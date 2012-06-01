@@ -11,7 +11,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(8, 15);
-        private RangeI _treeTypeRange = new RangeI(0, 2);
         #endregion
 
         #region Public Properties
@@ -21,7 +20,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public override byte GroundCube { get { return CubeId.Stone; } }
 
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
-        protected override RangeI TreeTypeRange { get { return _treeTypeRange; } }
         #endregion
 
         #region Public Methods

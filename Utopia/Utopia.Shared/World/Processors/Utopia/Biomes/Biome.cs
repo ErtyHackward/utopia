@@ -93,7 +93,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 70) };
 
         private RangeI _treePerChunk = new RangeI(0, 0);
-        private RangeI _DefaultTreeTypeRange = new RangeI(0,0);
+        protected int[] _treeTypeDistribution = new int[100];
         //Default chunk Vein values
         protected virtual CubeVein SandVein { get { return _sandVein; } }
         protected virtual CubeVein RockVein { get { return _rockVein; } }
@@ -107,7 +107,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual CubeVein LavaSource { get { return _lavaSource; } }
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
-        protected virtual RangeI TreeTypeRange { get { return _DefaultTreeTypeRange; } }
+        protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
         #endregion
 
         #region Public Properties
@@ -116,6 +116,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public abstract RangeI UnderSurfaceLayers { get; }
         public abstract byte GroundCube { get; }
         #endregion
+
+        public Biome()
+        {
+            CreateTreeDistribution();
+        }
 
         #region Public Methods
         /// <summary>
@@ -242,6 +247,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Private Methods
+
+        private void CreateTreeDistribution()
+        {
+            //Default tree distribution
+            for (int i = 0; i < 50; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Small;
+            for (int i = 50; i < 85; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Medium;
+            for (int i = 85; i < 100; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Big;  
+        }
+
         /// <summary>
         /// Will create a resource vein
         /// </summary>
@@ -310,7 +324,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         protected static void PopulateChunkWithTree(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
         {
-            var treeTemplate = TreeTemplates.Templates[rnd.Next(biome.TreeTypeRange.Min, biome.TreeTypeRange.Max + 1)];
+            var treeTemplate = TreeTemplates.Templates[biome.TreeTypeDistribution[rnd.Next(0, 100)]];
 
             //Get Rnd chunk Location.
             int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
