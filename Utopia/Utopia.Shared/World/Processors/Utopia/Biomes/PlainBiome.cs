@@ -11,7 +11,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(0, 1);
-        private RangeI _treeTypeRange = new RangeI(0, 2);
         #endregion
 
         #region Public Properties
@@ -19,15 +18,24 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public override byte UnderSurfaceCube { get { return CubeId.Dirt; } }
         public override RangeI UnderSurfaceLayers { get { return _underSurfaceLayers; } }
         public override byte GroundCube { get { return CubeId.Stone; } }
-
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
-        protected override RangeI TreeTypeRange { get { return _treeTypeRange; } }
         #endregion
 
+        public PlainBiome()
+            : base()
+        {
+            CreateTreeDistribution();
+        }
         #region Public Methods
         #endregion
 
         #region Private Methods
+        private void CreateTreeDistribution()
+        {
+            //Default tree distribution
+            for (int i = 0; i < 50; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Small;
+            for (int i = 50; i < 100; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Medium;
+        }
         #endregion
 
     }
