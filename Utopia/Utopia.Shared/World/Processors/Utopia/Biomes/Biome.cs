@@ -90,7 +90,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private CubeVein _moonStoneVein = new CubeVein() { CubeId = CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1, 20) };
 
         private CubeVein _waterSource = new CubeVein() { CubeId = CubeId.DynamicWater,  VeinPerChunk = 20, SpawningHeight = new RangeB(60, 120) };
-        private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 70) };
+        private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 60) };
 
         private RangeI _treePerChunk = new RangeI(0, 0);
         protected int[] _treeTypeDistribution = new int[100];
@@ -203,24 +203,26 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         public static void GenerateChunkLiquidSources(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
+            int liquidPower = 5;
             //Generate WaterSource
             for (int i = 0; i < biome.WaterSource.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
-                int x = rnd.Next(1, 15);
+                int x = rnd.Next(liquidPower, 16 - liquidPower);
                 int y = rnd.Next(biome.WaterSource.SpawningHeight.Min, biome.WaterSource.SpawningHeight.Max);
-                int z = rnd.Next(1, 15);
-                PopulateChunkLiquidSources(biome.WaterSource.CubeId, cursor, x, y, z);
+                int z = rnd.Next(liquidPower, 16 - liquidPower);
+                PopulateChunkLiquidSources(biome.WaterSource.CubeId, cursor, x, y, z, liquidPower);
             }
 
+            liquidPower = 5;
             //Generate LavaSources
             for (int i = 0; i < biome.LavaSource.VeinPerChunk; i++)
             {
                 //Get Rnd chunk Location.
-                int x = rnd.Next(1, 15);
+                int x = rnd.Next(liquidPower, 16 - liquidPower);
                 int y = rnd.Next(biome.LavaSource.SpawningHeight.Min, biome.LavaSource.SpawningHeight.Max);
-                int z = rnd.Next(1, 15);
-                PopulateChunkLiquidSources(biome.LavaSource.CubeId, cursor, x, y, z);
+                int z = rnd.Next(liquidPower, 16 - liquidPower);
+                PopulateChunkLiquidSources(biome.LavaSource.CubeId, cursor, x, y, z, liquidPower);
             }
         }
 
@@ -295,29 +297,92 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="x">InsideChunk X starting position</param>
         /// <param name="y">InsideChunk Y starting position</param>
         /// <param name="z">InsideChunk Z starting position</param>
-        protected static void PopulateChunkLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z)
+        protected static void PopulateChunkLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int liquidPower)
         {
+
             cursor.SetInternalPosition(x, y, z);
 
             //Check if this source is candidate as valid source = Must be surrended by 5 solid blocks and ahave one side block going to Air
             if (cursor.Read() != CubeId.Air)
             {
                 //Looking Up for Air
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Up)].IsSolidToEntity == false) return;
-                //Looking Down for Air
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Down)].IsSolidToEntity == false) return;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Up)].IsBlockingWater == false || cursor.Peek(CursorRelativeMovement.Up) == CubeId.Snow) return;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false ) return;
                 int cpt = 0;
                 //Counting the number of holes arround the source
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.East)].IsSolidToEntity == false) cpt++;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.West)].IsSolidToEntity == false) cpt++;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.North)].IsSolidToEntity == false) cpt++;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.South)].IsSolidToEntity == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.East)].IsBlockingWater == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.West)].IsBlockingWater == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.North)].IsBlockingWater == false) cpt++;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.South)].IsBlockingWater == false) cpt++;
 
                 //Only one face touching air ==> Createing the Liquid Source !
-                if (cpt == 1)
+                if (cpt != 1) return;
+
+                cursor.Write(cubeId);
+                Queue<Tuple<ByteChunkCursor, int>> sourcesWithPower = new Queue<Tuple<ByteChunkCursor, int>>();
+                sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(cursor, liquidPower));
+                PropagateLiquidSources(sourcesWithPower, cubeId);
+            }
+        }
+
+        protected static void PropagateLiquidSources(Queue<Tuple<ByteChunkCursor, int>> sourcesWithPower, byte cubeId)
+        {
+            Tuple<ByteChunkCursor, int> liquidSource = sourcesWithPower.Dequeue();
+
+            //Can Fall, falling doesn't remove Power at propagation
+            bool isFalling = false;
+            if (GameSystemSettings.Current.Settings.CubesProfile[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].CubeFamilly == Enums.enuCubeFamilly.Liquid) return;
+            while (GameSystemSettings.Current.Settings.CubesProfile[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == CubeId.Snow)
+            {
+                liquidSource.Item1.Move(CursorRelativeMovement.Down);
+                liquidSource.Item1.Write(cubeId);
+                isFalling = true;
+            }
+            if (isFalling)
+            {
+                sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), liquidSource.Item2));
+            }
+            else
+            {
+                int power = liquidSource.Item2 - 1;
+                if (power >= 0)
                 {
-                    cursor.Write(cubeId);
+                    if (GameSystemSettings.Current.Settings.CubesProfile[liquidSource.Item1.Peek(CursorRelativeMovement.East)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == CubeId.Snow)
+                    {
+                        liquidSource.Item1.Move(CursorRelativeMovement.East);
+                        liquidSource.Item1.Write(cubeId);
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
+                        liquidSource.Item1.Move(CursorRelativeMovement.West);
+                    }
+
+                    if (GameSystemSettings.Current.Settings.CubesProfile[liquidSource.Item1.Peek(CursorRelativeMovement.West)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == CubeId.Snow)
+                    {
+                        liquidSource.Item1.Move(CursorRelativeMovement.West);
+                        liquidSource.Item1.Write(cubeId);
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
+                        liquidSource.Item1.Move(CursorRelativeMovement.East);
+                    }
+
+                    if (GameSystemSettings.Current.Settings.CubesProfile[liquidSource.Item1.Peek(CursorRelativeMovement.North)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == CubeId.Snow)
+                    {
+                        liquidSource.Item1.Move(CursorRelativeMovement.North);
+                        liquidSource.Item1.Write(cubeId);
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
+                        liquidSource.Item1.Move(CursorRelativeMovement.South);
+                    }
+
+                    if (GameSystemSettings.Current.Settings.CubesProfile[liquidSource.Item1.Peek(CursorRelativeMovement.South)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == CubeId.Snow)
+                    {
+                        liquidSource.Item1.Move(CursorRelativeMovement.South);
+                        liquidSource.Item1.Write(cubeId);
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
+                    }
                 }
+            }
+
+            while (sourcesWithPower.Count > 0)
+            {
+                PropagateLiquidSources(sourcesWithPower, cubeId);
             }
         }
 
