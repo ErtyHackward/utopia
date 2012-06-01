@@ -18,6 +18,21 @@ namespace Utopia.Shared.Chunks
         #endregion
 
         #region Public Properties
+        public byte[] ChunkData
+        {
+            get { return _chunkData; }
+            set { _chunkData = value; }
+        }
+        public Vector3I InternalPosition
+        {
+            get { return _internalPosition; }
+            set { _internalPosition = value; }
+        }
+        public int ArrayIndex
+        {
+            get { return _arrayIndex; }
+            set { _arrayIndex = value; }
+        }
         #endregion
 
         public ByteChunkCursor(byte[] chunkData, Vector3I internalChunkPosition)
@@ -31,6 +46,17 @@ namespace Utopia.Shared.Chunks
             _chunkData = chunkData;
         }
 
+        public ByteChunkCursor(ByteChunkCursor cursor)
+        {
+            ChunkData = cursor.ChunkData;
+            ArrayIndex = cursor.ArrayIndex;
+            InternalPosition = cursor.InternalPosition;
+        }
+
+        public ByteChunkCursor Clone()
+        {
+            return new ByteChunkCursor(this);
+        }
         #region Public Methods
 
         public void SetInternalPosition(Vector3I internalChunkPosition)
@@ -139,9 +165,9 @@ namespace Utopia.Shared.Chunks
             return true;
         }
 
-        public bool PeekWithCheck(CursorRelativeMovement relativeMove, byte value)
+        public bool PeekWithCheck(CursorRelativeMovement relativeMove, out byte value)
         {
-            return PeekWithCheck((int)relativeMove, value);
+            return PeekWithCheck((int)relativeMove, out value);
         }
         /// <summary>
         /// Move the cursor in the chunk
@@ -155,7 +181,7 @@ namespace Utopia.Shared.Chunks
         /// 6 = Z_Minus1;
         /// </param>
         /// <returns></returns>
-        public bool PeekWithCheck(int relativeMove, byte value)
+        public bool PeekWithCheck(int relativeMove, out byte value)
         {
             relativeMove = Math.Abs(relativeMove);
             value = 0;

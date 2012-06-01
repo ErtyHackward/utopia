@@ -202,7 +202,8 @@ namespace Utopia.Worlds.Chunks
                         chunk = SortedChunks[chunkIndice];
                         if (chunk.State == ChunkState.Empty ||
                             chunk.State == ChunkState.LandscapeCreated || 
-                            chunk.State == ChunkState.UserChanged)
+                            chunk.State == ChunkState.UserChanged
+                            || chunk.ThreadStatus == ThreadStatus.Locked)
                         {
                             inSync = false;
                             break;
@@ -216,7 +217,8 @@ namespace Utopia.Worlds.Chunks
                         if (chunk.State == ChunkState.Empty ||
                             chunk.State == ChunkState.LandscapeCreated ||
                             chunk.State == ChunkState.LandscapeLightsSourceCreated || 
-                            chunk.State == ChunkState.UserChanged)
+                            chunk.State == ChunkState.UserChanged
+                            || chunk.ThreadStatus == ThreadStatus.Locked)
                         {
                             inSync = false;
                             break;
