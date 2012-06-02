@@ -132,6 +132,8 @@ namespace Sandbox.Client.States
                 return;
             if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.Air)
                 return;
+            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.DynamicWater)
+                return;
 
             if (e.NewBlockType == 0)
                 _sandboxGameSoundManager.PlayBlockTake(e.Position);

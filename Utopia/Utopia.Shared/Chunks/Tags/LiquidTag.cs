@@ -8,13 +8,13 @@ namespace Utopia.Shared.Chunks.Tags
         //YOffset : 0 = FULL cube, 1 = Empty cube
         public float YOffset
         {
-            get { return (Pressure - 1) * -1; }
+            get { return Pressure > 9 ? 0 : (10f - Pressure) / 10; }
         }
 
         /// <summary>
-        /// Pressure of the liquid, less than one values indicate non full block
+        /// Pressure of the liquid, 10 - full block
         /// </summary>
-        public float Pressure;
+        public ushort Pressure;
         
         public byte LiquidType;
 
@@ -35,7 +35,7 @@ namespace Utopia.Shared.Chunks.Tags
         public override void Load(BinaryReader reader)
         {
             LiquidType = reader.ReadByte();
-            Pressure = reader.ReadSingle();
+            Pressure = reader.ReadUInt16();
             Sourced = reader.ReadBoolean();
         }
     }

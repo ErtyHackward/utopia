@@ -18,14 +18,15 @@ namespace Utopia.Server.Services
     /// </summary>
     public class WaterDynamicService : Service
     {
-        private LinkedList<Vector3I> _updateList = new LinkedList<Vector3I>();
-        private HashSet<Vector3I> _updateSet = new HashSet<Vector3I>();
-        private Dictionary<Vector2I, InsideDataProvider> _affectedChunks = new Dictionary<Vector2I, InsideDataProvider>();
-
-
-        private bool _updating = false;
+        private readonly LinkedList<Vector3I> _updateList = new LinkedList<Vector3I>();
+        private readonly HashSet<Vector3I> _updateSet = new HashSet<Vector3I>();
+        private readonly Dictionary<Vector2I, InsideDataProvider> _affectedChunks = new Dictionary<Vector2I, InsideDataProvider>();
+        
+        private bool _updating;
         private Server _server;
         private Timer _updateTimer;
+
+        private Vector3I[] directions = new[] { new Vector3I(1, 0, 0), new Vector3I(0, 0, 1), new Vector3I(-1, 0, 0), new Vector3I(0, 0, -1) };
 
         public override string ServiceName
         {
@@ -52,6 +53,7 @@ namespace Utopia.Server.Services
                 
                 var node = _updateList.First;
 
+                var spreadList = new List<Vector3I>(6);
                 var cursor = _server.LandscapeManager.GetCursor(new Vector3I());
                 cursor.BeforeWrite += CursorBeforeWrite;
 
@@ -59,28 +61,157 @@ namespace Utopia.Server.Services
                 {
                     cursor.GlobalPosition = node.Value;
 
-                    //var currentTag = (LiquidTag)cursor.ReadTag();
+                    var currentValue = cursor.Read();
 
-                    // check if this water can fall down
-                    if (TryFallTo(node, cursor, new Vector3I(0, -1, 0)))
+                    if (currentValue != CubeId.DynamicWater)
+                    {
+                        var prevNode = node.Previous;
+                        _updateList.Remove(node);
+                        _updateSet.Remove(node.Value);
+                        node = prevNode ?? _updateList.First;
+                        if (node == null) break;
                         continue;
+                    }
 
-                    // fall in sides
-                    if (cursor.PeekValue(new Vector3I(1, 0, 0)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(1, -1, 0)))
-                        continue;
-                    if (cursor.PeekValue(new Vector3I(-1, 0, 0)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(-1, -1, 0)))
-                        continue;
-                    if (cursor.PeekValue(new Vector3I(0, 0, 1)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(0, -1, 1)))
-                        continue;
-                    if (cursor.PeekValue(new Vector3I(0, 0, -1)) == CubeId.Air && TryFallTo(node, cursor, new Vector3I(0, -1, -1)))
-                        continue;
+                    var currentTag = (LiquidTag)cursor.ReadTag() ?? new LiquidTag { Pressure = 10, Sourced = false };
 
-                    _updateSet.Remove(node.Value);
-                    _updateList.Remove(node);
-                    
+                    // water always tries to spread until it have pressure lower than 0.11
+
+                    #region falling
+                    BlockTag tag;
+                    var value = cursor.PeekValue(new Vector3I(0, -1, 0), out tag);
+
+                    if (value == CubeId.Air)
+                    {
+
+                        cursor.Write(CubeId.Air);
+                        cursor.Move(new Vector3I(0, -1, 0));
+                        cursor.Write(CubeId.DynamicWater, currentTag);
+                        PropagateUpdate(cursor.GlobalPosition);
+                        continue;
+                    }
+
+                    if (value == CubeId.StillWater)
+                    {
+                        // disappear
+                        cursor.Write(CubeId.Air);
+                        continue;
+                    }
+
+                    if (value == CubeId.DynamicWater)
+                    {
+                        var ltag = tag as LiquidTag;
+                        // merge if possible
+                        if (ltag != null && ltag.Pressure < 10)
+                        {
+                            var need = (ushort)(10 - ltag.Pressure);
+
+                            if (need >= currentTag.Pressure)
+                            {
+                                need = currentTag.Pressure;
+                                cursor.Write(CubeId.Air);
+                            }
+                            else
+                            {
+                                currentTag.Pressure -= need;
+                                cursor.Write(CubeId.DynamicWater, currentTag);
+                            }
+                            ltag.Pressure += need;
+                            cursor.Move(new Vector3I(0, -1, 0)).Write(CubeId.DynamicWater, ltag);
+                            PropagateUpdate(cursor.GlobalPosition);
+                            continue;
+                        }
+                    }
+
+                    #endregion
+
+                    #region spreading
+
+                    if (currentTag.Pressure > 1)
+                    {
+                        spreadList.Clear();
+                        // detect all possible ways
+                        foreach (var direction in directions)
+                        {
+                            if (CanFlowTo(cursor, direction, currentTag.Pressure))
+                                spreadList.Add(direction);
+                        }
+
+                        // move up only if pressure is too high
+                        if ((spreadList.Count + 1) * 10 < currentTag.Pressure && CanFlowTo(cursor, new Vector3I(0, 1, 0), currentTag.Pressure))
+                            spreadList.Add(new Vector3I(0, 1, 0));
+
+                        // oki spread
+
+                        if (spreadList.Count > 0)
+                        {
+                            int outPressure = 0;
+                            int limit = spreadList.Count + 1;
+
+                            for (; outPressure == 0 && limit > 0; limit--)
+                            {
+                                outPressure = currentTag.Pressure / limit;
+                            }
+
+                            var r = new Random();
+                            if (outPressure > 0)
+                            {
+                                for (int i = r.Next(0, limit), l = 0 ; l < limit; i++, l++) // a bit of voodoo ;)
+                                {
+                                    if (i == spreadList.Count) i = 0;
+                                    var vector3I = spreadList[i];
+                                    cursor.Move(vector3I);
+
+                                    LiquidTag sideTag;
+
+                                    if (cursor.Read(out sideTag) != CubeId.DynamicWater)
+                                    {
+                                        sideTag = new LiquidTag { Pressure = 0 };
+                                    }
+                                    else if (sideTag == null)
+                                    {
+                                        sideTag = new LiquidTag { Pressure = 1 };
+                                    }
+
+                                    var wave = outPressure;
+
+                                    if (wave > currentTag.Pressure - sideTag.Pressure)
+                                        wave = currentTag.Pressure - sideTag.Pressure;
+
+                                    sideTag.Pressure = (ushort)(sideTag.Pressure + wave);
+                                    currentTag.Pressure = (ushort)(currentTag.Pressure - wave);
+
+                                    cursor.Write(CubeId.DynamicWater, sideTag);
+                                    PropagateUpdate(cursor.GlobalPosition);
+                                    // move cursor back
+                                    cursor.Move(Vector3I.Zero - vector3I);
+                                }
+
+                                if (spreadList.Count > 0)
+                                {
+                                    cursor.Write(CubeId.DynamicWater, currentTag);
+                                }
+
+                                if (spreadList.Count != 0)
+                                    continue;
+                            }
+                        }
+                    }
+
+                    #endregion
+
+                    {
+                        var prevNode = node.Previous;
+                        _updateSet.Remove(node.Value);
+                        _updateList.Remove(node);
+                        node = prevNode ?? _updateList.First;
+                        if (node == null) break;
+                    }
                 }
 
                 cursor.BeforeWrite -= CursorBeforeWrite;
+
+                Console.WriteLine("Water cycle update " + sw.Elapsed.TotalMilliseconds + " ms Items: " + _updateList.Count);
 
                 // commit all changes
                 foreach (var pair in _affectedChunks)
@@ -91,8 +222,29 @@ namespace Utopia.Server.Services
                 _affectedChunks.Clear();
 
                 _updating = false;
-                Console.WriteLine("Water cycle update " + sw.Elapsed.TotalMilliseconds + " ms");
+                
             }
+        }
+
+        bool CanFlowTo(ILandscapeCursor cursor, Vector3I move, ushort pressure)
+        {
+            LiquidTag tag;
+            var value = cursor.PeekValue(move, out tag);
+
+            if (value == CubeId.Air)
+                return true;
+
+            if (value == CubeId.DynamicWater)
+            {
+                if (tag == null)
+                    return false;
+
+                if (tag.Pressure + 1 < pressure)
+                    return true;
+                return false;
+            }
+
+            return false;
         }
 
         void CursorBeforeWrite(object sender, LandscapeCursorBeforeWriteEventArgs e)
@@ -119,8 +271,8 @@ namespace Utopia.Server.Services
                 _updateSet.Remove(cursor.GlobalPosition);
                 _updateSet.Add(node.Value);
 
-                cursor.Write(CubeId.DynamicWater, new LiquidTag { LiquidType = 0, Pressure = 0.5f, Sourced = false });
-                cursor.Move(move).Write(CubeId.DynamicWater, new LiquidTag { LiquidType = 0, Pressure = 0.5f, Sourced = false });
+                //cursor.Write(CubeId.DynamicWater, new LiquidTag { LiquidType = 0, Pressure = 0.5f, Sourced = false });
+                //cursor.Move(move).Write(CubeId.DynamicWater, new LiquidTag { LiquidType = 0, Pressure = 0.5f, Sourced = false });
 
                 PropagateUpdate(prevPosition);
                 PropagateUpdate(node.Value);
@@ -155,19 +307,22 @@ namespace Utopia.Server.Services
             // check if we touch surrounding water block
             var cursor = _server.LandscapeManager.GetCursor(globalPos);
 
+            if (cursor.Read() == CubeId.DynamicWater)
+                AddToUpdateList(globalPos);
+
             // up
             CheckDirection(cursor, new Vector3I(0, 1, 0));
 
             // sides
-            CheckDirection(cursor, new Vector3I(1, 0, 0));
-            CheckDirection(cursor, new Vector3I(-1, 0, 0));
-            CheckDirection(cursor, new Vector3I(0, 0, 1));
-            CheckDirection(cursor, new Vector3I(0, 0, -1));
+            CheckDirection(cursor, new Vector3I( 1, 0,  0));
+            CheckDirection(cursor, new Vector3I(-1, 0,  0));
+            CheckDirection(cursor, new Vector3I( 0, 0,  1));
+            CheckDirection(cursor, new Vector3I( 0, 0, -1));
 
-            CheckDirection(cursor, new Vector3I(1, 1, 0));
-            CheckDirection(cursor, new Vector3I(-1, 1, 0));
-            CheckDirection(cursor, new Vector3I(0, 1, 1));
-            CheckDirection(cursor, new Vector3I(0, 1, -1));
+            //CheckDirection(cursor, new Vector3I( 1, 1,  0));
+            //CheckDirection(cursor, new Vector3I(-1, 1,  0));
+            //CheckDirection(cursor, new Vector3I( 0, 1,  1));
+            //CheckDirection(cursor, new Vector3I( 0, 1, -1));
 
             // down
             CheckDirection(cursor, new Vector3I(0, -1, 0));
@@ -183,7 +338,7 @@ namespace Utopia.Server.Services
         {
             if (!_updateSet.Contains(vec))
             {
-                _updateList.AddLast(vec);
+                _updateList.AddFirst(vec);
                 _updateSet.Add(vec);
             }
         }
