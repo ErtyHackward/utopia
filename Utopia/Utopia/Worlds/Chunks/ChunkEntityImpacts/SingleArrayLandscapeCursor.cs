@@ -52,7 +52,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// Reads current block and tag at the cursor position
         /// </summary>
         /// <returns></returns>
-        public void ReadBlockWithTag(out byte blockValue, out BlockTag tag)
+        public byte Read<T>(out T tag) where T : BlockTag
         {
             throw new NotImplementedException();
         }
@@ -96,6 +96,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Vector3I peekPosition = _globalPosition + moveVector;
             var peekIndex = _landscapeManager.CubesHolder.Index(ref peekPosition);
             return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
+        }
+
+        public byte PeekValue<T>(Vector3I moveVector, out T tag) where T : BlockTag
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>

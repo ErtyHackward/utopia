@@ -221,7 +221,7 @@ namespace S33M3Resources.Structs
         }
 
         /// <summary>
-        /// Gets Vector3I with values x = 1, y = 1, z = 1
+        /// Gets Vector3I with values x = 0, y = 0, z = 0
         /// </summary>
         public static Vector3I Zero
         {

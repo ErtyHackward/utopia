@@ -31,7 +31,7 @@ namespace Utopia.Shared.Interfaces
         /// Reads current block and tag at the cursor position
         /// </summary>
         /// <returns></returns>
-        void ReadBlockWithTag(out byte blockValue, out BlockTag tag);
+        byte Read<T>(out T tag) where T: BlockTag;
 
         /// <summary>
         /// Writes specidfied value to current cursor position
@@ -47,11 +47,19 @@ namespace Utopia.Shared.Interfaces
         ILandscapeCursor Clone();
 
         /// <summary>
-        /// Returns block value from cursor moved by vector specified
+        /// Returns a block value from the cursor moved by a vector specified
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
         byte PeekValue(Vector3I moveVector);
+
+        /// <summary>
+        /// Returns block and tag from the cursor moved by a vector specified
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <param name="tag"> </param>
+        /// <returns></returns>
+        byte PeekValue<T>(Vector3I moveVector, out T tag) where T: BlockTag;
 
         /// <summary>
         /// Moves current cursor and returns itself (Fluent interface)

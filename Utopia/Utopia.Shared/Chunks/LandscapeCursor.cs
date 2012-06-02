@@ -62,9 +62,15 @@ namespace Utopia.Shared.Chunks
             return _currentChunk.BlockData.GetTag(_internalPosition);
         }
 
-        public void ReadBlockWithTag(out byte blockValue, out BlockTag tag)
+        public byte Read<T>( out T tag) where T : BlockTag
         {
-            _currentChunk.BlockData.GetBlockWithTag(_internalPosition, out blockValue, out tag);
+            BlockTag tmptag;
+            byte value;
+
+            _currentChunk.BlockData.GetBlockWithTag(_internalPosition, out value, out tmptag);
+
+            tag = tmptag as T;
+            return value;
         }
 
         /// <summary>
@@ -148,6 +154,48 @@ namespace Utopia.Shared.Chunks
                 return chunk.BlockData[peekPosition];
             }
             return _currentChunk.BlockData[peekPosition];
+        }
+
+        public byte PeekValue<T>(Vector3I moveVector, out T tag) where T : BlockTag
+        {
+            var peekPosition = _internalPosition + moveVector;
+
+            var newChunkPos = _currentChunk.Position;
+
+            if (peekPosition.X >= AbstractChunk.ChunkSize.X)
+            {
+                newChunkPos.X += peekPosition.X / AbstractChunk.ChunkSize.X;
+                peekPosition.X = peekPosition.X % AbstractChunk.ChunkSize.X;
+            }
+            if (peekPosition.Z >= AbstractChunk.ChunkSize.Z)
+            {
+                newChunkPos.Y += peekPosition.Z / AbstractChunk.ChunkSize.Z;
+                peekPosition.Z = peekPosition.Z % AbstractChunk.ChunkSize.Z;
+            }
+            if (peekPosition.X < 0)
+            {
+                newChunkPos.X += (int)Math.Floor((double)peekPosition.X / AbstractChunk.ChunkSize.X);
+                peekPosition.X = AbstractChunk.ChunkSize.X + peekPosition.X % AbstractChunk.ChunkSize.X;
+            }
+            if (peekPosition.Z < 0)
+            {
+                newChunkPos.Y += (int)Math.Floor((double)peekPosition.Z / AbstractChunk.ChunkSize.Z);
+                peekPosition.Z = AbstractChunk.ChunkSize.Z + peekPosition.Z % AbstractChunk.ChunkSize.Z;
+            }
+
+            byte value;
+            BlockTag tmpTag;
+            if (!newChunkPos.IsZero())
+            {
+                var chunk = _manager.GetChunk(newChunkPos);
+                chunk.BlockData.GetBlockWithTag(peekPosition, out value, out tmpTag);
+                tag = tmpTag as T;
+                return value;
+            }
+
+            _currentChunk.BlockData.GetBlockWithTag(peekPosition, out value, out tmpTag);
+            tag = tmpTag as T;
+            return value;
         }
 
         /// <summary>
