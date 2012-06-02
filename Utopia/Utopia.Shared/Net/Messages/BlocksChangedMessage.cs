@@ -87,7 +87,10 @@ namespace Utopia.Shared.Net.Messages
                 if (msg._tags == null || msg._tags[i] == null)
                     writer.Write((byte)0);
                 else
+                {
+                    writer.Write(msg._tags[i].Id);
                     msg._tags[i].Save(writer);
+                }
             }
         }
 

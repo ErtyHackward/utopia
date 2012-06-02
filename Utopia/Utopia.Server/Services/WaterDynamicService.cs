@@ -6,6 +6,7 @@ using S33M3Resources.Structs;
 using Utopia.Server.Managers;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 
@@ -116,9 +117,9 @@ namespace Utopia.Server.Services
                 node.Value = cursor.GlobalPosition + move;
                 _updateSet.Remove(cursor.GlobalPosition);
                 _updateSet.Add(node.Value);
-                
-                cursor.Write(CubeId.Air);
-                cursor.Move(move).Write(CubeId.DynamicWater);
+
+                cursor.Write(CubeId.DynamicWater, new LiquidTag { LiquidType = 0, Pressure = 0.5f, Sourced = false });
+                cursor.Move(move).Write(CubeId.DynamicWater, new LiquidTag { LiquidType = 0, Pressure = 0.5f, Sourced = false });
 
                 PropagateUpdate(prevPosition);
                 PropagateUpdate(node.Value);
