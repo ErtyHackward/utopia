@@ -148,7 +148,7 @@ namespace Utopia.Shared.Chunks
                 peekPosition.Z = AbstractChunk.ChunkSize.Z + peekPosition.Z % AbstractChunk.ChunkSize.Z;
             }
 
-            if (!newChunkPos.IsZero())
+            if (newChunkPos != _currentChunk.Position)
             {
                 var chunk = _manager.GetChunk(newChunkPos);
                 return chunk.BlockData[peekPosition];
@@ -185,7 +185,7 @@ namespace Utopia.Shared.Chunks
 
             byte value;
             BlockTag tmpTag;
-            if (!newChunkPos.IsZero())
+            if (newChunkPos != _currentChunk.Position)
             {
                 var chunk = _manager.GetChunk(newChunkPos);
                 chunk.BlockData.GetBlockWithTag(peekPosition, out value, out tmpTag);
