@@ -1,7 +1,6 @@
-﻿using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
-namespace Utopia.Server.Utils
+namespace Utopia.Shared.Structs.Helpers
 {
     public static class BlockHelper
     {

@@ -4,6 +4,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Chunks.ChunkLighting;
@@ -238,13 +239,13 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 if (cubeProfile.IsTaggable)
                 {
-                    BlockTag ExistingTag = impactedChunk.BlockData.GetTag(cubeCoordinates);
-                    if (ExistingTag != null && ExistingTag == blockTag)
+                    BlockTag ExistingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+                    if (ExistingTag == blockTag)
                     {
                         return; //The block & tags are the sames !
                     }
-                }
-                return; //The block are the sames !
+                } 
+                else return; //The block are the sames !
             }
 
             //Change the cube in the big array
@@ -253,7 +254,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Update chunk tag collection if needed
             if (cubeProfile.IsTaggable)
             {
-                impactedChunk.BlockData.SetTag(blockTag, cubeCoordinates);
+                impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
             }
 
             //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy
