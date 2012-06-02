@@ -1,5 +1,5 @@
 using System;
-using Utopia.Shared.Structs;
+using Utopia.Shared.Chunks;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Events
@@ -25,5 +25,10 @@ namespace Utopia.Shared.Entities.Events
         /// Chunk position
         /// </summary>
         public Vector2I ChunkPosition { get; set; }
+
+        /// <summary>
+        /// Associated tags
+        /// </summary>
+        public BlockTag[] Tags { get; set; }
     }
 }

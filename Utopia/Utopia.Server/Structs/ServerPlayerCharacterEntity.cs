@@ -161,7 +161,7 @@ namespace Utopia.Server.Structs
 
         void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
         {
-            Connection.SendAsync(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations });
+            Connection.SendAsync(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations, Tags = e.Tags });
         }
 
         public override void Use(EntityUseMessage entityUseMessage)

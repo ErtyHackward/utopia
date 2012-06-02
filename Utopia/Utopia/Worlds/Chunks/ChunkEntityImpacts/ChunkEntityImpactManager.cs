@@ -91,7 +91,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
             for (int i = 0; i < e.Message.BlockValues.Length; i++)
             {                
-                ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i]);
+                ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], e.Message.Tags != null ? e.Message.Tags[i] : null);
             }
         }
 
