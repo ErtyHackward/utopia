@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using S33M3DXEngine;
 using SharpDX;
-using S33M3CoreComponents.Maths.Graphics;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
 
 namespace S33M3CoreComponents.Cameras
 {
@@ -47,7 +47,7 @@ namespace S33M3CoreComponents.Cameras
             //Compute the View Matrix
             _view = Matrix.Translation(_worldPosition.AsVector3() * -1) * Matrix.RotationQuaternion(Quaternion.Conjugate(_cameraOrientation));
             _viewProjection3D = _view * _projection3D;
-            _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
+            _frustum = new FastBoundingFrustum(ref _viewProjection3D);
         }
 
         protected override void CameraInitialize()

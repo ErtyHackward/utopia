@@ -205,14 +205,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             int liquidPower = 5;
             //Generate WaterSource
-            for (int i = 0; i < biome.WaterSource.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(liquidPower, 16 - liquidPower);
-                int y = rnd.Next(biome.WaterSource.SpawningHeight.Min, biome.WaterSource.SpawningHeight.Max);
-                int z = rnd.Next(liquidPower, 16 - liquidPower);
-                PopulateChunkLiquidSources(biome.WaterSource.CubeId, cursor, x, y, z, liquidPower);
-            }
+            //for (int i = 0; i < biome.WaterSource.VeinPerChunk; i++)
+            //{
+            //    //Get Rnd chunk Location.
+            //    int x = rnd.Next(liquidPower, 16 - liquidPower);
+            //    int y = rnd.Next(biome.WaterSource.SpawningHeight.Min, biome.WaterSource.SpawningHeight.Max);
+            //    int z = rnd.Next(liquidPower, 16 - liquidPower);
+            //    PopulateChunkLiquidSources(biome.WaterSource.CubeId, cursor, x, y, z, liquidPower);
+            //}
 
             liquidPower = 5;
             //Generate LavaSources
