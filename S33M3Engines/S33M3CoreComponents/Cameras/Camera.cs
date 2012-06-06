@@ -1,7 +1,6 @@
 ﻿#region
 using System;
 using SharpDX;
-using S33M3CoreComponents.Maths.Graphics;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine;
 using S33M3DXEngine.Main;
@@ -43,7 +42,7 @@ namespace S33M3CoreComponents.Cameras
         protected Matrix _viewProjection3D;
         protected Matrix _worldViewMatrix;
 
-        protected SimpleBoundingFrustum _frustum;
+        protected FastBoundingFrustum _frustum;
 
         private ICameraPlugin _cameraPlugin;
 
@@ -57,7 +56,7 @@ namespace S33M3CoreComponents.Cameras
 
         public CameraType CameraType { get; set; }
 
-        public SimpleBoundingFrustum Frustum
+        public FastBoundingFrustum Frustum
         {
             get { return _frustum; }
         }
@@ -207,7 +206,7 @@ namespace S33M3CoreComponents.Cameras
 
             var matrix = Matrix.Identity;
 
-            if (_frustum == null) _frustum = new SimpleBoundingFrustum(ref matrix);
+            if (_frustum == null) _frustum = new FastBoundingFrustum(ref matrix);
         }
 
         protected virtual void newCameraPluginDriver()

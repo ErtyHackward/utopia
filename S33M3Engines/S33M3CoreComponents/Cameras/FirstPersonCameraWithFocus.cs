@@ -6,7 +6,6 @@ using SharpDX;
 using System.Windows.Forms;
 using S33M3DXEngine;
 using S33M3CoreComponents.Maths;
-using S33M3CoreComponents.Maths.Graphics;
 using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.WorldFocus.Interfaces;
@@ -86,7 +85,7 @@ namespace S33M3CoreComponents.Cameras
             _viewProjection3D_focused = _view_focused * _projection3D;
             _viewProjection3D = Matrix.Translation(_worldPosition.AsVector3() * -1) * MRotation * _projection3D;
 
-            _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
+            _frustum = new FastBoundingFrustum(ref _viewProjection3D);
 
             //Refresh the lookat camera vector
             _lookAt = MQuaternion.GetLookAtFromQuaternion(inverseRotation);

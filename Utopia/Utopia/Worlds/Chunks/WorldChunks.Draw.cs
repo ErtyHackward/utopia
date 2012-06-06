@@ -40,9 +40,9 @@ namespace Utopia.Worlds.Chunks
 
         private void ChunkVisibilityTest()
         {
-            foreach (var chunk in SortedChunks)
+            foreach (VisualChunk chunk in SortedChunks)
             {
-                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(chunk.ChunkWorldBoundingBox);
+                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(ref chunk.ChunkWorldBoundingBox);
             }
         }
 

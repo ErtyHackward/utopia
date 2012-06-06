@@ -204,8 +204,8 @@
     <Compile Include="Inputs\MouseHandler\MouseManager.cs" />
     <Compile Include="Inputs\MouseHandler\MouseMessageHooker.cs" />
     <Compile Include="Inputs\MouseHandler\MouseState.cs" />
+    <Compile Include="Maths\FastBoundingFrustum.cs" />
     <Compile Include="Maths\FastRandom.cs" />
-    <Compile Include="Maths\Graphics\BoundingFrustum.cs" />
     <Compile Include="Maths\MathHelper.cs" />
     <Compile Include="Maths\MBoundingBox.cs" />
     <Compile Include="Maths\MBoundingSphere.cs" />
