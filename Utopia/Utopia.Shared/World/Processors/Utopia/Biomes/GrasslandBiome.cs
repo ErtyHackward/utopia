@@ -12,7 +12,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     public class GrasslandBiome : Biome
     {
         #region Private Variables
-        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 20, ChanceOfSpawning = 0.9 };
+        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 50, ChanceOfSpawning = 0.7 };
         #endregion
 
         #region Public Properties
