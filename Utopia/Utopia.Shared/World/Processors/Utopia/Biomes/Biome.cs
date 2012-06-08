@@ -80,7 +80,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Variables
         protected RangeI _underSurfaceLayers = new RangeI(1, 3);
 
-        //Default vein resources configurations
+        //Default mineral vein resources configurations
         private CubeVein _sandVein = new CubeVein() { CubeId = CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40, 128) };
         private CubeVein _rockVein = new CubeVein() { CubeId = CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1, 50)};
         private CubeVein _dirtVein = new CubeVein() { CubeId = CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 128) };
@@ -88,9 +88,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private CubeVein _goldVein = new CubeVein() { CubeId = CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1, 40)};
         private CubeVein _coalVein = new CubeVein() { CubeId = CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 80) };
         private CubeVein _moonStoneVein = new CubeVein() { CubeId = CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1, 20) };
-
+        //Default Liquid block spawning resource
         private CubeVein _waterSource = new CubeVein() { CubeId = CubeId.DynamicWater,  VeinPerChunk = 20, SpawningHeight = new RangeB(60, 120) };
         private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 60) };
+        //Default Spawning lake
+        private CubeVein _waterLake = new CubeVein() { CubeId = CubeId.StillWater, VeinPerChunk = 6, SpawningHeight = new RangeB(30, 120) };
+        private CubeVein _lavaLake = new CubeVein() { CubeId = CubeId.StillLava, VeinPerChunk = 2, SpawningHeight = new RangeB(2, 40) };
 
         private RangeI _treePerChunk = new RangeI(0, 0);
         protected int[] _treeTypeDistribution = new int[100];
@@ -105,6 +108,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         protected virtual CubeVein WaterSource { get { return _waterSource; } }
         protected virtual CubeVein LavaSource { get { return _lavaSource; } }
+
+        protected virtual CubeVein WaterLake { get { return _waterLake; } }
+        protected virtual CubeVein LavaLake { get { return _lavaLake; } }
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
@@ -228,9 +234,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         public static void GenerateChunkLakes(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
-            //Generate Still Water Lakes
-
-            //Generate Still Lava Lakes
+            //Generate still Water Lake
+            for (int i = 0; i < biome.WaterLake.VeinPerChunk; i++)
+            {
+                //Get Rnd chunk Location.
+                int x = rnd.Next(7, 9);
+                int y = rnd.Next(biome.WaterLake.SpawningHeight.Min, biome.WaterLake.SpawningHeight.Max);
+                int z = rnd.Next(7, 9);
+                PopulateChunkWithLake(cursor, x, y, z, biome, biome.WaterLake.CubeId, rnd);
+            }
         }
 
         public static void GenerateChunkTrees(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
@@ -386,7 +398,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-
         protected static void PopulateChunkWithTree(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
         {
             var treeTemplate = TreeTemplates.Templates[biome.TreeTypeDistribution[rnd.Next(0, 100)]];
@@ -470,6 +481,43 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                                 break;
                         }
                     }
+                }
+
+            }
+        }
+
+        protected static void PopulateChunkWithLake(ByteChunkCursor cursor, int x, int y, int z, Biome biome, byte cubeId, FastRandom rnd)
+        {
+            cursor.SetInternalPosition(x, y, z);
+            byte[] lakeForbidenBorder = new byte[] { CubeId.Air, CubeId.DynamicLava, CubeId.StillLava };
+
+            //Is the Lake Source a good position ?
+            if (!cursor.IsSurrendedBy(lakeForbidenBorder, true))
+            {
+                //Write Down the "Lake source point".
+                int nbrLakeLayer = rnd.Next(1, 4); // Lake can have up to 3 layers
+
+                //Define Layer lake size
+                int lakeLayerSizeEast = rnd.Next(3, 8);
+                int lakeLayerSizeWest = rnd.Next(-7, -2);
+                int lakeLayerSizeNorth = rnd.Next(3, 8);
+                int lakeLayerSizeSouth = rnd.Next(-7, -2);
+
+                for (int l = 0; l < nbrLakeLayer; l++)
+                {
+                    //Generate Lake Layers
+                    for (int X = lakeLayerSizeWest; X <= lakeLayerSizeEast; X++)
+                    {
+                        for (int Z = lakeLayerSizeSouth; Z <= lakeLayerSizeNorth; Z++)
+                        {
+                            cursor.SetInternalPosition(x + X, y + l, z + Z);
+                            if (!cursor.IsSurrendedBy(lakeForbidenBorder, true))
+                            {
+                                cursor.Write(cubeId);
+                            }
+                        }
+                    }
+
                 }
 
             }

@@ -100,6 +100,44 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
+        public bool IsSurrendedBy(byte CubeId, bool withoutTopCheck = false)
+        {
+            return IsSurrendedBy(new byte[] { CubeId }, withoutTopCheck);
+        }
+
+        public bool IsSurrendedBy(byte[] CubeIds, bool withoutTopCheck = false)
+        {
+            int topValue = withoutTopCheck == true ? topValue = 0 : topValue = 1;
+            //Save Position
+            Vector3I originalInternalPosition = _internalPosition;
+            int originalarrayIndex = _arrayIndex;
+
+            for (int y = originalInternalPosition.Y - 1; y <= originalInternalPosition.Y + topValue; y++)
+            {
+                for (int x = originalInternalPosition.X - 1; x <= originalInternalPosition.X + 1; x++)
+                {
+                    for (int z = originalInternalPosition.Z - 1; z <= originalInternalPosition.Z + 1; z++)
+                    {
+                        if (x < 0 || x >= AbstractChunk.ChunkSize.X || z < 0 || z >= AbstractChunk.ChunkSize.Z || y < 0 || y >= AbstractChunk.ChunkSize.Y) continue;
+                        SetInternalPosition(x, y, z);
+                        byte value = Read();
+                        if (CubeIds.Contains(value))
+                        {
+                            //restore position
+                            _internalPosition = originalInternalPosition;
+                            _arrayIndex = originalarrayIndex;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            //restore position
+            _internalPosition = originalInternalPosition;
+            _arrayIndex = originalarrayIndex;
+            return false;
+        }
+
         public byte Read()
         {
             return _chunkData[_arrayIndex];
