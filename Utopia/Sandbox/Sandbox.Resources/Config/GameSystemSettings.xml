@@ -5,6 +5,24 @@
     <SpriteID>0</SpriteID>
     <NbrGrowSprites>0</NbrGrowSprites>
   </Entity>
+  <Entity>
+    <!-- Flower 1 -->
+    <ClassID>4001</ClassID>
+    <SpriteID>1</SpriteID>
+    <NbrGrowSprites>0</NbrGrowSprites>
+  </Entity>
+  <Entity>
+    <!-- Flower 2 -->
+    <ClassID>4002</ClassID>
+    <SpriteID>2</SpriteID>
+    <NbrGrowSprites>0</NbrGrowSprites>
+  </Entity>
+  <Entity>
+    <!-- Flower 3 -->
+    <ClassID>4003</ClassID>
+    <SpriteID>3</SpriteID>
+    <NbrGrowSprites>0</NbrGrowSprites>
+  </Entity>
   <Cube>
     <Name>Air</Name>
     <Id>0</Id>

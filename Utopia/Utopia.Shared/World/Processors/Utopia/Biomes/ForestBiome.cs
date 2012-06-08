@@ -13,6 +13,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(8, 15);
         private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
+        private BiomeEntity _flower1Entities = new BiomeEntity() { EntityId = EntityClassId.Flower1, EntityPerChunk = 5, ChanceOfSpawning = 0.6 };
         #endregion
 
         #region Public Properties
@@ -23,6 +24,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
         protected override BiomeEntity GrassEntities { get { return _grassEntities; } }
+        protected override BiomeEntity Flower1Entities { get { return _flower1Entities; } }
         #endregion
 
         #region Public Methods

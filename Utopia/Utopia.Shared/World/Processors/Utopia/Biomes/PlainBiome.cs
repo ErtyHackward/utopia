@@ -13,6 +13,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(0, 1);
         private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 30, ChanceOfSpawning = 0.4 };
+        private BiomeEntity _flower2Entities = new BiomeEntity() { EntityId = EntityClassId.Flower2, EntityPerChunk = 3, ChanceOfSpawning = 0.4 };
+        private BiomeEntity _flower3Entities = new BiomeEntity() { EntityId = EntityClassId.Flower3, EntityPerChunk = 3, ChanceOfSpawning = 0.4 };
         #endregion
 
         #region Public Properties
@@ -21,7 +23,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public override RangeI UnderSurfaceLayers { get { return _underSurfaceLayers; } }
         public override byte GroundCube { get { return CubeId.Stone; } }
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
+
         protected override BiomeEntity GrassEntities { get { return _grassEntities; } }
+        protected override BiomeEntity Flower2Entities { get { return _flower2Entities; } }
+        protected override BiomeEntity Flower3Entities { get { return _flower3Entities; } }
+
         #endregion
 
         public PlainBiome()

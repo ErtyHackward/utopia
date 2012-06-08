@@ -421,6 +421,15 @@
     <None Include="TexturesPacks\Default\TexturePackConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\Default\Sprites\0001_0_Flower1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\Sprites\0002_0_Flower2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\Sprites\0003_0_Flower3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Terran\ct17_Snow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
