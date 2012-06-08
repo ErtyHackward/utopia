@@ -92,8 +92,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private CubeVein _waterSource = new CubeVein() { CubeId = CubeId.DynamicWater,  VeinPerChunk = 20, SpawningHeight = new RangeB(60, 120) };
         private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 60) };
         //Default Spawning lake
-        private CubeVein _waterLake = new CubeVein() { CubeId = CubeId.StillWater, VeinPerChunk = 6, SpawningHeight = new RangeB(30, 120) };
-        private CubeVein _lavaLake = new CubeVein() { CubeId = CubeId.StillLava, VeinPerChunk = 2, SpawningHeight = new RangeB(2, 40) };
+        private Cavern _moonStoneCavern = new Cavern() { CubeId = CubeId.MoonStone, CavernHeightSize = new RangeB(4, 8) ,CavernPerChunk = 1, SpawningHeight = new RangeB(20, 60), ChanceOfSpawning = 0.1 };
 
         private RangeI _treePerChunk = new RangeI(0, 0);
         protected int[] _treeTypeDistribution = new int[100];
@@ -109,8 +108,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual CubeVein WaterSource { get { return _waterSource; } }
         protected virtual CubeVein LavaSource { get { return _lavaSource; } }
 
-        protected virtual CubeVein WaterLake { get { return _waterLake; } }
-        protected virtual CubeVein LavaLake { get { return _lavaLake; } }
+        protected virtual Cavern MoonStoneCavern { get { return _moonStoneCavern; } }
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
@@ -232,16 +230,20 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        public static void GenerateChunkLakes(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
+        public static void GenerateMoonStoneCavern(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
         {
-            //Generate still Water Lake
-            for (int i = 0; i < biome.WaterLake.VeinPerChunk; i++)
+            //Generate MoonStoneCavern
+            for (int i = 0; i < biome.MoonStoneCavern.CavernPerChunk; i++)
             {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(7, 9);
-                int y = rnd.Next(biome.WaterLake.SpawningHeight.Min, biome.WaterLake.SpawningHeight.Max);
-                int z = rnd.Next(7, 9);
-                PopulateChunkWithLake(cursor, x, y, z, biome, biome.WaterLake.CubeId, rnd);
+                if (rnd.NextDouble() <= biome.MoonStoneCavern.ChanceOfSpawning)
+                {
+                    //Get Rnd chunk Location.
+                    int x = rnd.Next(7, 9);
+                    int y = rnd.Next(biome.MoonStoneCavern.SpawningHeight.Min, biome.MoonStoneCavern.SpawningHeight.Max);
+                    int z = rnd.Next(7, 9);
+                    int layer = rnd.Next(biome.MoonStoneCavern.CavernHeightSize.Min, biome.MoonStoneCavern.CavernHeightSize.Max + 1);
+                    PopulateChunkWithCave(cursor, x, y, z, layer, biome, biome.MoonStoneCavern.CubeId, rnd);
+                }
             }
         }
 
@@ -486,41 +488,52 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        protected static void PopulateChunkWithLake(ByteChunkCursor cursor, int x, int y, int z, Biome biome, byte cubeId, FastRandom rnd)
+        protected static void PopulateChunkWithCave(ByteChunkCursor cursor, int x, int y, int z, int layers ,Biome biome, byte cubeId, FastRandom rnd)
         {
             cursor.SetInternalPosition(x, y, z);
-            byte[] lakeForbidenBorder = new byte[] { CubeId.Air, CubeId.DynamicLava, CubeId.StillLava };
 
-            //Is the Lake Source a good position ?
-            if (!cursor.IsSurrendedBy(lakeForbidenBorder, true))
-            {
-                //Write Down the "Lake source point".
-                int nbrLakeLayer = rnd.Next(1, 4); // Lake can have up to 3 layers
+                int caveRadius = rnd.Next(3, 8);
 
-                //Define Layer lake size
-                int lakeLayerSizeEast = rnd.Next(3, 8);
-                int lakeLayerSizeWest = rnd.Next(-7, -2);
-                int lakeLayerSizeNorth = rnd.Next(3, 8);
-                int lakeLayerSizeSouth = rnd.Next(-7, -2);
+                int layerRadiusModifier = 0;
 
-                for (int l = 0; l < nbrLakeLayer; l++)
+                for (int l = 0; l < layers; l++)
                 {
                     //Generate Lake Layers
-                    for (int X = lakeLayerSizeWest; X <= lakeLayerSizeEast; X++)
+                    for (int X = x - (caveRadius - layerRadiusModifier); X <= x + (caveRadius - layerRadiusModifier); X++)
                     {
-                        for (int Z = lakeLayerSizeSouth; Z <= lakeLayerSizeNorth; Z++)
+                        for (int Z = z - (caveRadius - layerRadiusModifier); Z <= z + (caveRadius - layerRadiusModifier); Z++)
                         {
-                            cursor.SetInternalPosition(x + X, y + l, z + Z);
-                            if (!cursor.IsSurrendedBy(lakeForbidenBorder, true))
+                            //Create "Noise" at Cave border
+                            if ((X == x - (caveRadius - layerRadiusModifier) ||
+                                 X == x + (caveRadius - layerRadiusModifier) ||
+                                 Z == z - (caveRadius - layerRadiusModifier) ||
+                                 Z == z + (caveRadius - layerRadiusModifier)) 
+                                 && rnd.NextDouble() < 0.2)
+                            {
+                                continue;
+                            }
+
+                            cursor.SetInternalPosition(X, y + l, Z);
+                            if (l <= 1 && rnd.NextDouble() < 0.3)
                             {
                                 cursor.Write(cubeId);
                             }
+                            else
+                            {
+                                if (l != 0)
+                                {
+                                    if (l == layers - 1)
+                                    {
+                                        if (cursor.Read() == CubeId.Stone) cursor.Write(CubeId.LightWhite);
+                                    }
+                                    else cursor.Write(CubeId.Air);
+
+                                }
+                            }
                         }
                     }
-
+                    if (layerRadiusModifier < caveRadius) layerRadiusModifier++;
                 }
-
-            }
         }
         #endregion
     }
