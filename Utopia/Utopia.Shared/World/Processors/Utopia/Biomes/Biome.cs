@@ -114,6 +114,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual Cavern MoonStoneCavern { get { return _moonStoneCavern; } }
 
         protected virtual BiomeEntity GrassEntities { get { return BiomeEntity.None; } }
+        protected virtual BiomeEntity Flower1Entities { get { return BiomeEntity.None; } }
+        protected virtual BiomeEntity Flower2Entities { get { return BiomeEntity.None; } }
+        protected virtual BiomeEntity Flower3Entities { get { return BiomeEntity.None; } }
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
@@ -273,7 +276,49 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int z = rnd.Next(0, 16);
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.GrassEntities.EntityId, x, y, z, rnd, entityFactory);
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.GrassEntities.EntityId, x, y, z, rnd, entityFactory, false, false);
+                }
+            }
+
+            //Flower 1 population
+            for (int i = 0; i < biome.Flower1Entities.EntityPerChunk; i++)
+            {
+                if (rnd.NextDouble() <= biome.Flower1Entities.ChanceOfSpawning)
+                {
+                    //Get Rnd chunk Location.
+                    int x = rnd.Next(0, 16);
+                    int z = rnd.Next(0, 16);
+                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower1Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                }
+            }
+
+            //Flower 2 population
+            for (int i = 0; i < biome.Flower2Entities.EntityPerChunk; i++)
+            {
+                if (rnd.NextDouble() <= biome.Flower2Entities.ChanceOfSpawning)
+                {
+                    //Get Rnd chunk Location.
+                    int x = rnd.Next(0, 16);
+                    int z = rnd.Next(0, 16);
+                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower2Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                }
+            }
+
+            //Flower 3 population
+            for (int i = 0; i < biome.Flower3Entities.EntityPerChunk; i++)
+            {
+                if (rnd.NextDouble() <= biome.Flower3Entities.ChanceOfSpawning)
+                {
+                    //Get Rnd chunk Location.
+                    int x = rnd.Next(0, 16);
+                    int z = rnd.Next(0, 16);
+                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
                 }
             }
         }
@@ -553,7 +598,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 }
         }
 
-        protected static void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory)
+        protected static void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true, bool isSpriteVariableSize = false)
         {
             cursor.SetInternalPosition(x, y, z);
             //Check that the block above is "Air"
@@ -569,7 +614,21 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     Vector3I linkedCubePosition = new Vector3I(chunkWorldPosition.X + x, y, chunkWorldPosition.Z + z);
                     ((IBlockLinkedEntity)entity).LinkedCube = linkedCubePosition;
                 }
-                entity.Position = new Vector3D(chunkWorldPosition.X + x + 0.5, y + 1, chunkWorldPosition.Z + z + 0.5);
+
+                double XOffset = 0.5;
+                double ZOffset = 0.5;
+                if (isBlockCentered == false)
+                {
+                    XOffset = rnd.NextDouble(0.2, 0.8);
+                    ZOffset = rnd.NextDouble(0.2, 0.8);
+                }
+                if (isSpriteVariableSize)
+                {
+                    float newSize = (float)rnd.NextDouble(0.4, 0.8);
+                    entity.Size = new SharpDX.Vector3(newSize, newSize, newSize);
+                }
+
+                entity.Position = new Vector3D(chunkWorldPosition.X + x + XOffset, y + 1, chunkWorldPosition.Z + z + ZOffset);
                 chunk.Entities.Add((IStaticEntity)entity);
             }
         }

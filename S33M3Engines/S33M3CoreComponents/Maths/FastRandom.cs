@@ -187,6 +187,10 @@ namespace S33M3CoreComponents.Maths
                 return (REAL_UNIT_INT * (int)(0x7FFFFFFF & (w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)))));
             }
 
+            public double NextDouble(double minimum, double maximum)
+            {
+                return minimum + NextDouble() * (maximum - minimum);
+            }
 
             /// <summary>
             /// Fills the provided byte array with random bytes.
