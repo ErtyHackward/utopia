@@ -49,7 +49,7 @@ namespace Sandbox.Client.Components
             settings.Save();
 
             //Utopia New Landscape Test
-            var utopiaProcessor = new UtopiaProcessor(worldParam);
+            var utopiaProcessor = new UtopiaProcessor(worldParam, _serverFactory);
             var worldGenerator = new WorldGenerator(worldParam, utopiaProcessor);
 
             //Old s33m3 landscape

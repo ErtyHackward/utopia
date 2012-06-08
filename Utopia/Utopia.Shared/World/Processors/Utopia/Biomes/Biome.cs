@@ -10,6 +10,9 @@ using S33M3CoreComponents.Maths;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -92,7 +95,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private CubeVein _waterSource = new CubeVein() { CubeId = CubeId.DynamicWater,  VeinPerChunk = 20, SpawningHeight = new RangeB(60, 120) };
         private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 60) };
         //Default Spawning lake
-        private Cavern _moonStoneCavern = new Cavern() { CubeId = CubeId.MoonStone, CavernHeightSize = new RangeB(4, 8) ,CavernPerChunk = 1, SpawningHeight = new RangeB(20, 60), ChanceOfSpawning = 0.1 };
+        private Cavern _moonStoneCavern = new Cavern() { CubeId = CubeId.MoonStone, CavernHeightSize = new RangeB(4, 7) ,CavernPerChunk = 1, SpawningHeight = new RangeB(20, 60), ChanceOfSpawning = 0.01 };
 
         private RangeI _treePerChunk = new RangeI(0, 0);
         protected int[] _treeTypeDistribution = new int[100];
@@ -109,6 +112,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual CubeVein LavaSource { get { return _lavaSource; } }
 
         protected virtual Cavern MoonStoneCavern { get { return _moonStoneCavern; } }
+
+        protected virtual BiomeEntity GrassEntities { get { return BiomeEntity.None; } }
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
@@ -256,9 +261,21 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        public static void GenerateChunkItems(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
+        public static void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
         {
-            //Generate grass, ...
+            //Grass population
+            for (int i = 0; i < biome.GrassEntities.EntityPerChunk; i++)
+            {
+                if (rnd.NextDouble() <= biome.GrassEntities.ChanceOfSpawning)
+                {
+                    //Get Rnd chunk Location.
+                    int x = rnd.Next(0, 16);
+                    int z = rnd.Next(0, 16);
+                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.GrassEntities.EntityId, x, y, z, rnd, entityFactory);
+                }
+            }
         }
         #endregion
 
@@ -407,7 +424,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //Get Rnd chunk Location.
             int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
             int z = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
-            int y = columndInfo[z * AbstractChunk.ChunkSize.X + x].MaxHeight;
+            int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
             cursor.SetInternalPosition(x, y, z);
             //No other tree around me ?
@@ -535,6 +552,28 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     if (layerRadiusModifier < caveRadius) layerRadiusModifier++;
                 }
         }
+
+        protected static void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory)
+        {
+            cursor.SetInternalPosition(x, y, z);
+            //Check that the block above is "Air"
+            if (cursor.Peek(CursorRelativeMovement.Up) != CubeId.Air) return;
+            //Check that the block below is "solid"
+            byte blockBelow = cursor.Read();
+            CubeProfile blockBelowProfile = GameSystemSettings.Current.Settings.CubesProfile[blockBelow];
+            if (blockBelowProfile.IsSolidToEntity)
+            {
+                var entity = entityFactory.CreateEntity(entityId);
+                if(entity is IBlockLinkedEntity)
+                {
+                    Vector3I linkedCubePosition = new Vector3I(chunkWorldPosition.X + x, y, chunkWorldPosition.Z + z);
+                    ((IBlockLinkedEntity)entity).LinkedCube = linkedCubePosition;
+                }
+                entity.Position = new Vector3D(chunkWorldPosition.X + x + 0.5, y + 1, chunkWorldPosition.Z + z + 0.5);
+                chunk.Entities.Add((IStaticEntity)entity);
+            }
+        }
+
         #endregion
     }
 }

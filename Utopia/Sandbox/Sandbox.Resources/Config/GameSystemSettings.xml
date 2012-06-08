@@ -3,37 +3,7 @@
     <!-- Grass -->
     <ClassID>4000</ClassID>
     <SpriteID>0</SpriteID>
-    <NbrGrowSprites>5</NbrGrowSprites>
-  </Entity>
-  <Entity>
-    <!-- Mushroom1 -->
-    <ClassID>4003</ClassID>
-    <SpriteID>5</SpriteID>
-  </Entity>
-  <Entity>
-    <!-- Mushroom2 -->
-    <ClassID>4004</ClassID>
-    <SpriteID>6</SpriteID>
-  </Entity>
-  <Entity>
-    <!-- Flower1 -->
-    <ClassID>4001</ClassID>
-    <SpriteID>7</SpriteID>
-  </Entity>
-  <Entity>
-    <!-- Flower2 -->
-    <ClassID>4002</ClassID>
-    <SpriteID>8</SpriteID>
-  </Entity>
-  <Entity>
-    <!-- GoldCoin1 -->
-    <ClassID>100</ClassID>
-    <SpriteID>9</SpriteID>
-  </Entity>
-  <Entity>
-    <!-- Carver tool -->
-    <ClassID>3</ClassID>
-    <SpriteID>10</SpriteID>
+    <NbrGrowSprites>0</NbrGrowSprites>
   </Entity>
   <Cube>
     <Name>Air</Name>

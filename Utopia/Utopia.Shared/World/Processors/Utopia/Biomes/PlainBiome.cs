@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3_Resources.Structs;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -11,6 +12,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(0, 1);
+        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 10, ChanceOfSpawning = 0.6 };
         #endregion
 
         #region Public Properties
@@ -19,6 +21,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public override RangeI UnderSurfaceLayers { get { return _underSurfaceLayers; } }
         public override byte GroundCube { get { return CubeId.Stone; } }
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
+        protected override BiomeEntity GrassEntities { get { return _grassEntities; } }
         #endregion
 
         public PlainBiome()

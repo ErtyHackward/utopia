@@ -168,7 +168,7 @@ namespace Sandbox.Client.States
             //var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
             //_ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
-            IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam);
+            IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 

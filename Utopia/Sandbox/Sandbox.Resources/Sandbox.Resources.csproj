@@ -367,18 +367,6 @@
     <None Include="TexturesPacks\Default\Sprites\0000_0_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\Sprites\0000_1_Grass1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Sprites\0000_2_Grass1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Sprites\0000_3_Grass1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Sprites\0000_4_Grass1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TexturesPacks\Default\Terran\ct00_GrassTop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -430,21 +418,6 @@
     <None Include="TexturesPacks\Default\Terran\ct16_Glass.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="TexturesPacks\Default\Sprites\0001_0_Mush1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0002_0_Mush2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0003_0_Flower1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0004_0_Flower2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0005_0_GoldCoin1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="TexturesPacks\Default\TexturePackConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

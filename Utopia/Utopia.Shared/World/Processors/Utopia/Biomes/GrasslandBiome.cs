@@ -5,12 +5,14 @@ using System.Text;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Structs;
 using S33M3_Resources.Structs;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public class GrasslandBiome : Biome
     {
         #region Private Variables
+        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 20, ChanceOfSpawning = 0.9 };
         #endregion
 
         #region Public Properties
@@ -33,6 +35,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             get { return CubeId.Stone; }
         }
+
+        protected override BiomeEntity GrassEntities { get { return _grassEntities; } }
         #endregion
 
         #region Public Methods

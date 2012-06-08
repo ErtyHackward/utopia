@@ -39,6 +39,7 @@ namespace Utopia.Resources.Effects.Entities
 
         #region Resources
         public ShaderResource DiffuseTexture;
+        public ShaderResource BiomesColors;
         #endregion
 
         #region Sampler
@@ -66,6 +67,9 @@ namespace Utopia.Resources.Effects.Entities
             //Create the resource interfaces ==================================================
             DiffuseTexture = new ShaderResource( "DiffuseTexture");
             ShaderResources.Add(DiffuseTexture);
+
+            BiomesColors = new ShaderResource("BiomesColors");
+            ShaderResources.Add(BiomesColors);
 
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler( "SamplerDiffuse");
