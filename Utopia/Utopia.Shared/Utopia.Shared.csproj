@@ -107,15 +107,10 @@
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\Vector3DExtensions.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Mushr1.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Mushr2.cs" />
     <Compile Include="Entities\Concrete\CubeResource.cs" />
     <Compile Include="Entities\Concrete\EditableVoxelEntity.cs" />
     <Compile Include="Entities\Concrete\NoEntity.cs" />
-    <Compile Include="Entities\Concrete\Tree.cs" />
     <Compile Include="Entities\Concrete\Zombie.cs" />
     <Compile Include="Entities\CubePlaceableSpriteItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
@@ -289,6 +284,7 @@
     <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeEntity.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\Cavern.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\CubeVein.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\MontainBiome.cs" />

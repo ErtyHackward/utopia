@@ -128,7 +128,6 @@ namespace Utopia.Shared.World.Processors
                                             {
                                                 var grass = _factory.CreateEntity<Grass>();
 
-                                                grass.GrowPhase = 1;
                                                 grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
@@ -143,48 +142,47 @@ namespace Utopia.Shared.World.Processors
                                             {
                                                 var grass = _factory.CreateEntity<Grass>();
 
-                                                grass.GrowPhase = (byte) r.Next(0, 5);
                                                 grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
                                                 chunk.Entities.Add(grass);
                                             }
-                                            else if (result <= 0.6)
-                                            {
-                                                var entity = _factory.CreateEntity<Flower1>();
+                                            //else if (result <= 0.6)
+                                            //{
+                                            //    var entity = _factory.CreateEntity<Flower1>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                            //    entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                            //    entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                            else if (result <= 0.7)
-                                            {
-                                                var entity = _factory.CreateEntity<Flower2>();
+                                            //    chunk.Entities.Add(entity);
+                                            //}
+                                            //else if (result <= 0.7)
+                                            //{
+                                            //    var entity = _factory.CreateEntity<Flower2>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                            //    entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                            //    entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                            else if (result <= 0.9)
-                                            {
-                                                var entity = _factory.CreateEntity<Mushr1>();
+                                            //    chunk.Entities.Add(entity);
+                                            //}
+                                            //else if (result <= 0.9)
+                                            //{
+                                            //    var entity = _factory.CreateEntity<Mushr1>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                            //    entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                            //    entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
-                                            else if (result <= 1)
-                                            {
-                                                var entity = _factory.CreateEntity<Mushr2>();
+                                            //    chunk.Entities.Add(entity);
+                                            //}
+                                            //else if (result <= 1)
+                                            //{
+                                            //    var entity = _factory.CreateEntity<Mushr2>();
 
-                                                entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
-                                                entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
+                                            //    entity.Position = globalPos + new Vector3D(0.5, 1, 0.5);
+                                            //    entity.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
 
-                                                chunk.Entities.Add(entity);
-                                            }
+                                            //    chunk.Entities.Add(entity);
+                                            //}
                                         }
                                     }
                                 }
@@ -216,10 +214,6 @@ namespace Utopia.Shared.World.Processors
             // don't add tree at the edge of chunk
             if (vector3i.X == 0 || vector3i.X == AbstractChunk.ChunkSize.X - 1 || vector3i.Z == 0 || vector3i.Z == AbstractChunk.ChunkSize.Z - 1)
                 return;
-
-            var tree = new Tree();
-            tree.Position = new Vector3D(vector3i.X, vector3i.Y, vector3i.Z);
-            chunk.Entities.Add(tree);
 
             for (int i = 0; i < 7; i++)
             {

@@ -158,6 +158,7 @@ PS_OUT PS(PS_IN input)
 		finalColor.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
 		finalColor.a = fogvalue;
 	}
+
 	// Apply fog on output color
 	output.Color = finalColor;
     return output;

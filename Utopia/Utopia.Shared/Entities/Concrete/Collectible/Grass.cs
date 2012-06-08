@@ -6,10 +6,9 @@ using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Grass : CubePlaceableSpriteItem, IBlockLinkedEntity, IGrowEntity
+    public class Grass : CubePlaceableSpriteItem, IBlockLinkedEntity
     {
         #region Private properties
-        private byte _growPhase;
         #endregion
 
         #region Public properties/variables
@@ -17,15 +16,9 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         public override bool IsPlayerCollidable { get { return false; } }
         public Vector3I LinkedCube { get; set; }
 
-        public byte GrowPhase
-        {
-            get { return _growPhase; }
-            set { _growPhase = value; GrawPhaseChanged(); }
-        }
-
         public override string StackType
         {
-            get { return this.GetType().Name + GrowPhase; }
+            get { return this.GetType().Name; }
         }
 
         public override ushort ClassId
@@ -56,7 +49,8 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
-            GrowPhase = 0; //Set Default Grow Phase
+            Size = new Vector3(0.7f, 0.7f, 0.7f);
+            Format = SpriteFormat.Cross;
         }
 
         #region Public methods
@@ -65,7 +59,6 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             // first we need to load base information
             base.Load(reader, factory);
-            GrowPhase = reader.ReadByte();
             LinkedCube = reader.ReadVector3I();
         }
 
@@ -73,22 +66,11 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             // first we need to save base information
             base.Save(writer);
-            writer.Write(GrowPhase);
             writer.Write(LinkedCube);
         }
         #endregion
 
         #region Private methods
-        private void GrawPhaseChanged()
-        {
-            switch (GrowPhase)
-            {
-                default:
-                        Size = new Vector3(0.7f, 0.7f, 0.7f);
-                        Format = SpriteFormat.Triangle;
-                    break;
-            }
-        }
         #endregion
 
     }

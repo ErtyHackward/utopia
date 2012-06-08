@@ -24,6 +24,7 @@ cbuffer PerFrame
 //--------------------------------------------------------------------------------------
 Texture2DArray DiffuseTexture;
 SamplerState SamplerDiffuse;
+Texture2DArray BiomesColors;
 
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
@@ -31,7 +32,8 @@ struct VSInput {
 	float4 Position				: POSITION;
 	float4 Color				: COLOR;
 	float3 Textcoord     		: TEXCOORD;
-	float3 MetaData     		: METADATA;
+	float3 MetaData     		: METADATA; //Billboard Size x-y-z
+	float2 BiomeData		    : BIOMEINFO; //X = Temperature, Y = Moisture
 };
 
 //Pixel shader Input
@@ -40,6 +42,7 @@ struct PSInput {
 	float3 UVW					: TEXCOORD0;
 	float fogPower				: VARIOUS0;
 	float3 EmissiveLight		: Light0;
+	float2 BiomeData			: BIOMEDATA0;
 };
 
 struct PS_OUT
@@ -90,6 +93,8 @@ PSInput VS (VSInput input)
 	output.Position = mul(worldPosition, ViewProjection);
 	output.UVW = input.Textcoord;
 
+	output.BiomeData = input.BiomeData;
+		              
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 	output.EmissiveLight = saturate(input.Color.rgb +  SunColor * input.Color.a);
 
@@ -101,14 +106,24 @@ PSInput VS (VSInput input)
 //--------------------------------------------------------------------------------------
 PS_OUT PS(PSInput IN)
 {	
+   //Don't Display at all entity if in the fog
+   clip( IN.fogPower > 0.01f ? -1:1 );
+
 	PS_OUT output;
 	//Texture Sampling
-	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW) * float4(IN.EmissiveLight, 1);;
+	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW) * float4(IN.EmissiveLight, 1);
 	
 	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
-	float4 Finalfogcolor = {SunColor / 1.5, color.a};
-	color = lerp(color, Finalfogcolor, IN.fogPower);
+	//Apply Biome Color if the Alpha is < 1
+	if(color.a < 1.0)
+	{
+		float3 samplingBiomeColor = {IN.BiomeData.xy, 0 };
+	    float4 biomeColor =  BiomesColors.Sample(SamplerDiffuse, samplingBiomeColor);
+		color.r = color.r * biomeColor.r;
+		color.g = color.g * biomeColor.g;
+		color.b = color.b * biomeColor.b;
+	}
 
 	output.Color = color;
     return output;

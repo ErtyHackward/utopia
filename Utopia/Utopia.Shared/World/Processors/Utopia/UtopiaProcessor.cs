@@ -14,6 +14,7 @@ using Utopia.Shared.World.Processors.Utopia.Biomes;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.World.Processors.Utopia.ClimateFct;
 using System.Linq;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -21,6 +22,7 @@ namespace Utopia.Shared.World.Processors.Utopia
     {
         #region Private Variables
         private WorldParameters _worldParameters;
+        private EntityFactory _entityFactory;
         #endregion
 
         #region Public Properties
@@ -40,9 +42,10 @@ namespace Utopia.Shared.World.Processors.Utopia
         }
         #endregion
 
-        public UtopiaProcessor(WorldParameters worldParameters)
+        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory)
         {
             _worldParameters = worldParameters;
+            _entityFactory = entityFactory;
         }
 
         public void Dispose()
@@ -74,7 +77,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
                 TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
-                PopulateChunk(chunkBytes, columnsInfo, metaData, chunkRnd);
+                Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0 , chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+
+                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
                 chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
@@ -358,16 +363,16 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// </summary>
         /// <param name="ChunkCubes"></param>
         /// <param name="chunkMetaData"></param>
-        private void PopulateChunk(byte[] ChunkCubes, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd)
+        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory)
         {
             //Get Chunk Master Biome
             var masterBiome = Biome.BiomeList[chunkMetaData.ChunkMasterBiomeType];
-            ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes);
+            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData);
             Biome.GenerateMoonStoneCavern(dataCursor, masterBiome, chunkRnd);
             Biome.GenerateChunkLiquidSources(dataCursor, masterBiome,chunkRnd);
             Biome.GenerateChunkResources(dataCursor, masterBiome, chunkRnd);
-            Biome.GenerateChunkItems(dataCursor, masterBiome, chunkRnd);
-            Biome.GenerateChunkTrees(dataCursor, columnInfo, masterBiome,  chunkRnd);
+            Biome.GenerateChunkTrees(dataCursor, columnInfo, masterBiome, chunkRnd);
+            Biome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
         }
 
         private ChunkMetaData CreateChunkMetaData(ChunkColumnInfo[] columnsInfo)

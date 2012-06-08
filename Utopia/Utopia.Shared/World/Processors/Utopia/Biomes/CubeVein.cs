@@ -12,6 +12,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public int VeinSize;
         public RangeB SpawningHeight;
         public int VeinPerChunk;
-        public int ChanceOfSpawningInPercent;
+        public double ChanceOfSpawning;
     }
 }

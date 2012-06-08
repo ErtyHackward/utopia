@@ -276,10 +276,6 @@ namespace Utopia.Shared.World.Processors
             if (vector3i.X == 0 || vector3i.X == AbstractChunk.ChunkSize.X - 1 || vector3i.Z == 0 || vector3i.Z == AbstractChunk.ChunkSize.Z - 1)
                 return;
 
-            var tree = new Tree();
-            tree.Position = new Vector3D(vector3i.X, vector3i.Y, vector3i.Z);
-            chunk.Entities.Add(tree);
-
             for (int i = 0; i < 7; i++)
             {
                 TryAddBlock(chunk, vector3i, CubeId.Trunk);
