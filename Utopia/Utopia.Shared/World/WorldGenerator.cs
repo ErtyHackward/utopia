@@ -78,7 +78,7 @@ namespace Utopia.Shared.World
             {
                 for (int z = 0; z < range.Size.Y; z++)
                 {
-                    chunks[x, z] = new GeneratedChunk();
+                    chunks[x, z] = new GeneratedChunk() { Position = new Vector2I(x + range.Position.X, z + range.Position.Y) };
                 }
             }
 
