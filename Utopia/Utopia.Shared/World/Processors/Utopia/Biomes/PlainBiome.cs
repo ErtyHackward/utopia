@@ -12,7 +12,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(0, 1);
-        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 10, ChanceOfSpawning = 0.6 };
+        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 30, ChanceOfSpawning = 0.4 };
         #endregion
 
         #region Public Properties
