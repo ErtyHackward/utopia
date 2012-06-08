@@ -6,12 +6,12 @@ using S33M3_Resources.Structs;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public struct CubeVein
+    public struct Cavern
     {
         public byte CubeId;
-        public int VeinSize;
+        public RangeB CavernHeightSize;
         public RangeB SpawningHeight;
-        public int VeinPerChunk;
-        public int ChanceOfSpawningInPercent;
+        public int CavernPerChunk;
+        public double ChanceOfSpawning;
     }
 }

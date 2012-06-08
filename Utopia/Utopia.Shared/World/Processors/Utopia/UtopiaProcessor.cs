@@ -363,7 +363,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Get Chunk Master Biome
             var masterBiome = Biome.BiomeList[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes);
-            //Biome.GenerateChunkLakes(dataCursor, masterBiome, chunkRnd);
+            Biome.GenerateMoonStoneCavern(dataCursor, masterBiome, chunkRnd);
             Biome.GenerateChunkLiquidSources(dataCursor, masterBiome,chunkRnd);
             Biome.GenerateChunkResources(dataCursor, masterBiome, chunkRnd);
             Biome.GenerateChunkItems(dataCursor, masterBiome, chunkRnd);
