@@ -31,7 +31,7 @@ namespace Utopia.Entities.Renderer
         private BoundingBox3D _pickedCube;
         private HLSLVertexPositionColor _blockpickedUPEffect;
 
-        private ByteColor _cursorColor = Colors.Red;//Color.FromNonPremultiplied(20,20,20, 255);
+        private ByteColor _cursorColor = new ByteColor(20,20,20, 255);
         private D3DEngine _engine;
         private WorldFocusManager _focusManager;
         private IDynamicEntity _player;
