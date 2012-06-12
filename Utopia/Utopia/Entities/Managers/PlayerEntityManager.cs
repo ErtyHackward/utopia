@@ -610,16 +610,16 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 11 + (2 * jumpPower), 0) });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = (_lookAt * _moveDelta) * 20 });
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_lookAt * _moveDelta) * 20 });
 
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_lookAt * _moveDelta) * 20 });
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_entityHeadXAxis * _moveDelta) * 20 });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_entityHeadXAxis * _moveDelta) * 20 });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = (_entityHeadXAxis * _moveDelta) * 20 });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_entityHeadXAxis * _moveDelta) * 20 });
         }
 
         private void FreeFirstPersonMove()
@@ -627,16 +627,16 @@ namespace Utopia.Entities.Managers
             Vector3D moveVector = Vector3D.Zero;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                moveVector += _lookAt;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
                 moveVector -= _lookAt;
 
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                moveVector += _lookAt;
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                moveVector -= _entityHeadXAxis;
+                moveVector += _entityHeadXAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                moveVector += _entityHeadXAxis;
+                moveVector -= _entityHeadXAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down))
                 moveVector += Vector3D.Down;
@@ -681,17 +681,16 @@ namespace Utopia.Entities.Managers
                     _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
 
                 if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                    moveVector -= _entityZAxis;
-
-
-                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
                     moveVector += _entityZAxis;
 
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                    moveVector -= _entityZAxis;
+
                 if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                    moveVector -= _entityXAxis;
+                    moveVector += _entityXAxis;
 
                 if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                    moveVector += _entityXAxis;
+                    moveVector -= _entityXAxis;
             }
 
             moveVector.Normalize();
@@ -730,16 +729,16 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-             moveVector += _entityZAxis;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
                 moveVector -= _entityZAxis;
 
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                moveVector += _entityZAxis;
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                moveVector += _entityXAxis;
+                moveVector -= _entityXAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                moveVector -= _entityXAxis;
+                moveVector += _entityXAxis;
 
             moveVector.Normalize();
             //Run only if Move forward and run button pressed at the same time.
@@ -827,7 +826,7 @@ namespace Utopia.Entities.Managers
 
             //Inverse the mouse move impact on the rotation
             double heading = MathHelper.ToRadians(headingDegrees) * -1;
-            double pitch = MathHelper.ToRadians(pitchDegrees) * -1;
+            double pitch = MathHelper.ToRadians(pitchDegrees);
             Quaternion rotation;
 
             // Rotate the camera about its local X axis.
