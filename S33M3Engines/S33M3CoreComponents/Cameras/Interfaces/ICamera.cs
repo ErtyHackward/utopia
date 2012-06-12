@@ -23,7 +23,7 @@ namespace S33M3CoreComponents.Cameras.Interfaces
         Quaternion Orientation { get; }
         Quaternion YAxisOrientation { get; }
         Viewport Viewport { get; set; }
-        FastBoundingFrustum Frustum { get; }
+        SimpleBoundingFrustum Frustum { get; }
         ICameraPlugin CameraPlugin { get; set; }
         CameraType CameraType { get; set; }
         Vector3 LookAt { get; }
