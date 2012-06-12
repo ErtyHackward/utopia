@@ -77,21 +77,28 @@ namespace S33M3CoreComponents.Cameras
             FocusPoint.ValueInterp = _worldPosition;
             FocusPointMatrix.ValueInterp = Matrix.Translation(-1 * _worldPosition.AsVector3());
             
-            Matrix MTranslation = Matrix.Translation((_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3() * -1); //Inverse the Translation
-            Quaternion inverseRotation = Quaternion.Conjugate(_cameraOrientation); //Inverse the rotation
-            Matrix MRotation = Matrix.RotationQuaternion(inverseRotation);                                             
-            Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
+            //Matrix MTranslation = Matrix.Translation((_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3() * -1); //Inverse the Translation
+            //Quaternion inverseRotation = Quaternion.Conjugate(_cameraOrientation); //Inverse the rotation
+            //Matrix MRotation = Matrix.RotationQuaternion(inverseRotation);                                             
+            //Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
 
-            _viewProjection3D_focused = _view_focused * _projection3D;
-            _viewProjection3D = Matrix.Translation(_worldPosition.AsVector3() * -1) * MRotation * _projection3D;
+            //_viewProjection3D_focused = _view_focused * _projection3D;
+            //_viewProjection3D = Matrix.Translation(_worldPosition.AsVector3() * -1) * MRotation * _projection3D;
 
+            ////TEST ======================== 
+            Matrix rotation = Matrix.RotationQuaternion(_cameraOrientation);
+            Vector3 cameraPosition = _worldPosition.AsVector3();
+            Vector3 cameraFocusedPosition = (_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3();
+            Vector3 camTY = new Vector3(rotation.M21, rotation.M22, rotation.M23);
+            Vector3 camTZ = new Vector3(-(rotation.M31), -(rotation.M32), -(rotation.M33));
+            _viewProjection3D = Matrix.LookAtLH(cameraPosition, cameraPosition + camTZ, camTY) * _projection3D;
+            _viewProjection3D_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition + camTZ, camTY) * _projection3D;
+            //STOP TEST ======================
 
             _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
-
-            //SharpDXboundingFrustum BF = new SharpDXboundingFrustum(_viewProjection3D);
-            
+                       
             //Refresh the lookat camera vector
-            _lookAt = MQuaternion.GetLookAtFromQuaternion(inverseRotation);
+            _lookAt = MQuaternion.GetLookAtFromQuaternion(_cameraOrientation);
         }
 
         protected override void CameraInitialize()
