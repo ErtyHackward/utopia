@@ -42,7 +42,7 @@ namespace Utopia.Worlds.Chunks
         {
             foreach (VisualChunk chunk in SortedChunks)
             {
-                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.Intersects(ref chunk.ChunkWorldBoundingBox);
+                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.IntersectsWithoutFar(ref chunk.ChunkWorldBoundingBox);
             }
         }
 

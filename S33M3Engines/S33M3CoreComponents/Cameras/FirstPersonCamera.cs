@@ -47,7 +47,7 @@ namespace S33M3CoreComponents.Cameras
             //Compute the View Matrix
             _view = Matrix.Translation(_worldPosition.AsVector3() * -1) * Matrix.RotationQuaternion(Quaternion.Conjugate(_cameraOrientation));
             _viewProjection3D = _view * _projection3D;
-            _frustum = new FastBoundingFrustum(ref _viewProjection3D);
+            _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
         }
 
         protected override void CameraInitialize()
