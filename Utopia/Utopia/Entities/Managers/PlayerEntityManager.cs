@@ -256,7 +256,7 @@ namespace Utopia.Entities.Managers
                 {
                     //Avoid the player to add a block where he is located !            
                     BoundingBox playerPotentialNewBlock;
-                    ComputeBlockBoundingBox(ref Player._entityState.NewBlockPosition, out playerPotentialNewBlock);
+                    ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
 
                     if (!MBoundingBox.Intersects(ref VisualEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
@@ -305,9 +305,9 @@ namespace Utopia.Entities.Managers
             if(newpicking)
             {
                 //A new Block has been pickedup
-                if (Player._entityState.IsEntityPicked == false)
+                if (Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player._entityState.PickedBlockPosition, GameSystemSettings.Current.Settings.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, GameSystemSettings.Current.Settings.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
@@ -320,17 +320,17 @@ namespace Utopia.Entities.Managers
         //Will return true if a new Item has been picked up !
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
         {
-            Player._entityState.IsBlockPicked = false;
+            Player.EntityState.IsBlockPicked = false;
 
             //Check the Ray against all entity.
             Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt.AsVector3());
             if (_entityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
             {
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
-                Player._entityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
-                Player._entityState.PickedEntityLink = _pickedUpEntity.Entity.GetLink();
-                Player._entityState.IsEntityPicked = true;
-                Player._entityState.IsBlockPicked = false;
+                Player.EntityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
+                Player.EntityState.PickedEntityLink = _pickedUpEntity.Entity.GetLink();
+                Player.EntityState.IsEntityPicked = true;
+                Player.EntityState.IsBlockPicked = false;
                 return true;
             }
 
@@ -342,7 +342,7 @@ namespace Utopia.Entities.Managers
                 //Check if a block is picked up !
                 if (_cubesHolder.isPickable(ref pickingWorldPosition, out PickedCube))
                 {
-                    Player._entityState.PickedBlockPosition = PickedCube.Position;
+                    Player.EntityState.PickedBlockPosition = PickedCube.Position;
                     
                     bool newPlacechanged = false;
                     
@@ -353,16 +353,16 @@ namespace Utopia.Entities.Managers
                         
                         if (_cubesHolder.isPickable(ref pickingWorldPosition, out NewCube) == false)
                         {
-                            Player._entityState.NewBlockPosition = NewCube.Position;
+                            Player.EntityState.NewBlockPosition = NewCube.Position;
                             newPlacechanged = true;
                             break;
                         }
                         ptNbr--;
                     }
 
-                    Player._entityState.IsEntityPicked = false;
-                    Player._entityState.IsBlockPicked = true;
-                    if (PickedCube.Position == Player._entityState.PickedBlockPosition)
+                    Player.EntityState.IsEntityPicked = false;
+                    Player.EntityState.IsBlockPicked = true;
+                    if (PickedCube.Position == Player.EntityState.PickedBlockPosition)
                     {
                         if (! newPlacechanged) return false;
                     }
@@ -370,7 +370,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            return Player._entityState.IsBlockPicked; //Return true if a new block or Entity has been picked up !
+            return Player.EntityState.IsBlockPicked; //Return true if a new block or Entity has been picked up !
         }
 
         private void ComputeBlockBoundingBox(ref Vector3I blockPlace, out BoundingBox blockBoundingBox)
@@ -978,8 +978,8 @@ namespace Utopia.Entities.Managers
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),
-                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.PickedBlockPosition.ToString() : "None",
-                                                                                  Player._entityState.IsBlockPicked ? Player._entityState.NewBlockPosition.ToString() : "None"
+                                                                                  Player.EntityState.IsBlockPicked ? Player.EntityState.PickedBlockPosition.ToString() : "None",
+                                                                                  Player.EntityState.IsBlockPicked ? Player.EntityState.NewBlockPosition.ToString() : "None"
                                                                                   );            
         }
     }

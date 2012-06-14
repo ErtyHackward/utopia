@@ -15,7 +15,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// </summary>
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
-        public DynamicEntityState _entityState;
+        public DynamicEntityState EntityState;
         private Quaternion _headRotation;
 
         #region Events
@@ -77,14 +77,14 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Gets voxel entity model
         /// </summary>
         public VoxelModelInstance ModelInstance { get; set; }
-
+        
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
         /// </summary>
-        public DynamicEntityState EntityState
+        DynamicEntityState IDynamicEntity.EntityState
         {
-            get { return _entityState; }
-            set { _entityState = value; }
+            get { return EntityState; }
+            set { EntityState = value; }
         }
 
         /// <summary>
@@ -101,6 +101,11 @@ namespace Utopia.Shared.Entities.Dynamic
         /// The displacement mode use by this entity (Walk, swim, fly, ...)
         /// </summary>
         public EntityDisplacementModes DisplacementMode { get; set; }
+        
+        /// <summary>
+        /// Gets or sets current voxel model name
+        /// </summary>
+        public virtual string ModelName { get; set; } 
 
         /// <summary>
         /// Gets or sets entity position

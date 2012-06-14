@@ -5,7 +5,6 @@ using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using Utopia.Shared.Structs;
 using S33M3DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
@@ -19,8 +18,8 @@ namespace Utopia.Entities.Voxel
         private readonly ServerComponent _server;
         private readonly VoxelMeshFactory _voxelMeshFactory;
         private readonly object _syncRoot = new object();
-        private readonly Dictionary<Md5Hash, VisualVoxelModel> _models = new Dictionary<Md5Hash, VisualVoxelModel>();
-        private readonly HashSet<Md5Hash> _pengingModels = new HashSet<Md5Hash>();
+        private readonly Dictionary<string, VisualVoxelModel> _models = new Dictionary<string, VisualVoxelModel>();
+        private readonly HashSet<string> _pengingModels = new HashSet<string>();
 
         /// <summary>
         /// Occurs when a voxel moded received from the server
@@ -54,8 +53,8 @@ namespace Utopia.Entities.Voxel
         {
             lock (_syncRoot)
             {
-                _models.Add(e.Message.VoxelModel.Hash, new VisualVoxelModel(e.Message.VoxelModel,_voxelMeshFactory));
-                _pengingModels.Remove(e.Message.VoxelModel.Hash);
+                _models.Add(e.Message.VoxelModel.Name, new VisualVoxelModel(e.Message.VoxelModel,_voxelMeshFactory));
+                _pengingModels.Remove(e.Message.VoxelModel.Name);
             }
 
             OnVoxelModelReceived(new VoxelModelReceivedEventArgs { Model = e.Message.VoxelModel });
@@ -66,38 +65,38 @@ namespace Utopia.Entities.Voxel
         /// <summary>
         /// Request a missing model from the server
         /// </summary>
-        /// <param name="hash"></param>
-        public void RequestModel(Md5Hash hash)
+        /// <param name="name"></param>
+        public void RequestModel(string name)
         {
             bool requested;
             lock (_syncRoot)
             {
-                if (_models.ContainsKey(hash))
+                if (_models.ContainsKey(name))
                     return;
-                requested = _pengingModels.Add(hash);
+                requested = _pengingModels.Add(name);
             }
 
             if(requested)
-                _server.ServerConnection.SendAsync(new GetVoxelModelsMessage { Md5Hashes = new [] { hash } });
+                _server.ServerConnection.SendAsync(new GetVoxelModelsMessage { Names = new [] { name } });
         }
 
         /// <summary>
         /// Gets a model from manager, if the model not found requests it from the server
         /// </summary>
-        /// <param name="hash">md5 hash of the model</param>
+        /// <param name="name">name of the model</param>
         /// <param name="requestIfMissing"></param>
         /// <returns></returns>
-        public VisualVoxelModel GetModel(Md5Hash hash, bool requestIfMissing = true)
+        public VisualVoxelModel GetModel(string name, bool requestIfMissing = true)
         {
             lock (_syncRoot)
             {
                 VisualVoxelModel model;
-                if (_models.TryGetValue(hash, out model))
+                if (_models.TryGetValue(name, out model))
                     return model;
             }
 
             if (requestIfMissing)
-                RequestModel(hash);
+                RequestModel(name);
 
             return null;
         }
@@ -111,7 +110,7 @@ namespace Utopia.Entities.Voxel
             model.VoxelModel.UpdateHash();
 
             lock (_syncRoot)
-                _models.Add(model.VoxelModel.Hash, model);
+                _models.Add(model.VoxelModel.Name, model);
 
             _storage.Save(model.VoxelModel);
         }
@@ -119,15 +118,19 @@ namespace Utopia.Entities.Voxel
         /// <summary>
         /// Removes a voxel model by its hash
         /// </summary>
-        /// <param name="hash"></param>
-        public void DeleteModel(Md5Hash hash)
+        /// <param name="name"></param>
+        public void DeleteModel(string name)
         {
-            lock (_syncRoot)
+            VisualVoxelModel model;
+            if (_models.TryGetValue(name, out model))
             {
-                _models.Remove(hash);
-            }
+                lock (_syncRoot)
+                {
+                    _models.Remove(name);
+                }
 
-            _storage.Delete(hash);
+                _storage.Delete(model.VoxelModel.Hash);
+            }
         }
 
         public IEnumerable<VisualVoxelModel> Enumerate()
@@ -148,7 +151,7 @@ namespace Utopia.Entities.Voxel
             {
                 foreach (var voxelModel in _storage.Enumerate())
                 {
-                    _models.Add(voxelModel.Hash, new VisualVoxelModel(voxelModel, _voxelMeshFactory));
+                    _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, _voxelMeshFactory));
                 }
             }
         }
