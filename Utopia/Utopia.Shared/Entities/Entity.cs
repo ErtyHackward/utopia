@@ -40,7 +40,7 @@ namespace Utopia.Shared.Entities
         /// Gets or sets entity position
         /// </summary>
         public virtual Vector3D Position { get; set; }
-
+        
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>

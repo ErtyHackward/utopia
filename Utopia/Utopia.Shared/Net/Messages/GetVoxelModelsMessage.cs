@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
 using Utopia.Shared.Net.Interfaces;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -11,7 +10,7 @@ namespace Utopia.Shared.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct GetVoxelModelsMessage : IBinaryMessage
     {
-        private Md5Hash[] _md5Hashes;
+        private string[] _names;
         
         public byte MessageId
         {
@@ -21,10 +20,10 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Gets or sets a set of md5 hash values of requested models
         /// </summary>
-        public Md5Hash[] Md5Hashes
+        public string[] Names
         {
-            get { return _md5Hashes; }
-            set { _md5Hashes = value; }
+            get { return _names; }
+            set { _names = value; }
         }
 
         public void Write(BinaryWriter writer)
@@ -34,10 +33,10 @@ namespace Utopia.Shared.Net.Messages
 
         public static void Write(BinaryWriter writer, GetVoxelModelsMessage msg)
         {
-            writer.Write(msg._md5Hashes.Length);
-            foreach (var md5Hash in msg._md5Hashes)
+            writer.Write(msg._names.Length);
+            foreach (var name in msg._names)
             {
-                writer.Write(md5Hash.Bytes);
+                writer.Write(name);
             }
         }
 
@@ -47,13 +46,11 @@ namespace Utopia.Shared.Net.Messages
 
             var count = reader.ReadInt32();
 
-            msg._md5Hashes = new Md5Hash[count];
+            msg._names = new string[count];
 
             for (int i = 0; i < count; i++)
             {
-                var bytes = reader.ReadBytes(16);
-                if (bytes.Length != 16) throw new EndOfStreamException();
-                msg._md5Hashes[i] = new Md5Hash(bytes);
+                msg._names[i] = reader.ReadString();
             }
 
             return msg;

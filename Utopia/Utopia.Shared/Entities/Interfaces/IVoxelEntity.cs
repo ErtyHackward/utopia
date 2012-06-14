@@ -15,5 +15,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Get current model md5 hash
         /// </summary>
         VoxelModelInstance ModelInstance { get; set; }
+
+        /// <summary>
+        /// Gets or sets current voxel model name
+        /// </summary>
+        string ModelName { get; set; }
     }
 }
