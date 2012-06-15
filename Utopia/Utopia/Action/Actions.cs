@@ -8,15 +8,6 @@ namespace Utopia.Action
 {
     public class UtopiaActions : Actions
     {
-        public const int Move_Forward                       =21;
-        public const int Move_Backward                      =22;
-        public const int Move_StrafeLeft                    =23;
-        public const int Move_StrafeRight                   =24;
-        public const int Move_Down                          =25;
-        public const int Move_Up                            =26;
-        public const int Move_Jump                          =27;
-        public const int Move_Mode                          =28;
-        public const int Move_Run                           =29;
         public const int Use_Left                           =30;
         public const int Use_LeftWhileCursorLocked          =31;
         public const int Use_LeftWhileCursorNotLocked       =32;
