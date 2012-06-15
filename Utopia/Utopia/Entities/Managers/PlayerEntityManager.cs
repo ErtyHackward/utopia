@@ -857,7 +857,7 @@ namespace Utopia.Entities.Managers
             _entityHeadYAxis = new Vector3D(_headRotation.M12, _headRotation.M22, _headRotation.M32);
             _entityHeadZAxis = new Vector3D(_headRotation.M13, _headRotation.M23, _headRotation.M33);
 
-            _lookAt = new Vector3D(_entityHeadZAxis.X, _entityHeadZAxis.Y, _entityHeadZAxis.Z);
+            _lookAt = new Vector3D(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
             _lookAt.Normalize();
         }
         #endregion
