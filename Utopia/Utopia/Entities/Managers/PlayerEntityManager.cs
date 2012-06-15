@@ -610,16 +610,16 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 11 + (2 * jumpPower), 0) });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_lookAt * _moveDelta) * 20 });
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_lookAt * _moveDelta) * 20 });
 
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_lookAt * _moveDelta) * 20 });
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_entityHeadXAxis * _moveDelta) * 20 });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_entityHeadXAxis * _moveDelta) * 20 });
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_entityHeadXAxis * _moveDelta) * 20 });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_entityHeadXAxis * _moveDelta) * 20 });
         }
 
         private void FreeFirstPersonMove()
@@ -627,16 +627,16 @@ namespace Utopia.Entities.Managers
             Vector3D moveVector = Vector3D.Zero;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                moveVector -= _lookAt;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
                 moveVector += _lookAt;
 
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
+                moveVector -= _lookAt;
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                moveVector += _entityHeadXAxis;
+                moveVector -= _entityHeadXAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                moveVector -= _entityHeadXAxis;
+                moveVector += _entityHeadXAxis;
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down))
                 moveVector += Vector3D.Down;
@@ -829,13 +829,6 @@ namespace Utopia.Entities.Managers
             double pitch = MathHelper.ToRadians(pitchDegrees);
             Quaternion rotation;
 
-            // Rotate the camera about its local X axis.
-            if (pitch != 0.0f)
-            {
-                Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
-                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
-            }
-
             // Rotate the camera about the world Y axis.
             if (heading != 0.0f)
             {
@@ -843,6 +836,15 @@ namespace Utopia.Entities.Managers
                 _lookAtDirection.Value = _lookAtDirection.Value * rotation;             //Add this value to the existing Entity quaternion rotation
                 _cameraYAxisOrientation.Value = _cameraYAxisOrientation.Value * rotation;
             }
+
+            // Rotate the camera about its local X axis.
+            if (pitch != 0.0f)
+            {
+                Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
+
+                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
+            }
+
 
             _lookAtDirection.Value.Normalize();
             UpdateHeadData();
@@ -853,11 +855,11 @@ namespace Utopia.Entities.Managers
             //Get the lookAt vector
             _headRotation = Matrix.RotationQuaternion(Quaternion.Conjugate(_lookAtDirection.Value));
 
-            _entityHeadXAxis = new Vector3D(_headRotation.M11, _headRotation.M21, _headRotation.M31);
+            _entityHeadXAxis = new Vector3D(_headRotation.M11, _headRotation.M21, _headRotation.M31) * -1;
             _entityHeadYAxis = new Vector3D(_headRotation.M12, _headRotation.M22, _headRotation.M32);
-            _entityHeadZAxis = new Vector3D(_headRotation.M13, _headRotation.M23, _headRotation.M33);
+            _entityHeadZAxis = new Vector3D(_headRotation.M13, _headRotation.M23, _headRotation.M33) * -1;
 
-            _lookAt = new Vector3D(-_entityHeadZAxis.X, -_entityHeadZAxis.Y, -_entityHeadZAxis.Z);
+            _lookAt = new Vector3D(_entityHeadZAxis.X, _entityHeadZAxis.Y, _entityHeadZAxis.Z);
             _lookAt.Normalize();
         }
         #endregion

@@ -91,8 +91,10 @@ namespace S33M3CoreComponents.Cameras
             Vector3 cameraFocusedPosition = (_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3();
             Vector3 camTY = new Vector3(rotation.M21, rotation.M22, rotation.M23);
             Vector3 camTZ = new Vector3(-(rotation.M31), -(rotation.M32), -(rotation.M33));
+            _view_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition + camTZ, camTY);
             _viewProjection3D = Matrix.LookAtLH(cameraPosition, cameraPosition + camTZ, camTY) * _projection3D;
-            _viewProjection3D_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition + camTZ, camTY) * _projection3D;
+            _viewProjection3D_focused = _view_focused * _projection3D;
+
             //STOP TEST ======================
 
             _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);

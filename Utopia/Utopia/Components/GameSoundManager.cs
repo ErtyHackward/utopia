@@ -163,7 +163,7 @@ namespace Utopia.Components
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Y,
                                    (float) _cameraManager.ActiveCamera.WorldPosition.Z);
             var lookAt = new IrrVector3(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
-                                      -_cameraManager.ActiveCamera.LookAt.Z);
+                                        -_cameraManager.ActiveCamera.LookAt.Z);
 
             var sw = Stopwatch.StartNew();
 
