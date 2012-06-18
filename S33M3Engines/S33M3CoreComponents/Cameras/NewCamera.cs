@@ -79,15 +79,17 @@ namespace S33M3CoreComponents.Cameras
         #region Private Methods
         private void ComputeCameraMatrices()
         {
-            //Normalize the quaternion
+            //These view matrix computation are derived directly from Matrix.lookatlh() where I'm only doing needed math operations.
+
+            //Normalize the Camera Quaternion rotation
             Quaternion.Normalize(ref _cameraOrientation, out _cameraOrientation);
             //Extract the Rotation Matrix
             Matrix.RotationQuaternion(ref _cameraOrientation, out _view);
 
             //Extract the 3 axis from the RotationMatrix
-            _xAxis = new Vector3(_view_focused.M11, _view_focused.M21, _view.M31);
-            _yAxis = new Vector3(_view_focused.M12, _view_focused.M22, _view.M32);
-            _zAxis = new Vector3(_view_focused.M13, _view_focused.M23, _view.M33);
+            _xAxis = new Vector3(_view.M11, _view.M21, _view.M31);
+            _yAxis = new Vector3(_view.M12, _view.M22, _view.M32);
+            _zAxis = new Vector3(_view.M13, _view.M23, _view.M33);
 
             //Extract the LookAtVector
             _lookAt = _zAxis;
@@ -98,9 +100,12 @@ namespace S33M3CoreComponents.Cameras
             Vector3 cameraFocusedPosition = Vector3.Zero; //(_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3();
 
             //Recompute the view Matrix
-            _view_focused.M31 = Vector3.Dot(_xAxis, cameraFocusedPosition) * -1;
-            _view_focused.M32 = Vector3.Dot(_yAxis, cameraFocusedPosition) * -1;
-            _view_focused.M33 = Vector3.Dot(_zAxis, cameraFocusedPosition) * -1;
+            Vector3.Dot(ref _xAxis, ref cameraFocusedPosition, out _view_focused.M41);
+            Vector3.Dot(ref _yAxis, ref cameraFocusedPosition, out _view_focused.M42);
+            Vector3.Dot(ref _zAxis, ref cameraFocusedPosition, out _view_focused.M43);
+            _view_focused.M41 *= -1;
+            _view_focused.M42 *= -1;
+            _view_focused.M43 *= -1;
 
             _viewProjection3D_focused = _view_focused * _projection3D;
 
@@ -108,11 +113,13 @@ namespace S33M3CoreComponents.Cameras
             Vector3 cameraPosition = _worldPosition.AsVector3();
 
             //Recompute the view Matrix
-            _view.M31 = Vector3.Dot(_xAxis, cameraPosition) * -1;
-            _view.M32 = Vector3.Dot(_yAxis, cameraPosition) * -1;
-            _view.M33 = Vector3.Dot(_zAxis, cameraPosition) * -1;
-
-            _viewProjection3D = _view_focused * _projection3D;
+            Vector3.Dot(ref _xAxis, ref cameraPosition, out _view.M41);
+            Vector3.Dot(ref _yAxis, ref cameraPosition, out _view.M42);
+            Vector3.Dot(ref _zAxis, ref cameraPosition, out _view.M43);
+            _view.M41 *= -1;
+            _view.M42 *= -1;
+            _view.M43 *= -1;
+            _viewProjection3D = _view * _projection3D;
         }
 
         protected override void CameraInitialize()

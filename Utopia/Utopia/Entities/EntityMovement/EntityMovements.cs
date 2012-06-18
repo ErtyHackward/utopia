@@ -7,8 +7,9 @@ using S33M3DXEngine.Main;
 using SharpDX;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
 
-namespace S33M3CoreComponents.EntityMovement
+namespace Utopia.Entities.EntityMovement
 {
     /// <summary>
     /// Helper class that will transform Input and environments signals into movements
@@ -20,19 +21,24 @@ namespace S33M3CoreComponents.EntityMovement
         private InputsManager _inputsManager;
 
         private float _gravityInfluence;
-        private float _gravityInfluenceOnGround = 1.0;
-        private float _gravityInfluenceFlying = 3.0;
-        private float _gravityInfluenceSwimming = 1.5;
+        private float _gravityInfluenceOnGround = 1.0f;
+        private float _gravityInfluenceFlying = 3.0f;
+        private float _gravityInfluenceSwimming = 1.5f;
 
         private float _entityMoveSpeed;
         private float _entityRotationSpeed;
         private Vector3 _entityMoveVector;
 
-        private Vector3 _entityEyeXAxis, _entityEyeYAxis, _entityEyeZAxis;
-        private Vector3 _entityXAxis, _entityYAxis, _entityZAxis;
+        private Vector3 _entityEyeXAxis = Vector3.UnitX;
+        private Vector3 _entityEyeYAxis = Vector3.UnitY;
+        private Vector3 _entityEyeZAxis = Vector3.UnitZ;
+        private Vector3 _entityXAxis  = Vector3.UnitX;
+        private Vector3 _entityYAxis = Vector3.UnitY;
+        private Vector3 _entityZAxis = Vector3.UnitZ;
         private Vector3 _lookAt;
         private Quaternion _eyeOrientation, _moveOrientation;
-
+        private Vector3D _worldPosition;
+        private Vector3 _eyeOffset;
         private float _accumPitchDegrees;
 
         private float _moveDelta;
@@ -40,41 +46,24 @@ namespace S33M3CoreComponents.EntityMovement
         #endregion
 
         #region Public Properties
-        public EntityMovementModes MovementMode
-        {
-            get { return _movementMode; }
-            set
-            {
-                switch (value)
-                {
-                    case EntityMovementModes.Flying:
-                        _gravityInfluence = _gravityInfluenceFlying;
-                        break;
-                    case EntityMovementModes.Walking:
-                        _gravityInfluence = _gravityInfluenceOnGround;
-                        break;
-                    case EntityMovementModes.Swiming:
-                        _gravityInfluence = _gravityInfluenceSwimming;
-                        break;
-                    default:
-                        _gravityInfluence = _gravityInfluenceOnGround;
-                        break;
-                }
-                _movementMode = value;
-            }
-        }
-    
         public float GravityInfluenceOnGround { get { return _gravityInfluenceOnGround; } set { _gravityInfluenceOnGround = value; } }
         public float GravityInfluenceFlying { get { return _gravityInfluenceFlying; } set { _gravityInfluenceFlying = value; } }
         public float GravityInfluenceSwimming { get { return _gravityInfluenceSwimming; } set { _gravityInfluenceSwimming = value; } }
         public float EntityMoveSpeed { get { return _entityMoveSpeed; } set { _entityMoveSpeed = value; } }
         public float EntityRotationSpeed { get { return _entityRotationSpeed; } set { _entityRotationSpeed = value; } }
         public Vector3 LookAt { get { return _lookAt; } }
+        public EntityMovementModes MovementMode { get { return _movementMode; } set { SetNewMovementMode(value); } }
+        public Quaternion MoveOrientation { get { return _moveOrientation; } set { _moveOrientation = value; RefreshRotation(WorldEyePosition.AsVector3(), WorldEyePosition.AsVector3() + _lookAt, Vector3.UnitY); } }
+        public Quaternion EyeOrientation { get { return _eyeOrientation; } }
+        public Vector3D WorldPosition { get { return _worldPosition; } set { _worldPosition = value; } }
+        public Vector3D WorldEyePosition { get { return _worldPosition + _eyeOffset; } }
+        public Vector3 EyeOffset { get { return _eyeOffset; } set { _eyeOffset = value; } }
         #endregion
 
-        public EntityMovements(InputsManager inputManager)
+        public EntityMovements(InputsManager inputManager, EntityMovementModes initialMovementMode = EntityMovementModes.Walking)
         {
             _inputsManager = inputManager;
+            MovementMode = initialMovementMode;
         }
 
         #region Public Methods
@@ -85,10 +74,10 @@ namespace S33M3CoreComponents.EntityMovement
             _rotationDelta = _entityRotationSpeed * timeSpent.ElapsedGameTimeInS_LD;
 
             //Rotation with mouse
-            EntityRotations(timeSpent.ElapsedGameTimeInS_LD);
+            EntityRotation(timeSpent.ElapsedGameTimeInS_LD);
 
             //Movement
-            EntityMovements(timeSpent.ElapsedGameTimeInS_LD);
+            EntityMovement(timeSpent.ElapsedGameTimeInS_LD);
         }
         #endregion
 
@@ -173,12 +162,52 @@ namespace S33M3CoreComponents.EntityMovement
             return Vector3.Normalize(entityMoveVector);
         }
 
-        #region ROTATION
-        private void EntityRotations(float elapsedTime)
+        private void SetNewMovementMode(EntityMovementModes newValue)
         {
-            double headingDegrees = 0.0;
-            double pitchDegree = 0.0;
-            double rollDegree = 0.0;
+            switch (newValue)
+            {
+                case EntityMovementModes.Flying:
+                    _gravityInfluence = _gravityInfluenceFlying;
+                    break;
+                case EntityMovementModes.Walking:
+                    _gravityInfluence = _gravityInfluenceOnGround;
+                    break;
+                case EntityMovementModes.Swiming:
+                    _gravityInfluence = _gravityInfluenceSwimming;
+                    break;
+                default:
+                    _gravityInfluence = _gravityInfluenceOnGround;
+                    break;
+            }
+
+            // Moving from flight behavior to first person behavior.
+            // Need to ignore camera roll, but retain existing pitch and heading.
+            if (_movementMode == EntityMovementModes.Flying && newValue == EntityMovementModes.Walking)
+            {
+                RefreshRotation(WorldEyePosition.AsVector3(), WorldEyePosition.AsVector3() + _entityEyeZAxis, Vector3.UnitY);
+            }
+
+            _movementMode = newValue;
+        }
+
+        #region Rotation
+        private void RefreshRotation(Vector3 eye, Vector3 target, Vector3 up)
+        {
+            Matrix viewMatrix;
+            Matrix.LookAtLH(ref eye, ref target, ref up, out viewMatrix);
+
+            // Extract the pitch angle from the view matrix.
+            _accumPitchDegrees = (float)Math.Asin(viewMatrix.M23);
+            //Set Rotation for both Eye View and Body rotation
+            Quaternion.RotationMatrix(ref viewMatrix, out _eyeOrientation);
+            _moveOrientation = _eyeOrientation;
+        }
+
+        private void EntityRotation(float elapsedTime)
+        {
+            float headingDegrees = 0.0f;
+            float pitchDegree = 0.0f;
+            float rollDegree = 0.0f;
             if (_inputsManager.MouseManager.MouseCapture)
             {
                 switch (_movementMode)
@@ -187,8 +216,8 @@ namespace S33M3CoreComponents.EntityMovement
                     case EntityMovementModes.Walking:
                     case EntityMovementModes.Swiming:
                         headingDegrees = _inputsManager.MouseManager.MouseMoveDelta.X;
-                        pitchDegree = _inputsManager.MouseManager.MouseMoveDelta.Y * -1;
-                        rollDegree = 0.0;
+                        pitchDegree = _inputsManager.MouseManager.MouseMoveDelta.Y;
+                        rollDegree = 0.0f;
                         break;
                     case EntityMovementModes.FreeFlying:
                         //Get the movement direction from Keyboard input
@@ -260,19 +289,13 @@ namespace S33M3CoreComponents.EntityMovement
 
         }
 
-        }
         #endregion
 
         #region Movements
-        private void EntityMovements(float elapsedTime)
+        private void EntityMovement(float elapsedTime)
         {
             //Get movement Vector only if not freeFlying (Was done at the rotation time)
-            if (_movementMode != EntityMovementModes.FreeFlying)
-            {
-                _entityMoveVector = ExtractMovementVector();
-            }
-
-
+            _entityMoveVector = ExtractMovementVector();
         }
         #endregion
         #endregion
