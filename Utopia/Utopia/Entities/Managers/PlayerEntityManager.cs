@@ -33,6 +33,7 @@ using SharpDX.Direct3D11;
 using Utopia.Action;
 using S33M3CoreComponents.Physics;
 using S33M3DXEngine.Debug.Interfaces;
+using Utopia.Entities.EntityMovement;
 
 namespace Utopia.Entities.Managers
 {
@@ -91,7 +92,9 @@ namespace Utopia.Entities.Managers
 
         private TerraCubeWithPosition _groundCube;
         private CubeProfile _groundCubeProgile;
-        
+
+
+        private EntityMovements _movement;
         #endregion
 
         #region Public variables/properties
@@ -200,6 +203,10 @@ namespace Utopia.Entities.Managers
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
+
+            _movement = new EntityMovements(_inputsManager, EntityMovementModes.Walking);
+            _movement.EntityMoveSpeed = player.MoveSpeed;
+            _movement.EntityRotationSpeed = player.RotationSpeed;
         }
 
         public override void BeforeDispose()
@@ -562,10 +569,12 @@ namespace Utopia.Entities.Managers
             _cameraYAxisOrientation.BackUpValue();
 
             //Rotation with mouse
-            EntityRotationsOnEvents(Player.DisplacementMode);
-
+            //EntityRotationsOnEvents(Player.DisplacementMode);
+            _movement.Update(timeSpent);
+            _lookAtDirection.Value = _movement.EyeOrientation;
+            _worldPosition.Value = _movement.WorldPosition;
             //Movement
-            EntityMovementsOnEvents(Player.DisplacementMode, ref timeSpent);
+            //EntityMovementsOnEvents(Player.DisplacementMode, ref timeSpent);
 
             //Physic simulation !
             PhysicOnEntity(Player.DisplacementMode, ref timeSpent);
