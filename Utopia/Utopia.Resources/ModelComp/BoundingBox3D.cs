@@ -26,7 +26,7 @@ namespace Utopia.Resources.ModelComp
         //Buffer _vertexBuffer;
         private VertexBuffer<VertexPosition3Color> _vertexBuffer;
         private Line3D[] _lines = new Line3D[12];
-        private Matrix BB3dworld;
+        public Matrix BB3dworld;
         #endregion
 
         #region Public properties
