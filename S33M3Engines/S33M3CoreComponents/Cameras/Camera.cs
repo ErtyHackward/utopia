@@ -24,14 +24,14 @@ namespace S33M3CoreComponents.Cameras
     public abstract class Camera : BaseComponent, ICamera
     {
         #region Private TimeDepending Variable ===> Will be LERPED, SLERPED or recomputed
-        protected Vector3D _worldPosition = new Vector3D();
-        protected Quaternion _cameraOrientation = new Quaternion();
-        protected Quaternion _cameraYAxisOrientation = new Quaternion();
+        protected FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
+        protected FTSValue<Quaternion> _cameraOrientation = new FTSValue<Quaternion>();
+        protected FTSValue<Quaternion> _cameraYAxisOrientation = new FTSValue<Quaternion>();
+        protected FTSValue<Vector3> _lookAt = new FTSValue<Vector3>();
         #endregion
 
         #region Private Variable
         protected Viewport? _viewport;
-        protected Vector3 _lookAt;
         protected Vector3 _cameraUpVector = VectorsCst.Up3;
 
         protected float _nearPlane = 0.5f;
@@ -78,21 +78,6 @@ namespace S33M3CoreComponents.Cameras
             }
         }
 
-        //public Matrix Projection3D
-        //{
-        //    get { return _projection3D; }
-        //}
-
-        //public Matrix View
-        //{
-        //    get { return _view; }
-        //}
-
-        //public Matrix Projection2D
-        //{
-        //    get { return _d3dEngine.Projection2D; }
-        //}
-
         public Matrix ViewProjection3D
         {
             get { return _viewProjection3D; }
@@ -118,22 +103,22 @@ namespace S33M3CoreComponents.Cameras
             }
         }
 
-        public Vector3D WorldPosition
+        public FTSValue<Vector3D> WorldPosition
         {
             get { return _worldPosition; }
         }
 
-        public Quaternion Orientation
+        public FTSValue<Quaternion> Orientation
         {
             get { return _cameraOrientation; }
         }
 
-        public Vector3 LookAt
+        public FTSValue<Vector3> LookAt
         {
             get { return _lookAt; }
         }
 
-        public Quaternion YAxisOrientation
+        public FTSValue<Quaternion> YAxisOrientation
         {
             get { return _cameraYAxisOrientation; }
         }
@@ -198,7 +183,7 @@ namespace S33M3CoreComponents.Cameras
         #region Private Methods
         protected virtual void CameraInitialize()
         {
-            _cameraOrientation = Quaternion.Identity;
+            _cameraOrientation.Initialize(Quaternion.Identity);
 
             float aspectRatio = Viewport.Width / Viewport.Height;
 
@@ -211,7 +196,7 @@ namespace S33M3CoreComponents.Cameras
 
         protected virtual void newCameraPluginDriver()
         {
-            _worldPosition = _cameraPlugin.CameraWorldPosition;
+            _worldPosition.Initialize(_cameraPlugin.CameraWorldPosition);
 
             if (CameraUpdateOrderChanged != null) CameraUpdateOrderChanged(this, _cameraPlugin.CameraUpdateOrder);
         }

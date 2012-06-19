@@ -94,7 +94,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                         else
                             _visibility = 1;
 
-            _visibility = Math.Max(_visibility, Math.Min(Math.Max((float)_camManager.ActiveCamera.WorldPosition.Y - 127, 0), 173) / 173.0f);
+            _visibility = Math.Max(_visibility, Math.Min(Math.Max((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y - 127, 0), 173) / 173.0f);
 
             _effectStars.CBPerDraw.Values.Visibility = _visibility;
             _effectStars.CBPerDraw.IsDirty = true;

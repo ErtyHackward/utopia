@@ -26,7 +26,7 @@ namespace Utopia.Worlds.Chunks
         #region public methods
         public override void Update(GameTime timeSpend)
         {
-            if (_camManager.ActiveCamera.WorldPosition.Y < 400)
+            if (_camManager.ActiveCamera.WorldPosition.Value.Y < 400)
             {
                 ChunkUpdateManager();
                 CheckWrapping();     // Handle Playerzz impact on Terra (Mainly the location will trigger chunk creation/destruction)

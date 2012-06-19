@@ -29,16 +29,31 @@ namespace S33M3CoreComponents.Cameras
         }
 
         #region Public Methods
-        //Called once before the drawing sequence ==> Computed interpolated values here !
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
+        public override void Update(GameTime timeSpend)
         {
             if (CameraPlugin != null)
             {
+                _worldPosition.BackUpValue();
+                _cameraOrientation.BackUpValue();
+                _cameraYAxisOrientation.BackUpValue();
+
                 //Get the Camera Position and Rotation from the attached Entity to the camera !
-                _worldPosition = CameraPlugin.CameraWorldPosition;
-                _cameraOrientation = CameraPlugin.CameraOrientation;
-                _cameraYAxisOrientation = CameraPlugin.CameraYAxisOrientation;
+                _worldPosition.Value = CameraPlugin.CameraWorldPosition;
+                _cameraOrientation.Value = CameraPlugin.CameraOrientation;
+                _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
+                Matrix cameraRotation;
+                Matrix.RotationQuaternion(ref _cameraOrientation.Value, out cameraRotation);
+                _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);
             }
+        }
+
+        //Called once before the drawing sequence ==> Computed interpolated values here !
+        public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
+        {
+            //Do interpolation on the value received at update time
+            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolation_hd, out _worldPosition.ValueInterp);
+            Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, interpolation_ld, out _cameraOrientation.ValueInterp);
+            Quaternion.Slerp(ref _cameraYAxisOrientation.ValuePrev, ref _cameraYAxisOrientation.Value, interpolation_ld, out _cameraYAxisOrientation.ValueInterp);
 
             ComputeCameraMatrices();
 
@@ -53,7 +68,7 @@ namespace S33M3CoreComponents.Cameras
             //These view matrix computation are derived directly from Matrix.lookatlh() where I'm only doing needed math operations.
 
             //Extract the Rotation Matrix
-            Matrix.RotationQuaternion(ref _cameraOrientation, out _view);
+            Matrix.RotationQuaternion(ref _cameraOrientation.ValueInterp, out _view);
 
             //Extract the 3 axis from the RotationMatrix
             _xAxis = new Vector3(_view.M11, _view.M21, _view.M31);
@@ -61,10 +76,10 @@ namespace S33M3CoreComponents.Cameras
             _zAxis = new Vector3(_view.M13, _view.M23, _view.M33);
 
             //Extract the LookAtVector
-            _lookAt = _zAxis;
+            _lookAt.ValueInterp = _zAxis;
 
             //Camera computation ============================================================
-            Vector3 cameraPosition = _worldPosition.AsVector3();
+            Vector3 cameraPosition = _worldPosition.ValueInterp.AsVector3();
 
             //Recompute the view Matrix
             Vector3.Dot(ref _xAxis, ref cameraPosition, out _view.M41);
@@ -82,7 +97,7 @@ namespace S33M3CoreComponents.Cameras
         public override bool ShowDebugInfo { get; set; }
         public override string GetDebugInfo()
         {
-            return string.Concat("<FirstPersonCamera> X : ", WorldPosition.X.ToString("0.000"), " Y : ", WorldPosition.Y.ToString("0.000"), " Z : ", WorldPosition.Z.ToString("0.000"), " Pitch : ", _lookAt.X.ToString("0.000"), " Yaw : ", _lookAt.Y.ToString("0.000"));
+            return string.Concat("<FirstPersonCamera> X : ", WorldPosition.ValueInterp.X.ToString("0.000"), " Y : ", WorldPosition.ValueInterp.Y.ToString("0.000"), " Z : ", WorldPosition.ValueInterp.Z.ToString("0.000"), " Pitch : ", _lookAt.ValueInterp.X.ToString("0.000"), " Yaw : ", _lookAt.ValueInterp.Y.ToString("0.000"));
         }
         #endregion
     }
