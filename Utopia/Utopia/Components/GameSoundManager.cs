@@ -159,11 +159,11 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpent)
         {
-            _listenerPosition = new IrrVector3((float)_cameraManager.ActiveCamera.WorldPosition.X,
-                                   (float) _cameraManager.ActiveCamera.WorldPosition.Y,
-                                   (float) _cameraManager.ActiveCamera.WorldPosition.Z);
-            var lookAt = new IrrVector3(_cameraManager.ActiveCamera.LookAt.X, _cameraManager.ActiveCamera.LookAt.Y,
-                                        -_cameraManager.ActiveCamera.LookAt.Z);
+            _listenerPosition = new IrrVector3((float)_cameraManager.ActiveCamera.WorldPosition.Value.X,
+                                   (float)_cameraManager.ActiveCamera.WorldPosition.Value.Y,
+                                   (float)_cameraManager.ActiveCamera.WorldPosition.Value.Z);
+            var lookAt = new IrrVector3(_cameraManager.ActiveCamera.LookAt.Value.X, _cameraManager.ActiveCamera.LookAt.Value.Y,
+                                        _cameraManager.ActiveCamera.LookAt.Value.Z);
 
             var sw = Stopwatch.StartNew();
 
@@ -173,11 +173,11 @@ namespace Utopia.Components
 
             _debugInfo = "Sounds playing: " + _sharedSounds.Count + ", Update " + sw.ElapsedMilliseconds + " ms, ";
             
-            // update all cubes sounds
-            if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition != _lastPosition)
+            // update all cubes sounds if Camera move !
+            if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition.Value != _lastPosition)
             {
                 sw.Restart();
-                _lastPosition = (Vector3I)_cameraManager.ActiveCamera.WorldPosition;
+                _lastPosition = (Vector3I)_cameraManager.ActiveCamera.WorldPosition.Value;
 
                 Range3I listenRange;
 

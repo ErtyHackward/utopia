@@ -205,7 +205,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _indexBuffer.SetData(_d3DEngine.Device.ImmediateContext, indices.ToArray());
 
-            _cameraPrevious = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Z);
+            _cameraPrevious = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.X, (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.Z);
 
             FormClouds();
         }
@@ -241,7 +241,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.X, (float)_cameraManager.ActiveCamera.WorldPosition.Z);
+            var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.X, (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.Z);
             _smallOffset += _cameraPrevious - cameraCurrent;
             _cameraPrevious = cameraCurrent;
 
@@ -255,7 +255,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effect.Begin(_d3DEngine.ImmediateContext);
             _effect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
 
-            var world = Matrix.Identity * Matrix.Translation(-(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.X + (float)_cameraManager.ActiveCamera.WorldPosition.X, 140, -(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.Y + (float)_cameraManager.ActiveCamera.WorldPosition.Z);
+            var world = Matrix.Identity * Matrix.Translation(-(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.X + (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.X, 140, -(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.Y + (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.Z);
             
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref world, ref world);
             

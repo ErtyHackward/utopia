@@ -326,7 +326,7 @@ namespace Utopia.Worlds.SkyDomes
 
         private void DrawingDome(DeviceContext context)
         {
-            Matrix World = Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
+            Matrix World = Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);
 
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
@@ -335,7 +335,7 @@ namespace Utopia.Worlds.SkyDomes
 
             _skyDomeEffect.Begin(context);
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-            _skyDomeEffect.CBPerDraw.Values.CameraWorldPosition = _camManager.ActiveCamera.WorldPosition.AsVector3();
+            _skyDomeEffect.CBPerDraw.Values.CameraWorldPosition = _camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
             _skyDomeEffect.CBPerDraw.Values.time = _clock.ClockTime.ClockTimeNormalized;
             _skyDomeEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             _skyDomeEffect.CBPerDraw.Values.LightDirection = LightDirection;
@@ -379,7 +379,7 @@ namespace Utopia.Worlds.SkyDomes
             Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
                             Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *
                             Matrix.Translation(LightDirection.X * 1900, LightDirection.Y * 1900, LightDirection.Z * 1900) *
-                            Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
+                            Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);
 
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
@@ -409,7 +409,7 @@ namespace Utopia.Worlds.SkyDomes
                     Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
                     Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *
                     Matrix.Translation(LightDirection.X * 1700, LightDirection.Y * 1700, LightDirection.Z * 1700) *
-                    Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.X, -(float)_camManager.ActiveCamera.WorldPosition.Y, (float)_camManager.ActiveCamera.WorldPosition.Z);
+                    Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);
 
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
