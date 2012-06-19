@@ -78,20 +78,20 @@ namespace S33M3CoreComponents.Cameras
             }
         }
 
-        public Matrix Projection3D
-        {
-            get { return _projection3D; }
-        }
+        //public Matrix Projection3D
+        //{
+        //    get { return _projection3D; }
+        //}
 
-        public Matrix View
-        {
-            get { return _view; }
-        }
+        //public Matrix View
+        //{
+        //    get { return _view; }
+        //}
 
-        public Matrix Projection2D
-        {
-            get { return _d3dEngine.Projection2D; }
-        }
+        //public Matrix Projection2D
+        //{
+        //    get { return _d3dEngine.Projection2D; }
+        //}
 
         public Matrix ViewProjection3D
         {

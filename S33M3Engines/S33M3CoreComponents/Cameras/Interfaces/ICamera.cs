@@ -15,9 +15,9 @@ namespace S33M3CoreComponents.Cameras.Interfaces
 {
     public interface ICamera : IUpdatable, IDebugInfo
     {
-        Matrix View { get; }
-        Matrix Projection3D { get; }
-        Matrix Projection2D { get; }
+        //Matrix View { get; }
+        //Matrix Projection3D { get; }
+        //Matrix Projection2D { get; }
         Matrix ViewProjection3D { get; }
         Vector3D WorldPosition { get; }
         Quaternion Orientation { get; }

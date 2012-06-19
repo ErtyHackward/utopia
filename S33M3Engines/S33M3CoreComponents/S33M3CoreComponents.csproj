@@ -88,12 +88,12 @@
     <Compile Include="Cameras\Camera.cs" />
     <Compile Include="Cameras\CameraManager.cs" />
     <Compile Include="Cameras\FirstPersonCamera.cs" />
-    <Compile Include="Cameras\FirstPersonCameraWithFocus.cs" />
     <Compile Include="Cameras\Interfaces\ICamera.cs" />
     <Compile Include="Cameras\Interfaces\ICameraFocused.cs" />
     <Compile Include="Cameras\Interfaces\ICameraManager.cs" />
     <Compile Include="Cameras\Interfaces\ICameraPlugin.cs" />
-    <Compile Include="Cameras\NewCamera.cs" />
+    <Compile Include="Cameras\FirstPersonCameraWithFocus.cs" />
+    <Compile Include="Cameras\ThirdPersonCameraWithFocus.cs" />
     <Compile Include="Config\IConfigClass.cs" />
     <Compile Include="Config\XmlSettingsManager.cs" />
     <Compile Include="Debug\Components\ColumnChart.cs" />

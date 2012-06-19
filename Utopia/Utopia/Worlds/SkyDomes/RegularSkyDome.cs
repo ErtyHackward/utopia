@@ -384,8 +384,7 @@ namespace Utopia.Worlds.SkyDomes
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             _posiTextureEffect.Begin(context);
-            _posiTextureEffect.CBPerFrame.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.Projection3D);
-            _posiTextureEffect.CBPerFrame.Values.View = Matrix.Transpose(_camManager.ActiveCamera.View_focused);
+            _posiTextureEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _posiTextureEffect.CBPerFrame.IsDirty = true;
             _posiTextureEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             if (LightDirection.Y > 0)

@@ -62,26 +62,17 @@ namespace Utopia.Entities.Managers
         private Vector3D _pickedUpEntityPosition;
         
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();         //World Position
-        private FTSValue<Quaternion> _lookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
-        private FTSValue<Quaternion> _cameraYAxisOrientation = new FTSValue<Quaternion>();   //LookAtYAxis angle
-        private FTSValue<Quaternion> _moveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
-        private Vector3D _lookAt;
+        //private Vector3D _lookAt;
         private Vector3 _entityEyeOffset;                                     //Offset of the camera Placement inside the entity, from entity center point.
 
         //Mouvement handling variables
         private VerletSimulator _physicSimu;
-        private double _accumPitchDegrees;
-        private double _gravityInfluence;
+        private float _accumPitchDegrees;
+        private float _gravityInfluence;
         private double _groundBelowEntity;
-        private double _rotationDelta;
-        private double _moveDelta;
-        private Matrix _headRotation;
-        private Matrix _entityRotation;
-        private Vector3D _entityHeadXAxis, _entityHeadYAxis, _entityHeadZAxis;
-        private Vector3D _entityXAxis, _entityYAxis, _entityZAxis;
+        private float _moveDelta;
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
-        private readonly IGameStateToolManager _gameStateToolManager;
         private bool _stopMovedAction = false;
 
         //Drawing component
@@ -93,16 +84,15 @@ namespace Utopia.Entities.Managers
         private TerraCubeWithPosition _groundCube;
         private CubeProfile _groundCubeProgile;
 
-
-        private EntityMovements _movement;
+        //Will be used to compute entity rotation movements
+        private EntityMovements _entityMovement;
         #endregion
 
         #region Public variables/properties
 
-        public Vector3D LookAt
+        public Vector3 LookAt
         {
-            get { return _lookAt; }
-            set { _lookAt = value; }
+            get { return _entityMovement.LookAt.ValueInterp; }
         }
 
         /// <summary>
@@ -117,8 +107,8 @@ namespace Utopia.Entities.Managers
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition.ValueInterp + _entityEyeOffset; } }
-        public virtual Quaternion CameraOrientation { get { return _lookAtDirection.ValueInterp; } }
-        public virtual Quaternion CameraYAxisOrientation { get { return _cameraYAxisOrientation.ValueInterp; } }
+        public virtual Quaternion CameraOrientation { get { return _entityMovement.EyeOrientation.ValueInterp; } }
+        public virtual Quaternion CameraYAxisOrientation { get { return _entityMovement.BodyOrientation.ValueInterp; } }
         public virtual int CameraUpdateOrder { get { return this.UpdateOrder; } }
 
         public bool IsHeadInsideWater { get; set; }
@@ -131,6 +121,7 @@ namespace Utopia.Entities.Managers
             set
             {
                 Player.DisplacementMode = value;
+                _entityMovement.SetDisplacementMode(Player.DisplacementMode, _worldPosition.Value + _entityEyeOffset);
 #if DEBUG
                 logger.Info("{0} is now {1}", Player.CharacterName, value.ToString());
 #endif
@@ -203,10 +194,6 @@ namespace Utopia.Entities.Managers
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
-
-            _movement = new EntityMovements(_inputsManager, EntityMovementModes.Walking);
-            _movement.EntityMoveSpeed = player.MoveSpeed;
-            _movement.EntityRotationSpeed = player.RotationSpeed;
         }
 
         public override void BeforeDispose()
@@ -299,14 +286,14 @@ namespace Utopia.Entities.Managers
             if (MousepickDisabled || _inputsManager.MouseManager.MouseCapture)
             {
                 Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
-                newpicking = RefreshPicking(ref pickingPointInLine, ref _lookAt, 1);
+                newpicking = RefreshPicking(ref pickingPointInLine, _entityMovement.LookAt.Value, 1);
             }
             else
             {
                 Vector3D mouseWorldPosition;
                 Vector3D mouseLookAtPosition;
                 _inputsManager.MouseManager.UnprojectMouseCursor(_cameraManager.ActiveCamera, out mouseWorldPosition, out mouseLookAtPosition);
-                newpicking = RefreshPicking(ref mouseWorldPosition, ref mouseLookAtPosition, 2);
+                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), 2);
             }
 
             if(newpicking)
@@ -325,12 +312,12 @@ namespace Utopia.Entities.Managers
 
 
         //Will return true if a new Item has been picked up !
-        private bool RefreshPicking(ref Vector3D pickingWorldPosition, ref Vector3D pickingLookAt, int rounding)
+        private bool RefreshPicking(ref Vector3D pickingWorldPosition, Vector3 pickingLookAt, int rounding)
         {
             Player._entityState.IsBlockPicked = false;
 
             //Check the Ray against all entity.
-            Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt.AsVector3());
+            Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
             if (_entityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
             {
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
@@ -344,7 +331,7 @@ namespace Utopia.Entities.Managers
             //Sample 500 points in the view direction vector
             for (int ptNbr = 0; ptNbr < 500; ptNbr++)
             {
-                pickingWorldPosition += pickingLookAt * 0.02;
+                pickingWorldPosition += new Vector3D(pickingLookAt * 0.02f);
 
                 //Check if a block is picked up !
                 if (_cubesHolder.isPickable(ref pickingWorldPosition, out PickedCube))
@@ -356,7 +343,7 @@ namespace Utopia.Entities.Managers
                     //Find the potential new block place, by rolling back !
                     while (ptNbr > 0)
                     {
-                        pickingWorldPosition -= pickingLookAt * 0.02;
+                        pickingWorldPosition -= new Vector3D(pickingLookAt * 0.02f);
                         
                         if (_cubesHolder.isPickable(ref pickingWorldPosition, out NewCube) == false)
                         {
@@ -560,21 +547,16 @@ namespace Utopia.Entities.Managers
             }
 
             //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
-            _moveDelta = Player.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_HD;
-            _rotationDelta = Player.RotationSpeed * timeSpent.ElapsedGameTimeInS_HD;
+            _moveDelta = Player.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_LD;
 
             //Backup previous values
-            _lookAtDirection.BackUpValue();
             _worldPosition.BackUpValue();
-            _cameraYAxisOrientation.BackUpValue();
 
-            //Rotation with mouse
-            //EntityRotationsOnEvents(Player.DisplacementMode);
-            _movement.Update(timeSpent);
-            _lookAtDirection.Value = _movement.EyeOrientation;
-            _worldPosition.Value = _movement.WorldPosition;
+            //Catch Movements from Input keyx and compute associated rotations
+            _entityMovement.Update(timeSpent);
+
             //Movement
-            //EntityMovementsOnEvents(Player.DisplacementMode, ref timeSpent);
+            EntityMovementsOnEvents(Player.DisplacementMode, ref timeSpent);
 
             //Physic simulation !
             PhysicOnEntity(Player.DisplacementMode, ref timeSpent);
@@ -582,7 +564,7 @@ namespace Utopia.Entities.Managers
             //Send the Actual Position to the Entity object only of it has change !!!
             //The Change check is done at DynamicEntity level
             Player.Position = _worldPosition.Value;
-            Player.HeadRotation = _lookAtDirection.Value;
+            Player.HeadRotation = _entityMovement.EyeOrientation.Value;
         }
 
         #region Movement Management
@@ -615,51 +597,20 @@ namespace Utopia.Entities.Managers
         {
             float jumpPower;
 
+            //Jump Key inside water
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 11 + (2 * jumpPower), 0) });
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_lookAt * _moveDelta) * 20 });
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_lookAt * _moveDelta) * 20 });
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = -1 * (_entityHeadXAxis * _moveDelta) * 20 });
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight, CatchExclusiveAction))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = 1 * (_entityHeadXAxis * _moveDelta) * 20 });
+            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * _moveDelta * 20 });            
         }
 
         private void FreeFirstPersonMove()
         {
-            Vector3D moveVector = Vector3D.Zero;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                moveVector += _lookAt;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
-                moveVector -= _lookAt;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                moveVector -= _entityHeadXAxis;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                moveVector += _entityHeadXAxis;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Down))
-                moveVector += Vector3D.Down;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Up))
-                moveVector += Vector3D.Up;
-
-            moveVector.Normalize();
-            _worldPosition.Value += moveVector * _moveDelta;
+            _worldPosition.Value += _entityMovement.EntityMoveVector * _moveDelta;
         }
 
         private void WalkingFirstPersonOnGround(ref GameTime timeSpent)
         {
-            Vector3D moveVector = Vector3D.Zero;
             float moveModifier = 1;
 
             float jumpPower;
@@ -682,196 +633,45 @@ namespace Utopia.Entities.Managers
                 {
                     //Force of 8 for 0.5 offset
                     //Force of 2 for 0.1 offset
-                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
+                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
                     OffsetBlockHitted = 0;
                 }
 
+                //Jumping
                 if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
-                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
-
-                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                    moveVector += _entityZAxis;
-
-                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
-                    moveVector -= _entityZAxis;
-
-                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                    moveVector += _entityXAxis;
-
-                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                    moveVector -= _entityXAxis;
+                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
             }
 
-            moveVector.Normalize();
             //Run only if Move forward and run button pressed at the same time.
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
             {
                 moveModifier = 1.5f;
             }
 
-            if (moveVector != Vector3D.Zero) _stopMovedAction = false;
-            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = moveVector * 2 * moveModifier });
-
+            if (_entityMovement.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
+            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * 2 * moveModifier });
         }
 
         private void WalkingFirstPersonNotOnGround(ref GameTime timeSpent)
         {
-            Vector3D moveVector = Vector3D.Zero;
             float moveModifier = 1;
 
-            float jumpPower;
             _physicSimu.Freeze(true, false, true); //Trick to easy ground deplacement, it will nullify all accumulated forced being applied on the entity (Except the Y ones)
 
             //Move 2 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
-            //Do a small "Jump" of hitted a offset wall
-            if (OffsetBlockHitted > 0 && _physicSimu.OnGround)
-            {
-                //Force of 8 for 0.5 offset
-                //Force of 2 for 0.1 offset
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
-                OffsetBlockHitted = 0;
-            }
-
-            if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3D(0, 7 + (2 * jumpPower), 0) });
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward))
-                moveVector -= _entityZAxis;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward))
-                moveVector += _entityZAxis;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft))
-                moveVector -= _entityXAxis;
-
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight))
-                moveVector += _entityXAxis;
-
-            moveVector.Normalize();
             //Run only if Move forward and run button pressed at the same time.
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
             {
                 moveModifier = 2;
             }
-            _physicSimu.PrevPosition += moveVector * _moveDelta * moveModifier;
+
+            _physicSimu.PrevPosition -= _entityMovement.EntityMoveVector * _moveDelta * moveModifier;
 
         }
         #endregion
 
-        #region Head + Body Rotation management
-        private void EntityRotationsOnEvents(EntityDisplacementModes mode)
-        {
-            if (_inputsManager.MouseManager.MouseCapture)
-            {
-                Rotate(_inputsManager.MouseManager.MouseMoveDelta.X, _inputsManager.MouseManager.MouseMoveDelta.Y, 0.0f, mode);
-            }
-        }
-
-        private void Rotate(double headingDegrees, double pitchDegrees, double rollDegrees, EntityDisplacementModes mode)
-        {
-            if (headingDegrees == 0 && pitchDegrees == 0 && rollDegrees == 0) return;
-
-            //Affect mouse sensibility stored in Delta to the mouvement that has been realized
-            headingDegrees *= _rotationDelta;
-            pitchDegrees *= _rotationDelta;
-            rollDegrees *= _rotationDelta;
-
-            switch (mode)
-            {
-                case EntityDisplacementModes.Walking:
-                case EntityDisplacementModes.Flying:
-                case EntityDisplacementModes.Swiming:
-                    RotateLookAt(headingDegrees, pitchDegrees);
-                    RotateMove(headingDegrees);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void RotateMove(double headingDegrees)
-        {
-            double heading = MathHelper.ToRadians(headingDegrees);
-            Quaternion rotation;
-
-            // Rotate the camera about the world Y axis.
-            if (heading != 0.0f)
-            {
-                Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation);
-                _moveDirection.Value = _moveDirection.Value * rotation;
-            }
-
-            _moveDirection.Value.Normalize();
-
-            UpdateEntityData();
-        }
-        private void UpdateEntityData()
-        {
-            Matrix.RotationQuaternion(ref _moveDirection.Value, out _entityRotation);
-
-            _entityXAxis = new Vector3D(_entityRotation.M11, _entityRotation.M21, _entityRotation.M31);
-            _entityYAxis = new Vector3D(_entityRotation.M12, _entityRotation.M22, _entityRotation.M32);
-            _entityZAxis = new Vector3D(_entityRotation.M13, _entityRotation.M23, _entityRotation.M33) * -1;
-        }
-
-        private void RotateLookAt(double headingDegrees, double pitchDegrees)
-        {
-            //To avoid the Camera to make full loop on the Pitch axis
-            _accumPitchDegrees += pitchDegrees;
-
-            if (_accumPitchDegrees > 90.0f)
-            {
-                pitchDegrees = 90.0f - (_accumPitchDegrees - pitchDegrees);
-                _accumPitchDegrees = 90.0f;
-            }
-
-            if (_accumPitchDegrees < -90.0f)
-            {
-                pitchDegrees = -90.0f - (_accumPitchDegrees - pitchDegrees);
-                _accumPitchDegrees = -90.0f;
-            }
-
-            //Inverse the mouse move impact on the rotation
-            double heading = MathHelper.ToRadians(headingDegrees) * -1;
-            double pitch = MathHelper.ToRadians(pitchDegrees);
-            Quaternion rotation;
-
-            // Rotate the camera about the world Y axis.
-            if (heading != 0.0f)
-            {
-                Quaternion.RotationAxis(ref MVector3.Up, (float)heading, out rotation); //Transform the rotation angle from mouse into a quaternion
-                _lookAtDirection.Value = _lookAtDirection.Value * rotation;             //Add this value to the existing Entity quaternion rotation
-                _cameraYAxisOrientation.Value = _cameraYAxisOrientation.Value * rotation;
-            }
-
-            // Rotate the camera about its local X axis.
-            if (pitch != 0.0f)
-            {
-                Quaternion.RotationAxis(ref MVector3.Right, (float)pitch, out rotation);
-
-                _lookAtDirection.Value = rotation * _lookAtDirection.Value;
-            }
-
-
-            _lookAtDirection.Value.Normalize();
-            UpdateHeadData();
-        }
-
-        private void UpdateHeadData()
-        {
-            //Get the lookAt vector
-            _headRotation = Matrix.RotationQuaternion(Quaternion.Conjugate(_lookAtDirection.Value));
-
-            _entityHeadXAxis = new Vector3D(_headRotation.M11, _headRotation.M21, _headRotation.M31) * -1;
-            _entityHeadYAxis = new Vector3D(_headRotation.M12, _headRotation.M22, _headRotation.M32);
-            _entityHeadZAxis = new Vector3D(_headRotation.M13, _headRotation.M23, _headRotation.M33) * -1;
-
-            _lookAt = new Vector3D(_entityHeadZAxis.X, _entityHeadZAxis.Y, _entityHeadZAxis.Z);
-            _lookAt.Normalize();
-        }
-        #endregion
         #endregion
         #endregion
 
@@ -894,22 +694,12 @@ namespace Utopia.Entities.Managers
             _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;
             _physicSimu.ConstraintFct += _entityPickingManager.isCollidingWithEntity;
 
+            _entityMovement = new EntityMovements(_inputsManager, _physicSimu);
+            _entityMovement.EntityRotationSpeed = Player.RotationSpeed;
+            _entityMovement.SetOrientation(Player.HeadRotation, _worldPosition.Value + _entityEyeOffset);
+
             //Set displacement mode
             DisplacementMode = Player.DisplacementMode;
-
-            //Set LookAt
-            //Take back only the saved server Yaw rotation (Or Heading) and only using it;
-            _lookAtDirection.Value = Player.HeadRotation;
-
-            double playerSavedYaw = MQuaternion.getYaw(ref _lookAtDirection.Value);
-            Quaternion.RotationAxis(ref MVector3.Up, (float)playerSavedYaw, out _lookAtDirection.Value);            
-            _lookAtDirection.ValuePrev = _lookAtDirection.Value;
-
-            _cameraYAxisOrientation.Value = _lookAtDirection.Value;
-            _cameraYAxisOrientation.ValuePrev = _lookAtDirection.Value;
-
-            //Set Move direction = to LookAtDirection
-            _moveDirection.Value = _lookAtDirection.Value;
 
             _playerRenderer.Initialize();
         }
@@ -934,7 +724,6 @@ namespace Utopia.Entities.Managers
         //long from, to;
         public override void Update( GameTime timeSpend)
         {
-            //from = System.Diagnostics.Stopwatch.GetTimestamp();
             if (_landscapeInitiazed == false) return;
 
             inputHandler();             //Input handling
@@ -947,18 +736,14 @@ namespace Utopia.Entities.Managers
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
-
-            //to = System.Diagnostics.Stopwatch.GetTimestamp() - from;
-            //test[i] = to.ToString();
-            //i++; if (i >= test.Length) i = 0;
         }
 
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
-            //TODO FIXME NAsty bug here, not a number float arithmetic exception sometimes - surely a server side fix to do !
-            Quaternion.Slerp(ref _lookAtDirection.ValuePrev, ref _lookAtDirection.Value, interpolationLd, out _lookAtDirection.ValueInterp);
-            Quaternion.Slerp(ref _cameraYAxisOrientation.ValuePrev, ref _cameraYAxisOrientation.Value, interpolationLd, out _cameraYAxisOrientation.ValueInterp);
+            //Interpolate rotations values
+            _entityMovement.Interpolation(interpolationHd, interpolationLd, timePassed);
+
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             //TODO To remove when Voxel Entity merge will done with Entity
@@ -966,10 +751,9 @@ namespace Utopia.Entities.Managers
             Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
             //entityCenteredPosition.X -= Player.Size.X / 2;
             //entityCenteredPosition.Z -= Player.Size.Z / 2;
-            VisualEntity.World = Matrix.RotationQuaternion(_lookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);
+            VisualEntity.World = Matrix.RotationQuaternion(_entityMovement.EyeOrientation.ValueInterp) * Matrix.Translation(entityCenteredPosition);
             //VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
-
             CheckHeadUnderWater();      //Under water head test
         }
 
