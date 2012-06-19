@@ -3,7 +3,6 @@ using System.IO;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -18,6 +17,11 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets voxel entity model
         /// </summary>
         public VoxelModelInstance ModelInstance { get; set; }
+
+        /// <summary>
+        /// Gets or sets current voxel model name
+        /// </summary>
+        public string ModelName { get; set; }
 
         /// <summary>
         /// This is name can vary for concrete class instance (Example: Simon's steel shovel)

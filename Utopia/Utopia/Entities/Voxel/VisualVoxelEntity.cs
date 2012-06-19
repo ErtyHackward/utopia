@@ -54,7 +54,7 @@ namespace Utopia.Entities.Voxel
                 return;
             
 
-            var model = manager.GetModel(wrapped.ModelInstance.ModelHash);
+            var model = manager.GetModel(wrapped.ModelName);
 
             // set the model or wait for it
             if (model == null)
@@ -66,9 +66,9 @@ namespace Utopia.Entities.Voxel
         void ManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
         {
             // our model just downloaded, set it
-            if (e.Model.Hash == _voxelEntity.ModelInstance.ModelHash)
+            if (e.Model.Name == _voxelEntity.ModelName)
             {
-                _visualVoxelModel = _manager.GetModel(e.Model.Hash);
+                _visualVoxelModel = _manager.GetModel(e.Model.Name);
                 _manager.VoxelModelReceived -= ManagerVoxelModelReceived;
             }
         }

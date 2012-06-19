@@ -34,7 +34,7 @@ namespace Utopia.Shared.Entities.Models
         public Md5Hash Hash { get; private set; }
 
         /// <summary>
-        /// Geta a list of model states
+        /// Gets a list of model states
         /// </summary>
         public List<VoxelModelState> States { get; private set; }
 
