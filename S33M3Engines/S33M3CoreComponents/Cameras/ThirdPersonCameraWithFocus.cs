@@ -8,6 +8,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using S33M3CoreComponents.WorldFocus;
 using S33M3DXEngine;
+using S33M3CoreComponents.Physics.Verlet;
 
 namespace S33M3CoreComponents.Cameras
 {
@@ -25,9 +26,21 @@ namespace S33M3CoreComponents.Cameras
         private float _springConstant = 16.0f;
         private float _dampingConstant = 8.0f;
         private float _offsetDistance = 5.0f;
+
+        private VerletSimulator _physicSimulator;
         #endregion
 
         #region Public Properties
+        public VerletSimulator PhysicSimulator
+        {
+            get { return _physicSimulator; }
+            set
+            {
+                _physicSimulator = value;
+                _physicSimulator.StartSimulation(ref _worldPosition.Value, ref _worldPosition.Value);
+            }
+        }
+
         public FTSValue<Vector3D> FocusPoint
         {
             get { return _focusPoint; }
@@ -120,6 +133,12 @@ namespace S33M3CoreComponents.Cameras
             //Focused camera computation ============================================================
             _view_focused = _view;
             Vector3 cameraFocusedPosition = _zAxis * -1 * _offsetDistance;
+
+            if (_physicSimulator != null)
+            {
+                //Check for Collision against landscape
+            }
+
             //Recompute the view Matrix
             Vector3.Dot(ref _xAxis, ref cameraFocusedPosition, out _view_focused.M41);
             Vector3.Dot(ref _yAxis, ref cameraFocusedPosition, out _view_focused.M42);

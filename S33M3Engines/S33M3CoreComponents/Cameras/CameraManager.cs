@@ -5,6 +5,10 @@ using System.Text;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.WorldFocus;
+using S33M3CoreComponents.WorldFocus.Interfaces;
 
 namespace S33M3CoreComponents.Cameras
 {
@@ -15,13 +19,17 @@ namespace S33M3CoreComponents.Cameras
 
         #region Private variables
         private CamType _activeCamera;
+        private WorldFocusManager _worldFocusManager;
+
+        private InputsManager _inputManager;
+        private int _cameraChangeIndex = -1;
+        private List<CamType> _registeredCameras = new List<CamType>();
         #endregion
 
         #region Public properties/variables
         public CamType ActiveCamera
         {
             get { return _activeCamera; }
-            set { ChangeActiveCamera(value); }
         }
 
         public ICamera ActiveBaseCamera
@@ -32,9 +40,10 @@ namespace S33M3CoreComponents.Cameras
         public event CameraChange ActiveCamera_Changed;
         #endregion
 
-        public CameraManager(CamType camera)
+        public CameraManager(InputsManager inputManager, WorldFocusManager worldFocusManager)
         {
-            ActiveCamera = camera;
+            _inputManager = inputManager;
+            _worldFocusManager = worldFocusManager;
         }
 
         public override void BeforeDispose()
@@ -66,6 +75,11 @@ namespace S33M3CoreComponents.Cameras
         public override void Update(GameTime timeSpend)
         {
             ActiveCamera.Update(timeSpend);
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.ChangeCameraType))
+            {
+                MoveToNextActiveCamera();
+            }
         }
 
         public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
@@ -73,16 +87,40 @@ namespace S33M3CoreComponents.Cameras
             ActiveCamera.Interpolation(interpolation_hd, interpolation_ld, elapsedTime);
         }
 
+        public void RegisterNewCamera(CamType camera)
+        {
+            _registeredCameras.Add(camera);
+            if (_activeCamera == null) MoveToNextActiveCamera();
+        }
+
+        public void SetCamerasPlugin(ICameraPlugin camplugin)
+        {
+            foreach (var camera in _registeredCameras)
+            {
+                camera.CameraPlugin = camplugin;
+            }
+        }
         #endregion
 
         #region Private methods
+        private void MoveToNextActiveCamera()
+        {
+            if (_registeredCameras.Count == 0) return;
+            _cameraChangeIndex++;
+            if (_cameraChangeIndex >= _registeredCameras.Count) _cameraChangeIndex = 0;
+            ChangeActiveCamera(_registeredCameras[_cameraChangeIndex]);
+        }
+
         private void ChangeActiveCamera(CamType newCamera)
         {
             _activeCamera = newCamera;
             _activeCamera.CameraUpdateOrderChanged -= ActiveCamera_CameraUpdateOrderChanged;
             _activeCamera.CameraUpdateOrderChanged += ActiveCamera_CameraUpdateOrderChanged;
-            if (ActiveCamera_Changed != null) ActiveCamera_Changed(newCamera);
 
+            //Change the focus
+            _worldFocusManager.WorldFocus = (IWorldFocus)newCamera;
+
+            if (ActiveCamera_Changed != null) ActiveCamera_Changed(newCamera);
         }
 
         private void ActiveCamera_CameraUpdateOrderChanged(ICamera camera, int newOrderId)

@@ -158,9 +158,10 @@ namespace Sandbox.Client
             //Parameters ===============================================
             _iocContainer.Bind<VisualWorldParameters>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<ICameraFocused>().To<ThirdPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
+            _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).Named("FirstPCamera").WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
+            _iocContainer.Bind<ICameraFocused>().To<ThirdPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).Named("ThirdPCamera").WithConstructorArgument("nearPlane", 0.5f).WithConstructorArgument("farPlane", 3000f); //Type of camera used
             //Force ICamera to use the same singleton as ICameraFocused !
-            _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InScope(x => GameScope.CurrentGameScope);
+            //_iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>("FirstPCamera")).InScope(x => GameScope.CurrentGameScope);
 
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InScope(x => GameScope.CurrentGameScope);//Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class

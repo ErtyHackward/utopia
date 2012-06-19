@@ -198,6 +198,7 @@ namespace Utopia.Shared.Settings
     [Serializable]
     public class GameBindingKeys
     {
+        public KeyWithModifier ChangeCameraType;
         public KeyWithModifier Chat;
         public KeyWithModifier Use;
         public KeyWithModifier Throw;
@@ -314,6 +315,7 @@ namespace Utopia.Shared.Settings
                         },
                         Game = new GameBindingKeys()
                         {
+                            ChangeCameraType = new KeyWithModifier { MainKey = Keys.F5, Modifier = Keys.None, Info = "Change Camera type" },
                             Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
                             Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
                             Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },

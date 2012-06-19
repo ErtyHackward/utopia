@@ -37,6 +37,8 @@ namespace S33M3CoreComponents.Inputs.Actions
         public const int Move_Jump                  = 27;
         public const int Move_Mode                  = 28;
         public const int Move_Run                   = 29;
+        public const int ChangeCameraType           = 30;
+
 
     }
 }
