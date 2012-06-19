@@ -16,7 +16,8 @@ namespace S33M3CoreComponents.Cameras
 
     public enum CameraType
     {
-        FirstPerson
+        FirstPerson,
+        ThirdPerson
     }
 
     public delegate void CameraUpdateOrder(ICamera camera, int newOrderId);

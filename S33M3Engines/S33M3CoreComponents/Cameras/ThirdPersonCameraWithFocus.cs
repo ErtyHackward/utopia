@@ -24,6 +24,7 @@ namespace S33M3CoreComponents.Cameras
 
         private float _springConstant = 16.0f;
         private float _dampingConstant = 8.0f;
+        private float _offsetDistance = 5.0f;
         #endregion
 
         #region Public Properties
@@ -61,26 +62,26 @@ namespace S33M3CoreComponents.Cameras
             : base(d3dEngine, nearPlane, farPlane)
         {
             _worldFocusManager = worldFocusManager;
-            this.CameraType = Cameras.CameraType.FirstPerson;
+            this.CameraType = Cameras.CameraType.ThirdPerson;
         }
 
         #region Public Methods
         public override void Update(S33M3DXEngine.Main.GameTime timeSpend)
         {
-            if (CameraPlugin != null)
-            {
-                _worldPosition.BackUpValue();
-                _cameraOrientation.BackUpValue();
-                _cameraYAxisOrientation.BackUpValue();
+            if (CameraPlugin == null) return;
 
-                //Get the Camera Position and Rotation from the attached Entity to the camera !
-                _worldPosition.Value = CameraPlugin.CameraWorldPosition;
-                _cameraOrientation.Value = CameraPlugin.CameraOrientation;
-                _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
-                Matrix cameraRotation;
-                Matrix.RotationQuaternion(ref _cameraOrientation.ValueInterp, out cameraRotation);
-                _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);
-            }
+            _worldPosition.BackUpValue();
+            _cameraOrientation.BackUpValue();
+            _cameraYAxisOrientation.BackUpValue();
+
+            //Get the Camera Position and Rotation from the attached Entity to the camera !
+            _worldPosition.Value = CameraPlugin.CameraWorldPosition;
+            _cameraOrientation.Value = CameraPlugin.CameraOrientation;
+            _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
+            //Get the LookAt Vector
+            Matrix cameraRotation;
+            Matrix.RotationQuaternion(ref _cameraOrientation.ValueInterp, out cameraRotation);
+            _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -118,6 +119,14 @@ namespace S33M3CoreComponents.Cameras
 
             //Focused camera computation ============================================================
             _view_focused = _view;
+            Vector3 cameraFocusedPosition = _zAxis * -1 * _offsetDistance;
+            //Recompute the view Matrix
+            Vector3.Dot(ref _xAxis, ref cameraFocusedPosition, out _view_focused.M41);
+            Vector3.Dot(ref _yAxis, ref cameraFocusedPosition, out _view_focused.M42);
+            Vector3.Dot(ref _zAxis, ref cameraFocusedPosition, out _view_focused.M43);
+            _view_focused.M41 *= -1;
+            _view_focused.M42 *= -1;
+            _view_focused.M43 *= -1;
             _viewProjection3D_focused = _view_focused * _projection3D;
 
             //NOT Focused camera computation ============================================================

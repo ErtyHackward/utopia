@@ -188,7 +188,7 @@ namespace Utopia.Entities.Managers
             this.ShowDebugInfo = true;
 
             VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
-
+            
             //Give the Renderer acces to the Voxel buffers, ...
             _playerRenderer.VisualEntity = this;
 
@@ -736,6 +736,8 @@ namespace Utopia.Entities.Managers
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
+
+            _playerRenderer.Update(timeSpend);
         }
 
 
