@@ -180,8 +180,12 @@ namespace Sandbox.Client.States
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
             var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
-            var firstPersonCamera = _ioc.Get<ICamera>();
+            var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
+            var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
+            cameraManager.RegisterNewCamera(firstPersonCamera);
+            cameraManager.RegisterNewCamera(thirdPersonCamera);
+
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
             var guiManager = _ioc.Get<GuiManager>();
@@ -224,8 +228,8 @@ namespace Sandbox.Client.States
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
-            firstPersonCamera.CameraPlugin = playerEntityManager;
-            worldFocusManager.WorldFocus = (IWorldFocus)firstPersonCamera;
+            cameraManager.SetCamerasPlugin(playerEntityManager);
+            //worldFocusManager.WorldFocus = (IWorldFocus)thirdPersonCamera;// cameraManager.ActiveCamera;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
