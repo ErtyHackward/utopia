@@ -99,8 +99,7 @@ namespace Utopia.Resources.ModelComp
             _wrappedEffect.Begin(context);
             _wrappedEffect.CBPerDraw.Values.World = Matrix.Transpose(WorldFocused);
             _wrappedEffect.CBPerDraw.IsDirty = true;
-            _wrappedEffect.CBPerFrame.Values.View = Matrix.Transpose(camera.View_focused);
-            _wrappedEffect.CBPerFrame.Values.Projection = Matrix.Transpose(camera.Projection3D);
+            _wrappedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(camera.ViewProjection3D_focused);
             _wrappedEffect.CBPerFrame.IsDirty = true;
             _wrappedEffect.Apply(context);
 

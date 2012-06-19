@@ -7,6 +7,15 @@ namespace S33M3Resources.Structs
         public T ValuePrev;
         public T ValueInterp;
 
+        public FTSValue()
+        {
+        }
+
+        public FTSValue(T value)
+        {
+            Initialize(value);
+        }
+
         public void BackUpValue()
         {
             ValuePrev = Value;
@@ -15,6 +24,11 @@ namespace S33M3Resources.Structs
         public void Initialize()
         {
             ValuePrev = Value;
+        }
+
+        public void Initialize(T value)
+        {
+            ValuePrev = Value = value;
         }
     }
 }

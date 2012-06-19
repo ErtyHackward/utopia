@@ -8,8 +8,7 @@ cbuffer PerDraw
 
 cbuffer PerFrame
 {
-	matrix View;
-	matrix Projection;
+	matrix ViewProjection;
 	float Alpha;
 }
 
@@ -43,8 +42,7 @@ PS_IN VS( VS_IN input )
 	
 	output.Pos = float4(input.Pos.xyz, 1);
 	output.Pos = mul( output.Pos, World );
-	output.Pos = mul( output.Pos, View );
-	output.Pos = mul( output.Pos, Projection );
+	output.Pos = mul( output.Pos, ViewProjection );
 	output.UV = input.UV;
 	
 	return output;

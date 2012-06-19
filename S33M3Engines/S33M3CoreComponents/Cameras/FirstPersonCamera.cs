@@ -13,6 +13,7 @@ namespace S33M3CoreComponents.Cameras
     public class FirstPersonCamera : Camera
     {
         #region Private Variables
+        private Vector3 _xAxis, _yAxis, _zAxis;
         #endregion
 
         #region Public Properties
@@ -27,32 +28,52 @@ namespace S33M3CoreComponents.Cameras
             this.CameraType = Cameras.CameraType.FirstPerson;
         }
 
-        #region Private Methods
-        #endregion
-
         #region Public Methods
         //Called once before the drawing sequence ==> Computed interpolated values here !
         public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
         {
             if (CameraPlugin != null)
             {
-                //Get the interpolated value from the Camera pluggin !
+                //Get the Camera Position and Rotation from the attached Entity to the camera !
                 _worldPosition = CameraPlugin.CameraWorldPosition;
                 _cameraOrientation = CameraPlugin.CameraOrientation;
                 _cameraYAxisOrientation = CameraPlugin.CameraYAxisOrientation;
             }
-            
-            //Value are already interpolated by the pluggin, no need to interpolate again !
 
-            //Compute the View Matrix
-            _view = Matrix.Translation(_worldPosition.AsVector3() * -1) * Matrix.RotationQuaternion(Quaternion.Conjugate(_cameraOrientation));
-            _viewProjection3D = _view * _projection3D;
+            ComputeCameraMatrices();
+
             _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
         }
 
-        protected override void CameraInitialize()
+        #endregion
+
+        #region Private Methods
+        private void ComputeCameraMatrices()
         {
-            base.CameraInitialize();
+            //These view matrix computation are derived directly from Matrix.lookatlh() where I'm only doing needed math operations.
+
+            //Extract the Rotation Matrix
+            Matrix.RotationQuaternion(ref _cameraOrientation, out _view);
+
+            //Extract the 3 axis from the RotationMatrix
+            _xAxis = new Vector3(_view.M11, _view.M21, _view.M31);
+            _yAxis = new Vector3(_view.M12, _view.M22, _view.M32);
+            _zAxis = new Vector3(_view.M13, _view.M23, _view.M33);
+
+            //Extract the LookAtVector
+            _lookAt = _zAxis;
+
+            //Camera computation ============================================================
+            Vector3 cameraPosition = _worldPosition.AsVector3();
+
+            //Recompute the view Matrix
+            Vector3.Dot(ref _xAxis, ref cameraPosition, out _view.M41);
+            Vector3.Dot(ref _yAxis, ref cameraPosition, out _view.M42);
+            Vector3.Dot(ref _zAxis, ref cameraPosition, out _view.M43);
+            _view.M41 *= -1;
+            _view.M42 *= -1;
+            _view.M43 *= -1;
+            _viewProjection3D = _view * _projection3D;
         }
 
         #endregion

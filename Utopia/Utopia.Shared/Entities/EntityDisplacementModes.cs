@@ -4,6 +4,7 @@ namespace Utopia.Shared.Entities
     {
         Flying,
         Walking,
-        Swiming
+        Swiming,
+        FreeFlying
     }
 }

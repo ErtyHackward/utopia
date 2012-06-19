@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SharpDX;
-using System.Windows.Forms;
-using S33M3DXEngine;
-using S33M3CoreComponents.Maths;
-using S33M3CoreComponents.WorldFocus;
-using S33M3Resources.Structs;
-using S33M3CoreComponents.WorldFocus.Interfaces;
 using S33M3CoreComponents.Cameras.Interfaces;
-using S33M3DXEngine.Main;
+using S33M3CoreComponents.WorldFocus.Interfaces;
+using SharpDX;
+using S33M3Resources.Structs;
+using S33M3CoreComponents.WorldFocus;
+using S33M3DXEngine;
 
 namespace S33M3CoreComponents.Cameras
 {
     public class FirstPersonCameraWithFocus : Camera, ICameraFocused, IWorldFocus
     {
         #region Private Variables
-        WorldFocusManager _worldFocusManager;
-        protected Matrix _viewProjection3D_focused;
-        protected Matrix _view_focused;
-        private readonly FTSValue<Vector3D> _focusPoint = new FTSValue<Vector3D>();
-        private readonly FTSValue<Matrix> _focusPointMatrix = new FTSValue<Matrix>();
+        private WorldFocusManager _worldFocusManager;
+        private Matrix _viewProjection3D_focused;
+        private Matrix _view_focused;
+        private FTSValue<Vector3D> _focusPoint = new FTSValue<Vector3D>();
+        private FTSValue<Matrix> _focusPointMatrix = new FTSValue<Matrix>();
+
+        private Vector3 _xAxis, _yAxis, _zAxis;
         #endregion
 
         #region Public Properties
@@ -45,25 +44,19 @@ namespace S33M3CoreComponents.Cameras
             get { return _view_focused; }
         }
         #endregion
-        //Constructors
 
         public FirstPersonCameraWithFocus(D3DEngine d3dEngine, 
-                                          WorldFocusManager worldFocusManager,
-                                          float nearPlane,
-                                          float farPlane)
+                         WorldFocusManager worldFocusManager,                
+                         float nearPlane,
+                         float farPlane)
             : base(d3dEngine, nearPlane, farPlane)
         {
             _worldFocusManager = worldFocusManager;
             this.CameraType = Cameras.CameraType.FirstPerson;
         }
 
-        #region Private Methods
-        #endregion
-
         #region Public Methods
-
-        //Called once before the drawing sequence ==> Computed interpolated values here !
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             if (CameraPlugin != null)
             {
@@ -73,34 +66,57 @@ namespace S33M3CoreComponents.Cameras
                 _cameraYAxisOrientation = CameraPlugin.CameraYAxisOrientation;
             }
 
-            //Value are already interpolated by the pluggin, no need to interpolate again !
+            //The camera is used as a focus Point = Its the 0;0;0 reference point in world space !!
             FocusPoint.ValueInterp = _worldPosition;
-            FocusPointMatrix.ValueInterp = Matrix.Translation(-1 * _worldPosition.AsVector3());
-            
-            //Matrix MTranslation = Matrix.Translation((_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3() * -1); //Inverse the Translation
-            //Quaternion inverseRotation = Quaternion.Conjugate(_cameraOrientation); //Inverse the rotation
-            //Matrix MRotation = Matrix.RotationQuaternion(inverseRotation);                                             
-            //Matrix.Multiply(ref MTranslation, ref MRotation, out _view_focused);
+            FocusPointMatrix.ValueInterp = Matrix.Translation(_worldPosition.AsVector3() * -1);
 
-            //_viewProjection3D_focused = _view_focused * _projection3D;
-            //_viewProjection3D = Matrix.Translation(_worldPosition.AsVector3() * -1) * MRotation * _projection3D;
-
-            ////TEST ======================== 
-            Matrix rotation = Matrix.RotationQuaternion(_cameraOrientation);
-            Vector3 cameraPosition = _worldPosition.AsVector3();
-            Vector3 cameraFocusedPosition = (_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3();
-            Vector3 camTY = new Vector3(rotation.M21, rotation.M22, rotation.M23);
-            Vector3 camTZ = new Vector3(-(rotation.M31), -(rotation.M32), -(rotation.M33));
-            _view_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition + camTZ, camTY);
-            _viewProjection3D = Matrix.LookAtLH(cameraPosition, cameraPosition + camTZ, camTY) * _projection3D;
-            _viewProjection3D_focused = _view_focused * _projection3D;
-
-            //STOP TEST ======================
+            ComputeCameraMatrices();
 
             _frustum = new SimpleBoundingFrustum(ref _viewProjection3D);
-                       
-            //Refresh the lookat camera vector
-            _lookAt = MQuaternion.GetLookAtFromQuaternion(_cameraOrientation);
+        }
+        #endregion
+
+        #region Private Methods
+        private void ComputeCameraMatrices()
+        {
+            //These view matrix computation are derived directly from Matrix.lookatlh() where I'm only doing needed math operations.
+
+            //Extract the Rotation Matrix
+            Matrix.RotationQuaternion(ref _cameraOrientation, out _view);
+
+            //Extract the 3 axis from the RotationMatrix
+            _xAxis = new Vector3(_view.M11, _view.M21, _view.M31);
+            _yAxis = new Vector3(_view.M12, _view.M22, _view.M32);
+            _zAxis = new Vector3(_view.M13, _view.M23, _view.M33);
+
+            //Extract the LookAtVector
+            _lookAt = _zAxis;
+
+            //Focused camera computation ============================================================
+            _view_focused = _view;
+            //Get camera focused position == Always Zero in case of focused camera !! ==> Can skip all this logic !!
+            //Vector3 cameraFocusedPosition = Vector3.Zero; //(_worldPosition - _worldFocusManager.WorldFocus.FocusPoint.ValueInterp).AsVector3();
+
+            ////Recompute the view Matrix
+            //Vector3.Dot(ref _xAxis, ref cameraFocusedPosition, out _view_focused.M41);
+            //Vector3.Dot(ref _yAxis, ref cameraFocusedPosition, out _view_focused.M42);
+            //Vector3.Dot(ref _zAxis, ref cameraFocusedPosition, out _view_focused.M43);
+            //_view_focused.M41 *= -1;
+            //_view_focused.M42 *= -1;
+            //_view_focused.M43 *= -1;
+            _viewProjection3D_focused = _view_focused * _projection3D;
+
+            //NOT Focused camera computation ============================================================
+            Vector3 cameraPosition = _worldPosition.AsVector3();
+
+            //Recompute the view Matrix
+            Vector3.Dot(ref _xAxis, ref cameraPosition, out _view.M41);
+            Vector3.Dot(ref _yAxis, ref cameraPosition, out _view.M42);
+            Vector3.Dot(ref _zAxis, ref cameraPosition, out _view.M43);
+            _view.M41 *= -1;
+            _view.M42 *= -1;
+            _view.M43 *= -1;
+            _viewProjection3D = _view * _projection3D;
         }
 
         protected override void CameraInitialize()

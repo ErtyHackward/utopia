@@ -123,7 +123,6 @@
     <Compile Include="Editor\EntityEditorUI.cs" />
     <Compile Include="Editor\Spawn.cs" />
     <Compile Include="Effects\SharedFrameCB.cs" />
-    <Compile Include="Entities\EntityMovement\EntityDisplacementModes.cs" />
     <Compile Include="Entities\EntityMovement\EntityMovements.cs" />
     <Compile Include="Entities\IconFactory.cs" />
     <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />

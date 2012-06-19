@@ -34,14 +34,12 @@ namespace S33M3Resources.Effects.Basics
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
 
-        [StructLayout(LayoutKind.Explicit, Size = 144)]
+        [StructLayout(LayoutKind.Explicit, Size = 80)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
-            public Matrix View;
+            public Matrix ViewProjection;
             [FieldOffset(64)]
-            public Matrix Projection;
-            [FieldOffset(128)]
             public float Alpha;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
