@@ -75,12 +75,12 @@ namespace S33M3CoreComponents.Cameras
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward))
             {
-                zoomingPower = 0.5f;
+                zoomingPower = -0.5f;
             }
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward))
             {
-                zoomingPower = -0.5f;
+                zoomingPower = 0.5f;
             }
 
             if (CameraPlugin == null) return;

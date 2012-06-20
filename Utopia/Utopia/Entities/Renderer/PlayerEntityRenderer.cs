@@ -25,6 +25,7 @@ using Utopia.Shared.Settings;
 using S33M3_DXEngine.Main;
 using Utopia.Resources.ModelComp;
 using S33M3Resources.Effects.Basics;
+using S33M3Resources.Structs;
 
 namespace Utopia.Entities.Renderer
 {
@@ -37,6 +38,8 @@ namespace Utopia.Entities.Renderer
         private WorldFocusManager _worldFocusManager;
         private ShaderResourceView _cubeTexture_View;
         public SharedFrameCB SharedFrameCB { get; set;}
+
+        private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
 
         private BoundingBox3D renderer;
         private IVisualEntityContainer _visualEntity;
@@ -67,6 +70,7 @@ namespace Utopia.Entities.Renderer
         private void SetUpRenderer()
         {
             renderer = new BoundingBox3D(_d3DEngine, _worldFocusManager, _visualEntity.VisualEntity.Entity.Size, _dummyEntityRenderer, Colors.Red);
+            _worldPosition = new FTSValue<Vector3D>(_visualEntity.VisualEntity.Position);
         }
 
         #region Private Methods
@@ -115,11 +119,16 @@ namespace Utopia.Entities.Renderer
 
         public void Update(GameTime timeSpend)
         {
-            renderer.Update(_visualEntity.VisualEntity.Position.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.Size.Y / 2.0f,0), Vector3.One);
+            _worldPosition.BackUpValue();
+
+            _worldPosition.Value = _visualEntity.VisualEntity.Position;
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
+            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+
+            renderer.Update(_worldPosition.ValueInterp.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.Size.Y / 2.0f, 0), Vector3.One);
         }
 
         public override void BeforeDispose()
