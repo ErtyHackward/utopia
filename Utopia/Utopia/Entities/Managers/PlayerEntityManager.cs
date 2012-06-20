@@ -640,6 +640,8 @@ namespace Utopia.Entities.Managers
                 //Jumping
                 if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                     _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+
+                if (_entityMovement.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
             }
 
             //Run only if Move forward and run button pressed at the same time.
@@ -648,7 +650,6 @@ namespace Utopia.Entities.Managers
                 moveModifier = 1.5f;
             }
 
-            if (_entityMovement.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
             _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * 2 * moveModifier });
         }
 
