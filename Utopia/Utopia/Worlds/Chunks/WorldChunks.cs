@@ -177,6 +177,7 @@ namespace Utopia.Worlds.Chunks
             pickingManager.WorldChunks = this;
             lightingManager.WorldChunk = this;
             _playerManager.WorldChunks = this;
+            _chunkMeshManager.WorldChunks = this;
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
