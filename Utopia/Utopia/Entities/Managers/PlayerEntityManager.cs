@@ -668,7 +668,6 @@ namespace Utopia.Entities.Managers
             }
 
             _physicSimu.PrevPosition -= _entityMovement.EntityMoveVector * _moveDelta * moveModifier;
-
         }
         #endregion
 
@@ -757,6 +756,8 @@ namespace Utopia.Entities.Managers
             //VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
             CheckHeadUnderWater();      //Under water head test
+
+            _playerRenderer.Interpolation(interpolationHd, interpolationLd, timePassed);
         }
 
         public override void Draw(DeviceContext context, int index)
