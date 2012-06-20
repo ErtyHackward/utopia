@@ -33,14 +33,26 @@ namespace S33M3CoreComponents.Cameras
         {
             if (CameraPlugin != null)
             {
-                _worldPosition.BackUpValue();
-                _cameraOrientation.BackUpValue();
-                _cameraYAxisOrientation.BackUpValue();
+                if (NewlyActivatedCamera)
+                {
+                    _worldPosition.Initialize(CameraPlugin.CameraWorldPosition);
+                    _cameraOrientation.Initialize(CameraPlugin.CameraOrientation);
+                    _cameraYAxisOrientation.Initialize(CameraPlugin.CameraYAxisOrientation);
+                    NewlyActivatedCamera = false;
+                }
+                else
+                {
+                    _worldPosition.BackUpValue();
+                    _cameraOrientation.BackUpValue();
+                    _cameraYAxisOrientation.BackUpValue();
 
-                //Get the Camera Position and Rotation from the attached Entity to the camera !
-                _worldPosition.Value = CameraPlugin.CameraWorldPosition;
-                _cameraOrientation.Value = CameraPlugin.CameraOrientation;
-                _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
+                    //Get the Camera Position and Rotation from the attached Entity to the camera !
+                    _worldPosition.Value = CameraPlugin.CameraWorldPosition;
+                    //Console.WriteLine("From Update : " + _worldPosition.Value);
+                    _cameraOrientation.Value = CameraPlugin.CameraOrientation;
+                    _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
+                }
+
                 Matrix cameraRotation;
                 Matrix.RotationQuaternion(ref _cameraOrientation.Value, out cameraRotation);
                 _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);

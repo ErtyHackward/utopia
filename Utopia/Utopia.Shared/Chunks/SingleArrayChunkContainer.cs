@@ -465,6 +465,17 @@ namespace Utopia.Shared.Chunks
             return false;
         }
 
+        public bool IsSolidToPlayer(ref Vector3D worldPosition)
+        {
+            int index;
+            if (IndexSafe(MathHelper.Fastfloor(worldPosition.X), MathHelper.Fastfloor(worldPosition.Y), MathHelper.Fastfloor(worldPosition.Z), out index))
+            {
+                TerraCube cube = Cubes[index];
+                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsSolidToEntity;
+            }
+
+            return true;
+        }
 
         public bool IsSolidToPlayer(ref BoundingBox bb)
         {

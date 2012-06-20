@@ -229,13 +229,12 @@ namespace Sandbox.Client.States
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
             cameraManager.SetCamerasPlugin(playerEntityManager);
-            //worldFocusManager.WorldFocus = (IWorldFocus)thirdPersonCamera;// cameraManager.ActiveCamera;
+            ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
-            
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);

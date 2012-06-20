@@ -102,5 +102,7 @@ namespace Utopia.Worlds.Chunks
         bool IsInitialLoadCompleted { get; set;}
 
         void InitDrawComponents(DeviceContext context);
+
+        bool ValidatePosition(ref Vector3D newPosition2Evaluate);
     }
 }

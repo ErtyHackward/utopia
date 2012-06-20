@@ -24,6 +24,7 @@ namespace S33M3CoreComponents.Cameras.Interfaces
         ICameraPlugin CameraPlugin { get; set; }
         CameraType CameraType { get; set; }
         FTSValue<Vector3> LookAt { get; }
+        bool NewlyActivatedCamera { get; set; }
 
         /// <summary>
         /// Event that must be raised when the UpdateOrderId is changed

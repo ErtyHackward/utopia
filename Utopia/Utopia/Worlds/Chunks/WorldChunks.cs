@@ -480,6 +480,12 @@ namespace Utopia.Worlds.Chunks
 
             newPosition2Evaluate = newPositionWithColliding;
         }
+
+        //Return true if the position is not solid to player
+        public bool ValidatePosition(ref Vector3D newPosition2Evaluate)
+        {
+           return _cubesHolder.IsSolidToPlayer(ref newPosition2Evaluate) == false;
+        }
         #endregion
 
         #region Private methods

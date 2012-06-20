@@ -9,6 +9,8 @@ using SharpDX;
 using S33M3CoreComponents.WorldFocus;
 using S33M3DXEngine;
 using S33M3CoreComponents.Physics.Verlet;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Inputs.Actions;
 
 namespace S33M3CoreComponents.Cameras
 {
@@ -23,24 +25,12 @@ namespace S33M3CoreComponents.Cameras
 
         private Vector3 _xAxis, _yAxis, _zAxis;
 
-        private float _springConstant = 16.0f;
-        private float _dampingConstant = 8.0f;
         private float _offsetDistance = 5.0f;
 
-        private VerletSimulator _physicSimulator;
+        private InputsManager _inputManager;
         #endregion
 
         #region Public Properties
-        public VerletSimulator PhysicSimulator
-        {
-            get { return _physicSimulator; }
-            set
-            {
-                _physicSimulator = value;
-                _physicSimulator.StartSimulation(ref _worldPosition.Value, ref _worldPosition.Value);
-            }
-        }
-
         public FTSValue<Vector3D> FocusPoint
         {
             get { return _focusPoint; }
@@ -61,19 +51,18 @@ namespace S33M3CoreComponents.Cameras
             get { return _view_focused; }
         }
 
-        public float SpringConstant
-        {
-            get { return _springConstant; }
-            set { _springConstant = value; _dampingConstant = (float)(2.0f * Math.Sqrt(value)); }
-        }
+        public delegate bool CheckCameraPosition(ref Vector3D newPosition2Evaluate);
+        public CheckCameraPosition CheckCamera;
         #endregion
 
         public ThirdPersonCameraWithFocus(D3DEngine d3dEngine, 
                          WorldFocusManager worldFocusManager,                
                          float nearPlane,
-                         float farPlane)
+                         float farPlane,
+                         InputsManager inputManager)
             : base(d3dEngine, nearPlane, farPlane)
         {
+            _inputManager = inputManager;
             _worldFocusManager = worldFocusManager;
             this.CameraType = Cameras.CameraType.ThirdPerson;
         }
@@ -81,19 +70,41 @@ namespace S33M3CoreComponents.Cameras
         #region Public Methods
         public override void Update(S33M3DXEngine.Main.GameTime timeSpend)
         {
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward))
+            {
+                _offsetDistance += 0.2f;
+                if (_offsetDistance > 10.0f) _offsetDistance = 10.0f;
+            }
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward))
+            {
+                _offsetDistance -= 0.2f;
+                if (_offsetDistance < 0.0f) _offsetDistance = 0.0f;
+            }
+
             if (CameraPlugin == null) return;
 
-            _worldPosition.BackUpValue();
-            _cameraOrientation.BackUpValue();
-            _cameraYAxisOrientation.BackUpValue();
-
-            //Get the Camera Position and Rotation from the attached Entity to the camera !
-            _worldPosition.Value = CameraPlugin.CameraWorldPosition;
-            _cameraOrientation.Value = CameraPlugin.CameraOrientation;
-            _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
+            if (NewlyActivatedCamera)
+            {
+                _worldPosition.Initialize(CameraPlugin.CameraWorldPosition);
+                _cameraOrientation.Initialize(CameraPlugin.CameraOrientation);
+                _cameraYAxisOrientation.Initialize(CameraPlugin.CameraYAxisOrientation);
+                NewlyActivatedCamera = false;
+            }
+            else
+            {
+                _worldPosition.BackUpValue();
+                _cameraOrientation.BackUpValue();
+                _cameraYAxisOrientation.BackUpValue();
+                //Get the Camera Position and Rotation from the attached Entity to the camera !
+                _worldPosition.Value = CameraPlugin.CameraWorldPosition;
+                _cameraOrientation.Value = CameraPlugin.CameraOrientation;
+                _cameraYAxisOrientation.Value = CameraPlugin.CameraYAxisOrientation;
+            }
             //Get the LookAt Vector
             Matrix cameraRotation;
-            Matrix.RotationQuaternion(ref _cameraOrientation.ValueInterp, out cameraRotation);
+            Matrix.RotationQuaternion(ref _cameraOrientation.Value, out cameraRotation);
             _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);
         }
 
@@ -132,11 +143,23 @@ namespace S33M3CoreComponents.Cameras
 
             //Focused camera computation ============================================================
             _view_focused = _view;
-            Vector3 cameraFocusedPosition = _zAxis * -1 * _offsetDistance;
-
-            if (_physicSimulator != null)
+            
+            float _validatedOffsetDistance = _offsetDistance;
+            Vector3 cameraFocusedPosition = _zAxis * -1 * _validatedOffsetDistance;
+            Vector3D evaluatedCameraWorldPosition;
+            bool isCameraPositionCorrect = false;
+            while (isCameraPositionCorrect == false && _validatedOffsetDistance > 0)
             {
-                //Check for Collision against landscape
+                isCameraPositionCorrect = true;
+                foreach (CheckCameraPosition fct in CheckCamera.GetInvocationList())
+                {
+                    evaluatedCameraWorldPosition = _worldPosition.ValueInterp + cameraFocusedPosition;
+                    isCameraPositionCorrect = fct(ref evaluatedCameraWorldPosition);
+                    if (isCameraPositionCorrect == false) break;
+                }
+                _validatedOffsetDistance -= 0.01f;
+                if (_validatedOffsetDistance < 0) _validatedOffsetDistance = 0;
+                cameraFocusedPosition = _zAxis * -1 * _validatedOffsetDistance;
             }
 
             //Recompute the view Matrix
@@ -149,7 +172,7 @@ namespace S33M3CoreComponents.Cameras
             _viewProjection3D_focused = _view_focused * _projection3D;
 
             //NOT Focused camera computation ============================================================
-            Vector3 cameraPosition = _worldPosition.ValueInterp.AsVector3();
+            Vector3 cameraPosition = _worldPosition.ValueInterp.AsVector3() + cameraFocusedPosition;
 
             //Recompute the view Matrix
             Vector3.Dot(ref _xAxis, ref cameraPosition, out _view.M41);
