@@ -68,19 +68,19 @@ namespace S33M3CoreComponents.Cameras
         }
 
         #region Public Methods
+        public float zoomingPower = 0;
+        public float zoomingStep = 0.02f;
         public override void Update(S33M3DXEngine.Main.GameTime timeSpend)
         {
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward))
             {
-                _offsetDistance += 0.2f;
-                if (_offsetDistance > 10.0f) _offsetDistance = 10.0f;
+                zoomingPower = 0.5f;
             }
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward))
             {
-                _offsetDistance -= 0.2f;
-                if (_offsetDistance < 0.0f) _offsetDistance = 0.0f;
+                zoomingPower = -0.5f;
             }
 
             if (CameraPlugin == null) return;
@@ -110,6 +110,24 @@ namespace S33M3CoreComponents.Cameras
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
+            if (zoomingPower != 0.0f)
+            {
+                if (zoomingPower > 0)
+                {
+                    _offsetDistance -= zoomingStep;
+                    zoomingPower -= zoomingStep;
+                    if (zoomingPower < 0.0f) zoomingPower = 0.0f;
+                    if (_offsetDistance < 0.0f) _offsetDistance = 0.0f;
+                }
+                else
+                {
+                    _offsetDistance += zoomingStep;
+                    zoomingPower += zoomingStep;
+                    if (zoomingPower > 0.0f) zoomingPower = 0.0f;
+                    if (_offsetDistance > 15.0f) _offsetDistance = 15.0f;
+                }
+            }
+
             //Do interpolation on the value received at update time
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
             Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, interpolationLd, out _cameraOrientation.ValueInterp);
