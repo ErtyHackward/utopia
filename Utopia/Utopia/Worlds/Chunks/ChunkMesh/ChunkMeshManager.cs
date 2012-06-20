@@ -35,6 +35,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         #endregion
 
         #region public variables/properties
+        public IWorldChunks WorldChunks { get; set; }
         #endregion
 
         public ChunkMeshManager(VisualWorldParameters visualWorldParameters, SingleArrayChunkContainer cubesHolder, [Named("SolidCubeMeshFactory")] ICubeMeshFactory solidCubeMeshFactory, [Named("LiquidCubeMeshFactory")] ICubeMeshFactory liquidCubeMeshFactory)
@@ -113,7 +114,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             var worldRangeMaxX = _visualWorldParameters.WorldRange.Max.X;
             var worldRangeMaxY = _visualWorldParameters.WorldRange.Max.Y;
             var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
-            int xn, yn, zn;
+            int xNeight, yNeight, zNeight;
 
             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
@@ -167,9 +168,9 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         //BorderChunk value is true if the chunk is at the border of the visible world.
                         int topCubeIndex = cubeIndex + _cubesHolder.MoveY;
 
-                        xn = x;
-                        yn = y;
-                        zn = z;
+                        xNeight = x;
+                        yNeight = y;
+                        zNeight = z;
 
                         switch (cubeFace)
                         {
@@ -177,32 +178,32 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 if (ZWorld - 1 < _visualWorldParameters.WorldRange.Position.Z) continue;
                                 //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
-                                zn--;
+                                zNeight--;
                                 break;
                             case CubeFaces.Front:
                                 if (ZWorld + 1 >= worldRangeMaxZ) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1);
-                                zn++;
+                                zNeight++;
                                 break;
                             case CubeFaces.Bottom:
                                 if (YWorld - 1 < 0) continue;
                                 neightborCubeIndex = cubeIndex - _cubesHolder.MoveY;
-                                yn--;
+                                yNeight--;
                                 break;
                             case CubeFaces.Top:
                                 if (YWorld + 1 >= worldRangeMaxY) continue;
                                 neightborCubeIndex = topCubeIndex;
-                                yn++;
+                                yNeight++;
                                 break;
                             case CubeFaces.Left:
                                 if (XWorld - 1 < _visualWorldParameters.WorldRange.Position.X) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1);
-                                xn--;
+                                xNeight--;
                                 break;
                             case CubeFaces.Right:
                                 if (XWorld + 1 >= worldRangeMaxX) continue;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, XWorld, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1);
-                                xn++;
+                                xNeight++;
                                 break;
                             default:
                                 throw new NullReferenceException();
@@ -225,7 +226,12 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         float neightborcubeYOffset = (float)neightborCubeProfile.YBlockOffset;
                         if (neightborCubeProfile.IsTaggable)
                         {
-                            ICubeYOffsetModifier tagOffset = (chunk.BlockData.GetTag(new Vector3I(xn, yn, zn))) as ICubeYOffsetModifier;
+                            //Find the chunk where this neightboor is located !! (Could be a chunk next to this one !)
+                            Vector3I NeightCubeWorldPosition = new Vector3I(xNeight + chunk.CubeRange.Position.X, yNeight, zNeight + chunk.CubeRange.Position.Z);
+
+                            VisualChunk neighbChunk = WorldChunks.GetChunk(ref NeightCubeWorldPosition);
+
+                            ICubeYOffsetModifier tagOffset = (neighbChunk.BlockData.GetTag(new Vector3I(NeightCubeWorldPosition.X - neighbChunk.CubeRange.Position.X, yNeight, NeightCubeWorldPosition.Z - neighbChunk.CubeRange.Position.Z))) as ICubeYOffsetModifier;
                             if (tagOffset != null)
                             {
                                 neightborcubeYOffset = tagOffset.YOffset;
@@ -234,14 +240,18 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                         bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset && cubeFace != CubeFaces.Top) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top && neightborCube.Id != currentCube.Id);
 
+                        if (cubePosiInWorld.X == 20 &&
+                           cubePosiInWorld.Y == 74 &&
+                           cubePosiInWorld.Z == 16 &&
+                            cubeFace == CubeFaces.Back)
+                        {
+                            cubeFace = CubeFaces.Back;
+                        }
+
                         switch (cubeProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                if (cubeFace == CubeFaces.Top && cubePosiInWorld == new Vector3I(54, 74, 154))
-                                {
-                                    Console.Write("");
-                                }
                                 if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube,  ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);

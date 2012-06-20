@@ -130,7 +130,8 @@ namespace Utopia.Worlds.Chunks
                 chunk = SortedChunks[chunkIndice];
                 if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
                 {
-                    if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
+                    if (chunk.ThreadStatus == ThreadStatus.Locked) 
+                        continue; //Thread in working states ==> Cannot touch it !!!
 
                     if (chunk.State == ChunkState.LandscapeLightsPropagated)
                     {
@@ -148,7 +149,8 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
-                if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
+                if (chunk.ThreadStatus == ThreadStatus.Locked) 
+                    continue; //Thread in working states ==> Cannot touch it !!!
 
                 if (chunk.UserChangeOrder != userOrder && chunk.ThreadPriority == WorkItemPriority.Highest)
                 { //If this thread is user changed
