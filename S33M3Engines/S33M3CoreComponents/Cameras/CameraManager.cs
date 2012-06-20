@@ -74,12 +74,12 @@ namespace S33M3CoreComponents.Cameras
 
         public override void Update(GameTime timeSpend)
         {
-            ActiveCamera.Update(timeSpend);
-
             if (_inputManager.ActionsManager.isTriggered(Actions.ChangeCameraType))
             {
                 MoveToNextActiveCamera();
             }
+
+            ActiveCamera.Update(timeSpend);
         }
 
         public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
@@ -119,7 +119,7 @@ namespace S33M3CoreComponents.Cameras
 
             //Change the focus
             _worldFocusManager.WorldFocus = (IWorldFocus)newCamera;
-
+            newCamera.NewlyActivatedCamera = true;
             if (ActiveCamera_Changed != null) ActiveCamera_Changed(newCamera);
         }
 

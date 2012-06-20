@@ -57,6 +57,8 @@ namespace S33M3CoreComponents.Cameras
 
         public CameraType CameraType { get; set; }
 
+        public bool NewlyActivatedCamera { get; set; }
+
         public SimpleBoundingFrustum Frustum
         {
             get { return _frustum; }

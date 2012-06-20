@@ -229,7 +229,7 @@ namespace Sandbox.Client
             {
                 ActionId = UtopiaActions.ChangeCameraType,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.ChangeCameraType
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.CameraType
             }, rebindSettingsBasedAction);
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
