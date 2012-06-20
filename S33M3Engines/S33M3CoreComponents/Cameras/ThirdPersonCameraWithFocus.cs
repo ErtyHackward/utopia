@@ -69,7 +69,7 @@ namespace S33M3CoreComponents.Cameras
 
         #region Public Methods
         public float zoomingPower = 0;
-        public float zoomingStep = 0.02f;
+        public float zoomingStep = 0.005f;
         public override void Update(S33M3DXEngine.Main.GameTime timeSpend)
         {
 
@@ -114,15 +114,15 @@ namespace S33M3CoreComponents.Cameras
             {
                 if (zoomingPower > 0)
                 {
-                    _offsetDistance -= zoomingStep;
-                    zoomingPower -= zoomingStep;
+                    _offsetDistance -= zoomingStep * elapsedTime;
+                    zoomingPower -= zoomingStep * elapsedTime;
                     if (zoomingPower < 0.0f) zoomingPower = 0.0f;
                     if (_offsetDistance < 0.0f) _offsetDistance = 0.0f;
                 }
                 else
                 {
-                    _offsetDistance += zoomingStep;
-                    zoomingPower += zoomingStep;
+                    _offsetDistance += zoomingStep * elapsedTime;
+                    zoomingPower += zoomingStep * elapsedTime;
                     if (zoomingPower > 0.0f) zoomingPower = 0.0f;
                     if (_offsetDistance > 15.0f) _offsetDistance = 15.0f;
                 }
