@@ -45,6 +45,8 @@ namespace Utopia.Effects.Shared
         private VisualWorldParameters _visualWorldParam;
         private PlayerEntityManager _playerManager;
         private StaggingBackBuffer _backBuffer;
+        private float _animationValue = 0.0f;
+        private float _animationSpeed = 0.0006f;
 
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -87,9 +89,18 @@ namespace Utopia.Effects.Shared
             CBPerFrame.Values.fogdist = ((_visualWorldParam.WorldVisibleSize.X) / 2) - 48;
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
             CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
+            CBPerFrame.Values.Various.Y = _animationValue; //Asign animation Value (From 0 => 1 in loop);
             CBPerFrame.IsDirty = false;
 
             CBPerFrame.Update(context); //Send updated data to Graphical Card
+        }
+
+        List<float> prevValue = new List<float>();
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
+            _animationValue += (_animationSpeed * elapsedTime);
+            while(_animationValue >= 1.0) _animationValue -= 1.0f;
+            if (prevValue.Count < 1000) prevValue.Add(_animationValue);
         }
 
         public override void BeforeDispose()

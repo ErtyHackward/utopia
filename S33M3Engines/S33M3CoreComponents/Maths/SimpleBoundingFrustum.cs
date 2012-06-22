@@ -68,7 +68,6 @@ public class SimpleBoundingFrustum
 
     public bool Intersects(ref BoundingBox box)
     {
-
         return _near.Intersects(ref box) != PlaneIntersectionType.Back &&
                _far.Intersects(ref box) != PlaneIntersectionType.Back &&
                _top.Intersects(ref box) != PlaneIntersectionType.Back &&
