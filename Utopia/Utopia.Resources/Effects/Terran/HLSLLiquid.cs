@@ -42,11 +42,13 @@ namespace Utopia.Resources.Effects.Terran
         public ShaderResource SolidBackBuffer;
         public ShaderResource SkyBackBuffer;
         public ShaderResource BiomesColors;
+        public ShaderResource AnimatedTextures;
         #endregion
 
         #region Sampler
         public ShaderSampler SamplerDiffuse;
         public ShaderSampler SamplerBackBuffer;
+        public ShaderSampler SamplerOverlay;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -81,12 +83,18 @@ namespace Utopia.Resources.Effects.Terran
             BiomesColors = new ShaderResource("BiomesColors");
             ShaderResources.Add(BiomesColors);
 
+            AnimatedTextures = new ShaderResource("AnimatedTextures");
+            ShaderResources.Add(AnimatedTextures);
+
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
 
             SamplerBackBuffer = new ShaderSampler("SamplerBackBuffer");
             ShaderSamplers.Add(SamplerBackBuffer);
+
+            SamplerOverlay = new ShaderSampler("SamplerOverlay");
+            ShaderSamplers.Add(SamplerOverlay);
 
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);

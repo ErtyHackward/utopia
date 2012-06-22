@@ -23,7 +23,6 @@ namespace Utopia.Worlds.Chunks
     public partial class WorldChunks : IWorldChunks
     {
         #region private variables
-
         private HLSLTerran _terraEffect;
         private HLSLLiquid _liquidEffect;
         private HLSLStaticEntitySprite _staticSpriteEffect;
@@ -31,6 +30,7 @@ namespace Utopia.Worlds.Chunks
         private ShaderResourceView _terra_View;
         private ShaderResourceView _spriteTexture_View;
         private ShaderResourceView _biomesColors_View;
+        private ShaderResourceView _textureAnimation_View;
         #endregion
 
         #region public variables
@@ -231,8 +231,8 @@ namespace Utopia.Worlds.Chunks
 
             //Create Biomes Colors texture Array
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"BiomesColors/", @"*.png", FilterFlags.Point, "BiomesColors_WorldChunk", out _biomesColors_View);
-
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", TexturePackConfig.Current.Settings.enuSamplingFilter, "ArrayTexture_WorldChunk", out _terra_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"AnimatedTextures/", @"*.png", FilterFlags.Point, "ArrayTexture_AnimatedTextures", out _textureAnimation_View);
 
             _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
@@ -243,14 +243,17 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
             _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
+            _liquidEffect.SamplerOverlay.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
             _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _liquidEffect.BiomesColors.Value = _biomesColors_View;
+            _liquidEffect.AnimatedTextures.Value = _textureAnimation_View;
 
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
             _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-            _staticSpriteEffect.BiomesColors.Value = _biomesColors_View; 
+            _staticSpriteEffect.BiomesColors.Value = _biomesColors_View;
+
 
         }
 
@@ -266,6 +269,7 @@ namespace Utopia.Worlds.Chunks
             _terraEffect.Dispose();
             _spriteTexture_View.Dispose();
             _staticSpriteEffect.Dispose();
+            _textureAnimation_View.Dispose();
         }
         #endregion
 

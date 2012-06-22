@@ -52,11 +52,13 @@ static const float SHADOW_EPSILON = 0.001f;
 //--------------------------------------------------------------------------------------
 Texture2DArray TerraTexture;
 Texture2DArray BiomesColors;
+Texture2DArray AnimatedTextures;
 Texture2D SolidBackBuffer;
 Texture2D SkyBackBuffer;
 
 SamplerState SamplerDiffuse;
 SamplerState SamplerBackBuffer;
+SamplerState SamplerOverlay;
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 
@@ -71,10 +73,11 @@ struct VS_LIQUID_IN
 struct PS_IN
 {
 	float4 Position				: SV_POSITION;
-	float3 UVW					: TEXCOORD0;
+	float3 StaticUVW			: TEXCOORD0;
 	float fogPower				: VARIOUS0;
 	float4 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
+	float3 AnimationUVW			: TEXCOORD1;
 };
 
 struct PS_OUT
@@ -104,10 +107,12 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 
 	int facetype = input.VertexInfo1.x;
 	//Compute the texture mapping
-	output.UVW = float3(
+	output.StaticUVW = float3(
 						(input.Position.x * texmul1[facetype]) + (input.Position.z * texmul2[facetype]), 
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
+
+	output.AnimationUVW = float3(output.StaticUVW.xy / 4.0f, Various.y * 30);
 
 	output.EmissiveLight.rgb = saturate(input.Col.rgb +  SunColor * input.Col.a);
 
@@ -130,8 +135,8 @@ PS_OUT PS(PS_IN input)
 	float fogvalue = min( Opaque, 1 - input.fogPower);
 	clip(fogvalue <= 0.001 ? -1:1); 
 
-	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.UVW).rgb, 1) * input.EmissiveLight;
-	
+	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.StaticUVW).rgb, 1) * input.EmissiveLight;
+
 	float3 biomeColorSampling = {input.BiomeData.x, input.BiomeData.y, 2};
 	float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
 	colorInput.r = colorInput.r * biomeColor.r;
@@ -145,7 +150,9 @@ PS_OUT PS(PS_IN input)
 	//Manual Blending with SolidBackBuffer color received
 	float4 color = {(colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a)), colorInput.a};
 
-	float4 finalColor = color;
+	float4 animatedOverlay = float4(AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW).rgb, 0);
+
+	float4 finalColor = color + animatedOverlay;
 	
 	//To execute only when Fog is present !
 	if(fogvalue < 1){
@@ -153,7 +160,8 @@ PS_OUT PS(PS_IN input)
 		backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
 		color.a = min( Opaque, 1 - input.fogPower);
-		finalColor.rgb = (color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
+
+		finalColor.rgb = (finalColor.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
 		finalColor.a = color.a;
 	}
 	output.Color = finalColor;
