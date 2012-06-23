@@ -46,7 +46,7 @@ namespace Utopia.Effects.Shared
         private PlayerEntityManager _playerManager;
         private StaggingBackBuffer _backBuffer;
         private float _animationValue = 0.0f;
-        private float _animationSpeed = 0.0006f;
+        private float _animationSpeed = 0.0005f;
 
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -95,12 +95,10 @@ namespace Utopia.Effects.Shared
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
-        List<float> prevValue = new List<float>();
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             _animationValue += (_animationSpeed * elapsedTime);
             while(_animationValue >= 1.0) _animationValue -= 1.0f;
-            if (prevValue.Count < 1000) prevValue.Add(_animationValue);
         }
 
         public override void BeforeDispose()

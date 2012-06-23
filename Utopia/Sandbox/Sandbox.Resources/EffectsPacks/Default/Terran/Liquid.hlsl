@@ -77,7 +77,7 @@ struct PS_IN
 	float fogPower				: VARIOUS0;
 	float4 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
-	float3 AnimationUVW			: TEXCOORD1;
+	float4 AnimationUVW			: TEXCOORD1;
 };
 
 struct PS_OUT
@@ -112,7 +112,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	output.AnimationUVW = float3(output.StaticUVW.xy / 4.0f, Various.y * 30);
+	output.AnimationUVW = float4(output.StaticUVW.xy / 8.0f, Various.y * 31, facetype);
 
 	output.EmissiveLight.rgb = saturate(input.Col.rgb +  SunColor * input.Col.a);
 
@@ -133,38 +133,47 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float fogvalue = min( Opaque, 1 - input.fogPower);
-	clip(fogvalue <= 0.001 ? -1:1); 
+	clip(fogvalue <= 0.001 ? -1:1); //If fog maximum, pixel clamped (Will leave the sky buffer at this place)
 
+	//The alpha value is following the Angle of view to the face
 	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.StaticUVW).rgb, 1) * input.EmissiveLight;
 
+	//Change the water surface with the biomeColor
 	float3 biomeColorSampling = {input.BiomeData.x, input.BiomeData.y, 2};
 	float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
 	colorInput.r = colorInput.r * biomeColor.r;
 	colorInput.g = colorInput.g * biomeColor.g;
 	colorInput.b = colorInput.b * biomeColor.b;
 	
-	//Sample against Solid landscape
 	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
-	float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
-
-	//Manual Blending with SolidBackBuffer color received
-	float4 color = {(colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a)), colorInput.a};
-
-	float4 animatedOverlay = float4(AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW).rgb, 0);
-
-	float4 finalColor = color + animatedOverlay;
 	
+	float4 color = colorInput;
+
+	if(colorInput.a < 1.0f){
+		//Get Solid landscape value (Saw trough seethourgh water)
+		float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+
+		//Manual Blending with SolidBackBuffer color received
+		color.rgb = (colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a));
+		color.a = colorInput.a;
+	}
+
+	//Add overlay only when water is transparent
+	if(input.AnimationUVW.w == 3){
+		color.rgb += (AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb) * 0.33;
+	}
+
 	//To execute only when Fog is present !
 	if(fogvalue < 1){
 		//Sample BackGround Sky
-		backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+		float4 backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
 		color.a = min( Opaque, 1 - input.fogPower);
 
-		finalColor.rgb = (finalColor.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
-		finalColor.a = color.a;
+		color.rgb = (color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
+		color.a = color.a;
 	}
-	output.Color = finalColor;
+	output.Color = color;
 
     return output;
 }
