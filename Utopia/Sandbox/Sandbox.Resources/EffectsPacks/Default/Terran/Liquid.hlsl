@@ -113,7 +113,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	output.AnimationUVW = float4(output.StaticUVW.xy / 8.0f, Various.y * 60, facetype);
+	output.AnimationUVW = float4(output.StaticUVW.xy / 8.0f, Various.y * 61, facetype);
 
 	output.EmissiveLight.rgb = saturate(input.Col.rgb +  SunColor * input.Col.a);
 
@@ -160,11 +160,10 @@ PS_OUT PS(PS_IN input)
 		color.a = colorInput.a;
 	}
 
-	//Add overlay only when water is transparent
-
-	//color.rgb += (AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb) * 0.33;
-	color.rgb += ((AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb * (1 - input.causticPower)) * color.rgb) * 2;
-	
+	//Add overlay only when needed
+	if(input.causticPower < 1){
+		color.rgb += ((AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb * (1 - input.causticPower)) * color.rgb) * 2;
+	}
 
 	//To execute only when Fog is present !
 	if(fogvalue < 1){
