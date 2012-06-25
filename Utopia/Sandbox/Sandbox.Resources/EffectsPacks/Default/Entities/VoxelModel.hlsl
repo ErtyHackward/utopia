@@ -2,7 +2,7 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-cbuffer PerFrame
+cbuffer VoxelModelPerFrame
 {
 	matrix World;
 	matrix ViewProjection;
@@ -12,7 +12,7 @@ cbuffer PerFrame
 	float3 LightDirection;
 };
 
-cbuffer PerPart
+cbuffer VoxelModelPerPart
 {
 	matrix Transform;
 }
