@@ -75,6 +75,7 @@ struct PS_IN
 	float4 Position				: SV_POSITION;
 	float3 StaticUVW			: TEXCOORD0;
 	float fogPower				: VARIOUS0;
+	float causticPower			: VARIOUS1;
 	float4 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
 	float4 AnimationUVW			: TEXCOORD1;
@@ -112,7 +113,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	output.AnimationUVW = float4(output.StaticUVW.xy / 8.0f, Various.y * 31, facetype);
+	output.AnimationUVW = float4(output.StaticUVW.xy / 8.0f, Various.y * 60, facetype);
 
 	output.EmissiveLight.rgb = saturate(input.Col.rgb +  SunColor * input.Col.a);
 
@@ -121,6 +122,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.EmissiveLight.a = clamp(output.EmissiveLight.a, 0.6, 1);
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
+	output.causticPower = clamp( ((length(worldPosition.xyz) - fogdist/4) / (fogdist/2)), 0, 1);
 	output.BiomeData = input.VertexInfo2.yz;
     return output;
 }
@@ -159,9 +161,10 @@ PS_OUT PS(PS_IN input)
 	}
 
 	//Add overlay only when water is transparent
-	if(input.AnimationUVW.w == 3){
-		color.rgb += (AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb) * 0.33;
-	}
+
+	//color.rgb += (AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb) * 0.33;
+	color.rgb += ((AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb * (1 - input.causticPower)) * color.rgb) * 2;
+	
 
 	//To execute only when Fog is present !
 	if(fogvalue < 1){
