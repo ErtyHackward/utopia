@@ -148,6 +148,13 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 Update(context); //Update constant buffer with new values (From CPU to GPU)
             }
 
+#if DEBUG
+            if (_shadersImpacted == 0)
+            {
+                logger.Error("Constant buffer define in {0} is not binded, please check the name of the constant buffers (inside HLSL file and the effectWrapper)", this.Name);
+            }
+#endif
+
             if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetConstantBuffer(_slot[ShaderIDs.VS], _CBuffer);
             if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetConstantBuffer(_slot[ShaderIDs.GS], _CBuffer);
             if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetConstantBuffer(_slot[ShaderIDs.PS], _CBuffer);
