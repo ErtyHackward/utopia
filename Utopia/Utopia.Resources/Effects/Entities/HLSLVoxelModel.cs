@@ -62,10 +62,10 @@ namespace UtopiaContent.Effects.Entities
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerFrame = new CBuffer<CBPerFrameStructure>(device, "PerFrame");
+            CBPerFrame = new CBuffer<CBPerFrameStructure>(device, "VoxelModelPerFrame");
             CBuffers.Add(CBPerFrame);
 
-            CBPerPart = new CBuffer<CBPerPartStructure>(device, "PerPart");
+            CBPerPart = new CBuffer<CBPerPartStructure>(device, "VoxelModelPerPart");
             CBuffers.Add(CBPerPart);
             
             //Load the shaders
