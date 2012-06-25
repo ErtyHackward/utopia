@@ -78,7 +78,7 @@ struct PS_IN
 	float causticPower			: VARIOUS1;
 	float4 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
-	float4 AnimationUVW			: TEXCOORD1;
+	float3 AnimationUVW			: TEXCOORD1;
 };
 
 struct PS_OUT
@@ -113,7 +113,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	output.AnimationUVW = float4(output.StaticUVW.xy / 8.0f, Various.y * 61, facetype);
+	output.AnimationUVW = float3(output.StaticUVW.xy / 8.0f, Various.y * 61);
 
 	output.EmissiveLight.rgb = saturate(input.Col.rgb +  SunColor * input.Col.a);
 
@@ -123,6 +123,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 	output.causticPower = clamp( ((length(worldPosition.xyz) - fogdist/4) / (fogdist/2)), 0, 1);
+	if(facetype != 3) output.causticPower = 1;
 	output.BiomeData = input.VertexInfo2.yz;
     return output;
 }
