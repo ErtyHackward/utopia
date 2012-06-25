@@ -1165,14 +1165,14 @@ namespace Utopia.Components
                 if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.ShiftKey))
                 {
                     // translate
-                    _currentViewData.Translate.X -= dx;
-                    _currentViewData.Translate.Y -= dy;
+                    _currentViewData.Translate.X += dx;
+                    _currentViewData.Translate.Y += dy;
                 }
                 else
                 {
                     // rotate
-                    _currentViewData.RotateX += dx;
-                    _currentViewData.RotateY += dy;
+                    _currentViewData.RotateX -= dx;
+                    _currentViewData.RotateY -= dy;
                 }
             }
 
