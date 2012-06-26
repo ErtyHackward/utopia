@@ -5,7 +5,7 @@ namespace Utopia.Components
         /// <summary>
         /// Represents a simple model view
         /// </summary>
-        ModelView,
+        MainView,
         /// <summary>
         /// Shows whole model and allows to change layout of the parts
         /// </summary>

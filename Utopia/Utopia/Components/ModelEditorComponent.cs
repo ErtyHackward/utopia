@@ -65,6 +65,7 @@ namespace Utopia.Components
 
 
         private VertexBuffer<VertexPosition> _crosshairVertexBuffer;
+        private VertexBuffer<VertexPosition> _directionVertexBuffer;
 
         private HLSLVoxelModel _voxelEffect;
 
@@ -415,6 +416,8 @@ namespace Utopia.Components
                 // call property setter to fill the lists
                 if (_visualVoxelModel != null)
                     VisualVoxelModel = _visualVoxelModel;
+
+                OnMainViewMode();
             }
             else
             {
@@ -478,8 +481,17 @@ namespace Utopia.Components
             _crosshairVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             ptList.Clear();
-            ptList.Add(new VertexPosition(new Vector3(0, 0, 0)));
-            ptList.Add(new VertexPosition(new Vector3(1, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3(-1, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3( 1, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3( 0, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3( 0, 1, 0)));
+            ptList.Add(new VertexPosition(new Vector3( 0, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3( 0, 0, 1)));
+
+            _directionVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorDirection_vertexBuffer");
+            _directionVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
+
+            
 
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
 
@@ -704,6 +716,7 @@ namespace Utopia.Components
             var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex];
 
             frame.BlockData.UpdateChunkSize(new Vector3I(e.SizeX, e.SizeY, e.SizeZ), true);
+            RebuildFrameVertices();
         }
 
         private void OnFrameDeletePressed()
@@ -814,7 +827,7 @@ namespace Utopia.Components
             {
                 VisualVoxelModel.BuildMesh();
             }
-
+            UpdateCamera();
         }
 
         private void AskModelSave(Action<string> callback)
@@ -1195,9 +1208,12 @@ namespace Utopia.Components
 
         private void UpdateCamera()
         {
+            if (_visualVoxelModel == null)
+                return;
+
             switch (Mode)
             {
-                case EditorMode.ModelView:
+                case EditorMode.MainView:
                     if (SelectedStateIndex != -1)
                     {
                         var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
@@ -1262,7 +1278,7 @@ namespace Utopia.Components
 
             switch (Mode)
             {
-                case EditorMode.ModelView:
+                case EditorMode.MainView:
                     if (SelectedStateIndex != -1)
                     {
                         var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
@@ -1280,7 +1296,7 @@ namespace Utopia.Components
                             var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex];
                             var partState = state.PartsStates[_selectedPartIndex];
                             bb = partState.BoundingBox;
-                            var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,(bb.Maximum.Y - bb.Minimum.Y)/2,(bb.Maximum.Z - bb.Minimum.Z)/2) + partState.Transform.TranslationVector;
+                            var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2, (bb.Maximum.Y - bb.Minimum.Y) / 2, (bb.Maximum.Z - bb.Minimum.Z) / 2) + partState.Transform.TranslationVector;
                             _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
 
                             if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released)
@@ -1321,7 +1337,8 @@ namespace Utopia.Components
                                     translationVector.Y = (int)translationVector.Y;
                                     translationVector.Z = (int)translationVector.Z;
 
-                                    if (Math.Abs(translationVector.X) >= 1 || Math.Abs(translationVector.Y) >= 1 ||
+                                    if (Math.Abs(translationVector.X) >= 1 || 
+                                        Math.Abs(translationVector.Y) >= 1 ||
                                         Math.Abs(translationVector.Z) >= 1)
                                     {
 
@@ -1334,8 +1351,7 @@ namespace Utopia.Components
                                 var translationMatrix = Matrix.Translation(translationVector);
                                 partState.Transform.TranslationVector += translationVector;
                                 partState.BoundingBox = new BoundingBox(Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix), Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
-
-
+                                _needSave = true;
                             }
                         }
                     }
@@ -1374,6 +1390,7 @@ namespace Utopia.Components
 
                                 
                                 RebuildFrameVertices();
+                                _needSave = true;
                             }
                         }
                         else if (_inputManager.MouseManager.CurMouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
@@ -1393,6 +1410,7 @@ namespace Utopia.Components
                                 }
                                 
                                 RebuildFrameVertices();
+                                _needSave = true;
                             }
                         }
                         
@@ -1617,7 +1635,7 @@ namespace Utopia.Components
 
             switch (Mode)
             {
-                case EditorMode.ModelView: DrawModelView(context); break;
+                case EditorMode.MainView: DrawModelView(context); break;
                 case EditorMode.ModelLayout: DrawModelLayout(context); break;
                 case EditorMode.FrameEdit: DrawFrameEdit(context); break;
                 default:
@@ -1655,7 +1673,7 @@ namespace Utopia.Components
 
             _d3DEngine.ImmediateContext.DrawIndexed(24, 0, 0); 
         }
-
+        
         private void DrawCrosshair(Vector3 position, float size, bool turnAxis)
         {
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
@@ -1669,7 +1687,7 @@ namespace Utopia.Components
 
             //Set Effect variables
             _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
-            _lines3DEffect.CBPerDraw.Values.Color = new Color4(0,1,0,1);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(0, 1, 0, 1);
             _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
@@ -1679,6 +1697,40 @@ namespace Utopia.Components
             _crosshairVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
 
             _d3DEngine.ImmediateContext.Draw(4, 0); 
+        }
+
+        private void DrawDirection()
+        {
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+
+            var transform = Matrix.Scaling(16) * _transform;
+            
+            //Set Effect variables
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(1, 1, 1, 1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+            _lines3DEffect.CBPerDraw.IsDirty = true;
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
+
+            //Set the vertex buffer to the Graphical Card.
+            _directionVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
+
+            _d3DEngine.ImmediateContext.Draw(6, 0);
+
+            transform = Matrix.Scaling(16) * Matrix.Translation(new Vector3(0,16,0)) * _transform;
+            //Set Effect variables
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(1, 1, 1, 1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+            _lines3DEffect.CBPerDraw.IsDirty = true;
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
+
+            //Set the vertex buffer to the Graphical Card.
+            _directionVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
+
+            _d3DEngine.ImmediateContext.Draw(6, 0); 
         }
 
         private void DrawModelView(DeviceContext context)
@@ -1702,6 +1754,9 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null)
             {
+                // draw 0,0
+                DrawDirection();
+
                 // draw each part with bounding box
 
                 var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex];
@@ -1761,8 +1816,8 @@ namespace Utopia.Components
                         var bb = voxelModelPartState.BoundingBox;
                         var size = Vector3.Subtract(bb.Maximum, bb.Minimum);
                         var sizef = Math.Max(Math.Max(size.X, size.Y), size.Z);
-                        
-                        var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,(bb.Maximum.Y - bb.Minimum.Y)/2,(bb.Maximum.Z - bb.Minimum.Z)/2);
+
+                        var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2, (bb.Maximum.Y - bb.Minimum.Y) / 2, (bb.Maximum.Z - bb.Minimum.Z) / 2);
 
                         var translate = voxelModelPartState.Transform.TranslationVector + center;
 
@@ -2018,6 +2073,18 @@ namespace Utopia.Components
                 _yGridVertextBuffer = null;
                 _zGridVertextBuffer = null;
             }
+        }
+
+        private void OnSaveClicked()
+        {
+            if (_visualVoxelModel == null)
+            {
+                _gui.MessageBox("No model is selected to be saved.", "Error");
+                return;
+            }
+
+            _manager.SaveModel(_visualVoxelModel);
+            _needSave = false;
         }
     }
 }
