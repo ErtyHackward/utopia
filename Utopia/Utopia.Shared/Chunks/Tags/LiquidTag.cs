@@ -25,6 +25,11 @@ namespace Utopia.Shared.Chunks.Tags
             get { return 1; }
         }
 
+        public override int GetHashCode()
+        {
+            return Pressure.GetHashCode() ^ LiquidType.GetHashCode() ^ Sourced.GetHashCode() ^ Id.GetHashCode();
+        }
+
         public override void Save(BinaryWriter writer)
         {
             writer.Write(LiquidType);
