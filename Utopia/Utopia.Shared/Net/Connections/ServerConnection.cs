@@ -30,6 +30,11 @@ namespace Utopia.Shared.Net.Connections
 // ReSharper restore NotAccessedField.Local
         private readonly ConcurrentQueue<IBinaryMessage> _concurrentQueue = new ConcurrentQueue<IBinaryMessage>();
 
+        public int QueueSize
+        {
+            get { return _concurrentQueue.Count; }
+        } 
+
         /// <summary>
         /// Gets or sets current client version
         /// </summary>
