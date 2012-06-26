@@ -14,6 +14,11 @@ namespace Utopia.Components
 {
     public partial class ModelEditorComponent
     {
+        private struct DialogImportModelStruct
+        {
+            public DialogSelection Files;
+        }
+
         private struct DialogAnimationEditStruct
         {
             public string Name;
@@ -59,6 +64,7 @@ namespace Utopia.Components
         private DialogControl<DialogModelEditStruct> _modelEditDialog;
         private DialogControl<DialogPartsEditStruct> _partEditDialog;
         private DialogControl<DialogFrameEditStruct> _frameEditDialog;
+        private DialogControl<DialogImportModelStruct> _importDialog; 
         private LabelControl _infoLabel;
 
         // navigation groups
@@ -84,7 +90,8 @@ namespace Utopia.Components
         private ListControl _statesList;
         private ListControl _partsList;
         private ListControl _framesList;
-        
+        private ButtonControl _saveButton;
+
 
         private void InitializeGui()
         {
@@ -99,6 +106,7 @@ namespace Utopia.Components
             _modelEditDialog = new DialogControl<DialogModelEditStruct>();
             _partEditDialog = new DialogControl<DialogPartsEditStruct>();
             _frameEditDialog = new DialogControl<DialogFrameEditStruct>();
+            _importDialog = new DialogControl<DialogImportModelStruct>();
             _infoLabel = new LabelControl { Bounds = new UniRectangle(300, 20, 600, 20) };
 
             _controls.Add(_modelNavigationWindow);
@@ -417,11 +425,19 @@ namespace Utopia.Components
             _mainToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _mainToolsGroup.Children.Add(new LabelControl { Text = "Storage", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
-            var saveButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Save" };
+            
+            _saveButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Save" };
+            _saveButton.Pressed += delegate { OnSaveClicked(); };
 
-            saveButton.Clicked += delegate { OnSaveClicked(); };
+            var exportButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Export" };
+            exportButton.Pressed += delegate { OnExport(); };
+            var importButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import" };
+            importButton.Pressed += delegate { OnImport(); };
 
-            _mainToolsGroup.Children.Add(saveButton);
+            _mainToolsGroup.Children.Add(_saveButton);
+            _mainToolsGroup.Children.Add(importButton);
+            _mainToolsGroup.Children.Add(exportButton);
+
             #endregion
 
             #region Frame tools

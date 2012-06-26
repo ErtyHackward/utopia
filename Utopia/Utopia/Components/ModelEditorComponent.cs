@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -535,7 +537,7 @@ namespace Utopia.Components
             _modelsList.SelectedItems.Add(_modelsList.Items.Count - 1);
 
             VisualVoxelModel = model;
-            _needSave = true;
+            NeedSave();
         }
 
         private void OnModelsEditPressed()
@@ -1351,7 +1353,7 @@ namespace Utopia.Components
                                 var translationMatrix = Matrix.Translation(translationVector);
                                 partState.Transform.TranslationVector += translationVector;
                                 partState.BoundingBox = new BoundingBox(Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix), Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
-                                _needSave = true;
+                                NeedSave();
                             }
                         }
                     }
@@ -1390,7 +1392,7 @@ namespace Utopia.Components
 
                                 
                                 RebuildFrameVertices();
-                                _needSave = true;
+                                NeedSave();
                             }
                         }
                         else if (_inputManager.MouseManager.CurMouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released && 
@@ -1410,7 +1412,7 @@ namespace Utopia.Components
                                 }
                                 
                                 RebuildFrameVertices();
-                                _needSave = true;
+                                NeedSave();
                             }
                         }
                         
@@ -2085,6 +2087,72 @@ namespace Utopia.Components
 
             _manager.SaveModel(_visualVoxelModel);
             _needSave = false;
+            _saveButton.Enabled = false;
+        }
+
+        private void NeedSave()
+        {
+            _needSave = true;
+            _saveButton.Enabled = true;
+        }
+
+        private void OnExport()
+        {
+            if (_visualVoxelModel == null)
+            {
+                _gui.MessageBox("No model is selected to be exported.", "Error");
+                return;
+            }
+            try
+            {
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia",
+                                        _visualVoxelModel.VoxelModel.Name + ".uvm");
+                var dir = Path.GetDirectoryName(path);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+                using (var fs = File.OpenWrite(path))
+                {
+                    var writer = new BinaryWriter(fs);
+                    _visualVoxelModel.VoxelModel.Save(writer);
+                    fs.SetLength(fs.Position); // truncate the file if we overwrinting 
+                }
+                _gui.MessageBox("Model saved at " + path, "Success");
+            }
+            catch (Exception x)
+            {
+                _gui.MessageBox(x.Message,"Error");
+            }
+        }
+
+        private void OnImport()
+        {
+            var e = new DialogImportModelStruct();
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
+
+            e.Files = new DialogSelection {SelectedIndex = -1, Elements = Directory.GetFiles(path, "*.uvm").Select(Path.GetFileName)};
+            _importDialog.ShowDialog(_screen, _d3DEngine.ViewPort, e, "Select file to import", OnModelImported);
+        }
+
+        private void OnModelImported(DialogImportModelStruct e)
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
+            var files = Directory.GetFiles(path, "*.uvm");
+
+            try
+            {
+                var file = files[e.Files.SelectedIndex];
+                using (var fs = File.OpenRead(file))
+                {
+                    var reader = new BinaryReader(fs);
+                    var voxelModel = new VoxelModel();
+                    voxelModel.Load(reader);
+                }
+            }
+            catch (Exception)
+            {
+                
+                
+            }
         }
     }
 }
