@@ -90,8 +90,19 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         {
             //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
             //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
+            //for (int i = 0; i < e.Message.BlockValues.Length; i++)
+            //{                
+            //    ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], e.Message.Tags != null ? e.Message.Tags[i] : null);
+            //}
+            SmartThread.ThreadPool.QueueWorkItem(ReplaceBlockThreaded, e, Amib.Threading.WorkItemPriority.Highest);
+        }
+
+        private void ReplaceBlockThreaded(ProtocolMessageEventArgs<BlocksChangedMessage> e)
+        {
+            //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
+            //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
             for (int i = 0; i < e.Message.BlockValues.Length; i++)
-            {                
+            {
                 ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], e.Message.Tags != null ? e.Message.Tags[i] : null);
             }
         }
@@ -257,14 +268,15 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
             }
 
-            //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy
+            //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
-            SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
+            //SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
+            CheckImpactThreaded(cube);
 
             //Raise event for sound
             OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
 
-            //Save the modified Chunk in local buffer DB
+            //Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
             //Is it Worth ????
             impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash;
