@@ -93,6 +93,7 @@
     <Compile Include="Debug\Interfaces\IDebugInfo.cs" />
     <Compile Include="Debug\PerfMonitor.cs" />
     <Compile Include="Debug\PerfTimer.cs" />
+    <Compile Include="Debug\StopWatchWrapping.cs" />
     <Compile Include="Effects\HLSLFramework\CBuffer.cs" />
     <Compile Include="Effects\HLSLFramework\Constant.cs" />
     <Compile Include="Effects\HLSLFramework\HLSLShaderWrap.cs" />
