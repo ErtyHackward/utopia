@@ -116,7 +116,7 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Removes a voxel model by its hash
+        /// Removes a voxel model by its name
         /// </summary>
         /// <param name="name"></param>
         public void DeleteModel(string name)
@@ -153,6 +153,26 @@ namespace Utopia.Entities.Voxel
                 {
                     _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, _voxelMeshFactory));
                 }
+            }
+        }
+
+        public bool Contains(string name)
+        {
+            lock (_syncRoot)
+            {
+                return _models.ContainsKey(name);
+            }
+        }
+
+        public void Rename(string oldName, string newName)
+        {
+            lock (_syncRoot)
+            {
+                VisualVoxelModel model;
+                if (!_models.TryGetValue(oldName, out model))
+                    throw new InvalidOperationException("No such model to rename");
+                _models.Remove(oldName);
+                _models.Add(newName, model);
             }
         }
     }

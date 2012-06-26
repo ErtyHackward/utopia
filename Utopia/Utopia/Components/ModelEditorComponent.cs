@@ -90,9 +90,9 @@ namespace Utopia.Components
         private readonly GuiManager _gui;
         private readonly List<S33M3CoreComponents.GUI.Nuclex.Controls.Control> _controls = new List<S33M3CoreComponents.GUI.Nuclex.Controls.Control>();
 
-        private int _selectedFrameIndex;
-        private int _selectedPartIndex;
-        private int _selectedAnimationIndex;
+        private int _selectedFrameIndex = -1;
+        private int _selectedPartIndex = -1;
+        private int _selectedAnimationIndex = -1;
 
         private bool _flipAxis;
 
@@ -155,8 +155,10 @@ namespace Utopia.Components
                     {
                         _partsList.Items.Add(voxelModelPart);
                     }
-                    if (_selectedPartIndex != -1)
-                        _partsList.SelectedItems.Add(_selectedPartIndex);
+                    if (SelectedPartIndex == -1)
+                        SelectedPartIndex = 0;
+
+                    _partsList.SelectedItems.Add(_selectedPartIndex);
 
                     _animationsList.Items.Clear();
                     _animationsList.SelectedItems.Clear();
@@ -169,6 +171,20 @@ namespace Utopia.Components
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, 0);
 
                     _instance = _visualVoxelModel.VoxelModel.CreateInstance();
+                }
+
+                if (_visualVoxelModel == null)
+                {
+                    _selectedPartIndex = -1;
+                    _selectedFrameIndex = -1;
+                    _selectedAnimationIndex = -1;
+
+                    _partsList.Items.Clear();
+                    _framesList.Items.Clear();
+                    _animationsList.Items.Clear();
+
+                    if (_statesList != null)
+                        _statesList.Items.Clear();
                 }
             }
         }
@@ -185,16 +201,11 @@ namespace Utopia.Components
                     _selectedPartIndex = value;
 
                     // update frames list
-
-
                     _framesList.Items.Clear();
-
                     if (_selectedPartIndex != -1)
                     {
-
-                        for (int i = 0; i < _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames.Count; i++)
+                        foreach (var frame in _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames)
                         {
-                            var frame = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[i];
                             _framesList.Items.Add(frame);
                         }
 
@@ -285,6 +296,7 @@ namespace Utopia.Components
                         _currentViewData = _mainViewData;
                     }
                     _mode = value;
+                    UpdateCamera();
                 }
             }
         }
@@ -330,6 +342,7 @@ namespace Utopia.Components
         /// <param name="manager"> </param>
         /// <param name="meshFactory"> </param>
         /// <param name="gui"> </param>
+        /// <param name="inputManager"> </param>
         public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui, InputsManager inputManager)
         {
             _inputManager = inputManager;
@@ -511,6 +524,46 @@ namespace Utopia.Components
 
             VisualVoxelModel = model;
             _needSave = true;
+        }
+
+        private void OnModelsEditPressed()
+        {
+            if (VisualVoxelModel == null)
+            {
+                _gui.MessageBox("Please select or create a model to edit");
+                return;
+            }
+
+            _modelEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogModelEditStruct { Name = VisualVoxelModel.VoxelModel.Name }, "Model edit", OnModelEdited);
+        }
+
+        private void OnModelEdited(DialogModelEditStruct e)
+        {
+            if (string.IsNullOrEmpty(e.Name))
+                e.Name = "rename_me";
+
+            if (_manager.Contains(VisualVoxelModel.VoxelModel.Name))
+            {
+                _manager.Rename(VisualVoxelModel.VoxelModel.Name, e.Name);
+            }
+
+            VisualVoxelModel.VoxelModel.Name = e.Name;
+            
+        }
+
+        private void OnModelsDeletePressed()
+        {
+            _gui.MessageBox(string.Format("Are you sure want to delete '{0}'?", VisualVoxelModel.VoxelModel.Name), "Confirmation", new[] { "Yes", "No" }, OnModelDeleted);
+        }
+
+        private void OnModelDeleted(string btn)
+        {
+            if (btn == "Yes")
+            {
+                _manager.DeleteModel(VisualVoxelModel.VoxelModel.Name);
+                VisualVoxelModel = null;
+                _modelsList.Items.RemoveAt(_modelsList.SelectedItems[0]);
+            }
         }
 
         private void OnPartsAddPressed()
@@ -1140,15 +1193,44 @@ namespace Utopia.Components
                 _instance.Update(ref timePassed);
         }
 
+        private void UpdateCamera()
+        {
+            switch (Mode)
+            {
+                case EditorMode.ModelView:
+                    if (SelectedStateIndex != -1)
+                    {
+                        var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
+                        UpdateTransformMatrix(_currentViewData, bb);
+                    }
+                    break;
+                case EditorMode.ModelLayout:
+                    if (SelectedStateIndex != -1)
+                    {
+                        var bb = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].BoundingBox;
+                        UpdateTransformMatrix(_currentViewData, bb);
+                    }
+                    break;
+                case EditorMode.FrameEdit:
+                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1)
+                    {
+                        var frame = _visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex];
+                        var box = new BoundingBox(new Vector3(), frame.BlockData.ChunkSize);
+                        UpdateTransformMatrix(_currentViewData, box);
+                    }
+                    break;
+            }
+        }
+
         /// <summary>
         /// Allows the game component to update itself.
         /// </summary>
         /// <param name="timeSpent">Provides a snapshot of timing values.</param>
         public override void Update( GameTime timeSpent)
         {
-            if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null) return;
+            if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null || GuiManager.DialogClosed ) return;
 
-            if (_gui.Screen.IsMouseOverGui)
+            if ( _gui.Screen.IsMouseOverGui)
             {
                 return;
             }
@@ -1604,7 +1686,7 @@ namespace Utopia.Components
             // draw the model
             if (_visualVoxelModel != null)
             {
-                RenderStatesRepo.ApplyRaster(DXStates.Rasters.Default);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
@@ -1937,6 +2019,5 @@ namespace Utopia.Components
                 _zGridVertextBuffer = null;
             }
         }
-        
     }
 }

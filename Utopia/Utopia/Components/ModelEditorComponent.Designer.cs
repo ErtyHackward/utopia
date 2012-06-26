@@ -124,6 +124,10 @@ namespace Utopia.Components
             var modelsDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
 
             modelsAddButton.Pressed += delegate { OnModelsAddPressed(); };
+            modelsEditButton.Pressed += delegate { OnModelsEditPressed(); };
+            modelsDeleteButton.Pressed += delegate { OnModelsDeletePressed(); };
+
+
             _modelsList = new ListControl { Name = "modelsList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _modelsList.Bounds = new UniRectangle(0, 0, 180, 20);
             _modelsList.SelectionMode = ListSelectionMode.Single;
