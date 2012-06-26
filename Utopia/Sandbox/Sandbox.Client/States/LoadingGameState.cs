@@ -225,6 +225,7 @@ namespace Sandbox.Client.States
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
             var soundManager = _ioc.Get<GameSoundManager>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
+            var voxelModelManager = _ioc.Get<VoxelModelManager>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -255,6 +256,7 @@ namespace Sandbox.Client.States
             AddComponent(sharedFrameCB);
             AddComponent(soundManager);
             AddComponent(staggingBackBuffer);
+            AddComponent(voxelModelManager);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

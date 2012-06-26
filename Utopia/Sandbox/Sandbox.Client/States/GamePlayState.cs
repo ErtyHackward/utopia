@@ -6,6 +6,7 @@ using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Entities.Voxel;
 using Utopia.GUI;
 using Utopia.Network;
 using Utopia.Shared.Cubes;
@@ -73,6 +74,7 @@ namespace Sandbox.Client.States
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
+            var voxelModelManager = _ioc.Get<VoxelModelManager>();
             fadeComponent.Visible = false;
 
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
@@ -99,6 +101,7 @@ namespace Sandbox.Client.States
             AddComponent(staggingBackBuffer);
             AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
+            AddComponent(voxelModelManager);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

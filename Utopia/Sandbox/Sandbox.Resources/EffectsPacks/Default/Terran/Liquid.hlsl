@@ -122,7 +122,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.EmissiveLight.a = clamp(output.EmissiveLight.a, 0.6, 1);
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
-	output.causticPower = clamp( ((length(worldPosition.xyz) - fogdist/4) / (fogdist/2)), 0, 1);
+	output.causticPower = clamp( ((length(worldPosition.xyz) - 30) / 20), 0, 1);
 	if(facetype != 3) output.causticPower = 1;
 	output.BiomeData = input.VertexInfo2.yz;
     return output;

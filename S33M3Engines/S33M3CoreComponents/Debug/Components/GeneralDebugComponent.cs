@@ -64,7 +64,7 @@ namespace S33M3CoreComponents.Debug.Components
             _cpuCounter.InstanceName = "_Total";
             try
             {
-                _ramCounter = ToDispose(new PerformanceCounter("Memory", "Available MBytes"));
+                _ramCounter = ToDispose(new PerformanceCounter("Memory", "Available MBytes", true));
             }
             catch (InvalidOperationException ex)
             {
@@ -76,7 +76,7 @@ namespace S33M3CoreComponents.Debug.Components
         {
             if (_inputsManager.MouseManager.CurMouseState.middleButton == Inputs.MouseHandler.ButtonState.Pressed)
             {
-                _usedRam = ((int)_proc.PrivateMemorySize64 / (1024 * 1024)).ToString();
+                _usedRam = (_proc.PrivateMemorySize64 / (1024 * 1024)).ToString();
                 _freeRam = getAvailableRAM();
             }
         }
