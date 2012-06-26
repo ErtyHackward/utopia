@@ -112,8 +112,10 @@ namespace Utopia.Entities.Voxel
             lock (_syncRoot)
             {
                 if (_models.ContainsKey(model.VoxelModel.Name))
+                {
                     _models.Remove(model.VoxelModel.Name);
-                
+                    _storage.Delete(model.VoxelModel.Name);
+                }
                 _models.Add(model.VoxelModel.Name, model);
                 _storage.Save(model.VoxelModel);
             }
