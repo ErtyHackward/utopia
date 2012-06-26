@@ -102,7 +102,7 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Adds a new voxel model and saves it
+        /// Adds a new voxel model or updates it
         /// </summary>
         /// <param name="model"></param>
         public void SaveModel(VisualVoxelModel model)
@@ -110,9 +110,13 @@ namespace Utopia.Entities.Voxel
             model.VoxelModel.UpdateHash();
 
             lock (_syncRoot)
+            {
+                if (_models.ContainsKey(model.VoxelModel.Name))
+                    _models.Remove(model.VoxelModel.Name);
+                
                 _models.Add(model.VoxelModel.Name, model);
-
-            _storage.Save(model.VoxelModel);
+                _storage.Save(model.VoxelModel);
+            }
         }
 
         /// <summary>
@@ -129,7 +133,7 @@ namespace Utopia.Entities.Voxel
                     _models.Remove(name);
                 }
 
-                _storage.Delete(model.VoxelModel.Hash);
+                _storage.Delete(model.VoxelModel.Name);
             }
         }
 
@@ -171,6 +175,9 @@ namespace Utopia.Entities.Voxel
                 VisualVoxelModel model;
                 if (!_models.TryGetValue(oldName, out model))
                     throw new InvalidOperationException("No such model to rename");
+                model.VoxelModel.Name = newName;
+                _storage.Delete(oldName);
+                _storage.Save(model.VoxelModel);
                 _models.Remove(oldName);
                 _models.Add(newName, model);
             }

@@ -69,6 +69,7 @@ namespace Utopia.Components
         private Control _framesGroup;
 
         // tools group
+        private Control _mainToolsGroup;
         private Control _frameToolsGroup;
         private Control _layoutToolsGroup;
         private Control _modesButtonsGroup;
@@ -276,13 +277,14 @@ namespace Utopia.Components
             return listWindow;
         }
         
-        private void OnViewMode()
+        private void OnMainViewMode()
         {
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_modelsGroup);
 
             _toolsWindow.Children.Clear();
             _toolsWindow.Children.Add(_modesButtonsGroup);
+            _toolsWindow.Children.Add(_mainToolsGroup);
             
             
             UpdateLayout();
@@ -387,9 +389,9 @@ namespace Utopia.Components
 
             _modesButtonsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            var viewModeButton = new StickyButtonControl { Text = "View", Sticked = true };
-            viewModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            viewModeButton.Pressed += delegate { Mode = EditorMode.ModelView; OnViewMode(); };
+            var mainModeButton = new StickyButtonControl { Text = "Main", Sticked = true };
+            mainModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
+            mainModeButton.Pressed += delegate { Mode = EditorMode.MainView; OnMainViewMode(); };
 
             var layoutModeButton = new StickyButtonControl { Text = "Layout" };
             layoutModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
@@ -401,14 +403,26 @@ namespace Utopia.Components
 
             var animationModeButton = new StickyButtonControl { Text = "Anim" };
             animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            animationModeButton.Pressed += delegate { Mode = EditorMode.ModelView; OnAnimationMode(); };
+            animationModeButton.Pressed += delegate { Mode = EditorMode.MainView; OnAnimationMode(); };
 
-            _modesButtonsGroup.Children.Add(viewModeButton);
+            _modesButtonsGroup.Children.Add(mainModeButton);
             _modesButtonsGroup.Children.Add(layoutModeButton);
             _modesButtonsGroup.Children.Add(frameModeButton);
             _modesButtonsGroup.Children.Add(animationModeButton);
             
             _modesButtonsGroup.UpdateLayout();
+
+            #region Main tools
+
+            _mainToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            _mainToolsGroup.Children.Add(new LabelControl { Text = "Storage", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+            var saveButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Save" };
+
+            saveButton.Clicked += delegate { OnSaveClicked(); };
+
+            _mainToolsGroup.Children.Add(saveButton);
+            #endregion
 
             #region Frame tools
             _frameToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 310), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };

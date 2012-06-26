@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Utopia.Shared;
 using Utopia.Shared.Entities.Models;
@@ -23,17 +24,18 @@ namespace Utopia.Entities
         /// <returns></returns>
         protected override string CreateDataBase()
         {
-            return @"CREATE TABLE [models] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);";
+            return @"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [data] blob NOT NULL);";
         }
 
         /// <summary>
         /// Indicates if the storage contains a model with hash specified
         /// </summary>
-        /// <param name="hash"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        bool IVoxelModelStorage.Contains(Md5Hash hash)
+        bool IVoxelModelStorage.Contains(string name)
         {
-            using (var reader = Query(string.Format("SELECT id FROM models WHERE id = {0}", hash.GetHashCode())))
+            CheckName(name);
+            using (var reader = Query(string.Format("SELECT id FROM models WHERE id = '{0}'", name)))
             {
                 return reader.HasRows;
             }
@@ -42,11 +44,12 @@ namespace Utopia.Entities
         /// <summary>
         /// Loads a model form the storage
         /// </summary>
-        /// <param name="hash"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        VoxelModel IVoxelModelStorage.Load(Md5Hash hash)
+        VoxelModel IVoxelModelStorage.Load(string name)
         {
-            using (var reader = Query(string.Format("SELECT data FROM models WHERE id={0}", hash.GetHashCode())))
+            CheckName(name);
+            using (var reader = Query(string.Format("SELECT data FROM models WHERE id = '{0}'", name)))
             {
                 reader.Read();
                 var bytes = (byte[])reader.GetValue(0);
@@ -60,18 +63,29 @@ namespace Utopia.Entities
         /// <param name="model"></param>
         void IVoxelModelStorage.Save(VoxelModel model)
         {
+            CheckName(model.Name);
             var bytes = model.Serialize();
 
-            InsertBlob(string.Format("INSERT INTO models (id,data) VALUES ({0}, @blob)", model.Hash.GetHashCode()), bytes);
+            InsertBlob(string.Format("INSERT INTO models (id,data) VALUES ('{0}', @blob)", model.Name), bytes);
         }
 
         /// <summary>
         /// Removes model from the storage
         /// </summary>
-        /// <param name="hash"></param>
-        void IVoxelModelStorage.Delete(Md5Hash hash)
+        /// <param name="name"></param>
+        void IVoxelModelStorage.Delete(string name)
         {
-            Execute(string.Format("DELETE FROM models WHERE id = {0}", hash.GetHashCode()));
+            CheckName(name);
+            Execute(string.Format("DELETE FROM models WHERE id = '{0}'", name));
+        }
+
+        private void CheckName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name", "Null or empty names are not allowed");
+
+            if (name.Contains("'"))
+                throw new FormatException("Model name could not contan a \"'\" symbol");
         }
 
         /// <summary>

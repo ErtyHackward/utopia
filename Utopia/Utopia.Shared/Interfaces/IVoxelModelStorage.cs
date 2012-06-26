@@ -10,18 +10,18 @@ namespace Utopia.Shared.Interfaces
     public interface IVoxelModelStorage
     {
         /// <summary>
-        /// Indicates if the storage contains a model with hash specified
+        /// Indicates if the storage contains a model with name specified
         /// </summary>
-        /// <param name="hash"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        bool Contains(Md5Hash hash);
+        bool Contains(string name);
 
         /// <summary>
         /// Loads a model form the storage
         /// </summary>
-        /// <param name="hash"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        VoxelModel Load(Md5Hash hash);
+        VoxelModel Load(string name);
 
         /// <summary>
         /// Saves a new model to the storage
@@ -32,8 +32,8 @@ namespace Utopia.Shared.Interfaces
         /// <summary>
         /// Removes model from the storage
         /// </summary>
-        /// <param name="hash"></param>
-        void Delete(Md5Hash hash);
+        /// <param name="name"></param>
+        void Delete(string name);
 
         /// <summary>
         /// Allows to fetch all models
