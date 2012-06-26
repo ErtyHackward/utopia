@@ -11,7 +11,7 @@ namespace Sandbox.Client
 
         /// <summary>
         /// Indicates whether the debug should be shown
-        /// </summary>
+        /// </summary>S
         public static bool ShowDebug;
 
         /// <summary>
