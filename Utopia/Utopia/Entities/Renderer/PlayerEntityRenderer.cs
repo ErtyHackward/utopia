@@ -5,6 +5,7 @@ using System.Text;
 using Utopia.Entities.Voxel;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.Shared.Entities.Models;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
@@ -26,6 +27,7 @@ using S33M3_DXEngine.Main;
 using Utopia.Resources.ModelComp;
 using S33M3Resources.Effects.Basics;
 using S33M3Resources.Structs;
+using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Entities.Renderer
 {
@@ -36,6 +38,7 @@ namespace Utopia.Entities.Renderer
         private D3DEngine _d3DEngine;
         private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
+        private readonly VoxelModelManager _modelManager;
         private ShaderResourceView _cubeTexture_View;
         public SharedFrameCB SharedFrameCB { get; set;}
 
@@ -44,6 +47,9 @@ namespace Utopia.Entities.Renderer
         private BoundingBox3D renderer;
         private IVisualEntityContainer _visualEntity;
         private HLSLVertexPositionColor _dummyEntityRenderer;
+        private VisualVoxelModel _model;
+        private VoxelModelInstance _playerModelInstance;
+        private HLSLVoxelModel _voxelEffect;
         #endregion
 
         #region Public variables/properties
@@ -58,13 +64,16 @@ namespace Utopia.Entities.Renderer
         public PlayerEntityRenderer(D3DEngine d3DEngine,
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
-                                    VisualWorldParameters visualWorldParameters)
+                                    VisualWorldParameters visualWorldParameters,
+                                    VoxelModelManager modelManager)
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
+            _modelManager = modelManager;
 
             _dummyEntityRenderer = new HLSLVertexPositionColor(_d3DEngine.Device);
+
         }
 
         private void SetUpRenderer()
@@ -76,10 +85,20 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public void Initialize()
         {
+
         }
 
         public void LoadContent(DeviceContext context)
         {
+            _model = _modelManager.GetModel("Player");
+            if (_model != null)
+                _playerModelInstance = _model.VoxelModel.CreateInstance();
+
+            _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+            if (_model != null)
+            {
+                _model.BuildMesh();
+            }
             //_entityEffect = ToDispose(new HLSLTerran(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame));
             //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
@@ -90,7 +109,7 @@ namespace Utopia.Entities.Renderer
 
         public void UnloadContent()
         {
-
+            
         }
 
         #endregion
@@ -102,8 +121,25 @@ namespace Utopia.Entities.Renderer
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
 
             //Applying Correct Render States
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
-            renderer.Draw(context, _camManager.ActiveCamera);
+            if (_model != null)
+            {
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled,
+                             DXStates.DepthStencils.DepthEnabled);
+
+                _voxelEffect.Begin(context);
+                _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(  _camManager.ActiveCamera.ViewProjection3D);
+                _voxelEffect.CBPerFrame.IsDirty = true;
+                _voxelEffect.Apply(context);
+
+                _model.Draw(context, _voxelEffect, _playerModelInstance.State);
+            }
+            else
+            {
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled,
+                                             DXStates.DepthStencils.DepthEnabled);
+                renderer.Draw(context, _camManager.ActiveCamera);
+            }
 
             //_entityEffect.Begin(context);
 
