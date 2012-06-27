@@ -70,6 +70,9 @@ namespace S33M3CoreComponents.Debug.Components
             {
                 logger.Error(ex.Message);
             }
+
+            _usedRam = "-";
+            _freeRam = "-";
         }
 
         public override void Update(GameTime timeSpent)

@@ -165,72 +165,6 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-
-        private bool isUpdateInSync(ChunksThreadSyncMode syncMode)
-        {
-            VisualChunk chunk;
-            bool inSync = true;
-            int nbrThread;
-            switch (syncMode)
-            {
-                case ChunksThreadSyncMode.UpdateReadyForLightPropagation:
-                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-                    {
-                        chunk = SortedChunks[chunkIndice];
-                        if (chunk.State == ChunkState.Empty ||
-                            chunk.State == ChunkState.LandscapeCreated || 
-                            chunk.State == ChunkState.UserChanged        || chunk.ThreadStatus == ThreadStatus.Locked)
-                        {
-                            inSync = false;
-                            break;
-                        }
-                    }
-                    break;
-                case ChunksThreadSyncMode.UpdateReadyForMeshCreation:
-                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-                    {
-                        chunk = SortedChunks[chunkIndice];
-                        if (chunk.State == ChunkState.Empty ||
-                            chunk.State == ChunkState.LandscapeCreated ||
-                            chunk.State == ChunkState.LightsSourceCreated || 
-                            chunk.State == ChunkState.UserChanged
-                            || chunk.ThreadStatus == ThreadStatus.Locked)
-                        {
-                            inSync = false;
-                            break;
-                        }
-                    }
-                    break;
-                case ChunksThreadSyncMode.HighPriorityReadyToBeSendToGraphicalCard:
-                    nbrThread = 0;
-                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-                    {
-                        chunk = SortedChunks[chunkIndice];
-                        if (chunk.ThreadPriority == WorkItemPriority.Highest) nbrThread++;
-                        if (chunk.State == ChunkState.MeshesChanged && chunk.ThreadPriority == WorkItemPriority.Highest)
-                        {
-                            nbrThread--;
-                            break;
-                        }
-                        inSync = nbrThread == 0;
-                    }
-                    break;
-                case ChunksThreadSyncMode.ReadyForWrapping:
-                    for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-                    {
-                        chunk = SortedChunks[chunkIndice];
-                        if (chunk.State != ChunkState.DisplayInSyncWithMeshes || chunk.ThreadStatus == ThreadStatus.Locked)
-                        {
-                            inSync = false;
-                            break;
-                        }
-                    }
-                    break;
-            }
-
-            return inSync;
-        }
-
         /// <summary>
         /// Sort the chunks array if needed
         /// </summary>
@@ -250,8 +184,6 @@ namespace Utopia.Worlds.Chunks
         #region Update WRAPPING
         private void CheckWrapping()
         {
-            //if (!isUpdateInSync(ChunksThreadSyncMode.ReadyForWrapping)) return;
-
             if(SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
