@@ -73,12 +73,12 @@ namespace Utopia.Entities.Managers
         private void _timer_OnTimerRaised()
         {
 
-            CollectSurrendingDynamicPlayerEntities(); //They have their own collection
-            CollectSurrendingStaticEntities();  //They are stored inside chunks !
+            CollectsurroundingDynamicPlayerEntities(); //They have their own collection
+            CollectsurroundingStaticEntities();  //They are stored inside chunks !
             isDirty = false;
         }
 
-        private void CollectSurrendingStaticEntities()
+        private void CollectsurroundingStaticEntities()
         {
             if (_worldChunks.SortedChunks == null) return;
 
@@ -91,7 +91,7 @@ namespace Utopia.Entities.Managers
                 //Limit to projected 
                 if (chunk == null)
                 {
-                    Debug.WriteLine("CollectSurrendingStaticEntities bug, fix me please");
+                    Debug.WriteLine("CollectsurroundingStaticEntities bug, fix me please");
                     continue;
                 }
                 foreach (var entity in chunk.VisualSpriteEntities)
@@ -105,7 +105,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private void CollectSurrendingDynamicPlayerEntities()
+        private void CollectsurroundingDynamicPlayerEntities()
         {
             //Clear the list
             _entitiesNearPlayer.Clear();

@@ -109,12 +109,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         /// <summary>
         /// Check the impact of the block replacement.
-        /// Mostly will check wish of the surrending visualchunks must be refresh (lighting or cube masked face reason).
+        /// Mostly will check wish of the surrounding visualchunks must be refresh (lighting or cube masked face reason).
         /// This is only for drawing purpose, not landscape modification here.
         /// </summary>
         /// <param name="cubeCoordinates">The cube that has been modified</param>
         /// <param name="replacementCubeId">The type of the modified cube</param>
-        private void CheckImpactThreaded(TerraCubeWithPosition cube)
+        private void CheckImpact(TerraCubeWithPosition cube)
         {
             Int64 mainChunkId;
 
@@ -128,10 +128,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Refresh the Visual Entity if needed !
             VisualChunk NeightBorChunk;
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z);
-            //if (NeightBorChunk.Entities.IsDirty)
-            //{
-            //    NeightBorChunk.RefreshVisualEntities();
-            //}
 
             _lightManager.CreateLightSources(ref cubeRange);
 
@@ -139,24 +135,23 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             cubeRange.Position.Z--;
             cubeRange.Size.X += 2;
             cubeRange.Size.Z += 2;
-            //cubeRange.Max.X++;
-            //cubeRange.Max.Z++;
 
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
             CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
 
-            //Find the chunks that have been impacted around the 8 surrending chunks
-            NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+            //Find the chunks that have been impacted around the 8 surrounding chunks
+            NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
             NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
             NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 2 : 1;
             mainChunkId = NeightBorChunk.ChunkID;
+
             //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -165,7 +160,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -174,7 +169,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -183,7 +178,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -192,7 +187,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -201,7 +196,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -210,7 +205,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -219,7 +214,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.LandscapeLightsPropagated;
+                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UserChangeOrder = !profile.IsBlockingLight ? 1 : 2;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -271,7 +266,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
             //SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
-            CheckImpactThreaded(cube);
+            CheckImpact(cube);
 
             //Raise event for sound
             OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });

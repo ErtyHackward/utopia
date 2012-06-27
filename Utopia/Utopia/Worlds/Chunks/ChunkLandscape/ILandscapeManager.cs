@@ -15,6 +15,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         EntityFactory EntityFactory { get; set; }
 
-        void CreateLandScape(VisualChunk chunk, bool Async);
+        void CreateLandScape(VisualChunk chunk);
     }
 }

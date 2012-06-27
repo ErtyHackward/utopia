@@ -43,7 +43,8 @@ namespace Utopia.Worlds.Chunks
         private object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
         private object Lock_Draw = new object(); //Multithread Locker
         private CameraManager<ICameraFocused> _cameraManager;
-
+        private WorldChunks _worldChunkManager;
+        
         private IEntityPickingManager _entityPickingManager;
 
         #endregion
@@ -72,16 +73,29 @@ namespace Utopia.Worlds.Chunks
         public Vector3D ChunkCenter { get; set; } 
         public Vector2I ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
-        public ChunkState State { get; set; }                 // Chunk State
+
+        private ChunkState _s;
+
+        public ChunkState State
+        {
+            get { return _s; }
+            set { _s = value; }
+        }
+
+        //public ChunkState State { get; set; }                 // Chunk State
+        
+        
+        public bool IsOutsideLightSourcePropagated { get; set; }
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
         public int UserChangeOrder { get; set; }              // Variable for sync drawing at rebuild time.
         public bool IsBorderChunk { get; set; }               // Set to true if the chunk is located at the border of the visible world !
         private bool _ready2Draw;
+        public VisualChunk[] SurroundingChunks;
         /// <summary>
         /// Whenever the chunk mesh are ready to be rendered to screen
         /// </summary>
-        public bool IsReady2Draw
+        public bool isExistingMesh4Drawing
         {
             get { return _ready2Draw; }
             internal set 
@@ -183,13 +197,14 @@ namespace Utopia.Worlds.Chunks
                             ref Range3I cubeRange, 
                             SingleArrayChunkContainer singleArrayContainer,
                             IEntityPickingManager entityPickingManager,
-                            CameraManager<ICameraFocused> cameraManager)
+                            CameraManager<ICameraFocused> cameraManager,
+                            WorldChunks worldChunkManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
             _d3dEngine = d3dEngine;
-
+            _worldChunkManager = worldChunkManager;
 
 #if DEBUG
             _blockpickedUPEffect = new HLSLVertexPositionColor(_d3dEngine.Device);
@@ -202,7 +217,7 @@ namespace Utopia.Worlds.Chunks
             CubeRange = cubeRange;
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
-            IsReady2Draw = false;
+            isExistingMesh4Drawing = false;
             LightPropagateBorderOffset = new Vector2I(0, 0);
             Entities.CollectionDirty += Entities_CollectionDirty;
 
@@ -213,6 +228,25 @@ namespace Utopia.Worlds.Chunks
         public void RefreshBorderChunk()
         {
             IsBorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);
+
+            //Get the surrounding chunks if BorderChunk is null
+            if (IsBorderChunk == false)
+            {
+                SurroundingChunks = _worldChunkManager.GetsurroundingChunkFromChunkCoord(ChunkPosition.X, ChunkPosition.Y);
+            }
+            else
+            {
+                SurroundingChunks = new VisualChunk[0];
+            }
+        }
+
+        public bool SurroundingChunksMinimumState(ChunkState minimumState)
+        {
+            foreach (var chunk in SurroundingChunks)
+            {
+                if (chunk.State < minimumState) return false;
+            }
+            return true;
         }
 
         public void SetNewEntityCollection(EntityCollection newEntities)
@@ -246,7 +280,7 @@ namespace Utopia.Worlds.Chunks
             SendLiquidCubeMeshToGraphicCard();      //See Through Cubes
             SendStaticEntitiesToGraphicalCard();    //Static Entities Sprite + Voxel
             State = ChunkState.DisplayInSyncWithMeshes;
-            IsReady2Draw = true;
+            isExistingMesh4Drawing = true;
         }
 
         //Solid Cube
