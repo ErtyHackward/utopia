@@ -232,7 +232,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, BlockTag blockTag = null)
         {
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-
+            if (impactedChunk.ThreadStatus == ThreadStatus.Locked)
+            {
+                Console.WriteLine("Change done inside a locked thread currently processing : " + impactedChunk.State);
+            }
             //Create the new cube
             TerraCube newCube = new TerraCube(replacementCubeId);
 
