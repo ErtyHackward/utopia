@@ -148,156 +148,18 @@ namespace Utopia.Worlds.Chunks
         //This could lead to "lag" if too many chunks are sending their new mesh to the GC at the same time (during the same frame)
         //Maybe it will be worth to check is a limit of chunk by update must be placed (But this will slow down chunk creation time)
         private void SendMeshesToGC()
-        {            
+        {
+            int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged && x.ThreadStatus == ThreadStatus.Idle))
+            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged && 
+                                                             x.ThreadStatus == ThreadStatus.Idle &&
+                                                             x.UpdateOrder == maximumUpdateOrderPossible))
             {
+                chunk.UpdateOrder = 0;
                 chunk.SendCubeMeshesToBuffers();
             }
         }
 
-
-
-
-
-
-
-
-        private void ChunkUpdateManagerOLD()
-        {
-            ProcessChunks_Empty();
-            ProcessChunks_LandscapeCreated();
-            ProcessChunks_LandscapeLightsSourceCreated();
-            ProcessChunks_LandscapeLightsPropagated();
-            ProcessChunks_MeshesChanged();
-        }
-
-        private void ProcessChunks_Empty()
-        {
-            VisualChunk chunk;
-
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-
-                if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
-
-                if (chunk.State == ChunkState.Empty)
-                {
-                    _landscapeManager.CreateLandScape(chunk);
-                }
-            }
-        }
-
-        private void ProcessChunks_LandscapeCreated()
-        {
-            VisualChunk chunk;
-
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-                if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
-
-                if (chunk.State == ChunkState.LandscapeCreated ||
-                    chunk.State == ChunkState.UserChanged)
-                {
-                    _lightingManager.CreateChunkLightSources(chunk);
-                }
-            }
-        }
-
-        // Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
-        private void ProcessChunks_LandscapeLightsSourceCreated()
-        {
-            processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForLightPropagation);
-
-            VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-                if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
-                {
-                    if (chunk.ThreadStatus == ThreadStatus.Locked) continue; //Thread in working states ==> Cannot touch it !!!
-
-                    if (chunk.State == ChunkState.LightsSourceCreated)
-                    {
-                        _lightingManager.PropagateInnerChunkLightSources(chunk);
-                    }
-                }
-            }
-        }
-
-        // Syncronisation STEP !!! ==> No previous state pending job possible !! Wait for them all to be finished !
-        private void ProcessChunks_LandscapeLightsPropagated()
-        {
-            processInsync = isUpdateInSync(ChunksThreadSyncMode.UpdateReadyForMeshCreation);
-
-            VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-                if (processInsync || chunk.ThreadPriority == WorkItemPriority.Highest)
-                {
-                    if (chunk.ThreadStatus == ThreadStatus.Locked) 
-                        continue; //Thread in working states ==> Cannot touch it !!!
-
-                    if (chunk.State == ChunkState.InnerLightsSourcePropagated)
-                    {
-                        _chunkMeshManager.CreateChunkMesh(chunk);
-                    }
-                }
-            }
-        }
-
-        int userOrder = 0;
-        private void ProcessChunks_MeshesChanged()
-        {
-            userOrder = CheckUserModifiedChunks();
-            VisualChunk chunk;
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-                if (chunk.ThreadStatus == ThreadStatus.Locked) 
-                    continue; //Thread in working states ==> Cannot touch it !!!
-
-                if (chunk.UserChangeOrder != userOrder && chunk.ThreadPriority == WorkItemPriority.Highest)
-                { //If this thread is user changed
-                    continue;
-                }
-
-                if (chunk.State == ChunkState.MeshesChanged)
-                {
-                    chunk.UserChangeOrder = 0;
-                    chunk.ThreadPriority = WorkItemPriority.Normal;
-                    //If Executed in a thread ==> Must be executed on a deferred context, with a Replay system in place.
-                    chunk.SendCubeMeshesToBuffers();
-                }
-            }
-        }
-
-        private int CheckUserModifiedChunks()
-        {
-            VisualChunk chunk;
-            int nbrUserThreads = 0;
-            int lowestOrder = int.MaxValue;
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
-            {
-                chunk = SortedChunks[chunkIndice];
-                if (chunk.ThreadPriority == WorkItemPriority.Highest && chunk.State != ChunkState.DisplayInSyncWithMeshes)
-                    nbrUserThreads++;
-                if (chunk.State == ChunkState.MeshesChanged && chunk.ThreadPriority == WorkItemPriority.Highest)
-                {
-                    if (chunk.UserChangeOrder < lowestOrder && chunk.UserChangeOrder > 0) lowestOrder = chunk.UserChangeOrder;
-                    nbrUserThreads--;
-                }
-            }
-
-            if (nbrUserThreads == 0) //All my threads are ready to render !
-            {
-                return lowestOrder;
-            }
-            else return 0;
-        }
 
         private bool isUpdateInSync(ChunksThreadSyncMode syncMode)
         {
@@ -383,7 +245,9 @@ namespace Utopia.Worlds.Chunks
         #region Update WRAPPING
         private void CheckWrapping()
         {
-            if (!isUpdateInSync(ChunksThreadSyncMode.ReadyForWrapping)) return;
+            //if (!isUpdateInSync(ChunksThreadSyncMode.ReadyForWrapping)) return;
+
+            if(SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
