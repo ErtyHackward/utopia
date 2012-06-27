@@ -26,6 +26,28 @@ namespace Utopia.Worlds.Chunks
         #region public methods
         public override void Update(GameTime timeSpend)
         {
+            //if (_camManager.ActiveCamera.WorldPosition.Value.Y < 400)
+            //{
+            //    ChunkUpdateManager();
+            //    CheckWrapping();
+            //    SortChunks();
+            //}
+
+            //// make chunks appear slowly and not hurt the eyes
+            //for (int i = _transparentChunks.Count - 1; i >= 0; i--)
+            //{
+            //    var transparentChunk = _transparentChunks[i];
+            //    transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
+            //    if (transparentChunk.Opaque >= 1)
+            //    {
+            //        transparentChunk.Opaque = 1;
+            //        _transparentChunks.RemoveAt(i);
+            //    }
+            //}
+        }
+
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
             if (_camManager.ActiveCamera.WorldPosition.Value.Y < 400)
             {
                 ChunkUpdateManager();
@@ -37,7 +59,7 @@ namespace Utopia.Worlds.Chunks
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
             {
                 var transparentChunk = _transparentChunks[i];
-                transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
+                transparentChunk.Opaque += 2f * elapsedTime;
                 if (transparentChunk.Opaque >= 1)
                 {
                     transparentChunk.Opaque = 1;
