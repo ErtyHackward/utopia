@@ -162,20 +162,20 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             foreach (var BorderCube in cubeRangeWithBorder.AllExclude(chunk.CubeRange))
             {
-                PropagateLightSources(BorderCube);
+                PropagateLightSourcesForced(BorderCube);
             }
         }
 
-                //Can only be done if surrounding chunks have their landscape initialized !
-        public void PropagateLightSources(Vector3I cubePosition)
+        //Can only be done if surrounding chunks have their landscape initialized !
+        //Will force lighting from cubes passed, even if not Alpha is not 255 = borderAsLightSource = true
+        private void PropagateLightSourcesForced(Vector3I cubePosition)
         {
             CubeProfile cubeprofile;
             int index = _cubesHolder.Index(ref cubePosition);
 
             cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
             if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) return;
-            if (_cubesHolder.Cubes[index].EmissiveColor.A == 255) 
-                PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
+            PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
             if (cubeprofile.IsEmissiveColorLightSource)
             {
                 if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
