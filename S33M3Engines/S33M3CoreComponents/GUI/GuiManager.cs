@@ -276,7 +276,8 @@ namespace S33M3CoreComponents.GUI
             _screen.Desktop.Children.Add(mbWindow);
 
             // block all underlying controls
-            _screen.Desktop.Children.Add(DialogHelper.DialogBg);
+            if (!_screen.Desktop.Children.Contains(DialogHelper.DialogBg))
+                _screen.Desktop.Children.Add(DialogHelper.DialogBg);
             DialogHelper.DialogBg.BringToFront();
 
             mbWindow.BringToFront();
