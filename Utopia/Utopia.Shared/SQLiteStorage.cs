@@ -197,7 +197,6 @@ namespace Utopia.Shared
                         param.Value = blob;
                         cmd.Parameters.Add(param);
                         return cmd.ExecuteNonQuery();
-
                     }
                 }
                 else

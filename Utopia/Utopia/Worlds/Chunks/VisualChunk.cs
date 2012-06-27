@@ -88,7 +88,7 @@ namespace Utopia.Worlds.Chunks
         public bool IsOutsideLightSourcePropagated { get; set; }
         public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
-        public int UserChangeOrder { get; set; }              // Variable for sync drawing at rebuild time.
+        public int UpdateOrder { get; set; }              // Variable for sync drawing at rebuild time.
         public bool IsBorderChunk { get; set; }               // Set to true if the chunk is located at the border of the visible world !
         private bool _ready2Draw;
         public VisualChunk[] SurroundingChunks;
@@ -128,8 +128,6 @@ namespace Utopia.Worlds.Chunks
         public BoundingBox ChunkWorldBoundingBox;             // The chunk World BoundingBox ==> Not a property, to be sure it will be direct variables acces !!
 
         public bool IsServerRequested { get; set; }           //If the chunk has been requested to the server
-
-        public Vector2I LightPropagateBorderOffset;
 
         public List<VisualEntity> VisualSpriteEntities;
 
@@ -218,7 +216,6 @@ namespace Utopia.Worlds.Chunks
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
             isExistingMesh4Drawing = false;
-            LightPropagateBorderOffset = new Vector2I(0, 0);
             Entities.CollectionDirty += Entities_CollectionDirty;
 
         }
@@ -443,7 +440,7 @@ namespace Utopia.Worlds.Chunks
             //Change chunk state in order to rebuild the Entity collections change
             State = ChunkState.LandscapeCreated;
             ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-            UserChangeOrder = 1;
+            UpdateOrder = 1;
         }
 
         #endregion

@@ -8,6 +8,7 @@ using Utopia.Entities;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Threading;
 using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -77,14 +78,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             //If my Chunk is a border chunk, then don't propagate surrounding chunk light
             if (chunk.IsBorderChunk == false)
             {
-                //And propagate only the light from those blocks !
+                PropagatesBorderLightSources(chunk);
                 chunk.IsOutsideLightSourcePropagated = true;
-                chunk.State = ChunkState.OuterLightSourcesProcessed;
             }
-            else
-            {
-                chunk.State = ChunkState.OuterLightSourcesProcessed;
-            }
+
+            chunk.State = ChunkState.OuterLightSourcesProcessed;
         }
 
         #endregion
@@ -146,22 +144,44 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         //Light Propagation =================================================================================================================
-
-        //Create the landscape for the chunk
         private void PropagatesLightSources(VisualChunk chunk)
         {
-            bool borderAsLightSource = false;
-            if (chunk.LightPropagateBorderOffset.X != 0 || chunk.LightPropagateBorderOffset.Y != 0) borderAsLightSource = true;
             Range3I cubeRangeWithOffset = chunk.CubeRange;
-            if (chunk.LightPropagateBorderOffset.X > 0) cubeRangeWithOffset.Size.X += chunk.LightPropagateBorderOffset.X;
-            else cubeRangeWithOffset.Position.X += chunk.LightPropagateBorderOffset.X;
-
-            if (chunk.LightPropagateBorderOffset.Y > 0) cubeRangeWithOffset.Size.Z += chunk.LightPropagateBorderOffset.Y;
-            else cubeRangeWithOffset.Position.Z += chunk.LightPropagateBorderOffset.Y;
-
-            PropagateLightSources(ref cubeRangeWithOffset, borderAsLightSource);
-
+            PropagateLightSources(ref cubeRangeWithOffset, false);
             PropagateLightInsideStaticEntities(chunk);
+        }
+
+        private void PropagatesBorderLightSources(VisualChunk chunk)
+        {
+            //Get surrending cubes from this chunk
+            Range3I cubeRangeWithBorder = chunk.CubeRange;
+            cubeRangeWithBorder.Position.X--;
+            cubeRangeWithBorder.Position.Z--;
+            cubeRangeWithBorder.Size.X += 2;
+            cubeRangeWithBorder.Size.Z += 2;
+
+            foreach (var BorderCube in cubeRangeWithBorder.AllExclude(chunk.CubeRange))
+            {
+                PropagateLightSources(BorderCube);
+            }
+        }
+
+                //Can only be done if surrounding chunks have their landscape initialized !
+        public void PropagateLightSources(Vector3I cubePosition)
+        {
+            CubeProfile cubeprofile;
+            int index = _cubesHolder.Index(ref cubePosition);
+
+            cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
+            if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) return;
+            if (_cubesHolder.Cubes[index].EmissiveColor.A == 255) 
+                PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
+            if (cubeprofile.IsEmissiveColorLightSource)
+            {
+                if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
+                if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
+                if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
+            }
         }
 
         //Can only be done if surrounding chunks have their landscape initialized !
