@@ -5,6 +5,7 @@ using S33M3CoreComponents.Config;
 using S33M3Resources.Structs;
 using Utopia.Server;
 using Utopia.Server.Managers;
+using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
@@ -69,7 +70,7 @@ namespace Realms.Client.Components
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-
+            _server.Services.Add(new WaterDynamicService());
         }
 
 
@@ -84,7 +85,7 @@ namespace Realms.Client.Components
             ContainedSlot outItem;
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.CubeId = CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 

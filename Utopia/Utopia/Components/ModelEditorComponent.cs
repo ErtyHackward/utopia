@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -2110,11 +2111,14 @@ namespace Utopia.Components
                 var dir = Path.GetDirectoryName(path);
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
-                using (var fs = File.OpenWrite(path))
+
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
                 {
                     var writer = new BinaryWriter(fs);
                     _visualVoxelModel.VoxelModel.Save(writer);
-                    fs.SetLength(fs.Position); // truncate the file if we overwrinting 
                 }
                 _gui.MessageBox("Model saved at " + path, "Success");
             }
@@ -2140,18 +2144,35 @@ namespace Utopia.Components
 
             try
             {
+                var voxelModel = new VoxelModel();
                 var file = files[e.Files.SelectedIndex];
-                using (var fs = File.OpenRead(file))
+                using (var fs = new GZipStream(File.OpenRead(file), CompressionMode.Decompress))
                 {
                     var reader = new BinaryReader(fs);
-                    var voxelModel = new VoxelModel();
                     voxelModel.Load(reader);
                 }
+                var visualModel = new VisualVoxelModel(voxelModel, _meshFactory);
+                _manager.SaveModel(visualModel);
+
+                _modelsList.Items.Clear();
+                var index = 0;
+                int i = 0;
+                foreach (var model in _manager.Enumerate())
+                {
+                    _modelsList.Items.Add(model);
+                    if (model == visualModel)
+                        index = i;
+                    i++;
+                }
+
+                _modelsList.SelectedItems.Clear();
+                _modelsList.SelectedItems.Add(index);
+                
+                _gui.MessageBox("Model imported", "Success");
             }
-            catch (Exception)
+            catch (Exception x)
             {
-                
-                
+                _gui.MessageBox(x.Message, "Error");
             }
         }
     }
