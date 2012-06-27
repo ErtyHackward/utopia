@@ -26,24 +26,7 @@ namespace Utopia.Worlds.Chunks
         #region public methods
         public override void Update(GameTime timeSpend)
         {
-            //if (_camManager.ActiveCamera.WorldPosition.Value.Y < 400)
-            //{
-            //    ChunkUpdateManager();
-            //    CheckWrapping();
-            //    SortChunks();
-            //}
 
-            //// make chunks appear slowly and not hurt the eyes
-            //for (int i = _transparentChunks.Count - 1; i >= 0; i--)
-            //{
-            //    var transparentChunk = _transparentChunks[i];
-            //    transparentChunk.Opaque += 2f * timeSpend.ElapsedGameTimeInS_LD;
-            //    if (transparentChunk.Opaque >= 1)
-            //    {
-            //        transparentChunk.Opaque = 1;
-            //        _transparentChunks.RemoveAt(i);
-            //    }
-            //}
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -122,11 +105,11 @@ namespace Utopia.Worlds.Chunks
         {
             //Process each chunk that are in InnerLightsSourcePropagated state, and not being currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x =>
-                                                       (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false)) && 
+                                                       (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false && x.State >= ChunkState.InnerLightsSourcePropagated)) && 
                                                        x.ThreadStatus == ThreadStatus.Idle))
             {
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
-                if (chunk.SurroundingChunksMinimumState(ChunkState.InnerLightsSourcePropagated) || chunk.IsBorderChunk == true)
+                if (chunk.IsBorderChunk == true || chunk.SurroundingChunksMinimumState(ChunkState.InnerLightsSourcePropagated))
                 {
                     //Check if the surrounding chunk from this chunk are in the correct state = ChunkState.InnerLightsSourcePropagated
                     chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
