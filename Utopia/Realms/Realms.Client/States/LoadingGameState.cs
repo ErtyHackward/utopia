@@ -234,9 +234,8 @@ namespace Realms.Client.States
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
-
             cameraManager.SetCamerasPlugin(playerEntityManager);
-            worldFocusManager.WorldFocus = (IWorldFocus)cameraManager.ActiveCamera;
+            ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
