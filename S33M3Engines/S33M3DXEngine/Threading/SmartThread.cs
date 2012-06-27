@@ -43,6 +43,30 @@ namespace S33M3DXEngine.Threading
             if (_totThread == 0) SetOptimumNbrThread(0, false);
         }
 
+        private static bool _isBoostMode;
+
+        public static bool IsBoostMode
+        {
+            get { return SmartThread._isBoostMode; }
+            set
+            {
+                if (value == SmartThread._isBoostMode) return;
+                if (value)
+                {
+                    if (ThreadPool != null) ThreadPool.Dispose();
+                    STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread + 4, MinWorkerThreads = _totThread + 4, ThreadPriority = System.Threading.ThreadPriority.Lowest };
+                    ThreadPool = new SmartThreadPool(_stpInfo);
+                }
+                else
+                {
+                    if (ThreadPool != null) ThreadPool.Dispose();
+                    STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
+                    ThreadPool = new SmartThreadPool(_stpInfo);
+                }
+                SmartThread._isBoostMode = value;
+            }
+        }
+
         public static int SetOptimumNbrThread(int ThreadAllocatedModifier, bool forced = false)
         {
             if (forced == false)

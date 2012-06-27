@@ -201,6 +201,8 @@ namespace Utopia.Worlds.Chunks
 
         public override void LoadContent(DeviceContext context)
         {
+            S33M3DXEngine.Threading.SmartThread.IsBoostMode = true;
+
             IntilializeUpdateble();
             InitDrawComponents(context);
         }
@@ -620,8 +622,9 @@ namespace Utopia.Worlds.Chunks
             lock (_counterLock)
             {
                 _readyToDrawCount++;
-                if (_readyToDrawCount > (Chunks.Length * 5 /100) && IsInitialLoadCompleted == false)
+                if (_readyToDrawCount == Chunks.Length -1 && IsInitialLoadCompleted == false)
                 {
+                    S33M3DXEngine.Threading.SmartThread.IsBoostMode = false;
                     IsInitialLoadCompleted = true;
                     OnInitialLoadComplete();
                 }
