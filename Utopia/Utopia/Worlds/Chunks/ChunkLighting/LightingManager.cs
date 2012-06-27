@@ -52,39 +52,55 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
         #region Public methods
         //Create the LightSources for a specific range
-        public void CreateChunkLightSources(VisualChunk chunk, bool Async)
+        public void CreateChunkLightSources(VisualChunk chunk)
         {
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-            chunk.ThreadStatus = ThreadStatus.Locked;
-            SmartThread.ThreadPool.QueueWorkItem(CreateLightSources_threaded, chunk, chunk.ThreadPriority);
+            CreateLightSources(chunk);
+            chunk.State = ChunkState.LightsSourceCreated;
         }
 
         //Create the LightSources for a specific range
-        public void PropagateChunkLightSources(VisualChunk chunk, bool Async)
+        public void PropagateInnerChunkLightSources(VisualChunk chunk)
         {
             //1) Request Server the chunk
             //2) If chunk is a "pure" chunk on the server, then generate it localy.
             //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-            chunk.ThreadStatus = ThreadStatus.Locked;
-            SmartThread.ThreadPool.QueueWorkItem(PropagatesLightSources_threaded, chunk, chunk.ThreadPriority);
+            PropagatesLightSources(chunk);
+            chunk.IsOutsideLightSourcePropagated = false;
+            chunk.State = ChunkState.InnerLightsSourcePropagated;
+        }
+
+        public void PropagateOutsideChunkLightSources(VisualChunk chunk)
+        {
+            //If my Chunk is a border chunk, then don't propagate surrounding chunk light
+            if (chunk.IsBorderChunk == false)
+            {
+                //And propagate only the light from those blocks !
+                chunk.IsOutsideLightSourcePropagated = true;
+                chunk.State = ChunkState.OuterLightSourcesProcessed;
+            }
+            else
+            {
+                chunk.State = ChunkState.OuterLightSourcesProcessed;
+            }
         }
 
         #endregion
 
         #region Private methods
+
+        //Light Source Creation ============================================================================================================
+
         //Create the landscape for the chunk
-        private void CreateLightSources_threaded(VisualChunk chunk)
+        private void CreateLightSources(VisualChunk chunk)
         {
             Range3I cubeRange = chunk.CubeRange;
-
             CreateLightSources(ref cubeRange);
-
-            chunk.State = ChunkState.LandscapeLightsSourceCreated;
-            chunk.ThreadStatus = ThreadStatus.Idle;
         }
 
+        //Create light source on a specific Cube Range (not chunk linked)
         public void CreateLightSources(ref Range3I cubeRange)
         {
             int index;
@@ -129,9 +145,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             }
         }
 
+        //Light Propagation =================================================================================================================
 
         //Create the landscape for the chunk
-        private void PropagatesLightSources_threaded(VisualChunk chunk)
+        private void PropagatesLightSources(VisualChunk chunk)
         {
             bool borderAsLightSource = false;
             if (chunk.LightPropagateBorderOffset.X != 0 || chunk.LightPropagateBorderOffset.Y != 0) borderAsLightSource = true;
@@ -145,11 +162,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             PropagateLightSources(ref cubeRangeWithOffset, borderAsLightSource);
 
             PropagateLightInsideStaticEntities(chunk);
-
-            chunk.State = ChunkState.LandscapeLightsPropagated;
-            chunk.ThreadStatus = ThreadStatus.Idle;
         }
-
 
         //Can only be done if surrounding chunks have their landscape initialized !
         public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
@@ -186,32 +199,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             if (withRangeEntityPropagation) PropagateLightInsideStaticEntities(ref cubeRange);
         }
 
-        //Propagate the light inside the chunk entities
-        private void PropagateLightInsideStaticEntities(ref Range3I cubeRange)
-        {
-            VisualChunk chunk;
-            //Find all chunk from the Cube range !
-            for (int i = 0; i < WorldChunk.Chunks.Length; i++)
-            {
-                chunk = WorldChunk.Chunks[i];
-                if ((chunk.CubeRange.Max.X < cubeRange.Position.X) || (chunk.CubeRange.Position.X > cubeRange.Max.X)) continue;
-                if ((chunk.CubeRange.Max.Y < cubeRange.Position.Y) || (chunk.CubeRange.Position.Y > cubeRange.Max.Y)) continue;
-                PropagateLightInsideStaticEntities(chunk);
-            }
-        }
-
-        //Propagate the light inside the chunk entities
-        private void PropagateLightInsideStaticEntities(VisualChunk chunk)
-        {
-            VisualEntity vertexEntity;
-            for (int i = 0; i < chunk.VisualSpriteEntities.Count; i++)
-            {
-                vertexEntity = chunk.VisualSpriteEntities[i];
-                //Find the Cube where the entity is placed, and assign its color to the entity
-                chunk.VisualSpriteEntities[i].Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.Entity.Position.X), MathHelper.Fastfloor(vertexEntity.Entity.Position.Y), MathHelper.Fastfloor(vertexEntity.Entity.Position.Z))].EmissiveColor;
-            }
-        }
-
+        //Propagate lights Algo.
         private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
             CubeProfile cubeprofile;
@@ -271,6 +259,32 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             PropagateLight(X - 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveX);
             //X, Y, Z - 1
             PropagateLight(X, Y, Z - 1, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveZ);
+        }
+
+        //Propagate the light inside the chunk entities
+        private void PropagateLightInsideStaticEntities(ref Range3I cubeRange)
+        {
+            VisualChunk chunk;
+            //Find all chunk from the Cube range !
+            for (int i = 0; i < WorldChunk.Chunks.Length; i++)
+            {
+                chunk = WorldChunk.Chunks[i];
+                if ((chunk.CubeRange.Max.X < cubeRange.Position.X) || (chunk.CubeRange.Position.X > cubeRange.Max.X)) continue;
+                if ((chunk.CubeRange.Max.Y < cubeRange.Position.Y) || (chunk.CubeRange.Position.Y > cubeRange.Max.Y)) continue;
+                PropagateLightInsideStaticEntities(chunk);
+            }
+        }
+
+        //Propagate the light inside the chunk entities
+        private void PropagateLightInsideStaticEntities(VisualChunk chunk)
+        {
+            VisualEntity vertexEntity;
+            for (int i = 0; i < chunk.VisualSpriteEntities.Count; i++)
+            {
+                vertexEntity = chunk.VisualSpriteEntities[i];
+                //Find the Cube where the entity is placed, and assign its color to the entity
+                chunk.VisualSpriteEntities[i].Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(vertexEntity.Entity.Position.X), MathHelper.Fastfloor(vertexEntity.Entity.Position.Y), MathHelper.Fastfloor(vertexEntity.Entity.Position.Z))].EmissiveColor;
+            }
         }
         #endregion
 

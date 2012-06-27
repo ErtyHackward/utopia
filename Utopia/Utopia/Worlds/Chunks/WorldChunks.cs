@@ -32,15 +32,16 @@ using Utopia.Components;
 
 namespace Utopia.Worlds.Chunks
 {
-    public enum ChunkState : byte
+    public enum ChunkState
     {
-        Empty,
-        LandscapeCreated,
-        LandscapeLightsSourceCreated,
-        LandscapeLightsPropagated,
-        MeshesChanged,
-        DisplayInSyncWithMeshes,
-        UserChanged
+        Empty                            = 0,
+        LandscapeCreated                 = 1,
+        LightsSourceCreated              = 2,
+        InnerLightsSourcePropagated      = 3,
+        OuterLightSourcesProcessed       = 4,
+        MeshesChanged                    = 5,
+        DisplayInSyncWithMeshes          = 6,
+        UserChanged                      = 7
     }
 
     public enum ChunksThreadSyncMode
@@ -285,6 +286,28 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public VisualChunk[] GetsurroundingChunkFromChunkCoord(int X, int Z)
+        {
+            VisualChunk[] surroundingChunk = new VisualChunk[8];
+
+            surroundingChunk[0] = GetChunkFromChunkCoord(X + 1, Z);
+            surroundingChunk[1] = GetChunkFromChunkCoord(X + 1, Z + 1);
+            surroundingChunk[2] = GetChunkFromChunkCoord(X, Z + 1);
+            surroundingChunk[3] = GetChunkFromChunkCoord(X - 1, Z + 1);
+            surroundingChunk[4] = GetChunkFromChunkCoord(X - 1, Z);
+            surroundingChunk[5] = GetChunkFromChunkCoord(X - 1, Z - 1);
+            surroundingChunk[6] = GetChunkFromChunkCoord(X, Z - 1);
+            surroundingChunk[7] = GetChunkFromChunkCoord(X + 1, Z - 1);
+
+            return surroundingChunk;
+        }
+
+        /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate with out of array check
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>
@@ -366,7 +389,7 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
-        /// Validate player move against surrending landscape, if move not possible, it will be "rollbacked"
+        /// Validate player move against surrounding landscape, if move not possible, it will be "rollbacked"
         /// It's used by the physic engine
         /// </summary>
         /// <param name="newPosition2Evaluate"></param>
@@ -531,7 +554,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager);
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);

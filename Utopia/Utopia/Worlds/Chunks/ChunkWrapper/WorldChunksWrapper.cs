@@ -39,6 +39,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
 
         #region Private methods
         //Force some chunks to be refresh (not reconstructed)
+        //All chunks are in "DisplayInSyncWithMeshes"
         private void PostWrappingStep()
         {
             switch (_processingType)
@@ -47,40 +48,28 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
 
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - (AbstractChunk.ChunkSize.X * 2), WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
-                        //chunk.Iswrapping = true;
-                        chunk.State = ChunkState.LandscapeLightsSourceCreated;
-                        chunk.LightPropagateBorderOffset.X = -1;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
+                        chunk.RefreshBorderChunk();
                     }
 
                     break;
                 case ChunkWrapType.X_Minus1:
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X + AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
-                        //chunk.Iswrapping = true;
-                        chunk.State = ChunkState.LandscapeLightsSourceCreated;
-                        chunk.LightPropagateBorderOffset.X = 1;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
+                        chunk.RefreshBorderChunk();
                     }
 
                     break;
                 case ChunkWrapType.Z_Plus1:
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - (AbstractChunk.ChunkSize.Z * 2), WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
-                        //chunk.Iswrapping = true;
-                        chunk.State = ChunkState.LandscapeLightsSourceCreated;
-                        chunk.LightPropagateBorderOffset.Y = -1;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
+                        chunk.RefreshBorderChunk();
                     }
 
                     break;
                 case ChunkWrapType.Z_Minus1:
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z + AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
-                        //chunk.Iswrapping = true;
-                        chunk.State = ChunkState.LandscapeLightsSourceCreated;
-                        chunk.LightPropagateBorderOffset.Y = 1;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
+                        chunk.RefreshBorderChunk();
                     }
                     break;
             }
@@ -105,7 +94,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.IsReady2Draw = false;
+                        chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.X;
                         ActualCubeRange = chunk.CubeRange;
@@ -113,16 +102,12 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         {
                             Position = new Vector3I(NewMinWorldValue, ActualCubeRange.Position.Y, ActualCubeRange.Position.Z),
                             Size = AbstractChunk.ChunkSize
-                            //Max = new Vector3I(NewMinWorldValue + AbstractChunk.ChunkSize.X, ActualCubeRange.Max.Y, ActualCubeRange.Max.Z)
-                            //Size = new Vector3I(AbstractChunk.ChunkSize.X, ActualCubeRange.Size.Y, ActualCubeRange.Size.Z)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
 
                     //Update World Range
                     NewWorldRange.Position.X += AbstractChunk.ChunkSize.X;
-                    //NewWorldRange.Max.X += AbstractChunk.ChunkSize.X;
-
                     if (NewWorldRange.Position.X > NewWrapEnd.X) NewWrapEnd.X += WorldChunks.VisualWorldParameters.WorldVisibleSize.X;
 
                     break;
@@ -133,7 +118,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.IsReady2Draw = false;
+                        chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Position.X;
                         ActualCubeRange = chunk.CubeRange;
@@ -141,16 +126,12 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         {
                             Position = new Vector3I(NewMinWorldValue - AbstractChunk.ChunkSize.X, ActualCubeRange.Position.Y, ActualCubeRange.Position.Z),
                             Size = AbstractChunk.ChunkSize
-                            //Size = new Vector3I(,ActualCubeRange.Size.Y,ActualCubeRange.Size.Z)
-                            //Max = new Vector3I(NewMinWorldValue, ActualCubeRange.Max.Y, ActualCubeRange.Max.Z)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
 
                     //Update World Range
                     NewWorldRange.Position.X -= AbstractChunk.ChunkSize.X;
-                    //NewWorldRange.Max.X -= AbstractChunk.ChunkSize.X;
-
                     if (NewWorldRange.Position.X <= NewWrapEnd.X - (WorldChunks.VisualWorldParameters.WorldVisibleSize.X)) NewWrapEnd.X -= WorldChunks.VisualWorldParameters.WorldVisibleSize.X;
 
                     break;
@@ -161,7 +142,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.IsReady2Draw = false;
+                        chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.Z;
                         ActualCubeRange = chunk.CubeRange;
@@ -169,15 +150,12 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         {
                             Position = new Vector3I(ActualCubeRange.Position.X, ActualCubeRange.Position.Y, NewMinWorldValue),
                             Size = AbstractChunk.ChunkSize
-                            //Max = new Vector3I(ActualCubeRange.Max.X, ActualCubeRange.Max.Y, NewMinWorldValue + AbstractChunk.ChunkSize.Z)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
 
                     //Update World Range
                     NewWorldRange.Position.Z += AbstractChunk.ChunkSize.Z;
-                    //NewWorldRange.Max.Z += AbstractChunk.ChunkSize.Z;
-
                     if (NewWorldRange.Position.Z > NewWrapEnd.Y) NewWrapEnd.Y += WorldChunks.VisualWorldParameters.WorldVisibleSize.Z;
 
                     break;
@@ -187,7 +165,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
-                        chunk.IsReady2Draw = false;
+                        chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Position.Z;
                         ActualCubeRange = chunk.CubeRange;
@@ -195,15 +173,12 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                         {
                             Position = new Vector3I(ActualCubeRange.Position.X, ActualCubeRange.Position.Y, NewMinWorldValue - AbstractChunk.ChunkSize.Z),
                             Size = AbstractChunk.ChunkSize
-                            //Max = new Vector3I(ActualCubeRange.Max.X, ActualCubeRange.Max.Y, NewMinWorldValue)
                         };
                         chunk.CubeRange = NewCubeRange;
                     }
 
                     //Update World Range
                     NewWorldRange.Position.Z -= AbstractChunk.ChunkSize.Z;
-                    //NewWorldRange.Max.Z -= AbstractChunk.ChunkSize.Z;
-
                     if (NewWorldRange.Position.Z <= NewWrapEnd.Y - (WorldChunks.VisualWorldParameters.WorldVisibleSize.Z)) NewWrapEnd.Y -= WorldChunks.VisualWorldParameters.WorldVisibleSize.Z;
 
                     break;
@@ -218,7 +193,6 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
             PostWrappingStep();
 
             WorldChunks.ChunkNeed2BeSorted = true;
-
         }
         #endregion
 

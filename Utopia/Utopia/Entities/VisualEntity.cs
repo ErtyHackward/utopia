@@ -13,7 +13,7 @@ namespace Utopia.Entities
     {
 
         /// <summary>
-        /// The BBox surrending the Entity, it will be used for collision detections mainly !
+        /// The BBox surrounding the Entity, it will be used for collision detections mainly !
         /// </summary>
         public BoundingBox WorldBBox = new BoundingBox();
         public BoundingBox LocalBBox = new BoundingBox();

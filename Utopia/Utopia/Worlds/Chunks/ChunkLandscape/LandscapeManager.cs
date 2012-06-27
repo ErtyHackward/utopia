@@ -26,8 +26,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private variable
-        private CreateLandScapeDelegate _createLandScapeDelegate;
-        private delegate void CreateLandScapeDelegate(VisualChunk chunk);
         private WorldGenerator _worldGenerator;
         private ServerComponent _server;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
@@ -68,9 +66,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         #region Public methods
         //Create the landscape for the chunk
-        public void CreateLandScape(VisualChunk chunk, bool Async)
+        public void CreateLandScape(VisualChunk chunk)
         {
-            CheckServerReceivedData(chunk, Async);
+            CheckServerReceivedData(chunk);
         }
 
         #endregion
@@ -78,7 +76,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         #region Private methods
         private void Initialize()
         {
-            _createLandScapeDelegate = new CreateLandScapeDelegate(createLandScape_threaded);
         }
 
         //New chunk Received !
@@ -95,7 +92,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
 
         //Perform Maintenance task every 10 seconds
-        void _timer_OnTimerRaised()
+        private void _timer_OnTimerRaised()
         {
             ChunkBufferCleanup();
         }
@@ -110,7 +107,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             }
         }
 
-        private void CheckServerReceivedData(VisualChunk chunk, bool Async)
+        private void CheckServerReceivedData(VisualChunk chunk)
         {
             //Is this chunk server requested ==> Then check if the result is buffered
             if (chunk.IsServerRequested)
@@ -127,11 +124,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             
                             chunk.Decompress(EntityFactory, message.Data); //Set the data into the "Big Array"
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
-                            chunk.RefreshBorderChunk();
-                            chunk.State = ChunkState.LandscapeCreated;
-                            //chunk.CompressedBytes = message.Data;
-                            chunk.ThreadStatus = ThreadStatus.Idle;
-
                             CreateVisualEntities(chunk, chunk);
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
@@ -162,20 +154,15 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             }
 
 
-                            chunk.IsServerRequested = false;
-
-
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
-                            CreateLandscapeFromGenerator(chunk, Async);
+                            CreateLandscapeFromGenerator(chunk);
 
                             if (chunk.StorageRequestTicket != 0)
                             {
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                 chunk.StorageRequestTicket = 0;
                             }
-
-                            chunk.IsServerRequested = false;
 
                             break;
                         case ChunkDataMessageFlag.ChunkMd5Equal:
@@ -186,9 +173,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 //Data are present !
                                 chunk.Decompress(EntityFactory, data.CubeData); //Set the data into the "Big Array"
                                 _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
-                                chunk.RefreshBorderChunk();
-                                chunk.State = ChunkState.LandscapeCreated;
-                                chunk.ThreadStatus = ThreadStatus.Idle;
 
                                 CreateVisualEntities(chunk, chunk);
 
@@ -197,14 +181,15 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                     _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                     chunk.StorageRequestTicket = 0;
                                 }
-
-                                chunk.IsServerRequested = false;
-
                             }
                             break;
                         default:
                             break;
                     }
+
+                    chunk.IsServerRequested = false;
+                    chunk.State = ChunkState.LandscapeCreated;
+                    chunk.RefreshBorderChunk();
                 }
             }
             else
@@ -213,12 +198,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 #if DEBUG
                 logger.Trace("Chunk request to server : " + chunk.ChunkID);
 #endif
+                //Request Chunk to the server, to see its server State (Was it modified by someone Else ???)
 
                 chunk.IsServerRequested = true;
                 Md5Hash hash;
                 if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.ChunkID, out hash))
                 {
-                    //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
+                    //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one. This way the server won't have to send back the chunk data
                     chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.ChunkID);
 
                     //We have already in the store manager a modified version of the chunk, do the server request with these information
@@ -243,27 +229,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             }
         }
 
-
-        //Auto generate a chunk
-        private void CreateLandscapeFromGenerator(VisualChunk chunk, bool Async)
-        {
-            //1) Request Server the chunk
-            //2) If chunk is a "pure" chunk on the server, then generate it localy.
-            //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
-            if (Async)
-            {
-                chunk.ThreadStatus = ThreadStatus.Locked;
-                SmartThread.ThreadPool.QueueWorkItem(createLandScape_threaded, chunk, chunk.ThreadPriority);
-            }
-            else
-            {
-                _createLandScapeDelegate.Invoke(chunk);
-            }
-            chunk.RefreshBorderChunk();
-        }
-
         //Create the landscape for the chunk
-        private void createLandScape_threaded(VisualChunk visualChunk)
+        private void CreateLandscapeFromGenerator(VisualChunk visualChunk)
         {
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
 
@@ -273,9 +240,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
             //Copy the entities
             CreateVisualEntities(generatedChunk, visualChunk);
-
-            visualChunk.State = ChunkState.LandscapeCreated;
-            visualChunk.ThreadStatus = ThreadStatus.Idle;
         }
 
         private void CreateVisualEntities(AbstractChunk source, VisualChunk target)

@@ -26,8 +26,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
     public class ChunkMeshManager : IChunkMeshManager
     {
         #region private variables
-        private CreateChunkMeshDelegate _createChunkMeshDelegate;
-        private delegate void CreateChunkMeshDelegate(VisualChunk chunk);
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _cubesHolder;
         private ICubeMeshFactory _solidCubeMeshFactory;
@@ -48,17 +46,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         }
 
         #region Public methods
-        public void CreateChunkMesh(VisualChunk chunk, bool async)
+        public void CreateChunkMesh(VisualChunk chunk)
         {
-            if (async)
-            {
-                chunk.ThreadStatus = ThreadStatus.Locked;
-                SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshThreaded, chunk, chunk.ThreadPriority);
-            }
-            else
-            {
-                _createChunkMeshDelegate.Invoke(chunk);
-            }
+            CreateCubeMeshes(chunk);
+            chunk.State = ChunkState.MeshesChanged;
         }
         
         #endregion
@@ -66,16 +57,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         #region Private methods
         private void Intialize()
         {
-            _createChunkMeshDelegate = new CreateChunkMeshDelegate(CreateChunkMeshThreaded);
-        }
-
-        //Create the landscape for the chunk
-        private void CreateChunkMeshThreaded(VisualChunk visualChunk)
-        {
-            CreateCubeMeshes(visualChunk);
-
-            visualChunk.State = ChunkState.MeshesChanged;
-            visualChunk.ThreadStatus = ThreadStatus.Idle;
         }
 
         //Creation of the cubes meshes, Face type by face type
