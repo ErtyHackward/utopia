@@ -226,6 +226,13 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
+                ActionId = UtopiaActions.ChangeCameraType,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.CameraType
+            }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
+            {
                 ActionId = UtopiaActions.Exit_Chat,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = new KeyWithModifier() { MainKey = Keys.Escape }
