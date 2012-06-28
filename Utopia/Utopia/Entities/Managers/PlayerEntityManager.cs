@@ -565,6 +565,7 @@ namespace Utopia.Entities.Managers
             //The Change check is done at DynamicEntity level
             Player.Position = _worldPosition.Value;
             Player.HeadRotation = _entityMovement.EyeOrientation.Value;
+            Player.BodyRotation = _entityMovement.BodyOrientation.Value;
         }
 
         #region Movement Management
