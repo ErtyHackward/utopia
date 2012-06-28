@@ -264,6 +264,7 @@
     <Compile Include="Structs\Helpers\HalfUtils.cs" />
     <Compile Include="Structs\Helpers\PackUtils.cs" />
     <Compile Include="Structs\Helpers\TraceHelper.cs" />
+    <Compile Include="Structs\Landscape\TerraCubePositionTag.cs" />
     <Compile Include="Structs\Line.cs" />
     <Compile Include="Structs\Range3I.cs" />
     <Compile Include="Structs\UserRole.cs" />

@@ -27,6 +27,7 @@ namespace S33M3DXEngine.Threading
     public static class SmartThread
     {
         public static SmartThreadPool ThreadPool;
+        public static IWorkItemsGroup ThreadPoolSingleConcurrency;
 
         static int _totThread = 0;
 
@@ -56,12 +57,14 @@ namespace S33M3DXEngine.Threading
                     if (ThreadPool != null) ThreadPool.Dispose();
                     STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread + 4, MinWorkerThreads = _totThread + 4, ThreadPriority = System.Threading.ThreadPriority.Lowest };
                     ThreadPool = new SmartThreadPool(_stpInfo);
+                    ThreadPoolSingleConcurrency = ThreadPool.CreateWorkItemsGroup(1);
                 }
                 else
                 {
                     if (ThreadPool != null) ThreadPool.Dispose();
                     STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
                     ThreadPool = new SmartThreadPool(_stpInfo);
+                    ThreadPoolSingleConcurrency = ThreadPool.CreateWorkItemsGroup(1);
                 }
                 SmartThread._isBoostMode = value;
             }
@@ -90,6 +93,7 @@ namespace S33M3DXEngine.Threading
             if (ThreadPool != null) ThreadPool.Dispose();
             STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
             ThreadPool = new SmartThreadPool(_stpInfo);
+            ThreadPoolSingleConcurrency = ThreadPool.CreateWorkItemsGroup(1);
 
             ThreadingActif = true;
 
