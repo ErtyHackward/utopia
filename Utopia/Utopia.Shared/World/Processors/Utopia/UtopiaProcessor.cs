@@ -254,7 +254,11 @@ namespace Utopia.Shared.World.Processors.Utopia
                     //Get Biomes informations for this Column============================================
                     bool mustPlacedSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
+                    if (temperature > 1.0) temperature = 1.0;
+                    if (temperature < 0.0) temperature = 0.0;
                     double moisture = biomeMap[noise2DIndex, 2];
+                    if (moisture > 1.0) moisture = 1.0;
+                    if (moisture < 0.0) moisture = 0.0;
                     byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
                     currentBiome = Biome.BiomeList[biomeId];
