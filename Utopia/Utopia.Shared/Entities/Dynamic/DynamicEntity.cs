@@ -17,6 +17,7 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public DynamicEntityState EntityState;
         private Quaternion _headRotation;
+        private Quaternion _bodyRotation;
 
         #region Events
 
@@ -24,10 +25,16 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Occurs when entity changes its view direction
         /// </summary>
         public event EventHandler<EntityViewEventArgs> ViewChanged;
-
         protected void OnViewChanged(EntityViewEventArgs e)
         {
             var handler = ViewChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<EntityBodyRotationEventArgs> BodyOrientationChanged;
+        protected void OnBodyRotationChanged(EntityBodyRotationEventArgs e)
+        {
+            var handler = BodyOrientationChanged;
             if (handler != null) handler(this, e);
         }
 
@@ -142,6 +149,25 @@ namespace Utopia.Shared.Entities.Dynamic
                 {
                     _headRotation = value;
                     OnViewChanged(new EntityViewEventArgs { Entity = this });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets entity head rotation
+        /// </summary>
+        public Quaternion BodyRotation
+        {
+            get
+            {
+                return _bodyRotation;
+            }
+            set
+            {
+                if (_bodyRotation != value)
+                {
+                    _bodyRotation = value;
+                    OnBodyRotationChanged(new EntityBodyRotationEventArgs { Entity = this });
                 }
             }
         }
