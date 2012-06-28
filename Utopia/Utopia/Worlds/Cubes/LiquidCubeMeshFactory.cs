@@ -81,8 +81,12 @@ namespace Utopia.Worlds.Cubes
             }
             else
             {
-                //This "natural" offset should only be made when the upper block is not the same as the block itself
-                if (topCube.Id != cube.Id)
+                //Add a naturel Offset to StillWater when touching water at the surface !
+                if (topCube.Id == CubeId.Air && cube.Id == CubeId.StillWater)
+                {
+                    yBlockOffset = 0.1f;
+                }
+                else
                 {
                     yBlockOffset = (float)cubeProfile.YBlockOffset;
                 }
