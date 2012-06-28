@@ -76,14 +76,19 @@ namespace Utopia.Components
 
         // tools group
         private Control _mainToolsGroup;
+        private Control _colorsGroup;
         private Control _frameToolsGroup;
         private Control _layoutToolsGroup;
         private Control _modesButtonsGroup;
         private Control _colorPaletteGroup;
 
-        private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
-        private List<StickyButtonControl> _toolsButtons = new List<StickyButtonControl>();
+        // tool properties gropus
+        private Control _tpPreset;
+        private Control _tpSliceBrush;
+        private Control _tpEdit;
 
+        private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
+        
         private ListControl _modelsList;
         private ListControl _animationsList;
         private ListControl _animationStepsList;
@@ -318,9 +323,8 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
 
-            _toolsWindow.Children.Clear();
-            _toolsWindow.Children.Add(_modesButtonsGroup);
-            _toolsWindow.Children.Add(_frameToolsGroup);
+            OnToolSelected(EditorTools.Edit);
+            
 
             UpdateLayout();
         }
@@ -381,7 +385,7 @@ namespace Utopia.Components
             
             _colorPaletteGroup.UpdateLayout();
             _colorPaletteGroup.Bounds.Size.Y.Offset = 20 * rowsCount + 5;
-            _frameToolsGroup.UpdateLayout();
+            _colorsGroup.UpdateLayout();
         }
         
         private void OnColorSelected(object sender, EventArgs e)
@@ -393,7 +397,7 @@ namespace Utopia.Components
         private WindowControl CreateToolsWindow()
         {
             var toolsWindow = new WindowControl { Title = "Tools" };
-            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 400);
+            toolsWindow.Bounds = new UniRectangle(0, 0, 200, 600);
 
             _modesButtonsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
@@ -441,46 +445,108 @@ namespace Utopia.Components
             #endregion
 
             #region Frame tools
-            _frameToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 310), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _frameToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 80), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Tools", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             var toolEditButton = new StickyButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 70, 20), Sticked = true };
-            toolEditButton.Pressed += delegate { OnToolSelected(0); };
+            toolEditButton.Pressed += delegate { _selectedToolIndex = 0; OnToolSelected(EditorTools.Edit); };
+
             var toolColorBrushButton = new StickyButtonControl { Text = "Color brush", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorBrushButton.Pressed += delegate { OnToolSelected(1); };
+            toolColorBrushButton.Pressed += delegate { _selectedToolIndex = 1; OnToolSelected(EditorTools.ColorBrush); };
+
             var toolColorFillButton = new StickyButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorFillButton.Pressed += delegate { OnToolSelected(2); };
+            toolColorFillButton.Pressed += delegate { _selectedToolIndex = 2; OnToolSelected(EditorTools.FillBrush); };
+
+            var toolSliceColorBrush = new StickyButtonControl { Text = "Slice color", Bounds = new UniRectangle(0, 0, 70, 20) };
+            toolSliceColorBrush.Pressed += delegate { _selectedToolIndex = 3; OnToolSelected(EditorTools.SliceBrush); };
+
+            var presetTool = new StickyButtonControl { Text = "Preset", Bounds = new UniRectangle(0, 0, 70, 20) };
+            presetTool.Pressed += delegate { _selectedToolIndex = -1; OnToolSelected(EditorTools.Preset); };
 
             _frameToolsGroup.Children.Add(toolEditButton);
             _frameToolsGroup.Children.Add(toolColorBrushButton);
             _frameToolsGroup.Children.Add(toolColorFillButton);
-
-            _toolsButtons.Add(toolEditButton);
-            _toolsButtons.Add(toolColorBrushButton);
-            _toolsButtons.Add(toolColorFillButton);
+            _frameToolsGroup.Children.Add(toolSliceColorBrush);
+            _frameToolsGroup.Children.Add(presetTool);
             
+            #region Tool properties
 
-            _frameToolsGroup.Children.Add(new LabelControl { Text = "Presets", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+            #region Preset Tool properties
+
+            _tpPreset = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            _tpPreset.Children.Add(new LabelControl { Text = "Presets:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             var cubePresetButton = new ButtonControl { Text = "Cube", Bounds = new UniRectangle(0, 0, 50, 20) };
             cubePresetButton.Pressed += delegate { OnCubePresetPressed(); };
-            _frameToolsGroup.Children.Add(cubePresetButton);
-
+            
             var spherePresetButton = new ButtonControl { Text = "Sphere", Bounds = new UniRectangle(0, 0, 50, 20) };
             spherePresetButton.Pressed += delegate { OnSpherePresetPressed(); };
-            _frameToolsGroup.Children.Add(spherePresetButton);
-
+            
             var outlinePresetButton = new ButtonControl { Text = "Outline", Bounds = new UniRectangle(0, 0, 50, 20) };
             outlinePresetButton.Pressed += delegate { OnOutlinePresetPressed(); };
-            _frameToolsGroup.Children.Add(outlinePresetButton);
 
+            _tpPreset.Children.Add(cubePresetButton);
+            _tpPreset.Children.Add(spherePresetButton);
+            _tpPreset.Children.Add(outlinePresetButton);
+            _tpPreset.UpdateLayout();
 
-            _frameToolsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+            #endregion
+
+            #region Slice tool properties
+
+            _tpSliceBrush = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            _tpSliceBrush.Children.Add(new LabelControl { Text = "Slice axis:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+
+            var xSlice = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20) };
+            xSlice.Pressed += delegate { _sliceAxis = EditorAxis.X; };
+
+            var ySlice = new StickyButtonControl { Text = "Y", Bounds = new UniRectangle(0, 0, 20, 20), Sticked = true };
+            ySlice.Pressed += delegate { _sliceAxis = EditorAxis.Y; };
+
+            var zSlice = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20) };
+            zSlice.Pressed += delegate { _sliceAxis = EditorAxis.Z; };
+            
+            _tpSliceBrush.Children.Add(xSlice);
+            _tpSliceBrush.Children.Add(ySlice);
+            _tpSliceBrush.Children.Add(zSlice);
+            _tpSliceBrush.UpdateLayout();
+
+            #endregion
+
+            #region Edit properties
+
+            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            _tpEdit.Children.Add(new LabelControl { Text = "Mirror:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+
+            var xMirror = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            xMirror.Pressed += delegate { _mirror ^= EditorAxis.X; if (!_mirror.HasFlag(EditorAxis.X)) xMirror.Release(); };
+
+            var yMirror = new StickyButtonControl { Text = "Y", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            yMirror.Pressed += delegate { _mirror ^= EditorAxis.Y; if (!_mirror.HasFlag(EditorAxis.Y)) yMirror.Release(); };
+
+            var zMirror = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            zMirror.Pressed += delegate { _mirror ^= EditorAxis.Z; if (!_mirror.HasFlag(EditorAxis.Z)) zMirror.Release(); };
+
+            _tpEdit.Children.Add(xMirror);
+            _tpEdit.Children.Add(yMirror);
+            _tpEdit.Children.Add(zMirror);
+            _tpEdit.UpdateLayout();
+
+            #endregion
+
+            #endregion
+
+            _colorsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 210), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            _colorsGroup.Children.Add(new LabelControl { Text = "Colors", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             _colorPaletteGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 200), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            _frameToolsGroup.Children.Add(_colorPaletteGroup);
+            _colorsGroup.Children.Add(_colorPaletteGroup);
 
             var colorsButtons = new Control { LayoutFlags = ControlLayoutFlags.WholeRow, Bounds = new UniRectangle(0,0,180,25) };
 
@@ -497,12 +563,13 @@ namespace Utopia.Components
 
             colorsButtons.UpdateLayout();
 
-            _frameToolsGroup.Children.Add(colorsButtons);
+            _colorsGroup.Children.Add(colorsButtons);
+
+            _colorsGroup.UpdateLayout();
 
             _frameToolsGroup.UpdateLayout();
             #endregion
-
-
+            
             #region Layout tools
             _layoutToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
@@ -530,7 +597,34 @@ namespace Utopia.Components
             return toolsWindow;
         }
 
+        private void OnToolSelected(EditorTools tool)
+        {
+            _toolsWindow.Children.Clear();
+            _toolsWindow.Children.Add(_modesButtonsGroup);
+            _toolsWindow.Children.Add(_frameToolsGroup);
+            
+            switch (tool)
+            {
+                case EditorTools.Edit:
+                    _toolsWindow.Children.Add(_tpEdit);
+                    break;
+                case EditorTools.ColorBrush:
+                    break;
+                case EditorTools.FillBrush:
+                    break;
+                case EditorTools.SliceBrush:
+                    _toolsWindow.Children.Add(_tpSliceBrush);
+                    break;
+                case EditorTools.Preset:
+                    _toolsWindow.Children.Add(_tpPreset);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("tool");
+            }
 
+            _toolsWindow.Children.Add(_colorsGroup);
+            _toolsWindow.UpdateLayout();
+        }
         
         public void UpdateLayout()
         {
@@ -548,5 +642,14 @@ namespace Utopia.Components
                 group.UpdateLayout();
             }
         }
+    }
+
+    public enum EditorTools
+    {
+        Edit,
+        ColorBrush,
+        FillBrush,
+        SliceBrush,
+        Preset
     }
 }
