@@ -36,7 +36,7 @@ namespace Utopia.Shared.Net.Messages
                 case MessageTypes.GetChunks:        return GetChunksMessage.Read(reader);
                 case MessageTypes.Login:            return LoginMessage.Read(reader);
                 case MessageTypes.LoginResult:      return LoginResultMessage.Read(reader);
-                case MessageTypes.EntityDirection:  return EntityDirectionMessage.Read(reader);
+                case MessageTypes.EntityDirection:  return EntityHeadDirectionMessage.Read(reader);
                 case MessageTypes.EntityIn:         return EntityInMessage.Read(reader, EntityFactory);
                 case MessageTypes.EntityOut:        return EntityOutMessage.Read(reader);
                 case MessageTypes.EntityPosition:   return EntityPositionMessage.Read(reader);

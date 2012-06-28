@@ -88,7 +88,7 @@ namespace Utopia.Server.Managers
             connection.ServerEntity.Use(e.Message);
         }
 
-        private void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
+        private void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
         {
             var connection = sender as ClientConnection;
             if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)

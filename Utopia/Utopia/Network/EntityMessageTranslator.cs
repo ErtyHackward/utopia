@@ -34,6 +34,7 @@ namespace Utopia.Network
                     {
                         _playerEntity.PositionChanged -= PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged -= PlayerEntityViewChanged;
+                        _playerEntity.BodyOrientationChanged -= _playerEntity_BodyOrientationChanged;
                         _playerEntity.Use -= PlayerEntityUse;
                     }
 
@@ -43,6 +44,7 @@ namespace Utopia.Network
                     {
                         _playerEntity.PositionChanged += PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged += PlayerEntityViewChanged;
+                        _playerEntity.BodyOrientationChanged += _playerEntity_BodyOrientationChanged;
                         _playerEntity.Use += PlayerEntityUse;
                     }
                 }
@@ -91,7 +93,7 @@ namespace Utopia.Network
             _server.MessageDirection -= ConnectionMessageDirection;
         }
 
-        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityDirectionMessage> e)
+        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
         {
             var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
@@ -155,12 +157,23 @@ namespace Utopia.Network
 
         private void PlayerEntityViewChanged(object sender, EntityViewEventArgs e)
         {
-            _server.ServerConnection.SendAsync(new EntityDirectionMessage 
+            _server.ServerConnection.SendAsync(new EntityHeadDirectionMessage 
             { 
                 Rotation = e.Entity.HeadRotation, 
                 EntityId = e.Entity.DynamicId
             });
         }
+
+
+        void _playerEntity_BodyOrientationChanged(object sender, EntityBodyRotationEventArgs e)
+        {
+            _server.ServerConnection.SendAsync(new EntityBodyDirectionMessage
+            {
+                Rotation = e.Entity.HeadRotation,
+                EntityId = e.Entity.DynamicId
+            });
+        }
+
 
         private void PlayerEntityPositionChanged(object sender, EntityMoveEventArgs e)
         {

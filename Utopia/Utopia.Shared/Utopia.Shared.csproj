@@ -109,6 +109,7 @@
     <Compile Include="Entities\Concrete\Collectible\Flower3.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
+    <Compile Include="Entities\Events\EntityBodyRotationEventArgs.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
     <Compile Include="Entities\Concrete\CubeResource.cs" />
@@ -212,7 +213,8 @@
     <Compile Include="Net\Messages\ChatMessage.cs" />
     <Compile Include="Net\Messages\ChunkDataMessage.cs" />
     <Compile Include="Net\Messages\DateTimeMessage.cs" />
-    <Compile Include="Net\Messages\EntityDirectionMessage.cs" />
+    <Compile Include="Net\Messages\EntityBodyDirectionMessage.cs" />
+    <Compile Include="Net\Messages\EntityHeadDirectionMessage.cs" />
     <Compile Include="Net\Messages\EntityEquipmentMessage.cs" />
     <Compile Include="Net\Messages\EntityImpulseMessage.cs" />
     <Compile Include="Net\Messages\EntityInMessage.cs" />

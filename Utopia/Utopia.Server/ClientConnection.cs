@@ -122,12 +122,12 @@ namespace Utopia.Server
         /// <summary>
         /// Occurs when a PlayerDirectionMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<EntityDirectionMessage>> MessageDirection;
+        public event EventHandler<ProtocolMessageEventArgs<EntityHeadDirectionMessage>> MessageDirection;
 
-        protected void OnMessageDirection(EntityDirectionMessage ea)
+        protected void OnMessageDirection(EntityHeadDirectionMessage ea)
         {
             var handler = MessageDirection;
-            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityHeadDirectionMessage> { Message = ea });
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ namespace Utopia.Server
                                     OnMessagePosition(EntityPositionMessage.Read(reader));
                                     break;
                                 case MessageTypes.EntityDirection:
-                                    OnMessageDirection(EntityDirectionMessage.Read(reader));
+                                    OnMessageDirection(EntityHeadDirectionMessage.Read(reader));
                                     break;
                                 case MessageTypes.EntityUse:
                                     OnMessageEntityUse(EntityUseMessage.Read(reader));

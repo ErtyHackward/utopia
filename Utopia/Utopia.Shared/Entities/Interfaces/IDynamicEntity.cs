@@ -21,6 +21,11 @@ namespace Utopia.Shared.Entities.Interfaces
         event EventHandler<EntityViewEventArgs> ViewChanged;
 
         /// <summary>
+        /// Occurs when entity changes its body orientation
+        /// </summary>
+        event EventHandler<EntityBodyRotationEventArgs> BodyOrientationChanged;
+
+        /// <summary>
         /// Occurs when entity performs "use" operation
         /// </summary>
         event EventHandler<EntityUseEventArgs> Use;
@@ -54,5 +59,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets or sets entity head rotation
         /// </summary>
         Quaternion HeadRotation { get; set; }
+
+        /// <summary>
+        /// Gets or sets entity body rotation
+        /// </summary>
+        Quaternion BodyRotation { get; set; }
     }
 }
