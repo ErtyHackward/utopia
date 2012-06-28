@@ -6,14 +6,19 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
     {
         public bool Sticked { get; set; }
 
+        /// <summary>
+        /// Gets or sets value indicating if the button should not automatically unstick when other stick button in the group is pressed
+        /// </summary>
+        public bool Separate { get; set; }
+
         protected override void OnPressed()
         {
-            base.OnPressed();
             Sticked = true;
-
+            base.OnPressed();
+            
             // unstick all other buttons at our parent
 
-            if (Parent != null)
+            if (Parent != null && !Separate)
             {
                 foreach (var control in Parent.Children)
                 {
