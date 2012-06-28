@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using SharpDX;
 using Utopia.Shared.Net.Interfaces;
@@ -9,7 +9,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that inform about change in view direction of the entity
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct EntityDirectionMessage : IBinaryMessage
+    public struct EntityBodyDirectionMessage : IBinaryMessage
     {
         /// <summary>
         /// entity identification number
@@ -46,9 +46,9 @@ namespace Utopia.Shared.Net.Messages
             set { _rotation = value; }
         }
 
-        public static EntityDirectionMessage Read(BinaryReader reader)
+        public static EntityBodyDirectionMessage Read(BinaryReader reader)
         {
-            EntityDirectionMessage msg;
+            EntityBodyDirectionMessage msg;
 
             msg._entityId = reader.ReadUInt32();
             msg._rotation = reader.ReadQuaternion();
@@ -56,7 +56,7 @@ namespace Utopia.Shared.Net.Messages
             return msg;
         }
 
-        public static void Write(BinaryWriter writer, EntityDirectionMessage msg)
+        public static void Write(BinaryWriter writer, EntityBodyDirectionMessage msg)
         {
             writer.Write(msg._entityId);
             writer.Write(msg._rotation);

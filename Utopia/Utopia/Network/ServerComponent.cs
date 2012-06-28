@@ -62,7 +62,7 @@ namespace Utopia.Network
         /// <summary>
         /// Occurs when PlayerDirectionMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<EntityDirectionMessage>> MessageDirection;
+        public event EventHandler<ProtocolMessageEventArgs<EntityHeadDirectionMessage>> MessageDirection;
         /// <summary>
         /// Occurs when GameInformationMessage is received
         /// </summary>
@@ -244,9 +244,9 @@ namespace Utopia.Network
             if (MessagePosition != null) MessagePosition(this, new ProtocolMessageEventArgs<EntityPositionMessage> { Message = ea });
         }
 
-        protected void OnMessageDirection(EntityDirectionMessage ea)
+        protected void OnMessageDirection(EntityHeadDirectionMessage ea)
         {
-            if (MessageDirection != null) MessageDirection(this, new ProtocolMessageEventArgs<EntityDirectionMessage> { Message = ea });
+            if (MessageDirection != null) MessageDirection(this, new ProtocolMessageEventArgs<EntityHeadDirectionMessage> { Message = ea });
         }
 
         protected void OnMessageGameInformation(GameInformationMessage ea)
@@ -365,7 +365,7 @@ namespace Utopia.Network
                     OnMessagePosition((EntityPositionMessage)msg);
                     break;
                 case MessageTypes.EntityDirection:
-                    OnMessageDirection((EntityDirectionMessage)msg);
+                    OnMessageDirection((EntityHeadDirectionMessage)msg);
                     break;
                 case MessageTypes.ChunkData:
                     OnMessageChunkData((ChunkDataMessage)msg);

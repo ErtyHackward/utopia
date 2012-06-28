@@ -155,7 +155,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.HeadRotation });
+                Connection.SendAsync(new EntityHeadDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.HeadRotation });
             }
         }
 
