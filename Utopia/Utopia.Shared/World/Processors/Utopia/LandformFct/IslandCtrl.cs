@@ -29,7 +29,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         public INoise GetLandFormFct()
         {
             //Create a Landscape 2D (Forced no matter the sampling realized on it).
-            INoise islandDisk =new Sphere(0.7, 0.5, 0.5);
+            INoise islandDisk =new Sphere(0.7, 0, 0);
 
             //Perturbation on the X and Y space
             INoise islandDiskXPerturb = new FractalFbm(new Perlin(_seed + 3), 10, 3);

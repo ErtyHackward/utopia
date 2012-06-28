@@ -12,6 +12,8 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
+using Amib.Threading;
+using System.Collections.Generic;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -24,6 +26,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private IWorldChunks _worldChunks;
         private IChunkStorageManager _chunkStorageManager;
         private ILightingManager _lightManager;
+        private List<TerraCubePositionTag> _onHoldNetworkMsg = new List<TerraCubePositionTag>(1000);
         #endregion
 
         #region Public variables/properties
@@ -69,6 +72,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _chunkStorageManager = chunkStorageManager;
             _server.MessageBlockChange += ServerConnection_MessageBlockChange;
             _cubesHolder = cubesHolder;
+
             _initialized = true;
         }
 
@@ -88,22 +92,35 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <param name="e"></param>
         private void ServerConnection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
-            //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
-            //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
-            //for (int i = 0; i < e.Message.BlockValues.Length; i++)
-            //{                
-            //    ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], e.Message.Tags != null ? e.Message.Tags[i] : null);
-            //}
-            SmartThread.ThreadPool.QueueWorkItem(ReplaceBlockThreaded, e, Amib.Threading.WorkItemPriority.Highest);
+            //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
+            SmartThread.ThreadPoolSingleConcurrency.QueueWorkItem(ReplaceBlockThreaded, e, Amib.Threading.WorkItemPriority.Highest);
         }
 
         private void ReplaceBlockThreaded(ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
             //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
             //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
+            _onHoldNetworkMsg.Clear();
             for (int i = 0; i < e.Message.BlockValues.Length; i++)
             {
-                ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], e.Message.Tags != null ? e.Message.Tags[i] : null);
+                BlockTag tag = e.Message.Tags != null ? e.Message.Tags[i] : null;
+                if (ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], true, tag) == false)
+                {
+                    _onHoldNetworkMsg.Add(new TerraCubePositionTag(e.Message.BlockPositions[i], e.Message.BlockValues[i], tag));
+                }
+            }
+
+            //If it was not possible to Do the block changes on chunk then retry until you can !
+            while (_onHoldNetworkMsg.Count > 0)
+            {
+                System.Threading.Thread.Sleep(5);
+                for (int i = _onHoldNetworkMsg.Count - 1; i >= 0; i--)
+                {
+                    if (ReplaceBlock(ref _onHoldNetworkMsg[i].Position, _onHoldNetworkMsg[i].Cube.Id, true, _onHoldNetworkMsg[i].Tag) == true)
+                    {
+                        _onHoldNetworkMsg.RemoveAt(i);
+                    }
+                }
             }
         }
 
@@ -114,7 +131,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// </summary>
         /// <param name="cubeCoordinates">The cube that has been modified</param>
         /// <param name="replacementCubeId">The type of the modified cube</param>
-        private void CheckImpact(TerraCubeWithPosition cube)
+        private void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
         {
             Int64 mainChunkId;
 
@@ -126,8 +143,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             };
 
             //Refresh the Visual Entity if needed !
-            VisualChunk NeightBorChunk;
-            NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z);
 
             _lightManager.CreateLightSources(ref cubeRange);
 
@@ -141,17 +156,17 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
 
             //Find the chunks that have been impacted around the 8 surrounding chunks
-            NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
-            NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-            NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 1 : 2;
-            mainChunkId = NeightBorChunk.ChunkID;
+            cubeChunk.State = ChunkState.OuterLightSourcesProcessed;
+            cubeChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+            cubeChunk.UpdateOrder = !profile.IsBlockingLight ? 1 : 2;
+            mainChunkId = cubeChunk.ChunkID;
 
             //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-
+            VisualChunk NeightBorChunk;
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -160,7 +175,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -169,7 +184,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -178,7 +193,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -187,7 +202,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -196,7 +211,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -205,7 +220,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -214,7 +229,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
-                NeightBorChunk.State = ChunkState.InnerLightsSourcePropagated;
+                NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
@@ -224,17 +239,17 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         #endregion
 
         #region Public methods
-        public void ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, BlockTag blockTag = null)
+        public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
         {
-            ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, blockTag);
+            return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);
         }
 
-        public void ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, BlockTag blockTag = null)
+        public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
         {
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-            if (impactedChunk.ThreadStatus == ThreadStatus.Locked)
+            if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChange)
             {
-                Console.WriteLine("Change done inside a locked thread currently processing : " + impactedChunk.State);
+                return false;
             }
             //Create the new cube
             TerraCube newCube = new TerraCube(replacementCubeId);
@@ -251,10 +266,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                     BlockTag ExistingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
                     if (ExistingTag == blockTag)
                     {
-                        return; //The block & tags are the sames !
+                        return true; //The block & tags are the sames !
                     }
-                } 
-                else return; //The block are the sames !
+                }
+                else return true; //The block are the sames !
             }
 
             //Change the cube in the big array
@@ -269,7 +284,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
             //SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
-            CheckImpact(cube);
+            CheckImpact(cube, impactedChunk);
 
             //Raise event for sound
             OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
@@ -280,6 +295,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Md5Hash chunkHash;
             byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
+
+            return true;
         }
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)
@@ -302,6 +319,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
         }
         #endregion
+
+
     }
 
     public class LandscapeBlockReplacedEventArgs : EventArgs

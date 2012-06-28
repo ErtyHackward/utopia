@@ -63,7 +63,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (handler != null) 
                 handler(this, new LandscapeCursorBeforeWriteEventArgs { GlobalPosition = GlobalPosition, Value = value, BlockTag = tag });
 
-            _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value, tag);
+            _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value, false, tag);
         }
 
         public ILandscapeCursor Clone()

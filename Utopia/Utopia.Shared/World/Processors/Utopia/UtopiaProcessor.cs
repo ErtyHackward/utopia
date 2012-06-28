@@ -103,7 +103,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             moisture = new Moisture(_worldParameters.Seed - 96).GetLandFormFct();
         }
 
-        public INoise CreateLandFormFct(Gradient ground_gradient, INoise islandCtrl, out INoise landScapeTypeFct)
+        public INoise CreateLandFormFct(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
         {
             //Create various landcreation Algo. ===================================================================
             //Montains forms
@@ -145,8 +145,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold); //Biome composition
 
             //Merge the Water landForm with the surface landForm
-            Select world_select = new Select(oceanBaseFct, midland_montain_select, islandCtrl, 0.01, 0.20);         
-            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, islandCtrl, world_select.Threshold);         //Biome composition
+            Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, 0.009, 0.20);         
+            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, terrainDelimiter, world_select.Threshold);         //Biome composition
 
             landScapeTypeFct = world_select_result;
 

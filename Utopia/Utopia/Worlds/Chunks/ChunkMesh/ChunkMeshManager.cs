@@ -194,10 +194,11 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         neightborCubeProfile = GameSystemSettings.Current.Settings.CubesProfile[neightborCube.Id];
 
                         //Check if a tag is present and ICubeYOffsetModifier is implementad by the tag;
-                        float cubeYOffset = (float)cubeProfile.YBlockOffset;
-                        if (cubeProfile.IsTaggable)
+                        float cubeYOffset = (float)cubeProfile.YBlockOffset;    //Natural YOffset of the Cube
+                        if (cubeProfile.IsTaggable)                             
                         {
-                            ICubeYOffsetModifier tagOffset = (chunk.BlockData.GetTag(new Vector3I(x, y, z))) as ICubeYOffsetModifier;
+                            BlockTag tag = chunk.BlockData.GetTag(new Vector3I(x, y, z));
+                            ICubeYOffsetModifier tagOffset = tag as ICubeYOffsetModifier;   //If block is taggle then it will overide the natural UOffset
                             if (tagOffset != null)
                             {
                                 cubeYOffset = tagOffset.YOffset;
@@ -209,25 +210,17 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             //Find the chunk where this neightboor is located !! (Could be a chunk next to this one !)
                             Vector3I NeightCubeWorldPosition = new Vector3I(xNeight + chunk.CubeRange.Position.X, yNeight, zNeight + chunk.CubeRange.Position.Z);
-
                             VisualChunk neighbChunk = WorldChunks.GetChunk(ref NeightCubeWorldPosition);
 
-                            ICubeYOffsetModifier tagOffset = (neighbChunk.BlockData.GetTag(new Vector3I(NeightCubeWorldPosition.X - neighbChunk.CubeRange.Position.X, yNeight, NeightCubeWorldPosition.Z - neighbChunk.CubeRange.Position.Z))) as ICubeYOffsetModifier;
+                            BlockTag tag = neighbChunk.BlockData.GetTag(new Vector3I(NeightCubeWorldPosition.X - neighbChunk.CubeRange.Position.X, yNeight, NeightCubeWorldPosition.Z - neighbChunk.CubeRange.Position.Z));
+                            ICubeYOffsetModifier tagOffset = tag as ICubeYOffsetModifier;
                             if (tagOffset != null)
                             {
                                 neightborcubeYOffset = tagOffset.YOffset;
                             }
                         }
 
-                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset && cubeFace != CubeFaces.Top) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top && neightborCube.Id != currentCube.Id);
-
-                        if (cubePosiInWorld.X == 20 &&
-                           cubePosiInWorld.Y == 74 &&
-                           cubePosiInWorld.Z == 16 &&
-                            cubeFace == CubeFaces.Back)
-                        {
-                            cubeFace = CubeFaces.Back;
-                        }
+                        bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset && cubeFace != CubeFaces.Top) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top); // && neightborCube.Id != currentCube.Id);
 
                         switch (cubeProfile.CubeFamilly)
                         {
