@@ -44,7 +44,7 @@ namespace Utopia.Components
 
         private VertexBuffer<VertexPosition> _boxVertexBuffer;
         private IndexBuffer<ushort> _boxIndexBuffer;
-
+        
         private Vector3I _gridSize;
         private VertexBuffer<VertexPosition> _xGridVertextBuffer;
         private VertexBuffer<VertexPosition> _yGridVertextBuffer;
@@ -105,6 +105,8 @@ namespace Utopia.Components
 
         private int _selectedColorIndex;
         private int _selectedToolIndex;
+        private EditorAxis _sliceAxis = EditorAxis.Y;
+        private EditorAxis _mirror = EditorAxis.None;
 
         /// <summary>
         /// Provides a plane for a part translating
@@ -232,6 +234,8 @@ namespace Utopia.Components
                     _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex].ActiveFrame
                         = (byte) _selectedFrameIndex;
                 }
+                if (Mode == EditorMode.FrameEdit)
+                    UpdateCamera();
             }
         }
 
@@ -472,7 +476,7 @@ namespace Utopia.Components
 
             _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine.Device, indices.Length, SharpDX.DXGI.Format.R16_UInt, "EditorBox_indexBuffer");
             _boxIndexBuffer.SetData(_d3DEngine.ImmediateContext, indices);
-
+            
             ptList.Clear();
 
             ptList.Add(new VertexPosition(new Vector3(0,  0, -1)));
@@ -1187,19 +1191,7 @@ namespace Utopia.Components
 
         #endregion
 
-        private void OnToolSelected(int toolIndex)
-        {
-            for (int i = 0; i < _toolsButtons.Count; i++)
-            {
-                if (i != toolIndex)
-                {
-                    _toolsButtons[i].Release();
-                }
-                else _toolsButtons[i].Sticked = true;
-            }
-
-            _selectedToolIndex = toolIndex;
-        }
+        
 
         #endregion
 
@@ -1238,6 +1230,66 @@ namespace Utopia.Components
                         UpdateTransformMatrix(_currentViewData, box);
                     }
                     break;
+            }
+        }
+
+        private IEnumerable<Vector3I> GetSelectedCubes(bool newCubes = false)
+        {
+            if (_newCube.HasValue || _pickedCube.HasValue)
+            {
+                var pos = _pickedCube.HasValue ? _pickedCube.Value : _newCube.Value;
+
+                if (newCubes) pos = _newCube.Value;
+
+                yield return pos;
+
+                if (_mirror != EditorAxis.None)
+                {
+                    if (SelectedPartIndex != -1 && SelectedFrameIndex != -1)
+                    {
+                        var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex];
+
+                        if (_mirror.HasFlag(EditorAxis.X))
+                        {
+                            yield return new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1, pos.Y, pos.Z);
+                        }
+                        if (_mirror.HasFlag(EditorAxis.Y))
+                        {
+                            yield return new Vector3I(pos.X, frame.BlockData.ChunkSize.Y - pos.Y - 1, pos.Z);
+                        }
+                        if (_mirror.HasFlag(EditorAxis.Z))
+                        {
+                            yield return new Vector3I(pos.X, pos.Y, frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                        }
+
+                        if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Y))
+                        {
+                            yield return
+                                new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1,
+                                             frame.BlockData.ChunkSize.Y - pos.Y - 1, pos.Z);
+                        }
+                        if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Z))
+                        {
+                            yield return
+                                new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1, pos.Y,
+                                             frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                        }
+                        if (_mirror.HasFlag(EditorAxis.Z | EditorAxis.Y))
+                        {
+                            yield return
+                                new Vector3I(pos.X, frame.BlockData.ChunkSize.Y - pos.Y - 1,
+                                             frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                        }
+
+                        if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Y | EditorAxis.Z))
+                        {
+                            yield return
+                                new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1,
+                                             frame.BlockData.ChunkSize.Y - pos.Y - 1,
+                                             frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                        }
+                    }
+                }
             }
         }
 
@@ -1373,25 +1425,84 @@ namespace Utopia.Components
                         {
                             if (_pickedCube.HasValue)
                             {
-                                switch (_selectedToolIndex)
+                                foreach (var cubePos in GetSelectedCubes())
                                 {
-                                    case 0:
-                                        frame.BlockData.SetBlock(_pickedCube.Value, 0);
-                                        break;  
-                                    case 1:
-                                        frame.BlockData.SetBlock(_pickedCube.Value, (byte)(_selectedColorIndex + 1));
-                                        break;
-                                    case 2:
-                                        // color fill 
-                                        var fillIndex = frame.BlockData.GetBlock(_pickedCube.Value);
-                                        var fillWith = (byte)(_selectedColorIndex + 1);
-                                        // recursive change all adjacent cubes
-                                        if (fillIndex != fillWith)
-                                            ColorFill(frame, _pickedCube.Value, fillIndex, fillWith);
-                                        break;
+                                    switch (_selectedToolIndex)
+                                    {
+                                        case 0:
+                                            frame.BlockData.SetBlock(cubePos, 0);
+                                            break;
+                                        case 1:
+                                            frame.BlockData.SetBlock(cubePos, (byte) (_selectedColorIndex + 1));
+                                            break;
+                                        case 2:
+                                            {
+                                                // color fill 
+                                                var fillIndex = frame.BlockData.GetBlock(cubePos);
+                                                var fillWith = (byte) (_selectedColorIndex + 1);
+                                                // recursive change all adjacent cubes
+                                                if (fillIndex != fillWith)
+                                                    ColorFill(frame, cubePos, fillIndex, fillWith);
+                                            }
+                                            break;
+                                        case 3:
+                                            {
+                                                // slice fill
+                                                var fillWith = (byte) (_selectedColorIndex + 1);
+
+                                                switch (_sliceAxis)
+                                                {
+                                                    case EditorAxis.X:
+                                                        for (int y = 0; y < frame.BlockData.ChunkSize.Y; y++)
+                                                        {
+                                                            for (int z = 0; z < frame.BlockData.ChunkSize.Z; z++)
+                                                            {
+                                                                if (
+                                                                    frame.BlockData.GetBlock(cubePos.X, y, z) !=
+                                                                    0)
+                                                                    frame.BlockData.SetBlock(
+                                                                        new Vector3I(cubePos.X, y, z),
+                                                                        fillWith);
+                                                            }
+                                                        }
+                                                        break;
+                                                    case EditorAxis.Y:
+                                                        for (int x = 0; x < frame.BlockData.ChunkSize.X; x++)
+                                                        {
+                                                            for (int z = 0; z < frame.BlockData.ChunkSize.Z; z++)
+                                                            {
+                                                                if (
+                                                                    frame.BlockData.GetBlock(x, cubePos.Y, z) !=
+                                                                    0)
+                                                                    frame.BlockData.SetBlock(
+                                                                        new Vector3I(x, cubePos.Y, z),
+                                                                        fillWith);
+                                                            }
+                                                        }
+                                                        break;
+                                                    case EditorAxis.Z:
+                                                        for (int y = 0; y < frame.BlockData.ChunkSize.Y; y++)
+                                                        {
+                                                            for (int x = 0; x < frame.BlockData.ChunkSize.X; x++)
+                                                            {
+                                                                if (
+                                                                    frame.BlockData.GetBlock(x, y, cubePos.Z) !=
+                                                                    0)
+                                                                    frame.BlockData.SetBlock(
+                                                                        new Vector3I(x, y, cubePos.Z),
+                                                                        fillWith);
+                                                            }
+                                                        }
+                                                        break;
+                                                    default:
+                                                        throw new ArgumentOutOfRangeException();
+                                                }
+
+                                            }
+                                            break;
+                                    }
                                 }
 
-                                
                                 RebuildFrameVertices();
                                 NeedSave();
                             }
@@ -1401,17 +1512,19 @@ namespace Utopia.Components
                         {
                             if (_newCube.HasValue)
                             {
-                                switch (_selectedToolIndex)
+                                foreach (var cubePos in GetSelectedCubes(true))
                                 {
-                                    case 0:
-                                        frame.BlockData.SetBlock(_newCube.Value, (byte)(_selectedColorIndex + 1));
-                                        break;
-                                    case 1:
-                                        break;
-                                    case 2:
-                                        break;
+                                    switch (_selectedToolIndex)
+                                    {
+                                        case 0:
+                                            frame.BlockData.SetBlock(cubePos, (byte)(_selectedColorIndex + 1));
+                                            break;
+                                        case 1:
+                                            break;
+                                        case 2:
+                                            break;
+                                    }
                                 }
-                                
                                 RebuildFrameVertices();
                                 NeedSave();
                             }
@@ -1942,6 +2055,23 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
+                //if (_pickedCube != null)
+                //{
+                //    // draw selected cube
+                //    DrawBox(new BoundingBox(_pickedCube.Value, _pickedCube.Value + Vector3I.One), new Color4(1, 0, 0, 1));
+                //}
+                //else if (_newCube != null)
+                //{
+                //    // draw selected cube
+                //    DrawBox(new BoundingBox(_newCube.Value, _newCube.Value + Vector3I.One), new Color4(1, 0, 0, 0.5f));
+                //}
+
+                foreach (var mirrorCube in GetSelectedCubes())
+                {
+                    DrawBox(new BoundingBox(new Vector3(-0.01f) + mirrorCube, new Vector3(1.01f) + mirrorCube), new Color4(1, 0, 0, 1f));
+                    DrawBox(new BoundingBox(new Vector3(0.01f) + mirrorCube, new Vector3(0.99f) + mirrorCube), new Color4(1, 0, 0, 1f));
+                }
+
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
                 #region Grid
@@ -1993,16 +2123,7 @@ namespace Utopia.Components
                 context.DrawIndexed(ib.IndicesCount, 0, 0);
 
                 
-                if (_pickedCube != null)
-                {
-                    // draw selected cube
-                    DrawBox(new BoundingBox(_pickedCube.Value, _pickedCube.Value + Vector3I.One), new Color4(1, 0, 0, 1));
-                }
-                else if (_newCube != null)
-                {
-                    // draw selected cube
-                    DrawBox(new BoundingBox(_newCube.Value, _newCube.Value + Vector3I.One), new Color4(1, 0, 0, 0.5f));
-                }
+
             }
         }
         #endregion
@@ -2175,5 +2296,14 @@ namespace Utopia.Components
                 _gui.MessageBox(x.Message, "Error");
             }
         }
+    }
+
+    [Flags]
+    internal enum EditorAxis
+    {
+        None = 0x0,
+        X    = 0x1,
+        Y    = 0x2,
+        Z    = 0x4
     }
 }
