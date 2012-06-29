@@ -123,8 +123,7 @@ namespace Utopia.Entities.Renderer
             //Applying Correct Render States
             if (_model != null)
             {
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled,
-                             DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
@@ -132,7 +131,7 @@ namespace Utopia.Entities.Renderer
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
 
-                _model.Draw(context, _voxelEffect, _playerModelInstance.State);
+                _model.Draw(context, _voxelEffect, _playerModelInstance);
             }
             else
             {
@@ -156,8 +155,9 @@ namespace Utopia.Entities.Renderer
         public void Update(GameTime timeSpend)
         {
             _worldPosition.BackUpValue();
-
             _worldPosition.Value = _visualEntity.VisualEntity.Position;
+
+            _playerModelInstance.HeadRotation = _visualEntity.VisualEntity.Position
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)

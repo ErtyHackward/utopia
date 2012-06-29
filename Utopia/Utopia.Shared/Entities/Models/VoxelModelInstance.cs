@@ -21,7 +21,9 @@ namespace Utopia.Shared.Entities.Models
         private bool _repeat;
         private Md5Hash _modelHash;
         private Quaternion _rotation;
-
+        private int _headPartIndex;
+        private  Quaternion _headRotation;
+        
         #region Properties
         /// <summary>
         /// Gets a parent voxel model
@@ -43,6 +45,15 @@ namespace Utopia.Shared.Entities.Models
         {
             get { return _rotation; }
             set { _rotation = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets model instance head rotation
+        /// </summary>
+        public Quaternion HeadRotation
+        {
+            get { return _headRotation; }
+            set { _headRotation = value; }
         }
 
         /// <summary>
@@ -96,7 +107,7 @@ namespace Utopia.Shared.Entities.Models
         {
             get
             {
-                return Playing ? _internalState : VoxelModel.States[0];
+                return _internalState;
             }
         }
         #endregion
@@ -111,12 +122,18 @@ namespace Utopia.Shared.Entities.Models
         /// This method should be used only on deserialization step to restore parent model relationship
         /// </summary>
         /// <param name="model"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void SetParentModel(VoxelModel model)
         {
+            if (model == null)
+                throw new ArgumentNullException("model");
+
             VoxelModel = model;
+
+            _headPartIndex = model.Parts.FindIndex(p => p.IsHead);
+
             // init the cached state, cached state should have the same structure as parent model states
-            if(model != null)
-                _internalState = new VoxelModelState(model.States[0]);
+            _internalState = new VoxelModelState(model.States[0]);
         }
 
         /// <summary>
@@ -131,10 +148,10 @@ namespace Utopia.Shared.Entities.Models
         /// Starts first animation with name specified
         /// </summary>
         /// <param name="animationName"></param>
-        /// <param name="repeat"> </param>
+        /// <param name="repeat"></param>
         public void Play(string animationName, bool repeat = false)
         {
-            if (string.IsNullOrEmpty(animationName)) 
+            if (string.IsNullOrEmpty(animationName))
                 throw new ArgumentNullException("animationName");
 
             var animation = VoxelModel.Animations.FindIndex(a => a.Name == animationName);
@@ -152,7 +169,7 @@ namespace Utopia.Shared.Entities.Models
         /// Starts animation with index specified
         /// </summary>
         /// <param name="index"></param>
-        /// <param name="repeat"> </param>
+        /// <param name="repeat"></param>
         public void Play(int index, bool repeat = false)
         {
             if (index < 0 || index >= VoxelModel.Animations.Count)
@@ -177,7 +194,7 @@ namespace Utopia.Shared.Entities.Models
 
             var animation = VoxelModel.Animations[_animationIndex];
 
-            int duration = animation.Steps[_animationStepIndex].Duration;
+            var duration = animation.Steps[_animationStepIndex].Duration;
 
             if (_elapsed > duration)
             {
@@ -203,7 +220,7 @@ namespace Utopia.Shared.Entities.Models
                 }
                 else state1 = VoxelModel.States[animation.Steps[_animationStepIndex + 1].StateIndex];
 
-                for (int i = 0; i < _internalState.PartsStates.Count; i++)
+                for (var i = 0; i < _internalState.PartsStates.Count; i++)
                 {
                     _internalState.PartsStates[i].ActiveFrame = state0.PartsStates[i].ActiveFrame;
                     var step = (float)Elapsed / duration;

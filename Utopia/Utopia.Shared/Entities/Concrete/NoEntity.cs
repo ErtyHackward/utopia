@@ -3,7 +3,7 @@ using System;
 namespace Utopia.Shared.Entities.Concrete
 {
     /// <summary>
-    /// Represents a null entity (no any entity)
+    /// Represents a null entity (no any entity). Used to represent an absence of the entity in the process of serialization
     /// </summary>
     public class NoEntity : Entity
     {

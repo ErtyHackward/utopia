@@ -1,46 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
-  <Class Name="Utopia.Shared.Chunks.AbstractChunk">
+  <Class Name="Utopia.Shared.Chunks.AbstractChunk" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>gAAAAAAJCAAAAAAAAAEAAAAAgCBACAAAAAEAACAgAAA=</HashCode>
+      <HashCode>gAAAAAAICAAAAAAAAAEAAAAAgCBACAAAAAEAACAoAAA=</HashCode>
       <FileName>Chunks\AbstractChunk.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Chunks.ChunkDataProvider">
+  <Class Name="Utopia.Shared.Chunks.ChunkDataProvider" Collapsed="true">
     <Position X="6.25" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAIAAAAAAAACIAAAAAAgAAAAAAAAAAACEAAQAQ=</HashCode>
+      <HashCode>MAAAgIAIQAAAACAACIAAAAAAgAAAQAACAAAACUAAQAU=</HashCode>
       <FileName>Chunks\ChunkDataProvider.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Chunks.CompressibleChunk">
-    <Position X="3.75" Y="1.25" Width="1.5" />
+  <Class Name="Utopia.Shared.Chunks.CompressibleChunk" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAIABAAAAAAAICAAAAEgAAAAAAAAAACACAAAAA=</HashCode>
+      <HashCode>QAAAAAAIABAAAAAAAICAAAAEgAAAAAAAAAACACAIAAA=</HashCode>
       <FileName>Chunks\CompressibleChunk.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Utopia.Shared.Chunks.GeneratedChunk">
-    <Position X="1" Y="5.75" Width="1.5" />
+  <Class Name="Utopia.Shared.Chunks.GeneratedChunk" Collapsed="true">
+    <Position X="0.75" Y="3.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <InheritanceLine Type="Utopia.Shared.Chunks.AbstractChunk" ManuallyRouted="true">
+      <Path>
+        <Point X="1.75" Y="1.076" />
+        <Point X="1.75" Y="3.5" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Chunks\GeneratedChunk.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Chunks.InsideDataProvider">
-    <Position X="5.75" Y="4.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Chunks.InsideDataProvider" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>EAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAACEAAAAQ=</HashCode>
+      <HashCode>MAAAgIABbAAQACQQCAEAQAAAAAKAQIACACAAqUAAAAQ=</HashCode>
       <FileName>Chunks\InsideDataProvider.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Utopia.Shared.Chunks.SingleArrayDataProvider">
-    <Position X="7.5" Y="4.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Chunks.SingleArrayDataProvider" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>EAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAACEQAAAQ=</HashCode>
+      <HashCode>NAAAgIAAQQAAACAAAAAAQAAAAAKIQAACAAAAiUQAAAQ=</HashCode>
       <FileName>Chunks\SingleArrayDataProvider.cs</FileName>
     </TypeIdentifier>
   </Class>
