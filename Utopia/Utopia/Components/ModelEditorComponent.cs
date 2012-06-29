@@ -1862,7 +1862,7 @@ namespace Utopia.Components
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
 
-                _visualVoxelModel.Draw(context, _voxelEffect, _instance.State);
+                _visualVoxelModel.Draw(context, _voxelEffect, _instance);
             }
         }
 

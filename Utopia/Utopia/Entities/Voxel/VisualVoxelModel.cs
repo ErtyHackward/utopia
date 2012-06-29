@@ -154,13 +154,12 @@ namespace Utopia.Entities.Voxel
         /// Draws a model with default state, to perform real drawing use VoxelModelInstance class
         /// </summary>
         /// <param name="effect"></param>
-        /// <param name="state"></param>
-        public void Draw(DeviceContext context, HLSLVoxelModel effect, VoxelModelState state = null)
+        /// <param name="instance"></param>
+        public void Draw(DeviceContext context, HLSLVoxelModel effect, VoxelModelInstance instance)
         {
             if (!_initialized) return;
 
-            if(state == null)
-                state = _model.States[0];
+            var state = instance.State;
 
             if (_model.ColorMapping != null)
             {
@@ -185,7 +184,15 @@ namespace Utopia.Entities.Voxel
                     effect.CBPerFrame.IsDirty = true;
                 }
 
-                effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
+                if (_model.Parts[i].IsHead)
+                {
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.RotationQuaternion(instance.HeadRotation) * voxelModelPartState.Transform);
+                }
+                else
+                {
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
+                }
+
                 effect.CBPerPart.IsDirty = true;
                 effect.Apply(context);
 

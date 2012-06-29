@@ -29,7 +29,6 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     }
                 }
             }
-
         }
 
         public void Release()
