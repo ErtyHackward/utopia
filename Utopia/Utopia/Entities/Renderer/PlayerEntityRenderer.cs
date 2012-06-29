@@ -31,6 +31,9 @@ using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Entities.Renderer
 {
+    /// <summary>
+    /// Performs actual drawing of the player entity model
+    /// </summary>
     public class PlayerEntityRenderer : BaseComponent, IEntitiesRenderer
     {
         #region Private variables
@@ -157,7 +160,7 @@ namespace Utopia.Entities.Renderer
             _worldPosition.BackUpValue();
             _worldPosition.Value = _visualEntity.VisualEntity.Position;
 
-            _playerModelInstance.HeadRotation = _visualEntity.VisualEntity.Position
+            //_playerModelInstance.HeadRotation = _visualEntity.VisualEntity.Position
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
