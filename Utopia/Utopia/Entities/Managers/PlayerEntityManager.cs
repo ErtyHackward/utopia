@@ -37,6 +37,13 @@ using Utopia.Entities.EntityMovement;
 
 namespace Utopia.Entities.Managers
 {
+    /// <summary>
+    /// Responsible for:
+    /// 1) current player physics interaction with the world. 
+    /// 2) player movement input handling
+    /// 3) player entity drawing
+    /// 4) picking of the block
+    /// </summary>
     public class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer, IDebugInfo
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
