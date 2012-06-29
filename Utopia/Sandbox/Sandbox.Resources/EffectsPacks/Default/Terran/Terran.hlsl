@@ -133,6 +133,7 @@ PS_IN VS(VS_IN input)
  float CalcShadowFactor(float4 projTexC)
  {
  	// Complete projection by doing division by w.
+
  	projTexC.xyz /= projTexC.w;
 
 	// Points outside the light volume are in shadow.
@@ -166,31 +167,6 @@ PS_IN VS(VS_IN input)
  	// Interpolate results.
 	return lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
 }
-
-// ============================================================================
-// Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
-// ============================================================================
- float CalcShadowFactorSimple(float4 projTexC)
- {
- 	// Complete projection by doing division by w.
- 	projTexC.xyz /= projTexC.w;
- 	
- 	// Transform from NDC space to texture space.
- 	projTexC.x = +0.5f*projTexC.x + 0.5f;
- 	projTexC.y = -0.5f*projTexC.y + 0.5f;
- 	
- 	// Depth in NDC space.
- 	float depth = projTexC.z;
- 	
- 	// Sample shadow map to get nearest depth to light.
- 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
- 		
- 	// Is the pixel depth <= shadow map value?
- 	float result0 = depth <= s0 + SHADOW_EPSILON;
- 
- 	// Interpolate results.
- 	return result0;
- }
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader

@@ -95,7 +95,7 @@ namespace Utopia.Worlds.Shadows
                 _shadowMap.Begin();
 
                 Matrix worldFocus = Matrix.Identity;
-                foreach (var chunk in WorldChunks.Chunks.Where(x => x.isFrustumCulled == false && x.isExistingMesh4Drawing))
+                foreach (var chunk in WorldChunks.Chunks.Where(x => x.isExistingMesh4Drawing))
                 {
                     _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                     _shadowMapEffect.Begin(context);
@@ -125,8 +125,40 @@ namespace Utopia.Worlds.Shadows
 
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
-            float high = (float)(90.0 - _camManager.ActiveCamera.WorldPosition.ValueInterp.Y);
-            float low = (float)(0.0 - _camManager.ActiveCamera.WorldPosition.ValueInterp.Y);
+            //BoundingSphere sphere = new BoundingSphere(new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f), 128);
+            BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 90);
+
+            const float ExtraBackup = 20.0f;
+            const float NearClip = 1.0f;
+
+            Vector3 lightDirection = _skydome.LightDirection *-1;
+            //lightDirection.Z += 0.3f;
+            lightDirection.Normalize();
+
+            float backupDist = ExtraBackup + NearClip + sphere.Radius;
+            Vector3 shadowCamPos = new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f) + (lightDirection * backupDist);
+            Matrix shadowViewMatrix = Matrix.LookAtLH(shadowCamPos, new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f), Vector3.UnitY);
+
+            float bounds = sphere.Radius * 2.0f;
+            float farClip = backupDist + sphere.Radius;
+            Matrix shadowProjMatrix = Matrix.OrthoLH(bounds, bounds, NearClip, farClip);
+
+            Matrix shadowMatrix = shadowViewMatrix * shadowProjMatrix;
+
+            float ShadowMapSize = 2048.0f; // Set this to the size of your shadow map
+            Vector4 shadowOrigin = Vector3.Transform(Vector3.Zero, shadowMatrix);
+            shadowOrigin *= (ShadowMapSize / 2.0f);
+            Vector2 roundedOrigin = new Vector2((float)Math.Round(shadowOrigin.X), (float)Math.Round(shadowOrigin.Y));
+            Vector2 rounding = roundedOrigin - new Vector2(shadowOrigin.X, shadowOrigin.Y);
+            rounding /= (ShadowMapSize / 2.0f);
+
+            Matrix roundMatrix = Matrix.Translation(rounding.X, rounding.Y, 0.0f);
+            shadowMatrix *= roundMatrix;
+            lightProjection = shadowMatrix;
+        }
+
+        private void CreateLightViewProjectionMatrixOLD(out Matrix lightProjection)
+        {
             Vector2 boxSize = new Vector2(160, 160);
             int texSize = 2048;
             Vector3 direction = _skydome.LightDirection;
@@ -134,24 +166,39 @@ namespace Utopia.Worlds.Shadows
 
             // CREATE A BOX CENTERED AROUND THE pCAMERA POSITION:                      
             Vector3 min = -new Vector3(boxSize.X / 2, 0, boxSize.Y / 2);
-            min.Y = low;
+            min.Y = 0;
             Vector3 max = new Vector3(boxSize.X / 2, 0, boxSize.Y / 2);
-            max.Y = high;
+            max.Y = 128;
             BoundingBox boxWS = new BoundingBox(min, max);
 
             // CREATE A VIEW MATRIX OF THE SHADOW CAMERA            
             Vector3 shadowCamPos = Vector3.Zero;
-            shadowCamPos.Y = high - low;
-            Matrix shadowViewMatrix = Matrix.LookAtRH(shadowCamPos, (shadowCamPos + (direction * 10)), MVector3.Up);
+            shadowCamPos.Y = 128;
+
+            Vector3 target = (shadowCamPos + (direction * 10));
+            Matrix shadowViewMatrix = Matrix.LookAtLH(shadowCamPos, target, MVector3.Up);
             // TRANSFORM THE BOX INTO LIGHTSPACE COORDINATES:            
             Vector3[] cornersWS = boxWS.GetCorners();
-            Vector3[] cornersLS = new Vector3[cornersWS.Length];
-            Vector3.TransformCoordinate(cornersWS, ref shadowViewMatrix, cornersLS);
-            BoundingBox box = BoundingBox.FromPoints(cornersLS);
+            Vector4[] cornersLS = new Vector4[cornersWS.Length];
+            Vector3.Transform(cornersWS, ref shadowViewMatrix, cornersLS);
+
+            Vector3[] cornersLS3 = new Vector3[cornersLS.Length];
+            for (int i = 0; i < cornersLS.Length; i++)
+            {
+                Vector4 c = cornersLS[i];
+                cornersLS3[i] = new Vector3(c.X, c.Y, c.Z);
+            }
+
+            BoundingBox box = BoundingBox.FromPoints(cornersLS3);
             // CREATE PROJECTION MATRIX            
-            Matrix shadowProjMatrix = Matrix.OrthoOffCenterRH(box.Minimum.X, box.Maximum.X, box.Minimum.Y, box.Maximum.Y, -box.Maximum.Z, -box.Minimum.Z);
+            Matrix shadowProjMatrix = Matrix.OrthoOffCenterLH(box.Minimum.X, box.Maximum.X, box.Minimum.Y, box.Maximum.Y, -box.Maximum.Z, -box.Minimum.Z);
             Matrix shadowViewProjMatrix = shadowViewMatrix * shadowProjMatrix;
-            Vector3 shadowOrigin = Vector3.TransformCoordinate(Vector3.Zero, shadowViewProjMatrix);
+            
+            lightProjection = shadowViewProjMatrix;
+            return;
+
+
+            Vector4 shadowOrigin = Vector3.Transform(Vector3.Zero, shadowViewProjMatrix);
             shadowOrigin *= (texSize / 2.0f);
             Vector2 roundedOrigin = new Vector2((float)Math.Round(shadowOrigin.X), (float)Math.Round(shadowOrigin.Y));
             Vector2 rounding = roundedOrigin - new Vector2(shadowOrigin.X, shadowOrigin.Y);
