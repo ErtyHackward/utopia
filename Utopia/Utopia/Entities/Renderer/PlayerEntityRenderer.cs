@@ -5,6 +5,7 @@ using System.Text;
 using Utopia.Entities.Voxel;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Models;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
@@ -62,6 +63,9 @@ namespace Utopia.Entities.Renderer
             get { return _visualEntity; }
             set { _visualEntity = value; SetUpRenderer(); }
         }
+
+        public VoxelModelInstance ModelInstance { get { return _playerModelInstance; } }
+
         #endregion
 
         public PlayerEntityRenderer(D3DEngine d3DEngine,
@@ -160,7 +164,11 @@ namespace Utopia.Entities.Renderer
             _worldPosition.BackUpValue();
             _worldPosition.Value = _visualEntity.VisualEntity.Position;
 
-            //_playerModelInstance.HeadRotation = _visualEntity.VisualEntity.Position
+            if (_playerModelInstance != null)
+            {
+                var playerChar = (PlayerCharacter) VisualEntity.VisualEntity.Entity;
+                _playerModelInstance.HeadRotation = playerChar.HeadRotation;
+            }
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)

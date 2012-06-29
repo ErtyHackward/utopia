@@ -744,7 +744,7 @@ namespace Utopia.Entities.Managers
 
             //Refresh the player Bounding box
             VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
-
+            
             _playerRenderer.Update(timeSpend);
         }
 

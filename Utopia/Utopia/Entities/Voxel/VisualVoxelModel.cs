@@ -186,7 +186,11 @@ namespace Utopia.Entities.Voxel
 
                 if (_model.Parts[i].IsHead)
                 {
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.RotationQuaternion(instance.HeadRotation) * voxelModelPartState.Transform);
+                    var bb = _visualParts[i].BoundingBoxes[voxelModelPartState.ActiveFrame];
+                    var move = (bb.Maximum - bb.Minimum)/2;
+                    var headQuaternion = instance.HeadRotation;
+                    headQuaternion.Invert();
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Translation(-move) * Matrix.RotationQuaternion(headQuaternion) * Matrix.Translation(move) * voxelModelPartState.Transform);
                 }
                 else
                 {
