@@ -32,7 +32,7 @@ namespace S33M3CoreComponents.Sprites
         #region Public method
         public void Reset(bool enableDepthSprite)
         {
-            AutoDepth = 0.9999f;
+            AutoDepth = 0.99999f;
             Restart(enableDepthSprite);
         }
 
@@ -45,7 +45,7 @@ namespace S33M3CoreComponents.Sprites
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, int drawGroupId)
         {
             AddSprite(texture, sampler, ref position, ref size, textureArrayIndex, ref color, AutoDepth, drawGroupId);
-            if (_enableDepthSprite) AutoDepth -= 0.001f;
+            if (_enableDepthSprite) AutoDepth -= 0.0001f;
         }
 
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
@@ -56,7 +56,7 @@ namespace S33M3CoreComponents.Sprites
         public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, int drawGroupId)
         {
             GetSpriteDrawInfo(texture, sampler, drawGroupId).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, AutoDepth);
-            if (_enableDepthSprite) AutoDepth -= 0.001f;
+            if (_enableDepthSprite) AutoDepth -= 0.0001f;
         }
 
         public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
@@ -67,7 +67,7 @@ namespace S33M3CoreComponents.Sprites
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId)
         {
             AddSprite(texture, sampler, ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth, drawGroupId);
-            if (_enableDepthSprite) AutoDepth -= 0.001f;
+            if (_enableDepthSprite) AutoDepth -= 0.0001f;
         }
 
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
@@ -78,7 +78,7 @@ namespace S33M3CoreComponents.Sprites
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId)
         {
             AddSprite(texture, sampler, ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth, drawGroupId);
-            if (_enableDepthSprite) AutoDepth -= 0.001f;
+            if (_enableDepthSprite) AutoDepth -= 0.0001f;
         }
 
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
