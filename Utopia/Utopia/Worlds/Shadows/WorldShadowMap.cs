@@ -18,6 +18,7 @@ using Utopia.Effects.Shared;
 using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.WorldFocus;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.GameClocks;
 
 namespace Utopia.Worlds.Shadows
 {
@@ -37,6 +38,7 @@ namespace Utopia.Worlds.Shadows
         private D3DEngine _d3dEngine;
         public IWorldChunks WorldChunks;
         private WorldFocusManager _worldFocusManager;
+        private IClock _clock;
 
         public Matrix LightViewProjection;
         #endregion
@@ -52,7 +54,8 @@ namespace Utopia.Worlds.Shadows
                                 ISkyDome skydome,
                                 CameraManager<ICameraFocused> camManager,
                                 D3DEngine d3dEngine,
-                                WorldFocusManager worldFocusManager
+                                WorldFocusManager worldFocusManager,
+                                IClock clock
                              )
         {
             DrawOrders.UpdateIndex(0, 99, "SM_CREATION");
@@ -62,6 +65,7 @@ namespace Utopia.Worlds.Shadows
             _skydome = skydome;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
+            _clock = clock;
         }
 
         #region Public Methods
@@ -126,14 +130,40 @@ namespace Utopia.Worlds.Shadows
 
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
-            //BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 100);
-            BoundingSphere sphere = new BoundingSphere(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3(), 100);
+            BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 100);
+            //BoundingSphere sphere = new BoundingSphere(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3(), 100);
 
             const float ExtraBackup = 20.0f;
             const float NearClip = 1.0f;
 
             Vector3 lightDirection = _skydome.LightDirection *-1;
             //lightDirection.Z += 0.3f;
+            lightDirection.Normalize();
+
+            float backupDist = ExtraBackup + NearClip + sphere.Radius;
+            Vector3 shadowCamPos = sphere.Center + (lightDirection * backupDist);
+            Matrix shadowViewMatrix = Matrix.LookAtLH(shadowCamPos, sphere.Center, Vector3.UnitY);
+
+            float bounds = sphere.Radius * 2.0f;
+            float farClip = backupDist + sphere.Radius;
+            Matrix shadowProjMatrix = Matrix.OrthoLH(bounds, bounds, NearClip, farClip);
+
+            Matrix shadowMatrix = shadowViewMatrix * shadowProjMatrix;
+
+            Matrix roundMatrix = ComputeRoundingValue();
+
+            shadowMatrix *= roundMatrix;
+            lightProjection = shadowMatrix;
+        }
+
+        private Matrix ComputeRoundingValue()
+        {
+            BoundingSphere sphere = new BoundingSphere(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3(), 100);
+
+            const float ExtraBackup = 20.0f;
+            const float NearClip = 1.0f;
+
+            Vector3 lightDirection = _skydome.LightDirection * -1;
             lightDirection.Normalize();
 
             float backupDist = ExtraBackup + NearClip + sphere.Radius;
@@ -153,9 +183,7 @@ namespace Utopia.Worlds.Shadows
             Vector2 rounding = roundedOrigin - new Vector2(shadowOrigin.X, shadowOrigin.Y);
             rounding /= (ShadowMapSize / 2.0f);
 
-            Matrix roundMatrix = Matrix.Translation(rounding.X, rounding.Y, 0.0f);
-            shadowMatrix *= roundMatrix;
-            lightProjection = shadowMatrix;
+            return Matrix.Translation(rounding.X, rounding.Y, 0.0f);
         }
 
         private void CreateLightViewProjectionMatrixOLD(out Matrix lightProjection)

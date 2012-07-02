@@ -49,7 +49,7 @@ namespace Utopia.Worlds.GameClocks
         #region Public methods
         public override void Initialize()
         {
-            _frozenTime = true;
+            _frozenTime = false;
             base.Initialize();
         }
 
