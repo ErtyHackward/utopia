@@ -126,7 +126,7 @@ namespace Utopia.Worlds.Shadows
 
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
-            //BoundingSphere sphere = new BoundingSphere(new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f), 128);
+            //BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 100);
             BoundingSphere sphere = new BoundingSphere(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3(), 100);
 
             const float ExtraBackup = 20.0f;
