@@ -38,8 +38,8 @@ namespace S33M3CoreComponents.WorldFocus
         /// <param name="WorldFocusedMatrix"></param>
         public void CenterTranslationMatrixOnFocus(ref Matrix WorldTranslationMatrix, ref Matrix WorldFocusedMatrix)
         {
-            WorldFocusedMatrix = WorldTranslationMatrix;
-            return;
+            //WorldFocusedMatrix = WorldTranslationMatrix;
+            //return;
             WorldFocusedMatrix.M41 = WorldTranslationMatrix.M41 - (float)_worldFocus.FocusPoint.ValueInterp.X;
             WorldFocusedMatrix.M42 = WorldTranslationMatrix.M42 - (float)_worldFocus.FocusPoint.ValueInterp.Y;
             WorldFocusedMatrix.M43 = WorldTranslationMatrix.M43 - (float)_worldFocus.FocusPoint.ValueInterp.Z;
@@ -52,7 +52,7 @@ namespace S33M3CoreComponents.WorldFocus
         /// <param name="WorldFocusedMatrix"></param>
         public Matrix CenterOnFocus(ref Matrix WorldMatrix)
         {
-            return WorldMatrix;
+            //return WorldMatrix;
             return WorldMatrix * _worldFocus.FocusPointMatrix.ValueInterp;
         }
 
