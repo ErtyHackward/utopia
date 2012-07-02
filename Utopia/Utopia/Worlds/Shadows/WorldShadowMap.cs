@@ -147,12 +147,16 @@ namespace Utopia.Worlds.Shadows
             float bounds = sphere.Radius * 2.0f;
             float farClip = backupDist + sphere.Radius;
             Matrix shadowProjMatrix = Matrix.OrthoLH(bounds, bounds, NearClip, farClip);
-
             Matrix shadowMatrix = shadowViewMatrix * shadowProjMatrix;
 
-            Matrix roundMatrix = ComputeRoundingValue();
+            if (Math.Abs(Math.Abs(_camManager.ActiveCamera.WorldPosition.Value.X) - Math.Abs(_camManager.ActiveCamera.WorldPosition.ValuePrev.X)) > 0.01 ||
+                Math.Abs(Math.Abs(_camManager.ActiveCamera.WorldPosition.Value.Y) - Math.Abs(_camManager.ActiveCamera.WorldPosition.ValuePrev.Y)) > 0.01 ||
+                Math.Abs(Math.Abs(_camManager.ActiveCamera.WorldPosition.Value.Z) - Math.Abs(_camManager.ActiveCamera.WorldPosition.ValuePrev.Z)) > 0.01)
+            {
+                Matrix roundMatrix = ComputeRoundingValue();
+                shadowMatrix *= roundMatrix;
+            }
 
-            shadowMatrix *= roundMatrix;
             lightProjection = shadowMatrix;
         }
 
