@@ -95,6 +95,7 @@ namespace Utopia.Worlds.Shadows
                 _shadowMap.Begin();
 
                 Matrix worldFocus = Matrix.Identity;
+
                 foreach (var chunk in WorldChunks.Chunks.Where(x => x.isExistingMesh4Drawing))
                 {
                     _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
@@ -113,7 +114,7 @@ namespace Utopia.Worlds.Shadows
 #if DEBUG
                 if (!_debugSMTextureNeedToBeSaved)
                 {
-                    Texture2D.ToFile(context, _shadowMap.DepthMap.Resource, ImageFileFormat.Dds, @"E:\1.dds");
+                    //Texture2D.ToFile(context, _shadowMap.DepthMap.Resource, ImageFileFormat.Dds, @"E:\1.dds");
                     _debugSMTextureNeedToBeSaved = true;
                 }
 #endif
@@ -126,7 +127,7 @@ namespace Utopia.Worlds.Shadows
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
             //BoundingSphere sphere = new BoundingSphere(new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f), 128);
-            BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 90);
+            BoundingSphere sphere = new BoundingSphere(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3(), 100);
 
             const float ExtraBackup = 20.0f;
             const float NearClip = 1.0f;
@@ -136,8 +137,8 @@ namespace Utopia.Worlds.Shadows
             lightDirection.Normalize();
 
             float backupDist = ExtraBackup + NearClip + sphere.Radius;
-            Vector3 shadowCamPos = new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f) + (lightDirection * backupDist);
-            Matrix shadowViewMatrix = Matrix.LookAtLH(shadowCamPos, new Vector3(0.0f, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, 0.0f), Vector3.UnitY);
+            Vector3 shadowCamPos = sphere.Center + (lightDirection * backupDist);
+            Matrix shadowViewMatrix = Matrix.LookAtLH(shadowCamPos, sphere.Center, Vector3.UnitY);
 
             float bounds = sphere.Radius * 2.0f;
             float farClip = backupDist + sphere.Radius;
