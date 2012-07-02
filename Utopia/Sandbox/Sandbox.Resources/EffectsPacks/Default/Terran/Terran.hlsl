@@ -119,7 +119,7 @@ PS_IN VS(VS_IN input)
 	output.EmissiveLight = input.VertexInfo.z/85 * saturate(input.Col.rgb +  SunColor * input.Col.a);
 	output.EmissiveLight *= faceshades[facetype];
 
-	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
+	output.fogPower = 0;//clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 	output.BiomeData = input.BiomeData;
 	output.Various = input.Various;
 

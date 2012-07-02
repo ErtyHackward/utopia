@@ -134,6 +134,8 @@ namespace S33M3CoreComponents.Cameras
             _view.M42 *= -1;
             _view.M43 *= -1;
             _viewProjection3D = _view * _projection3D;
+
+            _viewProjection3D_focused = _viewProjection3D;
         }
 
         protected override void CameraInitialize()
