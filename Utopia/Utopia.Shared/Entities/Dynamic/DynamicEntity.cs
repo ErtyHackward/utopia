@@ -150,26 +150,26 @@ namespace Utopia.Shared.Entities.Dynamic
                     _headRotation = value;
                     OnViewChanged(new EntityViewEventArgs { Entity = this });
                     
+                    // we want to change body rotation
                     // leave only y-axis rotation for the body
                     
-                    var body = _headRotation;
+                    var head = _headRotation;
 
-                    body.X = 0;
-                    body.Z = 0;
-                    body.Normalize();
+                    head.X = 0;
+                    head.Z = 0;
+                    head.Normalize();
 
-                    Trace.WriteLine(string.Format("Body: {0} Head {1}", BodyRotation.Angle, body.Angle));
-
-                    var bodyInvert = body;
-                    bodyInvert.Invert();
-
-                    var offset = BodyRotation * bodyInvert;
-
-                    if (offset.Angle > 1.8f)
+                    // calculate the difference between head and body rotation
+                    var headInvert = head;
+                    headInvert.Invert();
+                    var offset = BodyRotation * headInvert;
+                    
+                    // allow to rotate the head up to 160 degrees
+                    if (offset.Angle > 1.6f)
                     {
-                        //Quaternion.Add(BodyRotation, offset);
-                        body = Quaternion.RotationAxis(body.Axis, body.Angle + (BodyRotation.Angle > body.Angle ? 0.6f : -0.6f));
-                        BodyRotation = body;
+                        // remove excess rotation
+                        head = Quaternion.Lerp(BodyRotation, head, 1f -  1.6f / offset.Angle);
+                        BodyRotation = head;
                     }
                 }
             }
