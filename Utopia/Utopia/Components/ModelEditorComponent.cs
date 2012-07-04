@@ -2236,11 +2236,8 @@ namespace Utopia.Components
                 if (File.Exists(path))
                     File.Delete(path);
 
-                using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
-                {
-                    var writer = new BinaryWriter(fs);
-                    _visualVoxelModel.VoxelModel.Save(writer);
-                }
+                _visualVoxelModel.VoxelModel.SaveToFile(path);
+
                 _gui.MessageBox("Model saved at " + path, "Success");
             }
             catch (Exception x)
@@ -2265,13 +2262,8 @@ namespace Utopia.Components
 
             try
             {
-                var voxelModel = new VoxelModel();
                 var file = files[e.Files.SelectedIndex];
-                using (var fs = new GZipStream(File.OpenRead(file), CompressionMode.Decompress))
-                {
-                    var reader = new BinaryReader(fs);
-                    voxelModel.Load(reader);
-                }
+                var voxelModel = VoxelModel.LoadFromFile(file);
                 var visualModel = new VisualVoxelModel(voxelModel, _meshFactory);
                 _manager.SaveModel(visualModel);
 
