@@ -137,7 +137,7 @@ PS_IN VS(VS_IN input)
  	projTexC.xyz /= projTexC.w;
 
 	// Points outside the light volume are in shadow.
-	if( projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 0.0f;
+	if( projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 1.0f;
  	
  	// Transform from NDC space to texture space.
  	projTexC.x = +0.5f*projTexC.x + 0.5f;
