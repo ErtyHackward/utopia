@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SharpDX;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 
@@ -46,6 +47,7 @@ namespace Utopia.Shared.Entities.Dynamic
             //Model.Blocks[0, 0, 0] = CubeId.PlayerHead;
 
             Type = EntityType.Dynamic;
+            BodyRotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), 0);
         }
 
         #region Public Methods

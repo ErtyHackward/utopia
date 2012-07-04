@@ -568,6 +568,20 @@ namespace Utopia.Entities.Managers
             //Physic simulation !
             PhysicOnEntity(Player.DisplacementMode, ref timeSpent);
 
+            // slowly rotate the body in the moving direction
+            if (Player.Position != _worldPosition.Value)
+            {
+                // take only y-axis rotation
+
+                var targetRotation = Player.HeadRotation;
+
+                targetRotation.X = 0;
+                targetRotation.Z = 0;
+                targetRotation.Normalize();
+
+                Player.BodyRotation = Quaternion.Lerp(Player.BodyRotation, targetRotation, (float)Vector3D.Distance(Player.Position, _worldPosition.Value));
+            }
+
             //Send the Actual Position to the Entity object only of it has change !!!
             //The Change check is done at DynamicEntity level
             Player.Position = _worldPosition.Value;
