@@ -47,6 +47,8 @@ namespace Utopia.Entities.Renderer
         public SharedFrameCB SharedFrameCB { get; set;}
 
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
+        private FTSValue<Quaternion> _headRotation = new FTSValue<Quaternion>();
+        private FTSValue<Quaternion> _bodyRotation = new FTSValue<Quaternion>();
 
         private BoundingBox3D renderer;
         private IVisualEntityContainer _visualEntity;
@@ -98,14 +100,17 @@ namespace Utopia.Entities.Renderer
         public void LoadContent(DeviceContext context)
         {
             _model = _modelManager.GetModel("Player");
-            if (_model != null)
-                _playerModelInstance = _model.VoxelModel.CreateInstance();
+
 
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
             if (_model != null)
             {
                 _model.BuildMesh();
             }
+
+            if (_model != null)
+                _playerModelInstance = _model.VoxelModel.CreateInstance();
+
             //_entityEffect = ToDispose(new HLSLTerran(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame));
             //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
 
@@ -164,18 +169,31 @@ namespace Utopia.Entities.Renderer
             _worldPosition.BackUpValue();
             _worldPosition.Value = _visualEntity.VisualEntity.Position;
 
-            if (_playerModelInstance != null)
-            {
-                var playerChar = (PlayerCharacter) VisualEntity.VisualEntity.Entity;
-                _playerModelInstance.HeadRotation = playerChar.HeadRotation;
-            }
+
+            var playerChar = (PlayerCharacter)VisualEntity.VisualEntity.Entity;
+
+            _headRotation.BackUpValue();
+            _headRotation.Value = playerChar.HeadRotation;
+
+            _bodyRotation.BackUpValue();
+            _bodyRotation.Value = playerChar.BodyRotation;
+            
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
+            Quaternion.Lerp(ref _headRotation.ValuePrev, ref _headRotation.Value, interpolationLd, out _headRotation.ValueInterp);
+            Quaternion.Lerp(ref _bodyRotation.ValuePrev, ref _bodyRotation.Value, interpolationLd, out _bodyRotation.ValueInterp);
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
-            renderer.Update(_worldPosition.ValueInterp.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.Size.Y / 2.0f, 0), Vector3.One);
+            renderer.Update(_worldPosition.ValueInterp.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.Size.Y/2.0f, 0), Vector3.One);
+
+            if (_playerModelInstance != null)
+            {
+                _playerModelInstance.HeadRotation = _headRotation.ValueInterp;
+
+                _playerModelInstance.Rotation = _bodyRotation.ValueInterp;
+            }
         }
 
         public override void BeforeDispose()

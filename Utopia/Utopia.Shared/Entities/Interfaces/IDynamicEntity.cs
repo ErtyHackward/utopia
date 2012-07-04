@@ -23,7 +23,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Occurs when entity changes its body orientation
         /// </summary>
-        event EventHandler<EntityBodyRotationEventArgs> BodyOrientationChanged;
+        event EventHandler<EntityBodyRotationEventArgs> BodyRotationChanged;
 
         /// <summary>
         /// Occurs when entity performs "use" operation

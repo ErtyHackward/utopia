@@ -34,7 +34,7 @@ namespace Utopia.Network
                     {
                         _playerEntity.PositionChanged -= PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged -= PlayerEntityViewChanged;
-                        _playerEntity.BodyOrientationChanged -= _playerEntity_BodyOrientationChanged;
+                        _playerEntity.BodyRotationChanged -= _playerEntity_BodyOrientationChanged;
                         _playerEntity.Use -= PlayerEntityUse;
                     }
 
@@ -44,7 +44,7 @@ namespace Utopia.Network
                     {
                         _playerEntity.PositionChanged += PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged += PlayerEntityViewChanged;
-                        _playerEntity.BodyOrientationChanged += _playerEntity_BodyOrientationChanged;
+                        _playerEntity.BodyRotationChanged += _playerEntity_BodyOrientationChanged;
                         _playerEntity.Use += PlayerEntityUse;
                     }
                 }
