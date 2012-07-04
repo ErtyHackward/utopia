@@ -127,16 +127,23 @@ namespace Utopia.Worlds.Shadows
         #endregion
 
         #region Private Methods
+        private float lastLightUpdate = -100.0f;
+        private Vector3 BackUpLightDirection;
 
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
+            if (Math.Abs(lastLightUpdate - _clock.ClockTime.ClockTimeNormalized2) > 0.005f)
+            {
+                BackUpLightDirection = _skydome.LightDirection;
+                lastLightUpdate = _clock.ClockTime.ClockTimeNormalized2;
+            }
+
             BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 100);
-            //BoundingSphere sphere = new BoundingSphere(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3(), 100);
 
             const float ExtraBackup = 20.0f;
             const float NearClip = 1.0f;
 
-            Vector3 lightDirection = _skydome.LightDirection *-1;
+            Vector3 lightDirection = BackUpLightDirection * -1;
             //lightDirection.Z += 0.3f;
             lightDirection.Normalize();
 
@@ -149,16 +156,12 @@ namespace Utopia.Worlds.Shadows
             Matrix shadowProjMatrix = Matrix.OrthoLH(bounds, bounds, NearClip, farClip);
             Matrix shadowMatrix = shadowViewMatrix * shadowProjMatrix;
 
-            if (Math.Abs(Math.Abs(_camManager.ActiveCamera.WorldPosition.Value.X) - Math.Abs(_camManager.ActiveCamera.WorldPosition.ValuePrev.X)) > 0.01 ||
-                Math.Abs(Math.Abs(_camManager.ActiveCamera.WorldPosition.Value.Y) - Math.Abs(_camManager.ActiveCamera.WorldPosition.ValuePrev.Y)) > 0.01 ||
-                Math.Abs(Math.Abs(_camManager.ActiveCamera.WorldPosition.Value.Z) - Math.Abs(_camManager.ActiveCamera.WorldPosition.ValuePrev.Z)) > 0.01)
-            {
-                Matrix roundMatrix = ComputeRoundingValue();
-                shadowMatrix *= roundMatrix;
-            }
+            Matrix roundMatrix = ComputeRoundingValue();
+            shadowMatrix *= roundMatrix;
 
             lightProjection = shadowMatrix;
         }
+
 
         private Matrix ComputeRoundingValue()
         {
@@ -167,7 +170,7 @@ namespace Utopia.Worlds.Shadows
             const float ExtraBackup = 20.0f;
             const float NearClip = 1.0f;
 
-            Vector3 lightDirection = _skydome.LightDirection * -1;
+            Vector3 lightDirection = BackUpLightDirection * -1;
             lightDirection.Normalize();
 
             float backupDist = ExtraBackup + NearClip + sphere.Radius;
