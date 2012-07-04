@@ -13,9 +13,37 @@ namespace Utopia.Entities
     /// </summary>
     public class ModelSQLiteStorage : SQLiteStorage, IVoxelModelStorage
     {
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         public ModelSQLiteStorage(string fileName) : base(fileName, false)
         {
 
+        }
+
+        /// <summary>
+        /// Load new models from folder
+        /// </summary>
+        /// <param name="folderPath"></param>
+        public void ImportFromPath(string folderPath)
+        {
+            try
+            {
+                foreach (var file in Directory.GetFiles(folderPath, "*.uvm"))
+                {
+                    using (var reader = Query("SELECT id FROM models WHERE id ='{0}'", Path.GetFileNameWithoutExtension(file)))
+                    {
+                        if (reader.HasRows)
+                            continue;
+                    }
+
+                    // import the model
+                    ((IVoxelModelStorage)this).Save(VoxelModel.LoadFromFile(file));
+                }
+            }
+            catch (Exception x)
+            {
+                _logger.Error("Models import failed. {0}", x.Message);
+            }
         }
 
         /// <summary>

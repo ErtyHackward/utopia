@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -197,6 +198,26 @@ namespace Utopia.Shared.Entities.Models
         public VoxelModelInstance CreateInstance()
         {
             return new VoxelModelInstance(this);
+        }
+
+        public void SaveToFile(string path)
+        {
+            using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
+            {
+                var writer = new BinaryWriter(fs);
+                Save(writer);
+            }
+        }
+
+        public static VoxelModel LoadFromFile(string path)
+        {
+            var voxelModel = new VoxelModel();
+            using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
+            {
+                var reader = new BinaryReader(fs);
+                voxelModel.Load(reader);
+            }
+            return voxelModel;
         }
     }
 }
