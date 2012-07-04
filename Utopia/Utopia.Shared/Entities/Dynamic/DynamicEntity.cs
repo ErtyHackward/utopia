@@ -149,16 +149,28 @@ namespace Utopia.Shared.Entities.Dynamic
                 {
                     _headRotation = value;
                     OnViewChanged(new EntityViewEventArgs { Entity = this });
-
+                    
                     // leave only y-axis rotation for the body
-
+                    
                     var body = _headRotation;
 
                     body.X = 0;
                     body.Z = 0;
                     body.Normalize();
 
-                    BodyRotation = body;
+                    Trace.WriteLine(string.Format("Body: {0} Head {1}", BodyRotation.Angle, body.Angle));
+
+                    var bodyInvert = body;
+                    bodyInvert.Invert();
+
+                    var offset = BodyRotation * bodyInvert;
+
+                    if (offset.Angle > 1.8f)
+                    {
+                        //Quaternion.Add(BodyRotation, offset);
+                        body = Quaternion.RotationAxis(body.Axis, body.Angle + (BodyRotation.Angle > body.Angle ? 0.6f : -0.6f));
+                        BodyRotation = body;
+                    }
                 }
             }
         }
