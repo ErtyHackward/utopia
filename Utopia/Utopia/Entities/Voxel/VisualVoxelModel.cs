@@ -184,18 +184,22 @@ namespace Utopia.Entities.Voxel
                     effect.CBPerFrame.IsDirty = true;
                 }
 
+                Quaternion rotation;
                 if (_model.Parts[i].IsHead)
                 {
                     var bb = _visualParts[i].BoundingBoxes[voxelModelPartState.ActiveFrame];
-                    var move = (bb.Maximum - bb.Minimum)/2;
-                    var headQuaternion = instance.HeadRotation;
-                    headQuaternion.Invert();
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Translation(-move) * Matrix.RotationQuaternion(headQuaternion) * Matrix.Translation(move) * voxelModelPartState.Transform);
+                    var move = (bb.Maximum - bb.Minimum) / 2;
+                    rotation = instance.HeadRotation;
+                    rotation.Invert();
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.Transform);
                 }
                 else
                 {
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
+                    rotation = instance.Rotation;
+                    rotation.Invert();
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform * Matrix.RotationQuaternion(rotation));
                 }
+                
 
                 effect.CBPerPart.IsDirty = true;
                 effect.Apply(context);

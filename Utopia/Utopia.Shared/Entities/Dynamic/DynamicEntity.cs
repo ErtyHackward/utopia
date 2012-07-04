@@ -31,10 +31,10 @@ namespace Utopia.Shared.Entities.Dynamic
             if (handler != null) handler(this, e);
         }
 
-        public event EventHandler<EntityBodyRotationEventArgs> BodyOrientationChanged;
+        public event EventHandler<EntityBodyRotationEventArgs> BodyRotationChanged;
         protected void OnBodyRotationChanged(EntityBodyRotationEventArgs e)
         {
-            var handler = BodyOrientationChanged;
+            var handler = BodyRotationChanged;
             if (handler != null) handler(this, e);
         }
 
@@ -149,12 +149,22 @@ namespace Utopia.Shared.Entities.Dynamic
                 {
                     _headRotation = value;
                     OnViewChanged(new EntityViewEventArgs { Entity = this });
+
+                    // leave only y-axis rotation for the body
+
+                    var body = _headRotation;
+
+                    body.X = 0;
+                    body.Z = 0;
+                    body.Normalize();
+
+                    BodyRotation = body;
                 }
             }
         }
 
         /// <summary>
-        /// Gets or sets entity head rotation
+        /// Gets or sets entity body rotation
         /// </summary>
         public Quaternion BodyRotation
         {
