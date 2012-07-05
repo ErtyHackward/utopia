@@ -62,6 +62,9 @@ namespace Sandbox.Client.States
             //"Late Binding" of IVoxelModelStorage, must be done after vars is initialized
             _iocContainer.Bind<IVoxelModelStorage>().To<ModelSQLiteStorage>().InSingletonScope().WithConstructorArgument("fileName", Path.Combine(vars.ApplicationDataPath, "Common", "models.db"));
 
+            var storage = (ModelSQLiteStorage)_iocContainer.Get<IVoxelModelStorage>();
+            storage.ImportFromPath("Models");
+
             if (debugComponent != null)
                 AddComponent(debugComponent);
             AddComponent(guiManager);
