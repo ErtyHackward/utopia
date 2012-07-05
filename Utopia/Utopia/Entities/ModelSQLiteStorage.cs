@@ -4,7 +4,6 @@ using System.IO;
 using Utopia.Shared;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Entities
 {
@@ -13,7 +12,7 @@ namespace Utopia.Entities
     /// </summary>
     public class ModelSQLiteStorage : SQLiteStorage, IVoxelModelStorage
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public ModelSQLiteStorage(string fileName) : base(fileName, false)
         {
@@ -30,19 +29,23 @@ namespace Utopia.Entities
             {
                 foreach (var file in Directory.GetFiles(folderPath, "*.uvm"))
                 {
-                    using (var reader = Query("SELECT id FROM models WHERE id ='{0}'", Path.GetFileNameWithoutExtension(file)))
+                    var name = Path.GetFileNameWithoutExtension(file);
+                    if (name == null) continue;
+                    name = name.Replace('\'', ' ');
+                    using (var reader = Query("SELECT updated FROM models WHERE id ='{0}'", name ))
                     {
-                        if (reader.HasRows)
+                        if (reader.Read() && reader.GetDateTime(0) >= File.GetLastWriteTimeUtc(file))
                             continue;
                     }
 
                     // import the model
-                    ((IVoxelModelStorage)this).Save(VoxelModel.LoadFromFile(file));
+                    Delete(name);
+                    Save(VoxelModel.LoadFromFile(file));
                 }
             }
             catch (Exception x)
             {
-                _logger.Error("Models import failed. {0}", x.Message);
+                Logger.Error("Models import failed. {0}", x.Message);
             }
         }
 
@@ -52,7 +55,7 @@ namespace Utopia.Entities
         /// <returns></returns>
         protected override string CreateDataBase()
         {
-            return @"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [data] blob NOT NULL);";
+            return @"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [updated] datetime NULL, [data] blob NOT NULL);";
         }
 
         /// <summary>
@@ -74,7 +77,7 @@ namespace Utopia.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        VoxelModel IVoxelModelStorage.Load(string name)
+        public VoxelModel Load(string name)
         {
             CheckName(name);
             using (var reader = Query(string.Format("SELECT data FROM models WHERE id = '{0}'", name)))
@@ -89,19 +92,19 @@ namespace Utopia.Entities
         /// Saves a new model to the storage
         /// </summary>
         /// <param name="model"></param>
-        void IVoxelModelStorage.Save(VoxelModel model)
+        public void Save(VoxelModel model)
         {
             CheckName(model.Name);
             var bytes = model.Serialize();
 
-            InsertBlob(string.Format("INSERT INTO models (id,data) VALUES ('{0}', @blob)", model.Name), bytes);
+            InsertBlob(string.Format("INSERT INTO models (id,updated,data) VALUES ('{0}', datetime('now'), @blob)", model.Name), bytes);
         }
 
         /// <summary>
         /// Removes model from the storage
         /// </summary>
         /// <param name="name"></param>
-        void IVoxelModelStorage.Delete(string name)
+        public void Delete(string name)
         {
             CheckName(name);
             Execute(string.Format("DELETE FROM models WHERE id = '{0}'", name));
@@ -120,7 +123,7 @@ namespace Utopia.Entities
         /// Allows to fetch all models
         /// </summary>
         /// <returns></returns>
-        IEnumerable<VoxelModel> IVoxelModelStorage.Enumerate()
+        public IEnumerable<VoxelModel> Enumerate()
         {
             using (var reader = Query("SELECT data FROM models"))
             {
