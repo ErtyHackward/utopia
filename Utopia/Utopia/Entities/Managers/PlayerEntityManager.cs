@@ -81,6 +81,7 @@ namespace Utopia.Entities.Managers
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
+        private bool _isWalking;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -162,10 +163,40 @@ namespace Utopia.Entities.Managers
             set { _landscapeInitiazed = value; }
         }
 
+
+
+        public float OffsetBlockHitted { get; set; }
+
+
+        #endregion
+
+        #region Events
+
         public delegate void LandingGround(double fallHeight, TerraCubeWithPosition landedCube);
         public event LandingGround OnLanding;
 
-        public float OffsetBlockHitted { get; set; }
+        /// <summary>
+        /// Occurs when player press one or more moves keys
+        /// </summary>
+        public event EventHandler WalkStart;
+
+        private void OnWalkStart()
+        {
+            var handler = WalkStart;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Occurs when player releases all move keys
+        /// </summary>
+        public event EventHandler WalkEnd;
+
+        private void OnWalkEnd()
+        {
+            var handler = WalkEnd;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         #endregion
 
         public PlayerEntityManager(D3DEngine engine,
@@ -450,9 +481,10 @@ namespace Utopia.Entities.Managers
             {
                 if (_physicSimu.OnGround == true && _fallMaxHeight != int.MinValue)
                 {
-                    if (OnLanding != null) 
+                    var handler = OnLanding;
+                    if (handler != null) 
                     {
-                        OnLanding(_fallMaxHeight - _worldPosition.Value.Y, _groundCube);
+                        handler(_fallMaxHeight - _worldPosition.Value.Y, _groundCube);
                     }
 #if DEBUG
                     logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Value.Y, CubeId.GetCubeTypeName(_groundCube.Cube.Id));
@@ -460,7 +492,6 @@ namespace Utopia.Entities.Managers
                         _fallMaxHeight = int.MinValue;
                 }
             }
-
 
         }
         #endregion

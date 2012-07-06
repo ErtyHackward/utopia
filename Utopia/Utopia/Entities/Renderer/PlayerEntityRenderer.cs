@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
+using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -46,6 +47,7 @@ namespace Utopia.Entities.Renderer
         private WorldFocusManager _worldFocusManager;
         private readonly VoxelModelManager _modelManager;
         private readonly InputsManager _inputsManager;
+        private readonly PlayerEntityManager _entityManager;
         private ShaderResourceView _cubeTexture_View;
         public SharedFrameCB SharedFrameCB { get; set;}
 
@@ -60,7 +62,7 @@ namespace Utopia.Entities.Renderer
         private VoxelModelInstance _playerModelInstance;
         private HLSLVoxelModel _voxelEffect;
 
-        private bool _walkingAnimation;
+        private bool _isWalking;
         #endregion
 
         #region Public variables/properties
@@ -87,6 +89,7 @@ namespace Utopia.Entities.Renderer
             _worldFocusManager = worldFocusManager;
             _modelManager = modelManager;
             _inputsManager = inputsManager;
+
 
             _dummyEntityRenderer = new HLSLVertexPositionColor(_d3DEngine.Device);
 
@@ -185,8 +188,29 @@ namespace Utopia.Entities.Renderer
             _bodyRotation.BackUpValue();
             _bodyRotation.Value = playerChar.BodyRotation;
             
-            //_inputsManager.ActionsManager.isTriggered(UtopiaActions.
+            
 
+            var moveKeysPressed = ( _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) ||
+                                    _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward) ||
+                                    _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeLeft) ||
+                                    _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_StrafeRight));
+
+            if (!_isWalking && moveKeysPressed)
+            {
+                _isWalking = true;
+                if (_playerModelInstance.CanPlay("Walk"))
+                {
+                    _playerModelInstance.Play("Walk", true);
+                }
+            }
+
+            if (_isWalking && !moveKeysPressed)
+            {
+                _isWalking = false;
+                _playerModelInstance.Stop();
+            }
+
+            
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
@@ -202,7 +226,12 @@ namespace Utopia.Entities.Renderer
                 _playerModelInstance.HeadRotation = _headRotation.ValueInterp;
 
                 _playerModelInstance.Rotation = _bodyRotation.ValueInterp;
+
+                // update model animation
+                _playerModelInstance.Update(ref timePassed);
             }
+
+            
         }
 
         public override void BeforeDispose()
