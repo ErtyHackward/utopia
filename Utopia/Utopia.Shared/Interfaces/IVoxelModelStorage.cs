@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Utopia.Shared.Entities.Models;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Interfaces
 {

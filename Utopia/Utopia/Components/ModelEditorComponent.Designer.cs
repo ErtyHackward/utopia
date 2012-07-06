@@ -74,7 +74,7 @@ namespace Utopia.Components
         private Control _partsGroup;
         private Control _framesGroup;
 
-        // tools group
+        // tools groups
         private Control _mainToolsGroup;
         private Control _colorsGroup;
         private Control _frameToolsGroup;
@@ -82,10 +82,16 @@ namespace Utopia.Components
         private Control _modesButtonsGroup;
         private Control _colorPaletteGroup;
 
-        // tool properties gropus
+        // tool properties groups
         private Control _tpPreset;
         private Control _tpSliceBrush;
         private Control _tpEdit;
+
+        // view properties groups
+        LayoutTool _layoutTool;
+        private Control _vpLayout;
+        private Control _vpRotate;
+
 
         private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
         
@@ -310,9 +316,7 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
 
-            _toolsWindow.Children.Clear();
-            _toolsWindow.Children.Add(_modesButtonsGroup);
-            _toolsWindow.Children.Add(_layoutToolsGroup);
+            OnLayoutGroupSelected(0);
 
             UpdateLayout();
         }
@@ -323,7 +327,7 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
 
-            OnToolSelected(EditorTools.Edit);
+            OnFrameToolSelected(FrameEditorTools.Edit);
             
 
             UpdateLayout();
@@ -450,19 +454,19 @@ namespace Utopia.Components
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Tools", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             var toolEditButton = new StickyButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 70, 20), Sticked = true };
-            toolEditButton.Pressed += delegate { _selectedToolIndex = 0; OnToolSelected(EditorTools.Edit); };
+            toolEditButton.Pressed += delegate { _selectedFrameToolIndex = 0; OnFrameToolSelected(FrameEditorTools.Edit); };
 
             var toolColorBrushButton = new StickyButtonControl { Text = "Color brush", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorBrushButton.Pressed += delegate { _selectedToolIndex = 1; OnToolSelected(EditorTools.ColorBrush); };
+            toolColorBrushButton.Pressed += delegate { _selectedFrameToolIndex = 1; OnFrameToolSelected(FrameEditorTools.ColorBrush); };
 
             var toolColorFillButton = new StickyButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorFillButton.Pressed += delegate { _selectedToolIndex = 2; OnToolSelected(EditorTools.FillBrush); };
+            toolColorFillButton.Pressed += delegate { _selectedFrameToolIndex = 2; OnFrameToolSelected(FrameEditorTools.FillBrush); };
 
             var toolSliceColorBrush = new StickyButtonControl { Text = "Slice color", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolSliceColorBrush.Pressed += delegate { _selectedToolIndex = 3; OnToolSelected(EditorTools.SliceBrush); };
+            toolSliceColorBrush.Pressed += delegate { _selectedFrameToolIndex = 3; OnFrameToolSelected(FrameEditorTools.SliceBrush); };
 
             var presetTool = new StickyButtonControl { Text = "Preset", Bounds = new UniRectangle(0, 0, 70, 20) };
-            presetTool.Pressed += delegate { _selectedToolIndex = -1; OnToolSelected(EditorTools.Preset); };
+            presetTool.Pressed += delegate { _selectedFrameToolIndex = -1; OnFrameToolSelected(FrameEditorTools.Preset); };
 
             _frameToolsGroup.Children.Add(toolEditButton);
             _frameToolsGroup.Children.Add(toolColorBrushButton);
@@ -571,22 +575,54 @@ namespace Utopia.Components
             #endregion
             
             #region Layout tools
-            _layoutToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _layoutToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 45), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            _layoutToolsGroup.Children.Add(new LabelControl { Text = "View", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+            _layoutToolsGroup.Children.Add(new LabelControl { Text = "Tools:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            //var groundCheck = new OptionControl { Bounds = new UniRectangle(0,0, 70, 20), Text ="Ground" };
-            //groundCheck.Changed += delegate { _drawGround = !_drawGround; };
+            var layoutTools = new StickyButtonControl { Text = "Layout", Bounds = new UniRectangle(0, 0, 70, 20), Sticked = true };
+            layoutTools.Pressed += delegate { OnLayoutGroupSelected(LayoutTool.Move); };
 
-            //var layoutCopy = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Copy" };
+            var rotateTools = new StickyButtonControl { Text = "Rotate", Bounds = new UniRectangle(0, 0, 70, 20) };
+            rotateTools.Pressed += delegate { OnLayoutGroupSelected(LayoutTool.Rotate); };
 
+            #region Layout tools
+            _vpLayout = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            var copyLayoutButton = new ButtonControl { Text = "Copy layout", Bounds = new UniRectangle(0, 0, 100, 20) };
             
+            var pasteLayoutButton = new ButtonControl { Text = "Paste layout", Bounds = new UniRectangle(0, 0, 100, 20) };
 
-            //var layoutPaste = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Paste" };
+            _vpLayout.Children.Add(copyLayoutButton);
+            _vpLayout.Children.Add(pasteLayoutButton);
+            _vpLayout.UpdateLayout();
 
+            #endregion
 
-            //_layoutToolsGroup.Children.Add(layoutCopy);
-            //_layoutToolsGroup.Children.Add(layoutPaste);
+            #region Rotate tools
+            _vpRotate = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            var angleLabel = new LabelControl { Bounds = new UniRectangle(0, 0, 50, 20), Text = "Angle:" };
+            var angleInput = new InputControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "15.0", LayoutFlags = ControlLayoutFlags.WholeRow };
+            
+            var rotateX       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate X (RED)" };
+            var rotateY       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate Y (GREEN)" };
+            var rotateZ       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate Z (BLUE)" };
+            var resetRotation = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Reset rotation" };
+
+            _vpRotate.Children.Add(angleLabel);
+            _vpRotate.Children.Add(angleInput);
+
+            _vpRotate.Children.Add(rotateX);
+            _vpRotate.Children.Add(rotateY);
+            _vpRotate.Children.Add(rotateZ);
+            _vpRotate.Children.Add(resetRotation);
+
+            _vpRotate.UpdateLayout();
+
+            #endregion
+
+            _layoutToolsGroup.Children.Add(layoutTools);
+            _layoutToolsGroup.Children.Add(rotateTools);
             //_layoutToolsGroup.Children.Add(groundCheck);
             #endregion
 
@@ -597,7 +633,35 @@ namespace Utopia.Components
             return toolsWindow;
         }
 
-        private void OnToolSelected(EditorTools tool)
+        private enum LayoutTool
+        {
+            Move,
+            Rotate
+        }
+
+        private void OnLayoutGroupSelected(LayoutTool group)
+        {
+            _layoutTool = group;
+            _toolsWindow.Children.Clear();
+            _toolsWindow.Children.Add(_modesButtonsGroup);
+            _toolsWindow.Children.Add(_layoutToolsGroup);
+            
+            switch (group)
+            {
+                case LayoutTool.Move:
+                    _toolsWindow.Children.Add(_vpLayout);
+                    break;
+                case LayoutTool.Rotate:
+                    _toolsWindow.Children.Add(_vpRotate);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("group");
+            }
+            
+            _toolsWindow.UpdateLayout();
+        }
+
+        private void OnFrameToolSelected(FrameEditorTools tool)
         {
             _toolsWindow.Children.Clear();
             _toolsWindow.Children.Add(_modesButtonsGroup);
@@ -605,17 +669,17 @@ namespace Utopia.Components
             
             switch (tool)
             {
-                case EditorTools.Edit:
+                case FrameEditorTools.Edit:
                     _toolsWindow.Children.Add(_tpEdit);
                     break;
-                case EditorTools.ColorBrush:
+                case FrameEditorTools.ColorBrush:
                     break;
-                case EditorTools.FillBrush:
+                case FrameEditorTools.FillBrush:
                     break;
-                case EditorTools.SliceBrush:
+                case FrameEditorTools.SliceBrush:
                     _toolsWindow.Children.Add(_tpSliceBrush);
                     break;
-                case EditorTools.Preset:
+                case FrameEditorTools.Preset:
                     _toolsWindow.Children.Add(_tpPreset);
                     break;
                 default:
@@ -644,7 +708,7 @@ namespace Utopia.Components
         }
     }
 
-    public enum EditorTools
+    public enum FrameEditorTools
     {
         Edit,
         ColorBrush,

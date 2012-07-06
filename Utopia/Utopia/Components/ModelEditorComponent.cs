@@ -69,6 +69,7 @@ namespace Utopia.Components
 
         private VertexBuffer<VertexPosition> _crosshairVertexBuffer;
         private VertexBuffer<VertexPosition> _directionVertexBuffer;
+        private VertexBuffer<VertexPosition> _rotationVertexBuffer;
 
         private HLSLVoxelModel _voxelEffect;
 
@@ -104,7 +105,7 @@ namespace Utopia.Components
         private Vector3I? _newCube;
 
         private int _selectedColorIndex;
-        private int _selectedToolIndex;
+        private int _selectedFrameToolIndex;
         private EditorAxis _sliceAxis = EditorAxis.Y;
         private EditorAxis _mirror = EditorAxis.None;
 
@@ -484,7 +485,7 @@ namespace Utopia.Components
             ptList.Add(new VertexPosition(new Vector3(0, -1,  0)));
             ptList.Add(new VertexPosition(new Vector3(0,  1,  0)));
 
-            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
+            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
             _crosshairVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             ptList.Clear();
@@ -495,10 +496,17 @@ namespace Utopia.Components
             ptList.Add(new VertexPosition(new Vector3( 0, 0, 0)));
             ptList.Add(new VertexPosition(new Vector3( 0, 0, 1)));
 
-            _directionVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 4, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorDirection_vertexBuffer");
+            _directionVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorDirection_vertexBuffer");
             _directionVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
+            ptList.Clear();
+            ptList.Add(new VertexPosition(new Vector3(0, 0, 0)));
+            ptList.Add(new VertexPosition(new Vector3(1, 0, 0)));
             
+            _rotationVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorRotation_vertexBuffer");
+            _rotationVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
+
+             
 
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
 
@@ -1427,7 +1435,7 @@ namespace Utopia.Components
                             {
                                 foreach (var cubePos in GetSelectedCubes())
                                 {
-                                    switch (_selectedToolIndex)
+                                    switch (_selectedFrameToolIndex)
                                     {
                                         case 0:
                                             frame.BlockData.SetBlock(cubePos, 0);
@@ -1514,7 +1522,7 @@ namespace Utopia.Components
                             {
                                 foreach (var cubePos in GetSelectedCubes(true))
                                 {
-                                    switch (_selectedToolIndex)
+                                    switch (_selectedFrameToolIndex)
                                     {
                                         case 0:
                                             frame.BlockData.SetBlock(cubePos, (byte)(_selectedColorIndex + 1));
@@ -1789,7 +1797,50 @@ namespace Utopia.Components
 
             _d3DEngine.ImmediateContext.DrawIndexed(24, 0, 0); 
         }
-        
+
+        private void DrawRotationAxis(Vector3 position)
+        {
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+
+            var transform = Matrix.Translation(position) * _transform;
+
+            //Set the vertex buffer to the Graphical Card.
+            _rotationVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
+
+            //Set Effect variables
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(1, 1, 0, 1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+            _lines3DEffect.CBPerDraw.IsDirty = true;
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
+            
+            _d3DEngine.ImmediateContext.Draw(2, 0);
+
+            //Set Effect variables
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(0, 1, 0, 1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform * Matrix.RotationZ(90));
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+            _lines3DEffect.CBPerDraw.IsDirty = true;
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
+
+            _d3DEngine.ImmediateContext.Draw(2, 0);
+
+            //Set Effect variables
+            _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(0, 0, 1, 1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform * Matrix.RotationY(90));
+            _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+            _lines3DEffect.CBPerDraw.IsDirty = true;
+            _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
+
+            _d3DEngine.ImmediateContext.Draw(2, 0); 
+
+
+
+        }
+
         private void DrawCrosshair(Vector3 position, float size, bool turnAxis)
         {
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
