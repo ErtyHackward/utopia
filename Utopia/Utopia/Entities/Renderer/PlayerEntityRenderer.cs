@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3CoreComponents.Inputs;
+using Utopia.Action;
 using Utopia.Entities.Voxel;
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -43,6 +45,7 @@ namespace Utopia.Entities.Renderer
         private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
         private readonly VoxelModelManager _modelManager;
+        private readonly InputsManager _inputsManager;
         private ShaderResourceView _cubeTexture_View;
         public SharedFrameCB SharedFrameCB { get; set;}
 
@@ -56,6 +59,8 @@ namespace Utopia.Entities.Renderer
         private VisualVoxelModel _model;
         private VoxelModelInstance _playerModelInstance;
         private HLSLVoxelModel _voxelEffect;
+
+        private bool _walkingAnimation;
         #endregion
 
         #region Public variables/properties
@@ -74,12 +79,14 @@ namespace Utopia.Entities.Renderer
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
-                                    VoxelModelManager modelManager)
+                                    VoxelModelManager modelManager,
+                                    InputsManager inputsManager)
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
             _modelManager = modelManager;
+            _inputsManager = inputsManager;
 
             _dummyEntityRenderer = new HLSLVertexPositionColor(_d3DEngine.Device);
 
@@ -178,6 +185,8 @@ namespace Utopia.Entities.Renderer
             _bodyRotation.BackUpValue();
             _bodyRotation.Value = playerChar.BodyRotation;
             
+            //_inputsManager.ActionsManager.isTriggered(UtopiaActions.
+
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)

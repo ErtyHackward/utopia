@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using SharpDX;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -16,13 +17,14 @@ namespace Utopia.Shared.Entities.Models
 
         // storable fields
         private int _animationIndex;
-        private int _animationStepIndex;
+        private int _animationStepIndexFrom;
+        private int _animationStepIndexTo;
         private int _elapsed;
         private bool _repeat;
         private Md5Hash _modelHash;
         private Quaternion _rotation;
-        private int _headPartIndex;
-        private  Quaternion _headRotation;
+        private Quaternion _headRotation;
+        private bool _stopping;
         
         #region Properties
         /// <summary>
@@ -70,8 +72,8 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public int AnimationStepIndex
         {
-            get { return _animationStepIndex; }
-            set { _animationStepIndex = value; }
+            get { return _animationStepIndexTo; }
+            set { _animationStepIndexTo = value; }
         }
         
         /// <summary>
@@ -130,8 +132,6 @@ namespace Utopia.Shared.Entities.Models
 
             VoxelModel = model;
 
-            _headPartIndex = model.Parts.FindIndex(p => p.IsHead);
-
             // init the cached state, cached state should have the same structure as parent model states
             _internalState = new VoxelModelState(model.States[0]);
         }
@@ -142,6 +142,18 @@ namespace Utopia.Shared.Entities.Models
         public void UpdateStates()
         {
             _internalState = new VoxelModelState(VoxelModel.States[0]);
+        }
+
+        /// <summary>
+        /// Determines whether the animation can be played
+        /// </summary>
+        /// <param name="animationName"></param>
+        public bool CanPlay(string animationName)
+        {
+            if (string.IsNullOrEmpty(animationName))
+                throw new ArgumentNullException("animationName");
+
+            return VoxelModel.Animations.Any(a => a.Name == animationName);
         }
 
         /// <summary>
@@ -160,7 +172,8 @@ namespace Utopia.Shared.Entities.Models
                 throw new ArgumentOutOfRangeException("animationName", "Model have not animation called " + animationName);
 
             _animationIndex = animation;
-            _animationStepIndex = 0;
+            _animationStepIndexFrom = -1;
+            _animationStepIndexTo = 0;
             _elapsed = 0;
             _repeat = repeat;
         }
@@ -176,7 +189,8 @@ namespace Utopia.Shared.Entities.Models
                 throw new ArgumentOutOfRangeException("index", "Model have not animation with index " + index);
 
             _animationIndex = index;
-            _animationStepIndex = 0;
+            _animationStepIndexFrom = -1;
+            _animationStepIndexTo = 0;
             _elapsed = 0;
             _repeat = repeat;
         }
@@ -194,31 +208,53 @@ namespace Utopia.Shared.Entities.Models
 
             var animation = VoxelModel.Animations[_animationIndex];
 
-            var duration = animation.Steps[_animationStepIndex].Duration;
+            var duration = _animationStepIndexTo == -1 ? animation.Steps[0].Duration : animation.Steps[_animationStepIndexTo].Duration;
 
             if (_elapsed > duration)
             {
                 _elapsed -= duration;
-                AnimationStepIndex++;
-
-                if (_animationStepIndex == animation.Steps.Count)
+                
+                if (_animationStepIndexTo == -1)
+                    AnimationIndex = -1;
+                else
                 {
-                    if (_repeat)
-                        _animationStepIndex = 0;
+                    _animationStepIndexFrom = _animationStepIndexTo;
+
+                    if (_stopping)
+                    {
+                        _stopping = false;
+                        _animationStepIndexTo = -1;
+                    }
                     else
-                        Stop();
+                    {
+                        _animationStepIndexTo++;
+
+                        if (_animationStepIndexTo == animation.Steps.Count)
+                        {
+                            if (_repeat)
+                                _animationStepIndexTo = 0;
+                            else
+                                _animationStepIndexTo = -1;
+                        }
+                    }
                 }
             }
 
             if (Playing)
             {
-                var state0 = VoxelModel.States[animation.Steps[_animationStepIndex].StateIndex];
+                // take previous state
+                var state0 = _animationStepIndexFrom == -1 ? VoxelModel.States[0] : VoxelModel.States[animation.Steps[_animationStepIndexFrom].StateIndex];
+
                 VoxelModelState state1;
-                if (_animationStepIndex == animation.Steps.Count - 1)
+                if (_animationStepIndexTo == -1)
+                {
+                    state1 = VoxelModel.States[0];
+                }
+                else if (_animationStepIndexTo == animation.Steps.Count)
                 {
                     state1 = VoxelModel.States[animation.Steps[0].StateIndex];
                 }
-                else state1 = VoxelModel.States[animation.Steps[_animationStepIndex + 1].StateIndex];
+                else state1 = VoxelModel.States[animation.Steps[_animationStepIndexTo].StateIndex];
 
                 for (var i = 0; i < _internalState.PartsStates.Count; i++)
                 {
@@ -234,7 +270,11 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public void Stop()
         {
-            AnimationIndex = -1;
+            if (_animationIndex != -1)
+            {
+                _stopping = true;
+                _repeat = false;
+            }
         }
 
         /// <summary>
@@ -248,7 +288,8 @@ namespace Utopia.Shared.Entities.Models
             writer.Write(_repeat);
             writer.Write(_elapsed);
             writer.Write((byte)_animationIndex);
-            writer.Write((byte)_animationStepIndex);
+            writer.Write((byte)_animationStepIndexFrom);
+            writer.Write((byte)_animationStepIndexTo);   
         }
 
         /// <summary>
@@ -262,7 +303,9 @@ namespace Utopia.Shared.Entities.Models
             _repeat = reader.ReadBoolean();
             _elapsed = reader.ReadInt32();
             _animationIndex = reader.ReadByte();
-            _animationStepIndex = reader.ReadByte();
+            _animationStepIndexFrom = reader.ReadByte();
+            _animationStepIndexTo = reader.ReadByte();
         }
     }
 }
+
