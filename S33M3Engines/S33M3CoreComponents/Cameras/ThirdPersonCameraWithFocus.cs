@@ -11,6 +11,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
+using System.Windows.Forms;
 
 namespace S33M3CoreComponents.Cameras
 {
@@ -26,6 +27,10 @@ namespace S33M3CoreComponents.Cameras
         private Vector3 _xAxis, _yAxis, _zAxis;
 
         private float _offsetDistance = 5.0f;
+        private float _zoomingPower = 0;
+        private float _zoomingStep = 0.005f;
+
+        private bool _isbackLooking = true;
 
         private InputsManager _inputManager;
         #endregion
@@ -68,19 +73,22 @@ namespace S33M3CoreComponents.Cameras
         }
 
         #region Public Methods
-        public float zoomingPower = 0;
-        public float zoomingStep = 0.005f;
         public override void Update(S33M3DXEngine.Main.GameTime timeSpend)
         {
+            if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.LControlKey))
+            {
+                _isbackLooking = false;
+            }
+            else _isbackLooking = true;
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward))
             {
-                zoomingPower = -0.5f;
+                _zoomingPower = -0.5f;
             }
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward))
             {
-                zoomingPower = 0.5f;
+                _zoomingPower = 0.5f;
             }
 
             if (CameraPlugin == null) return;
@@ -110,20 +118,20 @@ namespace S33M3CoreComponents.Cameras
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            if (zoomingPower != 0.0f)
+            if (_zoomingPower != 0.0f)
             {
-                if (zoomingPower > 0)
+                if (_zoomingPower > 0)
                 {
-                    _offsetDistance -= zoomingStep * elapsedTime;
-                    zoomingPower -= zoomingStep * elapsedTime;
-                    if (zoomingPower < 0.0f) zoomingPower = 0.0f;
+                    _offsetDistance -= _zoomingStep * elapsedTime;
+                    _zoomingPower -= _zoomingStep * elapsedTime;
+                    if (_zoomingPower < 0.0f) _zoomingPower = 0.0f;
                     if (_offsetDistance < 0.0f) _offsetDistance = 0.0f;
                 }
                 else
                 {
-                    _offsetDistance += zoomingStep * elapsedTime;
-                    zoomingPower += zoomingStep * elapsedTime;
-                    if (zoomingPower > 0.0f) zoomingPower = 0.0f;
+                    _offsetDistance += _zoomingStep * elapsedTime;
+                    _zoomingPower += _zoomingStep * elapsedTime;
+                    if (_zoomingPower > 0.0f) _zoomingPower = 0.0f;
                     if (_offsetDistance > 15.0f) _offsetDistance = 15.0f;
                 }
             }
@@ -146,8 +154,6 @@ namespace S33M3CoreComponents.Cameras
         #region Private Methods
         private void ComputeCameraMatrices()
         {
-            //These view matrix computation are derived directly from Matrix.lookatlh() where I'm only doing needed math operations.
-
             //Extract the Rotation Matrix
             Matrix.RotationQuaternion(ref _cameraOrientation.ValueInterp, out _view);
 
@@ -161,9 +167,15 @@ namespace S33M3CoreComponents.Cameras
 
             //Focused camera computation ============================================================
             _view_focused = _view;
+
+            int way = -1;
+            if (_isbackLooking == false)
+            {
+                way = 1;
+            }
             
             float _validatedOffsetDistance = _offsetDistance;
-            Vector3 cameraFocusedPosition = _zAxis * -1 * _validatedOffsetDistance;
+            Vector3 cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
             Vector3D evaluatedCameraWorldPosition;
             bool isCameraPositionCorrect = false;
             while (isCameraPositionCorrect == false && _validatedOffsetDistance > 0)
@@ -177,28 +189,32 @@ namespace S33M3CoreComponents.Cameras
                 }
                 _validatedOffsetDistance -= 0.01f;
                 if (_validatedOffsetDistance < 0) _validatedOffsetDistance = 0;
-                cameraFocusedPosition = _zAxis * -1 * _validatedOffsetDistance;
+                cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
             }
 
-            //Recompute the view Matrix
-            Vector3.Dot(ref _xAxis, ref cameraFocusedPosition, out _view_focused.M41);
-            Vector3.Dot(ref _yAxis, ref cameraFocusedPosition, out _view_focused.M42);
-            Vector3.Dot(ref _zAxis, ref cameraFocusedPosition, out _view_focused.M43);
-            _view_focused.M41 *= -1;
-            _view_focused.M42 *= -1;
-            _view_focused.M43 *= -1;
+            if (_isbackLooking == false)
+            {
+                _view_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition - _zAxis, _yAxis);
+            }
+            else
+            {
+                _view_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition + _zAxis, _yAxis);
+            }
+
             _viewProjection3D_focused = _view_focused * _projection3D;
 
             //NOT Focused camera computation ============================================================
             Vector3 cameraPosition = _worldPosition.ValueInterp.AsVector3() + cameraFocusedPosition;
 
-            //Recompute the view Matrix
-            Vector3.Dot(ref _xAxis, ref cameraPosition, out _view.M41);
-            Vector3.Dot(ref _yAxis, ref cameraPosition, out _view.M42);
-            Vector3.Dot(ref _zAxis, ref cameraPosition, out _view.M43);
-            _view.M41 *= -1;
-            _view.M42 *= -1;
-            _view.M43 *= -1;
+            if (_isbackLooking == false)
+            {
+                _view = Matrix.LookAtLH(cameraPosition, cameraPosition - _zAxis, _yAxis);
+            }
+            else
+            {
+                _view = Matrix.LookAtLH(cameraPosition, cameraPosition + _zAxis, _yAxis);
+            }
+
             _viewProjection3D = _view * _projection3D;
         }
 
