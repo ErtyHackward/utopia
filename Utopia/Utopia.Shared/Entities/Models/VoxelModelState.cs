@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Interfaces;
 
@@ -88,32 +89,18 @@ namespace Utopia.Shared.Entities.Models
             if (PartsStates.Count == 0) 
                 return;
 
-            var minPoint = new Vector3();
-            var maxPoint = new Vector3();
             // calculate bounding boxes for each part state
             for (int i = 0; i < PartsStates.Count; i++)
             {
                 var partState = PartsStates[i];
                 var bb = new BoundingBox(new Vector3(), _parentModel.Parts[i].Frames[partState.ActiveFrame].BlockData.ChunkSize);
 
-                bb.Minimum = Vector3.TransformCoordinate(bb.Minimum, partState.Transform);
-                bb.Maximum = Vector3.TransformCoordinate(bb.Maximum, partState.Transform);
-
+                bb = bb.Transform(partState.Transform);
+                
                 partState.BoundingBox = bb;
 
-                if (i == 0)
-                {
-                    minPoint = bb.Minimum;
-                    maxPoint = bb.Maximum;
-                }
-
-                minPoint = Vector3.Min(minPoint, bb.Minimum);
-                minPoint = Vector3.Min(minPoint, bb.Maximum);
-                maxPoint = Vector3.Max(maxPoint, bb.Maximum);
-                maxPoint = Vector3.Max(maxPoint, bb.Minimum);
+                BoundingBox = BoundingBox.Merge(BoundingBox, bb);
             }
-
-            BoundingBox = new BoundingBox(minPoint, maxPoint);
         }
 
         public override string ToString()

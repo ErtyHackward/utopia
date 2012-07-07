@@ -109,6 +109,9 @@ namespace Utopia.Components
         private EditorAxis _sliceAxis = EditorAxis.Y;
         private EditorAxis _mirror = EditorAxis.None;
 
+        private bool _displayLayoutRotationPosition = true;
+        private Vector3 _rotationPoint;
+
         /// <summary>
         /// Provides a plane for a part translating
         /// </summary>
@@ -118,6 +121,7 @@ namespace Utopia.Components
 
         private bool _needSave;
         private VoxelModelInstance _instance;
+        private VoxelModelState _clipboardState;
 
         #endregion
 
@@ -1359,8 +1363,19 @@ namespace Utopia.Components
                             var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex];
                             var partState = state.PartsStates[_selectedPartIndex];
                             bb = partState.BoundingBox;
-                            var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2, (bb.Maximum.Y - bb.Minimum.Y) / 2, (bb.Maximum.Z - bb.Minimum.Z) / 2) + partState.Transform.TranslationVector;
-                            _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
+
+                            // get the translation plane
+                            if (_layoutTool == LayoutTool.Move)
+                            {
+                                var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2,
+                                                         (bb.Maximum.Y - bb.Minimum.Y) / 2,
+                                                         (bb.Maximum.Z - bb.Minimum.Z) / 2) + partState.Transform.TranslationVector;
+                                _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
+                            }
+                            else
+                            {
+                                _translatePlane = new Plane(_rotationPoint, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
+                            }
 
                             if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released)
                             {
@@ -1371,6 +1386,7 @@ namespace Utopia.Components
 
                             if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
                             {
+                                // get the intersection between plane and mouse screen ray
                                 Vector3D mPosition, mLookAt;
                                 var worldViewProjection = _transform * _viewProjection;
                                 _inputManager.MouseManager.UnprojectMouseCursor(ref worldViewProjection, out mPosition, out mLookAt);
@@ -1408,13 +1424,19 @@ namespace Utopia.Components
                                         _translatePoint = intersectPoint;
                                     }
                                 }
-
-                                // send translation to current state
-                                //var state = _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex];
-                                var translationMatrix = Matrix.Translation(translationVector);
-                                partState.Transform.TranslationVector += translationVector;
-                                partState.BoundingBox = new BoundingBox(Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix), Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
-                                NeedSave();
+                                if (_layoutTool == LayoutTool.Move)
+                                {
+                                    var translationMatrix = Matrix.Translation(translationVector);
+                                    partState.Transform.TranslationVector += translationVector;
+                                    partState.BoundingBox = new BoundingBox(
+                                            Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix),
+                                            Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
+                                    NeedSave();
+                                }
+                                else
+                                {
+                                    _rotationPoint += translationVector;
+                                }
                             }
                         }
                     }
@@ -1802,15 +1824,17 @@ namespace Utopia.Components
         {
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
-            var transform = Matrix.Translation(position) * _transform;
+            var transformX =  Matrix.Scaling(16) * Matrix.Translation(position) * _transform;
+            var transformY = Matrix.RotationAxis(new Vector3(0, 0, 1), (float)Math.PI / 2) * Matrix.Scaling(16) * Matrix.Translation(position) * _transform;
+            var transformZ = Matrix.RotationAxis(new Vector3(0, 1, 0), (float)Math.PI / 2) * Matrix.Scaling(16) * Matrix.Translation(position) * _transform;
 
             //Set the vertex buffer to the Graphical Card.
             _rotationVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
 
             //Set Effect variables
             _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
-            _lines3DEffect.CBPerDraw.Values.Color = new Color4(1, 1, 0, 1);
-            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform);
+            _lines3DEffect.CBPerDraw.Values.Color = new Color4(1, 0, 0, 1);
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transformX);
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
@@ -1820,7 +1844,7 @@ namespace Utopia.Components
             //Set Effect variables
             _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
             _lines3DEffect.CBPerDraw.Values.Color = new Color4(0, 1, 0, 1);
-            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform * Matrix.RotationZ(90));
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transformY);
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
@@ -1830,7 +1854,7 @@ namespace Utopia.Components
             //Set Effect variables
             _lines3DEffect.Begin(_d3DEngine.ImmediateContext);
             _lines3DEffect.CBPerDraw.Values.Color = new Color4(0, 0, 1, 1);
-            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transform * Matrix.RotationY(90));
+            _lines3DEffect.CBPerDraw.Values.World = Matrix.Transpose(transformZ);
             _lines3DEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_viewProjection);
             _lines3DEffect.CBPerDraw.IsDirty = true;
             _lines3DEffect.Apply(_d3DEngine.ImmediateContext);
@@ -1983,12 +2007,24 @@ namespace Utopia.Components
                         var bb = voxelModelPartState.BoundingBox;
                         var size = Vector3.Subtract(bb.Maximum, bb.Minimum);
                         var sizef = Math.Max(Math.Max(size.X, size.Y), size.Z);
-
                         var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2, (bb.Maximum.Y - bb.Minimum.Y) / 2, (bb.Maximum.Z - bb.Minimum.Z) / 2);
-
                         var translate = voxelModelPartState.Transform.TranslationVector + center;
 
-                        DrawCrosshair(translate, sizef, _flipAxis); 
+                        if (_layoutTool == LayoutTool.Move)
+                        {
+                            DrawCrosshair(translate, sizef, _flipAxis);
+                        }
+                        else
+                        {
+                            if (_displayLayoutRotationPosition)
+                            {
+                                DrawCrosshair(_rotationPoint, sizef, _flipAxis);
+                            }
+                            else
+                            {
+                                DrawRotationAxis(_rotationPoint);
+                            }
+                        }
                     }
                 }
 
@@ -2338,6 +2374,88 @@ namespace Utopia.Components
             {
                 _gui.MessageBox(x.Message, "Error");
             }
+        }
+
+        private void OnPartRotation(EditorAxis editorAxis)
+        {
+            if (SelectedPartIndex == -1)
+            {
+                _gui.MessageBox("Select part to rotate");
+                return;
+            }
+
+            float rotationAngle;
+            if (!float.TryParse(_angleInput.Text, out rotationAngle))
+            {
+                _gui.MessageBox("Invalid angle value");
+                return;
+            }
+
+            var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
+            var matrix = state.PartsStates[SelectedPartIndex].Transform;
+
+            // convert to radians 
+            rotationAngle = (float)((Math.PI / 180) * rotationAngle);
+
+            var translation = _rotationPoint - matrix.TranslationVector;
+
+            switch (editorAxis)
+            {
+                case EditorAxis.None:
+                    matrix = Matrix.Translation(matrix.TranslationVector);
+                    break;
+                case EditorAxis.X:
+                    matrix = Matrix.Translation(-translation) * Matrix.RotationX(rotationAngle) * Matrix.Translation(translation) * matrix;
+                    break;
+                case EditorAxis.Y:
+                    matrix = Matrix.Translation(-translation) * Matrix.RotationY(rotationAngle) * Matrix.Translation(translation) * matrix;
+                    break;
+                case EditorAxis.Z:
+                    matrix = Matrix.Translation(-translation) * Matrix.RotationZ(rotationAngle) * Matrix.Translation(translation) * matrix;
+                    break;
+            }
+
+            state.PartsStates[SelectedPartIndex].Transform = matrix;
+            state.UpdateBoundingBox();
+            NeedSave();
+        }
+
+        private void OnLayoutCopy()
+        {
+            if (SelectedStateIndex == -1)
+            {
+                _gui.MessageBox("Select state to copy");
+                return;
+            }
+
+            _clipboardState = new VoxelModelState(VisualVoxelModel.VoxelModel.States[SelectedStateIndex]);
+        }
+
+        private void OnLayoutPaste()
+        {
+            if (SelectedStateIndex == -1)
+            {
+                _gui.MessageBox("Select state to copy");
+                return;
+            }
+
+
+            VisualVoxelModel.VoxelModel.States[SelectedStateIndex] = _clipboardState;
+            _clipboardState = new VoxelModelState(_clipboardState);
+            NeedSave();
+        }
+
+        private void OnMoveRotationToCenter()
+        {
+            if (SelectedStateIndex == -1 || SelectedPartIndex == -1)
+            {
+                _gui.MessageBox("Select state and part");
+                return;
+            }
+
+            var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
+
+            _rotationPoint = state.PartsStates[SelectedPartIndex].BoundingBox.GetCenter();
         }
     }
 
