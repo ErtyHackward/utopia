@@ -66,6 +66,7 @@ namespace Utopia.Components
         private DialogControl<DialogFrameEditStruct> _frameEditDialog;
         private DialogControl<DialogImportModelStruct> _importDialog; 
         private LabelControl _infoLabel;
+        private InputControl _angleInput;
 
         // navigation groups
         private Control _modelsGroup;
@@ -225,7 +226,7 @@ namespace Utopia.Components
             _statesList = new ListControl { Name = "statesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _statesList.Bounds = new UniRectangle(0, 0, 180, 20);
             _statesList.SelectionMode = ListSelectionMode.Single;
-            _statesList.SelectionChanged += delegate { SelectedStateIndex = _statesList.SelectedItems.Count > 0 ? _statesList.SelectedItems[0] : -1; };
+            _statesList.SelectionChanged += delegate { SelectedStateIndex = _statesList.SelectedItems.Count > 0 ? _statesList.SelectedItems[0] : -1; UpdateCamera(); };
             _statesGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 0), LayoutFlags = ControlLayoutFlags.FreeHeight | ControlLayoutFlags.WholeRow };
 
             _statesGroup.Children.Add(statesLabel);
@@ -589,8 +590,9 @@ namespace Utopia.Components
             _vpLayout = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             var copyLayoutButton = new ButtonControl { Text = "Copy layout", Bounds = new UniRectangle(0, 0, 100, 20) };
-            
+            copyLayoutButton.Pressed += delegate { OnLayoutCopy(); };
             var pasteLayoutButton = new ButtonControl { Text = "Paste layout", Bounds = new UniRectangle(0, 0, 100, 20) };
+            pasteLayoutButton.Pressed += delegate { OnLayoutPaste(); };
 
             _vpLayout.Children.Add(copyLayoutButton);
             _vpLayout.Children.Add(pasteLayoutButton);
@@ -599,24 +601,43 @@ namespace Utopia.Components
             #endregion
 
             #region Rotate tools
-            _vpRotate = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _vpRotate = new Control { Bounds = new UniRectangle(0, 0, 180, 180), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            var angleLabel = new LabelControl { Bounds = new UniRectangle(0, 0, 50, 20), Text = "Angle:" };
-            var angleInput = new InputControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "15.0", LayoutFlags = ControlLayoutFlags.WholeRow };
+
+            var rotateDisplay = new LabelControl { Bounds = new UniRectangle(0, 0, 50, 20), Text = "Display:", LayoutFlags = ControlLayoutFlags.WholeRow };
+
+            var displayPosition = new StickyButtonControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "Position" , Sticked = true };
+            displayPosition.Pressed += delegate { _displayLayoutRotationPosition = true; };
+            var displayAxis = new StickyButtonControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "Rotation" };
+            displayAxis.Pressed += delegate { _displayLayoutRotationPosition = false; };
+
+            var angleLabel = new LabelControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Rotate Angle:" };
+            _angleInput = new InputControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "10", LayoutFlags = ControlLayoutFlags.WholeRow };
             
             var rotateX       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate X (RED)" };
+            rotateX.Pressed += delegate { OnPartRotation(EditorAxis.X); };
             var rotateY       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate Y (GREEN)" };
+            rotateY.Pressed += delegate { OnPartRotation(EditorAxis.Y); };
             var rotateZ       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate Z (BLUE)" };
+            rotateZ.Pressed += delegate { OnPartRotation(EditorAxis.Z); };
             var resetRotation = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Reset rotation" };
+            resetRotation.Pressed += delegate { OnPartRotation(EditorAxis.None); };
+            var moveRotationPointToCenter = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Move to center" };
+            moveRotationPointToCenter.Pressed += delegate { OnMoveRotationToCenter(); };
+
+            _vpRotate.Children.Add(rotateDisplay);
+            _vpRotate.Children.Add(displayPosition);
+            _vpRotate.Children.Add(displayAxis);
 
             _vpRotate.Children.Add(angleLabel);
-            _vpRotate.Children.Add(angleInput);
+            _vpRotate.Children.Add(_angleInput);
 
             _vpRotate.Children.Add(rotateX);
             _vpRotate.Children.Add(rotateY);
             _vpRotate.Children.Add(rotateZ);
             _vpRotate.Children.Add(resetRotation);
-
+            _vpRotate.Children.Add(moveRotationPointToCenter);
+            
             _vpRotate.UpdateLayout();
 
             #endregion

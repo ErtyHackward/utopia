@@ -105,7 +105,7 @@
     <Compile Include="Chunks\Tags\ICubeYOffsetModifier.cs" />
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
-    <Compile Include="ClassExt\Vector3DExtensions.cs" />
+    <Compile Include="ClassExt\OtherExtensions.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower3.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
