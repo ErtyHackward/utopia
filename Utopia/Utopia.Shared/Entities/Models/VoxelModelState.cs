@@ -88,15 +88,17 @@ namespace Utopia.Shared.Entities.Models
         {
             if (PartsStates.Count == 0) 
                 return;
-
+            
             // calculate bounding boxes for each part state
             for (int i = 0; i < PartsStates.Count; i++)
             {
                 var partState = PartsStates[i];
                 var bb = new BoundingBox(new Vector3(), _parentModel.Parts[i].Frames[partState.ActiveFrame].BlockData.ChunkSize);
-
-                bb = bb.Transform(partState.Transform);
                 
+                bb = bb.Transform(partState.Transform);
+
+                if (i == 0) BoundingBox = bb;
+
                 partState.BoundingBox = bb;
 
                 BoundingBox = BoundingBox.Merge(BoundingBox, bb);
