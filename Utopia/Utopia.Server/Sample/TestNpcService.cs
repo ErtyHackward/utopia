@@ -41,19 +41,6 @@ namespace Utopia.Server.Sample
             zombie.DynamicEntity.Position = position;
             zombie.DynamicEntity.Size = new SharpDX.Vector3(1f, 1f, 1f);
 
-            //zombie.DynamicEntity.Model.Blocks = new byte[1, 1, 1];// { { { (byte)15 } } },
-            //zombie.DynamicEntity.Model.Blocks[0, 0, 0] = 27;
-            //zombie.Blocks[1, 0, 0] = (byte)0;
-            //zombie.Blocks[0, 0, 1] = (byte)15;
-            //zombie.Blocks[1, 0, 1] = (byte)0;
-            //zombie.Blocks[0, 1, 0] = (byte)15;
-            //zombie.Blocks[1, 1, 0] = (byte)0;
-            //zombie.Blocks[0, 1, 1] = (byte)15;
-            //zombie.Blocks[1, 1, 1] = (byte)0;
-            //zombie.Blocks[0, 2, 0] = (byte)14;
-            //zombie.Blocks[1, 2, 0] = (byte)15;
-            //zombie.Blocks[0, 2, 1] = (byte)14;
-            //zombie.Blocks[1, 2, 1] = (byte)15;
             _aliveNpc.Add(zombie);
             _server.AreaManager.AddEntity(zombie);
             return zombie;

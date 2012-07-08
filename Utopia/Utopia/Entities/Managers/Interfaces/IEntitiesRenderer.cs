@@ -11,7 +11,6 @@ namespace Utopia.Entities.Renderer.Interfaces
 {
     public interface IEntitiesRenderer : IDrawable
     {
-        List<IVisualEntityContainer> VisualEntities { get; set; }
         IVisualEntityContainer VisualEntity { get; set; }
         void Initialize();
         void LoadContent(DeviceContext context);

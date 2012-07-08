@@ -9,6 +9,7 @@ namespace Utopia.Shared.Entities.Models
 {
     /// <summary>
     /// Represents instance data container of the voxel model.
+    /// Head and Body rotation, animation state
     /// </summary>
     public class VoxelModelInstance : IBinaryStorable
     {

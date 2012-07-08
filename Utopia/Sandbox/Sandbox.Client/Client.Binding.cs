@@ -220,7 +220,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<IEntitiesRenderer>().To<PlayerEntityRenderer>().InScope(x => GameScope.CurrentGameScope).Named("PlayerEntityRenderer");    //Rendering Player
-            _iocContainer.Bind<IEntitiesRenderer>().To<DynamicEntityRenderer>().InScope(x => GameScope.CurrentGameScope).Named("DefaultEntityRenderer");  //Rendering Dynamic Entities
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
             //=============================================================
             _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
