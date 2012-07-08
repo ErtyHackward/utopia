@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utopia.Network;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
@@ -14,21 +15,22 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VoxelModelManager : GameComponent
     {
+        private bool _initialized;
         private readonly IVoxelModelStorage _storage;
         private readonly ServerComponent _server;
         private readonly VoxelMeshFactory _voxelMeshFactory;
         private readonly object _syncRoot = new object();
         private readonly Dictionary<string, VisualVoxelModel> _models = new Dictionary<string, VisualVoxelModel>();
-        private readonly HashSet<string> _pengingModels = new HashSet<string>();
+        private HashSet<string> _pendingModels = new HashSet<string>();
 
         /// <summary>
-        /// Occurs when a voxel moded received from the server
+        /// Occurs when a voxel model is available (received from the server, loaded from the storage)
         /// </summary>
-        public event EventHandler<VoxelModelReceivedEventArgs> VoxelModelReceived;
+        public event EventHandler<VoxelModelReceivedEventArgs> VoxelModelAvailable;
 
-        private void OnVoxelModelReceived(VoxelModelReceivedEventArgs e)
+        private void OnVoxelModelAvailable(VoxelModelReceivedEventArgs e)
         {
-            var handler = VoxelModelReceived;
+            var handler = VoxelModelAvailable;
             if (handler != null) handler(this, e);
         }
 
@@ -54,10 +56,10 @@ namespace Utopia.Entities.Voxel
             lock (_syncRoot)
             {
                 _models.Add(e.Message.VoxelModel.Name, new VisualVoxelModel(e.Message.VoxelModel,_voxelMeshFactory));
-                _pengingModels.Remove(e.Message.VoxelModel.Name);
+                _pendingModels.Remove(e.Message.VoxelModel.Name);
             }
 
-            OnVoxelModelReceived(new VoxelModelReceivedEventArgs { Model = e.Message.VoxelModel });
+            OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = e.Message.VoxelModel });
 
             _storage.Save(e.Message.VoxelModel);
         }
@@ -73,10 +75,11 @@ namespace Utopia.Entities.Voxel
             {
                 if (_models.ContainsKey(name))
                     return;
-                requested = _pengingModels.Add(name);
+                requested = _pendingModels.Add(name);
             }
 
-            if(requested)
+            // don't request the model before we are initialized or already requested
+            if (requested && _initialized)
                 _server.ServerConnection.SendAsync(new GetVoxelModelsMessage { Names = new [] { name } });
         }
 
@@ -159,6 +162,37 @@ namespace Utopia.Entities.Voxel
                 {
                     _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, _voxelMeshFactory));
                 }
+            }
+            _initialized = true;
+            
+            // if we have some requested models, remove those that was loaded
+            List<string> loadedModels;
+            lock (_syncRoot)
+            {
+                loadedModels = _pendingModels.Where(Contains).ToList();
+                loadedModels.ForEach(m => _pendingModels.Remove(m));
+            }
+
+            // fire events
+            foreach (var loadedModel in loadedModels)
+            {
+                var model = GetModel(loadedModel, false);
+                OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = model.VoxelModel });
+            }
+
+            HashSet<string> requestSet;
+            
+            lock (_syncRoot)
+            {
+                _pendingModels.ExceptWith(loadedModels);
+                requestSet = _pendingModels;
+                _pendingModels = new HashSet<string>();
+            }
+
+            // request the rest models
+            foreach (var absentModel in requestSet)
+            {
+                RequestModel(absentModel);
             }
         }
 

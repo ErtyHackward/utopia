@@ -58,7 +58,7 @@ namespace Utopia.Entities.Voxel
 
             // set the model or wait for it
             if (model == null)
-                _manager.VoxelModelReceived += ManagerVoxelModelReceived;
+                _manager.VoxelModelAvailable += ManagerVoxelModelReceived;
             else
                 _visualVoxelModel = model;
         }
@@ -69,7 +69,7 @@ namespace Utopia.Entities.Voxel
             if (e.Model.Name == _voxelEntity.ModelName)
             {
                 _visualVoxelModel = _manager.GetModel(e.Model.Name);
-                _manager.VoxelModelReceived -= ManagerVoxelModelReceived;
+                _manager.VoxelModelAvailable -= ManagerVoxelModelReceived;
             }
         }
         

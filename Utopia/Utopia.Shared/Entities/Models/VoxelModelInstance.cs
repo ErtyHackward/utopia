@@ -117,6 +117,8 @@ namespace Utopia.Shared.Entities.Models
         
         public VoxelModelInstance(VoxelModel model = null)
         {
+            _rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), 0);
+            _headRotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), 0);
             _animationIndex = -1;
             SetParentModel(model);
         }

@@ -34,7 +34,6 @@ namespace Utopia.Network
                     {
                         _playerEntity.PositionChanged -= PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged -= PlayerEntityViewChanged;
-                        _playerEntity.BodyRotationChanged -= _playerEntity_BodyOrientationChanged;
                         _playerEntity.Use -= PlayerEntityUse;
                     }
 
@@ -44,7 +43,6 @@ namespace Utopia.Network
                     {
                         _playerEntity.PositionChanged += PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged += PlayerEntityViewChanged;
-                        _playerEntity.BodyRotationChanged += _playerEntity_BodyOrientationChanged;
                         _playerEntity.Use += PlayerEntityUse;
                     }
                 }
@@ -54,7 +52,7 @@ namespace Utopia.Network
         /// <summary>
         /// Creates new instance of EntityMessageTranslator
         /// </summary>
-        /// <param name="connection"></param>
+        /// <param name="server"></param>
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
         /// <param name="chunkManager"></param>
@@ -163,17 +161,6 @@ namespace Utopia.Network
                 EntityId = e.Entity.DynamicId
             });
         }
-
-
-        void _playerEntity_BodyOrientationChanged(object sender, EntityBodyRotationEventArgs e)
-        {
-            _server.ServerConnection.SendAsync(new EntityBodyDirectionMessage
-            {
-                Rotation = e.Entity.HeadRotation,
-                EntityId = e.Entity.DynamicId
-            });
-        }
-
 
         private void PlayerEntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
