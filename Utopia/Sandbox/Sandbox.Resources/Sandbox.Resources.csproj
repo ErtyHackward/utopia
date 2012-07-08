@@ -331,6 +331,9 @@
     <None Include="Models\Torch.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Models\Zombie.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TexturesPacks\Default\charactersheet.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
