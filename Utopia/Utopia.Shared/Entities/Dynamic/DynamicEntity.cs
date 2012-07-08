@@ -31,13 +31,6 @@ namespace Utopia.Shared.Entities.Dynamic
             if (handler != null) handler(this, e);
         }
 
-        public event EventHandler<EntityBodyRotationEventArgs> BodyRotationChanged;
-        protected void OnBodyRotationChanged(EntityBodyRotationEventArgs e)
-        {
-            var handler = BodyRotationChanged;
-            if (handler != null) handler(this, e);
-        }
-
         /// <summary>
         /// Occurs when entity performs "use" operation
         /// </summary>
@@ -75,7 +68,7 @@ namespace Utopia.Shared.Entities.Dynamic
         
         protected DynamicEntity()
         {
-
+            HeadRotation = new Quaternion(0, 0, 0, 1);
         }
 
         #region Properties
@@ -186,11 +179,7 @@ namespace Utopia.Shared.Entities.Dynamic
             }
             set
             {
-                if (_bodyRotation != value)
-                {
-                    _bodyRotation = value;
-                    OnBodyRotationChanged(new EntityBodyRotationEventArgs { Entity = this });
-                }
+                _bodyRotation = value;
             }
         }
 

@@ -5,6 +5,7 @@ using S33M3CoreComponents.Config;
 using S33M3Resources.Structs;
 using Utopia.Server;
 using Utopia.Server.Managers;
+using Utopia.Server.Sample;
 using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Cubes;
@@ -71,6 +72,7 @@ namespace Realms.Client.Components
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
             _server.Services.Add(new WaterDynamicService());
+            _server.Services.Add(new TestNpcService());
         }
 
 

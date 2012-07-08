@@ -516,8 +516,8 @@ namespace Utopia.Server.Managers
             var cx = (int)vector2.X % AbstractChunk.ChunkSize.X;
             var cz = (int)vector2.Z % AbstractChunk.ChunkSize.Z;
 
-            if (cx < 0) cx = AbstractChunk.ChunkSize.X - cx;
-            if (cz < 0) cz = AbstractChunk.ChunkSize.Z - cz;
+            if (cx < 0) cx = AbstractChunk.ChunkSize.X + cx;
+            if (cz < 0) cz = AbstractChunk.ChunkSize.Z + cz;
 
             int y;
 

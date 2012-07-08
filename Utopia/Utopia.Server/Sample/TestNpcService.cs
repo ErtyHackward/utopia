@@ -58,7 +58,8 @@ namespace Utopia.Server.Sample
             var r = new Random();
             for (int i = 0; i < 1; i++)
             {
-                var z = CreateZombie(r.Next(_names), new Vector3D(40, 72, -60)); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
+                
+                var z = CreateZombie(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
                 //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
             }

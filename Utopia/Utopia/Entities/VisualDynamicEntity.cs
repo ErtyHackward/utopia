@@ -8,6 +8,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Entities
 {
@@ -33,6 +34,8 @@ namespace Utopia.Entities
         public FTSValue<Vector3D> WorldPosition = new FTSValue<Vector3D>();         //World Position
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         public FTSValue<Quaternion> MoveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
+
+        public VoxelModelInstance ModelInstance { get; set; }
 
         #endregion
 
@@ -122,7 +125,7 @@ namespace Utopia.Entities
         #region Public Methods
         public void Update(GameTime timeSpent)
         {
-            RefreshEntityMovementAndRotation(); 
+            RefreshEntityMovementAndRotation();
         }
 
         //Draw interpolation (Before each Drawing)
@@ -135,8 +138,14 @@ namespace Utopia.Entities
             Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3(); //currentLocation.AsVector3();
             //entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
             //entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
-            VisualEntity.World = Matrix.RotationQuaternion(LookAtDirection.ValueInterp) * Matrix.Translation(entityCenteredPosition);  //Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
+            VisualEntity.World = Matrix.Translation(entityCenteredPosition);  //Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
+
+            if (ModelInstance != null)
+            {
+                ModelInstance.HeadRotation = LookAtDirection.ValueInterp;
+                ModelInstance.Rotation = DynamicEntity.BodyRotation;
+            }
         }
         #endregion
     }

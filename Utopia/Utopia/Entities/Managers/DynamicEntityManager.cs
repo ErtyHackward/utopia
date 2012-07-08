@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -33,7 +34,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Allows to group instances by model to perform instanced drawing
         /// </summary>
-        private struct ModelAndInstances
+        private class ModelAndInstances
         {
             public VisualVoxelModel VisualModel;
             public Dictionary<uint, VoxelModelInstance> Instances;
@@ -80,6 +81,31 @@ namespace Utopia.Entities.Managers
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
+
+            _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
+
+            DynamicEntities = new List<IVisualEntityContainer>();
+        }
+
+        void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
+        {
+            foreach (var modelAndInstances in _models)
+            {
+                if (modelAndInstances.Key == e.Model.Name)
+                {
+                    var model = _voxelModelManager.GetModel(e.Model.Name);
+                    modelAndInstances.Value.VisualModel = model;
+                    model.BuildMesh();
+                    var keys = modelAndInstances.Value.Instances.Select(p => p.Key).ToList();
+
+                    foreach (var id in keys)
+                    {
+                        var instance = model.VoxelModel.CreateInstance();
+                        modelAndInstances.Value.Instances[id] = instance;
+                        _dynamicEntitiesDico[id].ModelInstance = instance;
+                    }
+                }
+            }
         }
 
         public override void BeforeDispose()
@@ -89,7 +115,7 @@ namespace Utopia.Entities.Managers
 
         public override void Initialize()
         {
-            DynamicEntities = new List<IVisualEntityContainer>();
+            
         }
 
         public override void LoadContent(DeviceContext context)
@@ -146,9 +172,7 @@ namespace Utopia.Entities.Managers
                     //Draw only the entities that are in Client view range
                     if (_visualWorldParameters.WorldRange.Contains(entityToRender.Position.ToCubePosition()))
                     {
-                        var world = _worldFocusManager.CenterOnFocus(ref entityToRender.World);
-
-                        _voxelModelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * world);
+                        _voxelModelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * entityToRender.World);
                         _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                         _voxelModelEffect.CBPerFrame.IsDirty = true;
                         _voxelModelEffect.Apply(context);
@@ -173,12 +197,24 @@ namespace Utopia.Entities.Managers
                                         Instances = new Dictionary<uint, VoxelModelInstance>()
                                     };
 
-                    // todo: probably do this in another thread
-                    instances.VisualModel.BuildMesh();
+                    if (instances.VisualModel != null)
+                    {
+                        // todo: probably do this in another thread
+                        instances.VisualModel.BuildMesh();
+                    }
+                    _models.Add(entity.ModelName, instances);
                 }
-                var instance = new VoxelModelInstance(instances.VisualModel.VoxelModel);
-                instances.Instances.Add(entity.DynamicId, instance);
-                
+
+                if (instances.VisualModel != null)
+                {
+                    var instance = new VoxelModelInstance(instances.VisualModel.VoxelModel);
+                    instances.Instances.Add(entity.DynamicId, instance);
+                    _dynamicEntitiesDico[entity.DynamicId].ModelInstance = instance;
+                }
+                else
+                {
+                    instances.Instances.Add(entity.DynamicId, null);
+                }
 
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
                 _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);

@@ -8,6 +8,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Debug;
 using Ninject.Parameters;
 using S33M3DXEngine;
+using Utopia.Entities.Voxel;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Interfaces;
 using Utopia.Entities;
@@ -59,7 +60,7 @@ namespace Realms.Client.States
 
             var storage = (ModelSQLiteStorage)_iocContainer.Get<IVoxelModelStorage>();
             storage.ImportFromPath("Models");
-
+            
             AddComponent(debugComponent);
             AddComponent(guiManager);
             AddComponent(inputManager);
