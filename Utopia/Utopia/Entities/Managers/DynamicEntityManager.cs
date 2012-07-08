@@ -151,7 +151,7 @@ namespace Utopia.Entities.Managers
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
-                entity.Interpolation(ref interpolationHd, ref interpolationLd);
+                entity.Interpolation(interpolationHd, interpolationLd, timePassed);
             }
         }
 
@@ -205,6 +205,10 @@ namespace Utopia.Entities.Managers
                     _models.Add(entity.ModelName, instances);
                 }
 
+                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
+                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
+                DynamicEntities.Add(newEntity);
+
                 if (instances.VisualModel != null)
                 {
                     var instance = new VoxelModelInstance(instances.VisualModel.VoxelModel);
@@ -215,10 +219,6 @@ namespace Utopia.Entities.Managers
                 {
                     instances.Instances.Add(entity.DynamicId, null);
                 }
-
-                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
-                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
-                DynamicEntities.Add(newEntity);
 
                 OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });
             }

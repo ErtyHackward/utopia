@@ -228,7 +228,7 @@ namespace Utopia.Entities.Renderer
                 _playerModelInstance.Rotation = _bodyRotation.ValueInterp;
 
                 // update model animation
-                _playerModelInstance.Update(ref timePassed);
+                _playerModelInstance.Update(timePassed);
             }
 
             
