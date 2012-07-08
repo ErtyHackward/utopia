@@ -149,7 +149,7 @@ namespace Utopia.Entities.Renderer
 
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
-                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(  _camManager.ActiveCamera.ViewProjection3D);
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
 

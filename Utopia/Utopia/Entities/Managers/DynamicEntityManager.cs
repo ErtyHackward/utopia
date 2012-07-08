@@ -1,5 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.WorldFocus;
+using S33M3DXEngine;
+using S33M3DXEngine.RenderStates;
+using S33M3Resources.Structs;
+using S33M3Resources.Structs.Vertex;
+using SharpDX;
 using Utopia.Entities.Voxel;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
@@ -8,31 +16,70 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
+using Utopia.Shared.Entities.Models;
+using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Settings;
+using Utopia.Shared.World;
+using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Entities.Managers
 {
     /// <summary>
-    /// Will keep a collection of IDynamicEntity received from server.
-    /// Will be responsible mainly to Draw them, they will also be used to check collision detection with Player
+    /// Keeps a collection of IDynamicEntity received from server.
+    /// Responsible to Draw them, also used to check collision detection with Player
     /// </summary>
     public class DynamicEntityManager : DrawableGameComponent, IDynamicEntityManager
     {
-        #region Private variables
-        private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
-        private readonly IEntitiesRenderer _dynamicEntityRenderer;
-        private readonly VoxelModelManager _voxelModelManager;
-        #endregion
-
-        #region Public variables/properties
-        public List<IVisualEntityContainer> DynamicEntities { get; set; }
-        public event EventHandler<DynamicEntityEventArgs> EntityAdded;
-        public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
-        #endregion
-
-        public DynamicEntityManager([Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer, VoxelModelManager voxelModelManager)
+        /// <summary>
+        /// Allows to group instances by model to perform instanced drawing
+        /// </summary>
+        private struct ModelAndInstances
         {
-            _dynamicEntityRenderer = dynamicEntityRenderer;
+            public VisualVoxelModel VisualModel;
+            public Dictionary<uint, VoxelModelInstance> Instances;
+        }
+        
+        private HLSLVoxelModel _voxelModelEffect;
+        private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
+        private readonly D3DEngine _d3DEngine;
+        private readonly VoxelModelManager _voxelModelManager;
+        private readonly CameraManager<ICameraFocused> _camManager;
+        private readonly WorldFocusManager _worldFocusManager;
+        private readonly VisualWorldParameters _visualWorldParameters;
+
+        public List<IVisualEntityContainer> DynamicEntities { get; set; }
+
+        // collection of the models and instances
+        private Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
+        
+        public event EventHandler<DynamicEntityEventArgs> EntityAdded;
+
+        private void OnEntityAdded(DynamicEntityEventArgs e)
+        {
+            var handler = EntityAdded;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
+
+        public void OnEntityRemoved(DynamicEntityEventArgs e)
+        {
+            var handler = EntityRemoved;
+            if (handler != null) handler(this, e);
+        }
+
+
+        public DynamicEntityManager(D3DEngine d3DEngine, 
+                                    VoxelModelManager voxelModelManager, 
+                                    CameraManager<ICameraFocused> camManager,
+                                    WorldFocusManager worldFocusManager,
+                                    VisualWorldParameters visualWorldParameters)
+        {
+            _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
+            _camManager = camManager;
+            _worldFocusManager = worldFocusManager;
+            _visualWorldParameters = visualWorldParameters;
         }
 
         public override void BeforeDispose()
@@ -43,19 +90,16 @@ namespace Utopia.Entities.Managers
         public override void Initialize()
         {
             DynamicEntities = new List<IVisualEntityContainer>();
-            _dynamicEntityRenderer.VisualEntities = DynamicEntities;
-            _dynamicEntityRenderer.Initialize();
         }
 
         public override void LoadContent(DeviceContext context)
         {
-            _dynamicEntityRenderer.LoadContent(context);
+            _voxelModelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
         }
 
         public override void UnloadContent()
         {
             this.DisableComponent();
-            _dynamicEntityRenderer.UnloadContent();
             foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
             _dynamicEntitiesDico.Clear();
             this.IsInitialized = false;
@@ -66,17 +110,6 @@ namespace Utopia.Entities.Managers
         {
             return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
         }
-
-        private void OnEntityAdded(DynamicEntityEventArgs e)
-        {
-            if (EntityAdded != null) EntityAdded(this, e);
-        }
-
-        private void OnEntityRemoved(DynamicEntityEventArgs e)
-        {
-            if (EntityRemoved != null) EntityRemoved(this, e);
-        }
-
         #endregion
 
         #region Public Methods
@@ -98,14 +131,55 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(DeviceContext context, int index)
         {
-            //Only Draw the Entities that are in View Client scope !
-            _dynamicEntityRenderer.Draw(context, index);
+            // todo: use instanced drawing of the models
+
+            //Applying Correct Render States
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+            _voxelModelEffect.Begin(context);
+
+            foreach (var modelAndInstances in _models)
+            {
+                foreach (var pairs in modelAndInstances.Value.Instances)
+                {
+                    var entityToRender = _dynamicEntitiesDico[pairs.Key].VisualEntity;
+
+                    //Draw only the entities that are in Client view range
+                    if (_visualWorldParameters.WorldRange.Contains(entityToRender.Position.ToCubePosition()))
+                    {
+                        var world = _worldFocusManager.CenterOnFocus(ref entityToRender.World);
+
+                        _voxelModelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * world);
+                        _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+                        _voxelModelEffect.CBPerFrame.IsDirty = true;
+                        _voxelModelEffect.Apply(context);
+
+                        modelAndInstances.Value.VisualModel.Draw(_d3DEngine.ImmediateContext, _voxelModelEffect, pairs.Value);
+                    }
+                }
+            }
         }
 
         public void AddEntity(IDynamicEntity entity)
         {
             if (!_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
             {
+                ModelAndInstances instances;
+                if (!_models.TryGetValue(entity.ModelName, out instances))
+                {
+                    // load a new model
+                    instances = new ModelAndInstances
+                                    {
+                                        VisualModel = _voxelModelManager.GetModel(entity.ModelName),
+                                        Instances = new Dictionary<uint, VoxelModelInstance>()
+                                    };
+
+                    // todo: probably do this in another thread
+                    instances.VisualModel.BuildMesh();
+                }
+                var instance = new VoxelModelInstance(instances.VisualModel.VoxelModel);
+                instances.Instances.Add(entity.DynamicId, instance);
+                
+
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
                 _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
                 DynamicEntities.Add(newEntity);
@@ -118,6 +192,13 @@ namespace Utopia.Entities.Managers
         {
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
             {
+                ModelAndInstances instances;
+                if (!_models.TryGetValue(entity.ModelName, out instances))
+                {
+                    throw new InvalidOperationException("we have no such model");
+                }
+                instances.Instances.Remove(entity.DynamicId);
+
                 VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.DynamicId];
                 DynamicEntities.Remove(visualEntity);
                 _dynamicEntitiesDico.Remove(entity.DynamicId);

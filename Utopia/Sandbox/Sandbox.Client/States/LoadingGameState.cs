@@ -218,7 +218,6 @@ namespace Sandbox.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var playerEntityRenderer = _ioc.Get<IEntitiesRenderer>("PlayerEntityRenderer");
-            var defaultEntityRenderer = _ioc.Get<IEntitiesRenderer>("DefaultEntityRenderer");
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();

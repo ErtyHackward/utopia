@@ -131,7 +131,6 @@
     <Compile Include="Entities\Voxel\VisualVoxelModel.cs" />
     <Compile Include="Entities\Voxel\VoxelModelManager.cs" />
     <Compile Include="Entities\ModelSQLiteStorage.cs" />
-    <Compile Include="Entities\Renderer\DynamicEntityRenderer.cs" />
     <Compile Include="Entities\Managers\DynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntitiesRenderer.cs" />

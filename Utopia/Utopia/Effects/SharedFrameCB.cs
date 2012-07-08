@@ -56,7 +56,6 @@ namespace Utopia.Effects.Shared
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
                              [Named("PlayerEntityRenderer")] IEntitiesRenderer playerEntityRenderer,
-                             [Named("DefaultEntityRenderer")] IEntitiesRenderer dynamicEntityRenderer,
                              StaggingBackBuffer backBuffer)
             
         {
@@ -69,7 +68,6 @@ namespace Utopia.Effects.Shared
 
             //Self Injecting to avoid Cyclical problem
             playerEntityRenderer.SharedFrameCB = this;
-            dynamicEntityRenderer.SharedFrameCB = this;
 
             DrawOrders.UpdateIndex(0, 0);
 
