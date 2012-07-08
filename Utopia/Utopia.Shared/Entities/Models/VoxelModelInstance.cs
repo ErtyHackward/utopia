@@ -202,7 +202,7 @@ namespace Utopia.Shared.Entities.Models
         /// Updates current animation
         /// </summary>
         /// <param name="timePassed"></param>
-        public void Update(ref long timePassed)
+        public void Update(long timePassed)
         {
             if (!Playing) return;
             var ms = (int)timePassed;

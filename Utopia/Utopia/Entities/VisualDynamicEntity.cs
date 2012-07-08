@@ -37,6 +37,8 @@ namespace Utopia.Entities
 
         public VoxelModelInstance ModelInstance { get; set; }
 
+        private bool _walking = false;
+
         #endregion
 
         public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualVoxelEntity visualEntity)
@@ -88,6 +90,27 @@ namespace Utopia.Entities
         {
             LookAtDirection.BackUpValue();
 
+            if (_walking && Vector3D.Distance(_netLocation.Interpolated, _netLocation.Value) < 0.2d)
+            {
+                if (ModelInstance != null)
+                    ModelInstance.Stop();
+                _walking = false;
+            }
+
+            if (!_walking && _netLocation.Value != DynamicEntity.Position)
+            {
+                if (ModelInstance != null && ModelInstance.CanPlay("Walk"))
+                    ModelInstance.Play("Walk", true);
+                _walking = true;
+            }
+
+            var moveDirection = DynamicEntity.Position - _netLocation.Value;
+            moveDirection.Normalize();
+
+            var moveQuaternion = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
+
+            DynamicEntity.BodyRotation = Quaternion.Lerp(DynamicEntity.BodyRotation, moveQuaternion, (float)Vector3D.Distance(DynamicEntity.Position, _netLocation.Value));
+
             _netLocation.Value = DynamicEntity.Position;
             LookAtDirection.Value = DynamicEntity.HeadRotation;
 
@@ -129,7 +152,7 @@ namespace Utopia.Entities
         }
 
         //Draw interpolation (Before each Drawing)
-        public void Interpolation(ref double interpolationHd, ref float interpolationLd)
+        public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
             Vector3D.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
@@ -145,6 +168,8 @@ namespace Utopia.Entities
             {
                 ModelInstance.HeadRotation = LookAtDirection.ValueInterp;
                 ModelInstance.Rotation = DynamicEntity.BodyRotation;
+
+                ModelInstance.Update(timePassed);
             }
         }
         #endregion

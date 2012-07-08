@@ -80,8 +80,7 @@ namespace Utopia.Server.Entities
                 _pathTargetPoint = new Vector3D(_path.Points[1].X, _path.Points[1].Y, _path.Points[1].Z) + CubeCenter;
                 _moveDirection = _pathTargetPoint - DynamicEntity.Position;
                 _moveDirection.Normalize();
-                var q =
-                    Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(),
+                var q = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(),
                                                               DynamicEntity.Position.AsVector3() +
                                                               _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
                 DynamicEntity.HeadRotation = q;
@@ -140,14 +139,51 @@ namespace Utopia.Server.Entities
                     {
                         var vec3d = _path.Points[_targetPathNodeIndex];
                         _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
-                        _moveDirection = _pathTargetPoint-DynamicEntity.Position;
+                        _moveDirection = _pathTargetPoint - DynamicEntity.Position;
                         _moveDirection.Normalize();
                         var q = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
                         DynamicEntity.HeadRotation = q; //Transform the rotation from a world rotatino to a local rotation
                     }
                 }
-                
-                DynamicEntity.Position += _moveDirection * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 1.5;
+
+                DynamicEntity.Position += _moveDirection * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 3;
+            }
+            else
+            {
+                if (_target != null)
+                {
+                    if (Vector3D.Distance(_target.Position, DynamicEntity.Position) < 10)
+                    {
+                        _moveDirection = _target.Position - DynamicEntity.Position;
+                        _moveDirection.Normalize();
+                        DynamicEntity.HeadRotation = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
+                    }
+                    else
+                    {
+                        _target = null;
+                    }
+                }
+                else
+                {
+                    if (_checkCounter++ > 10)
+                    {
+                        _checkCounter = 0;
+                        // try to find target
+                        _mapAreas.Find(area =>
+                                           {
+                                               foreach (var serverEntity in area.Enumerate())
+                                               {
+                                                   if (serverEntity.GetType() != this.GetType() &&
+                                                       Vector3D.Distance(serverEntity.DynamicEntity.Position, DynamicEntity.Position) < 10)
+                                                   {
+                                                       _target = serverEntity.DynamicEntity;
+                                                       return true;
+                                                   }
+                                               }
+                                               return false;
+                                           });
+                    }
+                }
             }
 
 
