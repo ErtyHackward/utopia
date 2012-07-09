@@ -33,6 +33,8 @@ namespace UtopiaContent.Effects.Entities
             public Color4[] ColorMapping; //64 values
             [FieldOffset(1168)]
             public Vector3 LightDirection;
+            [FieldOffset(1180)]
+            public float LightIntensity;
         }
 
 

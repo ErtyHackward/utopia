@@ -10,6 +10,7 @@ cbuffer VoxelModelPerFrame
 	float fogdist;
 	float4 colorMapping[64];
 	float3 LightDirection;		//diffuse light direction
+	float LightIntensity;
 };
 
 cbuffer VoxelModelPerPart
@@ -25,6 +26,8 @@ static float3 Nightfogcolor = {0, 0, 0 };
 static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
 static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
 static const float normalsZ[6] = { -1,  1,  0,  0,  0,  0};		
+
+static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
@@ -74,22 +77,21 @@ PS_IN VS(VS_IN input)
 
 	output.fogPower = 0; //clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
-	float3 normal = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
-	
-	Matrix wvp = World; // * ViewProjection;
-
-	// transform normal
-	//normal.x = normal.x * wvp._11 + normal.y * wvp._21 + normal.z * wvp._31;
-    //normal.y = normal.x * wvp._12 + normal.y * wvp._22 + normal.z * wvp._32;
-    //normal.z = normal.x * wvp._13 + normal.y * wvp._23 + normal.z * wvp._33;
-	
-	normal = normalize(mul(normal, wvp));
-	
+	// ambient occlusion value	
 	output.Light = input.faceType.y;
+	
 
+	// fake shadow
+	//output.EmissiveLight = faceshades[facetype];
+
+	// diffuse shadow
+	float3 normal = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
+	normal = normalize(mul(normal, World));
 	float diffuse = dot(normal, LightDirection);
 
-	output.EmissiveLight = saturate(diffuse);
+	float lowerBound = 0.7;
+	output.EmissiveLight = diffuse * (1.0f-lowerBound) + lowerBound;
+
     return output;
 }	
 
@@ -101,8 +103,10 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float intensity = input.Light / 255;
+
+	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * LightColor * LightIntensity * intensity;
 	
-	output.Color = float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight * LightColor, 0.4 ),1);
+	output.Color = float4(color,1);
 
     return output;
 }
