@@ -1931,7 +1931,11 @@ namespace Utopia.Components
             {
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
+                var direction = new Vector3(0, 1, 1);
+                direction.Normalize();
                 _voxelEffect.Begin(context);
+                _voxelEffect.CBPerFrame.Values.LightColor = new Color3(1, 0, 0);
+                _voxelEffect.CBPerFrame.Values.LightDirection = direction;
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.IsDirty = true;
