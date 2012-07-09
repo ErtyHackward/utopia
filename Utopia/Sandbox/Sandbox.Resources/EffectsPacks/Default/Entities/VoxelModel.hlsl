@@ -6,10 +6,10 @@ cbuffer VoxelModelPerFrame
 {
 	matrix World;
 	matrix ViewProjection;
-	float3 SunColor;			  // Diffuse lighting color
+	float3 LightColor;			// Diffuse lighting color
 	float fogdist;
 	float4 colorMapping[64];
-	float3 LightDirection;
+	float3 LightDirection;		//diffuse light direction
 };
 
 cbuffer VoxelModelPerPart
@@ -74,24 +74,22 @@ PS_IN VS(VS_IN input)
 
 	output.fogPower = 0; //clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
-	float3 normal = float3(normalsX[facetype],normalsY[facetype],normalsZ[facetype]);
+	float3 normal = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
 	
-	Matrix wvp = World;// * ViewProjection;
+	Matrix wvp = World; // * ViewProjection;
 
 	// transform normal
-	normal.x = normal.x * wvp._11 + normal.y * wvp._21 + normal.z * wvp._31;
-    normal.y = normal.x * wvp._12 + normal.y * wvp._22 + normal.z * wvp._32;
-    normal.z = normal.x * wvp._13 + normal.y * wvp._23 + normal.z * wvp._33;
+	//normal.x = normal.x * wvp._11 + normal.y * wvp._21 + normal.z * wvp._31;
+    //normal.y = normal.x * wvp._12 + normal.y * wvp._22 + normal.z * wvp._32;
+    //normal.z = normal.x * wvp._13 + normal.y * wvp._23 + normal.z * wvp._33;
 	
+	normal = normalize(mul(normal, wvp));
 	
 	output.Light = input.faceType.y;
 
-	//float3 lightDirection = float3(0,0,-5);
-	float3 ambient = float3(0.4, 0.4, 0.4);	
+	float diffuse = dot(normal, LightDirection);
 
-	float diffuse = dot( normal, LightDirection );
-
-	output.EmissiveLight=saturate(diffuse);
+	output.EmissiveLight = saturate(diffuse);
     return output;
 }	
 
@@ -104,7 +102,8 @@ PS_OUT PS(PS_IN input)
 
 	float intensity = input.Light / 255;
 	
-	output.Color = float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight, 0.4 ),1);
+	output.Color = float4(lerp(colorMapping[input.colorIndex].rgb * intensity,input.EmissiveLight * LightColor, 0.4 ),1);
+
     return output;
 }
 

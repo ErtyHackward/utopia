@@ -26,7 +26,7 @@ namespace UtopiaContent.Effects.Entities
             [FieldOffset(64)]
             public Matrix ViewProjection;
             [FieldOffset(128)]
-            public Color3 SunColor;
+            public Color3 LightColor;
             [FieldOffset(140)]
             public float FogDistance;
             [FieldOffset(144), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
