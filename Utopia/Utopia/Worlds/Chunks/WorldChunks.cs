@@ -29,6 +29,7 @@ using S33M3Resources.Structs;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
 using Utopia.Components;
+using Utopia.Entities.Voxel;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -64,6 +65,7 @@ namespace Utopia.Worlds.Chunks
         private readonly int ENTITIES_DRAW;
 
         #region Private variables
+        private VoxelModelManager _modelManager;
         private D3DEngine _d3dEngine;
         private CameraManager<ICameraFocused> _camManager;
         private GameStatesManager _gameStates;
@@ -149,9 +151,11 @@ namespace Utopia.Worlds.Chunks
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
                            StaggingBackBuffer solidBackBuffer,
-                           StaggingBackBuffer skyBackBuffer
+                           StaggingBackBuffer skyBackBuffer,
+                           VoxelModelManager modelManager
             )
         {
+            _modelManager = modelManager;
             _server = server;
             _chunkstorage = chunkstorage;
             _d3dEngine = d3dEngine;

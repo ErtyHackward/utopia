@@ -38,6 +38,11 @@ namespace Utopia.Worlds.Chunks
                 SortChunks();
             }
 
+            foreach (var chunk in SortedChunks)
+            {
+                chunk.interpolateAnimation(elapsedTime);
+            }
+
             // make chunks appear slowly and not hurt the eyes
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
             {

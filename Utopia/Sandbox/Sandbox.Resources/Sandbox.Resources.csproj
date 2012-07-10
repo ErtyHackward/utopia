@@ -325,6 +325,7 @@
     <Content Include="Sounds\Interface\button_press.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Models\Grass1.uvm" />
     <None Include="Models\Player.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
