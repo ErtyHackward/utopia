@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ninject;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Models;
+using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
@@ -45,6 +48,7 @@ namespace Utopia.Entities.Renderer
         private D3DEngine _d3DEngine;
         private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
+        private SingleArrayChunkContainer _chunkContainer;
         private readonly VoxelModelManager _modelManager;
         private readonly InputsManager _inputsManager;
         private readonly PlayerEntityManager _entityManager;
@@ -74,6 +78,19 @@ namespace Utopia.Entities.Renderer
         }
 
         public VoxelModelInstance ModelInstance { get { return _playerModelInstance; } }
+
+        [Inject]
+        public ISkyDome SkyDome { get; set; }
+
+        [Inject]
+        public PlayerEntityManager PlayerManager { get; set; }
+        
+        [Inject]
+        public SingleArrayChunkContainer ChunkContainer
+        {
+            get { return _chunkContainer; }
+            set { _chunkContainer = value; }
+        }
 
         #endregion
 
@@ -147,7 +164,17 @@ namespace Utopia.Entities.Renderer
             {
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
+                var block = _chunkContainer.GetCube(_worldPosition.ValueInterp);
+                
+                // we take a max color
+                var sunPart = (float)block.EmissiveColor.A / 255;
+                var sunColor = SkyDome.SunColor * sunPart;
+                var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
+                
                 _voxelEffect.Begin(context);
+                _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
+                _voxelEffect.CBPerFrame.Values.LightColor = resultColor;
+                _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelEffect.CBPerFrame.IsDirty = true;

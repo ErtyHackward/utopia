@@ -94,5 +94,23 @@ namespace S33M3Resources.Structs
         {
             return new ByteColor(color);
         }
+
+        /// <summary>
+        /// Returns Color3 structure based on the current color, truncates alpha
+        /// </summary>
+        /// <returns></returns>
+        public Color3 ToColor3()
+        {
+            return new Color3((float)R / 255, (float)G / 255, (float)B / 255);
+        }
+
+        /// <summary>
+        /// Returns Color4 structure based on the current color
+        /// </summary>
+        /// <returns></returns>
+        public Color4 ToColor4()
+        {
+            return new Color4((float)R / 255, (float)G / 255, (float)B / 255, (float)A / 255);
+        }
     }
 }

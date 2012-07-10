@@ -162,11 +162,24 @@ namespace Utopia.Entities.Managers
             get { return _landscapeInitiazed; }
             set { _landscapeInitiazed = value; }
         }
-
-
-
+        
         public float OffsetBlockHitted { get; set; }
+        
+        [Inject, Named("PlayerEntityRenderer")]
+        public IEntitiesRenderer PlayerRenderer
+        {
+            get { return _playerRenderer; }
+            set { 
+                _playerRenderer = value;
+                //Give the Renderer acces to the Voxel buffers, ...
+                _playerRenderer.VisualEntity = this;
+            }
+        }
 
+        public SingleArrayChunkContainer CubesHolder
+        {
+            get { return _cubesHolder; }
+        }
 
         #endregion
 
@@ -205,7 +218,6 @@ namespace Utopia.Entities.Managers
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
                                    PlayerCharacter player,
-                                   [Named("PlayerEntityRenderer")] IEntitiesRenderer playerRenderer,
                                    IPickingRenderer pickingRenderer,
                                    IEntityPickingManager entityPickingManager,
                                    VoxelModelManager voxelModelManager
@@ -216,7 +228,6 @@ namespace Utopia.Entities.Managers
             _worldFocusManager = worldFocusManager;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
-            _playerRenderer = playerRenderer;
             _pickingRenderer = pickingRenderer;
             _entityPickingManager = entityPickingManager;
 
@@ -227,9 +238,6 @@ namespace Utopia.Entities.Managers
 
             VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
             
-            //Give the Renderer acces to the Voxel buffers, ...
-            _playerRenderer.VisualEntity = this;
-
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
         }
