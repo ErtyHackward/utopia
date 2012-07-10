@@ -395,6 +395,11 @@ namespace Utopia.Components
 
         private void ViewportUpdated(Viewport port, Texture2DDescription newBackBufferDescr)
         {
+            //Update The projection matrix
+            var aspect = port.Width / port.Height;
+            var projection = Matrix.PerspectiveFovLH((float)Math.PI / 3, aspect, 1f, 100);
+            _viewProjection = _view * projection;
+
             UpdateLayout();
         }
 
