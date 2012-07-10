@@ -216,6 +216,20 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
             }
+
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            {
+                chunk = SortedChunks[chunkIndice];
+
+                if (chunk.isExistingMesh4Drawing)
+                {
+                    if (!chunk.isFrustumCulled)
+                    {
+                        chunk.DrawVoxelStaticEntity(context, _modelManager, _camManager);
+                    }
+                }
+            }
+
         }
 
         /// <summary>

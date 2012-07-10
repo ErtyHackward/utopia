@@ -25,6 +25,9 @@ using S33M3Resources.Effects.Basics;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Maths;
+using Utopia.Entities.Voxel;
+using Utopia.Shared.Settings;
+using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -39,9 +42,6 @@ namespace Utopia.Worlds.Chunks
         private Range3I _cubeRange;
         private D3DEngine _d3dEngine;
 
-        private object Lock_DrawChunksSolidFaces = new object();       //Multithread Locker
-        private object Lock_DrawChunksSeeThrough1Faces = new object(); //Multithread Locker
-        private object Lock_Draw = new object(); //Multithread Locker
         private CameraManager<ICameraFocused> _cameraManager;
         private WorldChunks _worldChunkManager;
         
@@ -285,31 +285,28 @@ namespace Utopia.Worlds.Chunks
         //The Buffers are pushed to the graphic card. (SetData());
         private void SendSolidCubeMeshToGraphicCard()
         {
-            lock (Lock_DrawChunksSolidFaces)
+            if (SolidCubeVertices.Count == 0)
             {
-                if (SolidCubeVertices.Count == 0)
-                {
-                    if (SolidCubeVB != null) SolidCubeVB.Dispose();
-                    SolidCubeVB = null;
-                    return;
-                }
-
-                if (SolidCubeVB == null)
-                {
-                    SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine.Device, SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, "SolidCubeVB", ResourceUsage.Default, 10);
-                }
-                SolidCubeVB.SetData(_d3dEngine.ImmediateContext ,SolidCubeVertices.ToArray());
-                SolidCubeVertices.Clear();
-
-                if (SolidCubeIB == null)
-                {
-                    SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt , "SolidCubeIB");
-                }
-                SolidCubeIB.SetData(_d3dEngine.ImmediateContext, SolidCubeIndices.ToArray());
-                SolidCubeIndices.Clear();
-
-                CubeVerticeDico.Clear();
+                if (SolidCubeVB != null) SolidCubeVB.Dispose();
+                SolidCubeVB = null;
+                return;
             }
+
+            if (SolidCubeVB == null)
+            {
+                SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine.Device, SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, "SolidCubeVB", ResourceUsage.Default, 10);
+            }
+            SolidCubeVB.SetData(_d3dEngine.ImmediateContext ,SolidCubeVertices.ToArray());
+            SolidCubeVertices.Clear();
+
+            if (SolidCubeIB == null)
+            {
+                SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt , "SolidCubeIB");
+            }
+            SolidCubeIB.SetData(_d3dEngine.ImmediateContext, SolidCubeIndices.ToArray());
+            SolidCubeIndices.Clear();
+
+            CubeVerticeDico.Clear();
         }
 
         //Liquid Cube
@@ -317,99 +314,125 @@ namespace Utopia.Worlds.Chunks
         //The Buffers are pushed to the graphic card. (SetData());
         private void SendLiquidCubeMeshToGraphicCard()
         {
-            lock (Lock_DrawChunksSeeThrough1Faces)
+            if (LiquidCubeVertices.Count == 0)
             {
-                if (LiquidCubeVertices.Count == 0)
-                {
-                    if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
-                    LiquidCubeVB = null;
-                    return;
-                }
-
-                if (LiquidCubeVB == null)
-                {
-                    LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine.Device, LiquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, "LiquidCubeVB", ResourceUsage.Default, 10);
-                }
-                LiquidCubeVB.SetData(_d3dEngine.ImmediateContext, LiquidCubeVertices.ToArray());
-                LiquidCubeVertices.Clear();
-
-                if (LiquidCubeIB == null)
-                {
-                    LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, LiquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt,"LiquidCubeIB");
-                }
-                LiquidCubeIB.SetData(_d3dEngine.ImmediateContext, LiquidCubeIndices.ToArray());
-                LiquidCubeIndices.Clear();
+                if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
+                LiquidCubeVB = null;
+                return;
             }
+
+            if (LiquidCubeVB == null)
+            {
+                LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine.Device, LiquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, "LiquidCubeVB", ResourceUsage.Default, 10);
+            }
+            LiquidCubeVB.SetData(_d3dEngine.ImmediateContext, LiquidCubeVertices.ToArray());
+            LiquidCubeVertices.Clear();
+
+            if (LiquidCubeIB == null)
+            {
+                LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, LiquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt,"LiquidCubeIB");
+            }
+            LiquidCubeIB.SetData(_d3dEngine.ImmediateContext, LiquidCubeIndices.ToArray());
+            LiquidCubeIndices.Clear();
         }
 
         private void SendStaticEntitiesToGraphicalCard()
         {
-            lock (Lock_Draw)
+            if (StaticSpritesVertices.Count == 0)
             {
-                if (StaticSpritesVertices.Count == 0)
-                {
-                    if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
-                    StaticSpritesVB = null;
-                    return;
-                }
-
-                if (StaticSpritesVB == null)
-                {
-                    StaticSpritesVB = new VertexBuffer<VertexSprite3D>(_d3dEngine.Device, StaticSpritesVertices.Count, VertexSprite3D.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
-                }
-                StaticSpritesVB.SetData(_d3dEngine.ImmediateContext, StaticSpritesVertices.ToArray());
-                StaticSpritesVertices.Clear();
-
-                if (StaticSpritesIB == null)
-                {
-                    StaticSpritesIB = new IndexBuffer<ushort>(_d3dEngine.Device, StaticSpritesIndices.Count, SharpDX.DXGI.Format.R16_UInt, "StaticEntityIB");
-                }
-                StaticSpritesIB.SetData(_d3dEngine.ImmediateContext, StaticSpritesIndices.ToArray());
-                StaticSpritesIndices.Clear();
+                if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
+                StaticSpritesVB = null;
+                return;
             }
+
+            if (StaticSpritesVB == null)
+            {
+                StaticSpritesVB = new VertexBuffer<VertexSprite3D>(_d3dEngine.Device, StaticSpritesVertices.Count, VertexSprite3D.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
+            }
+            StaticSpritesVB.SetData(_d3dEngine.ImmediateContext, StaticSpritesVertices.ToArray());
+            StaticSpritesVertices.Clear();
+
+            if (StaticSpritesIB == null)
+            {
+                StaticSpritesIB = new IndexBuffer<ushort>(_d3dEngine.Device, StaticSpritesIndices.Count, SharpDX.DXGI.Format.R16_UInt, "StaticEntityIB");
+            }
+            StaticSpritesIB.SetData(_d3dEngine.ImmediateContext, StaticSpritesIndices.ToArray());
+            StaticSpritesIndices.Clear();
         }
 
 
         //Ask the Graphical card to Draw the solid faces
         public void DrawSolidFaces(DeviceContext context)
         {
-            lock (Lock_DrawChunksSolidFaces)
+            if (SolidCubeVB != null)
             {
-                if (SolidCubeVB != null)
-                {
-                    SolidCubeVB.SetToDevice(context, 0);
-                    SolidCubeIB.SetToDevice(context, 0);
-                    context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
-                }
+                SolidCubeVB.SetToDevice(context, 0);
+                SolidCubeIB.SetToDevice(context, 0);
+                context.DrawIndexed(SolidCubeIB.IndicesCount, 0, 0);
             }
         }
 
         //Ask the Graphical card to Draw the solid faces
         public void DrawLiquidFaces(DeviceContext context)
         {
-            lock (Lock_DrawChunksSeeThrough1Faces)
+            if (LiquidCubeVB != null)
             {
-                if (LiquidCubeVB != null)
-                {
-                    LiquidCubeVB.SetToDevice(context, 0);
-                    LiquidCubeIB.SetToDevice(context, 0);
-                    context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
-                }
+                LiquidCubeVB.SetToDevice(context, 0);
+                LiquidCubeIB.SetToDevice(context, 0);
+                context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
             }
         }
 
         //Ask the Graphical card to Draw the solid faces
         public void DrawStaticEntities(DeviceContext context)
         {
-            lock (Lock_Draw)
+            if (StaticSpritesVB != null)
             {
-                if (StaticSpritesVB != null)
-                {
-                    StaticSpritesVB.SetToDevice(context, 0);
-                    StaticSpritesIB.SetToDevice(context, 0);
-                    context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
-                }
+                StaticSpritesVB.SetToDevice(context, 0);
+                StaticSpritesIB.SetToDevice(context, 0);
+                context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
             }
+        }
+
+        VisualVoxelModel _model;
+        Utopia.Shared.Entities.Models.VoxelModelInstance _grassModel;
+        UtopiaContent.Effects.Entities.HLSLVoxelModel _voxelEffect;
+        public void DrawVoxelStaticEntity(DeviceContext context, VoxelModelManager modelManager, CameraManager<ICameraFocused> _camManager)
+        {
+            if (_model == null)
+            {
+                _model = modelManager.GetModel("Grass1");
+                _voxelEffect = new UtopiaContent.Effects.Entities.HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+                if (_model != null)
+                {
+                    _model.BuildMesh();
+                }
+
+                if (_model != null) _grassModel = _model.VoxelModel.CreateInstance();
+                _grassModel.Play("Windblow", true);  
+            }
+
+            S33M3DXEngine.RenderStates.RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+
+            _voxelEffect.Begin(context);
+            _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
+            _voxelEffect.CBPerFrame.Values.LightColor = new Color3(1,1,1);
+            _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
+            Vector3 worldPosition = ChunkCenter.AsVector3();
+            worldPosition.Y = 72;
+            _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(worldPosition));
+            _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelEffect.CBPerFrame.IsDirty = true;
+            _voxelEffect.Apply(context);
+
+            _model.Draw(context, _voxelEffect, _grassModel);
+        }
+
+        public void interpolateAnimation(long timePassed)
+        {
+            // update model animation
+            if(_grassModel != null)
+                _grassModel.Update(timePassed);
         }
 
 #if DEBUG

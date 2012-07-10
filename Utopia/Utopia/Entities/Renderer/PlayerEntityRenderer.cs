@@ -129,7 +129,6 @@ namespace Utopia.Entities.Renderer
         {
             _model = _modelManager.GetModel("Player");
 
-
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
             if (_model != null)
             {
@@ -138,13 +137,6 @@ namespace Utopia.Entities.Renderer
 
             if (_model != null)
                 _playerModelInstance = _model.VoxelModel.CreateInstance();
-
-            //_entityEffect = ToDispose(new HLSLTerran(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/DynamicEntity.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCB.CBPerFrame));
-            //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTexture_View);
-
-            //_entityEffect.TerraTexture.Value = _cubeTexture_View;
-            //_entityEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinLinearMagPointMipLinear);
-            //_entityEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
         }
 
         public void UnloadContent()
@@ -182,17 +174,6 @@ namespace Utopia.Entities.Renderer
                                              DXStates.DepthStencils.DepthEnabled);
                 renderer.Draw(context, _camManager.ActiveCamera);
             }
-
-            //_entityEffect.Begin(context);
-
-            //Matrix world = _worldFocusManager.CenterOnFocus(ref VisualEntity.VisualEntity.World);
-
-            //_entityEffect.CBPerDraw.Values.World = Matrix.Transpose(world);
-            //_entityEffect.CBPerDraw.IsDirty = true;
-            //_entityEffect.Apply(context);
-
-            //VisualEntity.VisualEntity.VertexBuffer.SetToDevice(0);
-            //context.Draw(VisualEntity.VisualEntity.VertexBuffer.VertexCount, 0);
         }
 
         public void Update(GameTime timeSpend)
@@ -274,8 +255,6 @@ namespace Utopia.Entities.Renderer
 
         public override void BeforeDispose()
         {
-            //_cubeTexture_View.Dispose();
-            //_entityEffect.Dispose();
         }
         #endregion
     }
