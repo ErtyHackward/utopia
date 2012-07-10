@@ -20,9 +20,8 @@ namespace Utopia.Shared.ClassExt
             // resize the array
             var newArray = new T[array.Length - 1];
             Array.Copy(array, newArray, index);
-            if (index != newArray.Length - 1)
+            if (index != array.Length - 1)
                 Array.Copy(array, index + 1, newArray, index, array.Length - 1 - index);
-
             array = newArray;
         }
     }
