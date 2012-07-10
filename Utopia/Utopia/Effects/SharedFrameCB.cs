@@ -30,7 +30,7 @@ namespace Utopia.Effects.Shared
             [FieldOffset(0)]
             public Matrix ViewProjection;   //64 (4*4 float)
             [FieldOffset(64)]
-            public Vector3 SunColor;        //12 (3 float)
+            public Color3 SunColor;        //12 (3 float)
             [FieldOffset(76)]
             public float fogdist;           //4 (float)
             [FieldOffset(80)]
@@ -82,7 +82,7 @@ namespace Utopia.Effects.Shared
         public override void Draw(DeviceContext context, int index)
         {
             CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D_focused);
-            if (_playerManager.IsHeadInsideWater) CBPerFrame.Values.SunColor = new Vector3(_skydome.SunColor.X / 3, _skydome.SunColor.Y / 3, _skydome.SunColor.Z);
+            if (_playerManager.IsHeadInsideWater) CBPerFrame.Values.SunColor = new Color3(_skydome.SunColor.Red / 3, _skydome.SunColor.Green / 3, _skydome.SunColor.Blue);
             else CBPerFrame.Values.SunColor = _skydome.SunColor;
             CBPerFrame.Values.fogdist = ((_visualWorldParam.WorldVisibleSize.X) / 2) - 48;
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;

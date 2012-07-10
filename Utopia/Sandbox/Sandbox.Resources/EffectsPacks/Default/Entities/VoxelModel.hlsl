@@ -82,15 +82,14 @@ PS_IN VS(VS_IN input)
 	
 
 	// fake shadow
-	//output.EmissiveLight = faceshades[facetype];
+	output.EmissiveLight = faceshades[facetype];
 
 	// diffuse shadow
-	float3 normal = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
-	normal = normalize(mul(normal, World));
-	float diffuse = dot(normal, LightDirection);
-
-	float lowerBound = 0.7;
-	output.EmissiveLight = diffuse * (1.0f-lowerBound) + lowerBound;
+	//float3 normal = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
+	//normal = normalize(mul(normal, World));
+	//float diffuse = dot(normal, LightDirection);
+	//float lowerBound = 0.7;
+	//output.EmissiveLight = diffuse * (1.0f-lowerBound) + lowerBound;
 
     return output;
 }	

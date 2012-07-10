@@ -188,9 +188,9 @@ namespace Utopia.Worlds.SkyDomes
                 }
             }
 
-            base._sunColor.X = SunColorBase;
-            base._sunColor.Y = SunColorBase;
-            base._sunColor.Z = SunColorBase;
+            base._sunColor.Red = SunColorBase;
+            base._sunColor.Green = SunColorBase;
+            base._sunColor.Blue = SunColorBase;
         }
 
         private void GenerateDome()
