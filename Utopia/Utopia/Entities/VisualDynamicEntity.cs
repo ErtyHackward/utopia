@@ -35,6 +35,8 @@ namespace Utopia.Entities
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
         public FTSValue<Quaternion> MoveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
 
+        public FTSValue<Color3> ModelLight = new FTSValue<Color3>();
+
         public VoxelModelInstance ModelInstance { get; set; }
 
         private bool _walking = false;

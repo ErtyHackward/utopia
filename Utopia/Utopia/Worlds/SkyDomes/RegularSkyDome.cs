@@ -64,12 +64,11 @@ namespace Utopia.Worlds.SkyDomes
         /// <summary>
         /// Regular Skydome loading
         /// </summary>
-        public RegularSkyDome(D3DEngine d3dEngine, PlayerEntityManager playerManager, CameraManager<ICameraFocused> camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds")] IDrawableComponent clouds)
+        public RegularSkyDome(D3DEngine d3dEngine, CameraManager<ICameraFocused> camManager, WorldFocusManager worldFocusManager, IClock clock, IWeather weather, [Named("Stars")] IDrawableComponent skyStars, [Named("Clouds")] IDrawableComponent clouds)
             : base(d3dEngine, clock, weather)
         {
             this.IsDefferedLoadContent = true;
 
-            _playerManager = playerManager;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
             _clock = clock;
@@ -78,6 +77,13 @@ namespace Utopia.Worlds.SkyDomes
 
             this.DrawOrders.UpdateIndex(0, 998);
             cloudDrawIndex = this.DrawOrders.AddIndex(1000, "Clouds");
+        }
+
+        [Inject]
+        public PlayerEntityManager PlayerManager
+        {
+            get { return _playerManager; }
+            set { _playerManager = value; }
         }
 
         #region Public Methods
@@ -150,13 +156,13 @@ namespace Utopia.Worlds.SkyDomes
         {
             if (index == cloudDrawIndex)
             {
-                if(_playerManager.IsHeadInsideWater == false) _clouds.Draw(context, index);
+                if(PlayerManager.IsHeadInsideWater == false) _clouds.Draw(context, index);
             }
             else
             {
                 DrawingDome(context);
                 DrawingMoon(context);
-                if (_playerManager.IsHeadInsideWater == false) _skyStars.Draw(context, index);
+                if (PlayerManager.IsHeadInsideWater == false) _skyStars.Draw(context, index);
             }
         }
         #endregion
@@ -339,7 +345,7 @@ namespace Utopia.Worlds.SkyDomes
             _skyDomeEffect.CBPerDraw.Values.time = _clock.ClockTime.ClockTimeNormalized;
             _skyDomeEffect.CBPerDraw.Values.World = Matrix.Transpose(World);
             _skyDomeEffect.CBPerDraw.Values.LightDirection = LightDirection;
-            _skyDomeEffect.CBPerDraw.Values.HeadUnderWater = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
+            _skyDomeEffect.CBPerDraw.Values.HeadUnderWater = PlayerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             _skyDomeEffect.CBPerDraw.IsDirty = true;
             _skyDomeEffect.Apply(context);
 

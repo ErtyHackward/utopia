@@ -58,6 +58,7 @@ namespace Utopia.Entities.Renderer
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
         private FTSValue<Quaternion> _headRotation = new FTSValue<Quaternion>();
         private FTSValue<Quaternion> _bodyRotation = new FTSValue<Quaternion>();
+        private FTSValue<Color3> _modelLight = new FTSValue<Color3>();
 
         private BoundingBox3D renderer;
         private IVisualEntityContainer _visualEntity;
@@ -163,17 +164,10 @@ namespace Utopia.Entities.Renderer
             if (_model != null)
             {
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
-
-                var block = _chunkContainer.GetCube(_worldPosition.ValueInterp);
-                
-                // we take a max color
-                var sunPart = (float)block.EmissiveColor.A / 255;
-                var sunColor = SkyDome.SunColor * sunPart;
-                var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
                 
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
-                _voxelEffect.CBPerFrame.Values.LightColor = resultColor;
+                _voxelEffect.CBPerFrame.Values.LightColor = _modelLight.ValueInterp;
                 _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
                 _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
@@ -256,6 +250,23 @@ namespace Utopia.Entities.Renderer
 
                 // update model animation
                 _playerModelInstance.Update(timePassed);
+
+                // update model color, get the cube where model is
+                var block = _chunkContainer.GetCube(_worldPosition.ValueInterp);
+                if (block.Id == 0)
+                {
+                    // we take the max color
+                    var sunPart = (float) block.EmissiveColor.A/255;
+                    var sunColor = SkyDome.SunColor*sunPart;
+                    var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
+
+                    _modelLight.Value = resultColor;
+                    
+                    if (_modelLight.ValueInterp != _modelLight.Value)
+                    {
+                        Color3.Lerp(ref _modelLight.ValueInterp, ref _modelLight.Value, timePassed/100f, out _modelLight.ValueInterp);
+                    }
+                }
             }
 
             

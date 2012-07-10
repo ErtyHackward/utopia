@@ -169,7 +169,8 @@ namespace Utopia.Entities.Managers
         public IEntitiesRenderer PlayerRenderer
         {
             get { return _playerRenderer; }
-            set { 
+            set 
+            { 
                 _playerRenderer = value;
                 //Give the Renderer acces to the Voxel buffers, ...
                 _playerRenderer.VisualEntity = this;
@@ -179,6 +180,17 @@ namespace Utopia.Entities.Managers
         public SingleArrayChunkContainer CubesHolder
         {
             get { return _cubesHolder; }
+        }
+
+        [Inject]
+        public IEntityPickingManager EntityPickingManager
+        {
+            get { return _entityPickingManager; }
+            set
+            {
+                _entityPickingManager = value;
+                _entityPickingManager.Player = this;
+            }
         }
 
         #endregion
@@ -219,7 +231,6 @@ namespace Utopia.Entities.Managers
                                    SingleArrayChunkContainer cubesHolder,
                                    PlayerCharacter player,
                                    IPickingRenderer pickingRenderer,
-                                   IEntityPickingManager entityPickingManager,
                                    VoxelModelManager voxelModelManager
             )
         {
@@ -229,9 +240,7 @@ namespace Utopia.Entities.Managers
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
             _pickingRenderer = pickingRenderer;
-            _entityPickingManager = entityPickingManager;
-
-            entityPickingManager.Player = this;
+            
             Player = player;
 
             this.ShowDebugInfo = true;
@@ -364,7 +373,7 @@ namespace Utopia.Entities.Managers
 
             //Check the Ray against all entity.
             Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
-            if (_entityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
+            if (EntityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
             {
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
                 Player.EntityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
@@ -753,7 +762,7 @@ namespace Utopia.Entities.Managers
             //Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualEntity.LocalBBox) { WithCollisionBouncing = false };
             _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;
-            _physicSimu.ConstraintFct += _entityPickingManager.isCollidingWithEntity;
+            _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity;
 
             _entityMovement = new EntityMovements(_inputsManager, _physicSimu);
             _entityMovement.EntityRotationSpeed = Player.RotationSpeed;
@@ -831,6 +840,7 @@ namespace Utopia.Entities.Managers
 
         //Debug Info interface
         public bool ShowDebugInfo { get; set; }
+        
         public string GetDebugInfo()
         {
             return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", Player.CharacterName,
