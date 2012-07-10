@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Ninject;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -23,7 +24,7 @@ namespace Utopia.GUI.Inventory
     {
         private readonly InputsManager _inputManager;
         private readonly GuiManager _guiManager;
-        private readonly PlayerEntityManager _playerManager;
+        
         private readonly IconFactory _iconFactory;
         private readonly ItemMessageTranslator _itemMessageTranslator;
         private readonly Hud _hud;
@@ -35,6 +36,9 @@ namespace Utopia.GUI.Inventory
         private ItemInfoWindow _infoWindow;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
+
+        [Inject]
+        public PlayerEntityManager PlayerManager { get; set; }
 
         /// <summary>
         /// Indicates if inventory is active now
@@ -77,7 +81,6 @@ namespace Utopia.GUI.Inventory
         public InventoryComponent(
             InputsManager inputManager, 
             GuiManager guiManager, 
-            PlayerEntityManager playerManager, 
             IconFactory iconFactory,
             ItemMessageTranslator itemMessageTranslator, 
             Hud hud)
@@ -87,7 +90,6 @@ namespace Utopia.GUI.Inventory
 
             _inputManager = inputManager;
             _guiManager = guiManager;
-            _playerManager = playerManager;
             _iconFactory = iconFactory;
             _itemMessageTranslator = itemMessageTranslator;
             _hud = hud;
@@ -174,9 +176,9 @@ namespace Utopia.GUI.Inventory
             try
             {
                 _itemMessageTranslator.Enabled = true;
-                if (_playerManager.Player.Toolbar[e.SlotIndex] != 0)
+                if (PlayerManager.Player.Toolbar[e.SlotIndex] != 0)
                 {
-                    var player = _playerManager.Player;
+                    var player = PlayerManager.Player;
                     var entityId = player.Toolbar[e.SlotIndex];
                     
                     // find the entity
@@ -212,7 +214,7 @@ namespace Utopia.GUI.Inventory
                 return;
             if (_dragControl.Slot.Item is ITool)
             {
-                _playerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.StaticId;
+                PlayerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.StaticId;
                 _toolBar.SetSlot(e.Cell.InventoryPosition.Y, new ContainedSlot {
                     Item = _dragControl.Slot.Item,
                     GridPosition = e.Cell.InventoryPosition

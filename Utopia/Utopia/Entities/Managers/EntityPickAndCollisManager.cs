@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using SharpDX;
 using Utopia.Shared.Chunks;
@@ -49,14 +50,20 @@ namespace Utopia.Entities.Managers
         }
 
         public bool isDirty { get; set; }
+
+        [Inject]
+        public IDynamicEntityManager DynamicEntityManager
+        {
+            get { return _dynamicEntityManager; }
+            set { _dynamicEntityManager = value; }
+        }
+
         #endregion
 
-        public EntityPickAndCollisManager(IDynamicEntityManager dynamicEntityManager, 
-                                          TimerManager timerManager,
+        public EntityPickAndCollisManager(TimerManager timerManager,
                                           ServerComponent server,
                                           InputsManager input)                                     
         {
-            _dynamicEntityManager = dynamicEntityManager;
             _timer = timerManager.AddTimer(1, 100);         //10 times/s
             _timer.OnTimerRaised += _timer_OnTimerRaised;
             _input = input;
@@ -111,9 +118,9 @@ namespace Utopia.Entities.Managers
             _entitiesNearPlayer.Clear();
 
             VisualDynamicEntity entity;
-            for (int i = 0; i < _dynamicEntityManager.DynamicEntities.Count; i++)
+            for (int i = 0; i < DynamicEntityManager.DynamicEntities.Count; i++)
             {
-                entity = _dynamicEntityManager.DynamicEntities[i] as VisualDynamicEntity;
+                entity = DynamicEntityManager.DynamicEntities[i] as VisualDynamicEntity;
 
                 if (entity != null)
                 {

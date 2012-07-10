@@ -13,6 +13,7 @@ using Utopia.Entities.Voxel;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
@@ -21,6 +22,7 @@ using Utopia.Shared.Entities.Models;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World;
+using Utopia.Worlds.SkyDomes;
 using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Entities.Managers
@@ -47,12 +49,22 @@ namespace Utopia.Entities.Managers
         private readonly CameraManager<ICameraFocused> _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
-
+        private SingleArrayChunkContainer _chunkContainer;
         public List<IVisualEntityContainer> DynamicEntities { get; set; }
 
         // collection of the models and instances
         private Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
         
+        [Inject]
+        public SingleArrayChunkContainer ChunkContainer
+        {
+            get { return _chunkContainer; }
+            set { _chunkContainer = value; }
+        }
+
+        [Inject]
+        public ISkyDome SkyDome { get; set; }
+
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
 
         private void OnEntityAdded(DynamicEntityEventArgs e)
@@ -152,6 +164,23 @@ namespace Utopia.Entities.Managers
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
                 entity.Interpolation(interpolationHd, interpolationLd, timePassed);
+
+                // update model color, get the cube where model is
+                var block = _chunkContainer.GetCube(entity.WorldPosition.ValueInterp);
+                if (block.Id == 0)
+                {
+                    // we take the max color
+                    var sunPart = (float)block.EmissiveColor.A / 255;
+                    var sunColor = SkyDome.SunColor * sunPart;
+                    var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
+
+                    entity.ModelLight.Value = resultColor;
+                    
+                    if (entity.ModelLight.ValueInterp != entity.ModelLight.Value)
+                    {
+                        Color3.Lerp(ref entity.ModelLight.ValueInterp, ref entity.ModelLight.Value, timePassed / 100f, out entity.ModelLight.ValueInterp);
+                    }
+                }
             }
         }
 
@@ -167,12 +196,15 @@ namespace Utopia.Entities.Managers
             {
                 foreach (var pairs in modelAndInstances.Value.Instances)
                 {
-                    var entityToRender = _dynamicEntitiesDico[pairs.Key].VisualEntity;
+                    var entityToRender = _dynamicEntitiesDico[pairs.Key];
 
                     //Draw only the entities that are in Client view range
-                    if (_visualWorldParameters.WorldRange.Contains(entityToRender.Position.ToCubePosition()))
+                    if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
                     {
-                        _voxelModelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * entityToRender.World);
+                        _voxelModelEffect.CBPerFrame.Values.LightIntensity = 1f;
+                        _voxelModelEffect.CBPerFrame.Values.LightColor = entityToRender.ModelLight.ValueInterp;
+                        _voxelModelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+                        _voxelModelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World);
                         _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                         _voxelModelEffect.CBPerFrame.IsDirty = true;
                         _voxelModelEffect.Apply(context);
