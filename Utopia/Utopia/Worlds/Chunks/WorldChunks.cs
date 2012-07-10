@@ -622,7 +622,7 @@ namespace Utopia.Worlds.Chunks
             lock (_counterLock)
             {
                 _readyToDrawCount++;
-                if (_readyToDrawCount == Chunks.Length -1 && IsInitialLoadCompleted == false)
+                if (_readyToDrawCount == Chunks.Length && IsInitialLoadCompleted == false)
                 {
                     S33M3DXEngine.Threading.SmartThread.IsBoostMode = false;
                     IsInitialLoadCompleted = true;

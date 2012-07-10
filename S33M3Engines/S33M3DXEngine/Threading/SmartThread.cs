@@ -54,17 +54,11 @@ namespace S33M3DXEngine.Threading
                 if (value == SmartThread._isBoostMode) return;
                 if (value)
                 {
-                    if (ThreadPool != null) ThreadPool.Dispose();
-                    STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread + 4, MinWorkerThreads = _totThread + 4, ThreadPriority = System.Threading.ThreadPriority.Lowest };
-                    ThreadPool = new SmartThreadPool(_stpInfo);
-                    ThreadPoolSingleConcurrency = ThreadPool.CreateWorkItemsGroup(1);
+                    ThreadPool.MaxThreads = _totThread + 4;
                 }
                 else
                 {
-                    if (ThreadPool != null) ThreadPool.Dispose();
-                    STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = _totThread, MinWorkerThreads = _totThread, ThreadPriority = System.Threading.ThreadPriority.Lowest };
-                    ThreadPool = new SmartThreadPool(_stpInfo);
-                    ThreadPoolSingleConcurrency = ThreadPool.CreateWorkItemsGroup(1);
+                    ThreadPool.MaxThreads = _totThread;
                 }
                 SmartThread._isBoostMode = value;
             }
