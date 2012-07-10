@@ -648,7 +648,7 @@ namespace Utopia.Components
             s.IsHead = part.IsHead;
             s.IsArm = part.IsArm;
 
-            _partEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, s, "Add a new part", OnPartEdited);
+            _partEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, s, "Edit the part", OnPartEdited);
 
         }
         private void OnPartEdited(DialogPartsEditStruct e)
@@ -682,6 +682,15 @@ namespace Utopia.Components
 
             _visualVoxelModel.RemovePartAt(SelectedPartIndex);
 
+            _partsList.Items.RemoveAt(SelectedPartIndex);
+
+            if (_partsList.Items.Count > 0 && SelectedPartIndex == 0)
+            {
+                _selectedPartIndex = -1;
+                SelectedPartIndex = 0;
+            }
+            else
+                SelectedPartIndex = SelectedPartIndex - 1;
         }
 
         private void OnFrameAddPressed()
