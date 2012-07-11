@@ -372,7 +372,7 @@ namespace Utopia.Components
 
             for (int i = 0; i < mapping.BlockColors.Length; i++)
             {
-                if (mapping.BlockColors[i].Alpha == 0)
+                if (mapping.BlockColors[i].A == 0)
                     break;
 
                 var colorControl = new ColorButtonControl { Bounds = new UniRectangle(0, 0, 20, 20), Name = "color" + i, Color = mapping.BlockColors[i], Sticked = i == selectedColorIndex };

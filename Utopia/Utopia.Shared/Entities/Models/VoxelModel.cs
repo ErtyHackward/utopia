@@ -72,7 +72,10 @@ namespace Utopia.Shared.Entities.Models
                     {
                         foreach (var color in voxelModelPart.ColorMapping.BlockColors)
                         {
-                            writer.Write(color);
+                            writer.Write(color.R);
+                            writer.Write(color.G);
+                            writer.Write(color.B);
+                            writer.Write(color.A);
                         }
                     }
                 }
@@ -192,7 +195,6 @@ namespace Utopia.Shared.Entities.Models
                         animationStep.StateIndex--;
                 }
             }
-
         }
 
         public VoxelModelInstance CreateInstance()

@@ -539,7 +539,7 @@ namespace Utopia.Components
             var voxelModelState = new VoxelModelState(model.VoxelModel);
             voxelModelState.Name = "Default";
             model.VoxelModel.States.Add(voxelModelState);
-            model.VoxelModel.ColorMapping = new ColorMapping { BlockColors = new Color4[64] };
+            model.VoxelModel.ColorMapping = new ColorMapping { BlockColors = new ByteColor[64] };
 
             // set some initial colors
             ColorLookup.Colours.CopyTo(model.VoxelModel.ColorMapping.BlockColors,0);            
@@ -786,7 +786,7 @@ namespace Utopia.Components
             {
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = colorDialog.Color;
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = new ByteColor(colorDialog.Color);
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
                 }
             }
@@ -798,10 +798,11 @@ namespace Utopia.Components
         {
             using (var colorDialog = new ColorDialog())
             {
-                colorDialog.Color = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex];
+                ByteColor c = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex];
+                colorDialog.Color = System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = colorDialog.Color;
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = new ByteColor(colorDialog.Color);
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
                     _visualVoxelModel.BuildMesh();
                 }
@@ -1987,8 +1988,8 @@ namespace Utopia.Components
 
                 if (model.ColorMapping != null)
                 {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
-                    _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerModel.Values.ColorMapping = model.ColorMapping.BlockColors;
+                    _voxelEffect.CBPerModel.IsDirty = true;
                 }
 
                 // draw each part of the model
@@ -2008,11 +2009,11 @@ namespace Utopia.Components
                     vb.SetToDevice(context, 0);
                     ib.SetToDevice(context, 0);
 
-                    if (model.Parts[i].ColorMapping != null)
-                    {
-                        _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[i].ColorMapping.BlockColors;
-                        _voxelEffect.CBPerFrame.IsDirty = true;
-                    }
+                    //if (model.Parts[i].ColorMapping != null)
+                    //{
+                    //    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[i].ColorMapping.BlockColors;
+                    //    _voxelEffect.CBPerFrame.IsDirty = true;
+                    //}
 
                     _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
                     _voxelEffect.CBPerPart.IsDirty = true;
@@ -2204,10 +2205,9 @@ namespace Utopia.Components
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 if (model.ColorMapping != null)
                 {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
-                    _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerModel.Values.ColorMapping = model.ColorMapping.BlockColors;
+                    _voxelEffect.CBPerModel.IsDirty = true;
                 }
-
 
                 var vb = visualParts[SelectedPartIndex].VertexBuffers[SelectedFrameIndex];
                 var ib = visualParts[SelectedPartIndex].IndexBuffers[SelectedFrameIndex];
@@ -2222,11 +2222,11 @@ namespace Utopia.Components
                 vb.SetToDevice(context,0);
                 ib.SetToDevice(context,0);
 
-                if (model.Parts[SelectedPartIndex].ColorMapping != null)
-                {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
-                    _voxelEffect.CBPerFrame.IsDirty = true;
-                }
+                //if (model.Parts[SelectedPartIndex].ColorMapping != null)
+                //{
+                //    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
+                //    _voxelEffect.CBPerFrame.IsDirty = true;
+                //}
 
                 _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
                 _voxelEffect.CBPerPart.IsDirty = true;
