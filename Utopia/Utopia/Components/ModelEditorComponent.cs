@@ -7,6 +7,7 @@ using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Entities;
@@ -122,6 +123,7 @@ namespace Utopia.Components
         private bool _needSave;
         private VoxelModelInstance _instance;
         private VoxelModelState _clipboardState;
+        private InsideDataProvider _clipboardBlock;
 
         #endregion
 
@@ -1115,7 +1117,7 @@ namespace Utopia.Components
                 _gui.MessageBox("Select an animation to play");
                 return;
             }
-            _instance.Play(SelectedAnimationIndex);
+            _instance.Play(SelectedAnimationIndex, true);
         }
 
         private void OnAnimationStopButtonPressed()
@@ -2524,6 +2526,82 @@ namespace Utopia.Components
             state.PartsStates[SelectedPartIndex].Transform = matrix;
             state.UpdateBoundingBox();
             NeedSave();
+        }
+
+        private void OnFrameCopyPressed()
+        {
+            if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
+            {
+                _gui.MessageBox("Nothing to copy. Select the part and frame");
+                return;
+            }
+            // backup the data
+            _clipboardBlock = new InsideDataProvider(_visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData);
+        }
+
+        private void OnFramePastePressed()
+        {
+            if (_clipboardBlock == null)
+            {
+                _gui.MessageBox("Nothing to paste. Copy a buffer first");
+                return;
+            }
+            if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
+            {
+                _gui.MessageBox("Nowhere to paste. Select the part and frame");
+                return;
+            }
+
+            var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+
+            var size = Vector3I.Min(pasteTo.ChunkSize, _clipboardBlock.ChunkSize);
+
+            for (int x = 0; x < size.X; x++)
+            {
+                for (int y = 0; y < size.Y; y++)
+                {
+                    for (int z = 0; z < size.Z; z++)
+                    {
+                        var position = new Vector3I(x,y,z);
+                        pasteTo.SetBlock(position, _clipboardBlock[position]);
+                    }
+                }
+            }
+
+            RebuildFrameVertices();
+        }
+
+        private void OnFrameMergePressed()
+        {
+            if (_clipboardBlock == null)
+            {
+                _gui.MessageBox("Nothing to paste. Copy a buffer first");
+                return;
+            }
+            if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
+            {
+                _gui.MessageBox("Nowhere to paste. Select the part and frame");
+                return;
+            }
+            var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+
+            var size = Vector3I.Min(pasteTo.ChunkSize, _clipboardBlock.ChunkSize);
+
+            for (int x = 0; x < size.X; x++)
+            {
+                for (int y = 0; y < size.Y; y++)
+                {
+                    for (int z = 0; z < size.Z; z++)
+                    {
+                        var position = new Vector3I(x, y, z);
+                        var value = _clipboardBlock[position];
+                        if (value != 0)
+                            pasteTo.SetBlock(position, _clipboardBlock[position]);
+                    }
+                }
+            }
+
+            RebuildFrameVertices();
         }
     }
 
