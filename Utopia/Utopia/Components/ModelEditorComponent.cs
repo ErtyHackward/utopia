@@ -1379,16 +1379,19 @@ namespace Utopia.Components
                             bb = partState.BoundingBox;
 
                             // get the translation plane
-                            if (_layoutTool == LayoutTool.Move)
+                            if (_layoutTool == LayoutTool.Rotate)
                             {
-                                var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2,
-                                                         (bb.Maximum.Y - bb.Minimum.Y) / 2,
-                                                         (bb.Maximum.Z - bb.Minimum.Z) / 2) + partState.Transform.TranslationVector;
-                                _translatePlane = new Plane(center, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
+                                _translatePlane = new Plane(_rotationPoint,
+                                                            _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
                             }
                             else
                             {
-                                _translatePlane = new Plane(_rotationPoint, _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
+                                var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,
+                                                         (bb.Maximum.Y - bb.Minimum.Y)/2,
+                                                         (bb.Maximum.Z - bb.Minimum.Z)/2) +
+                                             partState.Transform.TranslationVector;
+                                _translatePlane = new Plane(center,
+                                                            _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
                             }
 
                             if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Released)
@@ -1438,18 +1441,18 @@ namespace Utopia.Components
                                         _translatePoint = intersectPoint;
                                     }
                                 }
-                                if (_layoutTool == LayoutTool.Move)
+                                if (_layoutTool == LayoutTool.Rotate)
+                                {
+                                    _rotationPoint += translationVector;
+                                }
+                                else
                                 {
                                     var translationMatrix = Matrix.Translation(translationVector);
                                     partState.Transform.TranslationVector += translationVector;
                                     partState.BoundingBox = new BoundingBox(
-                                            Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix),
-                                            Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
+                                        Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix),
+                                        Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
                                     NeedSave();
-                                }
-                                else
-                                {
-                                    _rotationPoint += translationVector;
                                 }
                             }
                         }
@@ -2030,11 +2033,7 @@ namespace Utopia.Components
                         var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2, (bb.Maximum.Y - bb.Minimum.Y) / 2, (bb.Maximum.Z - bb.Minimum.Z) / 2);
                         var translate = voxelModelPartState.Transform.TranslationVector + center;
 
-                        if (_layoutTool == LayoutTool.Move)
-                        {
-                            DrawCrosshair(translate, sizef, _flipAxis);
-                        }
-                        else
+                        if (_layoutTool == LayoutTool.Rotate)
                         {
                             if (_displayLayoutRotationPosition)
                             {
@@ -2044,6 +2043,10 @@ namespace Utopia.Components
                             {
                                 DrawRotationAxis(_rotationPoint);
                             }
+                        }
+                        else
+                        {
+                            DrawCrosshair(translate, sizef, _flipAxis);
                         }
                     }
                 }
@@ -2405,7 +2408,7 @@ namespace Utopia.Components
             }
 
             float rotationAngle;
-            if (!float.TryParse(_angleInput.Text, out rotationAngle))
+            if (!float.TryParse(_rotateAngleInput.Text, out rotationAngle))
             {
                 _gui.MessageBox("Invalid angle value");
                 return;
@@ -2422,7 +2425,7 @@ namespace Utopia.Components
             switch (editorAxis)
             {
                 case EditorAxis.None:
-                    matrix = Matrix.Translation(matrix.TranslationVector);
+                    matrix = Matrix.Scaling(matrix.ScaleVector) * Matrix.Translation(matrix.TranslationVector);
                     break;
                 case EditorAxis.X:
                     matrix = Matrix.Translation(-translation) * Matrix.RotationX(rotationAngle) * Matrix.Translation(translation) * matrix;
@@ -2476,6 +2479,51 @@ namespace Utopia.Components
             var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
 
             _rotationPoint = state.PartsStates[SelectedPartIndex].BoundingBox.GetCenter();
+        }
+
+        private void OnPartScale(EditorAxis editorAxis)
+        {
+            if (SelectedPartIndex == -1)
+            {
+                _gui.MessageBox("Select part to scale");
+                return;
+            }
+
+            float scaleFactor;
+            if (!float.TryParse(_scaleAngleInput.Text, out scaleFactor))
+            {
+                if (!float.TryParse(_scaleAngleInput.Text.Replace('.', ','), out scaleFactor))
+                {
+                    _gui.MessageBox("Invalid factor value");
+                    return;
+                }
+            }
+
+            var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
+            var matrix = state.PartsStates[SelectedPartIndex].Transform;
+            
+            switch (editorAxis)
+            {
+                case EditorAxis.None:
+                    matrix.ScaleVector = Vector3.One;
+                    break;
+                case EditorAxis.X:
+                    matrix = Matrix.Scaling(scaleFactor, 1, 1) * matrix;
+                    break;
+                case EditorAxis.Y:
+                    matrix = Matrix.Scaling(1, scaleFactor, 1) * matrix;
+                    break;
+                case EditorAxis.Z:
+                    matrix = Matrix.Scaling(1, 1, scaleFactor) * matrix;
+                    break;
+                case EditorAxis.X | EditorAxis.Y | EditorAxis.Z:
+                    matrix = Matrix.Scaling(scaleFactor) * matrix;
+                    break;
+            }
+
+            state.PartsStates[SelectedPartIndex].Transform = matrix;
+            state.UpdateBoundingBox();
+            NeedSave();
         }
     }
 

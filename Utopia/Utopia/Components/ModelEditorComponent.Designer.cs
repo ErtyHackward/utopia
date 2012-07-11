@@ -66,7 +66,8 @@ namespace Utopia.Components
         private DialogControl<DialogFrameEditStruct> _frameEditDialog;
         private DialogControl<DialogImportModelStruct> _importDialog; 
         private LabelControl _infoLabel;
-        private InputControl _angleInput;
+        private InputControl _rotateAngleInput;
+        private InputControl _scaleAngleInput;
 
         // navigation groups
         private Control _modelsGroup;
@@ -92,6 +93,7 @@ namespace Utopia.Components
         LayoutTool _layoutTool;
         private Control _vpLayout;
         private Control _vpRotate;
+        private Control _vpScale;
 
 
         private List<ColorButtonControl> _colorPalette = new List<ColorButtonControl>();
@@ -580,11 +582,14 @@ namespace Utopia.Components
 
             _layoutToolsGroup.Children.Add(new LabelControl { Text = "Tools:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            var layoutTools = new StickyButtonControl { Text = "Layout", Bounds = new UniRectangle(0, 0, 70, 20), Sticked = true };
+            var layoutTools = new StickyButtonControl { Text = "Layout", Bounds = new UniRectangle(0, 0, 60, 20), Sticked = true };
             layoutTools.Pressed += delegate { OnLayoutGroupSelected(LayoutTool.Move); };
 
-            var rotateTools = new StickyButtonControl { Text = "Rotate", Bounds = new UniRectangle(0, 0, 70, 20) };
+            var rotateTools = new StickyButtonControl { Text = "Rotate", Bounds = new UniRectangle(0, 0, 60, 20) };
             rotateTools.Pressed += delegate { OnLayoutGroupSelected(LayoutTool.Rotate); };
+
+            var scaleTools = new StickyButtonControl { Text = "Scale", Bounds = new UniRectangle(0, 0, 60, 20) };
+            scaleTools.Pressed += delegate { OnLayoutGroupSelected(LayoutTool.Scale); };
 
             #region Layout tools
             _vpLayout = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
@@ -612,7 +617,7 @@ namespace Utopia.Components
             displayAxis.Pressed += delegate { _displayLayoutRotationPosition = false; };
 
             var angleLabel = new LabelControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Rotate Angle:" };
-            _angleInput = new InputControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "10", LayoutFlags = ControlLayoutFlags.WholeRow };
+            _rotateAngleInput = new InputControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "10", LayoutFlags = ControlLayoutFlags.WholeRow };
             
             var rotateX       = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Rotate X (RED)" };
             rotateX.Pressed += delegate { OnPartRotation(EditorAxis.X); };
@@ -630,7 +635,7 @@ namespace Utopia.Components
             _vpRotate.Children.Add(displayAxis);
 
             _vpRotate.Children.Add(angleLabel);
-            _vpRotate.Children.Add(_angleInput);
+            _vpRotate.Children.Add(_rotateAngleInput);
 
             _vpRotate.Children.Add(rotateX);
             _vpRotate.Children.Add(rotateY);
@@ -641,10 +646,43 @@ namespace Utopia.Components
             _vpRotate.UpdateLayout();
 
             #endregion
+            
+            #region Scale tools
+
+            _vpScale = new Control { Bounds = new UniRectangle(0, 0, 180, 180), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+
+            var scaleAngleLabel = new LabelControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Scale factor:" };
+            _scaleAngleInput = new InputControl { Bounds = new UniRectangle(0, 0, 60, 20), Text = "1.01", LayoutFlags = ControlLayoutFlags.WholeRow };
+
+            var scaleAll = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Scale" };
+            scaleAll.Pressed += delegate { OnPartScale(EditorAxis.X | EditorAxis.Y | EditorAxis.Z); };
+
+            var scaleX = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Scale X" };
+            scaleX.Pressed += delegate { OnPartScale(EditorAxis.X); };
+            var scaleY = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Scale Y" };
+            scaleY.Pressed += delegate { OnPartScale(EditorAxis.Y); };
+            var scaleZ = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Scale Z" };
+            scaleZ.Pressed += delegate { OnPartScale(EditorAxis.Z); };
+
+            var resetScale = new ButtonControl { Bounds = new UniRectangle(0, 0, 100, 20), Text = "Reset scale" };
+            resetScale.Pressed += delegate { OnPartScale(EditorAxis.None); };
+
+            _vpScale.Children.Add(scaleAngleLabel);
+            _vpScale.Children.Add(_scaleAngleInput);
+
+            _vpScale.Children.Add(scaleAll);
+            _vpScale.Children.Add(scaleX);
+            _vpScale.Children.Add(scaleY);
+            _vpScale.Children.Add(scaleZ);
+            _vpScale.Children.Add(resetScale);
+
+            _vpScale.UpdateLayout();
+
+            #endregion
 
             _layoutToolsGroup.Children.Add(layoutTools);
             _layoutToolsGroup.Children.Add(rotateTools);
-            //_layoutToolsGroup.Children.Add(groundCheck);
+            _layoutToolsGroup.Children.Add(scaleTools);
             #endregion
 
             toolsWindow.Children.Add(_modesButtonsGroup);
@@ -657,7 +695,8 @@ namespace Utopia.Components
         private enum LayoutTool
         {
             Move,
-            Rotate
+            Rotate,
+            Scale
         }
 
         private void OnLayoutGroupSelected(LayoutTool group)
@@ -674,6 +713,9 @@ namespace Utopia.Components
                     break;
                 case LayoutTool.Rotate:
                     _toolsWindow.Children.Add(_vpRotate);
+                    break;
+                case LayoutTool.Scale:
+                    _toolsWindow.Children.Add(_vpScale);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("group");
