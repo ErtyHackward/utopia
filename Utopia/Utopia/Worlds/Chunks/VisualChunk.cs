@@ -25,9 +25,6 @@ using S33M3Resources.Effects.Basics;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Maths;
-using Utopia.Entities.Voxel;
-using Utopia.Shared.Settings;
-using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -392,47 +389,6 @@ namespace Utopia.Worlds.Chunks
                 StaticSpritesIB.SetToDevice(context, 0);
                 context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
             }
-        }
-
-        VisualVoxelModel _model;
-        Utopia.Shared.Entities.Models.VoxelModelInstance _grassModel;
-        UtopiaContent.Effects.Entities.HLSLVoxelModel _voxelEffect;
-        public void DrawVoxelStaticEntity(DeviceContext context, VoxelModelManager modelManager, CameraManager<ICameraFocused> _camManager)
-        {
-            if (_model == null)
-            {
-                _model = modelManager.GetModel("Grass1");
-                _voxelEffect = new UtopiaContent.Effects.Entities.HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
-                if (_model != null)
-                {
-                    _model.BuildMesh();
-                }
-
-                if (_model != null) _grassModel = _model.VoxelModel.CreateInstance();
-                _grassModel.Play("Windblow", true);  
-            }
-
-            S33M3DXEngine.RenderStates.RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
-
-            _voxelEffect.Begin(context);
-            _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
-            _voxelEffect.CBPerFrame.Values.LightColor = new Color3(1,1,1);
-            _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
-            Vector3 worldPosition = ChunkCenter.AsVector3();
-            worldPosition.Y = 72;
-            _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(worldPosition));
-            _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-            _voxelEffect.CBPerFrame.IsDirty = true;
-            _voxelEffect.Apply(context);
-
-            _model.Draw(context, _voxelEffect, _grassModel);
-        }
-
-        public void interpolateAnimation(long timePassed)
-        {
-            // update model animation
-            if(_grassModel != null)
-                _grassModel.Update(timePassed);
         }
 
 #if DEBUG

@@ -65,7 +65,6 @@ namespace Utopia.Worlds.Chunks
         private readonly int ENTITIES_DRAW;
 
         #region Private variables
-        private VoxelModelManager _modelManager;
         private D3DEngine _d3dEngine;
         private CameraManager<ICameraFocused> _camManager;
         private GameStatesManager _gameStates;
@@ -151,11 +150,9 @@ namespace Utopia.Worlds.Chunks
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
                            StaggingBackBuffer solidBackBuffer,
-                           StaggingBackBuffer skyBackBuffer,
-                           VoxelModelManager modelManager
+                           StaggingBackBuffer skyBackBuffer
             )
         {
-            _modelManager = modelManager;
             _server = server;
             _chunkstorage = chunkstorage;
             _d3dEngine = d3dEngine;
