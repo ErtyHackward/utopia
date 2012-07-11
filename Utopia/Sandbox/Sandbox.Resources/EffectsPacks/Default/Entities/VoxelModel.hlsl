@@ -8,10 +8,14 @@ cbuffer VoxelModelPerFrame
 	matrix ViewProjection;
 	float3 LightColor;			// Diffuse lighting color
 	float fogdist;
-	float4 colorMapping[64];
 	float3 LightDirection;		//diffuse light direction
 	float LightIntensity;
 };
+
+cbuffer VoxelModel
+{
+	uint colorMapping[64];
+}
 
 cbuffer VoxelModelPerPart
 {
@@ -103,7 +107,14 @@ PS_OUT PS(PS_IN input)
 
 	float intensity = input.Light / 255;
 
-	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * LightColor * LightIntensity * intensity;
+	uint packedColor = colorMapping[input.colorIndex];
+	float4 c;
+	c.r = (packedColor >> 24 & 255 ) / 255;
+	c.g = (packedColor >> 16 & 255 )/255;
+	c.b = (packedColor >> 8 & 255 )/255;
+	c.a = (packedColor & 255)/255;
+
+	float3 color = c.rgb * input.EmissiveLight * LightColor * LightIntensity * intensity;
 	
 	output.Color = float4(color,1);
 

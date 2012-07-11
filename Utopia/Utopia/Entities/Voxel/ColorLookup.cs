@@ -1,6 +1,7 @@
 ﻿using System;
 using SharpDX;
 using Utopia.Shared.Structs;
+using S33M3Resources.Structs;
 
 namespace Utopia.Entities.Voxel
 {
@@ -10,7 +11,7 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public static class ColorLookup
     {
-        public static readonly Color4[] Colours;
+        public static readonly ByteColor[] Colours;
 
         /// <summary>
         /// Palette of 64 nice colours
@@ -28,7 +29,7 @@ namespace Utopia.Entities.Voxel
 
         static ColorLookup()
         {
-            Colours = new Color4[_palette.Length];
+            Colours = new ByteColor[_palette.Length];
             for (int i = 0; i < _palette.Length; i++)
             {
                 Colours[i] = HexStringToColor(_palette[i]);
@@ -36,18 +37,17 @@ namespace Utopia.Entities.Voxel
         }
 
 
-        private static Color4 HexStringToColor(string hexColor)
+        private static ByteColor HexStringToColor(string hexColor)
         {
-            
             string a = hexColor.Substring(0, 2);
             string r = hexColor.Substring(2, 2);
             string g = hexColor.Substring(4, 2);
             string b = hexColor.Substring(6, 2);
-            var ai = (float)Int32.Parse(a, System.Globalization.NumberStyles.HexNumber);
-            var ri = (float)Int32.Parse(r, System.Globalization.NumberStyles.HexNumber);
-            var gi = (float)Int32.Parse(g, System.Globalization.NumberStyles.HexNumber);
-            var bi = (float)Int32.Parse(b, System.Globalization.NumberStyles.HexNumber);
-            return new Color4(ri/255, gi/255, bi/255, ai/255);
+            int ai = Int32.Parse(a, System.Globalization.NumberStyles.HexNumber);
+            int ri = Int32.Parse(r, System.Globalization.NumberStyles.HexNumber);
+            int gi = Int32.Parse(g, System.Globalization.NumberStyles.HexNumber);
+            int bi = Int32.Parse(b, System.Globalization.NumberStyles.HexNumber);
+            return new ByteColor(ri, gi, bi, ai);
         }
 
     }

@@ -650,7 +650,6 @@ namespace Utopia.Worlds.Chunks
 
         #endregion
 
-
         #region Events Handling
         /// <summary>
         /// Fired when a block is change
