@@ -525,7 +525,7 @@ namespace Utopia.Components
 
             #region Edit properties
 
-            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 120), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _tpEdit.Children.Add(new LabelControl { Text = "Mirror:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
@@ -538,9 +538,24 @@ namespace Utopia.Components
             var zMirror = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
             zMirror.Pressed += delegate { _mirror ^= EditorAxis.Z; if (!_mirror.HasFlag(EditorAxis.Z)) zMirror.Release(); };
 
+            var frameLabel = new LabelControl { Text = "Frame:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow };
+            
+            var copyFrame = new ButtonControl { Text = "Copy", Bounds = new UniRectangle(0, 0, 100, 20) };
+            copyFrame.Pressed += delegate { OnFrameCopyPressed(); };
+            var replaceFrame = new ButtonControl { Text = "Paste (replace)", Bounds = new UniRectangle(0, 0, 100, 20) };
+            replaceFrame.Pressed += delegate { OnFramePastePressed(); };
+            var mergeFrame = new ButtonControl { Text = "Paste (merge)", Bounds = new UniRectangle(0, 0, 100, 20) };
+            mergeFrame.Pressed += delegate { OnFrameMergePressed(); };
+
             _tpEdit.Children.Add(xMirror);
             _tpEdit.Children.Add(yMirror);
             _tpEdit.Children.Add(zMirror);
+            _tpEdit.Children.Add(frameLabel);
+            _tpEdit.Children.Add(copyFrame);
+            _tpEdit.Children.Add(replaceFrame);
+            _tpEdit.Children.Add(mergeFrame);
+
+
             _tpEdit.UpdateLayout();
 
             #endregion

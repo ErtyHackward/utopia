@@ -17,13 +17,14 @@ namespace Utopia.Shared.Chunks
         private ChunkColumnInfo[] _chunkColumns;
         private ChunkMetaData _chunkMetaData;
 
+        // transaction allows to delay events by accumulating changes
         private bool _transaction;
         private readonly List<Vector3I> _transactionPositions = new List<Vector3I>();
         private readonly List<byte> _transactionValues = new List<byte>();
         private readonly List<BlockTag> _transactionTags = new List<BlockTag>();
 
         private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
-
+        
         //Get Or Set the Chunk MetaData
         public override ChunkMetaData ChunkMetaData
         {
@@ -70,6 +71,19 @@ namespace Utopia.Shared.Chunks
             _chunkSize = AbstractChunk.ChunkSize;
             _chunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
             _chunkMetaData = new ChunkMetaData();
+        }
+
+        /// <summary>
+        /// Creates a copy of the data
+        /// </summary>
+        /// <param name="insideDataProvider"></param>
+        public InsideDataProvider(InsideDataProvider insideDataProvider)
+        {
+            _chunkSize = insideDataProvider._chunkSize;
+            _chunkColumns = (ChunkColumnInfo[])insideDataProvider._chunkColumns.Clone();
+            _chunkMetaData = new ChunkMetaData(insideDataProvider.ChunkMetaData);
+            _tags = new Dictionary<Vector3I, BlockTag>(insideDataProvider._tags);
+            _blockBytes = (byte[])insideDataProvider._blockBytes.Clone();
         }
 
         /// <summary>

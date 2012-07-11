@@ -8,18 +8,17 @@ namespace Utopia.Shared.Chunks
 {
     public class ChunkMetaData : IBinaryStorable
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
         public byte ChunkMasterBiomeType;
-        #endregion
 
-        #region Public Methods
-        #endregion
+        public ChunkMetaData()
+        {
+            
+        }
 
-        #region Private Methods
-        #endregion
+        public ChunkMetaData(ChunkMetaData copyFrom)
+        {
+            ChunkMasterBiomeType = copyFrom.ChunkMasterBiomeType;
+        }
 
         public void Save(System.IO.BinaryWriter writer)
         {

@@ -232,5 +232,22 @@ namespace S33M3Resources.Structs
         {
             return X == 0 && Y == 0 && Z == 0;
         }
+
+        /// <summary>
+        /// Returns a vector containing a smallest components of vectors provided
+        /// </summary>
+        /// <param name="vec1"></param>
+        /// <param name="vec2"></param>
+        /// <returns></returns>
+        public static Vector3I Min(Vector3I vec1, Vector3I vec2)
+        {
+            Vector3I vec;
+            
+            vec.X = Math.Min(vec1.X, vec2.X);
+            vec.Y = Math.Min(vec1.Y, vec2.Y);
+            vec.Z = Math.Min(vec1.Z, vec2.Z);
+
+            return vec;
+        }
     }
 }
