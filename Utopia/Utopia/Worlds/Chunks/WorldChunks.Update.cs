@@ -66,13 +66,14 @@ namespace Utopia.Worlds.Chunks
             PropagateOuterChunkLights();
             CreateChunkMeshes();
             SendMeshesToGC();
+
         }
 
         //Will create new chunks based on chunks with state = Empty
         private void CreateNewChunk()
         {
             //Process each chunk that are in Empty state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.Empty && x.ThreadStatus == ThreadStatus.Idle))
+            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadStatus.Idle))
             {
                 //Start chunk creation process in a threaded way !
                 chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
@@ -85,7 +86,7 @@ namespace Utopia.Worlds.Chunks
         private void ChunkCreationThreadedSteps_Threaded(VisualChunk chunk)
         {
             //Create the landscape, by updating the "Big Array" area under the chunk
-            _landscapeManager.CreateLandScape(chunk);
+            if(chunk.State == ChunkState.Empty) _landscapeManager.CreateLandScape(chunk);
 
             //Was my landscape Creation, if not it means that the chunk has been requested to the server, waiting for server answer
             if (chunk.State == ChunkState.LandscapeCreated)
