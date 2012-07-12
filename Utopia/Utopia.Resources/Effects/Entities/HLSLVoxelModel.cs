@@ -36,11 +36,11 @@ namespace UtopiaContent.Effects.Entities
             public float LightIntensity;
         }
 
-        [StructLayout(LayoutKind.Explicit, Size = 256)]
+        [StructLayout(LayoutKind.Explicit, Size = 1024)]
         public struct CBPerModelStructure
         {
             [FieldOffset(0), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public ByteColor[] ColorMapping; //64 values
+            public Color4[] ColorMapping; //64 values
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 64)]

@@ -72,10 +72,7 @@ namespace Utopia.Shared.Entities.Models
                     {
                         foreach (var color in voxelModelPart.ColorMapping.BlockColors)
                         {
-                            writer.Write(color.R);
-                            writer.Write(color.G);
-                            writer.Write(color.B);
-                            writer.Write(color.A);
+                            writer.Write(color);
                         }
                     }
                 }

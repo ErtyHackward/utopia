@@ -14,7 +14,7 @@ cbuffer VoxelModelPerFrame
 
 cbuffer VoxelModel
 {
-	uint colorMapping[64];
+	float4 colorMapping[64];
 }
 
 cbuffer VoxelModelPerPart
@@ -107,14 +107,7 @@ PS_OUT PS(PS_IN input)
 
 	float intensity = input.Light / 255;
 
-	uint packedColor = colorMapping[input.colorIndex];
-	float4 c;
-	c.r = (packedColor >> 24 & 255 ) / 255;
-	c.g = (packedColor >> 16 & 255 )/255;
-	c.b = (packedColor >> 8 & 255 )/255;
-	c.a = (packedColor & 255)/255;
-
-	float3 color = c.rgb * input.EmissiveLight * LightColor * LightIntensity * intensity;
+	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * LightColor * LightIntensity * intensity;
 	
 	output.Color = float4(color,1);
 

@@ -47,33 +47,21 @@ namespace Utopia.Entities.Voxel
                         var vec = new Vector4B(x, y, z, blockType);
                         if (IsEmpty(ref blockData, ref size, x, y, z - 1))
                             GenerateFaces(ref blockData, CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
-                        else
-                            z = z;
                         
                         if (IsEmpty(ref blockData, ref size, x, y - 1, z))
                             GenerateFaces(ref blockData, CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
-                        else
-                            z = z;
 
                         if (IsEmpty(ref blockData, ref size, x, y, z + 1))
                             GenerateFaces(ref blockData, CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
-                        else
-                            z = z;
                         
                         if (IsEmpty(ref blockData, ref size, x - 1, y, z))
                             GenerateFaces(ref blockData, CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
-                        else
-                            z = z;
 
                         if (IsEmpty(ref blockData, ref size, x + 1, y, z))
                             GenerateFaces(ref blockData, CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
-                        else
-                            z = z;
 
                         if (IsEmpty(ref blockData, ref size, x, y + 1, z))
                             GenerateFaces(ref blockData, CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
-                        else
-                            z = z;
                     }
                 }
             }
