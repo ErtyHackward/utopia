@@ -1987,8 +1987,8 @@ namespace Utopia.Components
 
                 if (model.ColorMapping != null)
                 {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
-                    _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerModel.Values.ColorMapping = model.ColorMapping.BlockColors;
+                    _voxelEffect.CBPerModel.IsDirty = true;
                 }
 
                 // draw each part of the model
@@ -2010,8 +2010,8 @@ namespace Utopia.Components
 
                     if (model.Parts[i].ColorMapping != null)
                     {
-                        _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[i].ColorMapping.BlockColors;
-                        _voxelEffect.CBPerFrame.IsDirty = true;
+                        _voxelEffect.CBPerModel.Values.ColorMapping = model.Parts[i].ColorMapping.BlockColors;
+                        _voxelEffect.CBPerModel.IsDirty = true;
                     }
 
                     _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
@@ -2204,10 +2204,9 @@ namespace Utopia.Components
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 if (model.ColorMapping != null)
                 {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.ColorMapping.BlockColors;
-                    _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerModel.Values.ColorMapping = model.ColorMapping.BlockColors;
+                    _voxelEffect.CBPerModel.IsDirty = true;
                 }
-
 
                 var vb = visualParts[SelectedPartIndex].VertexBuffers[SelectedFrameIndex];
                 var ib = visualParts[SelectedPartIndex].IndexBuffers[SelectedFrameIndex];
@@ -2224,8 +2223,8 @@ namespace Utopia.Components
 
                 if (model.Parts[SelectedPartIndex].ColorMapping != null)
                 {
-                    _voxelEffect.CBPerFrame.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
-                    _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerModel.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
+                    _voxelEffect.CBPerModel.IsDirty = true;
                 }
 
                 _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);

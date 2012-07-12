@@ -113,9 +113,7 @@ namespace Utopia.Entities.Voxel
                         visualVoxelPart.IndexBuffers[i].Dispose();
                     }
                 }
-
             }
-
 
             _visualParts = new VisualVoxelPart[_model.Parts.Count];
 
@@ -163,8 +161,8 @@ namespace Utopia.Entities.Voxel
 
             if (_model.ColorMapping != null)
             {
-                effect.CBPerFrame.Values.ColorMapping = _model.ColorMapping.BlockColors;
-                effect.CBPerFrame.IsDirty = true;
+                effect.CBPerModel.Values.ColorMapping = _model.ColorMapping.BlockColors;
+                effect.CBPerModel.IsDirty = true;
             }
 
             // draw each part of the model
@@ -180,8 +178,8 @@ namespace Utopia.Entities.Voxel
 
                 if (_model.Parts[i].ColorMapping != null)
                 {
-                    effect.CBPerFrame.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
-                    effect.CBPerFrame.IsDirty = true;
+                    effect.CBPerModel.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
+                    effect.CBPerModel.IsDirty = true;
                 }
 
                 Quaternion rotation;
@@ -200,7 +198,6 @@ namespace Utopia.Entities.Voxel
                     effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform * Matrix.RotationQuaternion(rotation));
                 }
                 
-
                 effect.CBPerPart.IsDirty = true;
                 effect.Apply(context);
 

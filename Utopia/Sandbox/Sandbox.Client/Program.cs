@@ -40,7 +40,8 @@ namespace Sandbox.Client
         private static void DeleteAllSavedGame()
         {
             string clientDirectory = XmlSettingsManager.GetFilePath(@"Client\Singleplayer", SettingsStorage.ApplicationData, false);
-            string serverDirectory = XmlSettingsManager.GetFilePath(@"Server\Singleplayer", SettingsStorage.ApplicationData, false); 
+            string serverDirectory = XmlSettingsManager.GetFilePath(@"Server\Singleplayer", SettingsStorage.ApplicationData, false);
+            string modelDirectory = XmlSettingsManager.GetFilePath(@"Common", SettingsStorage.ApplicationData, false); 
 
             if (Directory.Exists(clientDirectory))
             {
@@ -54,6 +55,15 @@ namespace Sandbox.Client
             if (Directory.Exists(serverDirectory))
             {
                 foreach (var d in Directory.GetDirectories(serverDirectory))
+                {
+                    DirectoryInfo di = new DirectoryInfo(d);
+                    di.Delete(true);
+                }
+            }
+
+            if (Directory.Exists(modelDirectory))
+            {
+                foreach (var d in Directory.GetDirectories(modelDirectory))
                 {
                     DirectoryInfo di = new DirectoryInfo(d);
                     di.Delete(true);

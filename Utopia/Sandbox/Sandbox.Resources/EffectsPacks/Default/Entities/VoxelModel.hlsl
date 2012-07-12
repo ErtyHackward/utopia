@@ -8,10 +8,14 @@ cbuffer VoxelModelPerFrame
 	matrix ViewProjection;
 	float3 LightColor;			// Diffuse lighting color
 	float fogdist;
-	float4 colorMapping[64];
 	float3 LightDirection;		//diffuse light direction
 	float LightIntensity;
 };
+
+cbuffer VoxelModel
+{
+	float4 colorMapping[64];
+}
 
 cbuffer VoxelModelPerPart
 {

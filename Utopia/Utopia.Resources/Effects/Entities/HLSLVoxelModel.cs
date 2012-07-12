@@ -3,6 +3,7 @@ using SharpDX;
 using S33M3DXEngine.Effects.HLSLFramework;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.VertexFormat;
+using S33M3Resources.Structs;
 
 namespace UtopiaContent.Effects.Entities
 {
@@ -18,7 +19,7 @@ namespace UtopiaContent.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 1184)]
+        [StructLayout(LayoutKind.Explicit, Size = 160)]
         public struct CBPerFrameStructure
         {
             [FieldOffset(0)]
@@ -29,14 +30,18 @@ namespace UtopiaContent.Effects.Entities
             public Color3 LightColor;
             [FieldOffset(140)]
             public float FogDistance;
-            [FieldOffset(144), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public Color4[] ColorMapping; //64 values
-            [FieldOffset(1168)]
+            [FieldOffset(144)]
             public Vector3 LightDirection;
-            [FieldOffset(1180)]
+            [FieldOffset(156)]
             public float LightIntensity;
         }
 
+        [StructLayout(LayoutKind.Explicit, Size = 1024)]
+        public struct CBPerModelStructure
+        {
+            [FieldOffset(0), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+            public Color4[] ColorMapping; //64 values
+        }
 
         [StructLayout(LayoutKind.Explicit, Size = 64)]
         public struct CBPerPartStructure
@@ -46,10 +51,10 @@ namespace UtopiaContent.Effects.Entities
         }
 
         public CBuffer<CBPerFrameStructure> CBPerFrame;
+        public CBuffer<CBPerModelStructure> CBPerModel;
         public CBuffer<CBPerPartStructure> CBPerPart;
 
         #endregion
-
 
         #region Define Shaders EntryPoints Names
         //Default Entry points names for this HLSL file
@@ -64,8 +69,11 @@ namespace UtopiaContent.Effects.Entities
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerFrame = new CBuffer<CBPerFrameStructure>(device, "VoxelModelPerFrame", true);
+            CBPerFrame = new CBuffer<CBPerFrameStructure>(device, "VoxelModelPerFrame");
             CBuffers.Add(CBPerFrame);
+
+            CBPerModel = new CBuffer<CBPerModelStructure>(device, "VoxelModel", true);
+            CBuffers.Add(CBPerModel);
 
             CBPerPart = new CBuffer<CBPerPartStructure>(device, "VoxelModelPerPart");
             CBuffers.Add(CBPerPart);
