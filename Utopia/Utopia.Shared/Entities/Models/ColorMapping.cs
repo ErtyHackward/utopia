@@ -1,6 +1,5 @@
 using System.IO;
 using SharpDX;
-using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -12,7 +11,7 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Gets colors scheme, maximum 64 items
         /// </summary>
-        public ByteColor[] BlockColors { get; set; }
+        public Color4[] BlockColors { get; set; }
 
         public static ColorMapping Read(BinaryReader reader)
         {
@@ -24,16 +23,11 @@ namespace Utopia.Shared.Entities.Models
             {
                 colorMapping = new ColorMapping();
 
-                colorMapping.BlockColors = new ByteColor[colorMappingLength];
+                colorMapping.BlockColors = new Color4[colorMappingLength];
 
                 for (var i = 0; i < colorMappingLength; i++)
                 {
-                    byte r = reader.ReadByte();
-                    byte g = reader.ReadByte();
-                    byte b = reader.ReadByte();
-                    byte a = reader.ReadByte();
-
-                    colorMapping.BlockColors[i] = new ByteColor(r, g, b, a);
+                    colorMapping.BlockColors[i] = reader.ReadInt32();
                 }
             }
 
@@ -52,10 +46,7 @@ namespace Utopia.Shared.Entities.Models
 
                 foreach (var t in mapping.BlockColors)
                 {
-                    writer.Write(t.R);
-                    writer.Write(t.G);
-                    writer.Write(t.B);
-                    writer.Write(t.A);
+                    writer.Write(t);
                 }
             }
         }

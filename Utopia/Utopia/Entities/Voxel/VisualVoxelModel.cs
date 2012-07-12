@@ -176,11 +176,11 @@ namespace Utopia.Entities.Voxel
                 vb.SetToDevice(context, 0);
                 ib.SetToDevice(context, 0);
 
-                //if (_model.Parts[i].ColorMapping != null)
-                //{
-                //    effect.CBPerFrame.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
-                //    effect.CBPerFrame.IsDirty = true;
-                //}
+                if (_model.Parts[i].ColorMapping != null)
+                {
+                    effect.CBPerModel.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
+                    effect.CBPerModel.IsDirty = true;
+                }
 
                 Quaternion rotation;
                 if (_model.Parts[i].IsHead)
