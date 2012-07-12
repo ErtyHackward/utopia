@@ -192,7 +192,6 @@ namespace Utopia.Shared.Entities.Models
                         animationStep.StateIndex--;
                 }
             }
-
         }
 
         public VoxelModelInstance CreateInstance()
