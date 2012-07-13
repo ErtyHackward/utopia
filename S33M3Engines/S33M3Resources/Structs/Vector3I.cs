@@ -249,5 +249,22 @@ namespace S33M3Resources.Structs
 
             return vec;
         }
+
+        /// <summary>
+        /// Returns a vector containing a largest components of vectors provided
+        /// </summary>
+        /// <param name="vec1"></param>
+        /// <param name="vec2"></param>
+        /// <returns></returns>
+        public static Vector3I Max(Vector3I vec1, Vector3I vec2)
+        {
+            Vector3I vec;
+
+            vec.X = Math.Max(vec1.X, vec2.X);
+            vec.Y = Math.Max(vec1.Y, vec2.Y);
+            vec.Z = Math.Max(vec1.Z, vec2.Z);
+
+            return vec;
+        }
     }
 }

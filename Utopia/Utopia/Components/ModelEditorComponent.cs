@@ -124,6 +124,10 @@ namespace Utopia.Components
         private VoxelModelInstance _instance;
         private VoxelModelState _clipboardState;
         private InsideDataProvider _clipboardBlock;
+        private InsideDataProvider _backupBlock;
+
+        private Vector3I? _selectionStart;
+        private Vector3I? _selectionEnd;
 
         #endregion
 
@@ -1113,7 +1117,7 @@ namespace Utopia.Components
         }
 
         #region Presets
-        private void OnCubePresetPressed()
+        private void OnFillPresetPressed()
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
@@ -1123,9 +1127,24 @@ namespace Utopia.Components
                 if (frame.BlockBytes == null)
                     frame.SetBlock(new Vector3I(), 0);
 
-                for (int i = 0; i < frame.BlockBytes.Length; i++)
+                if (_selectionStart.HasValue && _selectionEnd.HasValue)
                 {
-                    frame.BlockBytes[i] = (byte)(_selectedColorIndex + 1);
+                    var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                    var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                    var selectionSize = max - min + Vector3I.One;
+                    var range = new Range3I(min, selectionSize);
+
+                    foreach (var position in range)
+                    {
+                        frame.SetBlock(position, (byte)(_selectedColorIndex + 1));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < frame.BlockBytes.Length; i++)
+                    {
+                        frame.BlockBytes[i] = (byte) (_selectedColorIndex + 1);
+                    }
                 }
 
                 RebuildFrameVertices();
@@ -1142,20 +1161,30 @@ namespace Utopia.Components
                 // clear everything
                 frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
 
-                var center =  (Vector3)frame.ChunkSize / 2;
+                Vector3 center;
+
+                Range3I range;
+                if (_selectionStart.HasValue && _selectionEnd.HasValue)
+                {
+                    var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                    var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                    var selectionSize = max - min + Vector3I.One;
+                    range = new Range3I(min, selectionSize);
+                    center = (Vector3)selectionSize / 2;
+                }
+                else
+                {
+                    range = new Range3I { Size = frame.ChunkSize };
+                    center = (Vector3)frame.ChunkSize / 2;
+                }
+
                 var radius = Math.Min(Math.Min(center.X, center.Y), center.Z);
 
-                for (int x = 0; x < frame.ChunkSize.X; x++)
+                foreach (var position in range)
                 {
-                    for (int y = 0; y < frame.ChunkSize.Y; y++)
-                    {
-                        for (int z = 0; z < frame.ChunkSize.Z; z++)
-                        {
-                            var point = new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
-                            if (Vector3.Distance(point, center) <= radius)
-                                frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
-                        }
-                    }
+                    var point = position + new Vector3(0.5f, 0.5f, 0.5f);
+                    if (Vector3.Distance(point, center) <= radius)
+                        frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
                 }
 
                 RebuildFrameVertices();
@@ -1170,35 +1199,32 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
-
-                int xMax = frame.ChunkSize.X - 1;
-                int yMax = frame.ChunkSize.Y - 1;
-                int zMax = frame.ChunkSize.Z - 1;
-
-
-                for (int x = 0; x < frame.ChunkSize.X; x++)
+                Range3I range;
+                if (_selectionStart.HasValue && _selectionEnd.HasValue)
                 {
-                    for (int y = 0; y < frame.ChunkSize.Y; y++)
+                    var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                    var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                    var selectionSize = max - min + Vector3I.One;
+                    range = new Range3I(min, selectionSize);
+                }
+                else
+                {
+                    range = new Range3I { Size = frame.ChunkSize };
+                }
+
+                foreach (var position in range)
+                {
+                    if (position.X == range.Position.X ||
+                        position.Y == range.Position.Y ||
+                        position.Z == range.Position.Y ||
+                        position.X == range.Max.X - 1 ||
+                        position.Y == range.Max.Y - 1 ||
+                        position.Z == range.Max.Z - 1)
                     {
-                        for (int z = 0; z < frame.ChunkSize.Z; z++)
-                        {
-                            int n = 0;
-                            if (x == 0) n++;
-                            if (y == 0) n++;
-                            if (z == 0) n++;
-                            if (x == xMax) n++;
-                            if (y == yMax) n++;
-                            if (z == zMax) n++;
-                            
-                            if (n > 1)
-                            {
-                             frame.SetBlock(new Vector3I(x,y,z), (byte)(_selectedColorIndex + 1));                                       
-                            }
-                        }
+                        frame.SetBlock(position, (byte)(_selectedColorIndex + 1));
                     }
                 }
+
 
                 RebuildFrameVertices();
             }
@@ -1536,6 +1562,19 @@ namespace Utopia.Components
 
                                             }
                                             break;
+                                        case 4: // selection tool
+
+                                            if (_selectionEnd.HasValue || !_selectionStart.HasValue)
+                                            {
+                                                _selectionStart = _pickedCube.Value;
+                                                _selectionEnd = null;
+                                            }
+                                            else
+                                            {
+                                                _selectionEnd = _pickedCube.Value;
+                                            }
+
+                                            break;
                                     }
                                 }
 
@@ -1558,6 +1597,19 @@ namespace Utopia.Components
                                         case 1:
                                             break;
                                         case 2:
+                                            break;
+                                        case 4: // selection tool
+
+                                            if (_selectionEnd.HasValue || !_selectionStart.HasValue)
+                                            {
+                                                _selectionStart = _newCube.Value;
+                                                _selectionEnd = null;
+                                            }
+                                            else
+                                            {
+                                                _selectionEnd = _newCube.Value;
+                                            }
+
                                             break;
                                     }
                                 }
@@ -2154,21 +2206,35 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
-                //if (_pickedCube != null)
-                //{
-                //    // draw selected cube
-                //    DrawBox(new BoundingBox(_pickedCube.Value, _pickedCube.Value + Vector3I.One), new Color4(1, 0, 0, 1));
-                //}
-                //else if (_newCube != null)
-                //{
-                //    // draw selected cube
-                //    DrawBox(new BoundingBox(_newCube.Value, _newCube.Value + Vector3I.One), new Color4(1, 0, 0, 0.5f));
-                //}
-
-                foreach (var mirrorCube in GetSelectedCubes())
+                if (_selectedFrameToolIndex == 4 || _selectedFrameToolIndex == -1)
                 {
-                    DrawBox(new BoundingBox(new Vector3(-0.01f) + mirrorCube, new Vector3(1.01f) + mirrorCube), new Color4(1, 0, 0, 1f));
-                    DrawBox(new BoundingBox(new Vector3(0.01f) + mirrorCube, new Vector3(0.99f) + mirrorCube), new Color4(1, 0, 0, 1f));
+                    if (GetSelectedCubes().Any())
+                    {
+                        var selection = GetSelectedCubes().First();
+                        DrawBox(new BoundingBox(selection, new Vector3(1f) + selection), new Color4(1, 0, 0, 1f));
+                    }
+
+                    if (_selectionStart.HasValue && _selectionEnd.HasValue)
+                    {
+                        var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                        var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+
+                        DrawBox(new BoundingBox(min, max + Vector3.One), new Color4(0, 1, 0, 1f));
+                    }
+                    else if (_selectionStart.HasValue)
+                    {
+                        DrawBox(new BoundingBox(_selectionStart.Value, _selectionStart.Value + Vector3.One), new Color4(0, 1, 0, 1f));
+                    }
+                }
+                else
+                {
+                    foreach (var mirrorCube in GetSelectedCubes())
+                    {
+                        DrawBox(new BoundingBox(new Vector3(-0.01f) + mirrorCube, new Vector3(1.01f) + mirrorCube),
+                                new Color4(1, 0, 0, 1f));
+                        DrawBox(new BoundingBox(new Vector3(0.01f) + mirrorCube, new Vector3(0.99f) + mirrorCube),
+                                new Color4(1, 0, 0, 1f));
+                    }
                 }
 
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
@@ -2522,8 +2588,31 @@ namespace Utopia.Components
                 _gui.MessageBox("Nothing to copy. Select the part and frame");
                 return;
             }
-            // backup the data
-            _clipboardBlock = new InsideDataProvider(_visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData);
+            
+            // if we have selection then copy only selected blocks
+            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            {
+                var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+
+                var size = max - min + Vector3I.One;
+
+                _clipboardBlock = new InsideDataProvider();
+                _clipboardBlock.UpdateChunkSize(size);
+
+                var copyFrom = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+
+                var range = new Range3I(min, size);
+
+                foreach (var vector in range)
+                {
+                    var clipPosition = vector - min;
+                    _clipboardBlock.SetBlock(clipPosition, copyFrom.GetBlock(vector));
+                }
+            }
+            else 
+                // copy whole block
+                _clipboardBlock = new InsideDataProvider(_visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData);
         }
 
         private void OnFramePastePressed()
@@ -2540,19 +2629,28 @@ namespace Utopia.Components
             }
 
             var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
-
             var size = Vector3I.Min(pasteTo.ChunkSize, _clipboardBlock.ChunkSize);
 
-            for (int x = 0; x < size.X; x++)
+            _backupBlock = new InsideDataProvider(pasteTo);
+
+            Range3I range;
+
+            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
             {
-                for (int y = 0; y < size.Y; y++)
-                {
-                    for (int z = 0; z < size.Z; z++)
-                    {
-                        var position = new Vector3I(x,y,z);
-                        pasteTo.SetBlock(position, _clipboardBlock[position]);
-                    }
-                }
+                var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                var selectionSize = Vector3I.Min(size, max - min + Vector3I.One);
+                range = new Range3I(min, selectionSize);
+            }
+            else
+            {
+                range = new Range3I { Size = size };
+            }
+
+            foreach (var position in range)
+            {
+                var offset = position - range.Position;
+                pasteTo.SetBlock(position, _clipboardBlock.GetBlock(offset));
             }
 
             RebuildFrameVertices();
@@ -2571,21 +2669,146 @@ namespace Utopia.Components
                 return;
             }
             var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
-
             var size = Vector3I.Min(pasteTo.ChunkSize, _clipboardBlock.ChunkSize);
 
-            for (int x = 0; x < size.X; x++)
+            _backupBlock = new InsideDataProvider(pasteTo);
+
+            Range3I range;
+
+            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
             {
-                for (int y = 0; y < size.Y; y++)
+                var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                var selectionSize = Vector3I.Min(size, max - min + Vector3I.One);
+                range = new Range3I(min, selectionSize);
+            }
+            else
+            {
+                range = new Range3I { Size = size };
+            }
+
+            foreach (var position in range)
+            {
+                var offset = position - range.Position;
+                if (pasteTo.GetBlock(position) != 0)
                 {
-                    for (int z = 0; z < size.Z; z++)
-                    {
-                        var position = new Vector3I(x, y, z);
-                        var value = _clipboardBlock[position];
-                        if (value != 0)
-                            pasteTo.SetBlock(position, _clipboardBlock[position]);
-                    }
+                    pasteTo.SetBlock(position, _clipboardBlock.GetBlock(offset));
                 }
+            }
+
+            RebuildFrameVertices();
+        }
+
+        private void OnFrameUndoPressed()
+        {
+            if (_backupBlock == null)
+            {
+                _gui.MessageBox("Nothing to undo. Do something crappy first ;)");
+                return;
+            }
+            if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
+            {
+                _gui.MessageBox("Nowhere to return backup. Select a part and a frame");
+                return;
+            }
+
+            var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+            var size = Vector3I.Min(pasteTo.ChunkSize, _backupBlock.ChunkSize);
+
+            // paste at 0,0,0
+            var range = new Range3I {Size = size};
+
+            foreach (var position in range)
+            {
+                pasteTo.SetBlock(position, _backupBlock[position]);
+            }
+
+            RebuildFrameVertices();
+
+        }
+
+        private void OnFrameBlockDeletePressed()
+        {
+            if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
+            {
+                _gui.MessageBox("Nowhere to delete. Select a part and a frame");
+                return;
+            }
+            var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+            _backupBlock = new InsideDataProvider(pasteTo);
+
+            Range3I range;
+
+            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            {
+                var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                var selectionSize = Vector3I.Min(pasteTo.ChunkSize, max - min + Vector3I.One);
+                range = new Range3I(min, selectionSize);
+            }
+            else
+            {
+                range = new Range3I { Size = pasteTo.ChunkSize };
+            }
+
+            foreach (var position in range)
+            {
+                pasteTo.SetBlock(position, 0);
+            }
+
+            RebuildFrameVertices();
+        }
+
+        private void OnFrameShift(EditorAxis editorAxis, bool plus)
+        {
+            if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
+            {
+                _gui.MessageBox("Nowhere to shift. Select a part and a frame");
+                return;
+            }
+
+            var shiftVector = new Vector3I();
+
+            switch (editorAxis)
+            {
+                case EditorAxis.X:
+                    shiftVector = new Vector3I(1, 0, 0);
+                    break;
+                case EditorAxis.Y:
+                    shiftVector = new Vector3I(0, 1, 0);
+                    break;
+                case EditorAxis.Z:
+                    shiftVector = new Vector3I(0, 0, 1);
+                    break;
+            }
+
+            if (plus) 
+                shiftVector = Vector3I.Zero - shiftVector;
+
+            var pasteTo = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+            _backupBlock = new InsideDataProvider(pasteTo);
+
+            Range3I range;
+
+            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            {
+                var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                var selectionSize = Vector3I.Min(pasteTo.ChunkSize, max - min + Vector3I.One);
+                range = new Range3I(min, selectionSize);
+            }
+            else
+            {
+                range = new Range3I { Size = pasteTo.ChunkSize };
+            }
+
+            foreach (var position in range)
+            {
+                var shifted = position + shiftVector;
+                if (range.Contains(shifted))
+                    pasteTo.SetBlock(position, _backupBlock.GetBlock(shifted));
+                else
+                    pasteTo.SetBlock(position, 0);
             }
 
             RebuildFrameVertices();

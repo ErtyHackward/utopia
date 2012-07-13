@@ -88,6 +88,7 @@ namespace Utopia.Components
         private Control _tpPreset;
         private Control _tpSliceBrush;
         private Control _tpEdit;
+        private Control _tpMirror;
 
         // view properties groups
         LayoutTool _layoutTool;
@@ -319,7 +320,7 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
 
-            OnLayoutGroupSelected(0);
+            OnLayoutGroupSelected(_layoutTool);
 
             UpdateLayout();
         }
@@ -471,11 +472,15 @@ namespace Utopia.Components
             var presetTool = new StickyButtonControl { Text = "Preset", Bounds = new UniRectangle(0, 0, 70, 20) };
             presetTool.Pressed += delegate { _selectedFrameToolIndex = -1; OnFrameToolSelected(FrameEditorTools.Preset); };
 
+            var selectionTool = new StickyButtonControl { Text = "Selection", Bounds = new UniRectangle(0, 0, 70, 20) };
+            selectionTool.Pressed += delegate { _selectedFrameToolIndex = 4; OnFrameToolSelected(FrameEditorTools.Selection); };
+
             _frameToolsGroup.Children.Add(toolEditButton);
             _frameToolsGroup.Children.Add(toolColorBrushButton);
             _frameToolsGroup.Children.Add(toolColorFillButton);
             _frameToolsGroup.Children.Add(toolSliceColorBrush);
             _frameToolsGroup.Children.Add(presetTool);
+            _frameToolsGroup.Children.Add(selectionTool);
             
             #region Tool properties
 
@@ -485,8 +490,8 @@ namespace Utopia.Components
 
             _tpPreset.Children.Add(new LabelControl { Text = "Presets:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            var cubePresetButton = new ButtonControl { Text = "Cube", Bounds = new UniRectangle(0, 0, 50, 20) };
-            cubePresetButton.Pressed += delegate { OnCubePresetPressed(); };
+            var fillPresetButton = new ButtonControl { Text = "Fill", Bounds = new UniRectangle(0, 0, 50, 20) };
+            fillPresetButton.Pressed += delegate { OnFillPresetPressed(); };
             
             var spherePresetButton = new ButtonControl { Text = "Sphere", Bounds = new UniRectangle(0, 0, 50, 20) };
             spherePresetButton.Pressed += delegate { OnSpherePresetPressed(); };
@@ -494,7 +499,7 @@ namespace Utopia.Components
             var outlinePresetButton = new ButtonControl { Text = "Outline", Bounds = new UniRectangle(0, 0, 50, 20) };
             outlinePresetButton.Pressed += delegate { OnOutlinePresetPressed(); };
 
-            _tpPreset.Children.Add(cubePresetButton);
+            _tpPreset.Children.Add(fillPresetButton);
             _tpPreset.Children.Add(spherePresetButton);
             _tpPreset.Children.Add(outlinePresetButton);
             _tpPreset.UpdateLayout();
@@ -525,9 +530,9 @@ namespace Utopia.Components
 
             #region Edit properties
 
-            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 120), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _tpMirror = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
-            _tpEdit.Children.Add(new LabelControl { Text = "Mirror:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
+            _tpMirror.Children.Add(new LabelControl { Text = "Mirror:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             var xMirror = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
             xMirror.Pressed += delegate { _mirror ^= EditorAxis.X; if (!_mirror.HasFlag(EditorAxis.X)) xMirror.Release(); };
@@ -538,23 +543,59 @@ namespace Utopia.Components
             var zMirror = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
             zMirror.Pressed += delegate { _mirror ^= EditorAxis.Z; if (!_mirror.HasFlag(EditorAxis.Z)) zMirror.Release(); };
 
+            _tpMirror.Children.Add(xMirror);
+            _tpMirror.Children.Add(yMirror);
+            _tpMirror.Children.Add(zMirror);
+
+            _tpMirror.UpdateLayout();
+
+            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            
             var frameLabel = new LabelControl { Text = "Frame:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow };
             
-            var copyFrame = new ButtonControl { Text = "Copy", Bounds = new UniRectangle(0, 0, 100, 20) };
+            var copyFrame = new ButtonControl { Text = "Copy", Bounds = new UniRectangle(0, 0, 40, 20) };
             copyFrame.Pressed += delegate { OnFrameCopyPressed(); };
-            var replaceFrame = new ButtonControl { Text = "Paste (replace)", Bounds = new UniRectangle(0, 0, 100, 20) };
-            replaceFrame.Pressed += delegate { OnFramePastePressed(); };
-            var mergeFrame = new ButtonControl { Text = "Paste (merge)", Bounds = new UniRectangle(0, 0, 100, 20) };
-            mergeFrame.Pressed += delegate { OnFrameMergePressed(); };
+            var delFrame = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 40, 20) };
+            delFrame.Pressed += delegate { OnFrameBlockDeletePressed(); };
 
-            _tpEdit.Children.Add(xMirror);
-            _tpEdit.Children.Add(yMirror);
-            _tpEdit.Children.Add(zMirror);
+            var replaceFrame = new ButtonControl { Text = "Paste (replace)", Bounds = new UniRectangle(0, 0, 90, 20) };
+            replaceFrame.Pressed += delegate { OnFramePastePressed(); };
+            var mergeFrame = new ButtonControl { Text = "Paste (merge)", Bounds = new UniRectangle(0, 0, 90, 20) };
+            mergeFrame.Pressed += delegate { OnFrameMergePressed(); };
+            var undoFrame = new ButtonControl { Text = "Undo", Bounds = new UniRectangle(0, 0, 40, 20) };
+            undoFrame.Pressed += delegate { OnFrameUndoPressed(); };
+
+            var shiftLabel = new LabelControl { Text = "Shift:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow };
+
+            var shiftXPlus = new ButtonControl { Text = "X+", Bounds = new UniRectangle(0, 0, 25, 20) };
+            shiftXPlus.Pressed += delegate { OnFrameShift(EditorAxis.X, true); };
+            var shiftXMinus = new ButtonControl { Text = "X-", Bounds = new UniRectangle(0, 0, 25, 20) };
+            shiftXMinus.Pressed += delegate { OnFrameShift(EditorAxis.X, false); };
+
+            var shiftYPlus = new ButtonControl { Text = "Y+", Bounds = new UniRectangle(0, 0, 25, 20) };
+            shiftYPlus.Pressed += delegate { OnFrameShift(EditorAxis.Y, true); };
+            var shiftYMinus = new ButtonControl { Text = "Y-", Bounds = new UniRectangle(0, 0, 25, 20) };
+            shiftYMinus.Pressed += delegate { OnFrameShift(EditorAxis.Y, false); };
+
+            var shiftZPlus = new ButtonControl { Text = "Z+", Bounds = new UniRectangle(0, 0, 25, 20) };
+            shiftZPlus.Pressed += delegate { OnFrameShift(EditorAxis.Z, true); };
+            var shiftZMinus = new ButtonControl { Text = "Z-", Bounds = new UniRectangle(0, 0, 25, 20) };
+            shiftZMinus.Pressed += delegate { OnFrameShift(EditorAxis.Z, false); };
+
             _tpEdit.Children.Add(frameLabel);
             _tpEdit.Children.Add(copyFrame);
+            _tpEdit.Children.Add(delFrame);
+            _tpEdit.Children.Add(undoFrame);
             _tpEdit.Children.Add(replaceFrame);
             _tpEdit.Children.Add(mergeFrame);
 
+            _tpEdit.Children.Add(shiftLabel);
+            _tpEdit.Children.Add(shiftXPlus);
+            _tpEdit.Children.Add(shiftXMinus);
+            _tpEdit.Children.Add(shiftYPlus);
+            _tpEdit.Children.Add(shiftYMinus);
+            _tpEdit.Children.Add(shiftZPlus);
+            _tpEdit.Children.Add(shiftZMinus);
 
             _tpEdit.UpdateLayout();
 
@@ -748,17 +789,23 @@ namespace Utopia.Components
             switch (tool)
             {
                 case FrameEditorTools.Edit:
+                    _toolsWindow.Children.Add(_tpMirror);
                     _toolsWindow.Children.Add(_tpEdit);
                     break;
                 case FrameEditorTools.ColorBrush:
+                    _toolsWindow.Children.Add(_tpMirror);
                     break;
                 case FrameEditorTools.FillBrush:
+                    _toolsWindow.Children.Add(_tpMirror);
                     break;
                 case FrameEditorTools.SliceBrush:
                     _toolsWindow.Children.Add(_tpSliceBrush);
                     break;
                 case FrameEditorTools.Preset:
                     _toolsWindow.Children.Add(_tpPreset);
+                    break;
+                case FrameEditorTools.Selection:
+                    _toolsWindow.Children.Add(_tpEdit);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("tool");
@@ -792,6 +839,8 @@ namespace Utopia.Components
         ColorBrush,
         FillBrush,
         SliceBrush,
-        Preset
+        Preset,
+        Selection
     }
 }
+
