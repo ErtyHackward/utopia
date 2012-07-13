@@ -548,7 +548,7 @@ namespace Utopia.Components
 
             var part = new VoxelModelPart { Name = "Main" };
             part.Frames.Add(new VoxelFrame(new Vector3I(16, 16, 16)));
-            voxelModelState.PartsStates.Add(new VoxelModelPartState { Transform = Matrix.Identity });
+            voxelModelState.PartsStates.Add(new VoxelModelPartState() );
 
 
             model.VoxelModel.Parts.Add(part);
@@ -629,7 +629,7 @@ namespace Utopia.Components
 
             foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
             {
-                voxelModelState.PartsStates.Add(new VoxelModelPartState { Transform = Matrix.Identity });
+                voxelModelState.PartsStates.Add(new VoxelModelPartState());
             }
 
             _visualVoxelModel.VoxelModel.Parts.Add(part);
@@ -894,25 +894,12 @@ namespace Utopia.Components
         }
         private void OnStateAdded(DialogStateEditStruct e)
         {
-            var vms = new VoxelModelState(VisualVoxelModel.VoxelModel);
+            var vms = new VoxelModelState(VisualVoxelModel.VoxelModel.States[VisualVoxelModel.VoxelModel.States.Count - 1]);
             if (string.IsNullOrEmpty(e.Name))
                 e.Name = "unnamed";
             vms.Name = e.Name;
             VisualVoxelModel.VoxelModel.States.Add(vms);
             _statesList.Items.Add(vms);
-
-
-            // copy the previouis state
-            var previousState = VisualVoxelModel.VoxelModel.States[VisualVoxelModel.VoxelModel.States.Count - 2];
-
-            for (int i = 0; i < previousState.PartsStates.Count; i++)
-            {
-                var partState = previousState.PartsStates[i];
-
-                vms.PartsStates[i].ActiveFrame = partState.ActiveFrame;
-                vms.PartsStates[i].BoundingBox = partState.BoundingBox;
-                vms.PartsStates[i].Transform = partState.Transform;
-            }
         }
         
         private void OnStateEditButtonPressed()
@@ -1391,7 +1378,7 @@ namespace Utopia.Components
                                 var center = new Vector3((bb.Maximum.X - bb.Minimum.X)/2,
                                                          (bb.Maximum.Y - bb.Minimum.Y)/2,
                                                          (bb.Maximum.Z - bb.Minimum.Z)/2) +
-                                             partState.Transform.TranslationVector;
+                                             partState.Translation;
                                 _translatePlane = new Plane(center,
                                                             _flipAxis ? new Vector3(0, 0, 1) : new Vector3(1, 0, 0));
                             }
@@ -1450,7 +1437,7 @@ namespace Utopia.Components
                                 else
                                 {
                                     var translationMatrix = Matrix.Translation(translationVector);
-                                    partState.Transform.TranslationVector += translationVector;
+                                    partState.Translation += translationVector;
                                     partState.BoundingBox = new BoundingBox(
                                         Vector3.TransformCoordinate(partState.BoundingBox.Minimum, translationMatrix),
                                         Vector3.TransformCoordinate(partState.BoundingBox.Maximum, translationMatrix));
@@ -2014,7 +2001,7 @@ namespace Utopia.Components
                         _voxelEffect.CBPerModel.IsDirty = true;
                     }
 
-                    _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform);
+                    _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation());
                     _voxelEffect.CBPerPart.IsDirty = true;
                     _voxelEffect.Apply(context);
 
@@ -2033,7 +2020,7 @@ namespace Utopia.Components
                         var size = Vector3.Subtract(bb.Maximum, bb.Minimum);
                         var sizef = Math.Max(Math.Max(size.X, size.Y), size.Z);
                         var center = new Vector3((bb.Maximum.X - bb.Minimum.X) / 2, (bb.Maximum.Y - bb.Minimum.Y) / 2, (bb.Maximum.Z - bb.Minimum.Z) / 2);
-                        var translate = voxelModelPartState.Transform.TranslationVector + center;
+                        var translate = voxelModelPartState.Translation + center;
 
                         if (_layoutTool == LayoutTool.Rotate)
                         {
@@ -2416,30 +2403,32 @@ namespace Utopia.Components
             }
 
             var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
-            var matrix = state.PartsStates[SelectedPartIndex].Transform;
+            var ps = state.PartsStates[SelectedPartIndex];
 
             // convert to radians 
             rotationAngle = (float)((Math.PI / 180) * rotationAngle);
 
-            var translation = _rotationPoint - matrix.TranslationVector;
-
+            var translation = _rotationPoint - ps.Translation;
+            
             switch (editorAxis)
             {
                 case EditorAxis.None:
-                    matrix = Matrix.Scaling(matrix.ScaleVector) * Matrix.Translation(matrix.TranslationVector);
+                    ps.Rotation = Quaternion.Identity;
                     break;
                 case EditorAxis.X:
-                    matrix = Matrix.Translation(-translation) * Matrix.RotationX(rotationAngle) * Matrix.Translation(translation) * matrix;
+                    ps.RotationOffset = translation;
+                    ps.Rotation = Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationX(rotationAngle) * Matrix.Translation(translation));
                     break;
                 case EditorAxis.Y:
-                    matrix = Matrix.Translation(-translation) * Matrix.RotationY(rotationAngle) * Matrix.Translation(translation) * matrix;
+                    ps.RotationOffset = translation;
+                    ps.Rotation = Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationY(rotationAngle) * Matrix.Translation(translation));
                     break;
                 case EditorAxis.Z:
-                    matrix = Matrix.Translation(-translation) * Matrix.RotationZ(rotationAngle) * Matrix.Translation(translation) * matrix;
+                    ps.RotationOffset = translation;
+                    ps.Rotation = Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationZ(rotationAngle) * Matrix.Translation(translation));
                     break;
             }
-
-            state.PartsStates[SelectedPartIndex].Transform = matrix;
+            
             state.UpdateBoundingBox();
             NeedSave();
         }
@@ -2501,28 +2490,27 @@ namespace Utopia.Components
             }
 
             var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
-            var matrix = state.PartsStates[SelectedPartIndex].Transform;
+            var ps = state.PartsStates[SelectedPartIndex];
             
             switch (editorAxis)
             {
                 case EditorAxis.None:
-                    matrix.ScaleVector = Vector3.One;
+                    ps.Scale = Vector3.One;
                     break;
                 case EditorAxis.X:
-                    matrix = Matrix.Scaling(scaleFactor, 1, 1) * matrix;
+                    ps.Scale.X *= scaleFactor;
                     break;
                 case EditorAxis.Y:
-                    matrix = Matrix.Scaling(1, scaleFactor, 1) * matrix;
+                    ps.Scale.Y *= scaleFactor;
                     break;
                 case EditorAxis.Z:
-                    matrix = Matrix.Scaling(1, 1, scaleFactor) * matrix;
+                    ps.Scale.Z *= scaleFactor;
                     break;
                 case EditorAxis.X | EditorAxis.Y | EditorAxis.Z:
-                    matrix = Matrix.Scaling(scaleFactor) * matrix;
+                    ps.Scale *= scaleFactor;
                     break;
             }
 
-            state.PartsStates[SelectedPartIndex].Transform = matrix;
             state.UpdateBoundingBox();
             NeedSave();
         }

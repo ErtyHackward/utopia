@@ -53,7 +53,7 @@ namespace Utopia.Shared.Entities.Models
             
             for (int i = 0; i < _parentModel.Parts.Count; i++)
             {
-                PartsStates.Add(new VoxelModelPartState { Transform = Matrix.Identity } );
+                PartsStates.Add(new VoxelModelPartState() );
             }
 
         }
@@ -83,7 +83,7 @@ namespace Utopia.Shared.Entities.Models
                 PartsStates.Add(partState);
             }
         }
-
+        
         public void UpdateBoundingBox()
         {
             if (PartsStates.Count == 0) 
@@ -95,7 +95,7 @@ namespace Utopia.Shared.Entities.Models
                 var partState = PartsStates[i];
                 var bb = new BoundingBox(new Vector3(), _parentModel.Parts[i].Frames[partState.ActiveFrame].BlockData.ChunkSize);
                 
-                bb = bb.Transform(partState.Transform);
+                bb = bb.Transform(partState.GetTransformation());
 
                 if (i == 0) BoundingBox = bb;
 

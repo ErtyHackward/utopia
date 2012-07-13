@@ -40,7 +40,7 @@ namespace Utopia.Shared.Entities.Models
         {
             get { return VoxelModel == null ? _modelHash : VoxelModel.Hash; }
         }
-
+        
         /// <summary>
         /// Gets or sets model instance rotation
         /// </summary>
@@ -117,8 +117,8 @@ namespace Utopia.Shared.Entities.Models
         
         public VoxelModelInstance(VoxelModel model = null)
         {
-            _rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), 0);
-            _headRotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), 0);
+            _rotation = Quaternion.Identity;
+            _headRotation = Quaternion.Identity;
             _animationIndex = -1;
             SetParentModel(model);
         }
@@ -263,7 +263,15 @@ namespace Utopia.Shared.Entities.Models
                 {
                     _internalState.PartsStates[i].ActiveFrame = state0.PartsStates[i].ActiveFrame;
                     var step = (float)Elapsed / duration;
-                    Matrix.SmoothStep(ref state0.PartsStates[i].Transform, ref state1.PartsStates[i].Transform, step, out _internalState.PartsStates[i].Transform);
+
+                    var psFrom = state0.PartsStates[i];
+                    var psTo = state1.PartsStates[i];
+                    var psResult = _internalState.PartsStates[i];
+                    
+                    Vector3.Lerp(ref psFrom.Translation, ref psTo.Translation, step, out psResult.Translation);
+                    Vector3.Lerp(ref psFrom.RotationOffset, ref psTo.RotationOffset, step, out psResult.RotationOffset);
+                    Vector3.Lerp(ref psFrom.Scale, ref psTo.Scale, step, out psResult.Scale);
+                    Quaternion.Slerp(ref psFrom.Rotation, ref psTo.Rotation, step, out psResult.Rotation);
                 }
             }
         }
