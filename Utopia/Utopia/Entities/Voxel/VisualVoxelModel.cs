@@ -70,6 +70,11 @@ namespace Utopia.Entities.Voxel
                 vp.IndexBuffers[i].Dispose();
             }
 
+            foreach (var voxelModelState in VoxelModel.States)
+            {
+                voxelModelState.PartsStates.RemoveAt(index);
+            }
+
             ArrayHelper.RemoveAt(ref _visualParts, index);
         }
 

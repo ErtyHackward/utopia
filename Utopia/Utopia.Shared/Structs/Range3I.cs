@@ -25,6 +25,12 @@ namespace Utopia.Shared.Structs
             get { return Position + Size; }
         }
 
+        public Range3I(Vector3I position, Vector3I size)
+        {
+            Position = position;
+            Size = size;
+        }
+
         /// <summary>
         /// Indicates if the point inside this range
         /// </summary>
