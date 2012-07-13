@@ -10,7 +10,6 @@ namespace Realms.Shared
         public const ushort Carver = 3;
         public const ushort Editor = 4;
 
-        public const ushort GoldCoin = 100;
-        public const ushort Torch = 101;
+        public const ushort Torch = 100;
     }
 }

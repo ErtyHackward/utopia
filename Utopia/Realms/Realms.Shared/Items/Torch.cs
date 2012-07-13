@@ -3,7 +3,7 @@ using Utopia.Shared.Entities;
 
 namespace Realms.Shared.Items
 {
-    public class Torch : VoxelItem
+    public class Torch : Item
     {
         public Torch()
         {

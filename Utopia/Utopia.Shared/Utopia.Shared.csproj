@@ -106,9 +106,6 @@
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Flower3.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
-    <Compile Include="Entities\Concrete\Collectible\Flower1.cs" />
     <Compile Include="Entities\Events\EntityBodyRotationEventArgs.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\Collectible\Grass.cs" />
@@ -116,7 +113,7 @@
     <Compile Include="Entities\Concrete\EditableVoxelEntity.cs" />
     <Compile Include="Entities\Concrete\NoEntity.cs" />
     <Compile Include="Entities\Concrete\Zombie.cs" />
-    <Compile Include="Entities\CubePlaceableSpriteItem.cs" />
+    <Compile Include="Entities\CubePlaceableItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityEffect.cs" />
@@ -165,17 +162,15 @@
     <Compile Include="Entities\Inventory\EquipmentSlotType.cs" />
     <Compile Include="Entities\Inventory\Slot.cs" />
     <Compile Include="Entities\Inventory\SlotContainer.cs" />
-    <Compile Include="Entities\Inventory\SpriteItem.cs" />
     <Compile Include="Entities\Inventory\ToolbarSlot.cs" />
     <Compile Include="Entities\Inventory\ToolImpact.cs" />
     <Compile Include="Entities\Inventory\ToolSlot.cs" />
-    <Compile Include="Entities\Inventory\VoxelItem.cs" />
+    <Compile Include="Entities\Inventory\Item.cs" />
     <Compile Include="Entities\MetaEntity.cs" />
     <Compile Include="Entities\Models\VoxelModelAnimation.cs" />
     <Compile Include="Entities\Models\VoxelModelInstance.cs" />
     <Compile Include="Entities\Models\VoxelModelPartState.cs" />
     <Compile Include="Entities\Models\VoxelModelState.cs" />
-    <Compile Include="Entities\SpriteEntity.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />
     <Compile Include="Entities\ToolUseMode.cs" />

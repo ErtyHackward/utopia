@@ -48,8 +48,6 @@ namespace Realms.Server
                 dEntity.Inventory.PutItem(item3);
             }
             //Add coins + Torch
-            var goldCoins = _server.EntityFactory.CreateEntity<GoldCoin>();
-            dEntity.Inventory.PutItem(goldCoins);
             var Torch = _server.EntityFactory.CreateEntity<Torch>();
             dEntity.Inventory.PutItem(Torch);
 

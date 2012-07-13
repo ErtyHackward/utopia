@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
-    public abstract class VoxelItem : StaticEntity, IItem, IVoxelEntity
+    public abstract class Item : StaticEntity, IItem, IVoxelEntity
     {
         #region Properties
 
@@ -70,8 +70,8 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to load base information
             base.Load(reader, factory);
 
-            ModelInstance = new VoxelModelInstance();
-            ModelInstance.Load(reader);
+            //ModelInstance = new VoxelModelInstance();
+            //ModelInstance.Load(reader);
 
             UniqueName = reader.ReadString();
         }
@@ -81,7 +81,7 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to save base information
             base.Save(writer);
 
-            ModelInstance.Save(writer);
+            //ModelInstance.Save(writer);
 
             writer.Write(UniqueName);
         }      

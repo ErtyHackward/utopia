@@ -38,8 +38,8 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private class ModelAndInstances
         {
-            public VisualVoxelModel VisualModel;
-            public Dictionary<uint, VoxelModelInstance> Instances;
+            public VisualVoxelModel VisualModel;                    //A model
+            public Dictionary<uint, VoxelModelInstance> Instances;  //Instanced model list
         }
         
         private HLSLVoxelModel _voxelModelEffect;
@@ -101,8 +101,10 @@ namespace Utopia.Entities.Managers
 
         void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
         {
+            //ForEach different Voxel model in local collection
             foreach (var modelAndInstances in _models)
             {
+                //Check if the model receive is already existing. (By model name)
                 if (modelAndInstances.Key == e.Model.Name)
                 {
                     var model = _voxelModelManager.GetModel(e.Model.Name);
@@ -191,23 +193,26 @@ namespace Utopia.Entities.Managers
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
             _voxelModelEffect.Begin(context);
+            _voxelModelEffect.CBPerFrame.Values.LightIntensity = 1f;
+            _voxelModelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+            _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelModelEffect.CBPerFrame.IsDirty = true;
+            _voxelModelEffect.Apply(context);
 
+            //For each existing model
             foreach (var modelAndInstances in _models)
             {
+                //For each instance of the model
                 foreach (var pairs in modelAndInstances.Value.Instances)
                 {
-                    var entityToRender = _dynamicEntitiesDico[pairs.Key];
+                    VisualDynamicEntity entityToRender = _dynamicEntitiesDico[pairs.Key];
 
                     //Draw only the entities that are in Client view range
                     if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
                     {
-                        _voxelModelEffect.CBPerFrame.Values.LightIntensity = 1f;
-                        _voxelModelEffect.CBPerFrame.Values.LightColor = entityToRender.ModelLight.ValueInterp;
-                        _voxelModelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
-                        _voxelModelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World);
-                        _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-                        _voxelModelEffect.CBPerFrame.IsDirty = true;
-                        _voxelModelEffect.Apply(context);
+                        _voxelModelEffect.CBPerModel.Values.LightColor = entityToRender.ModelLight.ValueInterp;
+                        _voxelModelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World);
+                        _voxelModelEffect.CBPerModel.IsDirty = true;
 
                         modelAndInstances.Value.VisualModel.Draw(_d3DEngine.ImmediateContext, _voxelModelEffect, pairs.Value);
                     }
@@ -217,39 +222,47 @@ namespace Utopia.Entities.Managers
 
         public void AddEntity(IDynamicEntity entity)
         {
-            if (!_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
+            //Do we already have thise entity ??
+            if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
             {
-                ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.ModelName, out instances))
+                ModelAndInstances modelWithInstances;
+                //Does the entity model exist in the collection ?
+                //If yes, will send back the instance Ids registered to this Model
+                if (!_models.TryGetValue(entity.ModelName, out modelWithInstances))
                 {
+                    //Model not existing ====
                     // load a new model
-                    instances = new ModelAndInstances
+                    modelWithInstances = new ModelAndInstances
                                     {
-                                        VisualModel = _voxelModelManager.GetModel(entity.ModelName),
-                                        Instances = new Dictionary<uint, VoxelModelInstance>()
+                                        VisualModel = _voxelModelManager.GetModel(entity.ModelName), //Get the model from the VoxelModelManager
+                                        Instances = new Dictionary<uint, VoxelModelInstance>()       //Create a new dico of modelInstance  
                                     };
 
-                    if (instances.VisualModel != null)
+                    //If the voxel model was send back by the manager, create the Mesh from it (Vx and idx buffers)
+                    if (modelWithInstances.VisualModel != null)
                     {
                         // todo: probably do this in another thread
-                        instances.VisualModel.BuildMesh();
+                        modelWithInstances.VisualModel.BuildMesh();
                     }
-                    _models.Add(entity.ModelName, instances);
+                    _models.Add(entity.ModelName, modelWithInstances);
                 }
 
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
                 _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
                 DynamicEntities.Add(newEntity);
 
-                if (instances.VisualModel != null)
+                //If the Model do have a Voxel Model (Search by Name)
+                if (modelWithInstances.VisualModel != null)
                 {
-                    var instance = new VoxelModelInstance(instances.VisualModel.VoxelModel);
-                    instances.Instances.Add(entity.DynamicId, instance);
+                    //Create a new Instance of the Model
+                    var instance = new VoxelModelInstance(modelWithInstances.VisualModel.VoxelModel);
+                    modelWithInstances.Instances.Add(entity.DynamicId, instance);
                     _dynamicEntitiesDico[entity.DynamicId].ModelInstance = instance;
                 }
                 else
                 {
-                    instances.Instances.Add(entity.DynamicId, null);
+                    //Add a new instance for the model, but without Voxel Body (=null instance)
+                    modelWithInstances.Instances.Add(entity.DynamicId, null);
                 }
 
                 OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });

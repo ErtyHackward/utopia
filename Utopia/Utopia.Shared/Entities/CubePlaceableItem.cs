@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Base class for items that can be placed into a world cube
     /// </summary>
-    public abstract class CubePlaceableSpriteItem : SpriteItem, ITool, IWorldIntercatingEntity
+    public abstract class CubePlaceableItem : Item, ITool, IWorldIntercatingEntity
     {
         /// <summary>
         /// Gets landscape manager, this field is injected

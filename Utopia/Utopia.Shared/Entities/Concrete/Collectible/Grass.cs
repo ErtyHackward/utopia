@@ -6,7 +6,7 @@ using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Grass : CubePlaceableSpriteItem, IBlockLinkedEntity
+    public class Grass : CubePlaceableItem, IBlockLinkedEntity
     {
         #region Private properties
         #endregion
@@ -50,7 +50,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             Type = EntityType.Static;
             UniqueName = DisplayName;
             Size = new Vector3(0.7f, 0.7f, 0.7f);
-            Format = SpriteFormat.Cross;
+            ModelName = "Grass1";
         }
 
         #region Public methods

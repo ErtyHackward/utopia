@@ -10,7 +10,7 @@ namespace Realms.Shared.Tools
     /// and eventually to show the carving tool itself in world, it's surely too small to be a voxel item
     /// maybe it will become a voxel item some day in fact ;)
     /// </summary>
-    public class Carver : SpriteItem, IGameStateTool
+    public class Carver : Item, IGameStateTool
     {
         public override ushort ClassId
         {
@@ -36,7 +36,6 @@ namespace Realms.Shared.Tools
         public override EquipmentSlotType AllowedSlots
         {
             get { return EquipmentSlotType.LeftHand; }
-            set { throw new NotSupportedException(); }
         }
 
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)

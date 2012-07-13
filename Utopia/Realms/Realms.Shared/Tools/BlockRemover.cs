@@ -10,7 +10,7 @@ using Utopia.Shared.Entities.Concrete;
 
 namespace Realms.Shared.Tools
 {
-    public abstract class BlockRemover : VoxelItem, ITool, IWorldIntercatingEntity
+    public abstract class BlockRemover : Item, ITool, IWorldIntercatingEntity
     {
         protected HashSet<byte> RemoveableCubeIds = new HashSet<byte>();
 

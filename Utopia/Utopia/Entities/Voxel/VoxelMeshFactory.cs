@@ -619,9 +619,7 @@ namespace Utopia.Entities.Voxel
             var vb = new VertexBuffer<VertexVoxel>(_d3DEngine.Device, vertice.Count,
                                                      VertexVoxel.VertexDeclaration,
                                                      PrimitiveTopology.TriangleList,
-                                                     "VoxelMeshFactory_VB",
-                                                     ResourceUsage.Default,
-                                                     10);
+                                                     "VoxelMeshFactory_VB");
             if(vertice.Count > 0)
                 vb.SetData(_d3DEngine.ImmediateContext ,vertice.ToArray());
             return vb;

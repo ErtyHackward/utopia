@@ -52,7 +52,6 @@ namespace Utopia.Entities.Voxel
 
             if (wrapped.ModelInstance == null)
                 return;
-            
 
             var model = manager.GetModel(wrapped.ModelName);
 

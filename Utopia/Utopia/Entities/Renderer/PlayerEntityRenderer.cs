@@ -159,12 +159,14 @@ namespace Utopia.Entities.Renderer
                 
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
-                _voxelEffect.CBPerFrame.Values.LightColor = _modelLight.ValueInterp;
                 _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
-                _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
+
+                _voxelEffect.CBPerModel.Values.LightColor = _modelLight.ValueInterp;
+                _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
+                _voxelEffect.CBPerModel.IsDirty = true;
 
                 _model.Draw(context, _voxelEffect, _playerModelInstance);
             }
