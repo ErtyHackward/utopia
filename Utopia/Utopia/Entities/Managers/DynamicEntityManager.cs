@@ -278,8 +278,16 @@ namespace Utopia.Entities.Managers
 
         public void RemoveEntityById(uint entityId,bool dispose=true)
         {
-            if (_dynamicEntitiesDico.ContainsKey(entityId))
+            VisualDynamicEntity entity;
+            if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
             {
+                ModelAndInstances instances;
+                if (!_models.TryGetValue(entity.VisualEntity.VoxelEntity.ModelName, out instances))
+                {
+                    throw new InvalidOperationException("we have no such model");
+                }
+                instances.Instances.Remove(entityId);
+                
                 VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
                 DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
