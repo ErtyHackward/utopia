@@ -181,7 +181,7 @@ namespace Utopia.Entities.Voxel
                     effect.CBPerModel.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
                     effect.CBPerModel.IsDirty = true;
                 }
-
+                
                 Quaternion rotation;
                 if (_model.Parts[i].IsHead)
                 {
@@ -189,13 +189,13 @@ namespace Utopia.Entities.Voxel
                     var move = (bb.Maximum - bb.Minimum) / 2;
                     rotation = instance.HeadRotation;
                     rotation.Invert();
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.Transform);
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.GetTransformation());
                 }
                 else
                 {
                     rotation = instance.Rotation;
                     rotation.Invert();
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.Transform * Matrix.RotationQuaternion(rotation));
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation));
                 }
                 
                 effect.CBPerPart.IsDirty = true;
