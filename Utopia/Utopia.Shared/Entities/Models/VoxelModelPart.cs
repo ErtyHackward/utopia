@@ -15,12 +15,12 @@ namespace Utopia.Shared.Entities.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Indicates if this part is the head
+        /// Indicates if this part is the head, if true then played head rotation will be applied to the part
         /// </summary>
         public bool IsHead { get; set; }
 
         /// <summary>
-        /// Indicates if this part is the arm
+        /// Indicates if this part is the arm. Equipped tool will be displayed at the arm palm point
         /// </summary>
         public bool IsArm { get; set; }
 
