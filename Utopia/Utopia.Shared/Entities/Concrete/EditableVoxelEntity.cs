@@ -3,7 +3,7 @@ using Utopia.Shared.Entities.Inventory;
 namespace Utopia.Shared.Entities.Concrete
 {
     //dont implement this one on server for now its merely a placeholder for having soemthing not abstract
-    public class EditableVoxelEntity : VoxelItem
+    public class EditableVoxelEntity : Item
     {
         public override ushort ClassId
         {

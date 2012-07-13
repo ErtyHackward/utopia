@@ -69,7 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Items\GoldCoin.cs" />
     <Compile Include="Items\Torch.cs" />
     <Compile Include="RealmsEntityClassId.cs" />
     <Compile Include="RealmsEntityFactory.cs" />
@@ -77,7 +76,6 @@
     <Compile Include="Tools\Annihilator.cs" />
     <Compile Include="Tools\BlockRemover.cs" />
     <Compile Include="Tools\Carver.cs" />
-    <Compile Include="Tools\Editor.cs" />
     <Compile Include="Tools\Shovel.cs" />
   </ItemGroup>
   <ItemGroup>

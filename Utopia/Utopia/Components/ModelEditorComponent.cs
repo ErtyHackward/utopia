@@ -1994,12 +1994,13 @@ namespace Utopia.Components
                 direction.Normalize();
                 _voxelEffect.Begin(context);
                 _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
-                _voxelEffect.CBPerFrame.Values.LightColor = new Color3(1, 1, 1);
                 _voxelEffect.CBPerFrame.Values.LightDirection = direction;
-                _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.IsDirty = true;
-                _voxelEffect.Apply(context);
+
+                _voxelEffect.CBPerModel.Values.LightColor = new Color3(1, 1, 1);
+                _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(_transform);
+                _voxelEffect.CBPerModel.IsDirty = true;
 
                 _visualVoxelModel.Draw(context, _voxelEffect, _instance);
             }
@@ -2020,7 +2021,6 @@ namespace Utopia.Components
 
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 
-
                 var model = _visualVoxelModel.VoxelModel;
                 var visualParts = _visualVoxelModel.VisualVoxelParts;
 
@@ -2039,10 +2039,8 @@ namespace Utopia.Components
                     var ib = visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];
 
                     _voxelEffect.Begin(context);
-                    _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                     _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                     _voxelEffect.CBPerFrame.IsDirty = true;
-                    _voxelEffect.Apply(context);
 
                     vb.SetToDevice(context, 0);
                     ib.SetToDevice(context, 0);
@@ -2050,8 +2048,10 @@ namespace Utopia.Components
                     if (model.Parts[i].ColorMapping != null)
                     {
                         _voxelEffect.CBPerModel.Values.ColorMapping = model.Parts[i].ColorMapping.BlockColors;
-                        _voxelEffect.CBPerModel.IsDirty = true;
                     }
+
+                    _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(_transform);
+                    _voxelEffect.CBPerModel.IsDirty = true;
 
                     _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation());
                     _voxelEffect.CBPerPart.IsDirty = true;
@@ -2265,7 +2265,6 @@ namespace Utopia.Components
                 var ib = visualParts[SelectedPartIndex].IndexBuffers[SelectedFrameIndex];
 
                 _voxelEffect.Begin(context);
-                _voxelEffect.CBPerFrame.Values.World = Matrix.Transpose(_transform);
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.Values.LightDirection = new Vector3(1, 1, 1);
                 _voxelEffect.CBPerFrame.IsDirty = true;
@@ -2277,17 +2276,15 @@ namespace Utopia.Components
                 if (model.Parts[SelectedPartIndex].ColorMapping != null)
                 {
                     _voxelEffect.CBPerModel.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
-                    _voxelEffect.CBPerModel.IsDirty = true;
                 }
+                _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(_transform);
+                _voxelEffect.CBPerModel.IsDirty = true;
 
                 _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
                 _voxelEffect.CBPerPart.IsDirty = true;
                 _voxelEffect.Apply(context);
 
                 context.DrawIndexed(ib.IndicesCount, 0, 0);
-
-                
-
             }
         }
         #endregion

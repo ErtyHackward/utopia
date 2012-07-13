@@ -9,7 +9,7 @@ using Utopia.Shared.Structs;
 
 namespace Utopia.Tests
 {
-    public class Shovel : VoxelItem
+    public class Shovel : Item
     {
         public override int MaxStackSize
         {
@@ -27,7 +27,7 @@ namespace Utopia.Tests
         }
     }
 
-    public class GoldCoin : SpriteItem
+    public class GoldCoin : Item
     {
         public override int MaxStackSize
         {

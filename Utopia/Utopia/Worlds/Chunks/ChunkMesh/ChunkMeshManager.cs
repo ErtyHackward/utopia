@@ -11,7 +11,6 @@ using Utopia.Worlds.Cubes;
 using Utopia.Entities;
 using System.Collections.Generic;
 using SharpDX;
-using Utopia.Entities.Sprites;
 using Ninject;
 using Utopia.Shared.Enums;
 using Utopia.Shared.Settings;
@@ -74,7 +73,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
             chunk.OnChunkMeshUpdated();
 
-            GenerateStaticEntitiesMesh(chunk);
+            //GenerateStaticEntitiesMesh(chunk);
         }
 
         private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)
@@ -245,193 +244,193 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             }
         }
 
-        private void GenerateStaticEntitiesMesh(VisualChunk chunk)
-        {
-            chunk.StaticSpritesVertices.Clear();
-            chunk.StaticSpritesIndices.Clear();
-            //Loop trhough all Visual Entity and create meshes from them.
-            foreach (VisualSpriteEntity SpriteEntities in chunk.VisualSpriteEntities)
-            {
-                GenerateEntitySprite(chunk, chunk.StaticSpritesVertices, chunk.StaticSpritesIndices, SpriteEntities.SpriteEntity.Format, SpriteEntities);
-            }
-        }
+        //private void GenerateStaticEntitiesMesh(VisualChunk chunk)
+        //{
+        //    chunk.StaticSpritesVertices.Clear();
+        //    chunk.StaticSpritesIndices.Clear();
+        //    //Loop trhough all Visual Entity and create meshes from them.
+        //    foreach (VisualSpriteEntity SpriteEntities in chunk.VisualSpriteEntities)
+        //    {
+        //        GenerateEntitySprite(chunk, chunk.StaticSpritesVertices, chunk.StaticSpritesIndices, SpriteEntities.SpriteEntity.Format, SpriteEntities);
+        //    }
+        //}
 
-        private void GenerateEntitySprite(VisualChunk chunk, List<VertexSprite3D> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
-        {
-            Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
-            int baseIndex = vertices.Count;
+        //private void GenerateEntitySprite(VisualChunk chunk, List<VertexSprite3D> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
+        //{
+        //    Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
+        //    int baseIndex = vertices.Count;
 
-           Vector3 normalSize = sprite.SpriteEntity.Size;
-           Vector3 normalHalfSize = new Vector3(normalSize.X / 2, normalSize.Y, normalSize.Z / 2);
-           Vector3 normalQuartSize = new Vector3(normalSize.X / 4, normalSize.Y, normalSize.Z / 4);
-           Vector4B biomeInfo = new Vector4B();
-           if (sprite.SpriteEntity is IBlockLinkedEntity)
-           {
-               //This is working only if the linked cube is inside the same chunk as the entity. 
-               Vector3I linkedCubeWorldPosition = ((IBlockLinkedEntity)sprite.SpriteEntity).LinkedCube;
-               Vector2I InChunkPosition = new Vector2I(linkedCubeWorldPosition.X - chunk.ChunkPositionBlockUnit.X, linkedCubeWorldPosition.Z - chunk.ChunkPositionBlockUnit.Y);
-               var columnInfo = chunk.BlockData.GetColumnInfo(InChunkPosition);
-               biomeInfo.X = columnInfo.Moisture;
-               biomeInfo.Y = columnInfo.Temperature; 
-           }
-            switch (spriteFormat)
-            {
-                case SpriteFormat.Single:
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //   Vector3 normalSize = sprite.SpriteEntity.Size;
+        //   Vector3 normalHalfSize = new Vector3(normalSize.X / 2, normalSize.Y, normalSize.Z / 2);
+        //   Vector3 normalQuartSize = new Vector3(normalSize.X / 4, normalSize.Y, normalSize.Z / 4);
+        //   Vector4B biomeInfo = new Vector4B();
+        //   if (sprite.SpriteEntity is IBlockLinkedEntity)
+        //   {
+        //       //This is working only if the linked cube is inside the same chunk as the entity. 
+        //       Vector3I linkedCubeWorldPosition = ((IBlockLinkedEntity)sprite.SpriteEntity).LinkedCube;
+        //       Vector2I InChunkPosition = new Vector2I(linkedCubeWorldPosition.X - chunk.ChunkPositionBlockUnit.X, linkedCubeWorldPosition.Z - chunk.ChunkPositionBlockUnit.Y);
+        //       var columnInfo = chunk.BlockData.GetColumnInfo(InChunkPosition);
+        //       biomeInfo.X = columnInfo.Moisture;
+        //       biomeInfo.Y = columnInfo.Temperature; 
+        //   }
+        //    switch (spriteFormat)
+        //    {
+        //        case SpriteFormat.Single:
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
-                    break;
-                case SpriteFormat.Billboard:
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 4), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), normalSize, biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 1), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), normalSize, biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 3), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), normalSize, biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 2), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), normalSize, biomeInfo));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            break;
+        //        case SpriteFormat.Billboard:
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 4), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), normalSize, biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 1), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), normalSize, biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 3), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), normalSize, biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X, spriteLocation.Y, spriteLocation.Z, 2), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), normalSize, biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
-                    break;
-                case SpriteFormat.Cross:
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            break;
+        //        case SpriteFormat.Cross:
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
                     
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    baseIndex += 4;
+        //            baseIndex += 4;
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
-                    break;
-                case SpriteFormat.Triangle:
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            break;
+        //        case SpriteFormat.Triangle:
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    baseIndex += 4;
+        //            baseIndex += 4;
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    baseIndex += 4;
+        //            baseIndex += 4;
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    break;
-                case SpriteFormat.Quad:
+        //            break;
+        //        case SpriteFormat.Quad:
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    baseIndex += 4;
+        //            baseIndex += 4;
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalHalfSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalQuartSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    baseIndex += 4;
+        //            baseIndex += 4;
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X + normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
 
-                    baseIndex += 4;
+        //            baseIndex += 4;
 
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
-                    vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z - normalHalfSize.Z, 0), sprite.Color, new Vector3(0.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 1.0f, sprite.spriteTextureId), biomeInfo));
+        //            vertices.Add(new VertexSprite3D(new Vector4(spriteLocation.X - normalQuartSize.X, spriteLocation.Y + normalSize.Y, spriteLocation.Z + normalHalfSize.Z, 0), sprite.Color, new Vector3(1.0f, 0.0f, sprite.spriteTextureId), biomeInfo));
 
-                    indices.Add((ushort)(baseIndex + 0));
-                    indices.Add((ushort)(baseIndex + 1));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 3));
-                    indices.Add((ushort)(baseIndex + 2));
-                    indices.Add((ushort)(baseIndex + 1));
-                    break;
-                default:
-                    break;
-            }
-        }
+        //            indices.Add((ushort)(baseIndex + 0));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 3));
+        //            indices.Add((ushort)(baseIndex + 2));
+        //            indices.Add((ushort)(baseIndex + 1));
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
 
         #endregion
     }

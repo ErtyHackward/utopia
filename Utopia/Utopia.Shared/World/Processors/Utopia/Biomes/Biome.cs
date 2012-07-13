@@ -280,47 +280,47 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 }
             }
 
-            //Flower 1 population
-            for (int i = 0; i < biome.Flower1Entities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.Flower1Entities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+            ////Flower 1 population
+            //for (int i = 0; i < biome.Flower1Entities.EntityPerChunk; i++)
+            //{
+            //    if (rnd.NextDouble() <= biome.Flower1Entities.ChanceOfSpawning)
+            //    {
+            //        //Get Rnd chunk Location.
+            //        int x = rnd.Next(0, 16);
+            //        int z = rnd.Next(0, 16);
+            //        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower1Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
-                }
-            }
+            //        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower1Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+            //    }
+            //}
 
-            //Flower 2 population
-            for (int i = 0; i < biome.Flower2Entities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.Flower2Entities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+            ////Flower 2 population
+            //for (int i = 0; i < biome.Flower2Entities.EntityPerChunk; i++)
+            //{
+            //    if (rnd.NextDouble() <= biome.Flower2Entities.ChanceOfSpawning)
+            //    {
+            //        //Get Rnd chunk Location.
+            //        int x = rnd.Next(0, 16);
+            //        int z = rnd.Next(0, 16);
+            //        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower2Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
-                }
-            }
+            //        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower2Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+            //    }
+            //}
 
-            //Flower 3 population
-            for (int i = 0; i < biome.Flower3Entities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.Flower3Entities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+            ////Flower 3 population
+            //for (int i = 0; i < biome.Flower3Entities.EntityPerChunk; i++)
+            //{
+            //    if (rnd.NextDouble() <= biome.Flower3Entities.ChanceOfSpawning)
+            //    {
+            //        //Get Rnd chunk Location.
+            //        int x = rnd.Next(0, 16);
+            //        int z = rnd.Next(0, 16);
+            //        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
-                }
-            }
+            //        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+            //    }
+            //}
         }
         #endregion
 

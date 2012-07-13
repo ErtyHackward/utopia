@@ -13,6 +13,7 @@ using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using UtopiaContent.Effects.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -25,7 +26,8 @@ namespace Utopia.Worlds.Chunks
         #region private variables
         private HLSLTerran _terraEffect;
         private HLSLLiquid _liquidEffect;
-        private HLSLStaticEntitySprite _staticSpriteEffect;
+        //private HLSLStaticEntitySprite _staticSpriteEffect;
+        private HLSLVoxelModel _voxelModelEffect;
         private int _chunkDrawByFrame;
         private ShaderResourceView _terra_View;
         private ShaderResourceView _spriteTexture_View;
@@ -183,26 +185,12 @@ namespace Utopia.Worlds.Chunks
         private void DrawStaticEntities(DeviceContext context)
         {
             VisualChunk chunk;
-            Matrix worldFocus = Matrix.Identity;
 
-            _staticSpriteEffect.Begin(context);
-            _staticSpriteEffect.CBPerFrameLocal.Values.WorldFocus = Matrix.Transpose(_worldFocusManager.CenterOnFocus(ref MMatrix.Identity));
-
-            // Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
-            //    angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0 / D3DX_PI);
-
-            //    // Convert rotation into radians.
-            //    rotation = (float)angle * 0.0174532925f;
-            //Use the rotation to first rotate the world matrix accordingly, and then translate to the position of the billboard in the world.
-
-            //    // Setup the rotation the billboard at the origin using the world matrix.
-            //    D3DXMatrixRotationY(&worldMatrix, rotation);
-
-            _staticSpriteEffect.CBPerFrameLocal.Values.View = Matrix.RotationQuaternion(_camManager.ActiveCamera.YAxisOrientation.ValueInterp);
-            _staticSpriteEffect.CBPerFrameLocal.Values.WindPower = _weather.Wind.FlatWindFlowNormalizedWithNoise;
-            _staticSpriteEffect.CBPerFrameLocal.Values.KeyFrameAnimation = (float)_weather.Wind.KeyFrameAnimation;
-            _staticSpriteEffect.CBPerFrameLocal.IsDirty = true;
-            _staticSpriteEffect.Apply(context);
+            _voxelModelEffect.Begin(context);
+            _voxelModelEffect.CBPerFrame.Values.LightIntensity = 1f;
+            _voxelModelEffect.CBPerFrame.Values.LightDirection = _skydome.LightDirection;
+            _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelModelEffect.CBPerFrame.IsDirty = true;
 
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
@@ -212,7 +200,16 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (!chunk.isFrustumCulled)
                     {
-                        chunk.DrawStaticEntities(context);
+
+                        //For each Voxel Items in the chunk
+                        foreach (var staticItem in chunk.VisualVoxelEntities)
+                        {
+                            _voxelModelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * staticItem.World);
+                            _voxelModelEffect.CBPerModel.Values.LightColor = _skydome.SunColor; //To be adapted with taking into account the position !
+                            _voxelModelEffect.CBPerModel.IsDirty = true;
+
+                            staticItem.VisualVoxelModel.Draw(context, _voxelModelEffect, staticItem.VoxelEntity.ModelInstance);
+                        }
                     }
                 }
             }
@@ -248,12 +245,13 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.BiomesColors.Value = _biomesColors_View;
             _liquidEffect.AnimatedTextures.Value = _textureAnimation_View;
 
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-            _staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-            _staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
-            _staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-            _staticSpriteEffect.BiomesColors.Value = _biomesColors_View;
+            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
+            //_staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            //_staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
+            //_staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
+            //_staticSpriteEffect.BiomesColors.Value = _biomesColors_View;
 
+            _voxelModelEffect = new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
 
         }
 
@@ -268,7 +266,8 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.Dispose();
             _terraEffect.Dispose();
             _spriteTexture_View.Dispose();
-            _staticSpriteEffect.Dispose();
+            //_staticSpriteEffect.Dispose();
+            _voxelModelEffect.Dispose();
             _textureAnimation_View.Dispose();
         }
         #endregion

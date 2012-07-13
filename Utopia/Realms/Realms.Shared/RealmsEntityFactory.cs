@@ -18,8 +18,6 @@ namespace Realms.Shared
             {
                 case RealmsEntityClassId.Annihilator: return new Annihilator();
                 case RealmsEntityClassId.Shovel: return new Shovel();
-                case RealmsEntityClassId.GoldCoin: return new GoldCoin();
-                case RealmsEntityClassId.Editor: return new Editor();
                 case RealmsEntityClassId.Carver: return new Carver();
                 case RealmsEntityClassId.Torch: return new Torch();
             }

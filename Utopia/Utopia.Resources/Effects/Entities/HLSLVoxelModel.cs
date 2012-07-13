@@ -19,28 +19,28 @@ namespace UtopiaContent.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 160)]
+        [StructLayout(LayoutKind.Explicit, Size = 96)]
         public struct CBPerFrameStructure
         {
             [FieldOffset(0)]
-            public Matrix World;
-            [FieldOffset(64)]
             public Matrix ViewProjection;
-            [FieldOffset(128)]
-            public Color3 LightColor;
-            [FieldOffset(140)]
-            public float FogDistance;
-            [FieldOffset(144)]
+            [FieldOffset(64)]
             public Vector3 LightDirection;
-            [FieldOffset(156)]
+            [FieldOffset(76)]
             public float LightIntensity;
+            [FieldOffset(80)]
+            public float FogDistance;
         }
 
-        [StructLayout(LayoutKind.Explicit, Size = 1024)]
+        [StructLayout(LayoutKind.Explicit, Size = 1104)]
         public struct CBPerModelStructure
         {
             [FieldOffset(0), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
             public Color4[] ColorMapping; //64 values
+            [FieldOffset(1024)]
+            public Matrix World;
+            [FieldOffset(1088)]
+            public Color3 LightColor;
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 64)]

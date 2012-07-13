@@ -139,6 +139,10 @@ namespace Utopia.Entities.Voxel
 
                     part.VertexBuffers[j] = _voxelMeshFactory.InitBuffer(vertices);
                     part.IndexBuffers[j] = _voxelMeshFactory.InitBuffer(indices);
+
+                    //part.VertexBuffers[j].SetToDevice(context, 0);
+                    //part.IndexBuffers[j].SetToDevice(context, 0);
+
                     part.BoundingBoxes[j] = new BoundingBox(new Vector3(), _model.Parts[i].Frames[j].BlockData.ChunkSize);
                 }
                 
@@ -174,6 +178,8 @@ namespace Utopia.Entities.Voxel
             for (int i = 0; i < state.PartsStates.Count; i++)
             {
                 var voxelModelPartState = state.PartsStates[i];
+
+                if (_visualParts[i] == null) continue;
 
                 var vb = _visualParts[i].VertexBuffers[voxelModelPartState.ActiveFrame];
                 var ib = _visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];

@@ -160,7 +160,9 @@ namespace Utopia.Entities.Voxel
             {
                 foreach (var voxelModel in _storage.Enumerate())
                 {
-                    _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, _voxelMeshFactory));
+                    var vmodel = new VisualVoxelModel(voxelModel, _voxelMeshFactory);
+                    vmodel.BuildMesh(); //Build the mesh of all local models
+                    _models.Add(voxelModel.Name, vmodel);
                 }
             }
             _initialized = true;

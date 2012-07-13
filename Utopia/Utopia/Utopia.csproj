@@ -135,12 +135,10 @@
     <Compile Include="Entities\Managers\Interfaces\IDynamicEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntitiesRenderer.cs" />
     <Compile Include="Entities\Managers\Interfaces\IPickingRenderer.cs" />
-    <Compile Include="Entities\Managers\Interfaces\IStaticSpriteEntityRenderer.cs" />
     <Compile Include="Entities\Renderer\PickingRenderer.cs" />
     <Compile Include="Entities\Renderer\PlayerEntityRenderer.cs" />
     <Compile Include="Entities\VisualDynamicEntity.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.cs" />
-    <Compile Include="Entities\Sprites\VisualSpriteEntity.cs" />
     <Compile Include="Entities\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
     <Compile Include="Entities\Voxel\IVisualEntityContainer.cs" />

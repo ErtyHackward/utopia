@@ -101,7 +101,7 @@ namespace Utopia.Entities.Managers
                     Debug.WriteLine("CollectsurroundingStaticEntities bug, fix me please");
                     continue;
                 }
-                foreach (var entity in chunk.VisualSpriteEntities)
+                foreach (var entity in chunk.VisualVoxelEntities)
                 {
                     //Add entity only if at <= 10 block distance !
                     if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)

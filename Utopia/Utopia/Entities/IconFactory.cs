@@ -109,27 +109,9 @@ namespace Utopia.Entities
                 textureArrayIndex = cubeId - 1;
                 return;
             }
-            else if (item is SpriteItem)
+            else if (item is Item)
             {
-                texture = _iconTextureArray;
-                var spriteItem = (SpriteItem)item;
-                var entityProfile = GameSystemSettings.Current.Settings.EntityProfile[item.ClassId];
-
-                textureArrayIndex = _nbrCubeIcon;
-
-                if (entityProfile.NbrGrowSprites > 0)
-                {
-                    textureArrayIndex += entityProfile.SpriteID + ((IGrowEntity)item).GrowPhase;
-                }
-                else
-                {
-                    textureArrayIndex += entityProfile.SpriteID;
-                }
-                return;
-            }
-            else if (item is VoxelItem)
-            {
-                VoxelItem voxelItem = item as VoxelItem;
+                Item voxelItem = item as Item;
 
                 //2 options : 
                 // option 1 :  draw voxelModel in a render target texture (reuse/pool while unchanged)

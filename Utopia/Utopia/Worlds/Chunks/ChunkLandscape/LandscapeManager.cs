@@ -14,10 +14,13 @@ using Utopia.Network;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.Storage.Structs;
 using Ninject;
-using Utopia.Entities.Sprites;
 using S33M3CoreComponents.Timers;
 using S33M3DXEngine.Threading;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Inventory;
+using Utopia.Entities.Voxel;
+using Utopia.Shared.Entities.Interfaces;
+using SharpDX;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -31,6 +34,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
         private IChunkStorageManager _chunkStorageManager;
         private TimerManager.GameTimer _timer;
+        private VoxelModelManager _voxelModelManager;
         #endregion
 
 
@@ -43,9 +47,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         public EntityFactory EntityFactory { get; set; }
 
-        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager)
+        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager, VoxelModelManager voxelModelManager)
         {
             _chunkStorageManager = chunkStorageManager;
+            _voxelModelManager = voxelModelManager;
 
             _server = server;
             _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
@@ -247,9 +252,21 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             target.SetNewEntityCollection(source.Entities);
 
             //Create the Sprite Entities
-            foreach (var spriteEntity in source.Entities.Enumerate<SpriteEntity>())
+            foreach (var voxelEntity in source.Entities.Enumerate<IVoxelEntity>())
             {
-                target.VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
+                //Create the Voxel Model Instance for the Item
+                VisualVoxelModel model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+                if (model != null && voxelEntity.ModelInstance == null)
+                {
+                    voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
+                    VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+                    visualVoxelEntity.World = Matrix.Translation(visualVoxelEntity.Position.AsVector3());
+                    if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
+                    {
+                        visualVoxelEntity.VisualVoxelModel.BuildMesh();
+                    }
+                    target.VisualVoxelEntities.Add(visualVoxelEntity);
+                }
             }
             
             source.Entities.IsDirty = false;
