@@ -5,7 +5,7 @@ using Utopia.Shared.Interfaces;
 namespace Utopia.Shared.Entities.Models
 {
     /// <summary>
-    /// Contains a layout of single part of the model and current active frame
+    /// Contains a layout of a single part of the model and a current active frame
     /// </summary>
     public class VoxelModelPartState : IBinaryStorable
     {
@@ -18,6 +18,11 @@ namespace Utopia.Shared.Entities.Models
         /// Frame transformation
         /// </summary>
         public Matrix Transform;
+
+        /// <summary>
+        /// Optional palm tranformation. Specifies the location of the tool equipped. Only for arm
+        /// </summary>
+        public Matrix? PalmTransform;
 
         /// <summary>
         /// Current part bounding box
@@ -40,12 +45,24 @@ namespace Utopia.Shared.Entities.Models
         {
             writer.Write(ActiveFrame);
             writer.Write(Transform);
+            writer.Write(PalmTransform.HasValue);
+            if (PalmTransform.HasValue)
+            {
+                writer.Write(PalmTransform.Value);
+            }
         }
 
         public void Load(BinaryReader reader)
         {
             ActiveFrame = reader.ReadByte();
             Transform = reader.ReadMatrix();
+            bool havePalmTransform = reader.ReadBoolean();
+
+            if (havePalmTransform)
+            {
+                PalmTransform = reader.ReadMatrix();
+            }
+
         }
     }
 }
