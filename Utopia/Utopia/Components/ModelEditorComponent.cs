@@ -1183,7 +1183,7 @@ namespace Utopia.Components
                 foreach (var position in range)
                 {
                     var point = position + new Vector3(0.5f, 0.5f, 0.5f);
-                    if (Vector3.Distance(point, center) <= radius)
+                    if (Vector3.Distance(point, center + range.Position) <= radius)
                         frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
                 }
 
@@ -1214,12 +1214,14 @@ namespace Utopia.Components
 
                 foreach (var position in range)
                 {
-                    if (position.X == range.Position.X ||
-                        position.Y == range.Position.Y ||
-                        position.Z == range.Position.Y ||
-                        position.X == range.Max.X - 1 ||
-                        position.Y == range.Max.Y - 1 ||
-                        position.Z == range.Max.Z - 1)
+                    var match = 0;
+                    if (position.X == range.Position.X) match++;
+                    if (position.Y == range.Position.Y) match++;
+                    if (position.Z == range.Position.Z) match++;
+                    if (position.X == range.Max.X - 1) match++;
+                    if (position.Y == range.Max.Y - 1) match++;
+                    if (position.Z == range.Max.Z - 1) match++;
+                    if (match >= 2)
                     {
                         frame.SetBlock(position, (byte)(_selectedColorIndex + 1));
                     }
