@@ -60,8 +60,8 @@ namespace Utopia.Entities
         private void Initialize()
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
-            VisualEntity.LocalBBox.Minimum = new Vector3(-(DynamicEntity.Size.X / 2.0f), 0, -(DynamicEntity.Size.Z / 2.0f));
-            VisualEntity.LocalBBox.Maximum = new Vector3(+(DynamicEntity.Size.X / 2.0f), DynamicEntity.Size.Y, +(DynamicEntity.Size.Z / 2.0f));
+            VisualEntity.LocalBBox.Minimum = new Vector3(-(DynamicEntity.DefaultSize.X / 2.0f), 0, -(DynamicEntity.DefaultSize.Z / 2.0f));
+            VisualEntity.LocalBBox.Maximum = new Vector3(+(DynamicEntity.DefaultSize.X / 2.0f), DynamicEntity.DefaultSize.Y, +(DynamicEntity.DefaultSize.Z / 2.0f));
 
             //Set Position
             //Set the entity world position following the position received from server

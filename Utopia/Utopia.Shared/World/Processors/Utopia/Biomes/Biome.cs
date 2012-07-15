@@ -625,7 +625,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 if (isSpriteVariableSize)
                 {
                     float newSize = (float)rnd.NextDouble(0.4, 0.8);
-                    entity.Size = new SharpDX.Vector3(newSize, newSize, newSize);
+                    entity.DefaultSize = new SharpDX.Vector3(newSize, newSize, newSize);
                 }
 
                 entity.Position = new Vector3D(chunkWorldPosition.X + x + XOffset, y + 1, chunkWorldPosition.Z + z + ZOffset);

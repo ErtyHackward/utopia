@@ -749,7 +749,7 @@ namespace Utopia.Entities.Managers
         public override void Initialize()
         {
             //Compute the Eye position into the entity
-            _entityEyeOffset = new Vector3(0, Player.Size.Y / 100 * 80, 0);
+            _entityEyeOffset = new Vector3(0, Player.DefaultSize.Y / 100 * 80, 0);
 
             //Set Position
             //Set the entity world position following the position received from server

@@ -86,6 +86,11 @@ namespace Utopia.Resources.ModelComp
             }
         }
 
+        public void Update(ref BoundingBox bb)
+        {
+            BB3dworld = Matrix.Scaling(new Vector3(bb.Maximum.X - bb.Minimum.X, bb.Maximum.Y - bb.Minimum.Y, bb.Maximum.Z - bb.Minimum.Z)) * Matrix.Translation(bb.GetCenter());
+        }
+
         #region Private methods
         #endregion
 

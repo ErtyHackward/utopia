@@ -49,7 +49,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
-            Size = new Vector3(0.7f, 0.7f, 0.7f);
+            //DefaultSize = new Vector3(0.7f, 0.7f, 0.7f); //If not specified than the voxel body will be use for sizing
             ModelName = "Grass1";
         }
 

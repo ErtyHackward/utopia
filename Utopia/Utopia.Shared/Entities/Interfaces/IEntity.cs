@@ -28,7 +28,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Entity size
         /// </summary>
-        Vector3 Size { get; set; }
+        Vector3 DefaultSize { get; set; }
 
         /// <summary>
         /// Gets or sets entity position
