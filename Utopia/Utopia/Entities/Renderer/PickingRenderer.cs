@@ -73,9 +73,7 @@ namespace Utopia.Entities.Renderer
             }
             else
             {
-                Vector3 EntityWorldPosition = _pickedEntity.Entity.Position.AsVector3();
-                EntityWorldPosition.Y += _pickedEntity.Entity.Size.Y / 2.0f;
-                _pickedCube.Update(EntityWorldPosition, _pickedEntity.Entity.Size);
+                _pickedCube.Update(ref  _pickedEntity.WorldBBox);
             }
 
         }

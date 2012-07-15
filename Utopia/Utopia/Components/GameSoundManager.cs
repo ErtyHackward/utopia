@@ -245,7 +245,7 @@ namespace Utopia.Components
                     if (currentCube.Id == CubeId.StillWater && cubeUnderFeet.Id != CubeId.StillWater)
                     {
                         //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
-                        TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.Size.Y, 0));
+                        TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.DefaultSize.Y, 0));
                         if (headCube.Id == CubeId.Air)
                         {
                             List<string> sounds;

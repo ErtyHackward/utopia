@@ -260,7 +260,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 {
                     voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
                     VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
-                    visualVoxelEntity.World = Matrix.Translation(visualVoxelEntity.Position.AsVector3());
                     if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
                     {
                         visualVoxelEntity.VisualVoxelModel.BuildMesh();

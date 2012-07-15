@@ -115,7 +115,7 @@ namespace Utopia.Entities.Renderer
 
         private void SetUpRenderer()
         {
-            renderer = new BoundingBox3D(_d3DEngine, _worldFocusManager, _visualEntity.VisualEntity.Entity.Size, _dummyEntityRenderer, Colors.Red);
+            renderer = new BoundingBox3D(_d3DEngine, _worldFocusManager, _visualEntity.VisualEntity.Entity.DefaultSize, _dummyEntityRenderer, Colors.Red);
             _worldPosition = new FTSValue<Vector3D>(_visualEntity.VisualEntity.Position);
         }
 
@@ -223,7 +223,7 @@ namespace Utopia.Entities.Renderer
             Quaternion.Lerp(ref _bodyRotation.ValuePrev, ref _bodyRotation.Value, interpolationLd, out _bodyRotation.ValueInterp);
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
-            renderer.Update(_worldPosition.ValueInterp.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.Size.Y/2.0f, 0), Vector3.One);
+            renderer.Update(_worldPosition.ValueInterp.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.DefaultSize.Y/2.0f, 0), Vector3.One);
 
             if (_playerModelInstance != null)
             {

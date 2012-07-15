@@ -34,7 +34,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Entity maximum size
         /// </summary>
-        public virtual Vector3 Size { get; set; }
+        public virtual Vector3 DefaultSize { get; set; }
 
         /// <summary>
         /// Gets or sets entity position
@@ -58,7 +58,7 @@ namespace Utopia.Shared.Entities
 
             Type = (EntityType)reader.ReadByte();
 
-            Size = reader.ReadVector3();
+            DefaultSize = reader.ReadVector3();
             Position = reader.ReadVector3D();
         }
 
@@ -72,7 +72,7 @@ namespace Utopia.Shared.Entities
 
             writer.Write((byte)Type);
 
-            writer.Write(Size);
+            writer.Write(DefaultSize);
             writer.Write(Position);
         }
 

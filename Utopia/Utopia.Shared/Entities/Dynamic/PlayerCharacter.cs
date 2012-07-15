@@ -40,7 +40,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             MoveSpeed = DefaultMoveSpeed;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed
-            Size = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
+            DefaultSize = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
             
             //Default Player Voxel Body
             //Model.Blocks = new byte[1, 1, 1];
