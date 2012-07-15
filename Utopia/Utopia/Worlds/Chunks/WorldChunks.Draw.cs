@@ -30,7 +30,7 @@ namespace Utopia.Worlds.Chunks
         private HLSLVoxelModel _voxelModelEffect;
         private int _chunkDrawByFrame;
         private ShaderResourceView _terra_View;
-        private ShaderResourceView _spriteTexture_View;
+        //private ShaderResourceView _spriteTexture_View;
         private ShaderResourceView _biomesColors_View;
         private ShaderResourceView _textureAnimation_View;
         #endregion
@@ -265,7 +265,7 @@ namespace Utopia.Worlds.Chunks
             _terra_View.Dispose();
             _liquidEffect.Dispose();
             _terraEffect.Dispose();
-            _spriteTexture_View.Dispose();
+            //_spriteTexture_View.Dispose();
             //_staticSpriteEffect.Dispose();
             _voxelModelEffect.Dispose();
             _textureAnimation_View.Dispose();
