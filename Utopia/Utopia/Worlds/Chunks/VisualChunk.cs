@@ -27,6 +27,7 @@ using S33M3CoreComponents.Maths;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Entities.Voxel;
 using UtopiaContent.Effects.Entities;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -45,6 +46,7 @@ namespace Utopia.Worlds.Chunks
         private WorldChunks _worldChunkManager;
         
         private IEntityPickingManager _entityPickingManager;
+        private VoxelModelManager _voxelModelManager;
 
         #endregion
 
@@ -195,7 +197,8 @@ namespace Utopia.Worlds.Chunks
                             SingleArrayChunkContainer singleArrayContainer,
                             IEntityPickingManager entityPickingManager,
                             CameraManager<ICameraFocused> cameraManager,
-                            WorldChunks worldChunkManager)
+                            WorldChunks worldChunkManager,
+                            VoxelModelManager voxelModelManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
@@ -210,14 +213,18 @@ namespace Utopia.Worlds.Chunks
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameter;
+            _voxelModelManager = voxelModelManager;
             VisualVoxelEntities = new List<VisualVoxelEntity>();
             CubeRange = cubeRange;
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
             isExistingMesh4Drawing = false;
             Entities.CollectionDirty += Entities_CollectionDirty;
-
+            Entities.EntityAdded += Entities_EntityAdded;
+            Entities.EntityRemoved += Entities_EntityRemoved;
+            Entities.CollectionCleared += Entities_CollectionCleared;
         }
+
         #region Public methods
         
 
@@ -245,17 +252,17 @@ namespace Utopia.Worlds.Chunks
             return true;
         }
 
-        public void SetNewEntityCollection(EntityCollection newEntities)
-        {
-            if (newEntities == Entities)
-            {
-                // TODO: Fabian, why it happens? it should not be
-                //throw new InvalidOperationException();
-                return;
-            }
+        //public void SetNewEntityCollection(EntityCollection newEntities)
+        //{
+        //    if (newEntities == Entities)
+        //    {
+        //        // TODO: Fabian, why it happens? it should not be
+        //        //throw new InvalidOperationException();
+        //        return;
+        //    }
 
-            Entities.Import(newEntities);
-        }
+        //    Entities.Import(newEntities);
+        //}
 
         //Graphical Part
         public void InitializeChunkBuffers()
@@ -382,13 +389,13 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public void DrawStaticEntities(DeviceContext context, HLSLVoxelModel effect)
-        {
-            foreach (var staticItem in VisualVoxelEntities)
-            {
-                staticItem.VisualVoxelModel.Draw(context, effect, staticItem.VoxelEntity.ModelInstance);
-            }
-        }
+       //public void DrawStaticEntities(DeviceContext context, HLSLVoxelModel effect)
+        //{
+        //    foreach (var staticItem in VisualVoxelEntities)
+        //    {
+        //        staticItem.VisualVoxelModel.Draw(context, effect, staticItem.VoxelEntity.ModelInstance);
+        //    }
+        //}
 
         //Ask the Graphical card to Draw the solid faces
         //public void DrawStaticEntities(DeviceContext context)
@@ -408,29 +415,69 @@ namespace Utopia.Worlds.Chunks
         }
 #endif
 
-        public void RefreshVisualEntities()
-        {
-            //Create the Sprite Entities
-            VisualVoxelEntities.Clear();
-
-            foreach (var spriteEntity in Entities.Enumerate<Item>())
-            {
-                //VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
-            }
-
-            Entities.IsDirty = false;
-        }
-
         private void Entities_CollectionDirty(object sender, EventArgs e)
         {
-            RefreshVisualEntities();
             _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
-
-            //Change chunk state in order to rebuild the Entity collections change
-            State = ChunkState.LandscapeCreated;
-            ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-            UpdateOrder = 1;
         }
+
+        void Entities_CollectionCleared(object sender, EventArgs e)
+        {
+            foreach (IDisposable i in VisualVoxelEntities)
+            {
+                i.Dispose();
+            }
+            VisualVoxelEntities.Clear();
+        }
+
+        void Entities_EntityRemoved(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
+        {
+            //Remove the entity from Visual Model
+            VisualVoxelEntities.RemoveAll(x => x.Entity == e.Entity);
+        }
+
+        void Entities_EntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
+        {
+            IVoxelEntity voxelEntity = e.Entity as IVoxelEntity;
+
+            if (voxelEntity == null) return; //My entity is not a Voxel Entity => Not possible to render it so !!!
+
+            //Create the Voxel Model Instance for the Item
+            VisualVoxelModel model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+            if (model != null && voxelEntity.ModelInstance == null)
+            {
+                voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
+                VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+                if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
+                {
+                    visualVoxelEntity.VisualVoxelModel.BuildMesh();
+                }
+                VisualVoxelEntities.Add(visualVoxelEntity);
+            }
+        }
+
+        //public void RefreshVisualEntities()
+        //{
+        //    //Create the Sprite Entities
+        //    VisualVoxelEntities.Clear();
+
+        //    foreach (var spriteEntity in Entities.Enumerate<Item>())
+        //    {
+        //        //VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
+        //    }
+
+        //    Entities.IsDirty = false;
+        //}
+
+        //private void Entities_CollectionDirty(object sender, EventArgs e)
+        //{
+        //    RefreshVisualEntities();
+        //    _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
+
+        //    //Change chunk state in order to rebuild the Entity collections change
+        //    State = ChunkState.LandscapeCreated;
+        //    ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
+        //    UpdateOrder = 1;
+        //}
 
         #endregion
 
@@ -506,9 +553,9 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
-            //if (StaticSpritesIB != null) StaticSpritesIB.Dispose();
-            //if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
             Entities.CollectionDirty -= Entities_CollectionDirty;
+            Entities.EntityAdded -= Entities_EntityAdded;
+            Entities.EntityRemoved -= Entities_EntityRemoved;
 #if DEBUG
             _blockpickedUPEffect.Dispose();
             ChunkBoundingBoxDisplay.Dispose();

@@ -200,7 +200,6 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (!chunk.isFrustumCulled)
                     {
-
                         //For each Voxel Items in the chunk
                         foreach (var staticItem in chunk.VisualVoxelEntities)
                         {

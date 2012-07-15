@@ -141,7 +141,6 @@
     <Compile Include="Entities\Interfaces\IEntity.cs" />
     <Compile Include="Entities\Interfaces\IFeetArmor.cs" />
     <Compile Include="Entities\Interfaces\IGameStateTool.cs" />
-    <Compile Include="Entities\Interfaces\IGrowEntity.cs" />
     <Compile Include="Entities\Interfaces\IHeadArmor.cs" />
     <Compile Include="Entities\Interfaces\IItem.cs" />
     <Compile Include="Entities\Interfaces\ILegsArmor.cs" />
