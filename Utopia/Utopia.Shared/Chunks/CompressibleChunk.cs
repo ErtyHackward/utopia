@@ -147,13 +147,6 @@ namespace Utopia.Shared.Chunks
             base.BlockBufferChanged(sender, e);
         }
 
-        protected override void EntitiesCollectionDirty(object sender, EventArgs e)
-        {
-            OnBlockDataChanged();
-
-            base.EntitiesCollectionDirty(sender, e);
-        }
-
         public override void ChangeBlockDataProvider(ChunkDataProvider newProvider, bool sameData)
         {
             base.ChangeBlockDataProvider(newProvider, sameData);

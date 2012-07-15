@@ -44,6 +44,18 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
+        /// Occurs when collection is cleared
+        /// </summary>
+        public event EventHandler CollectionCleared;
+
+        protected void OnCollectionCleared()
+        {
+            if (_initialisation) return;
+            var handler = CollectionCleared;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Occurs when some static entity was removed
         /// </summary>
         public event EventHandler<EntityCollectionEventArgs> EntityRemoved;
@@ -94,6 +106,7 @@ namespace Utopia.Shared.Entities
                 {
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = 0 });
                 }
                 _initialisation = false;
             }
@@ -266,6 +279,7 @@ namespace Utopia.Shared.Entities
                 }
 
                 _entities.Clear();
+                OnCollectionCleared();
                 OnCollectionDirty();
             }
         }

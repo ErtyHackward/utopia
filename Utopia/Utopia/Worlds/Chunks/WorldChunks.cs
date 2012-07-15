@@ -86,6 +86,7 @@ namespace Utopia.Worlds.Chunks
         private StaggingBackBuffer _solidBackBuffer;
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
+        private VoxelModelManager _voxelModelManager;
 
         /// <summary>
         /// List of chunks that still _slowly_ appearing
@@ -150,7 +151,8 @@ namespace Utopia.Worlds.Chunks
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
                            StaggingBackBuffer solidBackBuffer,
-                           StaggingBackBuffer skyBackBuffer
+                           StaggingBackBuffer skyBackBuffer,
+                           VoxelModelManager voxelModelManager
             )
         {
             _server = server;
@@ -173,6 +175,7 @@ namespace Utopia.Worlds.Chunks
             _pickingManager = pickingManager;
             _solidBackBuffer = solidBackBuffer;
             _skyBackBuffer = skyBackBuffer;
+            _voxelModelManager = voxelModelManager;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
@@ -557,7 +560,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this);
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);

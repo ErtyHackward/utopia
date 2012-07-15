@@ -129,10 +129,6 @@ namespace Utopia.Shared.Entities.Concrete
                                 if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                                 {
                                     var adder = (IItem)Factory.CreateEntity(cubeEntity.ClassId);
-                                    if (cubeEntity is IGrowEntity)
-                                    {
-                                        ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)cubeEntity).GrowPhase;
-                                    }
                                     character.Inventory.PutItem(adder);
                                 }
                             }
@@ -184,10 +180,6 @@ namespace Utopia.Shared.Entities.Concrete
             if (character != null)
             {
                 var adder = (IItem)Factory.CreateEntity(entityRemoved.ClassId);
-                if (entityRemoved is IGrowEntity)
-                {
-                    ((IGrowEntity)adder).GrowPhase = ((IGrowEntity)entityRemoved).GrowPhase;
-                }
                 character.Inventory.PutItem(adder);
             }
             return impact;

@@ -162,8 +162,10 @@ namespace Utopia.Entities.Managers
                     }
                 }
             }
-            if (pickedEntity == null) return false;
-            else return true;
+            if (pickedEntity == null) 
+                return false;
+            else 
+                return true;
         }
 
         public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)

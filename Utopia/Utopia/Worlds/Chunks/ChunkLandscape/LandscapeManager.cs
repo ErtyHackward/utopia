@@ -129,7 +129,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             
                             chunk.Decompress(EntityFactory, message.Data); //Set the data into the "Big Array"
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
-                            CreateVisualEntities(chunk, chunk);
+                            //CreateVisualEntities(chunk, chunk);
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
                             Md5Hash hash;
@@ -179,7 +179,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 chunk.Decompress(EntityFactory, data.CubeData); //Set the data into the "Big Array"
                                 _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
 
-                                CreateVisualEntities(chunk, chunk);
+                                //CreateVisualEntities(chunk, chunk);
 
                                 if (chunk.StorageRequestTicket != 0)
                                 {
@@ -244,32 +244,30 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             visualChunk.BlockData.ColumnsInfo = generatedChunk.BlockData.ColumnsInfo;
 
             //Copy the entities
-            CreateVisualEntities(generatedChunk, visualChunk);
+            visualChunk.Entities.Import(generatedChunk.Entities);
         }
 
-        private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
-        {
-            target.SetNewEntityCollection(source.Entities);
+        //private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
+        //{
+        //    target.SetNewEntityCollection(source.Entities);
 
-            //Create the Sprite Entities
-            foreach (var voxelEntity in source.Entities.Enumerate<IVoxelEntity>())
-            {
-                //Create the Voxel Model Instance for the Item
-                VisualVoxelModel model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
-                if (model != null && voxelEntity.ModelInstance == null)
-                {
-                    voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
-                    VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
-                    if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
-                    {
-                        visualVoxelEntity.VisualVoxelModel.BuildMesh();
-                    }
-                    target.VisualVoxelEntities.Add(visualVoxelEntity);
-                }
-            }
-            
-            source.Entities.IsDirty = false;
-        }
+        //    //Create the Sprite Entities
+        //    foreach (var voxelEntity in source.Entities.Enumerate<IVoxelEntity>())
+        //    {
+        //        //Create the Voxel Model Instance for the Item
+        //        VisualVoxelModel model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+        //        if (model != null && voxelEntity.ModelInstance == null)
+        //        {
+        //            voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
+        //            VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+        //            if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
+        //            {
+        //                visualVoxelEntity.VisualVoxelModel.BuildMesh();
+        //            }
+        //            target.VisualVoxelEntities.Add(visualVoxelEntity);
+        //        }
+        //    }
+        //}
         #endregion
     }
 }
