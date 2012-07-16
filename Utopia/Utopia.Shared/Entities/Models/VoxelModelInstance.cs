@@ -212,10 +212,10 @@ namespace Utopia.Shared.Entities.Models
         }
 
         /// <summary>
-        /// Updates current animation
+        /// Updates current animation, should be done before each draw
         /// </summary>
         /// <param name="timePassed"></param>
-        public void Update(long timePassed)
+        public void Interpolation(long timePassed)
         {
             if (!Playing) return;
             var ms = (int)timePassed;

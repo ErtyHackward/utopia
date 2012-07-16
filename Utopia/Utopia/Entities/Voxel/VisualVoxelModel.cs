@@ -216,6 +216,52 @@ namespace Utopia.Entities.Voxel
             }
         }
 
+        private void DrawGroup(byte activeFrame, int partIndex, IList<VoxelModelInstance> instances)
+        {
+            // create instance data block that will be passed to the shader
+            var instanceData = instances.Select(ins => new VoxelInstanceData { Transform = ins.World, LightColor = ins.LightColor }).ToArray();
+
+            // update shader instance data by model instance variables
+            for (int instanceIndex = 0; instanceIndex < instances.Count; instanceIndex++)
+            {
+                var instance = instances[instanceIndex];
+                var state = instance.State;
+                var voxelModelPartState = state.PartsStates[partIndex];
+
+
+                instanceData[instanceIndex].LightColor = instance.LightColor;
+
+                // apply rotations from the state and instance (if the head)
+                Quaternion rotation;
+                if (_model.Parts[partIndex].IsHead)
+                {
+                    var bb = _visualParts[partIndex].BoundingBoxes[activeFrame];
+                    var move = (bb.Maximum - bb.Minimum) / 2;
+                    rotation = instance.HeadRotation;
+                    rotation.Invert();
+                    instanceData[instanceIndex].Transform = Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.GetTransformation();
+                }
+                else
+                {
+                    rotation = instance.Rotation;
+                    rotation.Invert();
+                    instanceData[instanceIndex].Transform = voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation);
+                }
+
+                instanceData[instanceIndex].Transform = Matrix.Transpose(instanceData[instanceIndex].Transform * instance.World);
+            }
+
+            var vb = _visualParts[partIndex].VertexBuffers[activeFrame];
+            var ib = _visualParts[partIndex].IndexBuffers[activeFrame];
+
+            vb.SetInstancedData(_voxelMeshFactory.Engine.ImmediateContext, instanceData);
+
+            vb.SetToDevice(_voxelMeshFactory.Engine.ImmediateContext, 0);
+            ib.SetToDevice(_voxelMeshFactory.Engine.ImmediateContext, 0);
+
+            _voxelMeshFactory.Engine.ImmediateContext.DrawIndexedInstanced(ib.IndicesCount, instanceData.Length, 0, 0, 0);
+        }
+
         /// <summary>
         /// Performs instanced drawing of the group of models (should be the instances of the same model)
         /// </summary>
@@ -239,53 +285,22 @@ namespace Utopia.Entities.Voxel
             // we need to draw each part separately
             for (int partIndex = 0; partIndex < VoxelModel.Parts.Count; partIndex++)
             {
-                // group instances by active frame because they have different VB
-                var groups = from inst in instancesList group inst by inst.State.PartsStates[partIndex].ActiveFrame into g select new { FrameIndex = g.Key, Instances = g.AsEnumerable().ToArray() };
-
-                foreach (var g in groups)
+                if (VoxelModel.Parts[partIndex].Frames.Count == 1 || VoxelModel.States.Count == 1)
                 {
-                    // create instance data block that will be passed to the shader
-                    var instanceData = g.Instances.Select(ins => new VoxelInstanceData { Transform = ins.World, LightColor = ins.LightColor }).ToArray();
+                    // we have only one frame or state, so every model have the same VB
+                    DrawGroup(instancesList[0].State.PartsStates[partIndex].ActiveFrame, partIndex, instancesList);
+                }
+                else
+                {
+                    // group instances by active frame because they have different VB
+                    var groups = from inst in instancesList
+                                 group inst by inst.State.PartsStates[partIndex].ActiveFrame
+                                 into g select new {FrameIndex = g.Key, Instances = g.AsEnumerable().ToArray()};
 
-                    // update shader instance data by model instance variables
-                    for (int instanceIndex = 0; instanceIndex < g.Instances.Length; instanceIndex++)
+                    foreach (var g in groups)
                     {
-                        var instance = g.Instances[instanceIndex];
-                        var state = instance.State;
-                        var voxelModelPartState = state.PartsStates[partIndex];
-                        
-
-                        instanceData[instanceIndex].LightColor = instance.LightColor;
-
-                        // apply rotations from the state and instance (if the head)
-                        Quaternion rotation;
-                        if (_model.Parts[partIndex].IsHead)
-                        {
-                            var bb = _visualParts[partIndex].BoundingBoxes[voxelModelPartState.ActiveFrame];
-                            var move = (bb.Maximum - bb.Minimum) / 2;
-                            rotation = instance.HeadRotation;
-                            rotation.Invert();
-                            instanceData[instanceIndex].Transform = Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.GetTransformation();
-                        }
-                        else
-                        {
-                            rotation = instance.Rotation;
-                            rotation.Invert();
-                            instanceData[instanceIndex].Transform = voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation);
-                        }
-
-                        instanceData[instanceIndex].Transform = Matrix.Transpose(instanceData[instanceIndex].Transform * instance.World);
+                        DrawGroup(g.FrameIndex, partIndex, g.Instances);
                     }
-                    
-                    var vb = _visualParts[partIndex].VertexBuffers[g.FrameIndex];
-                    var ib = _visualParts[partIndex].IndexBuffers[g.FrameIndex];
-
-                    vb.SetInstancedData(_voxelMeshFactory.Engine.ImmediateContext, instanceData);
-
-                    vb.SetToDevice(context, 0);
-                    ib.SetToDevice(context, 0);
-
-                    _voxelMeshFactory.Engine.ImmediateContext.DrawIndexedInstanced(ib.IndicesCount, instanceData.Length, 0, 0, 0);
                 }
             }
         }

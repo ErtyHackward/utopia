@@ -171,7 +171,7 @@ namespace Utopia.Entities
                 ModelInstance.HeadRotation = LookAtDirection.ValueInterp;
                 ModelInstance.Rotation = DynamicEntity.BodyRotation;
 
-                ModelInstance.Update(timePassed);
+                ModelInstance.Interpolation(timePassed);
             }
         }
         #endregion
