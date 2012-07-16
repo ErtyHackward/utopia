@@ -248,16 +248,16 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         _cubesHolder.Cubes[index].EmissiveColor.A = (byte)LightValue;
                         break;
                     case LightComponent.Red:
-                        if (isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.R = (byte)((cube.EmissiveColor.R + LightValue) / 2.0f);
+                        if (cube.EmissiveColor.R >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.R = (byte)LightValue;
                         break;
                     case LightComponent.Green:
-                        if (isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.G = (byte)((cube.EmissiveColor.G + LightValue) / 2.0f);
+                        if (cube.EmissiveColor.G >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.G = (byte)LightValue;
                         break;
                     case LightComponent.Blue:
-                        if (isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.B = (byte)((cube.EmissiveColor.B + LightValue) / 2.0f);
+                        if (cube.EmissiveColor.B >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.B = (byte)LightValue;
                         break;
                 }
             }
@@ -302,6 +302,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             {
                 foreach (var voxelEntity in pair.Value)
                 {
+                    //Find the Cube where the entity is placed, and assign its color to the entity
                     voxelEntity.Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(voxelEntity.Entity.Position.X), MathHelper.Fastfloor(voxelEntity.Entity.Position.Y), MathHelper.Fastfloor(voxelEntity.Entity.Position.Z))].EmissiveColor;
                 }
             }
