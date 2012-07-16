@@ -209,7 +209,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         if (_cubesHolder.Cubes[index].EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cubeprofile.IsEmissiveColorLightSource || (borderAsLightSource && borderchunk))
                         {
-                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X,Y,Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
+                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
                             if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
                             if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
                         }
@@ -248,16 +248,16 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         _cubesHolder.Cubes[index].EmissiveColor.A = (byte)LightValue;
                         break;
                     case LightComponent.Red:
-                        if (cube.EmissiveColor.R >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.R = (byte)LightValue;
+                        if (isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.R = (byte)((cube.EmissiveColor.R + LightValue) / 2.0f);
                         break;
                     case LightComponent.Green:
-                        if (cube.EmissiveColor.G >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.G = (byte)LightValue;
+                        if (isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.G = (byte)((cube.EmissiveColor.G + LightValue) / 2.0f);
                         break;
                     case LightComponent.Blue:
-                        if (cube.EmissiveColor.B >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
-                        _cubesHolder.Cubes[index].EmissiveColor.B = (byte)LightValue;
+                        if (isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        _cubesHolder.Cubes[index].EmissiveColor.B = (byte)((cube.EmissiveColor.B + LightValue) / 2.0f);
                         break;
                 }
             }
