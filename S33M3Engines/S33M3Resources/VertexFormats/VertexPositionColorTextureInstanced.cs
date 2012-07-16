@@ -43,15 +43,15 @@ namespace S33M3Resources.Structs.Vertex
         static VertexPositionColorTextureInstanced()
         {
             // !!! The VertexDeclaration must incorporate the Fixed vertex Part !!!!
-            InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0, InputClassification.PerVertexData, 0), 
-                                                            new InputElement("TEXCOORD", 0, Format.R32G32_Float, InputElement.AppendAligned, 0, InputClassification.PerVertexData, 0), //Instead of 8 use AppendAligned
-                                                            new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, 0, 1, InputClassification.PerInstanceData, 1),  //World Matrix Row0
-                                                            new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row1
-                                                            new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row2
-                                                            new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row3
-                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1),
-                                                            new InputElement("TEXINDEX", 0, Format.R32_UInt, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
+            InputElement[] elements = new[] { 
+                new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0, InputClassification.PerVertexData, 0), 
+                new InputElement("TEXCOORD", 0, Format.R32G32_Float, InputElement.AppendAligned, 0, InputClassification.PerVertexData, 0), //Instead of 8 use AppendAligned
+                new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, 0, 1, InputClassification.PerInstanceData, 1),  //World Matrix Row0
+                new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row1
+                new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row2
+                new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row3
+                new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1),
+                new InputElement("TEXINDEX", 0, Format.R32_UInt, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
             };
 
             VertexDeclaration = new VertexDeclaration(elements);

@@ -16,6 +16,16 @@ namespace S33M3Resources.Structs
         }
 
         /// <summary>
+        /// Returns cube position based on entity position
+        /// </summary>
+        /// <param name="entityPosition"></param>
+        /// <returns></returns>
+        public static Vector3I ToCubePosition(this Vector3 entityPosition)
+        {
+            return new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z));
+        }
+
+        /// <summary>
         /// Gets the center point of the bounding box
         /// </summary>
         /// <param name="box"></param>

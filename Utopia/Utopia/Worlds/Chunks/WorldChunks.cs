@@ -102,6 +102,11 @@ namespace Utopia.Worlds.Chunks
 
         public bool ChunkNeed2BeSorted { get; set; }
 
+        /// <summary>
+        /// Gets or sets value indicating if static entities should be drawn using instancing
+        /// </summary>
+        public bool DrawStaticInstanced { get; set; }
+
         /// <summary> World parameters </summary>
         public VisualWorldParameters VisualWorldParameters { get; set; }
 
@@ -176,6 +181,8 @@ namespace Utopia.Worlds.Chunks
             _solidBackBuffer = solidBackBuffer;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
+
+            DrawStaticInstanced = true;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
@@ -693,7 +700,12 @@ namespace Utopia.Worlds.Chunks
                     if (chunk.LiquidCubeIB != null) BprimitiveCount += chunk.LiquidCubeIB.IndicesCount;
 
                 }
-                return string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices, Temperature {4:0.00}, Moisture {5:0.00}", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount, columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f);
+
+                var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices, Temperature {4:0.00}, Moisture {5:0.00}", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount, columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f);
+
+                var line1 = string.Format("Static entity draw calls {2}: {0}, time {1}", _staticEntityDrawCalls, _staticEntityDrawTime, DrawStaticInstanced ? "[INSTANCED]": "");
+
+                return string.Join("\r\n", line0, line1);
             }
             else
             {

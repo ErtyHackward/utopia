@@ -87,7 +87,7 @@ namespace Utopia.Entities.Voxel
         {
             var part = _visualParts[partIndex];
 
-            List<VertexVoxel> vertices;
+            List<VertexVoxelInstanced> vertices;
             List<ushort> indices;
 
             _voxelMeshFactory.GenerateVoxelFaces(_model.Parts[partIndex].Frames[frameIndex].BlockData, out vertices, out indices);
@@ -126,23 +126,19 @@ namespace Utopia.Entities.Voxel
             {
                 var part = new VisualVoxelPart();
                 
-                part.VertexBuffers = new VertexBuffer<VertexVoxel>[_model.Parts[i].Frames.Count];
+                part.VertexBuffers = new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>[_model.Parts[i].Frames.Count];
                 part.IndexBuffers = new IndexBuffer<ushort>[_model.Parts[i].Frames.Count];
                 part.BoundingBoxes = new BoundingBox[_model.Parts[i].Frames.Count];
 
                 for (int j = 0; j < _model.Parts[i].Frames.Count; j++)
                 {
-                    List<VertexVoxel> vertices;
+                    List<VertexVoxelInstanced> vertices;
                     List<ushort> indices;
 
                     _voxelMeshFactory.GenerateVoxelFaces(_model.Parts[i].Frames[j].BlockData, out vertices, out indices);
 
                     part.VertexBuffers[j] = _voxelMeshFactory.InitBuffer(vertices);
                     part.IndexBuffers[j] = _voxelMeshFactory.InitBuffer(indices);
-
-                    //part.VertexBuffers[j].SetToDevice(context, 0);
-                    //part.IndexBuffers[j].SetToDevice(context, 0);
-
                     part.BoundingBoxes[j] = new BoundingBox(new Vector3(), _model.Parts[i].Frames[j].BlockData.ChunkSize);
                 }
                 
@@ -158,8 +154,9 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Draws a model with default state, to perform real drawing use VoxelModelInstance class
+        /// Draws one model using its instance data
         /// </summary>
+        /// <param name="context"></param>
         /// <param name="effect"></param>
         /// <param name="instance"></param>
         public void Draw(DeviceContext context, HLSLVoxelModel effect, VoxelModelInstance instance)
@@ -171,8 +168,11 @@ namespace Utopia.Entities.Voxel
             if (_model.ColorMapping != null)
             {
                 effect.CBPerModel.Values.ColorMapping = _model.ColorMapping.BlockColors;
-                effect.CBPerModel.IsDirty = true;
             }
+
+            effect.CBPerModel.Values.World = Matrix.Transpose(instance.World);
+            effect.CBPerModel.Values.LightColor = instance.LightColor;
+            effect.CBPerModel.IsDirty = true;
 
             // draw each part of the model
             for (int i = 0; i < state.PartsStates.Count; i++)
@@ -192,7 +192,7 @@ namespace Utopia.Entities.Voxel
                     effect.CBPerModel.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
                     effect.CBPerModel.IsDirty = true;
                 }
-                
+
                 Quaternion rotation;
                 if (_model.Parts[i].IsHead)
                 {
@@ -208,11 +208,85 @@ namespace Utopia.Entities.Voxel
                     rotation.Invert();
                     effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation));
                 }
-                
+
                 effect.CBPerPart.IsDirty = true;
                 effect.Apply(context);
 
                 _voxelMeshFactory.Engine.ImmediateContext.DrawIndexed(ib.IndicesCount, 0, 0);
+            }
+        }
+
+        /// <summary>
+        /// Performs instanced drawing of the group of models (should be the instances of the same model)
+        /// </summary>
+        /// <param name="context"> </param>
+        /// <param name="effect"></param>
+        /// <param name="instances"></param>
+        public void DrawInstanced(DeviceContext context, HLSLVoxelModelInstanced effect, IEnumerable<VoxelModelInstance> instances)
+        {
+            if (!_initialized) return;
+
+            var instancesList = instances.ToArray();
+            
+            if (_model.ColorMapping != null)
+            {
+                effect.CBPerModel.Values.ColorMapping = _model.ColorMapping.BlockColors;
+                effect.CBPerModel.IsDirty = true;
+            }
+
+            effect.Apply(context);
+
+            // we need to draw each part separately
+            for (int partIndex = 0; partIndex < VoxelModel.Parts.Count; partIndex++)
+            {
+                // group instances by active frame because they have different VB
+                var groups = from inst in instancesList group inst by inst.State.PartsStates[partIndex].ActiveFrame into g select new { FrameIndex = g.Key, Instances = g.AsEnumerable().ToArray() };
+
+                foreach (var g in groups)
+                {
+                    // create instance data block that will be passed to the shader
+                    var instanceData = g.Instances.Select(ins => new VoxelInstanceData { Transform = ins.World, LightColor = ins.LightColor }).ToArray();
+
+                    // update shader instance data by model instance variables
+                    for (int instanceIndex = 0; instanceIndex < g.Instances.Length; instanceIndex++)
+                    {
+                        var instance = g.Instances[instanceIndex];
+                        var state = instance.State;
+                        var voxelModelPartState = state.PartsStates[partIndex];
+                        
+
+                        instanceData[instanceIndex].LightColor = instance.LightColor;
+
+                        // apply rotations from the state and instance (if the head)
+                        Quaternion rotation;
+                        if (_model.Parts[partIndex].IsHead)
+                        {
+                            var bb = _visualParts[partIndex].BoundingBoxes[voxelModelPartState.ActiveFrame];
+                            var move = (bb.Maximum - bb.Minimum) / 2;
+                            rotation = instance.HeadRotation;
+                            rotation.Invert();
+                            instanceData[instanceIndex].Transform = Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.GetTransformation();
+                        }
+                        else
+                        {
+                            rotation = instance.Rotation;
+                            rotation.Invert();
+                            instanceData[instanceIndex].Transform = voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation);
+                        }
+
+                        instanceData[instanceIndex].Transform = Matrix.Transpose(instanceData[instanceIndex].Transform * instance.World);
+                    }
+                    
+                    var vb = _visualParts[partIndex].VertexBuffers[g.FrameIndex];
+                    var ib = _visualParts[partIndex].IndexBuffers[g.FrameIndex];
+
+                    vb.SetInstancedData(_voxelMeshFactory.Engine.ImmediateContext, instanceData);
+
+                    vb.SetToDevice(context, 0);
+                    ib.SetToDevice(context, 0);
+
+                    _voxelMeshFactory.Engine.ImmediateContext.DrawIndexedInstanced(ib.IndicesCount, instanceData.Length, 0, 0, 0);
+                }
             }
         }
 
@@ -225,7 +299,13 @@ namespace Utopia.Entities.Voxel
     public class VisualVoxelPart
     {
         public BoundingBox[] BoundingBoxes;
-        public VertexBuffer<VertexVoxel>[] VertexBuffers;
+        public InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>[] VertexBuffers;
         public IndexBuffer<ushort>[] IndexBuffers;
+    }
+
+    public struct VoxelInstanceData
+    {
+        public Matrix Transform;
+        public Color3 LightColor;
     }
 }

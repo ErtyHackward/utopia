@@ -72,7 +72,7 @@ namespace Utopia.Components
         private VertexBuffer<VertexPosition> _directionVertexBuffer;
         private VertexBuffer<VertexPosition> _rotationVertexBuffer;
 
-        private HLSLVoxelModel _voxelEffect;
+        private HLSLVoxelModelInstanced _voxelEffect;
 
         // view parameters
         private ViewParameters _mainViewData;
@@ -523,7 +523,7 @@ namespace Utopia.Components
 
              
 
-            _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+            _voxelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
 
 
             base.LoadContent(context);
@@ -1995,16 +1995,14 @@ namespace Utopia.Components
                 var direction = new Vector3(0f, 0f, 1f);
                 direction.Normalize();
                 _voxelEffect.Begin(context);
-                _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
                 _voxelEffect.CBPerFrame.Values.LightDirection = direction;
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelEffect.CBPerFrame.IsDirty = true;
 
-                _voxelEffect.CBPerModel.Values.LightColor = new Color3(1, 1, 1);
-                _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(_transform);
-                _voxelEffect.CBPerModel.IsDirty = true;
+                _instance.LightColor = new Color3(1, 1, 1);
+                _instance.World = _transform;
 
-                _visualVoxelModel.Draw(context, _voxelEffect, _instance);
+                _visualVoxelModel.DrawInstanced(context, _voxelEffect, new[] { _instance });
             }
         }
 
@@ -2044,22 +2042,14 @@ namespace Utopia.Components
                     _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                     _voxelEffect.CBPerFrame.IsDirty = true;
 
+                    vb.SetInstancedData(context, new[] { new VoxelInstanceData { Transform = _transform * voxelModelPartState.GetTransformation(), LightColor = _instance.LightColor } });
+
                     vb.SetToDevice(context, 0);
                     ib.SetToDevice(context, 0);
 
-                    if (model.Parts[i].ColorMapping != null)
-                    {
-                        _voxelEffect.CBPerModel.Values.ColorMapping = model.Parts[i].ColorMapping.BlockColors;
-                    }
-
-                    _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(_transform);
-                    _voxelEffect.CBPerModel.IsDirty = true;
-
-                    _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation());
-                    _voxelEffect.CBPerPart.IsDirty = true;
                     _voxelEffect.Apply(context);
 
-                    context.DrawIndexed(ib.IndicesCount, 0, 0);
+                    context.DrawIndexedInstanced(ib.IndicesCount, 1, 0, 0, 0);
                 }
 
                 // draw bounding boxes
@@ -2272,21 +2262,12 @@ namespace Utopia.Components
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
 
+                vb.SetInstancedData(context, new[] { new VoxelInstanceData { Transform = _transform, LightColor = _instance.LightColor } });
+
                 vb.SetToDevice(context,0);
                 ib.SetToDevice(context,0);
 
-                if (model.Parts[SelectedPartIndex].ColorMapping != null)
-                {
-                    _voxelEffect.CBPerModel.Values.ColorMapping = model.Parts[SelectedPartIndex].ColorMapping.BlockColors;
-                }
-                _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(_transform);
-                _voxelEffect.CBPerModel.IsDirty = true;
-
-                _voxelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
-                _voxelEffect.CBPerPart.IsDirty = true;
-                _voxelEffect.Apply(context);
-
-                context.DrawIndexed(ib.IndicesCount, 0, 0);
+                context.DrawIndexedInstanced(ib.IndicesCount, 1, 0, 0, 0);
             }
         }
         #endregion

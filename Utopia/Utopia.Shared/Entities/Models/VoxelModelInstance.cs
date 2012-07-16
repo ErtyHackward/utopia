@@ -28,6 +28,17 @@ namespace Utopia.Shared.Entities.Models
         private bool _stopping;
         
         #region Properties
+
+        /// <summary>
+        /// Instance light color
+        /// </summary>
+        public Color3 LightColor { get; set; }
+
+        /// <summary>
+        /// Instance world position
+        /// </summary>
+        public Matrix World { get; set; }
+
         /// <summary>
         /// Gets a parent voxel model
         /// </summary>
@@ -120,6 +131,8 @@ namespace Utopia.Shared.Entities.Models
             _rotation = Quaternion.Identity;
             _headRotation = Quaternion.Identity;
             _animationIndex = -1;
+            LightColor = new Color3(1, 1, 1);
+            World = Matrix.Identity;
             SetParentModel(model);
         }
 

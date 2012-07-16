@@ -42,7 +42,7 @@ namespace Utopia.Entities.Managers
             public Dictionary<uint, VoxelModelInstance> Instances;  //Instanced model list
         }
         
-        private HLSLVoxelModel _voxelModelEffect;
+        private HLSLVoxelModelInstanced _voxelModelEffect;
         private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
         private readonly D3DEngine _d3DEngine;
         private readonly VoxelModelManager _voxelModelManager;
@@ -134,7 +134,7 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent(DeviceContext context)
         {
-            _voxelModelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+            _voxelModelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
         }
 
         public override void UnloadContent()
@@ -188,12 +188,9 @@ namespace Utopia.Entities.Managers
 
         public override void Draw(DeviceContext context, int index)
         {
-            // todo: use instanced drawing of the models
-
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
             _voxelModelEffect.Begin(context);
-            _voxelModelEffect.CBPerFrame.Values.LightIntensity = 1f;
             _voxelModelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
@@ -205,18 +202,18 @@ namespace Utopia.Entities.Managers
                 //For each instance of the model
                 foreach (var pairs in modelAndInstances.Value.Instances)
                 {
-                    VisualDynamicEntity entityToRender = _dynamicEntitiesDico[pairs.Key];
+                    var entityToRender = _dynamicEntitiesDico[pairs.Key];
 
                     //Draw only the entities that are in Client view range
                     if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
                     {
-                        _voxelModelEffect.CBPerModel.Values.LightColor = entityToRender.ModelLight.ValueInterp;
-                        _voxelModelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World);
-                        _voxelModelEffect.CBPerModel.IsDirty = true;
-
-                        modelAndInstances.Value.VisualModel.Draw(_d3DEngine.ImmediateContext, _voxelModelEffect, pairs.Value);
+                        pairs.Value.World = Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World;
+                        pairs.Value.LightColor = entityToRender.ModelLight.ValueInterp;
                     }
                 }
+
+                var instancesToDraw = modelAndInstances.Value.Instances.Values;
+                modelAndInstances.Value.VisualModel.DrawInstanced(_d3DEngine.ImmediateContext, _voxelModelEffect, instancesToDraw);
             }
         }
 

@@ -101,12 +101,15 @@ namespace Utopia.Entities.Managers
                     Debug.WriteLine("CollectsurroundingStaticEntities bug, fix me please");
                     continue;
                 }
-                foreach (var entity in chunk.VisualVoxelEntities)
+                foreach (var pair in chunk.VisualVoxelEntities)
                 {
-                    //Add entity only if at <= 10 block distance !
-                    if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
+                    foreach (var entity in pair.Value)
                     {
-                        _entitiesNearPlayer.Add(entity);
+                        //Add entity only if at <= 10 block distance !
+                        if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
+                        {
+                            _entitiesNearPlayer.Add(entity);
+                        }
                     }
                 }
             }

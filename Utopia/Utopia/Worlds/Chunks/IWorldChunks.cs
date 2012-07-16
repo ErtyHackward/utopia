@@ -101,6 +101,11 @@ namespace Utopia.Worlds.Chunks
 
         bool IsInitialLoadCompleted { get; set;}
 
+        /// <summary>
+        /// Gets or sets value indicating if static entities should be drawn using instancing
+        /// </summary>
+        bool DrawStaticInstanced { get; set; }
+
         void InitDrawComponents(DeviceContext context);
 
         bool ValidatePosition(ref Vector3D newPosition2Evaluate);

@@ -12,13 +12,6 @@ cbuffer VoxelModelPerFrame
 cbuffer VoxelModel
 {
 	float4 colorMapping[64];
-	matrix World;
-	float3 LightColor;			// Diffuse lighting color
-}
-
-cbuffer VoxelModelPerPart
-{
-	matrix Transform;
 }
 
 static const float foglength = 45;
@@ -36,8 +29,10 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 //Vertex shader Input
 struct VS_IN
 {
-	uint4 Position		 : POSITION;
-	uint4 faceType    	 : INFO;
+	uint4 Position		: POSITION;
+	uint4 faceType    	: INFO;
+	matrix Transform	: TRANSFORM;
+	float3 LightColor	: COLOR; // Diffuse lighting color
 };
 
 struct PS_IN
@@ -48,6 +43,7 @@ struct PS_IN
 	float EmissiveLight         : Light0;
 	float Light					: Light1;
 	float3 normal				: NORMAL0;
+	float3 LightColor			: Light2;
 };
 
 struct PS_OUT
@@ -70,10 +66,8 @@ PS_IN VS(VS_IN input)
 	output.colorIndex = input.Position.w - 1;
 
 	float4 newPosition = {input.Position.xyz, 1.0f};
-
-	newPosition = mul(newPosition, Transform);
-
-    float4 worldPosition = mul(newPosition, World);
+	
+    float4 worldPosition = mul(newPosition, input.Transform);
 	output.Position = mul(worldPosition, ViewProjection);
 
 	int facetype = input.faceType.x;
@@ -82,7 +76,7 @@ PS_IN VS(VS_IN input)
 
 	// ambient occlusion value	
 	output.Light = input.faceType.y;
-	
+	output.LightColor = input.LightColor;
 
 	// fake shadow
 	output.EmissiveLight = faceshades[facetype];
@@ -106,7 +100,7 @@ PS_OUT PS(PS_IN input)
 
 	float intensity = input.Light / 255;
 
-	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * LightColor * intensity;
+	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * input.LightColor * intensity;
 	
 	output.Color = float4(color,1);
 

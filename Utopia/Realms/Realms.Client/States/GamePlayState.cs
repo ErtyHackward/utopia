@@ -173,6 +173,15 @@ namespace Realms.Client.States
 
                 worldChunks.InitDrawComponents(_ioc.Get<D3DEngine>().ImmediateContext);
             }
+
+            if (e.Message == "/staticinstanced")
+            {
+                e.DoNotSend = true;
+                var worldChunks = _ioc.Get<IWorldChunks>();
+
+                worldChunks.DrawStaticInstanced = !worldChunks.DrawStaticInstanced;
+            }
+
         }
 
         public override void OnEnabled(GameState previousState)
