@@ -272,7 +272,8 @@ namespace Utopia.Entities.Voxel
             if (!_initialized) return;
 
             var instancesList = instances.ToArray();
-            
+            if (instancesList.Length == 0) return;
+
             if (_model.ColorMapping != null)
             {
                 effect.CBPerModel.Values.ColorMapping = _model.ColorMapping.BlockColors;
