@@ -226,9 +226,6 @@ namespace Utopia.Worlds.Chunks
                             // update instances data
                             foreach (var staticEntity in pair.Value)
                             {
-                                staticEntity.VoxelEntity.ModelInstance.World = Matrix.Scaling(1f / 16) * staticEntity.World;
-                                staticEntity.VoxelEntity.ModelInstance.LightColor = _skydome.SunColor;
-
                                 if (!DrawStaticInstanced)
                                 {
                                     var sw = Stopwatch.StartNew();
@@ -237,7 +234,11 @@ namespace Utopia.Worlds.Chunks
                                     _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
                                     _staticEntityDrawCalls++;
                                 }
-
+                                else
+                                {
+                                    staticEntity.VoxelEntity.ModelInstance.World = Matrix.Scaling(1f / 16) * staticEntity.World; //Update World position of the instance
+                                    staticEntity.VoxelEntity.ModelInstance.LightColor = _skydome.SunColor;                       //Update LightColor of the instance
+                                }
                             }
 
                             if (DrawStaticInstanced)

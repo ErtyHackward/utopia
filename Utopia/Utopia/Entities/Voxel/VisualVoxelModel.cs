@@ -228,7 +228,6 @@ namespace Utopia.Entities.Voxel
                 var state = instance.State;
                 var voxelModelPartState = state.PartsStates[partIndex];
 
-
                 instanceData[instanceIndex].LightColor = instance.LightColor;
 
                 // apply rotations from the state and instance (if the head)
