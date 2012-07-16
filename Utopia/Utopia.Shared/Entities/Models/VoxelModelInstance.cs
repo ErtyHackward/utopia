@@ -285,6 +285,7 @@ namespace Utopia.Shared.Entities.Models
                     Vector3.Lerp(ref psFrom.RotationOffset, ref psTo.RotationOffset, step, out psResult.RotationOffset);
                     Vector3.Lerp(ref psFrom.Scale, ref psTo.Scale, step, out psResult.Scale);
                     Quaternion.Slerp(ref psFrom.Rotation, ref psTo.Rotation, step, out psResult.Rotation);
+                    psResult.Transform = null;
                 }
             }
         }

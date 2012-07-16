@@ -9,6 +9,7 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModelPartState : IBinaryStorable
     {
+        internal Matrix? Transform;
         /// <summary>
         /// Current active frame
         /// </summary>
@@ -46,7 +47,7 @@ namespace Utopia.Shared.Entities.Models
 
         public Matrix GetTransformation()
         {
-            return Matrix.Scaling(Scale) * Matrix.Translation(-RotationOffset) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(RotationOffset) * Matrix.Translation(Translation);
+            return Transform.HasValue ? Transform.Value : (Transform = Matrix.Scaling(Scale) * Matrix.Translation(-RotationOffset) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(RotationOffset) * Matrix.Translation(Translation)).Value;
         }
 
         public VoxelModelPartState()
