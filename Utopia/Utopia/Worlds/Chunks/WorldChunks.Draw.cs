@@ -74,7 +74,6 @@ namespace Utopia.Worlds.Chunks
                     DrawDebug(context);
                 }
 #endif
-
                 return;
             }
 
