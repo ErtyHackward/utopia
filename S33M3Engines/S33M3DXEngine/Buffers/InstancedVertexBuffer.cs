@@ -17,7 +17,6 @@ namespace S33M3DXEngine.Buffers
         VertexBufferBinding _bindingFixed;
         int _vertexCountFixedData;
 
-
         BufferDescription _descriptionInstancedData;
         Buffer _vertexBufferInstancedData;
         int _vertexCountInstancedData;
@@ -30,6 +29,7 @@ namespace S33M3DXEngine.Buffers
         Device _device;
 
         public int VertexCount { get { return _vertexCountFixedData; } set { _vertexCountFixedData = value; } }
+        public int VertexCountInstancedData { get { return _vertexCountInstancedData; } }
         #endregion
 
         public InstancedVertexBuffer(Device device, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology)
@@ -107,17 +107,13 @@ namespace S33M3DXEngine.Buffers
             else
             {
                 //Update the buffer
-                DataStream dataStream;
-                DataBox databox = context.MapSubresource(_vertexBufferInstancedData, 0, MapMode.WriteDiscard, MapFlags.None, out dataStream);
-                dataStream.Position = 0;
-                dataStream.WriteRange(data);
-                dataStream.Position = 0;
+                DataBox databox = context.MapSubresource(_vertexBufferInstancedData, 0, MapMode.WriteDiscard, MapFlags.None);
+                //Write Data to Pointer without changing the Position value (Fastest way)
+                Utilities.Write(databox.DataPointer, data, 0, _vertexCountInstancedData);
                 context.UnmapSubresource(_vertexBufferInstancedData, 0);
-                dataStream.Dispose();
             }
 
             _bindingInstanced = new VertexBufferBinding(_vertexBufferInstancedData, _vertexDeclatation.PerInstance_vertexStride, 0);
-
         }
 
         public void SetToDevice(DeviceContext context, int Offset)
