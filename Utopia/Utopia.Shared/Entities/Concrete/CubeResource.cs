@@ -177,7 +177,7 @@ namespace Utopia.Shared.Entities.Concrete
             chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
             
             var character = owner as CharacterEntity;
-            if (character != null)
+            if (character != null && entityRemoved != null)
             {
                 var adder = (IItem)Factory.CreateEntity(entityRemoved.ClassId);
                 character.Inventory.PutItem(adder);
