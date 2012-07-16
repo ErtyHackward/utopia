@@ -230,7 +230,7 @@ namespace Utopia.Entities.Renderer
                 _playerModelInstance.Rotation = _bodyRotation.ValueInterp;
 
                 // update model animation
-                _playerModelInstance.Update(timePassed);
+                _playerModelInstance.Interpolation(timePassed);
 
                 // update model color, get the cube where model is
                 var block = _chunkContainer.GetCube(_worldPosition.ValueInterp);

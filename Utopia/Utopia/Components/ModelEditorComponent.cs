@@ -1241,7 +1241,7 @@ namespace Utopia.Components
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             if (_instance != null)
-                _instance.Update(timePassed);
+                _instance.Interpolation(timePassed);
         }
 
         private void UpdateCamera()
