@@ -124,6 +124,12 @@ namespace Sandbox.Client
             }
 
             //Set Default Threads - initializing the thread Engine component
+            if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize == 0)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize = ClientSettings.Current.Settings.GraphicalParameters.WorldSize - 5;
+                needSave = true;
+            }
+            
             if (ClientSettings.Current.Settings.DefaultAllocatedThreads == 0)
             {
                 ClientSettings.Current.Settings.DefaultAllocatedThreads = SmartThread.SetOptimumNbrThread(0);

@@ -101,6 +101,7 @@ namespace Utopia.Worlds.Chunks
         public VisualChunk[] SortedChunks { get; set; }
 
         public bool ChunkNeed2BeSorted { get; set; }
+        public int StaticEntityViewRange { get; set; }
 
         /// <summary>
         /// Gets or sets value indicating if static entities should be drawn using instancing
@@ -205,6 +206,15 @@ namespace Utopia.Worlds.Chunks
         {
             IsInitialLoadCompleted = false;
             _readyToDrawCount = 0;
+
+            if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize > (ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5)
+            {
+                StaticEntityViewRange = (int)((ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5) * 16;
+            }
+            else
+            {
+                StaticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
+            }
 
             InitChunks();
             InitWrappingVariables();

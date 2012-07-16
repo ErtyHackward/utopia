@@ -24,6 +24,7 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.World;
 using Utopia.Worlds.SkyDomes;
 using UtopiaContent.Effects.Entities;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Entities.Managers
 {
@@ -50,6 +51,7 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private SingleArrayChunkContainer _chunkContainer;
+        private int _staticEntityViewRange;
         public List<IVisualEntityContainer> DynamicEntities { get; set; }
 
         // collection of the models and instances
@@ -129,7 +131,14 @@ namespace Utopia.Entities.Managers
 
         public override void Initialize()
         {
-            
+            if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize > (ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5)
+            {
+                _staticEntityViewRange = (int)((ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5) * 16;
+            }
+            else
+            {
+                _staticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
+            }
         }
 
         public override void LoadContent(DeviceContext context)
@@ -205,14 +214,19 @@ namespace Utopia.Entities.Managers
                     var entityToRender = _dynamicEntitiesDico[pairs.Key];
 
                     //Draw only the entities that are in Client view range
-                    if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
+                    //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
+                    if(MVector3.Distance2D(entityToRender.VisualEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
                     {
                         pairs.Value.World = Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World;
                         pairs.Value.LightColor = entityToRender.ModelLight.ValueInterp;
                     }
+                    else
+                    {
+                        pairs.Value.World = Matrix.Zero;
+                    }
                 }
 
-                var instancesToDraw = modelAndInstances.Value.Instances.Values;
+                var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero);
                 modelAndInstances.Value.VisualModel.DrawInstanced(_d3DEngine.ImmediateContext, _voxelModelEffect, instancesToDraw);
             }
         }

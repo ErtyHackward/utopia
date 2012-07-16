@@ -134,6 +134,12 @@ namespace Realms.Client
                 SmartThread.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + ClientSettings.Current.Settings.EngineParameters.AllocatedThreadsModifier, true);
             }
 
+            if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize == 0)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize = ClientSettings.Current.Settings.GraphicalParameters.WorldSize - 5;
+                needSave = true;
+            }
+
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.EngineParameters.EffectPack))
                 ClientSettings.Current.Settings.EngineParameters.EffectPack = "Default";
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.GraphicalParameters.TexturePack))
