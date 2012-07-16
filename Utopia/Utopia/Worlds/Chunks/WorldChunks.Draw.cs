@@ -28,7 +28,7 @@ namespace Utopia.Worlds.Chunks
         private HLSLTerran _terraEffect;
         private HLSLLiquid _liquidEffect;
         //private HLSLStaticEntitySprite _staticSpriteEffect;
-        
+
         private HLSLVoxelModel _voxelModelEffect;
         private HLSLVoxelModelInstanced _voxelModelInstancedEffect;
 
@@ -58,7 +58,7 @@ namespace Utopia.Worlds.Chunks
 
         public override void Draw(DeviceContext context, int index)
         {
-            
+
             if (index == SOLID_DRAW)
             {
                 ChunkVisibilityTest();
@@ -98,7 +98,7 @@ namespace Utopia.Worlds.Chunks
 
             if (index == ENTITIES_DRAW)
             {
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.CullNone, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 DrawStaticEntities(context);
                 return;
             }
