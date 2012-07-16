@@ -108,6 +108,9 @@ namespace Realms.Client.Components.GUI.Settings
                             case "VSync":
                                 ChangeVSync((bool)row.FieldData.Value);
                                 break;
+                            case "StaticEntityViewSize":
+                                ChangeVisiableStaticEntities((int)row.FieldData.Value);
+                                break;
                             default:
                                 break;
                         }
@@ -300,6 +303,11 @@ namespace Realms.Client.Components.GUI.Settings
         private void ChangeVSync(bool vsyncValue)
         {
             _game.VSync = vsyncValue;
+        }
+
+        private void ChangeVisiableStaticEntities(int distance)
+        {
+
         }
 
         //ButtonList Event management ==========================================

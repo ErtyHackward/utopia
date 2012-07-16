@@ -172,6 +172,7 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
+
                 if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
                 {
                     //Only If I have something to draw !
@@ -214,6 +215,8 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
+
+                if (chunk.DistanceFromPlayer > StaticEntityViewRange) continue;
 
                 if (chunk.isExistingMesh4Drawing)
                 {

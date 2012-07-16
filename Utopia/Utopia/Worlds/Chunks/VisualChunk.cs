@@ -71,6 +71,7 @@ namespace Utopia.Worlds.Chunks
         //public VertexBuffer<VertexSprite3D> StaticSpritesVB;
         //public IndexBuffer<ushort> StaticSpritesIB;
 
+        public Double DistanceFromPlayer { get; set; }
         public Vector3D ChunkCenter { get; set; } 
         public Vector2I ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit

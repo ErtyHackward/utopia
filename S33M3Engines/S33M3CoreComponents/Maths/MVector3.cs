@@ -46,6 +46,23 @@ namespace S33M3CoreComponents.Maths
             return (float)Math.Sqrt((double)num4);
         }
 
+        public static double Distance(Vector3D value1, Vector3D value2)
+        {
+            double num3 = value1.X - value2.X;
+            double num2 = value1.Y - value2.Y;
+            double num = value1.Z - value2.Z;
+            double num4 = ((num3 * num3) + (num2 * num2)) + (num * num);
+            return Math.Sqrt(num4);
+        }
+
+        public static double Distance2D(Vector3D value1, Vector3D value2)
+        {
+            double num3 = value1.X - value2.X;
+            double num = value1.Z - value2.Z;
+            double num4 = ((num3 * num3) + (num * num));
+            return Math.Sqrt(num4);
+        }
+
         public static void Distance(ref Vector3 value1, ref Vector3 value2, out float result)
         {
             float num3 = value1.X - value2.X;
