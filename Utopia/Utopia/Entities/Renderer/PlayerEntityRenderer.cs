@@ -65,7 +65,7 @@ namespace Utopia.Entities.Renderer
         private HLSLVertexPositionColor _dummyEntityRenderer;
         private VisualVoxelModel _model;
         private VoxelModelInstance _playerModelInstance;
-        private HLSLVoxelModel _voxelEffect;
+        private HLSLVoxelModelInstanced _voxelEffect;
 
         private bool _isWalking;
         #endregion
@@ -129,7 +129,7 @@ namespace Utopia.Entities.Renderer
         {
             _model = _modelManager.GetModel("Player");
 
-            _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+            _voxelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
             if (_model != null)
             {
                 _model.BuildMesh();
@@ -158,17 +158,15 @@ namespace Utopia.Entities.Renderer
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
                 
                 _voxelEffect.Begin(context);
-                _voxelEffect.CBPerFrame.Values.LightIntensity = 1f;
                 _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
+                
+                _playerModelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
+                _playerModelInstance.LightColor = _modelLight.ValueInterp;
 
-                _voxelEffect.CBPerModel.Values.LightColor = _modelLight.ValueInterp;
-                _voxelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3()));
-                _voxelEffect.CBPerModel.IsDirty = true;
-
-                _model.Draw(context, _voxelEffect, _playerModelInstance);
+                _model.DrawInstanced(context, _voxelEffect, new [] { _playerModelInstance });
             }
             else
             {

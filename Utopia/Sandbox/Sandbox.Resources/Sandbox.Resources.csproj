@@ -80,6 +80,9 @@
     <None Include="EffectsPacks\Default\Entities\VoxelModel.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="EffectsPacks\Default\Entities\VoxelModelInstanced.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="EffectsPacks\Default\Weather\Clouds.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -94,7 +97,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="EffectsPacks\Default\Entities\LoadingCube.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="GUI\Skins\SandBox\SandBox.skin.xml">
       <SubType>Designer</SubType>

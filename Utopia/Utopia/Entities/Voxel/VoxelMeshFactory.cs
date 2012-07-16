@@ -28,10 +28,10 @@ namespace Utopia.Entities.Voxel
             _d3DEngine = d3DEngine;
         }
 
-        public void GenerateVoxelFaces(InsideDataProvider blockData, out List<VertexVoxel> vertices, out List<ushort> indices)
+        public void GenerateVoxelFaces(InsideDataProvider blockData, out List<VertexVoxelInstanced> vertices, out List<ushort> indices)
         {
             var size = blockData.ChunkSize;
-            vertices = new List<VertexVoxel>();
+            vertices = new List<VertexVoxelInstanced>();
             indices = new List<ushort>();
             var dico = new Dictionary<int, int>();
 
@@ -80,7 +80,7 @@ namespace Utopia.Entities.Voxel
             return (byte)((b1 + b2 + b3 + b4)/4);
         }
 
-        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, Vector4B cubePosition, ref List<VertexVoxel> vertices, ref List<ushort> indices)
+        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, Vector4B cubePosition, ref List<VertexVoxelInstanced> vertices, ref List<ushort> indices)
         {
             // hash and index
 
@@ -129,7 +129,7 @@ namespace Utopia.Entities.Voxel
                             // topLeftFront
                             var light = Avg(lfront, lfrontLeft, ltopFront, ltopLeftFront);
 
-                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -143,7 +143,7 @@ namespace Utopia.Entities.Voxel
                             // topRightFront
                             var light = Avg(lfront, ltopFront, lrightFront, ltopFrontRight);
 
-                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -157,7 +157,7 @@ namespace Utopia.Entities.Voxel
                             // bottomLeftFront
                             var light = Avg(lfront, lfrontLeft, lbottomFront, lbottomLeftFront);
 
-                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -171,7 +171,7 @@ namespace Utopia.Entities.Voxel
                             // bottomRightFront
                             var light = Avg(lfront, lrightFront, lbottomFront, lbottomFrontRight);
 
-                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -214,7 +214,7 @@ namespace Utopia.Entities.Voxel
                             // topLeftBack
                             var light = Avg(lback, ltopBack, lleftback, ltopBackLeft);
 
-                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -228,7 +228,7 @@ namespace Utopia.Entities.Voxel
                             // topRightBack
                             var light = Avg(lback, lbackRight, ltopBack, ltopRightBack);
                             
-                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -242,7 +242,7 @@ namespace Utopia.Entities.Voxel
                             // bottomLeftBack
                             var light = Avg(lback, lbottomBack, lleftback, lbottomBackLeft);
 
-                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -256,7 +256,7 @@ namespace Utopia.Entities.Voxel
                             // bottomRightBack
                             var light = Avg(lback, lbackRight, lbottomBack, lbottomRightBack);
                             
-                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -299,7 +299,7 @@ namespace Utopia.Entities.Voxel
                             // topLeftBack
                             var light = Avg(ltop, ltopLeft, ltopBack, ltopBackLeft);
 
-                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -313,7 +313,7 @@ namespace Utopia.Entities.Voxel
                             // topRightFront
                             var light = Avg(ltop, ltopRight, ltopFront, ltopFrontRight);
 
-                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -327,7 +327,7 @@ namespace Utopia.Entities.Voxel
                             // topLeftFront
                             var light = Avg(ltop, ltopLeft, ltopFront, ltopLeftFront);
 
-                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -341,7 +341,7 @@ namespace Utopia.Entities.Voxel
                             // topRightBack
                             var light = Avg(ltop, ltopRight, ltopBack, ltopRightBack);
 
-                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -384,7 +384,7 @@ namespace Utopia.Entities.Voxel
                             // bottomLeftFront
                             var light = Avg(lbottom, lbottomLeft, lbottomFront, lbottomLeftFront);
 
-                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -398,7 +398,7 @@ namespace Utopia.Entities.Voxel
                             // bottomLeftBack
                             var light = Avg(lbottom, lbottomLeft, lbottomBack, lbottomBackLeft);
 
-                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -412,7 +412,7 @@ namespace Utopia.Entities.Voxel
                             // bottomRightFront
                             var light = Avg(lbottom, lbottomright, lbottomFront, lbottomFrontRight);
 
-                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -426,7 +426,7 @@ namespace Utopia.Entities.Voxel
                             // bottomRightBack
                             var light = Avg(lbottom, lbottomright, lbottomBack, lbottomRightBack);
 
-                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -469,7 +469,7 @@ namespace Utopia.Entities.Voxel
                             // topLeftBack
                             var light = Avg(lleft, ltopLeft, lleftback, ltopBackLeft);
 
-                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -483,7 +483,7 @@ namespace Utopia.Entities.Voxel
                             // topLeftFront
                             var light = Avg(lleft, ltopLeft, lfrontLeft, ltopLeftFront);
 
-                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -497,7 +497,7 @@ namespace Utopia.Entities.Voxel
                             // bottomLeftBack
                             var light = Avg(lleft, lbottomLeft, lleftback, lbottomBackLeft);
 
-                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -511,7 +511,7 @@ namespace Utopia.Entities.Voxel
                             // bottomLeftFront
                             var light = Avg(lleft, lbottomLeft, lfrontLeft, lbottomLeftFront);
 
-                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -554,7 +554,7 @@ namespace Utopia.Entities.Voxel
                             // topRightBack
                             var light = Avg(lright, ltopRight, lbackRight, ltopRightBack);
 
-                            vertices.Add(new VertexVoxel(topRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -568,7 +568,7 @@ namespace Utopia.Entities.Voxel
                             // topRightFront
                             var light = Avg(lright, ltopRight, lrightFront, ltopFrontRight);
 
-                            vertices.Add(new VertexVoxel(topLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(topLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -582,7 +582,7 @@ namespace Utopia.Entities.Voxel
                             // bottomRightFront
                             var light = Avg(lright, lbottomright, lrightFront, lbottomFrontRight);
 
-                            vertices.Add(new VertexVoxel(bottomLeft, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomLeft, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -596,7 +596,7 @@ namespace Utopia.Entities.Voxel
                             // bottonRightBack
                             var light = Avg(lright, lbottomright, lbackRight, lbottomRightBack);
 
-                            vertices.Add(new VertexVoxel(bottomRight, faceTypeByte, light));
+                            vertices.Add(new VertexVoxelInstanced(bottomRight, faceTypeByte, light));
                             generatedVertex++;
                         }
 
@@ -613,15 +613,12 @@ namespace Utopia.Entities.Voxel
                 #endregion
             }
         }
-        
-        public VertexBuffer<VertexVoxel> InitBuffer(List<VertexVoxel> vertice)
+
+        public InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData> InitBuffer(List<VertexVoxelInstanced> vertice)
         {
-            var vb = new VertexBuffer<VertexVoxel>(_d3DEngine.Device, vertice.Count,
-                                                     VertexVoxel.VertexDeclaration,
-                                                     PrimitiveTopology.TriangleList,
-                                                     "VoxelMeshFactory_VB");
+            var vb = new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>(_d3DEngine.Device, VertexVoxelInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
             if(vertice.Count > 0)
-                vb.SetData(_d3DEngine.ImmediateContext ,vertice.ToArray());
+                vb.SetFixedData(vertice.ToArray());
             return vb;
         }
 

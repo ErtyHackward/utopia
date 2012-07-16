@@ -3,11 +3,10 @@ using SharpDX;
 using S33M3DXEngine.Effects.HLSLFramework;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.VertexFormat;
-using S33M3Resources.Structs;
 
 namespace UtopiaContent.Effects.Entities
 {
-    public class HLSLVoxelModel : HLSLShaderWrap
+    public class HLSLVoxelModelInstanced : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -30,27 +29,15 @@ namespace UtopiaContent.Effects.Entities
             public float FogDistance;
         }
 
-        [StructLayout(LayoutKind.Explicit, Size = 1104)]
+        [StructLayout(LayoutKind.Explicit, Size = 1024)]
         public struct CBPerModelStructure
         {
             [FieldOffset(0), MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
             public Color4[] ColorMapping; //64 values
-            [FieldOffset(1024)]
-            public Matrix World;
-            [FieldOffset(1088)]
-            public Color3 LightColor;
-        }
-
-        [StructLayout(LayoutKind.Explicit, Size = 64)]
-        public struct CBPerPartStructure
-        {
-            [FieldOffset(0)]
-            public Matrix Transform;
         }
 
         public CBuffer<CBPerFrameStructure> CBPerFrame;
         public CBuffer<CBPerModelStructure> CBPerModel;
-        public CBuffer<CBPerPartStructure> CBPerPart;
 
         #endregion
 
@@ -63,7 +50,7 @@ namespace UtopiaContent.Effects.Entities
         };
         #endregion
 
-        public HLSLVoxelModel(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLVoxelModelInstanced(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
@@ -72,9 +59,6 @@ namespace UtopiaContent.Effects.Entities
 
             CBPerModel = new CBuffer<CBPerModelStructure>(device, "VoxelModel", true);
             CBuffers.Add(CBPerModel);
-
-            CBPerPart = new CBuffer<CBPerPartStructure>(device, "VoxelModelPerPart");
-            CBuffers.Add(CBPerPart);
             
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);

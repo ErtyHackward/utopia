@@ -130,6 +130,7 @@
     <Compile Include="VertexFormats\VertexSprite3D.cs" />
     <Compile Include="VertexFormats\VertexSpriteInstanced.cs" />
     <Compile Include="VertexFormats\VertexVoxel.cs" />
+    <Compile Include="VertexFormats\VertexVoxelInstanced.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Effects\Debug\ColumnChart.hlsl">

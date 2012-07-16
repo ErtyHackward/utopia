@@ -130,7 +130,7 @@ namespace Utopia.Worlds.Chunks
 
         public bool IsServerRequested { get; set; }           //If the chunk has been requested to the server
 
-        public List<VisualVoxelEntity> VisualVoxelEntities;
+        public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
 
         public int StorageRequestTicket { get; set; }
 
@@ -214,7 +214,7 @@ namespace Utopia.Worlds.Chunks
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameter;
             _voxelModelManager = voxelModelManager;
-            VisualVoxelEntities = new List<VisualVoxelEntity>();
+            VisualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
             CubeRange = cubeRange;
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
@@ -422,17 +422,24 @@ namespace Utopia.Worlds.Chunks
 
         void Entities_CollectionCleared(object sender, EventArgs e)
         {
-            foreach (IDisposable i in VisualVoxelEntities)
+            foreach (var entityList in VisualVoxelEntities.Values)
             {
-                i.Dispose();
+                foreach (IDisposable i in entityList)
+                {
+                    i.Dispose();
+                }    
             }
+            
             VisualVoxelEntities.Clear();
         }
 
         void Entities_EntityRemoved(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
         {
             //Remove the entity from Visual Model
-            VisualVoxelEntities.RemoveAll(x => x.Entity == e.Entity);
+            foreach (var pair in VisualVoxelEntities)
+            {
+                pair.Value.RemoveAll(x => x.Entity == e.Entity);
+            }
         }
 
         void Entities_EntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
@@ -451,7 +458,16 @@ namespace Utopia.Worlds.Chunks
                 {
                     visualVoxelEntity.VisualVoxelModel.BuildMesh();
                 }
-                VisualVoxelEntities.Add(visualVoxelEntity);
+                
+                List<VisualVoxelEntity> list;
+                if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
+                {
+                    list.Add(visualVoxelEntity);
+                }
+                else
+                {
+                    VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                }
             }
         }
 
