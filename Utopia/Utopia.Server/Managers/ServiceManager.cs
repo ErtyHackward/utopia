@@ -42,5 +42,13 @@ namespace Utopia.Server.Managers
         {
             return _services.GetEnumerator();
         }
+
+        public void Dispose()
+        {
+            foreach (var service in _services)
+            {
+                service.Dispose();
+            }
+        }
     }
 }
