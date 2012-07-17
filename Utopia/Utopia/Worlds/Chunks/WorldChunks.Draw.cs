@@ -230,7 +230,7 @@ namespace Utopia.Worlds.Chunks
                             {
                                 // we need to do next two lines anyway to change the color of the entities
                                 staticEntity.VoxelEntity.ModelInstance.World = Matrix.Scaling(1f / 16) * staticEntity.World; //Update World position of the instance
-                                staticEntity.VoxelEntity.ModelInstance.LightColor = _skydome.SunColor;                       //Update LightColor of the instance
+                                staticEntity.VoxelEntity.ModelInstance.LightColor = Color3.Max(staticEntity.Color.ToColor3(), _skydome.SunColor);  //Update LightColor of the instance
 
                                 if (!DrawStaticInstanced)
                                 {
