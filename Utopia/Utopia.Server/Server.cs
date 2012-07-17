@@ -152,8 +152,10 @@ namespace Utopia.Server
         /// </summary>
         public void Dispose()
         {
+            AreaManager.Dispose();
             ConnectionManager.Dispose();
             LandscapeManager.Dispose();
+            Services.Dispose();
         }
     }
 }
