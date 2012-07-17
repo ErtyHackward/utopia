@@ -191,8 +191,6 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
             WorldChunks.VisualWorldParameters.WrapEnd = NewWrapEnd;
 
             PostWrappingStep();
-
-            WorldChunks.ChunkNeed2BeSorted = true;
         }
         #endregion
 
