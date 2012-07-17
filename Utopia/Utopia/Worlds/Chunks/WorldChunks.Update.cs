@@ -18,6 +18,7 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private bool processInsync;
         private int _chunkCreationTrigger;
+        private Vector3D _lastPlayerTriggeredPosition;
         #endregion
 
         #region Public variables/properties
@@ -26,7 +27,7 @@ namespace Utopia.Worlds.Chunks
         #region public methods
         public override void Update(GameTime timeSpend)
         {
-
+            PlayerDisplacementChunkEvents();
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -66,7 +67,6 @@ namespace Utopia.Worlds.Chunks
             PropagateOuterChunkLights();
             CreateChunkMeshes();
             SendMeshesToGC();
-
         }
 
         //Will create new chunks based on chunks with state = Empty
@@ -187,6 +187,15 @@ namespace Utopia.Worlds.Chunks
                 index++;
             }
             ChunkNeed2BeSorted = false;
+        }
+
+        private void PlayerDisplacementChunkEvents()
+        {
+            double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, _playerManager.Player.Position);
+            if(distance > 8){
+                _lastPlayerTriggeredPosition = _playerManager.Player.Position;
+                ChunkNeed2BeSorted = true;
+            }
         }
 
         #region Update WRAPPING
