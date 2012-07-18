@@ -191,9 +191,9 @@ namespace Utopia.Entities.Managers
                     _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), localEntityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
                     if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
                     {
-                        //Player was moving ?
-                        if (MVector3.DistanceSquared(newPosition2Evaluate, previousPosition) > 0.0001)
-                        {
+                        ////Player was moving ?
+                        //if (MVector3.DistanceSquared(newPosition2Evaluate, previousPosition) > 0.0001)
+                        //{
                             Vector3D newPositionWithColliding = previousPosition;
 
                             newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -232,16 +232,16 @@ namespace Utopia.Entities.Managers
                                     }
                                 );
                             }
-                        }
-                        else
-                        {
-                            var dynEntity = entityTesting.Entity as IDynamicEntity;
-                            if (dynEntity != null)
-                            {
-                                Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.HeadRotation);
-                                newPosition2Evaluate += lookAt * 0.1;
-                            }
-                        }
+                        //}
+                        //else
+                        //{
+                        //    var dynEntity = entityTesting.Entity as IDynamicEntity;
+                        //    if (dynEntity != null)
+                        //    {
+                        //        Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.HeadRotation);
+                        //        newPosition2Evaluate += lookAt * 0.1;
+                        //    }
+                        //}
                     }
                 }
             }
