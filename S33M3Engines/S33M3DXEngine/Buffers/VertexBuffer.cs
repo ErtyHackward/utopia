@@ -24,12 +24,10 @@ namespace S33M3DXEngine.Buffers
         VertexBufferBinding _binding;
         Buffer _vertexBuffer;
         PrimitiveTopology _primitiveTopology;
-        //VertexBufferBinding _defaultBinding;
         Device _device;
         DataStream _vertices;
         VertexDeclaration _vertexDeclatation;
         DataBox _databox;
-        DataStream _dataStream;
         BufferDescription _description;
         string _bufferName;
         int _vertexCount;
@@ -77,19 +75,17 @@ namespace S33M3DXEngine.Buffers
                 //Compute VB new size
                 _bufferCount = _vertexCount + (_vertexCount * _autoResizePerc / 100);
 
+                //Dispose resources as they will be recreated with larget size !
                 if (_vertexBuffer != null) { _vertexBuffer.Dispose(); }
                 if (_vertices != null) { _vertices.Dispose(); }
 
                 //Create new DataStream
                 _vertices = new DataStream(_bufferCount * _vertexDeclatation.VertexStride, false, true);
-
                 _vertices.WriteRange(data, offset, _vertexCount);
                 _vertices.Position = 0; //Set the pointer to the beggining of the datastream
 
                 //Create the new Databox
                 _databox = new DataBox(_vertices.DataPointer, _vertexDeclatation.VertexStride, _bufferCount * _vertexDeclatation.VertexStride);
-                if (_dataStream != null) _dataStream.Dispose();
-                _dataStream = new DataStream(_databox.DataPointer, _bufferCount * _vertexDeclatation.VertexStride, false, true);
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _vertexDeclatation.VertexStride;
@@ -101,8 +97,6 @@ namespace S33M3DXEngine.Buffers
             }
             else
             {
-                //Update buffer only (its size is enough)
-
                 //Using MapSubresource
                 if (MapUpdate || _vertexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
@@ -115,13 +109,11 @@ namespace S33M3DXEngine.Buffers
                 {
                     //Write Data to Pointer without changing the Position value (Fastest way)
                     //Using UpdateSubresource
-                    Utilities.Write(_dataStream.DataPointer, data, offset, _vertexCount);
-                    context.UpdateSubresource(_databox, _vertexBuffer, 0);
+                    Utilities.Write(_vertices.DataPointer, data, offset, _vertexCount);   //Write data to the buffer stream
+                    context.UpdateSubresource(_databox, _vertexBuffer, 0);                  //Push the data to the GPU
                 }
             }
-
             _binding = new VertexBufferBinding(_vertexBuffer, _vertexDeclatation.VertexStride, 0);
-
         }
 
         public void SetToDevice(DeviceContext context, int Offset)
@@ -142,7 +134,6 @@ namespace S33M3DXEngine.Buffers
             _binding.Offset = Offset;
             context.InputAssembler.SetVertexBuffers(0, _binding);
         }
-
         #region IDisposable Members
 
         public void Dispose()

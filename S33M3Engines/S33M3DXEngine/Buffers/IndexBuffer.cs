@@ -17,7 +17,6 @@ namespace S33M3DXEngine.Buffers
         private BufferDescription _description;
         private DataStream _indices;
         private DataBox _databox;
-        private DataStream _dataStream;
         private int _indexStride;
         private int _indicesCount;
         private int _autoResizePerc;
@@ -75,8 +74,6 @@ namespace S33M3DXEngine.Buffers
 
                 //Create the new Databox
                 _databox = new DataBox(_indices.DataPointer, _indexStride, _bufferCount * _indexStride);
-                if (_dataStream != null) _dataStream.Dispose();
-                _dataStream = new DataStream(_databox.DataPointer, _bufferCount * _indexStride, false, true);
 
                 //Create new Buffer
                 _description.SizeInBytes = _bufferCount * _indexStride;
@@ -100,14 +97,10 @@ namespace S33M3DXEngine.Buffers
                 }
                 else
                 {
-                    _dataStream.Position = 0;
-                    _dataStream.WriteRange(data, offset, indiceCount);
-                    _dataStream.Position = 0;
-                    context.UpdateSubresource(_databox, _indexBuffer, 0);
+                    Utilities.Write(_indices.DataPointer, data, offset, indiceCount);   //Write data to the buffer stream
+                    context.UpdateSubresource(_databox, _indexBuffer, 0);                  //Push the data to the GPU
                 }
-
             }
-
         }
 
         public void SetToDevice(DeviceContext context, int Offset)

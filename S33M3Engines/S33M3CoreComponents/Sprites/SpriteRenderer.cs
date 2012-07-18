@@ -372,8 +372,8 @@ namespace S33M3CoreComponents.Sprites
             _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device));
 
             //Buffer creation
-            _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Dynamic, 20));
-            _ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 24, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer2 IB", 20, ResourceUsage.Dynamic));
+            _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Default, 20));
+            _ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 24, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer2 IB", 20, ResourceUsage.Default));
 
             //Sprite buffer creation
             _spriteBuffer = new SpriteDrawBuffer();
