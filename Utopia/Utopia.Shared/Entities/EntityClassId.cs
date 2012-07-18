@@ -31,6 +31,8 @@ namespace Utopia.Shared.Entities
         public const ushort Flower2 = 4002;
         public const ushort Flower3 = 4003;
         public const ushort Mushroom1 = 4004;
+        public const ushort CactusFlower = 4005;
+        public const ushort Cactus = 4006;
 
         //Special case
         public const ushort EditableEntity = 10001;

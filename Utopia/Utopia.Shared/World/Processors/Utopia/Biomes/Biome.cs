@@ -256,12 +256,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        public static void GenerateChunkTrees(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
+        public static void GenerateChunkTrees(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
         {
             int nbrTree = rnd.Next(biome.TreePerChunk.Min, biome.TreePerChunk.Max + 1);
             for (int i = 0; i < nbrTree; i++)
             {
-                PopulateChunkWithTree(cursor, columndInfo, biome, rnd);
+                PopulateChunkWithTree(cursor, chunk, ref chunkWorldPosition, entityFactory,  columndInfo, biome, rnd);
             }
         }
 
@@ -277,7 +277,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int z = rnd.Next(0, 16);
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.GrassEntities.EntityId, x, y, z, rnd, entityFactory, false, false);
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.GrassEntities.EntityId, x, y, z, rnd, entityFactory, false);
                 }
             }
 
@@ -291,7 +291,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int z = rnd.Next(0, 16);
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower1Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower1Entities.EntityId, x, y, z, rnd, entityFactory, false);
                 }
             }
 
@@ -305,7 +305,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int z = rnd.Next(0, 16);
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower2Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower2Entities.EntityId, x, y, z, rnd, entityFactory, false);
                 }
             }
 
@@ -319,7 +319,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int z = rnd.Next(0, 16);
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false);
                 }
             }
 
@@ -333,9 +333,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int z = rnd.Next(0, 16);
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.MushroomEntities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.MushroomEntities.EntityId, x, y, z, rnd, entityFactory, false);
                 }
             }
+
         }
         #endregion
 
@@ -477,7 +478,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        protected static void PopulateChunkWithTree(ByteChunkCursor cursor, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
+        protected static void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, EntityFactory entityFactory, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
         {
             var treeTemplate = TreeTemplates.Templates[biome.TreeTypeDistribution[rnd.Next(0, 100)]];
 
@@ -485,7 +486,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
             int z = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
             int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
-
+            
             cursor.SetInternalPosition(x, y, z);
             //No other tree around me ?
             byte trunkRootCube = cursor.Read();
@@ -505,6 +506,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 }
                 //Move Down to the last trunk block
                 cursor.Move(CursorRelativeMovement.Down);
+
                 //Add Foliage
                 foreach (List<int> treeStructBlock in treeTemplate.FoliageStructure)
                 {
@@ -520,8 +522,19 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     foreach (int foliageMove in treeStructBlock)
                     {
                         cursor.Move(foliageMove);
-                        if (foliageMove >= 0 && cursor.Read() == CubeId.Air) cursor.Write(treeTemplate.FoliageCubeId);
+                        if (foliageMove >= 0 && cursor.Read() == CubeId.Air)
+                        {
+                            cursor.Write(treeTemplate.FoliageCubeId);
+                        }
                     }
+
+                    //In case of cactus add a flower on top of fit
+                    if (treeTemplate.TreeType == TreeTemplates.TreeType.Cactus)
+                    {
+                        Vector3I posi = cursor.InternalPosition;
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, EntityClassId.CactusFlower, posi.X, posi.Y, posi.Z, rnd, entityFactory, true, true);
+                    }
+
                     //Remove OFfset
                     if (foliageStructOffset1 != 0)
                     {
@@ -561,6 +574,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         }
                     }
                 }
+
+
 
             }
         }
@@ -613,9 +628,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 }
         }
 
-        protected static void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true, bool isSpriteVariableSize = false)
+        protected static void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true, bool test = false)
         {
             cursor.SetInternalPosition(x, y, z);
+
             //Check that the block above is "Air"
             if (cursor.Peek(CursorRelativeMovement.Up) != CubeId.Air) return;
             //Check that the block below is "solid"
@@ -637,13 +653,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     XOffset = rnd.NextDouble(0.2, 0.8);
                     ZOffset = rnd.NextDouble(0.2, 0.8);
                 }
-                if (isSpriteVariableSize)
-                {
-                    float newSize = (float)rnd.NextDouble(0.4, 0.8);
-                    entity.DefaultSize = new SharpDX.Vector3(newSize, newSize, newSize);
-                }
 
                 entity.Position = new Vector3D(chunkWorldPosition.X + x + XOffset, y + 1, chunkWorldPosition.Z + z + ZOffset);
+
                 chunk.Entities.Add((IStaticEntity)entity);
             }
         }

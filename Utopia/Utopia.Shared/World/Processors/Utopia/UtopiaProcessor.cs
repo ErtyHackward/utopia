@@ -375,7 +375,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             Biome.GenerateMoonStoneCavern(dataCursor, masterBiome, chunkRnd);
             Biome.GenerateChunkLiquidSources(dataCursor, masterBiome,chunkRnd);
             Biome.GenerateChunkResources(dataCursor, masterBiome, chunkRnd);
-            Biome.GenerateChunkTrees(dataCursor, columnInfo, masterBiome, chunkRnd);
+            Biome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
             Biome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
         }
 
