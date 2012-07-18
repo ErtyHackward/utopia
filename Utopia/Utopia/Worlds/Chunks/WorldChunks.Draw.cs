@@ -228,9 +228,17 @@ namespace Utopia.Worlds.Chunks
                             // update instances data
                             foreach (var staticEntity in pair.Value)
                             {
-                                // we need to do next two lines anyway to change the color of the entities
-                                staticEntity.VoxelEntity.ModelInstance.World = Matrix.Scaling(1f / 16) * staticEntity.World; //Update World position of the instance
-                                staticEntity.VoxelEntity.ModelInstance.LightColor = Color3.Max(staticEntity.Color.ToColor3(), _skydome.SunColor);  //Update LightColor of the instance
+                                var block = _cubesHolder.GetCube(staticEntity.Position);
+                                if (block.Id == 0)
+                                {
+                                    // we take the max color
+                                    var sunPart = (float) block.EmissiveColor.A/255;
+                                    var sunColor = _skydome.SunColor * sunPart;
+                                    var resultColor = Color3.Max(block.EmissiveColor.ToColor3(),
+                                                                    sunColor);
+
+                                    staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
+                                }
 
                                 if (!DrawStaticInstanced)
                                 {

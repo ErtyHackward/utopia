@@ -454,7 +454,10 @@ namespace Utopia.Worlds.Chunks
             if (model != null && voxelEntity.ModelInstance == null)
             {
                 voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
-                VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+
+                visualVoxelEntity.VoxelEntity.ModelInstance.World = Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
+
                 if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
                 {
                     visualVoxelEntity.VisualVoxelModel.BuildMesh();
