@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Cubes;
 using S33M3_Resources.Structs;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -12,6 +13,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Variables
         private RangeI _cactusPerChunk = new RangeI(0, 4);
         private Cavern _moonStoneCavern = new Cavern() { CubeId = CubeId.MoonStone, CavernHeightSize = new RangeB(5, 10), CavernPerChunk = 3, SpawningHeight = new RangeB(20, 60), ChanceOfSpawning = 0.1 };
+        private BiomeEntity _flower1Entities = new BiomeEntity() { EntityId = EntityClassId.Cactus, EntityPerChunk = 10, ChanceOfSpawning = 0.5 };
+
         #endregion
 
         #region Public Properties
@@ -22,6 +25,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         
         protected override RangeI TreePerChunk { get { return _cactusPerChunk; } }
         protected override Cavern MoonStoneCavern { get { return _moonStoneCavern; } }
+        protected override BiomeEntity Flower1Entities { get { return _flower1Entities; } }
         #endregion
 
         public DesertBiome()

@@ -101,6 +101,12 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.CubeResource: 
                         entity = new CubeResource();
                         break;
+                    case EntityClassId.CactusFlower:
+                        entity = new Flower4();
+                        break;
+                    case EntityClassId.Cactus:
+                        entity = new Cactus();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
                 }

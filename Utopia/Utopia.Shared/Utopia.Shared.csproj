@@ -106,6 +106,8 @@
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Cactus.cs" />
+    <Compile Include="Entities\Concrete\Collectible\Flower4.cs" />
     <Compile Include="Entities\Concrete\Collectible\Mushroom1.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower3.cs" />
     <Compile Include="Entities\Concrete\Collectible\Flower2.cs" />
