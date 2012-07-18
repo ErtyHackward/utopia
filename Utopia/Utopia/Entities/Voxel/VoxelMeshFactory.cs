@@ -616,7 +616,7 @@ namespace Utopia.Entities.Voxel
 
         public InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData> InitBuffer(List<VertexVoxelInstanced> vertice)
         {
-            var vb = new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>(_d3DEngine.Device, VertexVoxelInstanced.VertexDeclaration, PrimitiveTopology.TriangleList);
+            var vb = new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>(_d3DEngine.Device, VertexVoxelInstanced.VertexDeclaration, PrimitiveTopology.TriangleList, "VoxelMeshFactory");
             if(vertice.Count > 0)
                 vb.SetFixedData(vertice.ToArray());
             return vb;

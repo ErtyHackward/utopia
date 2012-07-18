@@ -26,14 +26,23 @@ namespace S33M3DXEngine.Buffers
         VertexDeclaration _vertexDeclatation;
         PrimitiveTopology _primitiveTopology;
 
+        DataStream _verticesInstancedData;
+        DataBox _databoxInstanced;
+        bool _withDynamicInstanceBuffer;
+
+        string _bufferName;
+
         Device _device;
 
         public int VertexCount { get { return _vertexCountFixedData; } set { _vertexCountFixedData = value; } }
         public int VertexCountInstancedData { get { return _vertexCountInstancedData; } }
         #endregion
 
-        public InstancedVertexBuffer(Device device, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology)
+        public InstancedVertexBuffer(Device device, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, string bufferName, bool withDynamicInstanceBuffer = false)
         {
+            _withDynamicInstanceBuffer = withDynamicInstanceBuffer;
+            _bufferName = bufferName;
+
             //Fixed Data part Buffer ========================
             //Create the buffer for the fixed data
             _descriptionFixedData = new BufferDescription()
@@ -49,9 +58,9 @@ namespace S33M3DXEngine.Buffers
             _descriptionInstancedData = new BufferDescription()
             {
                 BindFlags = BindFlags.VertexBuffer,
-                CpuAccessFlags = CpuAccessFlags.Write,
+                CpuAccessFlags = _withDynamicInstanceBuffer ? CpuAccessFlags.Write : CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
-                Usage = ResourceUsage.Dynamic
+                Usage = _withDynamicInstanceBuffer ? ResourceUsage.Dynamic : ResourceUsage.Default
             };
 
             _vertexDeclatation = vertexDeclatation;
@@ -91,26 +100,42 @@ namespace S33M3DXEngine.Buffers
                 _InstancedDataMaxBufferCount = _vertexCountInstancedData;
 
                 if (_vertexBufferInstancedData != null) _vertexBufferInstancedData.Dispose();
+                if (_verticesInstancedData != null) _verticesInstancedData.Dispose();
 
                 //Create the buffer
                 //Create new DataStream
-                DataStream verticesInstancedData = new DataStream(_vertexCountInstancedData * _vertexDeclatation.PerInstance_vertexStride, false, true);
-                verticesInstancedData.WriteRange(data);
-                verticesInstancedData.Position = 0; //Set the pointer to the beggining of the datastream
+                _verticesInstancedData = new DataStream(_vertexCountInstancedData * _vertexDeclatation.PerInstance_vertexStride, false, true);
+                _verticesInstancedData.WriteRange(data);
+                _verticesInstancedData.Position = 0; //Set the pointer to the beggining of the datastream
+
+                _databoxInstanced = new DataBox(_verticesInstancedData.DataPointer, _vertexDeclatation.PerInstance_vertexStride, _InstancedDataMaxBufferCount * _vertexDeclatation.PerInstance_vertexStride);
 
                 //Create new Buffer
                 _descriptionInstancedData.SizeInBytes = _vertexCountInstancedData * _vertexDeclatation.PerInstance_vertexStride;
-                _vertexBufferInstancedData = new Buffer(_device, verticesInstancedData, _descriptionInstancedData);
+                _vertexBufferInstancedData = new Buffer(_device, _verticesInstancedData, _descriptionInstancedData);
 
-                verticesInstancedData.Dispose();
+#if DEBUG
+                //Set resource Name, will only be done at debug time.
+                _vertexBufferInstancedData.DebugName = "Instanced Buffer : " + _bufferName;
+#endif
             }
             else
             {
-                //Update the buffer
-                DataBox databox = context.MapSubresource(_vertexBufferInstancedData, 0, MapMode.WriteDiscard, MapFlags.None);
-                //Write Data to Pointer without changing the Position value (Fastest way)
-                Utilities.Write(databox.DataPointer, data, 0, _vertexCountInstancedData);
-                context.UnmapSubresource(_vertexBufferInstancedData, 0);
+                //A dynamic buffer can only be update by MAP/UNMAP operation
+                if (_withDynamicInstanceBuffer)
+                {
+                    //MAP
+                    DataBox databox = context.MapSubresource(_vertexBufferInstancedData, 0, MapMode.WriteDiscard, MapFlags.None);
+                    //Write Data to Pointer without changing the Position value (Fastest way)
+                    Utilities.Write(databox.DataPointer, data, 0, _vertexCountInstancedData);
+                    //UNMAP
+                    context.UnmapSubresource(_vertexBufferInstancedData, 0);
+                }
+                else
+                {
+                    Utilities.Write(_verticesInstancedData.DataPointer, data, 0, _vertexCountInstancedData);   //Write data to the buffer stream
+                    context.UpdateSubresource(_databoxInstanced, _vertexBufferInstancedData, 0);                  //Push the data to the GPU
+                }
             }
 
             _bindingInstanced = new VertexBufferBinding(_vertexBufferInstancedData, _vertexDeclatation.PerInstance_vertexStride, 0);
@@ -141,6 +166,7 @@ namespace S33M3DXEngine.Buffers
         {
             if (_vertexBufferFixedData != null) _vertexBufferFixedData.Dispose();
             if (_vertexBufferInstancedData != null) _vertexBufferInstancedData.Dispose();
+            if (_verticesInstancedData != null) _verticesInstancedData.Dispose();
         }
         #endregion
     }
