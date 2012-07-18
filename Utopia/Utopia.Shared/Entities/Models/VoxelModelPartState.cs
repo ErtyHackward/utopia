@@ -9,7 +9,14 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModelPartState : IBinaryStorable
     {
-        internal Matrix? Transform;
+        private Vector3 _scale;
+        private Quaternion _rotation;
+        private Vector3 _rotationOffset;
+        private Vector3 _translation;
+
+        // cached transformation
+        private Matrix? _transform;
+
         /// <summary>
         /// Current active frame
         /// </summary>
@@ -18,22 +25,53 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Frame scale
         /// </summary>
-        public Vector3 Scale;
-
+        public Vector3 Scale
+        {
+            get { return _scale; }
+            set
+            {
+                _scale = value;
+                _transform = null;
+            }
+        }
+        
         /// <summary>
         /// Frame rotation
         /// </summary>
-        public Quaternion Rotation;
-
+        public Quaternion Rotation
+        {
+            get { return _rotation; }
+            set
+            {
+                _rotation = value;
+                _transform = null;
+            }
+        }
+        
         /// <summary>
         /// Frame rotation offset
         /// </summary>
-        public Vector3 RotationOffset;
-
+        public Vector3 RotationOffset
+        {
+            get { return _rotationOffset; }
+            set
+            {
+                _rotationOffset = value;
+                _transform = null;
+            }
+        }
+        
         /// <summary>
         /// Frame translation
         /// </summary>
-        public Vector3 Translation;
+        public Vector3 Translation
+        {
+            get { return _translation; }
+            set {
+                _translation = value;
+                _transform = null;
+            }
+        }
 
         /// <summary>
         /// Optional palm tranformation. Specifies the location of the tool equipped. Only for arm
@@ -47,7 +85,7 @@ namespace Utopia.Shared.Entities.Models
 
         public Matrix GetTransformation()
         {
-            return Transform.HasValue ? Transform.Value : (Transform = Matrix.Scaling(Scale) * Matrix.Translation(-RotationOffset) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(RotationOffset) * Matrix.Translation(Translation)).Value;
+            return _transform.HasValue ? _transform.Value : (_transform = Matrix.Scaling(Scale) * Matrix.Translation(-RotationOffset) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(RotationOffset) * Matrix.Translation(Translation)).Value;
         }
 
         public VoxelModelPartState()
@@ -100,6 +138,21 @@ namespace Utopia.Shared.Entities.Models
                 PalmTransform = reader.ReadMatrix();
             }
 
+        }
+
+        /// <summary>
+        /// Calculates values for this state as interpolated between states passed
+        /// </summary>
+        /// <param name="psFrom"></param>
+        /// <param name="psTo"></param>
+        /// <param name="step"></param>
+        public void Interpolation(VoxelModelPartState psFrom, VoxelModelPartState psTo, float step)
+        {
+            Vector3.Lerp(ref psFrom._translation, ref psTo._translation, step, out _translation);
+            Vector3.Lerp(ref psFrom._rotationOffset, ref psTo._rotationOffset, step, out _rotationOffset);
+            Vector3.Lerp(ref psFrom._scale, ref psTo._scale, step, out _scale);
+            Quaternion.Slerp(ref psFrom._rotation, ref psTo._rotation, step, out _rotation);
+            _transform = null;
         }
     }
 }

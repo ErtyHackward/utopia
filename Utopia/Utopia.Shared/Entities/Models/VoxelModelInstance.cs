@@ -280,12 +280,8 @@ namespace Utopia.Shared.Entities.Models
                     var psFrom = state0.PartsStates[i];
                     var psTo = state1.PartsStates[i];
                     var psResult = _internalState.PartsStates[i];
-                    
-                    Vector3.Lerp(ref psFrom.Translation, ref psTo.Translation, step, out psResult.Translation);
-                    Vector3.Lerp(ref psFrom.RotationOffset, ref psTo.RotationOffset, step, out psResult.RotationOffset);
-                    Vector3.Lerp(ref psFrom.Scale, ref psTo.Scale, step, out psResult.Scale);
-                    Quaternion.Slerp(ref psFrom.Rotation, ref psTo.Rotation, step, out psResult.Rotation);
-                    psResult.Transform = null;
+
+                    psResult.Interpolation(psFrom, psTo, step);
                 }
             }
         }

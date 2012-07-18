@@ -2566,13 +2566,25 @@ namespace Utopia.Components
                     ps.Scale = Vector3.One;
                     break;
                 case EditorAxis.X:
-                    ps.Scale.X *= scaleFactor;
+                    {
+                        var scale = ps.Scale;
+                        scale.X *= scaleFactor;
+                        ps.Scale = scale;
+                    }
                     break;
                 case EditorAxis.Y:
-                    ps.Scale.Y *= scaleFactor;
+                    {
+                        var scale = ps.Scale;
+                        scale.Y *= scaleFactor;
+                        ps.Scale = scale;
+                    }
                     break;
                 case EditorAxis.Z:
-                    ps.Scale.Z *= scaleFactor;
+                    {
+                        var scale = ps.Scale;
+                        scale.Z *= scaleFactor;
+                        ps.Scale = scale;
+                    }
                     break;
                 case EditorAxis.X | EditorAxis.Y | EditorAxis.Z:
                     ps.Scale *= scaleFactor;
