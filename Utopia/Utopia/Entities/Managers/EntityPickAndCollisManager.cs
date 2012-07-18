@@ -192,7 +192,7 @@ namespace Utopia.Entities.Managers
                     if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
                     {
                         //Player was moving ?
-                        if (MVector3.DistanceSquared(newPosition2Evaluate, previousPosition) > 0.01)
+                        if (MVector3.DistanceSquared(newPosition2Evaluate, previousPosition) > 0.0001)
                         {
                             Vector3D newPositionWithColliding = previousPosition;
 
@@ -235,9 +235,12 @@ namespace Utopia.Entities.Managers
                         }
                         else
                         {
-                            var dynEntity =  (IDynamicEntity)entityTesting.Entity;
-                            Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.HeadRotation);
-                            newPosition2Evaluate += lookAt * 0.1;
+                            var dynEntity = entityTesting.Entity as IDynamicEntity;
+                            if (dynEntity != null)
+                            {
+                                Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.HeadRotation);
+                                newPosition2Evaluate += lookAt * 0.1;
+                            }
                         }
                     }
                 }
