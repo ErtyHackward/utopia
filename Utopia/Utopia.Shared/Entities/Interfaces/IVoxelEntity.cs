@@ -20,5 +20,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets or sets current voxel model name
         /// </summary>
         string ModelName { get; set; }
+
+        /// <summary>
+        /// The entity can have a rnd rotation along its Y axis at creation time
+        /// </summary>
+        bool RndCreationYAxisRotation { get; set; }
     }
 }

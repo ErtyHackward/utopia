@@ -21,7 +21,6 @@ namespace Utopia.Shared.Entities
         /// Gets or sets current parent container
         /// </summary>
         private IStaticContainer _container;
-
         public IStaticContainer Container
         {
             get { return _container; }

@@ -18,6 +18,13 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public VoxelModelInstance ModelInstance { get; set; }
 
+        private bool _rndYAxisRotation = false;
+        public bool RndCreationYAxisRotation
+        {
+            get { return _rndYAxisRotation; }
+            set { _rndYAxisRotation = value; }
+        }
+
         /// <summary>
         /// Gets or sets current voxel model name
         /// </summary>

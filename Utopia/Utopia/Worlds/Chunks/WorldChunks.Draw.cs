@@ -228,17 +228,11 @@ namespace Utopia.Worlds.Chunks
                             // update instances data
                             foreach (var staticEntity in pair.Value)
                             {
-                                var block = _cubesHolder.GetCube(staticEntity.Position);
-                                if (block.Id == 0)
-                                {
-                                    // we take the max color
-                                    var sunPart = (float) block.EmissiveColor.A/255;
-                                    var sunColor = _skydome.SunColor * sunPart;
-                                    var resultColor = Color3.Max(block.EmissiveColor.ToColor3(),
-                                                                    sunColor);
-
-                                    staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
-                                }
+                                //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
+                                var sunPart = (float)staticEntity.Color.A / 255;
+                                var sunColor = _skydome.SunColor * sunPart;
+                                var resultColor = Color3.Max(staticEntity.Color.ToColor3(), sunColor);
+                                staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
 
                                 if (!DrawStaticInstanced)
                                 {
