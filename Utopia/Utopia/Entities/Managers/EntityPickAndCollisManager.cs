@@ -27,7 +27,7 @@ namespace Utopia.Entities.Managers
     {
         #region private variables
         private IDynamicEntityManager _dynamicEntityManager;
-        private TimerManager.GameTimer _timer;
+        //private TimerManager.GameTimer _timer;
         private List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
         private PlayerEntityManager _player;
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
@@ -64,22 +64,21 @@ namespace Utopia.Entities.Managers
                                           ServerComponent server,
                                           InputsManager input)                                     
         {
-            _timer = timerManager.AddTimer(1, 100);         //10 times/s
-            _timer.OnTimerRaised += _timer_OnTimerRaised;
+            //_timer = timerManager.AddTimer(1, 100);         //10 times/s
+            //_timer.OnTimerRaised += _timer_OnTimerRaised;
             _input = input;
             _server = server;
         }
 
         public void Dispose()
         {
-            _timer.OnTimerRaised -= _timer_OnTimerRaised;
+            //_timer.OnTimerRaised -= _timer_OnTimerRaised;
         }
 
         #region private methods
         //Started everyseconds
         private void _timer_OnTimerRaised()
         {
-
             CollectsurroundingDynamicPlayerEntities(); //They have their own collection
             CollectsurroundingStaticEntities();  //They are stored inside chunks !
             isDirty = false;
@@ -171,6 +170,11 @@ namespace Utopia.Entities.Managers
                 return true;
         }
 
+        public void Update()
+        {
+            _timer_OnTimerRaised();
+        }
+
         public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (isDirty) _timer_OnTimerRaised();
@@ -188,7 +192,7 @@ namespace Utopia.Entities.Managers
                     if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
                     {
                         //Player was moving ?
-                        if (newPosition2Evaluate != previousPosition)
+                        if (MVector3.DistanceSquared(newPosition2Evaluate, previousPosition) > 0.01)
                         {
                             Vector3D newPositionWithColliding = previousPosition;
 

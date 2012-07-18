@@ -337,6 +337,7 @@ namespace Utopia.Entities.Managers
         private void GetSelectedEntity()
         {
             bool newpicking;
+            EntityPickingManager.Update(); //UPdate picking data
 
             if (MousepickDisabled || _inputsManager.MouseManager.MouseCapture)
             {
@@ -720,7 +721,7 @@ namespace Utopia.Entities.Managers
                 moveModifier = 1.5f;
             }
 
-            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * 2 * moveModifier });
+            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * 1.2f * moveModifier });
         }
 
         private void WalkingFirstPersonNotOnGround(ref GameTime timeSpent)
