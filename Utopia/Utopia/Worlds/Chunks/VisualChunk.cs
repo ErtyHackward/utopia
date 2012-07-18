@@ -41,6 +41,7 @@ namespace Utopia.Worlds.Chunks
         private WorldFocusManager _worldFocusManager;
         private Range3I _cubeRange;
         private D3DEngine _d3dEngine;
+        private FastRandom _rnd = new FastRandom();
 
         private CameraManager<ICameraFocused> _cameraManager;
         private WorldChunks _worldChunkManager;
@@ -456,7 +457,19 @@ namespace Utopia.Worlds.Chunks
                 voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
                 var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
 
-                visualVoxelEntity.VoxelEntity.ModelInstance.World = Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
+                //By default the entity is 1/16 if its world size.
+
+                Matrix rotation;
+                if (voxelEntity.RndCreationYAxisRotation)
+                {
+                    Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
+                }
+                else
+                {
+                    rotation = Matrix.Identity;
+                }
+
+                visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
 
                 if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
                 {
@@ -474,30 +487,6 @@ namespace Utopia.Worlds.Chunks
                 }
             }
         }
-
-        //public void RefreshVisualEntities()
-        //{
-        //    //Create the Sprite Entities
-        //    VisualVoxelEntities.Clear();
-
-        //    foreach (var spriteEntity in Entities.Enumerate<Item>())
-        //    {
-        //        //VisualSpriteEntities.Add(new VisualSpriteEntity(spriteEntity));
-        //    }
-
-        //    Entities.IsDirty = false;
-        //}
-
-        //private void Entities_CollectionDirty(object sender, EventArgs e)
-        //{
-        //    RefreshVisualEntities();
-        //    _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
-
-        //    //Change chunk state in order to rebuild the Entity collections change
-        //    State = ChunkState.LandscapeCreated;
-        //    ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
-        //    UpdateOrder = 1;
-        //}
 
         #endregion
 

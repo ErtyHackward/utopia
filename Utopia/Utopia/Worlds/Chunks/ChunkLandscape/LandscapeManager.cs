@@ -247,27 +247,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             visualChunk.Entities.Import(generatedChunk.Entities);
         }
 
-        //private void CreateVisualEntities(AbstractChunk source, VisualChunk target)
-        //{
-        //    target.SetNewEntityCollection(source.Entities);
-
-        //    //Create the Sprite Entities
-        //    foreach (var voxelEntity in source.Entities.Enumerate<IVoxelEntity>())
-        //    {
-        //        //Create the Voxel Model Instance for the Item
-        //        VisualVoxelModel model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
-        //        if (model != null && voxelEntity.ModelInstance == null)
-        //        {
-        //            voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
-        //            VisualVoxelEntity visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
-        //            if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
-        //            {
-        //                visualVoxelEntity.VisualVoxelModel.BuildMesh();
-        //            }
-        //            target.VisualVoxelEntities.Add(visualVoxelEntity);
-        //        }
-        //    }
-        //}
         #endregion
     }
 }

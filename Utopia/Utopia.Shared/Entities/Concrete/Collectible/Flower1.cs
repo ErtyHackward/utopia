@@ -25,12 +25,12 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         public override ushort ClassId
         {
-            get { return EntityClassId.Grass; }
+            get { return EntityClassId.Flower1; }
         }
 
         public override string DisplayName
         {
-            get { return "Grass"; }
+            get { return "Small flowers"; }
         }
 
         public override string Description
@@ -53,6 +53,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             UniqueName = DisplayName;
             //DefaultSize = new Vector3(0.7f, 0.7f, 0.7f); //If not specified than the voxel body will be use for sizing
             ModelName = "Flower1";
+            RndCreationYAxisRotation = true;
         }
 
         #region Public methods

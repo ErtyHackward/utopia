@@ -19,6 +19,17 @@ namespace Utopia.Shared.Entities.Dynamic
         private Quaternion _headRotation;
         private Quaternion _bodyRotation;
 
+        public bool RndCreationYAxisRotation
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+            }
+        }
+
         #region Events
 
         /// <summary>

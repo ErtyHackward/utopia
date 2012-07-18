@@ -117,6 +117,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual BiomeEntity Flower1Entities { get { return BiomeEntity.None; } }
         protected virtual BiomeEntity Flower2Entities { get { return BiomeEntity.None; } }
         protected virtual BiomeEntity Flower3Entities { get { return BiomeEntity.None; } }
+        protected virtual BiomeEntity MushroomEntities { get { return BiomeEntity.None; } }
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
@@ -319,6 +320,20 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
                     PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false, true);
+                }
+            }
+
+            //Mushroom population
+            for (int i = 0; i < biome.MushroomEntities.EntityPerChunk; i++)
+            {
+                if (rnd.NextDouble() <= biome.MushroomEntities.ChanceOfSpawning)
+                {
+                    //Get Rnd chunk Location.
+                    int x = rnd.Next(0, 16);
+                    int z = rnd.Next(0, 16);
+                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+
+                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.MushroomEntities.EntityId, x, y, z, rnd, entityFactory, false, true);
                 }
             }
         }

@@ -1,12 +1,14 @@
-using System.IO;
-using SharpDX;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using System.IO;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Grass : CubePlaceableItem, IBlockLinkedEntity
+    public class Mushroom1 : CubePlaceableItem, IBlockLinkedEntity
     {
         #region Private properties
         #endregion
@@ -23,17 +25,17 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
 
         public override ushort ClassId
         {
-            get { return EntityClassId.Grass; }
+            get { return EntityClassId.Mushroom1; }
         }
 
         public override string DisplayName
         {
-            get { return "Grass"; }
+            get { return "Mushroom"; }
         }
 
         public override string Description
         {
-            get { return "Juicy green grass. Collect, dry and smoke!"; }
+            get { return "Mushroom !"; }
         }
 
         public override int MaxStackSize
@@ -45,12 +47,12 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         }
 
         #endregion
-        public Grass()
+        public Mushroom1()
         {
             Type = EntityType.Static;
             UniqueName = DisplayName;
             //DefaultSize = new Vector3(0.7f, 0.7f, 0.7f); //If not specified than the voxel body will be use for sizing
-            ModelName = "Grass1";
+            ModelName = "Mushroom1";
             RndCreationYAxisRotation = true;
         }
 

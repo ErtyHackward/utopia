@@ -95,6 +95,9 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.Flower3:
                         entity = new Flower3();
                         break;
+                    case EntityClassId.Mushroom1:
+                        entity = new Mushroom1();
+                        break;
                     case EntityClassId.CubeResource: 
                         entity = new CubeResource();
                         break;
