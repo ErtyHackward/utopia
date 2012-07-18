@@ -252,6 +252,7 @@ namespace Utopia.Worlds.Chunks
 
                             if (DrawStaticInstanced)
                             {
+                                if (pair.Value.Count == 0) continue;
                                 var entity = pair.Value.First();
                                 var sw = Stopwatch.StartNew();
                                 entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Select(ve => ve.VoxelEntity.ModelInstance));
