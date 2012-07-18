@@ -328,6 +328,15 @@
     <Content Include="Sounds\Interface\button_press.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Models\Flower1.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\Flower2.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\Flower3.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Models\Grass1.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
