@@ -5,6 +5,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using Device = SharpDX.Direct3D11.Device;
+using MapFlags = SharpDX.Direct3D11.MapFlags;
 
 namespace S33M3DXEngine.Buffers
 {
@@ -54,9 +55,9 @@ namespace S33M3DXEngine.Buffers
             SetData(context, data, 0, data.Length, MapUpdate);
         }
 
-        public void SetData(DeviceContext context,dataType[] data, int offset, int indiceCount, bool MapUpdate = false)
+        public void SetData(DeviceContext context,dataType[] data, int offset, int _indiceCount, bool MapUpdate = false)
         {
-            _indicesCount = indiceCount;
+            _indicesCount = _indiceCount;
 
             //Autoresize ??
             if (_indexBuffer == null || (_indicesCount > _bufferCount))
@@ -69,7 +70,7 @@ namespace S33M3DXEngine.Buffers
 
                 //Create new DataStream
                 _indices = new DataStream(_bufferCount * _indexStride, false, true);
-                _indices.WriteRange(data, offset, indiceCount);
+                _indices.WriteRange(data, offset, _indiceCount);
                 _indices.Position = 0; //Set the pointer to the beggining of the datastream
 
                 //Create the new Databox
@@ -87,17 +88,14 @@ namespace S33M3DXEngine.Buffers
             {
                 if (MapUpdate || _indexBuffer.Description.Usage == ResourceUsage.Dynamic)
                 {
-                    DataStream dataStream;
-                    DataBox databox = context.MapSubresource(_indexBuffer, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out dataStream);
-                    dataStream.Position = 0;
-                    dataStream.WriteRange(data, offset, indiceCount);
-                    dataStream.Position = 0;
+                    DataBox databox = context.MapSubresource(_indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
+                    //Write Data to Pointer without changing the Position value (Fastest way)
+                    Utilities.Write(databox.DataPointer, data, offset, _indiceCount);
                     context.UnmapSubresource(_indexBuffer, 0);
-                    dataStream.Dispose();
                 }
                 else
                 {
-                    Utilities.Write(_indices.DataPointer, data, offset, indiceCount);   //Write data to the buffer stream
+                    Utilities.Write(_indices.DataPointer, data, offset, _indiceCount);   //Write data to the buffer stream
                     context.UpdateSubresource(_databox, _indexBuffer, 0);                  //Push the data to the GPU
                 }
             }
