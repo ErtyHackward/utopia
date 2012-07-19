@@ -14,10 +14,6 @@ cbuffer VoxelModel
 	float4 colorMapping[64];
 }
 
-static const float foglength = 45;
-static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
-static float3 Nightfogcolor = {0, 0, 0 };
-
 //	cube face						ba	F	Bo	T	L   R
 static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
 static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
@@ -38,12 +34,10 @@ struct VS_IN
 struct PS_IN
 {
 	float4 Position				: SV_POSITION;
-	float fogPower				: VARIOUS0;
-	int colorIndex              : VARIOUS1;
-	float EmissiveLight         : Light0;
 	float Light					: Light1;
-	float3 normal				: NORMAL0;
 	float3 LightColor			: Light2;
+	float EmissiveLight         : Light0;
+	int colorIndex              : VARIOUS1;
 };
 
 struct PS_OUT
@@ -66,13 +60,10 @@ PS_IN VS(VS_IN input)
 	output.colorIndex = input.Position.w - 1;
 
 	float4 newPosition = {input.Position.xyz, 1.0f};
-	
     float4 worldPosition = mul(newPosition, input.Transform);
 	output.Position = mul(worldPosition, ViewProjection);
 
 	int facetype = input.faceType.x;
-
-	output.fogPower = 0; //clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
 	// ambient occlusion value	
 	output.Light = input.faceType.y;
@@ -80,14 +71,6 @@ PS_IN VS(VS_IN input)
 
 	// fake shadow
 	output.EmissiveLight = faceshades[facetype];
-
-	// diffuse shadow
-	//float3 normal = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
-	//normal = normalize(mul(normal, World));
-	//float diffuse = dot(normal, LightDirection);
-	//float lowerBound = 0.7;
-	//output.EmissiveLight = diffuse * (1.0f-lowerBound) + lowerBound;
-
     return output;
 }	
 
@@ -99,9 +82,7 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float intensity = input.Light / 255;
-
 	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * input.LightColor * intensity;
-	
 	output.Color = float4(color,1);
 
     return output;
