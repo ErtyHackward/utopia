@@ -29,6 +29,11 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public IStaticContainer Container { get; set; }
 
+        protected StaticEntity()
+        {
+            Rotation = Quaternion.Identity;
+        }
+
         /// <summary>
         /// Returns link to the entity
         /// </summary>
