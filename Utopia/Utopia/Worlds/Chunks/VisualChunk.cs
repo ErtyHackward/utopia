@@ -39,6 +39,7 @@ namespace Utopia.Worlds.Chunks
     {
         #region Private variables
         private VisualWorldParameters _visualWorldParameters;
+        private readonly SingleArrayChunkContainer _singleArrayContainer;
         private WorldFocusManager _worldFocusManager;
         private Range3I _cubeRange;
         private D3DEngine _d3dEngine;
@@ -216,6 +217,7 @@ namespace Utopia.Worlds.Chunks
             _cameraManager = cameraManager;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameter;
+            _singleArrayContainer = singleArrayContainer;
             _voxelModelManager = voxelModelManager;
             VisualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
             CubeRange = cubeRange;
@@ -477,11 +479,18 @@ namespace Utopia.Worlds.Chunks
 
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
 
+                visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(visualVoxelEntity.Position).EmissiveColor;
+                
                 if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
                 {
                     visualVoxelEntity.VisualVoxelModel.BuildMesh();
                 }
-                
+
+                if (voxelEntity.ModelInstance.CanPlay("Idle"))
+                {
+                    voxelEntity.ModelInstance.Play("Idle", true);
+                }
+
                 List<VisualVoxelEntity> list;
                 if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
                 {

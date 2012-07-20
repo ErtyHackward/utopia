@@ -50,6 +50,22 @@ namespace Utopia.Worlds.Chunks
                     _transparentChunks.RemoveAt(i);
                 }
             }
+
+            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            {
+                var chunk = SortedChunks[chunkIndice];
+                if (chunk.isExistingMesh4Drawing)
+                {
+                    foreach (var pair in chunk.VisualVoxelEntities)
+                    {
+                        foreach (var staticEntity in pair.Value)
+                        {
+                            staticEntity.VoxelEntity.ModelInstance.Interpolation(elapsedTime);
+                        }
+                    }
+                }
+            }
+
         }
 
         #endregion
