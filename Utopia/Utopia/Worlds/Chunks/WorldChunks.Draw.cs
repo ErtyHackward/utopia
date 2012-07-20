@@ -229,9 +229,9 @@ namespace Utopia.Worlds.Chunks
                             foreach (var staticEntity in pair.Value)
                             {
                                 //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
-                                var sunPart = (float)staticEntity.Color.A / 255;
+                                var sunPart = (float)staticEntity.BlockLight.A / 255;
                                 var sunColor = _skydome.SunColor * sunPart;
-                                var resultColor = Color3.Max(staticEntity.Color.ToColor3(), sunColor);
+                                var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
                                 staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
 
                                 if (!DrawStaticInstanced)

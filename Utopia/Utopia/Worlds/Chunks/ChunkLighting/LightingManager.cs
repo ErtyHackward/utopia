@@ -303,7 +303,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 foreach (var voxelEntity in pair.Value)
                 {
                     //Find the Cube where the entity is placed, and assign its color to the entity
-                    voxelEntity.Color = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(voxelEntity.Entity.Position.X), MathHelper.Fastfloor(voxelEntity.Entity.Position.Y), MathHelper.Fastfloor(voxelEntity.Entity.Position.Z))].EmissiveColor;
+                    voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(voxelEntity.Entity.Position.X), MathHelper.Fastfloor(voxelEntity.Entity.Position.Y), MathHelper.Fastfloor(voxelEntity.Entity.Position.Z))].EmissiveColor;
                 }
             }
         }

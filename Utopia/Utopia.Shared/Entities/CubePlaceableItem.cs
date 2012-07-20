@@ -47,7 +47,7 @@ namespace Utopia.Shared.Entities
                     if (moveVector.Y == -1 && !MountPoint.HasFlag(BlockFace.Bottom))
                         return impact;
 
-                    if (Math.Abs(moveVector.X) == 1 || Math.Abs(moveVector.Z) == 1 && !MountPoint.HasFlag(BlockFace.Sides))
+                    if ((Math.Abs(moveVector.X) == 1 || Math.Abs(moveVector.Z) == 1) && !MountPoint.HasFlag(BlockFace.Sides))
                         return impact;
 
                     // check if the place is free
@@ -83,16 +83,17 @@ namespace Utopia.Shared.Entities
                     }
                     else
                     {
-                        cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                                           owner.EntityState.PickedBlockPosition.Y + 0.5f,
-                                                           owner.EntityState.PickedBlockPosition.Z);
+                        var newBlockPos = owner.EntityState.NewBlockPosition;
 
+                        cubeEntity.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)moveVector.X / 2, 0.5f, 0.5f - (float)moveVector.Z / 2));
+                        cubeEntity.Position += new Vector3D(moveVector.X == -1 ? -0.01 : 0, 0, moveVector.Z == -1 ? -0.01 : 0);
+                        
                         var slope = 0d;
 
-                        if (moveVector.X == -1) slope = 0;
-                        if (moveVector.X == 1) slope = Math.PI / 2;
-                        if (moveVector.Z == -1) slope = Math.PI;
-                        if (moveVector.Z == 1) slope = -Math.PI / 2;
+                        if (moveVector.X == -1) slope = -Math.PI / 2;
+                        if (moveVector.X == 1) slope = Math.PI / 2; // ok
+                        if (moveVector.Z == -1) slope = Math.PI; // ok
+                        if (moveVector.Z == 1) slope = 0 ;
 
                         cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
                     }
