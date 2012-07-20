@@ -1,4 +1,5 @@
 using System;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 
@@ -242,5 +243,13 @@ namespace Utopia.Shared.Chunks
             return this;
         }
 
+        /// <summary>
+        /// Adds static entity to the world
+        /// </summary>
+        /// <param name="entity"></param>
+        public void AddEntity(IStaticEntity entity)
+        {
+            _currentChunk.Entities.Add(entity);
+        }
     }
 }

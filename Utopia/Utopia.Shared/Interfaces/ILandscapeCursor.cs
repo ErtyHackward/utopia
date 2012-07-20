@@ -1,6 +1,7 @@
 using System;
 using Utopia.Shared.Chunks;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Interfaces
 {
@@ -67,6 +68,12 @@ namespace Utopia.Shared.Interfaces
         /// <param name="moveVector"></param>
         /// <returns></returns>
         ILandscapeCursor Move(Vector3I moveVector);
+
+        /// <summary>
+        /// Adds static entity to the world
+        /// </summary>
+        /// <param name="entity"></param>
+        void AddEntity(IStaticEntity entity);
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs

@@ -107,6 +107,9 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.Cactus:
                         entity = new Cactus();
                         break;
+                    case EntityClassId.Torch:
+                        entity = new Torch();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
                 }

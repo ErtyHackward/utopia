@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Entities.Events;
@@ -17,7 +16,6 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public DynamicEntityState EntityState;
         private Quaternion _headRotation;
-        private Quaternion _bodyRotation;
 
         #region Events
 
@@ -162,17 +160,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets or sets entity body rotation
         /// </summary>
-        public Quaternion BodyRotation
-        {
-            get
-            {
-                return _bodyRotation;
-            }
-            set
-            {
-                _bodyRotation = value;
-            }
-        }
+        public Quaternion BodyRotation { get; set; }
 
         /// <summary>
         /// Gets or sets dynamic entity id

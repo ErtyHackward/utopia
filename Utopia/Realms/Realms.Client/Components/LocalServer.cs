@@ -11,6 +11,7 @@ using Utopia.Shared.ClassExt;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -100,6 +101,8 @@ namespace Realms.Client.Components
                 item3.CubeId = cubeId;
                 dEntity.Inventory.PutItem(item3);
             }
+
+            dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<Torch>());
 
             e.PlayerEntity = dEntity;
         }

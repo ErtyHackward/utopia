@@ -1,4 +1,6 @@
-﻿namespace Utopia.Shared.Entities.Interfaces
+﻿using SharpDX;
+
+namespace Utopia.Shared.Entities.Interfaces
 {
     /// <summary>
     /// Represents an entity that can be stored in chunk entiteis
@@ -9,6 +11,11 @@
         /// Gets or sets static entity id. This id is unique only in current container. Invalid without Container property set
         /// </summary>
         uint StaticId { get; set; }
+
+        /// <summary>
+        /// Gets or sets entity world rotation
+        /// </summary>
+        Quaternion Rotation { get; set; }
 
         /// <summary>
         /// Gets or sets current parent container

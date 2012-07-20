@@ -1,5 +1,6 @@
 ﻿using System;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 
@@ -128,6 +129,16 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _globalPosition += moveVector;
             _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref _globalPosition);
             return this;
+        }
+
+        /// <summary>
+        /// Adds static entity to the world
+        /// </summary>
+        /// <param name="entity"></param>
+        public void AddEntity(IStaticEntity entity)
+        {
+            var chunk = _landscapeManager.GetChunk(GlobalPosition);
+            chunk.Entities.Add(entity);
         }
     }
 }
