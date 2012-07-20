@@ -13,7 +13,12 @@ namespace Realms.Shared.Tools
         public override string DisplayName
         {
             get { return "Annihilator"; }
-        }        
+        }
+
+        public override string ModelName
+        {
+            get { return "Annihilator"; }
+        }
     }
 
 }

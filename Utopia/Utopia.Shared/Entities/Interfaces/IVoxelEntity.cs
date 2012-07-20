@@ -1,29 +1,20 @@
-using System;
-using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
+    /// <summary>
+    /// Represents an entity that have a visual voxel representation
+    /// </summary>
     public interface IVoxelEntity : IEntity
     {
         /// <summary>
-        /// Occurs when entity voxel model was changed
+        /// Gets current voxel model name
         /// </summary>
-        event EventHandler<VoxelModelEventArgs> VoxelModelChanged;
+        string ModelName { get; }
 
         /// <summary>
-        /// Get current model md5 hash
+        /// Gets or sets voxel model instance
         /// </summary>
         VoxelModelInstance ModelInstance { get; set; }
-
-        /// <summary>
-        /// Gets or sets current voxel model name
-        /// </summary>
-        string ModelName { get; set; }
-
-        /// <summary>
-        /// The entity can have a rnd rotation along its Y axis at creation time
-        /// </summary>
-        bool RndCreationYAxisRotation { get; set; }
     }
 }

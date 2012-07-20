@@ -1,6 +1,4 @@
-using System;
 using System.IO;
-using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 
@@ -14,32 +12,31 @@ namespace Utopia.Shared.Entities.Inventory
         #region Properties
 
         /// <summary>
-        /// Gets voxel entity model
+        /// Gets current voxel model name
         /// </summary>
-        public VoxelModelInstance ModelInstance { get; set; }
-
-        private bool _rndYAxisRotation = false;
-        public bool RndCreationYAxisRotation
-        {
-            get { return _rndYAxisRotation; }
-            set { _rndYAxisRotation = value; }
-        }
+        public abstract string ModelName { get; }
 
         /// <summary>
-        /// Gets or sets current voxel model name
+        /// Gets or sets voxel model instance
         /// </summary>
-        public string ModelName { get; set; }
-
+        public VoxelModelInstance ModelInstance { get; set; }
+        
         /// <summary>
         /// This is name can vary for concrete class instance (Example: Simon's steel shovel)
         /// </summary>
         public virtual string UniqueName { get; set; }
 
+        /// <summary>
+        /// Gets stack string. Entities with the same stack string will be possible to put together in a single slot
+        /// </summary>
         public virtual string StackType
         {
             get { return GetType().Name; }            
         }
 
+        /// <summary>
+        /// Gets possible slot types where the item can be put to
+        /// </summary>
         public virtual EquipmentSlotType AllowedSlots
         {
             get { return EquipmentSlotType.None; }
@@ -49,8 +46,10 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
         /// </summary>
         public abstract int MaxStackSize { get; }
-
-
+        
+        /// <summary>
+        /// Gets an item description
+        /// </summary>
         public abstract string Description { get; }
 
         /// <summary>
@@ -58,27 +57,16 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public override string DisplayName
         {
-            get { return UniqueName; }
+            get { return string.IsNullOrEmpty(UniqueName) ? DisplayName : UniqueName; }
         }
 
         #endregion
-
-        public event EventHandler<VoxelModelEventArgs> VoxelModelChanged;
-
-        public void OnVoxelModelChanged(VoxelModelEventArgs e)
-        {
-            var handler = VoxelModelChanged;
-            if (handler != null) handler(this, e);
-        }
 
         // we need to override save and load!
         public override void Load(BinaryReader reader, EntityFactory factory)
         {
             // first we need to load base information
             base.Load(reader, factory);
-
-            //ModelInstance = new VoxelModelInstance();
-            //ModelInstance.Load(reader);
 
             UniqueName = reader.ReadString();
         }
@@ -88,7 +76,8 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to save base information
             base.Save(writer);
 
-            //ModelInstance.Save(writer);
+            if (UniqueName == null)
+                UniqueName = "";
 
             writer.Write(UniqueName);
         }      

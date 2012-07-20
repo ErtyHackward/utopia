@@ -215,7 +215,6 @@ namespace Utopia.Server.Structs
                 entity.PositionChanged += EntityPositionChanged;
                 entity.DynamicEntity.ViewChanged += EntityViewChanged;
                 entity.DynamicEntity.Use += EntityUseHandler;
-                entity.DynamicEntity.VoxelModelChanged += EntityVoxelModelChanged;
                 
                 CharacterEntity charEntity;
                 if ((charEntity = entity.DynamicEntity as CharacterEntity) != null)
@@ -241,7 +240,6 @@ namespace Utopia.Server.Structs
                 e.PositionChanged -= EntityPositionChanged;
                 e.DynamicEntity.ViewChanged -= EntityViewChanged;
                 e.DynamicEntity.Use -= EntityUseHandler;
-                e.DynamicEntity.VoxelModelChanged -= EntityVoxelModelChanged;
 
                 CharacterEntity charEntity;
                 if ((charEntity = e.DynamicEntity as CharacterEntity) != null)
@@ -263,16 +261,6 @@ namespace Utopia.Server.Structs
         {
             // retranslate
             OnEntityView(e);
-        }
-
-        void EntityVoxelModelChanged(object sender, VoxelModelEventArgs e)
-        {
-            // retranslate
-            //var ea = new AreaVoxelModelEventArgs{ Entity = (VoxelEntity)sender, Message = new 
-
-           
-
-            //OnEntityModelChanged(e);
         }
 
         private void EntityPositionChanged(object sender, ServerDynamicEntityMoveEventArgs e)

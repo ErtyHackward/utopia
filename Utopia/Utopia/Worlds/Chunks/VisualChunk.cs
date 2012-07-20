@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using Amib.Threading;
@@ -460,7 +461,7 @@ namespace Utopia.Worlds.Chunks
                 //By default the entity is 1/16 if its world size.
 
                 Matrix rotation;
-                if (voxelEntity.RndCreationYAxisRotation)
+                if (voxelEntity is Plant)
                 {
                     Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
                 }
