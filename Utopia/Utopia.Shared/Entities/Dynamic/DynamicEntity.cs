@@ -19,23 +19,13 @@ namespace Utopia.Shared.Entities.Dynamic
         private Quaternion _headRotation;
         private Quaternion _bodyRotation;
 
-        public bool RndCreationYAxisRotation
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-            }
-        }
-
         #region Events
 
         /// <summary>
         /// Occurs when entity changes its view direction
         /// </summary>
         public event EventHandler<EntityViewEventArgs> ViewChanged;
+
         protected void OnViewChanged(EntityViewEventArgs e)
         {
             var handler = ViewChanged;
@@ -61,17 +51,6 @@ namespace Utopia.Shared.Entities.Dynamic
         protected void OnPositionChanged(EntityMoveEventArgs e)
         {
             var handler = PositionChanged;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
-        /// Occurs when entity voxel model was changed
-        /// </summary>
-        public event EventHandler<VoxelModelEventArgs> VoxelModelChanged;
-
-        protected void OnVoxelModelChanged(VoxelModelEventArgs e)
-        {
-            var handler = VoxelModelChanged;
             if (handler != null) handler(this, e);
         }
 

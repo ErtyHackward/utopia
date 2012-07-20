@@ -1,8 +1,7 @@
-﻿using Realms.Shared.Items;
-using Realms.Shared.Tools;
-using Utopia.Shared.Cubes;
+﻿using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -48,8 +47,8 @@ namespace Realms.Server
                 dEntity.Inventory.PutItem(item3);
             }
             //Add coins + Torch
-            var Torch = _server.EntityFactory.CreateEntity<Torch>();
-            dEntity.Inventory.PutItem(Torch);
+            var torch = _server.EntityFactory.CreateEntity<Torch>();
+            dEntity.Inventory.PutItem(torch);
 
             //var item = (IItem)EntityFactory.Instance.CreateEntity((SandboxEntityClassId.Shovel));
             //dEntity.Inventory.PutItem(item);

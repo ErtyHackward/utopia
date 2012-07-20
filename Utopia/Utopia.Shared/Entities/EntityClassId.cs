@@ -13,6 +13,7 @@ namespace Utopia.Shared.Entities
         public const ushort Chair = 1001;
         public const ushort Door = 1002;
         public const ushort Bed = 1003;
+        public const ushort Torch = 1004;
 
         // tools 
         public const ushort CubeResource = 1500;
@@ -32,10 +33,6 @@ namespace Utopia.Shared.Entities
         public const ushort Flower3 = 4003;
         public const ushort Mushroom1 = 4004;
         public const ushort CactusFlower = 4005;
-        public const ushort Cactus = 4006;
-
-        //Special case
-        public const ushort EditableEntity = 10001;
-        
+        public const ushort Cactus = 4006;        
     }
 }

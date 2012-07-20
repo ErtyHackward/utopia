@@ -9,5 +9,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets or sets entity position
         /// </summary>
         Vector3I LinkedCube { get; set; }
+
+        /// <summary>
+        /// Gets or sets allowed faces where the entity can be mount on
+        /// </summary>
+        BlockFace MountPoint { get; }
     }
 }

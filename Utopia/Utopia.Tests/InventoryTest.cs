@@ -25,6 +25,11 @@ namespace Utopia.Tests
         {
             get { throw new NotImplementedException(); }
         }
+
+        public override string ModelName
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 
     public class GoldCoin : Item
@@ -45,6 +50,11 @@ namespace Utopia.Tests
         }
 
         public override string DisplayName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override string ModelName
         {
             get { throw new NotImplementedException(); }
         }

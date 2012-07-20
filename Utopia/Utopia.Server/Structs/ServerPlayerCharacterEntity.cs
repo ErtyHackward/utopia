@@ -42,7 +42,6 @@ namespace Utopia.Server.Structs
             area.EntityMoved += AreaEntityMoved;
             area.EntityUse += AreaEntityUse;
             area.BlocksChanged += AreaBlocksChanged;
-            area.EntityModelChanged += AreaEntityModelChanged;
             area.EntityEquipment += AreaEntityEquipment;
             area.StaticEntityAdded += AreaStaticEntityAdded;
             area.StaticEntityRemoved += AreaStaticEntityRemoved;
@@ -76,14 +75,6 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void AreaEntityModelChanged(object sender, AreaVoxelModelEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                Connection.SendAsync(new EntityVoxelModelMessage { EntityLink = e.Entity.GetLink(), Hash = e.Entity.ModelInstance.ModelHash });
-            }
-        }
-
         protected override void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e)
         {
             if (e.Entity != DynamicEntity)
@@ -108,7 +99,6 @@ namespace Utopia.Server.Structs
             area.EntityMoved -= AreaEntityMoved;
             area.EntityUse -= AreaEntityUse;
             area.BlocksChanged -= AreaBlocksChanged;
-            area.EntityModelChanged -= AreaEntityModelChanged;
             area.EntityEquipment -= AreaEntityEquipment;
             area.StaticEntityAdded -= AreaStaticEntityAdded;
             area.StaticEntityRemoved -= AreaStaticEntityRemoved;

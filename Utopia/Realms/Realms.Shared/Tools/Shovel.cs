@@ -34,5 +34,10 @@ namespace Realms.Shared.Tools
             RemoveableCubeIds.Add(CubeId.Dirt);
             RemoveableCubeIds.Add(CubeId.Grass);
         }
+
+        public override string ModelName
+        {
+            get { return "Shovel"; }
+        }
     }
 }
