@@ -254,10 +254,36 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    entity.Container = null; //Remove from its container
                     OnEntityRemoved(new EntityCollectionEventArgs { 
                         Entity = entity, 
                         ParentDynamicEntityId = parentDynamicEntityId 
+                    });
+                    entity.Container = null; //Remove from its container after event raise !
+                    OnCollectionDirty();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes entity by ID
+        /// </summary>
+        /// <param name="staticEntityId"></param>
+        /// <param name="parentDynamicEntityId"></param>
+        /// <param name="entity"></param>
+        public void RemoveById(uint staticEntityId, uint parentDynamicEntityId = 0)
+        {
+            lock (_syncRoot)
+            {
+                IStaticEntity entity;
+                if (_entities.TryGetValue(staticEntityId, out entity))
+                {
+                    IsDirty = true;
+                    _entities.Remove(staticEntityId);
+                    entity.Container = null; //Remove from its container
+                    OnEntityRemoved(new EntityCollectionEventArgs
+                    {
+                        Entity = entity,
+                        ParentDynamicEntityId = parentDynamicEntityId
                     });
                     OnCollectionDirty();
                 }

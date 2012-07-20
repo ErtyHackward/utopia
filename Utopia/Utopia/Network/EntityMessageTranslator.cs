@@ -115,8 +115,23 @@ namespace Utopia.Network
 
         void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            // do we need to check if that entity was dynamic or static?
-            _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
+            switch (e.Message.EntityType)
+            {
+                case EntityType.Gear:
+                    break;
+                case EntityType.Block:
+                    break;
+                case EntityType.Static:
+                    var cpos = e.Message.Link.ChunkPosition;
+                    var chunk = _chunkManager.GetChunk(cpos.X * AbstractChunk.ChunkSize.X, cpos.Y * AbstractChunk.ChunkSize.Z);
+                    chunk.Entities.RemoveById(e.Message.EntityId);
+                    break;
+                case EntityType.Dynamic:
+                    _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
+                    break;
+                default:
+                    break;
+            }
         }
 
         void ConnectionMessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
