@@ -465,6 +465,11 @@ namespace Utopia.Worlds.Chunks
                 {
                     Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
                 }
+                else if (voxelEntity is IItem)
+                {
+                    var item = voxelEntity as IItem;
+                    rotation = Matrix.RotationQuaternion(item.Rotation);
+                }
                 else
                 {
                     rotation = Matrix.Identity;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -82,10 +83,18 @@ namespace Utopia.Shared.Entities
                     }
                     else
                     {
-
                         cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                                           owner.EntityState.PickedBlockPosition.Y,
-                                                           owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                                                           owner.EntityState.PickedBlockPosition.Y + 0.5f,
+                                                           owner.EntityState.PickedBlockPosition.Z);
+
+                        var slope = 0d;
+
+                        if (moveVector.X == -1) slope = 0;
+                        if (moveVector.X == 1) slope = Math.PI / 2;
+                        if (moveVector.Z == -1) slope = Math.PI;
+                        if (moveVector.Z == 1) slope = -Math.PI / 2;
+
+                        cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
                     }
 
 
