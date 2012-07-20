@@ -30,6 +30,19 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
+        /// Returns whether this block is empty to entity
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsEmpty(this Func<Tuple<ILandscapeCursor, Vector3I>> func)
+        {
+            var operation = func();
+
+            var value = operation.Item2.IsZero() ? operation.Item1.Read() : operation.Item1.PeekValue(operation.Item2);
+
+            return !GameSystemSettings.Current.Settings.CubesProfile[value].IsSolidToEntity;
+        }
+
+        /// <summary>
         /// Reads a block value
         /// </summary>
         /// <param name="func"></param>

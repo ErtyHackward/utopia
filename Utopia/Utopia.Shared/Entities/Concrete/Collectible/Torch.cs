@@ -4,7 +4,7 @@ using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Torch : CubePlaceableItem, IBlockLinkedEntity
+    public class Torch : CubePlaceableItem
     {
         public override string ModelName
         {
@@ -34,32 +34,13 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         {
             get { return "Basic light source"; }
         }
-
-        /// <summary>
-        /// Gets or sets entity position
-        /// </summary>
-        public Vector3I LinkedCube { get; set; }
         
         /// <summary>
         /// Gets or sets allowed faces where the entity can be mount on
         /// </summary>
-        public BlockFace MountPoint
+        public override BlockFace MountPoint
         {
             get { return BlockFace.Sides; }
-        }
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // first we need to load base information
-            base.Load(reader, factory);
-            LinkedCube = reader.ReadVector3I();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            // first we need to save base information
-            base.Save(writer);
-            writer.Write(LinkedCube);
         }
     }
 }

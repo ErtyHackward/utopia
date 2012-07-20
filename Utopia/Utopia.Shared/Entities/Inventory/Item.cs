@@ -57,7 +57,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public override string DisplayName
         {
-            get { return string.IsNullOrEmpty(UniqueName) ? DisplayName : UniqueName; }
+            get { return UniqueName; }
         }
 
         #endregion

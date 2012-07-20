@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
@@ -16,19 +18,16 @@ namespace Utopia.Shared.Entities
         /// Gets or sets static entity id. This id is unique only in current container. Invalid without Container property set
         /// </summary>
         public uint StaticId { get; set; }
+        
+        /// <summary>
+        /// Gets or sets entity world rotation
+        /// </summary>
+        public Quaternion Rotation { get; set; }
 
         /// <summary>
         /// Gets or sets current parent container
         /// </summary>
-        private IStaticContainer _container;
-        public IStaticContainer Container
-        {
-            get { return _container; }
-            set 
-            {
-                _container = value; 
-            }
-        }
+        public IStaticContainer Container { get; set; }
 
         /// <summary>
         /// Returns link to the entity
@@ -60,32 +59,34 @@ namespace Utopia.Shared.Entities
             if (container is EntityCollection)
             {
                 var ec = container as EntityCollection;
-                return new EntityLink((ec.Chunk as IChunkLayout2D).Position, entities.ToArray());
+                return new EntityLink(((IChunkLayout2D)ec.Chunk).Position, entities.ToArray());
             }
 
             // root is the dynamicEntity
             if (container is ISlotContainer<ContainedSlot>)
             {
                 var sc = container as ISlotContainer<ContainedSlot>;
-                return new EntityLink((sc.Parent as IDynamicEntity).DynamicId, entities.ToArray());
+                return new EntityLink(((IDynamicEntity)sc.Parent).DynamicId, entities.ToArray());
             }
             
             // wrong root
             throw new InvalidOperationException("Unable to take link from that object");
         }
 
-        public override void Save(System.IO.BinaryWriter writer)
+        public override void Save(BinaryWriter writer)
         {
             base.Save(writer);
 
             writer.Write(StaticId);
+            writer.Write(Rotation);
         }
 
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
+        public override void Load(BinaryReader reader, EntityFactory factory)
         {
             base.Load(reader, factory);
 
             StaticId = reader.ReadUInt32();
+            Rotation = reader.ReadQuaternion();
         }
     }
 }

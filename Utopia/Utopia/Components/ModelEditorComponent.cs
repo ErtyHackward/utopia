@@ -2485,15 +2485,15 @@ namespace Utopia.Components
                     break;
                 case EditorAxis.X:
                     ps.RotationOffset = translation;
-                    ps.Rotation = Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationX(rotationAngle) * Matrix.Translation(translation));
+                    ps.Rotation = ps.Rotation * Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationX(rotationAngle) * Matrix.Translation(translation));
                     break;
                 case EditorAxis.Y:
                     ps.RotationOffset = translation;
-                    ps.Rotation = Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationY(rotationAngle) * Matrix.Translation(translation));
+                    ps.Rotation = ps.Rotation * Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationY(rotationAngle) * Matrix.Translation(translation));
                     break;
                 case EditorAxis.Z:
                     ps.RotationOffset = translation;
-                    ps.Rotation = Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationZ(rotationAngle) * Matrix.Translation(translation));
+                    ps.Rotation = ps.Rotation * Quaternion.RotationMatrix(Matrix.Translation(-translation) * Matrix.RotationZ(rotationAngle) * Matrix.Translation(translation));
                     break;
             }
             

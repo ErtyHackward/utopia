@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
@@ -9,7 +11,7 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Base class for items that can be placed into a world cube
     /// </summary>
-    public abstract class CubePlaceableItem : Item, ITool, IWorldIntercatingEntity
+    public abstract class CubePlaceableItem : Item, ITool, IWorldIntercatingEntity, IBlockLinkedEntity
     {
         /// <summary>
         /// Gets landscape manager, this field is injected
@@ -21,6 +23,10 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public EntityFactory Factory { get; set; }
 
+        public Vector3I LinkedCube { get; set; }
+
+        public abstract BlockFace MountPoint { get; }
+        
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
             var impact = new ToolImpact { Success = false };
@@ -29,14 +35,62 @@ namespace Utopia.Shared.Entities
             {
                 if (owner.EntityState.IsBlockPicked)
                 {
-                    var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                    var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
 
-                    //Create a new version of the Grass, and put it into the world
+                    var moveVector = owner.EntityState.NewBlockPosition - owner.EntityState.PickedBlockPosition;
+
+                    // check if entity can be put there
+                    if (moveVector.Y == 1 && !MountPoint.HasFlag(BlockFace.Top))
+                        return impact;
+
+                    if (moveVector.Y == -1 && !MountPoint.HasFlag(BlockFace.Bottom))
+                        return impact;
+
+                    if (Math.Abs(moveVector.X) == 1 || Math.Abs(moveVector.Z) == 1 && !MountPoint.HasFlag(BlockFace.Sides))
+                        return impact;
+
+                    // check if the place is free
+                    if (MountPoint.HasFlag(BlockFace.Top) && cursor.Up().IsSolid())
+                        return impact;
+                    
+                    if (MountPoint.HasFlag(BlockFace.Sides) && cursor.Offset(moveVector).IsSolid())
+                        return impact;
+
+                    if (MountPoint.HasFlag(BlockFace.Bottom) && cursor.Down().IsSolid())
+                        return impact;
+
+                    cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
+
+                    //Create a new version of the item, and put it into the world
                     var cubeEntity = (IItem)Factory.CreateEntity(ClassId);
-                    cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f, owner.EntityState.PickedBlockPosition.Y + 1f, owner.EntityState.PickedBlockPosition.Z + 0.5f);
 
-                    chunk.Entities.Add(cubeEntity);
+                    var blockLinked = (IBlockLinkedEntity)cubeEntity;
+                    blockLinked.LinkedCube = owner.EntityState.PickedBlockPosition;
 
+                    // locate the entity
+                    if (moveVector.Y == 1)
+                    {
+                        cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                                                           owner.EntityState.PickedBlockPosition.Y + 1f,
+                                                           owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                    }
+                    else if (moveVector.Y == -1)
+                    {
+                        cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                                                           owner.EntityState.PickedBlockPosition.Y,
+                                                           owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                    }
+                    else
+                    {
+
+                        cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                                                           owner.EntityState.PickedBlockPosition.Y,
+                                                           owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                    }
+
+
+                    cursor.AddEntity(cubeEntity);
+                    
                     impact.Success = true;
                 }
             }
@@ -46,6 +100,20 @@ namespace Utopia.Shared.Entities
         public void Rollback(IToolImpact impact)
         {
             throw new NotImplementedException();
+        }
+
+        public override void Load(BinaryReader reader, EntityFactory factory)
+        {
+            // first we need to load base information
+            base.Load(reader, factory);
+            LinkedCube = reader.ReadVector3I();
+        }
+
+        public override void Save(BinaryWriter writer)
+        {
+            // first we need to save base information
+            base.Save(writer);
+            writer.Write(LinkedCube);
         }
     }
 }
