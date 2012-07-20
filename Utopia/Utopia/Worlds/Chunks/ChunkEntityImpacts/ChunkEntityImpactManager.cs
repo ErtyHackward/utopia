@@ -123,15 +123,77 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 }
             }
         }
+        #endregion
+
+        #region Public methods
+        public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
+        {
+            return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);
+        }
+
+        public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChanged, BlockTag blockTag = null)
+        {
+            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+            if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
+            {
+                return false;
+            }
+            //Create the new cube
+            TerraCube newCube = new TerraCube(replacementCubeId);
+
+            //Get Cube Profile
+            CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[replacementCubeId];
+
+            ////Check if the cube is not already the same ? ! ?
+            TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
+            if (existingCube.Id == replacementCubeId)
+            {
+                if (cubeProfile.IsTaggable)
+                {
+                    BlockTag ExistingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+                    if (ExistingTag == blockTag)
+                    {
+                        return true; //The block & tags are the sames !
+                    }
+                }
+                else return true; //The block are the sames !
+            }
+
+            //Change the cube in the big array
+            _cubesHolder.SetCube(cubeArrayIndex, ref cubeCoordinates, ref newCube);
+
+            //Update chunk tag collection if needed
+            if (cubeProfile.IsTaggable)
+            {
+                impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+            }
+
+            //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
+            TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
+            //SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
+            CheckImpact(cube, impactedChunk);
+
+            //Raise event for sound
+            OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
+
+            //Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
+            //Is it Worth ????
+            impactedChunk.CompressedDirty = true;
+            Md5Hash chunkHash;
+            byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
+            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
+
+            return true;
+        }
 
         /// <summary>
-        /// Check the impact of the block replacement.
+        /// Check the impact of the block/Item replacement.
         /// Mostly will check wish of the surrounding visualchunks must be refresh (lighting or cube masked face reason).
         /// This is only for drawing purpose, not landscape modification here.
         /// </summary>
-        /// <param name="cubeCoordinates">The cube that has been modified</param>
+        /// <param name="cubeCoordinates">The cube where the modification has been realized</param>
         /// <param name="replacementCubeId">The type of the modified cube</param>
-        private void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
+        public void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
         {
             Int64 mainChunkId;
 
@@ -142,8 +204,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 Size = new Vector3I(_lightManager.LightPropagateSteps * 2, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, _lightManager.LightPropagateSteps * 2)
             };
 
-            //Refresh the Visual Entity if needed !
-
+            //recompute the light sources without the range
             _lightManager.CreateLightSources(ref cubeRange);
 
             cubeRange.Position.X--;
@@ -151,6 +212,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             cubeRange.Size.X += 2;
             cubeRange.Size.Z += 2;
 
+            //Refresh the Visual Entity too !
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
             CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
@@ -235,68 +297,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             }
 
-        }
-        #endregion
-
-        #region Public methods
-        public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
-        {
-            return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);
-        }
-
-        public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChanged, BlockTag blockTag = null)
-        {
-            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-            if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
-            {
-                return false;
-            }
-            //Create the new cube
-            TerraCube newCube = new TerraCube(replacementCubeId);
-
-            //Get Cube Profile
-            CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[replacementCubeId];
-
-            ////Check if the cube is not already the same ? ! ?
-            TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
-            if (existingCube.Id == replacementCubeId)
-            {
-                if (cubeProfile.IsTaggable)
-                {
-                    BlockTag ExistingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-                    if (ExistingTag == blockTag)
-                    {
-                        return true; //The block & tags are the sames !
-                    }
-                }
-                else return true; //The block are the sames !
-            }
-
-            //Change the cube in the big array
-            _cubesHolder.SetCube(cubeArrayIndex, ref cubeCoordinates, ref newCube);
-
-            //Update chunk tag collection if needed
-            if (cubeProfile.IsTaggable)
-            {
-                impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-            }
-
-            //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
-            TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
-            //SmartThread.ThreadPool.QueueWorkItem(CheckImpactThreaded, cube, Amib.Threading.WorkItemPriority.Highest);
-            CheckImpact(cube, impactedChunk);
-
-            //Raise event for sound
-            OnBlockReplaced(new LandscapeBlockReplacedEventArgs { Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
-
-            //Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
-            //Is it Worth ????
-            impactedChunk.CompressedDirty = true;
-            Md5Hash chunkHash;
-            byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
-            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
-
-            return true;
         }
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)

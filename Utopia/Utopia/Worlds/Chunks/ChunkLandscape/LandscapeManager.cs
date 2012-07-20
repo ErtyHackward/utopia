@@ -244,7 +244,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             visualChunk.BlockData.ColumnsInfo = generatedChunk.BlockData.ColumnsInfo;
 
             //Copy the entities
-            visualChunk.Entities.Import(generatedChunk.Entities);
+            visualChunk.Entities.Import(generatedChunk.Entities, false);
         }
 
         #endregion

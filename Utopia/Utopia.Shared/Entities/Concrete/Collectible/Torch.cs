@@ -1,11 +1,19 @@
 ﻿using System.IO;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
+using SharpDX;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {
-    public class Torch : CubePlaceableItem
+    public class Torch : CubePlaceableItem, ILightEmitterEntity
     {
+        private ByteColor _emittedLightColor = new ByteColor(255, 190, 94);
+        public ByteColor EmittedLightColor
+        {
+            get { return _emittedLightColor; }
+            set { _emittedLightColor = value; }
+        }
+
         public override string ModelName
         {
             get { return "Torch"; }
