@@ -9,5 +9,6 @@ namespace Utopia.Shared.Entities.Events
         public uint ParentDynamicEntityId { get; set; }
         public IStaticEntity Entity { get; set; }
         public AbstractChunk Chunk { get; set; }
+        public bool RaisedFromNetworkData { get; set; }
     }
 }

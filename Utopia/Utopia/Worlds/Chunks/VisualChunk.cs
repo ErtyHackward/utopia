@@ -29,6 +29,7 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Entities.Voxel;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -50,6 +51,8 @@ namespace Utopia.Worlds.Chunks
         
         private IEntityPickingManager _entityPickingManager;
         private VoxelModelManager _voxelModelManager;
+
+        //private ChunkEntityImpactManager _chunkEntityImpactManager;
 
         #endregion
 
@@ -203,13 +206,14 @@ namespace Utopia.Worlds.Chunks
                             CameraManager<ICameraFocused> cameraManager,
                             WorldChunks worldChunkManager,
                             VoxelModelManager voxelModelManager)
+                            //ChunkEntityImpactManager chunkEntityImpactManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
             _d3dEngine = d3dEngine;
             _worldChunkManager = worldChunkManager;
-
+            //_chunkEntityImpactManager = chunkEntityImpactManager;
 #if DEBUG
             _blockpickedUPEffect = new HLSLVertexPositionColor(_d3dEngine.Device);
 #endif
@@ -434,6 +438,8 @@ namespace Utopia.Worlds.Chunks
                 {
                     voxelEntity.ModelInstance.Play("Idle", true);
                 }
+
+                //_chunkEntityImpactManager.CheckImpact(
 
                 List<VisualVoxelEntity> list;
                 if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))

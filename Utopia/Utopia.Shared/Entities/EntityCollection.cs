@@ -95,7 +95,7 @@ namespace Utopia.Shared.Entities
         /// Must be used if we want to copy the entities from another collection to this one
         /// </summary>
         /// <param name="entityCollection">The new entities collection</param>
-        public void Import(EntityCollection entityCollection)
+        public void Import(EntityCollection entityCollection, bool fromNetworkDataSource = true)
         {
             lock (_syncRoot)
             {
@@ -106,7 +106,7 @@ namespace Utopia.Shared.Entities
                 {
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = 0 });
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = 0, RaisedFromNetworkData = fromNetworkDataSource });
                 }
                 _initialisation = false;
             }

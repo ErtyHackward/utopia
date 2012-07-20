@@ -9,6 +9,8 @@ using Utopia.Shared.Settings;
 using S33M3DXEngine.Threading;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Interfaces;
+using System.Linq;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -96,6 +98,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             Range3I cubeRange = chunk.CubeRange;
             CreateLightSources(ref cubeRange);
+            CreateEntityLightSources(chunk);
         }
 
         //Create light source on a specific Cube Range (not chunk linked)
@@ -143,6 +146,24 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             }
         }
 
+        public void CreateEntityLightSources(VisualChunk chunk)
+        {
+            foreach (ILightEmitterEntity LightingEntity in chunk.Entities.Enumerate<ILightEmitterEntity>())
+            {
+                //Get the Cube where is located the entity
+                Vector3D entityWorldPosition = ((IEntity)LightingEntity).Position;
+                Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
+                                                            MathHelper.Fastfloor(entityWorldPosition.Y),
+                                                            MathHelper.Fastfloor(entityWorldPosition.Z));
+
+                //Get big array index of this cube
+                int index = _cubesHolder.Index(ref entityBlockPosition);
+                _cubesHolder.Cubes[index].EmissiveColor.R = LightingEntity.EmittedLightColor.R;
+                _cubesHolder.Cubes[index].EmissiveColor.G = LightingEntity.EmittedLightColor.G;
+                _cubesHolder.Cubes[index].EmissiveColor.B = LightingEntity.EmittedLightColor.B;
+            }
+        }
+
         //Light Propagation =================================================================================================================
         private void PropagatesLightSources(VisualChunk chunk)
         {
@@ -172,16 +193,15 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             CubeProfile cubeprofile;
             int index = _cubesHolder.Index(ref cubePosition);
+            TerraCube cube = _cubesHolder.Cubes[index];
 
-            cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
+            cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
             if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) return;
-            PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
-            if (cubeprofile.IsEmissiveColorLightSource)
-            {
-                if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
-                if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
-                if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, _cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
-            }
+            PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
+
+            if (cube.EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
+            if (cube.EmissiveColor.G > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.G, LightComponent.Green, true, index);
+            if (cube.EmissiveColor.B > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.B, LightComponent.Blue, true, index);
         }
 
         //Can only be done if surrounding chunks have their landscape initialized !
@@ -190,6 +210,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             CubeProfile cubeprofile;
             bool borderchunk = false;
             int index;
+
+            TerraCube cube;
+
             //Foreach Blocks in the Range
             for (int X = cubeRange.Position.X; X < cubeRange.Max.X; X++)
             {
@@ -203,16 +226,14 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                         if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
 
-                        cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[_cubesHolder.Cubes[index].Id];
+                        cube = _cubesHolder.Cubes[index];
+                        cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
                         if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
-                        if (_cubesHolder.Cubes[index].EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.A, LightComponent.SunLight, true, index);
-                        if (cubeprofile.IsEmissiveColorLightSource || (borderAsLightSource && borderchunk))
-                        {
-                            if (_cubesHolder.Cubes[index].EmissiveColor.R > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.R, LightComponent.Red, true, index);
-                            if (_cubesHolder.Cubes[index].EmissiveColor.G > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.G, LightComponent.Green, true, index);
-                            if (_cubesHolder.Cubes[index].EmissiveColor.B > 0) PropagateLight(X, Y, Z, _cubesHolder.Cubes[index].EmissiveColor.B, LightComponent.Blue, true, index);
-                        }
+                        if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
+                        if (cube.EmissiveColor.R > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
+                        if (cube.EmissiveColor.G > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.G, LightComponent.Green, true, index);
+                        if (cube.EmissiveColor.B > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.B, LightComponent.Blue, true, index);
                     }
                 }
             }
