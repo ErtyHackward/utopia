@@ -41,7 +41,6 @@ namespace Utopia.Shared.Net.Messages
         }
 
         private EntityLink _link;
-
         /// <summary>
         /// A link for an entity
         /// </summary>

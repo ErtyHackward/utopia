@@ -98,7 +98,6 @@ namespace Utopia.Shared.Entities
                         cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
                     }
 
-
                     cursor.AddEntity(cubeEntity);
                     
                     impact.Success = true;

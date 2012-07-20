@@ -257,18 +257,6 @@ namespace Utopia.Worlds.Chunks
             return true;
         }
 
-        //public void SetNewEntityCollection(EntityCollection newEntities)
-        //{
-        //    if (newEntities == Entities)
-        //    {
-        //        // TODO: Fabian, why it happens? it should not be
-        //        //throw new InvalidOperationException();
-        //        return;
-        //    }
-
-        //    Entities.Import(newEntities);
-        //}
-
         //Graphical Part
         public void InitializeChunkBuffers()
         {
@@ -347,31 +335,6 @@ namespace Utopia.Worlds.Chunks
             LiquidCubeIndices.Clear();
         }
 
-        //private void SendStaticEntitiesToGraphicalCard()
-        //{
-        //    if (StaticSpritesVertices.Count == 0)
-        //    {
-        //        if (StaticSpritesVB != null) StaticSpritesVB.Dispose();
-        //        StaticSpritesVB = null;
-        //        return;
-        //    }
-
-        //    if (StaticSpritesVB == null)
-        //    {
-        //        StaticSpritesVB = new VertexBuffer<VertexSprite3D>(_d3dEngine.Device, StaticSpritesVertices.Count, VertexSprite3D.VertexDeclaration, PrimitiveTopology.TriangleList, "StaticEntityVB", ResourceUsage.Default, 5);
-        //    }
-        //    StaticSpritesVB.SetData(_d3dEngine.ImmediateContext, StaticSpritesVertices.ToArray());
-        //    StaticSpritesVertices.Clear();
-
-        //    if (StaticSpritesIB == null)
-        //    {
-        //        StaticSpritesIB = new IndexBuffer<ushort>(_d3dEngine.Device, StaticSpritesIndices.Count, SharpDX.DXGI.Format.R16_UInt, "StaticEntityIB");
-        //    }
-        //    StaticSpritesIB.SetData(_d3dEngine.ImmediateContext, StaticSpritesIndices.ToArray());
-        //    StaticSpritesIndices.Clear();
-        //}
-
-
         //Ask the Graphical card to Draw the solid faces
         public void DrawSolidFaces(DeviceContext context)
         {
@@ -393,25 +356,6 @@ namespace Utopia.Worlds.Chunks
                 context.DrawIndexed(LiquidCubeIB.IndicesCount, 0, 0);
             }
         }
-
-       //public void DrawStaticEntities(DeviceContext context, HLSLVoxelModel effect)
-        //{
-        //    foreach (var staticItem in VisualVoxelEntities)
-        //    {
-        //        staticItem.VisualVoxelModel.Draw(context, effect, staticItem.VoxelEntity.ModelInstance);
-        //    }
-        //}
-
-        //Ask the Graphical card to Draw the solid faces
-        //public void DrawStaticEntities(DeviceContext context)
-        //{
-        //    if (StaticSpritesVB != null)
-        //    {
-        //        StaticSpritesVB.SetToDevice(context, 0);
-        //        StaticSpritesIB.SetToDevice(context, 0);
-        //        context.DrawIndexed(StaticSpritesIB.IndicesCount, 0, 0);
-        //    }
-        //}
 
 #if DEBUG
         public void DrawDebugBoundingBox(DeviceContext context)

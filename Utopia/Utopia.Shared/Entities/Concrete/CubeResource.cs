@@ -113,6 +113,7 @@ namespace Utopia.Shared.Entities.Concrete
             {
                 if (useMode == ToolUseMode.LeftMouse)
                 {
+                    //Remove block and all attached entities to this blocks !
                     var character = owner as CharacterEntity;
 
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
@@ -128,12 +129,14 @@ namespace Utopia.Shared.Entities.Concrete
                                 IBlockLinkedEntity cubeBlockLinkedEntity = cubeEntity as IBlockLinkedEntity;
                                 if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                                 {
+                                    //Insert in the inventory the entity that will be removed !
                                     var adder = (IItem)Factory.CreateEntity(cubeEntity.ClassId);
                                     character.Inventory.PutItem(adder);
                                 }
                             }
                         }
 
+                        //Removed all entities from collection that where linked to this removed cube !
                         chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                         //change the Block to AIR
@@ -141,18 +144,13 @@ namespace Utopia.Shared.Entities.Concrete
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = Cubes.CubeId.Air });
                         
                         impact.Success = true;
-                        //If the Tool Owner is a player, then Add the resource removed into the inventory
-                        //if (character != null)
-                        //{
-                        //    var adder = Factory.CreateEntity<CubeResource>();
-                        //    adder.CubeId = cube;
-                        //    character.Inventory.PutItem(adder);
-                        //}
+
                         return impact;
                     }
                 }
                 else
                 {
+                    //Add new block
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
                     if (cursor.Read() == Cubes.CubeId.Air)
                     {
@@ -167,6 +165,7 @@ namespace Utopia.Shared.Entities.Concrete
             return impact;
         }
 
+        //Entity impect when a player equiped with a cube click on the entity => Will remove the entity and place it to the inventory.
         private IToolImpact EntityImpact(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
         {
             var impact = new ToolImpact { Success = false };
@@ -174,11 +173,14 @@ namespace Utopia.Shared.Entities.Concrete
             EntityLink entity = owner.EntityState.PickedEntityLink;
             IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
             IStaticEntity entityRemoved;
+
+            //Remove the entity from chunk
             chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
             
             var character = owner as CharacterEntity;
             if (character != null && entityRemoved != null)
             {
+                //Create a new entity of the same clicked one and place it into the inventory
                 var adder = (IItem)Factory.CreateEntity(entityRemoved.ClassId);
                 character.Inventory.PutItem(adder);
             }

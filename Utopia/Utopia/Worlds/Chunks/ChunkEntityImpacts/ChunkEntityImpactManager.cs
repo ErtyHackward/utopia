@@ -244,10 +244,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);
         }
 
-        public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
+        public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChanged, BlockTag blockTag = null)
         {
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
-            if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChange)
+            if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
             {
                 return false;
             }
