@@ -74,6 +74,9 @@ namespace Realms.Client
 
             game.MenuRequested += game_MenuRequested;
             game.GameStateManager = stateManager;
+
+            ApplySystemSettings();
+
             game.Run(); //Start the Main render loop
 
             _iocContainer.Dispose();
@@ -97,6 +100,22 @@ namespace Realms.Client
             //Load the Actif texture pack config
             TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath, @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\");
             TexturePackConfig.Current.Load();
+        }
+
+
+        private void ApplySystemSettings()
+        {
+            var game = _iocContainer.Get<Game>();
+
+            if (ClientSettings.Current.Settings.FrameLimiter > 0)
+            {
+                game.FramelimiterTime = (long)(1.0 / ClientSettings.Current.Settings.FrameLimiter * 1000.0);
+                game.VSync = false;
+            }
+            else
+            {
+                game.FramelimiterTime = 0;
+            }
         }
 
         /// <summary>
