@@ -127,7 +127,7 @@ namespace Utopia.Shared.Settings
     {
         [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 50]", " chunk(s)", ParamInputMethod.Slider, 10, 50, true)]
         public int WorldSize { get; set; }
-        [ParameterAttribute("Visible World Entity range", "World entities view range in chunk unit between [3 and 32]", " chunk(s)", ParamInputMethod.Slider, 3, 32, true)]
+        [ParameterAttribute("Visible World Entity range", "World entities view range in chunk unit between [1 and 32]", " chunk(s)", ParamInputMethod.Slider, 1, 32, true)]
         public int StaticEntityViewSize { get; set; }
         [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)", ParamInputMethod.Slider, 4, 12, true)]
         public int LightPropagateSteps { get; set; }
@@ -246,6 +246,12 @@ namespace Utopia.Shared.Settings
         /// Compute the first time the engine is started
         /// </summary>
         public int DefaultAllocatedThreads { get; set; }
+
+        /// <summary>
+        /// Will put a Max value on frame time
+        /// Use only if bad performances occurs !! (Bad GPU)
+        /// </summary>
+        public int FrameLimiter { get; set; }
 
         /// <summary>
         /// Game parameters config section

@@ -63,16 +63,20 @@ namespace S33M3DXEngine.Main
         }
         public PerfMonitor ComponentsPerfMonitor { get; set; }
 
+        public long FramelimiterTime
+        {
+            get { return _framelimiterTime; }
+            set { _framelimiterTime = value; }
+        } 
+
         #endregion
 
         #region Private Variable
 
         private delegate void WinformInvockCallBack();
         protected D3DEngine Engine;
-
-        //public static int TargetedGameUpdatePerSecond = 40; //Number of targeted update per seconds
-        //public static long GameUpdateDelta = Stopwatch.Frequency / TargetedGameUpdatePerSecond;
-        //Compute the number of Ticks/s per Update
+        Stopwatch _framelimiter = new Stopwatch();
+        long _framelimiterTime = 0;
 
         private int _maxRenderFrameSkip = 5; //Maximum frame rendering skipping
 
@@ -130,6 +134,7 @@ namespace S33M3DXEngine.Main
             _gameComponents.ComponentRemoved += new EventHandler<GameComponentCollectionEventArgs>(GameComponentRemoved);
 
             ComponentsPerfMonitor = ToDispose(new PerfMonitor());
+            _framelimiter.Start();
         }
 
         #region Public Methods
@@ -368,6 +373,16 @@ namespace S33M3DXEngine.Main
 
             HLSLShaderWrap.ResetEffectStateTracker();
             VertexBuffer.ResetVertexStateTracker();
+
+            if (_framelimiterTime > 0)
+            {
+                while (_framelimiter.ElapsedMilliseconds <= _framelimiterTime)
+                {
+                    Thread.Sleep(1);
+                }
+                _framelimiter.Restart();
+            }
+            //Frame limiter, will hold the frame for a minimum amount of time
         }
 
         #region Game Component Collection Methods
