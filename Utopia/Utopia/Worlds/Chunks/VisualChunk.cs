@@ -52,7 +52,7 @@ namespace Utopia.Worlds.Chunks
         private IEntityPickingManager _entityPickingManager;
         private VoxelModelManager _voxelModelManager;
 
-        //private ChunkEntityImpactManager _chunkEntityImpactManager;
+        private IChunkEntityImpactManager _chunkEntityImpactManager;
 
         #endregion
 
@@ -205,15 +205,15 @@ namespace Utopia.Worlds.Chunks
                             IEntityPickingManager entityPickingManager,
                             CameraManager<ICameraFocused> cameraManager,
                             WorldChunks worldChunkManager,
-                            VoxelModelManager voxelModelManager)
-                            //ChunkEntityImpactManager chunkEntityImpactManager)
+                            VoxelModelManager voxelModelManager,
+                            IChunkEntityImpactManager chunkEntityImpactManager)
             : base(new SingleArrayDataProvider(singleArrayContainer))
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
             _d3dEngine = d3dEngine;
             _worldChunkManager = worldChunkManager;
-            //_chunkEntityImpactManager = chunkEntityImpactManager;
+            _chunkEntityImpactManager = chunkEntityImpactManager;
 #if DEBUG
             _blockpickedUPEffect = new HLSLVertexPositionColor(_d3dEngine.Device);
 #endif
@@ -439,8 +439,6 @@ namespace Utopia.Worlds.Chunks
                     voxelEntity.ModelInstance.Play("Idle", true);
                 }
 
-                //_chunkEntityImpactManager.CheckImpact(
-
                 List<VisualVoxelEntity> list;
                 if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
                 {
@@ -449,6 +447,17 @@ namespace Utopia.Worlds.Chunks
                 else
                 {
                     VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                }
+
+                ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
+                if (e.LocalChange == false && lightEntity != null)
+                {
+                    //Get the Cube where is located the entity
+                    Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
+                    Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
+                                                                MathHelper.Fastfloor(entityWorldPosition.Y),
+                                                                MathHelper.Fastfloor(entityWorldPosition.Z));
+                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, Utopia.Shared.Cubes.CubeId.Air), this);
                 }
             }
         }

@@ -205,7 +205,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             };
 
             //recompute the light sources without the range
-            _lightManager.CreateLightSources(ref cubeRange);
+            _lightManager.CreateLightSources(ref cubeRange, cubeChunk);
 
             cubeRange.Position.X--;
             cubeRange.Position.Z--;
@@ -298,6 +298,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
         }
+
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)
         {

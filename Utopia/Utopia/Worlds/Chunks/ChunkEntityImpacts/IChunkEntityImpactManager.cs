@@ -5,6 +5,7 @@ using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Storage;
 using Utopia.Network;
 using S33M3Resources.Structs;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -20,5 +21,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager);
+        void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk);
     }
 }
