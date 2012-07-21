@@ -30,6 +30,7 @@ using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -87,6 +88,7 @@ namespace Utopia.Worlds.Chunks
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
         private VoxelModelManager _voxelModelManager;
+        private IChunkEntityImpactManager _chunkEntityImpactManager;
 
         /// <summary>
         /// List of chunks that still _slowly_ appearing
@@ -158,7 +160,8 @@ namespace Utopia.Worlds.Chunks
                            SharedFrameCB sharedFrameCB,
                            StaggingBackBuffer solidBackBuffer,
                            StaggingBackBuffer skyBackBuffer,
-                           VoxelModelManager voxelModelManager
+                           VoxelModelManager voxelModelManager,
+                           IChunkEntityImpactManager chunkEntityImpactManager
             )
         {
             _server = server;
@@ -182,6 +185,7 @@ namespace Utopia.Worlds.Chunks
             _solidBackBuffer = solidBackBuffer;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
+            _chunkEntityImpactManager = chunkEntityImpactManager;
 
             DrawStaticInstanced = true;
 
@@ -577,7 +581,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager);
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);

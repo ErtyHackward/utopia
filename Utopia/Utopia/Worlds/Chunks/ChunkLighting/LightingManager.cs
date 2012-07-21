@@ -97,12 +97,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private void CreateLightSources(VisualChunk chunk)
         {
             Range3I cubeRange = chunk.CubeRange;
-            CreateLightSources(ref cubeRange);
-            CreateEntityLightSources(chunk);
+            CreateLightSources(ref cubeRange, chunk);
         }
 
         //Create light source on a specific Cube Range (not chunk linked)
-        public void CreateLightSources(ref Range3I cubeRange)
+        public void CreateLightSources(ref Range3I cubeRange, VisualChunk chunk)
         {
             int index;
             bool blockLight = false;
@@ -144,6 +143,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     }
                 }
             }
+
+            CreateEntityLightSources(chunk);
         }
 
         public void CreateEntityLightSources(VisualChunk chunk)
@@ -228,7 +229,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                         cube = _cubesHolder.Cubes[index];
                         cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
-                        if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
+                        //if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
                         if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cube.EmissiveColor.R > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
