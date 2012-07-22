@@ -205,10 +205,16 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 Size = new Vector3I(_lightManager.LightPropagateSteps * 2, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, _lightManager.LightPropagateSteps * 2)
             };
 
+            //recompute the light sources without the range
+            _lightManager.CreateLightSources(ref cubeRange);
+
             cubeRange.Position.X--;
             cubeRange.Position.Z--;
             cubeRange.Size.X += 2;
             cubeRange.Size.Z += 2;
+
+            //Propagate the light, we add one cube around the previous Range !! <= !!
+            _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
             CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
 
@@ -301,12 +307,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
             }
-
-            //recompute the light sources without the range
-            _lightManager.CreateLightSources(ref cubeRange, impactedChunks);
-
-            //Refresh the Visual Entity too !
-            _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
         }
 

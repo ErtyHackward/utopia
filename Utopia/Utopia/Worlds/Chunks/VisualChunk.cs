@@ -394,17 +394,17 @@ namespace Utopia.Worlds.Chunks
             foreach (var pair in VisualVoxelEntities)
             {
                 pair.Value.RemoveAll(x => x.Entity == e.Entity);
+            }
 
-                ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
-                if (e.AtChunkCreationTime == false && lightEntity != null)
-                {
-                    //Get the Cube where is located the entity
-                    Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
-                    Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
-                                                                MathHelper.Fastfloor(entityWorldPosition.Y),
-                                                                MathHelper.Fastfloor(entityWorldPosition.Z));
-                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, Utopia.Shared.Cubes.CubeId.Air), this);
-                }
+            ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
+            if (e.AtChunkCreationTime == false && lightEntity != null)
+            {
+                //Get the Cube where is located the entity
+                Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
+                Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
+                                                            MathHelper.Fastfloor(entityWorldPosition.Y),
+                                                            MathHelper.Fastfloor(entityWorldPosition.Z));
+                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, Utopia.Shared.Cubes.CubeId.Air), this);
             }
         }
 
