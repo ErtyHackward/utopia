@@ -11,6 +11,7 @@ using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -97,11 +98,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private void CreateLightSources(VisualChunk chunk)
         {
             Range3I cubeRange = chunk.CubeRange;
-            CreateLightSources(ref cubeRange, chunk);
+            CreateLightSources(ref cubeRange, new List<VisualChunk>() { chunk });
         }
 
-        //Create light source on a specific Cube Range (not chunk linked)
-        public void CreateLightSources(ref Range3I cubeRange, VisualChunk chunk)
+        //Create light source on a specific Cube Range (not specific to a single chunk)
+        public void CreateLightSources(ref Range3I cubeRange, List<VisualChunk> impactedChunks)
         {
             int index;
             bool blockLight = false;
@@ -144,7 +145,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 }
             }
 
-            CreateEntityLightSources(chunk);
+            //Recreate the light sources from the entities on the impacted chunks
+            foreach (var chunk in impactedChunks)
+            {
+                CreateEntityLightSources(chunk);
+            }
         }
 
         public void CreateEntityLightSources(VisualChunk chunk)
@@ -184,13 +189,15 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             foreach (var BorderCube in cubeRangeWithBorder.AllExclude(chunk.CubeRange))
             {
-                PropagateLightSourcesForced(BorderCube);
+                PropagateLightSourcesForced(BorderCube, chunk);
             }
+
+            PropagateLightInsideStaticEntities(chunk);
         }
 
         //Can only be done if surrounding chunks have their landscape initialized !
         //Will force lighting from cubes passed, even if not Alpha is not 255 = borderAsLightSource = true
-        private void PropagateLightSourcesForced(Vector3I cubePosition)
+        private void PropagateLightSourcesForced(Vector3I cubePosition, VisualChunk chunk)
         {
             CubeProfile cubeprofile;
             int index = _cubesHolder.Index(ref cubePosition);
@@ -229,7 +236,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                         cube = _cubesHolder.Cubes[index];
                         cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
-                        //if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) continue;
 
                         if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cube.EmissiveColor.R > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
