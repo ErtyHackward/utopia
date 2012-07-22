@@ -95,7 +95,7 @@ namespace Utopia.Shared.Entities
         /// Must be used if we want to copy the entities from another collection to this one
         /// </summary>
         /// <param name="entityCollection">The new entities collection</param>
-        public void Import(EntityCollection entityCollection, bool localChange = false)
+        public void Import(EntityCollection entityCollection, bool atChunkCreationTime = false)
         {
             lock (_syncRoot)
             {
@@ -106,7 +106,7 @@ namespace Utopia.Shared.Entities
                 {
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = 0, LocalChange = localChange });
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = 0, AtChunkCreationTime = atChunkCreationTime });
                 }
                 _initialisation = false;
             }
@@ -131,7 +131,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="parentDynamicId"></param>
-        public void Add(IStaticEntity entity, uint parentDynamicId = 0)
+        public void Add(IStaticEntity entity, uint parentDynamicId = 0, bool atChunkCreationTime = false)
         {
             lock (_syncRoot)
             {
@@ -140,7 +140,7 @@ namespace Utopia.Shared.Entities
                 _entities.Add(entity.StaticId, entity);
             }
             IsDirty = true;
-            OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId });
+            OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId, AtChunkCreationTime = atChunkCreationTime });
             OnCollectionDirty();
         }
 
@@ -150,7 +150,7 @@ namespace Utopia.Shared.Entities
         /// <param name="entity"></param>
         public void Add(IStaticEntity entity)
         {
-            Add(entity, 0);
+            Add(entity, 0, false);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace Utopia.Shared.Entities
         /// <param name="parentDynamicId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryAdd(IStaticEntity entity, uint parentDynamicId = 0, int timeout = 0)
+        public bool TryAdd(IStaticEntity entity, uint parentDynamicId = 0, int timeout = 0, bool atChunkCreationTime = false)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
@@ -174,7 +174,7 @@ namespace Utopia.Shared.Entities
                 finally
                 {
                     Monitor.Exit(_syncRoot);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId });
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId, AtChunkCreationTime = atChunkCreationTime });
                     OnCollectionDirty();
                 }
                 return true;
@@ -390,7 +390,7 @@ namespace Utopia.Shared.Entities
             for (int i = 0; i < nbrEntities; i++)
             {
                 var entity = (IStaticEntity)factory.CreateFromBytes(reader);
-                Add(entity);
+                Add(entity, 0, true);
             }
             _initialisation = false;
         }

@@ -82,13 +82,15 @@ namespace Utopia.Worlds.Chunks
         public Vector2I ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
 
-        private ChunkState _s;
-
-        public ChunkState State
-        {
-            get { return _s; }
-            set { _s = value; }
-        }
+        public ChunkState State;
+        //public ChunkState State
+        //{
+        //    get { return _s; }
+        //    set
+        //    {
+        //        _s = value;
+        //    }
+        //}
 
         //public ChunkState State { get; set; }                 // Chunk State
         
@@ -392,6 +394,17 @@ namespace Utopia.Worlds.Chunks
             foreach (var pair in VisualVoxelEntities)
             {
                 pair.Value.RemoveAll(x => x.Entity == e.Entity);
+
+                ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
+                if (e.AtChunkCreationTime == false && lightEntity != null)
+                {
+                    //Get the Cube where is located the entity
+                    Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
+                    Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
+                                                                MathHelper.Fastfloor(entityWorldPosition.Y),
+                                                                MathHelper.Fastfloor(entityWorldPosition.Z));
+                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, Utopia.Shared.Cubes.CubeId.Air), this);
+                }
             }
         }
 
@@ -450,7 +463,7 @@ namespace Utopia.Worlds.Chunks
                 }
 
                 ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
-                if (e.LocalChange == false && lightEntity != null)
+                if (e.AtChunkCreationTime == false && lightEntity != null)
                 {
                     //Get the Cube where is located the entity
                     Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;

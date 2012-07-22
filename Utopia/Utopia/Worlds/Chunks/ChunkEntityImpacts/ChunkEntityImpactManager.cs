@@ -196,6 +196,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
         {
             Int64 mainChunkId;
+            List<VisualChunk> impactedChunks = new List<VisualChunk>(9);
 
             //Compute the Range impacted by the cube change
             Range3I cubeRange = new Range3I()
@@ -204,16 +205,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 Size = new Vector3I(_lightManager.LightPropagateSteps * 2, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, _lightManager.LightPropagateSteps * 2)
             };
 
-            //recompute the light sources without the range
-            _lightManager.CreateLightSources(ref cubeRange, cubeChunk);
-
             cubeRange.Position.X--;
             cubeRange.Position.Z--;
             cubeRange.Size.X += 2;
             cubeRange.Size.Z += 2;
-
-            //Refresh the Visual Entity too !
-            _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
             CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
 
@@ -222,6 +217,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             cubeChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
             cubeChunk.UpdateOrder = !profile.IsBlockingLight ? 1 : 2;
             mainChunkId = cubeChunk.ChunkID;
+
+            impactedChunks.Add(cubeChunk);
 
             //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             VisualChunk NeightBorChunk;
@@ -232,6 +229,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
@@ -241,6 +239,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
@@ -250,6 +249,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
@@ -259,6 +259,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
@@ -268,6 +269,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
@@ -277,6 +279,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
@@ -286,6 +289,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
@@ -295,7 +299,14 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
+                impactedChunks.Add(NeightBorChunk);
             }
+
+            //recompute the light sources without the range
+            _lightManager.CreateLightSources(ref cubeRange, impactedChunks);
+
+            //Refresh the Visual Entity too !
+            _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
         }
 

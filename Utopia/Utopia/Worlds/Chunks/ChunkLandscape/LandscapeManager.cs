@@ -192,9 +192,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             break;
                     }
 
+                    chunk.RefreshBorderChunk();
                     chunk.IsServerRequested = false;
                     chunk.State = ChunkState.LandscapeCreated;
-                    chunk.RefreshBorderChunk();
                 }
             }
             else
