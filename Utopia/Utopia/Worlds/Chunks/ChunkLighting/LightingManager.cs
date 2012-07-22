@@ -98,11 +98,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private void CreateLightSources(VisualChunk chunk)
         {
             Range3I cubeRange = chunk.CubeRange;
-            CreateLightSources(ref cubeRange, new List<VisualChunk>() { chunk });
+            CreateLightSources(ref cubeRange);
         }
 
         //Create light source on a specific Cube Range (not specific to a single chunk)
-        public void CreateLightSources(ref Range3I cubeRange, List<VisualChunk> impactedChunks)
+        public void CreateLightSources(ref Range3I cubeRange)
         {
             int index;
             bool blockLight = false;
@@ -145,9 +145,17 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 }
             }
 
-            //Recreate the light sources from the entities on the impacted chunks
-            foreach (var chunk in impactedChunks)
+            ////Recreate the light sources from the entities on the impacted chunks
+            //foreach (var chunk in impactedChunks)
+            //{
+            //    CreateEntityLightSources(chunk);
+            //}
+
+            //Find all chunk from the Cube range !
+            foreach (VisualChunk chunk in WorldChunk.Chunks)
             {
+                if ((chunk.CubeRange.Max.X < cubeRange.Position.X) || (chunk.CubeRange.Position.X > cubeRange.Max.X)) continue;
+                if ((chunk.CubeRange.Max.Y < cubeRange.Position.Y) || (chunk.CubeRange.Position.Y > cubeRange.Max.Y)) continue;
                 CreateEntityLightSources(chunk);
             }
         }
@@ -229,7 +237,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     index = _cubesHolder.Index(X, cubeRange.Max.Y - 1, Z);
                     for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Position.Y; Y--)
                     {
-                        if (X == cubeRange.Position.X || X == cubeRange.Max.X - 1 || Z == cubeRange.Position.Z || Z == cubeRange.Max.Z - 1) borderchunk = true;
+                        if (X == cubeRange.Position.X || X == cubeRange.Max.X || Z == cubeRange.Position.Z || Z == cubeRange.Max.Z) borderchunk = true;
                         else borderchunk = false;
 
                         if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
@@ -238,9 +246,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         cubeprofile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
 
                         if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
-                        if (cube.EmissiveColor.R > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
-                        if (cube.EmissiveColor.G > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.G, LightComponent.Green, true, index);
-                        if (cube.EmissiveColor.B > 0) PropagateLight(X, Y, Z, cube.EmissiveColor.B, LightComponent.Blue, true, index);
+                        if (cube.EmissiveColor.R > 0 || (borderAsLightSource && borderchunk)) 
+                            PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
+                        if (cube.EmissiveColor.G > 0 || (borderAsLightSource && borderchunk)) 
+                            PropagateLight(X, Y, Z, cube.EmissiveColor.G, LightComponent.Green, true, index);
+                        if (cube.EmissiveColor.B > 0 || (borderAsLightSource && borderchunk)) 
+                            PropagateLight(X, Y, Z, cube.EmissiveColor.B, LightComponent.Blue, true, index);
                     }
                 }
             }
