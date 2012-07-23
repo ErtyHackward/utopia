@@ -46,6 +46,14 @@ namespace S33M3Resources.Structs
             A = (byte)(color.Alpha * 255);
         }
 
+        public ByteColor(SharpDX.Color color)
+        {
+            R = color.R;
+            G = color.G;
+            B = color.B;
+            A = color.A;
+        }
+
         public static ByteColor operator +(ByteColor a, ByteColor b)
         {
             ByteColor result;
@@ -91,6 +99,11 @@ namespace S33M3Resources.Structs
         }
 
         public static implicit operator ByteColor(Color4 color)
+        {
+            return new ByteColor(color);
+        }
+
+        public static implicit operator ByteColor(Color color)
         {
             return new ByteColor(color);
         }

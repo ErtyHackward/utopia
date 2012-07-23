@@ -519,7 +519,7 @@ namespace Utopia.Worlds.Chunks
                            _cubeRange.Position.Z + (_cubeRange.Max.Z - _cubeRange.Position.Z) / 2.0);
 
 #if DEBUG
-            ChunkBoundingBoxDisplay = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3((float)(CubeRange.Max.X - CubeRange.Position.X), (float)(CubeRange.Max.Y - CubeRange.Position.Y), (float)(CubeRange.Max.Z - CubeRange.Position.Z)), _blockpickedUPEffect, Colors.Tomato);
+            ChunkBoundingBoxDisplay = new BoundingBox3D(_d3dEngine, _worldFocusManager, new Vector3((float)(CubeRange.Max.X - CubeRange.Position.X), (float)(CubeRange.Max.Y - CubeRange.Position.Y), (float)(CubeRange.Max.Z - CubeRange.Position.Z)), _blockpickedUPEffect, Color.Tomato);
             ChunkBoundingBoxDisplay.Update(ChunkCenter.AsVector3(), Vector3.One, 0);
 #endif
 

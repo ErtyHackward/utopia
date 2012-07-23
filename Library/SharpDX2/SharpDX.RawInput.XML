@@ -131,7 +131,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_DEVICE_FLAGS']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_DEVICE_FLAGS']/*"/>	
             <unmanaged>RAW_DEVICE_FLAGS</unmanaged>	
             <unmanaged-short>RAW_DEVICE_FLAGS</unmanaged-short>	
         </member>
@@ -139,7 +139,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_REMOVE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_REMOVE']/*"/>	
             <unmanaged>RIDEV_REMOVE</unmanaged>	
             <unmanaged-short>RIDEV_REMOVE</unmanaged-short>	
         </member>
@@ -147,7 +147,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_EXCLUDE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_EXCLUDE']/*"/>	
             <unmanaged>RIDEV_EXCLUDE</unmanaged>	
             <unmanaged-short>RIDEV_EXCLUDE</unmanaged-short>	
         </member>
@@ -155,7 +155,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_PAGEONLY']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_PAGEONLY']/*"/>	
             <unmanaged>RIDEV_PAGEONLY</unmanaged>	
             <unmanaged-short>RIDEV_PAGEONLY</unmanaged-short>	
         </member>
@@ -163,7 +163,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_NOLEGACY']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_NOLEGACY']/*"/>	
             <unmanaged>RIDEV_NOLEGACY</unmanaged>	
             <unmanaged-short>RIDEV_NOLEGACY</unmanaged-short>	
         </member>
@@ -171,7 +171,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_INPUTSINK']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_INPUTSINK']/*"/>	
             <unmanaged>RIDEV_INPUTSINK</unmanaged>	
             <unmanaged-short>RIDEV_INPUTSINK</unmanaged-short>	
         </member>
@@ -179,7 +179,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_CAPTUREMOUSE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_CAPTUREMOUSE']/*"/>	
             <unmanaged>RIDEV_CAPTUREMOUSE</unmanaged>	
             <unmanaged-short>RIDEV_CAPTUREMOUSE</unmanaged-short>	
         </member>
@@ -187,7 +187,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_NOHOTKEYS']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_NOHOTKEYS']/*"/>	
             <unmanaged>RIDEV_NOHOTKEYS</unmanaged>	
             <unmanaged-short>RIDEV_NOHOTKEYS</unmanaged-short>	
         </member>
@@ -195,7 +195,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_APPKEYS']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_APPKEYS']/*"/>	
             <unmanaged>RIDEV_APPKEYS</unmanaged>	
             <unmanaged-short>RIDEV_APPKEYS</unmanaged-short>	
         </member>
@@ -203,7 +203,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_EXINPUTSINK']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_EXINPUTSINK']/*"/>	
             <unmanaged>RIDEV_EXINPUTSINK</unmanaged>	
             <unmanaged-short>RIDEV_EXINPUTSINK</unmanaged-short>	
         </member>
@@ -211,7 +211,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_DEVNOTIFY']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDEV_DEVNOTIFY']/*"/>	
             <unmanaged>RIDEV_DEVNOTIFY</unmanaged>	
             <unmanaged-short>RIDEV_DEVNOTIFY</unmanaged-short>	
         </member>
@@ -219,7 +219,7 @@
             <summary>	
             None.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='']/*"/>	
             <unmanaged>None</unmanaged>	
             <unmanaged-short>None</unmanaged-short>	
         </member>
@@ -227,7 +227,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_DEVICE_TYPE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_DEVICE_TYPE']/*"/>	
             <unmanaged>RAW_DEVICE_TYPE</unmanaged>	
             <unmanaged-short>RAW_DEVICE_TYPE</unmanaged-short>	
         </member>
@@ -235,7 +235,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIM_TYPEMOUSE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIM_TYPEMOUSE']/*"/>	
             <unmanaged>RIM_TYPEMOUSE</unmanaged>	
             <unmanaged-short>RIM_TYPEMOUSE</unmanaged-short>	
         </member>
@@ -243,7 +243,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIM_TYPEKEYBOARD']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIM_TYPEKEYBOARD']/*"/>	
             <unmanaged>RIM_TYPEKEYBOARD</unmanaged>	
             <unmanaged-short>RIM_TYPEKEYBOARD</unmanaged-short>	
         </member>
@@ -251,7 +251,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIM_TYPEHID']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIM_TYPEHID']/*"/>	
             <unmanaged>RIM_TYPEHID</unmanaged>	
             <unmanaged-short>RIM_TYPEHID</unmanaged-short>	
         </member>
@@ -259,7 +259,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_KEY_STATE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_KEY_STATE']/*"/>	
             <unmanaged>RAW_KEY_STATE</unmanaged>	
             <unmanaged-short>RAW_KEY_STATE</unmanaged-short>	
         </member>
@@ -267,7 +267,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_VKEYTOITEM']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_VKEYTOITEM']/*"/>	
             <unmanaged>WM_VKEYTOITEM</unmanaged>	
             <unmanaged-short>WM_VKEYTOITEM</unmanaged-short>	
         </member>
@@ -275,7 +275,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_SETHOTKEY']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_SETHOTKEY']/*"/>	
             <unmanaged>WM_SETHOTKEY</unmanaged>	
             <unmanaged-short>WM_SETHOTKEY</unmanaged-short>	
         </member>
@@ -283,7 +283,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_GETHOTKEY']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_GETHOTKEY']/*"/>	
             <unmanaged>WM_GETHOTKEY</unmanaged>	
             <unmanaged-short>WM_GETHOTKEY</unmanaged-short>	
         </member>
@@ -291,7 +291,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYFIRST']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYFIRST']/*"/>	
             <unmanaged>WM_KEYFIRST</unmanaged>	
             <unmanaged-short>WM_KEYFIRST</unmanaged-short>	
         </member>
@@ -299,7 +299,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYDOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYDOWN']/*"/>	
             <unmanaged>WM_KEYDOWN</unmanaged>	
             <unmanaged-short>WM_KEYDOWN</unmanaged-short>	
         </member>
@@ -307,7 +307,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYUP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYUP']/*"/>	
             <unmanaged>WM_KEYUP</unmanaged>	
             <unmanaged-short>WM_KEYUP</unmanaged-short>	
         </member>
@@ -315,7 +315,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_SYSKEYDOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_SYSKEYDOWN']/*"/>	
             <unmanaged>WM_SYSKEYDOWN</unmanaged>	
             <unmanaged-short>WM_SYSKEYDOWN</unmanaged-short>	
         </member>
@@ -323,7 +323,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_SYSKEYUP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_SYSKEYUP']/*"/>	
             <unmanaged>WM_SYSKEYUP</unmanaged>	
             <unmanaged-short>WM_SYSKEYUP</unmanaged-short>	
         </member>
@@ -331,7 +331,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYLAST']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_KEYLAST']/*"/>	
             <unmanaged>WM_KEYLAST</unmanaged>	
             <unmanaged-short>WM_KEYLAST</unmanaged-short>	
         </member>
@@ -339,7 +339,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_IME_KEYLAST']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_IME_KEYLAST']/*"/>	
             <unmanaged>WM_IME_KEYLAST</unmanaged>	
             <unmanaged-short>WM_IME_KEYLAST</unmanaged-short>	
         </member>
@@ -347,7 +347,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_IME_KEYDOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_IME_KEYDOWN']/*"/>	
             <unmanaged>WM_IME_KEYDOWN</unmanaged>	
             <unmanaged-short>WM_IME_KEYDOWN</unmanaged-short>	
         </member>
@@ -355,7 +355,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_IME_KEYUP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_IME_KEYUP']/*"/>	
             <unmanaged>WM_IME_KEYUP</unmanaged>	
             <unmanaged-short>WM_IME_KEYUP</unmanaged-short>	
         </member>
@@ -363,7 +363,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_HOTKEY']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='WM_HOTKEY']/*"/>	
             <unmanaged>WM_HOTKEY</unmanaged>	
             <unmanaged-short>WM_HOTKEY</unmanaged-short>	
         </member>
@@ -371,7 +371,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_MOUSE_BUTTON_FLAGS']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_MOUSE_BUTTON_FLAGS']/*"/>	
             <unmanaged>RAW_MOUSE_BUTTON_FLAGS</unmanaged>	
             <unmanaged-short>RAW_MOUSE_BUTTON_FLAGS</unmanaged-short>	
         </member>
@@ -379,7 +379,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_LEFT_BUTTON_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_LEFT_BUTTON_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_LEFT_BUTTON_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_LEFT_BUTTON_DOWN</unmanaged-short>	
         </member>
@@ -387,7 +387,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_LEFT_BUTTON_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_LEFT_BUTTON_UP']/*"/>	
             <unmanaged>RI_MOUSE_LEFT_BUTTON_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_LEFT_BUTTON_UP</unmanaged-short>	
         </member>
@@ -395,7 +395,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_RIGHT_BUTTON_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_RIGHT_BUTTON_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_RIGHT_BUTTON_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_RIGHT_BUTTON_DOWN</unmanaged-short>	
         </member>
@@ -403,7 +403,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_RIGHT_BUTTON_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_RIGHT_BUTTON_UP']/*"/>	
             <unmanaged>RI_MOUSE_RIGHT_BUTTON_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_RIGHT_BUTTON_UP</unmanaged-short>	
         </member>
@@ -411,7 +411,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_MIDDLE_BUTTON_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_MIDDLE_BUTTON_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_MIDDLE_BUTTON_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_MIDDLE_BUTTON_DOWN</unmanaged-short>	
         </member>
@@ -419,7 +419,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_MIDDLE_BUTTON_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_MIDDLE_BUTTON_UP']/*"/>	
             <unmanaged>RI_MOUSE_MIDDLE_BUTTON_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_MIDDLE_BUTTON_UP</unmanaged-short>	
         </member>
@@ -427,7 +427,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_1_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_1_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_1_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_1_DOWN</unmanaged-short>	
         </member>
@@ -435,7 +435,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_1_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_1_UP']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_1_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_1_UP</unmanaged-short>	
         </member>
@@ -443,7 +443,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_2_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_2_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_2_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_2_DOWN</unmanaged-short>	
         </member>
@@ -451,7 +451,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_2_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_2_UP']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_2_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_2_UP</unmanaged-short>	
         </member>
@@ -459,7 +459,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_3_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_3_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_3_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_3_DOWN</unmanaged-short>	
         </member>
@@ -467,7 +467,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_3_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_3_UP']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_3_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_3_UP</unmanaged-short>	
         </member>
@@ -475,7 +475,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_4_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_4_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_4_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_4_DOWN</unmanaged-short>	
         </member>
@@ -483,7 +483,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_4_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_4_UP']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_4_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_4_UP</unmanaged-short>	
         </member>
@@ -491,7 +491,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_5_DOWN']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_5_DOWN']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_5_DOWN</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_5_DOWN</unmanaged-short>	
         </member>
@@ -499,7 +499,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_5_UP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_BUTTON_5_UP']/*"/>	
             <unmanaged>RI_MOUSE_BUTTON_5_UP</unmanaged>	
             <unmanaged-short>RI_MOUSE_BUTTON_5_UP</unmanaged-short>	
         </member>
@@ -507,7 +507,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_WHEEL']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_MOUSE_WHEEL']/*"/>	
             <unmanaged>RI_MOUSE_WHEEL</unmanaged>	
             <unmanaged-short>RI_MOUSE_WHEEL</unmanaged-short>	
         </member>
@@ -515,7 +515,7 @@
             <summary>	
             None.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='']/*"/>	
             <unmanaged>None</unmanaged>	
             <unmanaged-short>None</unmanaged-short>	
         </member>
@@ -523,7 +523,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_MOUSE_MODE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_MOUSE_MODE']/*"/>	
             <unmanaged>RAW_MOUSE_MODE</unmanaged>	
             <unmanaged-short>RAW_MOUSE_MODE</unmanaged-short>	
         </member>
@@ -531,7 +531,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_MOVE_RELATIVE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_MOVE_RELATIVE']/*"/>	
             <unmanaged>MOUSE_MOVE_RELATIVE</unmanaged>	
             <unmanaged-short>MOUSE_MOVE_RELATIVE</unmanaged-short>	
         </member>
@@ -539,7 +539,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_MOVE_ABSOLUTE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_MOVE_ABSOLUTE']/*"/>	
             <unmanaged>MOUSE_MOVE_ABSOLUTE</unmanaged>	
             <unmanaged-short>MOUSE_MOVE_ABSOLUTE</unmanaged-short>	
         </member>
@@ -547,7 +547,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_VIRTUAL_DESKTOP']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_VIRTUAL_DESKTOP']/*"/>	
             <unmanaged>MOUSE_VIRTUAL_DESKTOP</unmanaged>	
             <unmanaged-short>MOUSE_VIRTUAL_DESKTOP</unmanaged-short>	
         </member>
@@ -555,7 +555,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_ATTRIBUTES_CHANGED']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_ATTRIBUTES_CHANGED']/*"/>	
             <unmanaged>MOUSE_ATTRIBUTES_CHANGED</unmanaged>	
             <unmanaged-short>MOUSE_ATTRIBUTES_CHANGED</unmanaged-short>	
         </member>
@@ -563,7 +563,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_MOVE_NOCOALESCE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='MOUSE_MOVE_NOCOALESCE']/*"/>	
             <unmanaged>MOUSE_MOVE_NOCOALESCE</unmanaged>	
             <unmanaged-short>MOUSE_MOVE_NOCOALESCE</unmanaged-short>	
         </member>
@@ -571,7 +571,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_INPUT_DATA_TYPE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_INPUT_DATA_TYPE']/*"/>	
             <unmanaged>RAW_INPUT_DATA_TYPE</unmanaged>	
             <unmanaged-short>RAW_INPUT_DATA_TYPE</unmanaged-short>	
         </member>
@@ -579,7 +579,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_INPUT']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_INPUT']/*"/>	
             <unmanaged>RID_INPUT</unmanaged>	
             <unmanaged-short>RID_INPUT</unmanaged-short>	
         </member>
@@ -587,7 +587,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_HEADER']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_HEADER']/*"/>	
             <unmanaged>RID_HEADER</unmanaged>	
             <unmanaged-short>RID_HEADER</unmanaged-short>	
         </member>
@@ -595,7 +595,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_INPUT_DEVICE_INFO_TYPE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_INPUT_DEVICE_INFO_TYPE']/*"/>	
             <unmanaged>RAW_INPUT_DEVICE_INFO_TYPE</unmanaged>	
             <unmanaged-short>RAW_INPUT_DEVICE_INFO_TYPE</unmanaged-short>	
         </member>
@@ -603,7 +603,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDI_PREPARSEDDATA']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDI_PREPARSEDDATA']/*"/>	
             <unmanaged>RIDI_PREPARSEDDATA</unmanaged>	
             <unmanaged-short>RIDI_PREPARSEDDATA</unmanaged-short>	
         </member>
@@ -611,7 +611,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDI_DEVICENAME']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDI_DEVICENAME']/*"/>	
             <unmanaged>RIDI_DEVICENAME</unmanaged>	
             <unmanaged-short>RIDI_DEVICENAME</unmanaged-short>	
         </member>
@@ -619,7 +619,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDI_DEVICEINFO']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RIDI_DEVICEINFO']/*"/>	
             <unmanaged>RIDI_DEVICEINFO</unmanaged>	
             <unmanaged-short>RIDI_DEVICEINFO</unmanaged-short>	
         </member>
@@ -627,7 +627,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_SCAN_CODE_FLAGS']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAW_SCAN_CODE_FLAGS']/*"/>	
             <unmanaged>RAW_SCAN_CODE_FLAGS</unmanaged>	
             <unmanaged-short>RAW_SCAN_CODE_FLAGS</unmanaged-short>	
         </member>
@@ -635,7 +635,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_MAKE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_MAKE']/*"/>	
             <unmanaged>RI_KEY_MAKE</unmanaged>	
             <unmanaged-short>RI_KEY_MAKE</unmanaged-short>	
         </member>
@@ -643,7 +643,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_BREAK']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_BREAK']/*"/>	
             <unmanaged>RI_KEY_BREAK</unmanaged>	
             <unmanaged-short>RI_KEY_BREAK</unmanaged-short>	
         </member>
@@ -651,7 +651,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_E0']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_E0']/*"/>	
             <unmanaged>RI_KEY_E0</unmanaged>	
             <unmanaged-short>RI_KEY_E0</unmanaged-short>	
         </member>
@@ -659,7 +659,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_E1']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RI_KEY_E1']/*"/>	
             <unmanaged>RI_KEY_E1</unmanaged>	
             <unmanaged-short>RI_KEY_E1</unmanaged-short>	
         </member>
@@ -667,451 +667,518 @@
             <summary>	
             Functions	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.RawInput.RawInputFunctions']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='SharpDX.RawInput.RawInputFunctions']/*"/>	
         </member>
         <member name="M:SharpDX.RawInput.RawInputFunctions.GetRawInputDeviceList(SharpDX.RawInput.RawInputDevicelist[],System.Int32@,System.Int32)">
             <summary>	
-            Enumerates the raw input devices attached to the system.	
+            <p>Enumerates the raw input devices attached to the system. </p>	
             </summary>	
-            <param name="rawInputDeviceListRef"><para>An array of <see cref="T:SharpDX.RawInput.RawInputDevicelist"/> structures for the devices attached to the system. If <c>null</c>, the number of devices are returned in *puiNumDevices. </para></param>	
-            <param name="uiNumDevicesRef"><para>If pRawInputDeviceList is <c>null</c>, the function populates this variable with the number of devices attached to the system; otherwise, this variable specifies the number of <see cref="T:SharpDX.RawInput.RawInputDevicelist"/> structures that can be contained in the buffer to which pRawInputDeviceList points. If this value is less than the number of devices attached to the system, the function returns the actual number of devices in this variable and fails with <see cref="F:SharpDX.Win32.ErrorCode.InsufficientBuffer"/>.</para></param>	
-            <param name="cbSize"><para>The size of a <see cref="T:SharpDX.RawInput.RawInputDevicelist"/> structure, in bytes.</para></param>	
-            <returns>If the function is successful, the return value is the number of devices stored in the buffer pointed to by  pRawInputDeviceList.On any other error, the function returns (UINT) -1 and  GetLastError returns the error indication.</returns>	
+            <param name="rawInputDeviceListRef"><dd>  <p>An array of <strong><see cref="T:SharpDX.RawInput.RawInputDevicelist"/></strong> structures for the devices attached to the system. If <strong><c>null</c></strong>, the number of devices are returned in *<em>puiNumDevices</em>. </p> </dd></param>	
+            <param name="uiNumDevicesRef"><dd>  <p>If <em>pRawInputDeviceList</em> is <strong><c>null</c></strong>, the function populates this variable with the number of devices attached to the system; otherwise, this variable specifies the number of <strong><see cref="T:SharpDX.RawInput.RawInputDevicelist"/></strong> structures that can be contained in the buffer to which <em>pRawInputDeviceList</em> points. If this value is less than the number of devices attached to the system, the function returns the actual number of devices in this variable and fails with <strong><see cref="F:SharpDX.Win32.ErrorCode.InsufficientBuffer"/></strong>.</p> </dd></param>	
+            <param name="cbSize"><dd>  <p>The size of a <strong><see cref="T:SharpDX.RawInput.RawInputDevicelist"/></strong> structure, in bytes.</p> </dd></param>	
+            <returns><p>If the function is successful, the return value is the number of devices stored in the buffer pointed to by  <em>pRawInputDeviceList</em>.</p><p>On any other error, the function returns (<strong>UINT</strong>) -1 and  <strong>GetLastError</strong> returns the error indication.</p></returns>	
             <remarks>	
-            The devices returned from this function are the mouse, the keyboard, and other Human Interface Device (HID) devices.To get more detailed information about the attached devices, call GetRawInputDeviceInfo using the hDevice from <see cref="T:SharpDX.RawInput.RawInputDevicelist"/>.	
+            <p>The devices returned from this function are the mouse, the keyboard, and other Human Interface Device (HID) devices.</p><p>To get more detailed information about the attached devices, call <strong>GetRawInputDeviceInfo</strong> using the hDevice from <strong><see cref="T:SharpDX.RawInput.RawInputDevicelist"/></strong>. </p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRawInputDeviceList']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRawInputDeviceList']/*"/>	
             <msdn-id>ms645598</msdn-id>	
             <unmanaged>unsigned int GetRawInputDeviceList([Out, Buffer, Optional] RAWINPUTDEVICELIST* pRawInputDeviceList,[InOut] unsigned int* puiNumDevices,[In] unsigned int cbSize)</unmanaged>	
             <unmanaged-short>GetRawInputDeviceList</unmanaged-short>	
         </member>
+        <member name="M:SharpDX.RawInput.RawInputFunctions.GetRegisteredRawInputDevices(SharpDX.RawInput.RawInputDevice[],System.Int32@,System.Int32)">
+            <summary>	
+            <p>Retrieves the information about the raw input devices for the current application.</p>	
+            </summary>	
+            <param name="rawInputDevicesRef"><dd>  <p>An array of <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structures for the application. </p> </dd></param>	
+            <param name="uiNumDevicesRef"><dd>  <p>The number of <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structures in *<em>pRawInputDevices</em>. </p> </dd></param>	
+            <param name="cbSize"><dd>  <p>The size, in bytes, of a <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structure. </p> </dd></param>	
+            <returns><p>If successful, the function returns a non-negative number that is the number of <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structures written to the buffer. </p><p>If the <em>pRawInputDevices</em> buffer is too small or <strong><c>null</c></strong>, the function sets the last error as <strong><see cref="F:SharpDX.Win32.ErrorCode.InsufficientBuffer"/></strong>, returns -1, and sets <em>puiNumDevices</em> to the required number of devices. If the function fails for any other reason, it returns -1. For more details, call <strong>GetLastError</strong>. </p></returns>	
+            <remarks>	
+            <p>To receive raw input from a device, an application must register it by using <strong>RegisterRawInputDevices</strong>. </p>	
+            </remarks>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRegisteredRawInputDevices']/*"/>	
+            <msdn-id>ms645599</msdn-id>	
+            <unmanaged>unsigned int GetRegisteredRawInputDevices([Out, Buffer, Optional] RAWINPUTDEVICE* pRawInputDevices,[InOut] unsigned int* puiNumDevices,[In] unsigned int cbSize)</unmanaged>	
+            <unmanaged-short>GetRegisteredRawInputDevices</unmanaged-short>	
+        </member>
+        <member name="M:SharpDX.RawInput.RawInputFunctions.GetRawInputDeviceInfo(System.IntPtr,SharpDX.RawInput.RawInputDeviceInfoType,System.IntPtr,System.Int32@)">
+            <summary>	
+            <p>Retrieves information about the raw input device.</p>	
+            </summary>	
+            <param name="hDevice"><dd>  <p>A handle to the raw input device. This comes from the  <em>lParam</em> of the <strong>WM_INPUT</strong> message, from the <strong>hDevice</strong> member of <strong><see cref="T:SharpDX.RawInput.RawInputHeader"/></strong>, or from <strong>GetRawInputDeviceList</strong>. It can also be <strong><c>null</c></strong> if an application inserts input data, for example, by using <strong>SendInput</strong>. </p> </dd></param>	
+            <param name="uiCommand"><dd>  <p>Specifies what data will be returned in  <em>pData</em>. This parameter can be one of the following values. </p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.RawInputDeviceInfoType.DeviceName"/></strong></dt> <dt>0x20000007</dt> </dl> </td><td> <p><em>pData</em> points to a string that contains the device name. </p> <p>For this  <em>uiCommand</em> only, the value in  <em>pcbSize</em> is the character count (not the byte count).</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.RawInputDeviceInfoType.DeviceInfo"/></strong></dt> <dt>0x2000000b</dt> </dl> </td><td> <p><em>pData</em> points to an <strong><see cref="T:SharpDX.RawInput.RawDeviceInformation"/></strong> structure.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.RawInputDeviceInfoType.PreparsedData"/></strong></dt> <dt>0x20000005</dt> </dl> </td><td> <p><em>pData</em> points to the previously parsed data.</p> </td></tr> </table> <p>?</p> </dd></param>	
+            <param name="dataRef"><dd>  <p>A reference to a buffer that contains the information specified by  <em>uiCommand</em>. If  <em>uiCommand</em> is <strong><see cref="F:SharpDX.RawInput.RawInputDeviceInfoType.DeviceInfo"/></strong>, set the <strong>cbSize</strong> member of <strong><see cref="T:SharpDX.RawInput.RawDeviceInformation"/></strong> to <code>sizeof(<see cref="T:SharpDX.RawInput.RawDeviceInformation"/>)</code> before calling <strong>GetRawInputDeviceInfo</strong>. </p> </dd></param>	
+            <param name="cbSizeRef"><dd>  <p>The size, in bytes, of the data in  <em>pData</em>. </p> </dd></param>	
+            <returns><p>If successful, this function returns a non-negative number indicating the number of bytes copied to  <em>pData</em>. </p><p>If  <em>pData</em> is not large enough for the data, the function returns -1. If  <em>pData</em> is <strong><c>null</c></strong>, the function returns a value of zero. In both of these cases,  <em>pcbSize</em> is set to the minimum size required for the  <em>pData</em> buffer.</p><p>Call <strong>GetLastError</strong> to identify any other errors.</p></returns>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRawInputDeviceInfoW']/*"/>	
+            <msdn-id>ms645597</msdn-id>	
+            <unmanaged>unsigned int GetRawInputDeviceInfoW([In, Optional] void* hDevice,[In] RAW_INPUT_DEVICE_INFO_TYPE uiCommand,[Out, Buffer, Optional] void* pData,[InOut] unsigned int* pcbSize)</unmanaged>	
+            <unmanaged-short>GetRawInputDeviceInfoW</unmanaged-short>	
+        </member>
         <member name="M:SharpDX.RawInput.RawInputFunctions.RegisterRawInputDevices(SharpDX.RawInput.RawInputDevice[],System.Int32,System.Int32)">
             <summary>	
-            Registers the devices that supply the raw input data.	
+            <p>Registers the devices that supply the raw input data.</p>	
             </summary>	
-            <param name="rawInputDevicesRef"><para>An array of <see cref="T:SharpDX.RawInput.RawInputDevice"/> structures that represent the devices that supply the raw input.</para></param>	
-            <param name="uiNumDevices"><para>The number of <see cref="T:SharpDX.RawInput.RawInputDevice"/> structures pointed to by pRawInputDevices.</para></param>	
-            <param name="cbSize"><para>The size, in bytes, of a <see cref="T:SharpDX.RawInput.RawInputDevice"/> structure.</para></param>	
-            <returns>TRUE if the function succeeds; otherwise, <see cref="F:SharpDX.Result.False"/>. If the function fails, call GetLastError for more information.</returns>	
+            <param name="rawInputDevicesRef"><dd>  <p>An array of <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structures that represent the devices that supply the raw input.</p> </dd></param>	
+            <param name="uiNumDevices"><dd>  <p>The number of <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structures pointed to by <em>pRawInputDevices</em>.</p> </dd></param>	
+            <param name="cbSize"><dd>  <p>The size, in bytes, of a <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structure.</p> </dd></param>	
+            <returns><p><strong>TRUE</strong> if the function succeeds; otherwise, <strong><see cref="F:SharpDX.Result.False"/></strong>. If the function fails, call <strong>GetLastError</strong> for more information.</p></returns>	
             <remarks>	
-            To receive WM_INPUT messages, an application must first register the raw input devices using RegisterRawInputDevices. By default, an application does not receive raw input.To receive WM_INPUT_DEVICE_CHANGE messages, an application must specify the  <see cref="F:SharpDX.RawInput.DeviceFlags.DeviceNotify"/> flag for each device class that is specified by the usUsagePage and usUsage fields of the  <see cref="T:SharpDX.RawInput.RawInputDevice"/> structure  .  By default, an application does not receive  WM_INPUT_DEVICE_CHANGE notifications for raw input device arrival and removal.If a <see cref="T:SharpDX.RawInput.RawInputDevice"/> structure has the <see cref="F:SharpDX.RawInput.DeviceFlags.Remove"/> flag set and the hwndTarget parameter is not set to <c>null</c>, then parameter validation will fail.	
+            <p>To receive <strong>WM_INPUT</strong> messages, an application must first register the raw input devices using <strong>RegisterRawInputDevices</strong>. By default, an application does not receive raw input.</p><p>To receive <strong>WM_INPUT_DEVICE_CHANGE</strong> messages, an application must specify the  <see cref="F:SharpDX.RawInput.DeviceFlags.DeviceNotify"/> flag for each device class that is specified by the usUsagePage and usUsage fields of the  <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structure  .  By default, an application does not receive  <strong>WM_INPUT_DEVICE_CHANGE</strong> notifications for raw input device arrival and removal.</p><p>If a <strong><see cref="T:SharpDX.RawInput.RawInputDevice"/></strong> structure has the <see cref="F:SharpDX.RawInput.DeviceFlags.Remove"/> flag set and the hwndTarget parameter is not set to <c>null</c>, then parameter validation will fail. </p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RegisterRawInputDevices']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RegisterRawInputDevices']/*"/>	
             <msdn-id>ms645600</msdn-id>	
             <unmanaged>BOOL RegisterRawInputDevices([In, Buffer] const RAWINPUTDEVICE* pRawInputDevices,[In] unsigned int uiNumDevices,[In] unsigned int cbSize)</unmanaged>	
             <unmanaged-short>RegisterRawInputDevices</unmanaged-short>	
         </member>
         <member name="M:SharpDX.RawInput.RawInputFunctions.GetRawInputBuffer(SharpDX.RawInput.RawInput[],System.Int32@,System.Int32)">
             <summary>	
-            Performs a buffered read of the raw input data.	
+            <p>Performs a buffered read of the raw input data.</p>	
             </summary>	
-            <param name="dataRef"><para>A reference to a buffer of <see cref="T:SharpDX.RawInput.RawInput"/> structures that contain the raw input data. If <c>null</c>, the minimum required buffer, in bytes, is returned in *pcbSize. </para></param>	
-            <param name="cbSizeRef"><para>The size, in bytes, of a <see cref="T:SharpDX.RawInput.RawInput"/> structure. </para></param>	
-            <param name="cbSizeHeader"><para>The size, in bytes, of the <see cref="T:SharpDX.RawInput.RawInputHeader"/> structure. </para></param>	
-            <returns>If  pData is <c>null</c> and the function is successful, the return value is zero. If  pData is not <c>null</c> and the function is successful, the return value is the number of <see cref="T:SharpDX.RawInput.RawInput"/> structures written to  pData.If an error occurs, the return value is (UINT)-1. Call GetLastError for the error code.</returns>	
+            <param name="dataRef"><dd>  <p>A reference to a buffer of <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structures that contain the raw input data. If <strong><c>null</c></strong>, the minimum required buffer, in bytes, is returned in *<em>pcbSize</em>. </p> </dd></param>	
+            <param name="cbSizeRef"><dd>  <p>The size, in bytes, of a <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure. </p> </dd></param>	
+            <param name="cbSizeHeader"><dd>  <p>The size, in bytes, of the <strong><see cref="T:SharpDX.RawInput.RawInputHeader"/></strong> structure. </p> </dd></param>	
+            <returns><p>If  <em>pData</em> is <c>null</c> and the function is successful, the return value is zero. If  <em>pData</em> is not <c>null</c> and the function is successful, the return value is the number of <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structures written to  <em>pData</em>.</p><p>If an error occurs, the return value is (<strong>UINT</strong>)-1. Call <strong>GetLastError</strong> for the error code.</p></returns>	
             <remarks>	
-            Using GetRawInputBuffer, the raw input data is buffered in the array of <see cref="T:SharpDX.RawInput.RawInput"/> structures. For an unbuffered read, use the GetMessage function to read in the raw input data.The NEXTRAWINPUTBLOCK macro allows an application to traverse an array of <see cref="T:SharpDX.RawInput.RawInput"/> structures.Note??To get the correct size of the raw input buffer, do not use *pcbSize, use *pcbSize * 8 instead.   To ensure GetRawInputBuffer behaves properly on WOW64, you must align the <see cref="T:SharpDX.RawInput.RawInput"/> structure by 8 bytes. The following code shows how to align <see cref="T:SharpDX.RawInput.RawInput"/> for WOW64.<code>	
-            [StructLayout(LayoutKind.Explicit)]	
+            <p>Using <strong>GetRawInputBuffer</strong>, the raw input data is buffered in the array of <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structures. For an unbuffered read, use the <strong>GetMessage</strong> function to read in the raw input data. </p><p>The <strong>NEXTRAWINPUTBLOCK</strong> macro allows an application to traverse an array of <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structures.</p><p><strong>Note</strong>??To get the correct size of the raw input buffer, do not use *<em>pcbSize</em>, use *<em>pcbSize</em> * 8 instead.   To ensure <strong>GetRawInputBuffer</strong> behaves properly on WOW64, you must align the <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure by 8 bytes. The following code shows how to align <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> for WOW64.  </p><pre><code>[StructLayout(LayoutKind.Explicit)]	
             internal struct <see cref="T:SharpDX.RawInput.RawInput"/>	
             { [FieldOffset(0)] public <see cref="T:SharpDX.RawInput.RawInputHeader"/> header; [FieldOffset(16+8)] public <see cref="T:SharpDX.RawInput.RawMouse"/> mouse; [FieldOffset(16+8)] public <see cref="T:SharpDX.RawInput.RawKeyboard"/> keyboard; [FieldOffset(16+8)] public <see cref="T:SharpDX.RawInput.RawHid"/> hid;	
             }	
-            	
-            </code>	
+            </code></pre>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRawInputBuffer']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRawInputBuffer']/*"/>	
             <msdn-id>ms645595</msdn-id>	
             <unmanaged>unsigned int GetRawInputBuffer([Out, Buffer, Optional] RAWINPUT* pData,[InOut] unsigned int* pcbSize,[In] unsigned int cbSizeHeader)</unmanaged>	
             <unmanaged-short>GetRawInputBuffer</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "M:SharpDX.RawInput.RawInputFunctions.GetRawInputData(System.IntPtr,SharpDX.RawInput.RawInputDataType,System.IntPtr,System.Int32@,System.Int32)" -->
-        <!-- Badly formed XML comment ignored for member "M:SharpDX.RawInput.RawInputFunctions.GetRawInputDeviceInfo(System.IntPtr,SharpDX.RawInput.RawInputDeviceInfoType,System.IntPtr,System.Int32@)" -->
-        <member name="M:SharpDX.RawInput.RawInputFunctions.GetRegisteredRawInputDevices(SharpDX.RawInput.RawInputDevice[],System.Int32@,System.Int32)">
+        <member name="M:SharpDX.RawInput.RawInputFunctions.GetRawInputData(System.IntPtr,SharpDX.RawInput.RawInputDataType,System.IntPtr,System.Int32@,System.Int32)">
             <summary>	
-            Retrieves the information about the raw input devices for the current application.	
+            <p>Retrieves the raw input from the specified device.</p>	
             </summary>	
-            <param name="rawInputDevicesRef"><para>An array of <see cref="T:SharpDX.RawInput.RawInputDevice"/> structures for the application. </para></param>	
-            <param name="uiNumDevicesRef"><para>The number of <see cref="T:SharpDX.RawInput.RawInputDevice"/> structures in *pRawInputDevices. </para></param>	
-            <param name="cbSize"><para>The size, in bytes, of a <see cref="T:SharpDX.RawInput.RawInputDevice"/> structure. </para></param>	
-            <returns>If successful, the function returns a non-negative number that is the number of <see cref="T:SharpDX.RawInput.RawInputDevice"/> structures written to the buffer.If the pRawInputDevices buffer is too small or <c>null</c>, the function sets the last error as <see cref="F:SharpDX.Win32.ErrorCode.InsufficientBuffer"/>, returns -1, and sets puiNumDevices to the required number of devices. If the function fails for any other reason, it returns -1. For more details, call GetLastError.</returns>	
+            <param name="hRawInput"><dd>  <p>A handle to the <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure. This comes from the  <em>lParam</em> in <strong>WM_INPUT</strong>. </p> </dd></param>	
+            <param name="uiCommand"><dd>  <p>The command flag. This parameter can be one of the following values. </p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.RawInputDataType.Header"/></strong></dt> <dt>0x10000005</dt> </dl> </td><td> <p>Get the header information from the <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.RawInputDataType.Input"/></strong></dt> <dt>0x10000003</dt> </dl> </td><td> <p>Get the raw data from the <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure.</p> </td></tr> </table> <p>?</p> </dd></param>	
+            <param name="dataRef"><dd>  <p>A reference to the data that comes from the <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure. This depends on the value of  <em>uiCommand</em>. If  <em>pData</em> is <strong><c>null</c></strong>, the required size of the buffer is returned in *<em>pcbSize</em>. </p> </dd></param>	
+            <param name="cbSizeRef"><dd>  <p>The size, in bytes, of the data in  <em>pData</em>. </p> </dd></param>	
+            <param name="cbSizeHeader"><dd>  <p>The size, in bytes, of the <strong><see cref="T:SharpDX.RawInput.RawInputHeader"/></strong> structure. </p> </dd></param>	
+            <returns><p>If  <em>pData</em> is <strong><c>null</c></strong> and the function is successful, the return value is 0. If  <em>pData</em> is not <strong><c>null</c></strong> and the function is successful, the return value is the number of bytes copied into pData.</p><p>If there is an error, the return value is (<strong>UINT</strong>)-1.</p></returns>	
             <remarks>	
-            To receive raw input from a device, an application must register it by using RegisterRawInputDevices.	
+            <p><strong>GetRawInputData</strong> gets the raw input one <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structure at a time. In contrast, <strong>GetRawInputBuffer</strong> gets an array of <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> structures.</p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRegisteredRawInputDevices']/*"/>	
-            <msdn-id>ms645599</msdn-id>	
-            <unmanaged>unsigned int GetRegisteredRawInputDevices([Out, Buffer, Optional] RAWINPUTDEVICE* pRawInputDevices,[InOut] unsigned int* puiNumDevices,[In] unsigned int cbSize)</unmanaged>	
-            <unmanaged-short>GetRegisteredRawInputDevices</unmanaged-short>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='GetRawInputData']/*"/>	
+            <msdn-id>ms645596</msdn-id>	
+            <unmanaged>unsigned int GetRawInputData([In] HRAWINPUT hRawInput,[In] RAW_INPUT_DATA_TYPE uiCommand,[Out, Buffer, Optional] void* pData,[InOut] unsigned int* pcbSize,[In] unsigned int cbSizeHeader)</unmanaged>	
+            <unmanaged-short>GetRawInputData</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawDeviceInformation">
             <summary>	
-            Defines the raw input data coming from any device.	
+            <p>Defines the raw input data coming from any device. </p>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO']/*"/>	
             <msdn-id>ms645581</msdn-id>	
             <unmanaged>RID_DEVICE_INFO</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformation.Size">
             <summary>	
-            <para>The size, in bytes, of the <see cref="T:SharpDX.RawInput.RawDeviceInformation"/> structure. </para>	
+            <dd> <p>The size, in bytes, of the <strong><see cref="T:SharpDX.RawInput.RawDeviceInformation"/></strong> structure. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::cbSize']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::cbSize']/*"/>	
             <msdn-id>ms645581</msdn-id>	
             <unmanaged>unsigned int cbSize</unmanaged>	
             <unmanaged-short>unsigned int cbSize</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "F:SharpDX.RawInput.RawDeviceInformation.Type" -->
+        <member name="F:SharpDX.RawInput.RawDeviceInformation.Type">
+            <summary>	
+            <dd> <p>The type of raw input data. This member can be one of the following values. </p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.HumanInputDevice"/></strong></dt> <dt>2</dt> </dl> </td><td> <p>Data comes from an HID that is not a keyboard or a mouse.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.Keyboard"/></strong></dt> <dt>1</dt> </dl> </td><td> <p>Data comes from a keyboard.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.Mouse"/></strong></dt> <dt>0</dt> </dl> </td><td> <p>Data comes from a mouse.</p> </td></tr> </table> <p>?</p> </dd>	
+            </summary>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::dwType']/*"/>	
+            <msdn-id>ms645581</msdn-id>	
+            <unmanaged>RAW_DEVICE_TYPE dwType</unmanaged>	
+            <unmanaged-short>RAW_DEVICE_TYPE dwType</unmanaged-short>	
+        </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformation.Mouse">
             <summary>	
-            <para>If dwType is <see cref="F:SharpDX.RawInput.DeviceType.Mouse"/>, this is the <see cref="T:SharpDX.RawInput.RawDeviceInformationMouse"/> structure that defines the mouse. </para>	
+            <dd> <p>If <strong>dwType</strong> is <strong><see cref="F:SharpDX.RawInput.DeviceType.Mouse"/></strong>, this is the <strong><see cref="T:SharpDX.RawInput.RawDeviceInformationMouse"/></strong> structure that defines the mouse. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::mouse']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::mouse']/*"/>	
             <msdn-id>ms645581</msdn-id>	
             <unmanaged>RID_DEVICE_INFO_MOUSE mouse</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO_MOUSE mouse</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformation.Keyboard">
             <summary>	
-            <para>If dwType is <see cref="F:SharpDX.RawInput.DeviceType.Keyboard"/>, this is the <see cref="T:SharpDX.RawInput.RawDeviceInformationKeyboard"/> structure that defines the keyboard. </para>	
+            <dd> <p>If <strong>dwType</strong> is <strong><see cref="F:SharpDX.RawInput.DeviceType.Keyboard"/></strong>, this is the <strong><see cref="T:SharpDX.RawInput.RawDeviceInformationKeyboard"/></strong> structure that defines the keyboard. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::keyboard']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::keyboard']/*"/>	
             <msdn-id>ms645581</msdn-id>	
             <unmanaged>RID_DEVICE_INFO_KEYBOARD keyboard</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO_KEYBOARD keyboard</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformation.Hid">
             <summary>	
-            <para>If dwType is <see cref="F:SharpDX.RawInput.DeviceType.HumanInputDevice"/>, this is the <see cref="T:SharpDX.RawInput.RawDeviceInformationHid"/> structure that defines the HID device. </para>	
+            <dd> <p>If <strong>dwType</strong> is <strong><see cref="F:SharpDX.RawInput.DeviceType.HumanInputDevice"/></strong>, this is the <strong><see cref="T:SharpDX.RawInput.RawDeviceInformationHid"/></strong> structure that defines the HID device. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::hid']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO::hid']/*"/>	
             <msdn-id>ms645581</msdn-id>	
             <unmanaged>RID_DEVICE_INFO_HID hid</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO_HID hid</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawDeviceInformationHid">
             <summary>	
-            Defines the raw input data coming from the specified Human Interface Device (HID).	
+            <p>Defines the raw input data coming from the specified Human Interface Device (HID). </p>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID']/*"/>	
             <msdn-id>ms645584</msdn-id>	
             <unmanaged>RID_DEVICE_INFO_HID</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO_HID</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationHid.VendorId">
             <summary>	
-            <para>The vendor identifier for the HID. </para>	
+            <dd> <p>The vendor identifier for the HID. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::dwVendorId']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::dwVendorId']/*"/>	
             <msdn-id>ms645584</msdn-id>	
             <unmanaged>unsigned int dwVendorId</unmanaged>	
             <unmanaged-short>unsigned int dwVendorId</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationHid.ProductId">
             <summary>	
-            <para>The product identifier for the HID. </para>	
+            <dd> <p>The product identifier for the HID. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::dwProductId']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::dwProductId']/*"/>	
             <msdn-id>ms645584</msdn-id>	
             <unmanaged>unsigned int dwProductId</unmanaged>	
             <unmanaged-short>unsigned int dwProductId</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationHid.VersionNumber">
             <summary>	
-            <para>The version number for the HID. </para>	
+            <dd> <p>The version number for the HID. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::dwVersionNumber']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::dwVersionNumber']/*"/>	
             <msdn-id>ms645584</msdn-id>	
             <unmanaged>unsigned int dwVersionNumber</unmanaged>	
             <unmanaged-short>unsigned int dwVersionNumber</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationHid.UsagePage">
             <summary>	
-            <para>The top-level collection Usage Page for the device. </para>	
+            <dd> <p>The top-level collection Usage Page for the device. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::usUsagePage']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::usUsagePage']/*"/>	
             <msdn-id>ms645584</msdn-id>	
             <unmanaged>HID_USAGE_PAGE usUsagePage</unmanaged>	
             <unmanaged-short>HID_USAGE_PAGE usUsagePage</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationHid.Usage">
             <summary>	
-            <para>The top-level collection Usage for the device. </para>	
+            <dd> <p>The top-level collection Usage for the device. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::usUsage']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_HID::usUsage']/*"/>	
             <msdn-id>ms645584</msdn-id>	
             <unmanaged>HID_USAGE_ID usUsage</unmanaged>	
             <unmanaged-short>HID_USAGE_ID usUsage</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawDeviceInformationKeyboard">
             <summary>	
-            Defines the raw input data coming from the specified keyboard.	
+            <p>Defines the raw input data coming from the specified keyboard. </p>	
             </summary>	
             <remarks>	
-            For the keyboard, the Usage Page is 1 and the Usage is 6.	
+            <p>For the keyboard, the Usage Page is 1 and the Usage is 6. </p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>RID_DEVICE_INFO_KEYBOARD</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO_KEYBOARD</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationKeyboard.Type">
             <summary>	
-            <para>The type of the keyboard. </para>	
+            <dd> <p>The type of the keyboard. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwType']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwType']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>unsigned int dwType</unmanaged>	
             <unmanaged-short>unsigned int dwType</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationKeyboard.SubType">
             <summary>	
-            <para>The subtype of the keyboard. </para>	
+            <dd> <p>The subtype of the keyboard. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwSubType']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwSubType']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>unsigned int dwSubType</unmanaged>	
             <unmanaged-short>unsigned int dwSubType</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationKeyboard.KeyboardMode">
             <summary>	
-            <para>The  scan code mode. </para>	
+            <dd> <p>The  scan code mode. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwKeyboardMode']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwKeyboardMode']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>unsigned int dwKeyboardMode</unmanaged>	
             <unmanaged-short>unsigned int dwKeyboardMode</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationKeyboard.NumberOfFunctionKeys">
             <summary>	
-            <para>The number of function keys on the keyboard.</para>	
+            <dd> <p>The number of function keys on the keyboard.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwNumberOfFunctionKeys']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwNumberOfFunctionKeys']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>unsigned int dwNumberOfFunctionKeys</unmanaged>	
             <unmanaged-short>unsigned int dwNumberOfFunctionKeys</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationKeyboard.NumberOfIndicators">
             <summary>	
-            <para>The number of LED indicators on the keyboard.</para>	
+            <dd> <p>The number of LED indicators on the keyboard.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwNumberOfIndicators']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwNumberOfIndicators']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>unsigned int dwNumberOfIndicators</unmanaged>	
             <unmanaged-short>unsigned int dwNumberOfIndicators</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationKeyboard.NumberOfKeysTotal">
             <summary>	
-            <para>The total number of keys on the keyboard. </para>	
+            <dd> <p>The total number of keys on the keyboard. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwNumberOfKeysTotal']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_KEYBOARD::dwNumberOfKeysTotal']/*"/>	
             <msdn-id>ms645587</msdn-id>	
             <unmanaged>unsigned int dwNumberOfKeysTotal</unmanaged>	
             <unmanaged-short>unsigned int dwNumberOfKeysTotal</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawDeviceInformationMouse">
             <summary>	
-            Defines the raw input data coming from the specified mouse.	
+            <p>Defines the raw input data coming from the specified mouse.</p>	
             </summary>	
             <remarks>	
-            For the mouse, the Usage Page is 1 and the Usage is 2.	
+            <p>For the mouse, the Usage Page is 1 and the Usage is 2.</p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE']/*"/>	
             <msdn-id>ms645589</msdn-id>	
             <unmanaged>RID_DEVICE_INFO_MOUSE</unmanaged>	
             <unmanaged-short>RID_DEVICE_INFO_MOUSE</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationMouse.Id">
             <summary>	
-            <para>The identifier of the mouse device.</para>	
+            <dd> <p>The identifier of the mouse device.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::dwId']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::dwId']/*"/>	
             <msdn-id>ms645589</msdn-id>	
             <unmanaged>unsigned int dwId</unmanaged>	
             <unmanaged-short>unsigned int dwId</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationMouse.NumberOfButtons">
             <summary>	
-            <para>The number of buttons for the mouse.</para>	
+            <dd> <p>The number of buttons for the mouse.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::dwNumberOfButtons']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::dwNumberOfButtons']/*"/>	
             <msdn-id>ms645589</msdn-id>	
             <unmanaged>unsigned int dwNumberOfButtons</unmanaged>	
             <unmanaged-short>unsigned int dwNumberOfButtons</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawDeviceInformationMouse.SampleRate">
             <summary>	
-            <para>The number of data points per second. This information may not be applicable for every mouse device.</para>	
+            <dd> <p>The number of data points per second. This information may not be applicable for every mouse device.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::dwSampleRate']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::dwSampleRate']/*"/>	
             <msdn-id>ms645589</msdn-id>	
             <unmanaged>unsigned int dwSampleRate</unmanaged>	
             <unmanaged-short>unsigned int dwSampleRate</unmanaged-short>	
         </member>
-        <member name="P:SharpDX.RawInput.RawDeviceInformationMouse.HasHorizontalWheel">
+        <member name="F:SharpDX.RawInput.RawDeviceInformationMouse.HasHorizontalWheel">
             <summary>	
-            <para>TRUE if the mouse has a wheel for horizontal scrolling; otherwise, <see cref="F:SharpDX.Result.False"/>. </para>	
-             Windows?XP:??This member is only supported starting with Windows?Vista.	
+            <dd> <p><strong>TRUE</strong> if the mouse has a wheel for horizontal scrolling; otherwise, <strong><see cref="F:SharpDX.Result.False"/></strong>. </p> <strong>Windows?XP:??</strong>This member is only supported starting with Windows?Vista. </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::fHasHorizontalWheel']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RID_DEVICE_INFO_MOUSE::fHasHorizontalWheel']/*"/>	
             <msdn-id>ms645589</msdn-id>	
             <unmanaged>BOOL fHasHorizontalWheel</unmanaged>	
             <unmanaged-short>BOOL fHasHorizontalWheel</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawHid">
             <summary>	
-            Describes the format of the raw input from a Human Interface Device (HID).	
+            <p>Describes the format of the raw input from a Human Interface Device (HID). </p>	
             </summary>	
             <remarks>	
-            Each WM_INPUT can indicate several inputs, but all of the inputs come from the same HID. The size of the bRawData array is dwSizeHid *	dwCount.	
+            <p>Each <strong>WM_INPUT</strong> can indicate several inputs, but all of the inputs come from the same HID. The size of the <strong>bRawData</strong> array is <strong>dwSizeHid</strong> *	<strong>dwCount</strong>.</p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID']/*"/>	
             <msdn-id>ms645549</msdn-id>	
             <unmanaged>RAWHID</unmanaged>	
             <unmanaged-short>RAWHID</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawHid.SizeHid">
             <summary>	
-            <para>The size, in bytes, of each HID input in bRawData. </para>	
+            <dd> <p>The size, in bytes, of each HID input in <strong>bRawData</strong>. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID::dwSizeHid']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID::dwSizeHid']/*"/>	
             <msdn-id>ms645549</msdn-id>	
             <unmanaged>unsigned int dwSizeHid</unmanaged>	
             <unmanaged-short>unsigned int dwSizeHid</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawHid.Count">
             <summary>	
-            <para>The number of HID inputs in bRawData.</para>	
+            <dd> <p>The number of HID inputs in <strong>bRawData</strong>.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID::dwCount']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID::dwCount']/*"/>	
             <msdn-id>ms645549</msdn-id>	
             <unmanaged>unsigned int dwCount</unmanaged>	
             <unmanaged-short>unsigned int dwCount</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawHid.RawData">
             <summary>	
-            <para>The raw input data, as an array of bytes. </para>	
+            <dd> <p>The raw input data, as an array of bytes. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID::bRawData']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWHID::bRawData']/*"/>	
             <msdn-id>ms645549</msdn-id>	
             <unmanaged>int bRawData</unmanaged>	
             <unmanaged-short>int bRawData</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawInput">
             <summary>	
-            Contains the raw input from a device.	
+            <p>Contains the raw input from a device. </p>	
             </summary>	
             <remarks>	
-            The handle to this structure is passed in the lParam parameter of WM_INPUT.To get detailed information -- such as the header and the content of the raw input -- call GetRawInputData.To read the <see cref="T:SharpDX.RawInput.RawInput"/> in the message loop as a buffered read, call GetRawInputBuffer.To get device specific information, call GetRawInputDeviceInfo with the hDevice from <see cref="T:SharpDX.RawInput.RawInputHeader"/>.Raw input is available only when the application calls RegisterRawInputDevices with valid device specifications.	
+            <p>The handle to this structure is passed in the <em>lParam</em> parameter of <strong>WM_INPUT</strong>.</p><p>To get detailed information -- such as the header and the content of the raw input -- call <strong>GetRawInputData</strong>.</p><p>To read the <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> in the message loop as a buffered read, call <strong>GetRawInputBuffer</strong>. </p><p>To get device specific information, call <strong>GetRawInputDeviceInfo</strong> with the <em>hDevice</em> from <strong><see cref="T:SharpDX.RawInput.RawInputHeader"/></strong>.</p><p>Raw input is available only when the application calls <strong>RegisterRawInputDevices</strong> with valid device specifications. </p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT']/*"/>	
             <msdn-id>ms645562</msdn-id>	
             <unmanaged>RAWINPUT</unmanaged>	
             <unmanaged-short>RAWINPUT</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawInput.Header">
             <summary>	
-            <para>The raw input data. </para>	
+            <dd> <p>The raw input data. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT::header']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT::header']/*"/>	
             <msdn-id>ms645562</msdn-id>	
             <unmanaged>RAWINPUTHEADER header</unmanaged>	
             <unmanaged-short>RAWINPUTHEADER header</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "F:SharpDX.RawInput.RawInput.Data" -->
+        <member name="F:SharpDX.RawInput.RawInput.Data">
+            <summary>	
+            <dd> <dl> <dt><strong>mouse</strong></dt> <dd><p></p></dd> <dd> <p>If the data comes from a mouse, this is the raw input data. </p> </dd> <dt><strong>keyboard</strong></dt> <dd><p></p></dd> <dd> <p>If the data comes from a keyboard, this is the raw input data. </p> </dd> <dt><strong>hid</strong></dt> <dd><p></p></dd> <dd> <p>If the data comes from an HID, this is the raw input data. </p> </dd> </dl> </dd>	
+            </summary>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT::data']/*"/>	
+            <msdn-id>ms645562</msdn-id>	
+            <unmanaged>RAWINPUT_INNER_0 data</unmanaged>	
+            <unmanaged-short>RAWINPUT_INNER_0 data</unmanaged-short>	
+        </member>
         <member name="T:SharpDX.RawInput.RawInputDevice">
             <summary>	
-            Defines information for the raw input devices.	
+            <p>Defines information for the raw input devices. </p>	
             </summary>	
             <remarks>	
-            If <see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/> is set for a mouse or a keyboard, the system does not generate any legacy message for that device for the application. For example, if the mouse TLC is set with <see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/>, WM_LBUTTONDOWN and related legacy mouse messages are not generated. Likewise, if the keyboard TLC is set with <see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/>, <see cref="F:SharpDX.RawInput.KeyState.KeyDown"/> and related legacy keyboard messages are not generated.If <see cref="F:SharpDX.RawInput.DeviceFlags.Remove"/> is set and the hwndTarget member is not set to <c>null</c>, then parameter validation will fail.	
+            <p>If <strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/></strong> is set for a mouse or a keyboard, the system does not generate any legacy message for that device for the application. For example, if the mouse TLC is set with <strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/></strong>, <strong>WM_LBUTTONDOWN</strong> and related legacy mouse messages are not generated. Likewise, if the keyboard TLC is set with <strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/></strong>, <strong><see cref="F:SharpDX.RawInput.KeyState.KeyDown"/></strong> and related legacy keyboard messages are not generated.</p><p>If <strong><see cref="F:SharpDX.RawInput.DeviceFlags.Remove"/></strong> is set and the <strong>hwndTarget</strong> member is not set to <strong><c>null</c></strong>, then parameter validation will fail.</p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE']/*"/>	
             <msdn-id>ms645565</msdn-id>	
             <unmanaged>RAWINPUTDEVICE</unmanaged>	
             <unmanaged-short>RAWINPUTDEVICE</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawInputDevice.UsagePage">
             <summary>	
-            <para>Top level collection Usage page for the raw input device. </para>	
+            <dd> <p>Top level collection Usage page for the raw input device. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::usUsagePage']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::usUsagePage']/*"/>	
             <msdn-id>ms645565</msdn-id>	
             <unmanaged>unsigned short usUsagePage</unmanaged>	
             <unmanaged-short>unsigned short usUsagePage</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawInputDevice.Usage">
             <summary>	
-            <para>Top level collection Usage for the raw input device. </para>	
+            <dd> <p>Top level collection Usage for the raw input device. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::usUsage']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::usUsage']/*"/>	
             <msdn-id>ms645565</msdn-id>	
             <unmanaged>unsigned short usUsage</unmanaged>	
             <unmanaged-short>unsigned short usUsage</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "F:SharpDX.RawInput.RawInputDevice.Flags" -->
+        <member name="F:SharpDX.RawInput.RawInputDevice.Flags">
+            <summary>	
+            <dd> <p>Mode flag that specifies how to interpret the information provided by <strong>usUsagePage</strong> and <strong>usUsage</strong>. It can be zero (the default) or one of the following values. By default, the operating system sends raw input from devices with the specified top level collection (TLC) to the registered application as long as it has the window focus. </p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.AppKeys"/></strong></dt> <dt>0x00000400</dt> </dl> </td><td> <p>If set, the application command keys are handled. <strong><see cref="F:SharpDX.RawInput.DeviceFlags.AppKeys"/></strong> can be specified only if <strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/></strong> is specified for a keyboard device.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.CaptureMouse"/></strong></dt> <dt>0x00000200</dt> </dl> </td><td> <p>If set, the mouse button click does not activate the other window.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.DeviceNotify"/></strong></dt> <dt>0x00002000</dt> </dl> </td><td> <p>If set, this enables the caller to receive <strong>WM_INPUT_DEVICE_CHANGE</strong> notifications for device arrival and device removal.</p> <strong>Windows?XP:??</strong>This flag is not supported until Windows?Vista </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.Exclude"/></strong></dt> <dt>0x00000010</dt> </dl> </td><td> <p>If set, this specifies the top level collections to exclude when reading a complete usage page. This flag only affects a TLC whose usage page is already specified with <strong><see cref="F:SharpDX.RawInput.DeviceFlags.PageOnly"/></strong>. </p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.ExclusiveInputSink"/></strong></dt> <dt>0x00001000</dt> </dl> </td><td> <p>If set, this enables the caller to receive input in the background only if the foreground application does not process it. In other words, if the foreground application is not registered for raw input, then the background application that is registered will receive the input.</p> <strong>Windows?XP:??</strong>This flag is not supported until Windows?Vista </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.InputSink"/></strong></dt> <dt>0x00000100</dt> </dl> </td><td> <p>If set, this enables the caller to receive the input even when the caller is not in the foreground.  Note that <strong>hwndTarget</strong> must be specified.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoHotKeys"/></strong></dt> <dt>0x00000200</dt> </dl> </td><td> <p>If set, the application-defined keyboard device hotkeys are not handled. However, the system hotkeys; for example, ALT+TAB and CTRL+ALT+DEL, are still handled. By default, all keyboard hotkeys are handled. <strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoHotKeys"/></strong> can be specified even if <strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/></strong> is not specified and <strong>hwndTarget</strong> is <strong><c>null</c></strong>.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.NoLegacy"/></strong></dt> <dt>0x00000030</dt> </dl> </td><td> <p>If set, this prevents any devices specified by <strong>usUsagePage</strong> or <strong>usUsage</strong> from generating legacy messages. This is only for the mouse and keyboard. See Remarks.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.PageOnly"/></strong></dt> <dt>0x00000020</dt> </dl> </td><td> <p>If set, this specifies all devices whose top level collection is from the specified <strong>usUsagePage</strong>. Note that <strong>usUsage</strong> must be zero. To exclude a particular top level collection, use <strong><see cref="F:SharpDX.RawInput.DeviceFlags.Exclude"/></strong>.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceFlags.Remove"/></strong></dt> <dt>0x00000001</dt> </dl> </td><td> <p>If set, this removes the top level collection from the inclusion list. This tells the operating system to stop reading from a device which matches the top level collection.</p> </td></tr> </table> <p>?</p> </dd>	
+            </summary>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::dwFlags']/*"/>	
+            <msdn-id>ms645565</msdn-id>	
+            <unmanaged>unsigned int dwFlags</unmanaged>	
+            <unmanaged-short>unsigned int dwFlags</unmanaged-short>	
+        </member>
         <member name="F:SharpDX.RawInput.RawInputDevice.Target">
             <summary>	
-            <para>A handle to the target window. If <c>null</c> it follows the keyboard focus.</para>	
+            <dd> <p>A handle to the target window. If <strong><c>null</c></strong> it follows the keyboard focus.</p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::hwndTarget']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICE::hwndTarget']/*"/>	
             <msdn-id>ms645565</msdn-id>	
             <unmanaged>HWND hwndTarget</unmanaged>	
             <unmanaged-short>HWND hwndTarget</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawInputDevicelist">
             <summary>	
-            Contains information about a raw input device.	
+            <p>Contains information about a raw input device.</p>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICELIST']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICELIST']/*"/>	
             <msdn-id>ms645568</msdn-id>	
             <unmanaged>RAWINPUTDEVICELIST</unmanaged>	
             <unmanaged-short>RAWINPUTDEVICELIST</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawInputDevicelist.Device">
             <summary>	
-            <para>A handle to the raw input device. </para>	
+            <dd> <p>A handle to the raw input device. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICELIST::hDevice']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICELIST::hDevice']/*"/>	
             <msdn-id>ms645568</msdn-id>	
             <unmanaged>void* hDevice</unmanaged>	
             <unmanaged-short>void hDevice</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "F:SharpDX.RawInput.RawInputDevicelist.Type" -->
+        <member name="F:SharpDX.RawInput.RawInputDevicelist.Type">
+            <summary>	
+            <dd> <p>The type of device. This can be one of the following values. </p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.HumanInputDevice"/></strong></dt> <dt>2</dt> </dl> </td><td> <p>The device is an HID that is not a keyboard and not a mouse.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.Keyboard"/></strong></dt> <dt>1</dt> </dl> </td><td> <p>The device is a keyboard.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.Mouse"/></strong></dt> <dt>0</dt> </dl> </td><td> <p>The device is a mouse.</p> </td></tr> </table> <p>?</p> </dd>	
+            </summary>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTDEVICELIST::dwType']/*"/>	
+            <msdn-id>ms645568</msdn-id>	
+            <unmanaged>unsigned int dwType</unmanaged>	
+            <unmanaged-short>unsigned int dwType</unmanaged-short>	
+        </member>
         <member name="T:SharpDX.RawInput.RawInputHeader">
             <summary>	
-            Contains the header information that is part of the raw input data.	
+            <p>Contains the header information that is part of the raw input data. </p>	
             </summary>	
             <remarks>	
-            To get more information on the device, use hDevice in a call to GetRawInputDeviceInfo.	
+            <p>To get more information on the device, use <strong>hDevice</strong> in a call to <strong>GetRawInputDeviceInfo</strong>.</p>	
             </remarks>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER']/*"/>	
             <msdn-id>ms645571</msdn-id>	
             <unmanaged>RAWINPUTHEADER</unmanaged>	
             <unmanaged-short>RAWINPUTHEADER</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "F:SharpDX.RawInput.RawInputHeader.Type" -->
+        <member name="F:SharpDX.RawInput.RawInputHeader.Type">
+            <summary>	
+            <dd> <p>The type of raw input. It can be one of the following values. </p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.HumanInputDevice"/></strong></dt> <dt>2</dt> </dl> </td><td> <p>Raw input comes from some device that is not a keyboard or a mouse.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.Keyboard"/></strong></dt> <dt>1</dt> </dl> </td><td> <p>Raw input comes from the keyboard.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.DeviceType.Mouse"/></strong></dt> <dt>0</dt> </dl> </td><td> <p>Raw input comes from the mouse.</p> </td></tr> </table> <p>?</p> </dd>	
+            </summary>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::dwType']/*"/>	
+            <msdn-id>ms645571</msdn-id>	
+            <unmanaged>RAW_DEVICE_TYPE dwType</unmanaged>	
+            <unmanaged-short>RAW_DEVICE_TYPE dwType</unmanaged-short>	
+        </member>
         <member name="F:SharpDX.RawInput.RawInputHeader.Size">
             <summary>	
-            <para>The size, in bytes, of the entire input packet of data. This includes <see cref="T:SharpDX.RawInput.RawInput"/> plus possible extra input reports in the <see cref="T:SharpDX.RawInput.RawHid"/> variable length array. </para>	
+            <dd> <p>The size, in bytes, of the entire input packet of data. This includes <strong><see cref="T:SharpDX.RawInput.RawInput"/></strong> plus possible extra input reports in the <strong><see cref="T:SharpDX.RawInput.RawHid"/></strong> variable length array. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::dwSize']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::dwSize']/*"/>	
             <msdn-id>ms645571</msdn-id>	
             <unmanaged>unsigned int dwSize</unmanaged>	
             <unmanaged-short>unsigned int dwSize</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawInputHeader.Device">
             <summary>	
-            <para>A handle to the device generating the raw input data. </para>	
+            <dd> <p>A handle to the device generating the raw input data. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::hDevice']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::hDevice']/*"/>	
             <msdn-id>ms645571</msdn-id>	
             <unmanaged>void* hDevice</unmanaged>	
             <unmanaged-short>void hDevice</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawInputHeader.Param">
             <summary>	
-            <para>The value passed in the  wParam parameter of the WM_INPUT message. </para>	
+            <dd> <p>The value passed in the  <em>wParam</em> parameter of the <strong>WM_INPUT</strong> message. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::wParam']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUTHEADER::wParam']/*"/>	
             <msdn-id>ms645571</msdn-id>	
             <unmanaged>UINT_PTR wParam</unmanaged>	
             <unmanaged-short>UINT_PTR wParam</unmanaged-short>	
@@ -1120,7 +1187,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0']/*"/>	
             <unmanaged>RAWINPUT_INNER_0</unmanaged>	
             <unmanaged-short>RAWINPUT_INNER_0</unmanaged-short>	
         </member>
@@ -1128,7 +1195,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0::mouse']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0::mouse']/*"/>	
             <unmanaged>RAWMOUSE mouse</unmanaged>	
             <unmanaged-short>RAWMOUSE mouse</unmanaged-short>	
         </member>
@@ -1136,7 +1203,7 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0::keyboard']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0::keyboard']/*"/>	
             <unmanaged>RAWKEYBOARD keyboard</unmanaged>	
             <unmanaged-short>RAWKEYBOARD keyboard</unmanaged-short>	
         </member>
@@ -1144,61 +1211,69 @@
             <summary>	
             No documentation.	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0::hid']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWINPUT_INNER_0::hid']/*"/>	
             <unmanaged>RAWHID hid</unmanaged>	
             <unmanaged-short>RAWHID hid</unmanaged-short>	
         </member>
         <member name="T:SharpDX.RawInput.RawKeyboard">
             <summary>	
-            Contains information about the state of the keyboard.	
+            <p>Contains information about the state of the keyboard. </p>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD']/*"/>	
             <msdn-id>ms645575</msdn-id>	
             <unmanaged>RAWKEYBOARD</unmanaged>	
             <unmanaged-short>RAWKEYBOARD</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawKeyboard.MakeCode">
             <summary>	
-            <para>The scan code from the key depression. The scan code for keyboard overrun is KEYBOARD_OVERRUN_MAKE_CODE. </para>	
+            <dd> <p>The scan code from the key depression. The scan code for keyboard overrun is <strong>KEYBOARD_OVERRUN_MAKE_CODE</strong>. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::MakeCode']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::MakeCode']/*"/>	
             <msdn-id>ms645575</msdn-id>	
             <unmanaged>unsigned short MakeCode</unmanaged>	
             <unmanaged-short>unsigned short MakeCode</unmanaged-short>	
         </member>
-        <!-- Badly formed XML comment ignored for member "F:SharpDX.RawInput.RawKeyboard.Flags" -->
+        <member name="F:SharpDX.RawInput.RawKeyboard.Flags">
+            <summary>	
+            <dd> <p>Flags for scan code information. It can be one or more of the following.</p> <table> <tr><th>Value</th><th>Meaning</th></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.ScanCodeFlags.Break"/></strong></dt> <dt>1</dt> </dl> </td><td> <p>The key is up.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.ScanCodeFlags.E0"/></strong></dt> <dt>2</dt> </dl> </td><td> <p>This is the left version of the key.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.ScanCodeFlags.E1"/></strong></dt> <dt>4</dt> </dl> </td><td> <p>This is the right version of the key.</p> </td></tr> <tr><td><dl> <dt><strong><see cref="F:SharpDX.RawInput.ScanCodeFlags.Make"/></strong></dt> <dt>0</dt> </dl> </td><td> <p>The key is down.</p> </td></tr> </table> <p>?</p> </dd>	
+            </summary>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::Flags']/*"/>	
+            <msdn-id>ms645575</msdn-id>	
+            <unmanaged>RAW_SCAN_CODE_FLAGS Flags</unmanaged>	
+            <unmanaged-short>RAW_SCAN_CODE_FLAGS Flags</unmanaged-short>	
+        </member>
         <member name="F:SharpDX.RawInput.RawKeyboard.Reserved">
             <summary>	
-            <para>Reserved; must be zero. </para>	
+            <dd> <p>Reserved; must be zero. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::Reserved']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::Reserved']/*"/>	
             <msdn-id>ms645575</msdn-id>	
             <unmanaged>unsigned short Reserved</unmanaged>	
             <unmanaged-short>unsigned short Reserved</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawKeyboard.VKey">
             <summary>	
-            <para>Windows message compatible virtual-key code. For more information, see Virtual Key Codes. </para>	
+            <dd> <p>Windows message compatible virtual-key code. For more information, see Virtual Key Codes. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::VKey']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::VKey']/*"/>	
             <msdn-id>ms645575</msdn-id>	
             <unmanaged>unsigned short VKey</unmanaged>	
             <unmanaged-short>unsigned short VKey</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawKeyboard.Message">
             <summary>	
-            <para>The corresponding window message, for example <see cref="F:SharpDX.RawInput.KeyState.KeyDown"/>, <see cref="F:SharpDX.RawInput.KeyState.SystemKeyDown"/>, and so forth. </para>	
+            <dd> <p>The corresponding window message, for example <strong><see cref="F:SharpDX.RawInput.KeyState.KeyDown"/></strong>, <strong><see cref="F:SharpDX.RawInput.KeyState.SystemKeyDown"/></strong>, and so forth. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::Message']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::Message']/*"/>	
             <msdn-id>ms645575</msdn-id>	
             <unmanaged>RAW_KEY_STATE Message</unmanaged>	
             <unmanaged-short>RAW_KEY_STATE Message</unmanaged-short>	
         </member>
         <member name="F:SharpDX.RawInput.RawKeyboard.ExtraInformation">
             <summary>	
-            <para>The device-specific additional information for the event. </para>	
+            <dd> <p>The device-specific additional information for the event. </p> </dd>	
             </summary>	
-            <!-- No matching elements were found for the following include tag --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::ExtraInformation']/*"/>	
+            <!-- Aucun élément correspondant n'a été trouvé pour la balise include suivante --><include file=".\..\Documentation\CodeComments.xml" path="/comments/comment[@id='RAWKEYBOARD::ExtraInformation']/*"/>	
             <msdn-id>ms645575</msdn-id>	
             <unmanaged>unsigned int ExtraInformation</unmanaged>	
             <unmanaged-short>unsigned int ExtraInformation</unmanaged-short>	

@@ -14,7 +14,7 @@ namespace Utopia.Editor
     {
         public PaletteButtonControl()
         {
-            Color = Colors.White;
+            Color = SharpDX.Color.White;
         }
 
         public SpriteTexture Texture { get; set; }

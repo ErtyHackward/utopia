@@ -10,6 +10,7 @@ using SharpDX.Direct3D11;
 using System.Drawing;
 using S33M3Resources.Structs;
 using SharpDX;
+using Color = SharpDX.Color;
 
 namespace Utopia.Components
 {
@@ -25,7 +26,7 @@ namespace Utopia.Components
         private D3DEngine _engine;
         private SpriteRenderer _spriteRenderer;
         private System.Drawing.Rectangle _slideDimension;
-        private ByteColor _color = Colors.White;
+        private ByteColor _color = Color.White;
         private DateTime _slideSwitch = DateTime.Now;
         #endregion
 

@@ -28,6 +28,7 @@ using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
 using S33M3Resources.Structs;
 using S33M3_DXEngine.Main;
+using Color = SharpDX.Color;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {
@@ -50,7 +51,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
     /// </remarks>
     public partial class Control : BaseComponent
     {
-        private ByteColor _color = Colors.White;
+        private ByteColor _color = SharpDX.Color.White;
         public bool ColorSet { get; private set; }
 
         public virtual int DrawGroupId { get; set; }

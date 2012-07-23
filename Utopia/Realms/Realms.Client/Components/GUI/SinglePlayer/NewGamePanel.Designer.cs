@@ -47,13 +47,13 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             _inputWorldName = ToDispose(new InputControl()
             {
                 //CustomFont = _commonResources.FontBebasNeue17,
-                Color = Colors.Black
+                Color = SharpDX.Color.Black
             });
 
             _inputSeedName = ToDispose(new InputControl()
             {
                 //CustomFont = _commonResources.FontBebasNeue17,
-                Color = Colors.Black
+                Color = SharpDX.Color.Black
             });
 
             int oceanMinLevel = 30;

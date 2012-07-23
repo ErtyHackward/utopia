@@ -154,23 +154,23 @@ namespace S33M3CoreComponents.Debug.Components
                 tranform = new Vector4(_screenPosition.Left + i, _screenPosition.Top, Math.Min( (_values[i] / (avg * 2f)) * _screenPosition.Height, _screenPosition.Height), 0.0f);
                 if (_values[i] > limit)
                 {
-                    _lines.Add(new VertexColumnChart(tranform, Colors.Red));
+                    _lines.Add(new VertexColumnChart(tranform, Color.Red));
                 }
                 else
                 {
-                    _lines.Add(new VertexColumnChart(tranform, Colors.Green));
+                    _lines.Add(new VertexColumnChart(tranform, Color.Green));
                 }
             }
 
             //ADD axis
             tranform = new Vector4(_screenPosition.Left, _screenPosition.Top, _screenPosition.Height, 0.0f);
-            _lines.Add(new VertexColumnChart(tranform, Colors.Black));
+            _lines.Add(new VertexColumnChart(tranform, Color.Black));
             tranform = new Vector4(_screenPosition.Left, _screenPosition.Top, _screenPosition.Width, 1.0f);
-            _lines.Add(new VertexColumnChart(tranform, Colors.Black));
+            _lines.Add(new VertexColumnChart(tranform, Color.Black));
 
             //Add Cursor
             tranform = new Vector4(_screenPosition.Left + cursorLocation, _screenPosition.Top, _screenPosition.Height, 0.0f);
-            _lines.Add(new VertexColumnChart(tranform, Colors.DarkBlue));
+            _lines.Add(new VertexColumnChart(tranform, Color.DarkBlue));
         }
 
         public override void Draw(DeviceContext context, int index)

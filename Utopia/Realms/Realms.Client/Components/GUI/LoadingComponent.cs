@@ -11,6 +11,7 @@ using S33M3DXEngine.Buffers;
 using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Settings;
+using Color = SharpDX.Color;
 
 namespace Realms.Client.Components.GUI
 {
@@ -47,14 +48,14 @@ namespace Realms.Client.Components.GUI
             _loadingLabel = new LabelControl 
             {
                 Text = "LOADING...",
-                Color = Colors.White,
+                Color = Color.White,
                 CustomFont = _commonResources.FontBebasNeue50
             };
             
             _pleaseWaitLabel = new LabelControl 
             {
                 Text = "PLEASE WAIT",
-                Color = new Color4(Color.FromArgb(198, 0, 75).ToArgb()),
+                Color = new Color4(new Color(198, 0, 75, 255).ToArgb()),
                 CustomFont = _commonResources.FontBebasNeue25
             };
             

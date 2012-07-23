@@ -70,7 +70,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             int newOrder;
             if (int.TryParse(updateOrder.Text, out newOrder))
             {
-                updateOrder.Color = Colors.Red;
+                updateOrder.Color = Color.Red;
                 ((IUpdatableComponent)_gamecomp).UpdateOrder = newOrder;
             }
         }
@@ -80,7 +80,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             int newOrder;
             if (int.TryParse(drawOrder.Text, out newOrder))
             {
-                drawOrder.Color = Colors.Red;
+                drawOrder.Color = Color.Red;
                 ((IDrawableComponent)_gamecomp).DrawOrders.UpdateIndex(_drawOrderindex, newOrder);
             }
         }
@@ -181,7 +181,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
         #region Private methods
         private void BuildWindow()
         {
-            this.Color = Colors.Wheat;
+            this.Color = SharpDX.Color.Wheat;
 
             CloseWindowButtonControl closeBt = ToDispose(new CloseWindowButtonControl() { Bounds = new UniRectangle(this.Bounds.Size.X - 20, 5, 15, 15) });
             closeBt.Pressed += (sender, e) => { this.RemoveFromParent(); };
@@ -203,7 +203,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.FontStyle = System.Drawing.FontStyle.Bold;
             ColumnTitles.Bounds = new UniRectangle(200.0f, 5.0f, 90.0f, 18.0f);
             ColumnTitles.Text = "Updating";
-            ColumnTitles.Color = Colors.DarkBlue;
+            ColumnTitles.Color = SharpDX.Color.DarkBlue;
             ColumnTitles.Clicked += ColumnTitlesUpdating_Clicked;
             Children.Add(ColumnTitles);
 
@@ -211,7 +211,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
             ColumnTitles.FontStyle = System.Drawing.FontStyle.Bold;
             ColumnTitles.Bounds = new UniRectangle(290.0f, 5.0f, 110.0f, 18.0f);
             ColumnTitles.Text = "Drawing";
-            ColumnTitles.Color = Colors.DarkBlue;
+            ColumnTitles.Color = SharpDX.Color.DarkBlue;
             ColumnTitles.Clicked += ColumnTitlesDrawing_Clicked;
             Children.Add(ColumnTitles);
 

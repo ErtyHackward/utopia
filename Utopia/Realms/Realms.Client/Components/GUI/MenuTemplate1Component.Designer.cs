@@ -59,7 +59,7 @@ namespace Realms.Client.Components.GUI
                 CustomVerticalPlacement = FlatGuiGraphics.Frame.VerticalTextAlignment.Center
             };
 
-            _leftMenuPanel = new PanelControl() { Color = Colors.WhiteSmoke };
+            _leftMenuPanel = new PanelControl() { Color = Color.WhiteSmoke };
             _cubesPatern = new ImageControl() { Image = CommonResources.StCubesPattern };
             _linenPatern = new ImageControl() { Image = CommonResources.StLinenPattern };
             _shadow = new ImageControl() { Image = CommonResources.StShadow };

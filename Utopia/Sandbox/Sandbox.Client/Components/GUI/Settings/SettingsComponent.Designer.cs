@@ -37,7 +37,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         protected override void InitializeComponent()
         {
             _settingsStateLabel = new LabelControl() { Text = "Restart needed to apply new setting(s)",
-                                                        Color = Colors.Red, IsVisible = false};
+                                                        Color = Color.Red, IsVisible = false};
 
             _btGraphic = ToDispose(new ButtonControl
             {

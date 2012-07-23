@@ -62,7 +62,7 @@ namespace Utopia.Shared.Settings
                 IsNumeric = isNumeric,
                 CustomBackground = customInputBackgroundTexture,
                 CustomFont = customFont,
-                Color = SharpDX.Colors.White
+                Color = SharpDX.Color.White
             };
             ParamRow row = new ParamRow() { LabelName = label, InputingComp = input, ParamInputMethod = ParamInputMethod.InputBox, FieldData = new ParamValue() { Value = value, Name = fieldName } };
             input.Tag2 = row;

@@ -164,7 +164,7 @@ namespace Sandbox.Client.Components.GUI
             };
             
             _nicknameLabel = new LabelControl {
-                Color = SharpDX.Colors.White,
+                Color = SharpDX.Color.White,
                 CustomFont = _commonResources.FontBebasNeue25
             };
 

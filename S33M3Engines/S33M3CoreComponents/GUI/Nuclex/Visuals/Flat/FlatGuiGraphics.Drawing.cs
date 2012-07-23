@@ -31,7 +31,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
     partial class FlatGuiGraphics
     {
-        private ByteColor _defaultColor = Colors.White;
+        private ByteColor _defaultColor = Color.White;
 
         /// <summary>Needs to be called before the GUI drawing process begins</summary>
         public void BeginDrawing()
@@ -152,7 +152,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
         public void DrawElement(string frameName, ref RectangleF bounds, int groupId = 0)
         {
-            ByteColor color = Colors.White;
+            ByteColor color = Color.White;
             DrawElement(frameName, ref bounds, ref color, groupId);
         }
 

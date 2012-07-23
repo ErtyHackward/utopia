@@ -31,6 +31,7 @@ using SharpDX.Direct3D11;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.GUI.Nuclex.Support;
 using System.Drawing;
+using Color = SharpDX.Color;
 using S33M3Resources.Structs;
 using System.Drawing.Text;
 
@@ -306,7 +307,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                     Color4 color;
                     if (colorAttribute == null)
                     {
-                        color = Colors.White;
+                        color = Color.White;
                     }
                     else
                     {

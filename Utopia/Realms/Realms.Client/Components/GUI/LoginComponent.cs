@@ -193,7 +193,7 @@ namespace Realms.Client.Components.GUI
                 Text = Email,
                 CustomBackground = _stInputBg,
                 CustomFont = _commonResources.FontBebasNeue35,
-                Color = SharpDX.Colors.White,
+                Color = SharpDX.Color.White,
                 CustomHintImage = _stEmail,
                 TextOffset = new SharpDX.Vector2(25,22),
                 CustomHintImageOffset = new SharpDX.Vector2(25, 30)
@@ -205,7 +205,7 @@ namespace Realms.Client.Components.GUI
                 IsPassword = true,
                 CustomBackground = _stInputBg,
                 CustomFont = _commonResources.FontBebasNeue35,
-                Color = SharpDX.Colors.White,
+                Color = SharpDX.Color.White,
                 CustomHintImage = _stPassword,
                 TextOffset = new SharpDX.Vector2(25,22),
                 CustomHintImageOffset = new SharpDX.Vector2(25, 30)
@@ -238,7 +238,7 @@ namespace Realms.Client.Components.GUI
             _errorText = new LabelControl 
             {
                 CustomFont = _commonResources.FontBebasNeue25,
-                Color = SharpDX.Colors.White,
+                Color = SharpDX.Color.White,
                 Autosizing = true
             };
 
