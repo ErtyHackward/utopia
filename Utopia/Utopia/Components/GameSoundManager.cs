@@ -16,6 +16,7 @@ using Vector3D = S33M3Resources.Structs.Vector3D;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia.Components
 {
@@ -32,18 +33,19 @@ namespace Utopia.Components
             public byte LastSound;
         }
 
-
+        #region Private Variables
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private IDynamicEntityManager _dynamicEntityManager;
         private readonly ISoundEngine _soundEngine;
         private SingleArrayChunkContainer _singleArray;
+        private IChunkEntityImpactManager _chunkEntityImpactManager;
 
         private Vector3I _lastPosition;
         private Range3I _lastRange;
         private IrrVector3 _listenerPosition;
 
         private readonly SortedList<string, KeyValuePair<ISound, List<IrrVector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<IrrVector3>>>();
-        
+
         private string _debugInfo;
         private long _listenCubesTime;
 
@@ -55,7 +57,9 @@ namespace Utopia.Components
         private readonly List<KeyValuePair<int, string>> _ambientSounds = new List<KeyValuePair<int, string>>();
 
         private readonly List<string> _preLoad = new List<string>();
+        #endregion
 
+        #region Public Properties
         /// <summary>
         /// Gets irrKlang sound engine object
         /// </summary>
@@ -63,34 +67,36 @@ namespace Utopia.Components
         {
             get { return _soundEngine; }
         }
+        #endregion
 
-        public GameSoundManager(ISoundEngine soundEngine, 
-                                CameraManager<ICameraFocused> cameraManager, 
-                                SingleArrayChunkContainer singleArray, 
-                                IDynamicEntityManager dynamicEntityManager, 
-                                IDynamicEntity player)
+        public GameSoundManager(ISoundEngine soundEngine,
+                                CameraManager<ICameraFocused> cameraManager,
+                                SingleArrayChunkContainer singleArray,
+                                IDynamicEntityManager dynamicEntityManager,
+                                IDynamicEntity player,
+                                IChunkEntityImpactManager chunkEntityImpactManager)
         {
             _cameraManager = cameraManager;
             _soundEngine = soundEngine;
             _singleArray = singleArray;
+            _chunkEntityImpactManager = chunkEntityImpactManager;
 
             _dynamicEntityManager = dynamicEntityManager;
             _stepsTracker.Add(new Track { Entity = player, Position = player.Position });
 
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
+            _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
         }
 
-        void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        public override void BeforeDispose()
         {
-            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
+            _dynamicEntityManager.EntityAdded -= DynamicEntityManagerEntityAdded;
+            _dynamicEntityManager.EntityRemoved -= DynamicEntityManagerEntityRemoved;
+            _chunkEntityImpactManager.BlockReplaced -= _chunkEntityImpactManager_BlockReplaced;
         }
 
-        void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
-        {
-            _stepsTracker.Add(new Track { Entity = e.Entity, Position = e.Entity.Position });
-        }
-
+        #region Public Methods
         /// <summary>
         /// Setup a step sound for a cube type
         /// </summary>
@@ -131,7 +137,6 @@ namespace Utopia.Components
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
             // load all sounds
-
             foreach (var pair in _ambientSounds)
             {
                 _soundEngine.AddSoundSourceFromFile(pair.Value, StreamMode.AutoDetect, true);
@@ -149,12 +154,8 @@ namespace Utopia.Components
             {
                 _soundEngine.AddSoundSourceFromFile(path, StreamMode.AutoDetect, true);
             }
-            
-            base.LoadContent(context);
-        }
 
-        public override void BeforeDispose()
-        {
+            base.LoadContent(context);
         }
 
         public override void Update(GameTime timeSpent)
@@ -172,7 +173,7 @@ namespace Utopia.Components
             sw.Stop();
 
             _debugInfo = "Sounds playing: " + _sharedSounds.Count + ", Update " + sw.ElapsedMilliseconds + " ms, ";
-            
+
             // update all cubes sounds if Camera move !
             if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition.Value != _lastPosition)
             {
@@ -181,9 +182,9 @@ namespace Utopia.Components
 
                 Range3I listenRange;
 
-                listenRange.Position = _lastPosition - new Vector3I(16,16,16);
+                listenRange.Position = _lastPosition - new Vector3I(16, 16, 16);
 
-                listenRange.Size = new Vector3I(32,32,32); // 32768 block scan around player
+                listenRange.Size = new Vector3I(32, 32, 32); // 32768 block scan around player
 
                 ListenCubes(listenRange);
                 sw.Stop();
@@ -210,13 +211,13 @@ namespace Utopia.Components
 
                 Vector3D underTheFeets = entity.Position;
                 underTheFeets.Y -= 0.01f;
-                
+
                 TerraCube cubeUnderFeet = _singleArray.GetCube(underTheFeets);
 
                 // no need to play step if the entity is in air or not in walking displacement mode
-                if (cubeUnderFeet.Id == CubeId.Error || 
-                    cubeUnderFeet.Id == CubeId.Air || 
-                    _stepsTracker[i].Entity.DisplacementMode !=  Shared.Entities.EntityDisplacementModes.Walking)
+                if (cubeUnderFeet.Id == CubeId.Error ||
+                    cubeUnderFeet.Id == CubeId.Air ||
+                    _stepsTracker[i].Entity.DisplacementMode != Shared.Entities.EntityDisplacementModes.Walking)
                 {
                     var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position }; //Save the position of the entity
                     _stepsTracker[i] = item;
@@ -282,7 +283,7 @@ namespace Utopia.Components
                             }
                         }
                     }
-                    
+
                     //Save the Entity last position.
                     var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position, LastSound = soundIndex };
                     _stepsTracker[i] = item;
@@ -318,7 +319,7 @@ namespace Utopia.Components
                     _sharedSounds.RemoveAt(i);
                 }
             }
-            
+
 
             int cubeIndex;
             // add new sounds
@@ -378,6 +379,19 @@ namespace Utopia.Components
             }
         }
 
+
+        public virtual void PlayBlockPut(Vector3I blockPos)
+        {
+            var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+            sound.MaxDistance = 16;
+        }
+
+        public virtual void PlayBlockTake(Vector3I blockPos)
+        {
+            var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+            sound.MaxDistance = 16;
+        }
+
         public bool ShowDebugInfo
         {
             get;
@@ -388,5 +402,34 @@ namespace Utopia.Components
         {
             return _debugInfo;
         }
+        #endregion
+
+        #region Private Methods
+        //Handle Cube removed / added sound
+        private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
+        {
+            if (e.NewBlockType == CubeId.Air && e.PreviousBlock == CubeId.DynamicWater)
+                return;
+            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.Air)
+                return;
+            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.DynamicWater)
+                return;
+
+            if (e.NewBlockType == 0)
+                PlayBlockTake(e.Position);
+            else
+                PlayBlockPut(e.Position);
+        }
+
+        private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        {
+            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
+        }
+
+        private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        {
+            _stepsTracker.Add(new Track { Entity = e.Entity, Position = e.Entity.Position });
+        }
+        #endregion
     }
 }

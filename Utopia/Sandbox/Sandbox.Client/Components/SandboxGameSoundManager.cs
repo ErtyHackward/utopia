@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 using IrrKlang;
 using Utopia.Shared.Chunks;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Sandbox.Client.Components
 {
@@ -16,8 +17,9 @@ namespace Sandbox.Client.Components
                                     CameraManager<ICameraFocused> cameraManager,
                                     SingleArrayChunkContainer singleArray,
                                     IDynamicEntityManager dynamicEntityManager,
-                                    IDynamicEntity player)
-            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player)
+                                    IDynamicEntity player,
+                                    IChunkEntityImpactManager chunkEntityImpactManager)
+            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager)
         {
 
             // steps
@@ -54,13 +56,13 @@ namespace Sandbox.Client.Components
 
         }
 
-        public void PlayBlockPut(Vector3I blockPos)
+        public override void PlayBlockPut(Vector3I blockPos)
         {
             var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
             sound.MaxDistance = 16;
         }
 
-        public void PlayBlockTake(Vector3I blockPos)
+        public override void PlayBlockTake(Vector3I blockPos)
         {
             var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
             sound.MaxDistance = 16;
