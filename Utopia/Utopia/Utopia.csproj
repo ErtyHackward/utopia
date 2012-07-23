@@ -129,6 +129,10 @@
     <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IStaticEntityManager.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.Input.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.Move.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.Move.Physic.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.Picking.cs" />
     <Compile Include="Entities\Voxel\VisualVoxelModel.cs" />
     <Compile Include="Entities\Voxel\VoxelModelManager.cs" />
     <Compile Include="Entities\ModelSQLiteStorage.cs" />
