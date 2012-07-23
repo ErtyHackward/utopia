@@ -81,8 +81,6 @@ namespace Realms.Client
 
             _iocContainer.Dispose();
 
-            game.Dispose();
-
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
