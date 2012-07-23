@@ -30,7 +30,7 @@ namespace Utopia.GUI
         private bool _refreshDisplay;
         private long _hideChatInTick;
         private long _lastUpdateTime;
-        private ByteColor _fontColor = new ByteColor((byte)Color.White.R * 255, (byte)Color.White.G * 255, (byte)Color.White.B * 255, (byte)128);
+        private ByteColor _fontColor = new ByteColor(Color.White.R, Color.White.G, Color.White.B ,(byte)128);
         private readonly D3DEngine _d3dEngine;
         private readonly InputsManager _imanager;
         private readonly ServerComponent _server;
