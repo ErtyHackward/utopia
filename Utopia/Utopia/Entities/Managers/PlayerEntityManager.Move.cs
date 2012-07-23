@@ -221,7 +221,6 @@ namespace Utopia.Entities.Managers
                     _fallMaxHeight = int.MinValue;
                 }
             }
-
         }
 
         private void CheckHeadUnderWater()
