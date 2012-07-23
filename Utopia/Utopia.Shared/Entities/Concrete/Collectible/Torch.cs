@@ -19,6 +19,11 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
             get { return "Torch"; }
         }
 
+        public override string DisplayName
+        {
+            get { return "Torch"; }
+        }
+
         /// <summary>
         /// Gets entity class id
         /// </summary>

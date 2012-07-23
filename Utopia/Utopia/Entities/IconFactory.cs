@@ -117,6 +117,7 @@ namespace Utopia.Entities
                 // option 1 :  draw voxelModel in a render target texture (reuse/pool while unchanged)
                 // option 2 :  cpu projection of voxels into a dynamic Texture (making a for loop on blocks, creating a sort of heigtmap in a bitmap)
             }
+          
             return;
         }
         #endregion
