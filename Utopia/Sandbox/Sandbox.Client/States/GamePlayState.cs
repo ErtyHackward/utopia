@@ -78,7 +78,6 @@ namespace Sandbox.Client.States
             fadeComponent.Visible = false;
 
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
-            chunkEntityImpactManager.BlockReplaced += ChunkEntityImpactManagerBlockReplaced;
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -123,26 +122,10 @@ namespace Sandbox.Client.States
             }
 
 #endif
-
             chat.MessageOut += ChatMessageOut;
-
             base.Initialize(context);
         }
         
-        void ChunkEntityImpactManagerBlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
-        {
-            if (e.NewBlockType == CubeId.Air && e.PreviousBlock == CubeId.DynamicWater)
-                return;
-            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.Air)
-                return;
-            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.DynamicWater)
-                return;
-
-            if (e.NewBlockType == 0)
-                _sandboxGameSoundManager.PlayBlockTake(e.Position);
-            else
-                _sandboxGameSoundManager.PlayBlockPut(e.Position);
-        }
 
         void InventorySwitchInventory(object sender, System.EventArgs e)
         {

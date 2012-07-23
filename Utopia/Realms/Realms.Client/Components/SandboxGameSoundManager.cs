@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 using IrrKlang;
 using Utopia.Shared.Chunks;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Realms.Client.Components
 {
@@ -16,8 +17,9 @@ namespace Realms.Client.Components
                                     CameraManager<ICameraFocused> cameraManager,
                                     SingleArrayChunkContainer singleArray,
                                     IDynamicEntityManager dynamicEntityManager,
-                                    IDynamicEntity player)
-            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player)
+                                    IDynamicEntity player,
+                                    IChunkEntityImpactManager chunkEntityImpactManager)
+            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager)
         {
 
             // steps
