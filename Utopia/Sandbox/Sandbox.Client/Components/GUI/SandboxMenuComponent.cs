@@ -19,6 +19,7 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Color = SharpDX.Color;
 
 namespace Sandbox.Client.Components.GUI
 {
@@ -255,7 +256,7 @@ namespace Sandbox.Client.Components.GUI
             public Vector3 ScreenPosition;
             public Vector3 SpinningRotation;
 
-            public Color4 CubeColor = Colors.White;
+            public Color4 CubeColor = Color.White;
             public Color4 CubeShadowColor = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
 
             public Matrix World

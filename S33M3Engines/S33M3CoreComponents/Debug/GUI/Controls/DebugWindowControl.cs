@@ -70,7 +70,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
 
             //Create the Left Menu panel
             PanelControl menu = ToDispose(new PanelControl() { Bounds = new UniRectangle(4, 24, 100, _debugWindow.Bounds.Size.Y - 28), Color = LeftPanelColor });
-                LabelControl menu_title = ToDispose(new LabelControl() { Bounds = new UniRectangle(5, 0, menu.Bounds.Size.X, 30), Color = Colors.Yellow, Text = "Visualisation" });
+                LabelControl menu_title = ToDispose(new LabelControl() { Bounds = new UniRectangle(5, 0, menu.Bounds.Size.X, 30), Color = Color.Yellow, Text = "Visualisation" });
                 menu.Children.Add(menu_title);
 
                 ButtonControl btOptions = ToDispose(new ButtonControl() { Tag = "btOptions", Bounds = new UniRectangle(4, menu_title.Bounds.Bottom - 6, 92, 40), Text = "Debug Options" });

@@ -115,7 +115,7 @@ namespace Utopia.Entities.Renderer
 
         private void SetUpRenderer()
         {
-            renderer = new BoundingBox3D(_d3DEngine, _worldFocusManager, _visualEntity.VisualEntity.Entity.DefaultSize, _dummyEntityRenderer, Colors.Red);
+            renderer = new BoundingBox3D(_d3DEngine, _worldFocusManager, _visualEntity.VisualEntity.Entity.DefaultSize, _dummyEntityRenderer, Color.Red);
             _worldPosition = new FTSValue<Vector3D>(_visualEntity.VisualEntity.Position);
         }
 

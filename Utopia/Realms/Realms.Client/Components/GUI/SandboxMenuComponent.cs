@@ -252,7 +252,7 @@ namespace Realms.Client.Components.GUI
             public Vector3 ScreenPosition;
             public Vector3 SpinningRotation;
 
-            public Color4 CubeColor = Colors.White;
+            public Color4 CubeColor = Color.White;
             public Color4 CubeShadowColor = new Color4(0.05f, 0.05f, 0.05f, 0.02f);
 
             public Matrix World

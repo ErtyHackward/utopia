@@ -47,7 +47,7 @@ namespace S33M3CoreComponents.Debug.GUI.Controls
         #region Private methods
         private void BuildWindow()
         {
-            this.Color = Colors.Wheat;
+            this.Color = SharpDX.Color.Wheat;
 
             CloseWindowButtonControl closeBt = ToDispose(new CloseWindowButtonControl() { Bounds = new UniRectangle(this.Bounds.Size.X - 20, 5, 15, 15) });
             closeBt.Pressed += (sender, e) => { this.RemoveFromParent(); };

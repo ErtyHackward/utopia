@@ -5,7 +5,6 @@ using System.Text;
 using S33M3DXEngine.Main;
 using SharpDX;
 using S33M3DXEngine;
-using System.Drawing;
 using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
