@@ -78,8 +78,8 @@ namespace Realms.Client.States
 
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             chunkEntityImpactManager.BlockReplaced += ChunkEntityImpactManagerBlockReplaced;
-
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
+            var adminConsole = _ioc.Get<AdminConsole>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -123,9 +123,6 @@ namespace Realms.Client.States
             }
 
 #endif
-
-            chat.MessageOut += ChatMessageOut;
-
             base.Initialize(context);
         }
         
@@ -159,29 +156,6 @@ namespace Realms.Client.States
                 fadeComponent.Visible = true;
                 inventory.ShowInventory();
             }
-        }
-
-        void ChatMessageOut(object sender, ChatMessageEventArgs e)
-        {
-            if (e.Message == "/reloadtex")
-            {
-                e.DoNotSend = true;
-                var worldChunks = _ioc.Get<IWorldChunks>();
-
-                //Refresh the texture pack values
-                TexturePackConfig.Current.Load();
-
-                worldChunks.InitDrawComponents(_ioc.Get<D3DEngine>().ImmediateContext);
-            }
-
-            if (e.Message == "/staticinstanced")
-            {
-                e.DoNotSend = true;
-                var worldChunks = _ioc.Get<IWorldChunks>();
-
-                worldChunks.DrawStaticInstanced = !worldChunks.DrawStaticInstanced;
-            }
-
         }
 
         public override void OnEnabled(GameState previousState)

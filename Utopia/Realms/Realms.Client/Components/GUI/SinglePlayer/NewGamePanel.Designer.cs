@@ -46,13 +46,13 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
             _inputWorldName = ToDispose(new InputControl()
             {
-                CustomFont = _commonResources.FontBebasNeue17,
+                //CustomFont = _commonResources.FontBebasNeue17,
                 Color = Colors.Black
             });
 
             _inputSeedName = ToDispose(new InputControl()
             {
-                CustomFont = _commonResources.FontBebasNeue17,
+                //CustomFont = _commonResources.FontBebasNeue17,
                 Color = Colors.Black
             });
 
