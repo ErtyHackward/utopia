@@ -16,13 +16,14 @@ namespace S33M3_DXEngine.Main
         }
 
         public BaseComponent()         
-            :base()
+            : this(null)
         {
         }
 
         public BaseComponent(string name)
+            :base()
         {
-            base.Name = name;
+            base.Name = name ?? GetType().Name;
         }
 
         public virtual void BeforeDispose()
