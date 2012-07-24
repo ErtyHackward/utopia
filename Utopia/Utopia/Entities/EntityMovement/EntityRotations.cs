@@ -33,9 +33,9 @@ namespace Utopia.Entities.EntityMovement
         private Vector3 _entityBodyXAxis = Vector3.UnitX;
         private Vector3 _entityBodyYAxis = Vector3.UnitY;
         private Vector3 _entityBodyZAxis = Vector3.UnitZ;
-        private FTSValue<Vector3> _lookAt = new FTSValue<Vector3>(Vector3.UnitZ);
-        private FTSValue<Quaternion> _eyeOrientation = new FTSValue<Quaternion>();
-        private FTSValue<Quaternion> _bodyOrientation = new FTSValue<Quaternion>();
+        private Vector3 _lookAt = new Vector3(0 , 0, 1);
+        private Quaternion _eyeOrientation = new Quaternion();
+        private Quaternion _bodyOrientation = new Quaternion();
 
         private float _accumPitchDegrees;
         private float _rotationDelta;
@@ -43,10 +43,10 @@ namespace Utopia.Entities.EntityMovement
 
         #region Public Properties
         public float EntityRotationSpeed { get { return _entityRotationSpeed; } set { _entityRotationSpeed = value; } }
-        public FTSValue<Vector3> LookAt { get { return _lookAt; } }
+        public Vector3 LookAt { get { return _lookAt; } }
         public EntityDisplacementModes DisplacementMode { get { return _displacementMode; } }
-        public FTSValue<Quaternion> BodyOrientation { get { return _bodyOrientation; } }
-        public FTSValue<Quaternion> EyeOrientation { get { return _eyeOrientation; } }
+        public Quaternion BodyOrientation { get { return _bodyOrientation; } }
+        public Quaternion EyeOrientation { get { return _eyeOrientation; } }
         public Vector3 EntityMoveVector;
         #endregion
 
@@ -59,11 +59,6 @@ namespace Utopia.Entities.EntityMovement
         #region Public Methods
         public void Update(GameTime timeSpent)
         {
-            //BackUp FTS Values
-            LookAt.BackUpValue();
-            BodyOrientation.BackUpValue();
-            EyeOrientation.BackUpValue();
-
             //Compute the deltas following the time elapsed : Speed * Time = Distance (Over the elapsed time).
             _rotationDelta = _entityRotationSpeed * timeSpent.ElapsedGameTimeInS_LD;
 
@@ -72,13 +67,6 @@ namespace Utopia.Entities.EntityMovement
 
             //Movement Vector deduction from Rotation and Input handling
             EntityMovement();
-        }
-
-        public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
-        {
-            Quaternion.Slerp(ref _bodyOrientation.ValuePrev, ref _bodyOrientation.Value, interpolationLd, out _bodyOrientation.ValueInterp);
-            Quaternion.Slerp(ref _eyeOrientation.ValuePrev, ref _eyeOrientation.Value, interpolationLd, out _eyeOrientation.ValueInterp);
-            Vector3.Lerp(ref _lookAt.ValuePrev, ref _lookAt.Value, interpolationLd, out _lookAt.ValueInterp);
         }
 
         public void SetDisplacementMode(EntityDisplacementModes newValue, Vector3D WorldEyePosition)
@@ -101,14 +89,14 @@ namespace Utopia.Entities.EntityMovement
             {
                 Matrix rotationMatrix;
                 Matrix.RotationQuaternion(ref rotationValue, out rotationMatrix);
-                _eyeOrientation.Initialize(rotationValue);
-                _bodyOrientation.Initialize(rotationValue);
+                _eyeOrientation = rotationValue;
+                _bodyOrientation = rotationValue;
                 _accumPitchDegrees = (float)MathHelper.ToDegrees(Math.Asin(rotationMatrix.M23));
 
             }
             else
             {
-                InitRotation(WorldEyePosition.AsVector3(), WorldEyePosition.AsVector3() + _lookAt.Value, Vector3.UnitY);
+                InitRotation(WorldEyePosition.AsVector3(), WorldEyePosition.AsVector3() + _lookAt, Vector3.UnitY);
             }
         }
 
@@ -127,9 +115,8 @@ namespace Utopia.Entities.EntityMovement
             // Extract the pitch angle from the view matrix.
             _accumPitchDegrees = (float)MathHelper.ToDegrees(Math.Asin(viewMatrix.M23));
             //Set Rotation for both Eye View and Body rotation
-            Quaternion.RotationMatrix(ref viewMatrix, out _eyeOrientation.Value);
-            _eyeOrientation.Initialize();
-            _bodyOrientation.Initialize(_eyeOrientation.Value);
+            Quaternion.RotationMatrix(ref viewMatrix, out _eyeOrientation);
+            _bodyOrientation = _eyeOrientation;
         }
 
         private void EntityRotation(float elapsedTime)
@@ -188,7 +175,7 @@ namespace Utopia.Entities.EntityMovement
 
             Quaternion rotation;
             Quaternion.RotationYawPitchRoll(heading, pitch, roll, out rotation);
-            Quaternion.Multiply(ref _eyeOrientation.Value, ref rotation, out _eyeOrientation.Value);
+            Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
 
         }
 
@@ -227,8 +214,8 @@ namespace Utopia.Entities.EntityMovement
             if (heading != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Up, heading, out rotation);
-                Quaternion.Multiply(ref rotation, ref _eyeOrientation.Value, out _eyeOrientation.Value);
-                Quaternion.Multiply(ref rotation, ref _bodyOrientation.Value, out _bodyOrientation.Value);
+                Quaternion.Multiply(ref rotation, ref _eyeOrientation, out _eyeOrientation);
+                Quaternion.Multiply(ref rotation, ref _bodyOrientation, out _bodyOrientation);
             }
 
             // Rotate camera about its local x axis.
@@ -236,7 +223,7 @@ namespace Utopia.Entities.EntityMovement
             if (pitch != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Right, pitch, out rotation);
-                Quaternion.Multiply(ref _eyeOrientation.Value, ref rotation, out _eyeOrientation.Value);
+                Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
             }
         }
 
@@ -245,9 +232,9 @@ namespace Utopia.Entities.EntityMovement
             Matrix orientation;
 
             //Normalize the Camera Quaternion rotation
-            Quaternion.Normalize(ref _eyeOrientation.Value, out _eyeOrientation.Value);
+            Quaternion.Normalize(ref _eyeOrientation, out _eyeOrientation);
             //Extract the Rotation Matrix
-            Matrix.RotationQuaternion(ref _eyeOrientation.Value, out orientation);
+            Matrix.RotationQuaternion(ref _eyeOrientation, out orientation);
 
             //Extract the 3 axis from the RotationMatrix
             _entityEyeXAxis = new Vector3(orientation.M11, orientation.M21, orientation.M31);
@@ -255,12 +242,12 @@ namespace Utopia.Entities.EntityMovement
             _entityEyeZAxis = new Vector3(orientation.M13, orientation.M23, orientation.M33);
 
             //Extract the LookAtVector
-            _lookAt.Value = _entityEyeZAxis;
+            _lookAt = _entityEyeZAxis;
 
             //Normalize the Camera Quaternion rotation
-            Quaternion.Normalize(ref _bodyOrientation.Value, out _bodyOrientation.Value);
+            Quaternion.Normalize(ref _bodyOrientation, out _bodyOrientation);
             //Extract the Rotation Matrix
-            Matrix.RotationQuaternion(ref _bodyOrientation.Value, out orientation);
+            Matrix.RotationQuaternion(ref _bodyOrientation, out orientation);
 
             //Extract the 3 axis from the RotationMatrix
             _entityBodyXAxis = new Vector3(orientation.M11, orientation.M21, orientation.M31);
@@ -285,7 +272,7 @@ namespace Utopia.Entities.EntityMovement
                 {
                     case EntityDisplacementModes.Swiming:
                     case EntityDisplacementModes.Flying:
-                        entityMoveVector += _lookAt.Value;
+                        entityMoveVector += _lookAt;
                         break;
                     case EntityDisplacementModes.Walking:
                         entityMoveVector += _entityBodyZAxis;
@@ -300,7 +287,7 @@ namespace Utopia.Entities.EntityMovement
                 {
                     case EntityDisplacementModes.Swiming:
                     case EntityDisplacementModes.Flying:
-                        entityMoveVector -= _lookAt.Value;
+                        entityMoveVector -= _lookAt;
                         break;
                     case EntityDisplacementModes.Walking:
                         entityMoveVector -= _entityBodyZAxis;

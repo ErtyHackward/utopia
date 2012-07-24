@@ -67,10 +67,10 @@ namespace Utopia.Entities.Managers
         //Player Visual characteristics (Not insde the PlayerCharacter object)
         private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
-        
-        private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();         //World Position
+
+        private Vector3D _worldPosition;         //World Position
         //private Vector3D _lookAt;
-        private Vector3 _entityEyeOffset;                                     //Offset of the camera Placement inside the entity, from entity center point.
+        private Vector3 _entityEyeOffset;        //Offset of the camera Placement inside the entity, from entity center point.
 
         //Mouvement handling variables
         private VerletSimulator _physicSimu;
@@ -95,12 +95,6 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Public variables/properties
-
-        public Vector3 LookAt
-        {
-            get { return _entityRotations.LookAt.ValueInterp; }
-        }
-
         /// <summary>
         /// The Player
         /// </summary>
@@ -112,9 +106,9 @@ namespace Utopia.Entities.Managers
         public VisualVoxelEntity VisualVoxelEntity { get; set; }
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
-        public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
-        public virtual Quaternion CameraOrientation { get { return _entityRotations.EyeOrientation.Value; } }
-        public virtual Quaternion CameraYAxisOrientation { get { return _entityRotations.BodyOrientation.Value; } }
+        public virtual Vector3D CameraWorldPosition { get { return _worldPosition + _entityEyeOffset; } }
+        public virtual Quaternion CameraOrientation { get { return _entityRotations.EyeOrientation; } }
+        public virtual Quaternion CameraYAxisOrientation { get { return _entityRotations.BodyOrientation; } }
         public virtual int CameraUpdateOrder { get { return this.UpdateOrder; } }
 
         public bool IsHeadInsideWater { get; set; }
@@ -127,13 +121,13 @@ namespace Utopia.Entities.Managers
             set
             {
                 Player.DisplacementMode = value;
-                _entityRotations.SetDisplacementMode(Player.DisplacementMode, _worldPosition.Value + _entityEyeOffset);
+                _entityRotations.SetDisplacementMode(Player.DisplacementMode, _worldPosition + _entityEyeOffset);
 #if DEBUG
                 logger.Info("{0} is now {1}", Player.CharacterName, value.ToString());
 #endif
                 if (value == EntityDisplacementModes.Walking || value == EntityDisplacementModes.Swiming)
                 {
-                    _physicSimu.StartSimulation(ref _worldPosition.Value, ref _worldPosition.Value);
+                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
                 }
                 else
                 {
@@ -275,11 +269,10 @@ namespace Utopia.Entities.Managers
 
             //Set Position
             //Set the entity world position following the position received from server
-            _worldPosition.Value = Player.Position;
-            _worldPosition.ValuePrev = Player.Position;
+            _worldPosition = Player.Position;
 
             //Compute the initial Player world bounding box
-            VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
+            VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
 
             //Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
@@ -288,7 +281,7 @@ namespace Utopia.Entities.Managers
 
             _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
             _entityRotations.EntityRotationSpeed = Player.RotationSpeed;
-            _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition.Value + _entityEyeOffset);
+            _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition + _entityEyeOffset);
 
             //Set displacement mode
             DisplacementMode = Player.DisplacementMode;
@@ -329,7 +322,7 @@ namespace Utopia.Entities.Managers
             CheckAfterNewPosition();
 
             //Refresh the player Bounding box
-            VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
+            VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
             
             _playerRenderer.Update(timeSpend);
         }
@@ -337,13 +330,8 @@ namespace Utopia.Entities.Managers
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
-            //Interpolate rotations values
-            _entityRotations.Interpolation(interpolationHd, interpolationLd, timePassed);
-            //Interpolate the world position of the player
-            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
-
             //TODO To remove when Voxel Entity merge will done with Entity
-            VisualVoxelEntity.World = Matrix.RotationQuaternion(_entityRotations.EyeOrientation.ValueInterp) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
+            //VisualVoxelEntity.World = Matrix.RotationQuaternion(_entityRotations.EyeOrientation.ValueInterp) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
             //===================================================================================================================================
             
             CheckHeadUnderWater();      //Under water head test

@@ -28,8 +28,8 @@ namespace Utopia.Entities.Managers
 
             if (MousepickDisabled || _inputsManager.MouseManager.MouseCapture)
             {
-                Vector3D pickingPointInLine = _worldPosition.Value + _entityEyeOffset;
-                newpicking = RefreshPicking(ref pickingPointInLine, _entityRotations.LookAt.Value, 1);
+                Vector3D pickingPointInLine = _worldPosition + _entityEyeOffset;
+                newpicking = RefreshPicking(ref pickingPointInLine, _entityRotations.LookAt, 1);
             }
             else
             {
