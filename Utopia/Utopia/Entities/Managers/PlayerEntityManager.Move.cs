@@ -48,9 +48,6 @@ namespace Utopia.Entities.Managers
             //Compute the delta following the time elapsed : Speed * Time = Distance (Over the elapsed time).
             _moveDelta = Player.MoveSpeed * _gravityInfluence * timeSpent.ElapsedGameTimeInS_LD;
 
-            //Backup previous values
-            _worldPosition.BackUpValue();
-
             //Will computate all associated rotation (Hear/Eye and Body)
             _entityRotations.Update(timeSpent);
 
@@ -62,7 +59,7 @@ namespace Utopia.Entities.Managers
 
             //Assign to the PlayerCharacter object the newly computed positions and rotations values
             // Assign Body rotation by slowly rotate the body in the moving direction
-            if (Player.Position != _worldPosition.Value)
+            if (Player.Position != _worldPosition)
             {
                 // take only y-axis rotation of the head
                 var targetRotation = Player.HeadRotation;
@@ -72,10 +69,10 @@ namespace Utopia.Entities.Managers
                 targetRotation.Normalize();
 
                 //rotate from Current body rotation to Y axis head rotation "slowly"
-                Player.BodyRotation = Quaternion.Lerp(Player.BodyRotation, targetRotation, (float)Vector3D.Distance(Player.Position, _worldPosition.Value));
+                Player.BodyRotation = Quaternion.Lerp(Player.BodyRotation, targetRotation, (float)Vector3D.Distance(Player.Position, _worldPosition));
             }
-            Player.Position = _worldPosition.Value;
-            Player.HeadRotation = _entityRotations.EyeOrientation.Value;
+            Player.Position = _worldPosition;
+            Player.HeadRotation = _entityRotations.EyeOrientation;
         }
 
         /// <summary>
@@ -121,7 +118,7 @@ namespace Utopia.Entities.Managers
 
         private void FreeFirstPersonMove()
         {
-            _worldPosition.Value += _entityRotations.EntityMoveVector * _moveDelta;
+            _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
         }
 
         private void WalkingFirstPersonOnGround(ref GameTime timeSpent)
@@ -201,7 +198,7 @@ namespace Utopia.Entities.Managers
             if (_physicSimu.OnGround == false)
             {
                 //New "trigger"
-                if (_worldPosition.Value.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Value.Y;
+                if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;
             }
             else
             {
@@ -210,7 +207,7 @@ namespace Utopia.Entities.Managers
                     var handler = OnLanding;
                     if (handler != null)
                     {
-                        handler(_fallMaxHeight - _worldPosition.Value.Y, _groundCube);
+                        handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
                     }
 #if DEBUG
                     logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Value.Y, CubeId.GetCubeTypeName(_groundCube.Cube.Id));
