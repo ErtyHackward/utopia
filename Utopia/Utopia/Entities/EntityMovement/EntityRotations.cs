@@ -17,7 +17,7 @@ namespace Utopia.Entities.EntityMovement
     /// <summary>
     /// Helper class that will transform Input and environments signals into movements
     /// </summary>
-    public class EntityMovements
+    public class EntityRotations
     {
         #region Private Variables
         private EntityDisplacementModes _displacementMode;
@@ -50,7 +50,7 @@ namespace Utopia.Entities.EntityMovement
         public Vector3 EntityMoveVector;
         #endregion
 
-        public EntityMovements(InputsManager inputManager, VerletSimulator physicSimu)
+        public EntityRotations(InputsManager inputManager, VerletSimulator physicSimu)
         {
             _inputsManager = inputManager;
             _physicSimu = physicSimu;

@@ -51,34 +51,31 @@ namespace Utopia.Entities.Managers
             //Backup previous values
             _worldPosition.BackUpValue();
 
-            //Catch Movements from Input keyx and compute associated rotations
-            _entityMovement.Update(timeSpent);
+            //Will computate all associated rotation (Hear/Eye and Body)
+            _entityRotations.Update(timeSpent);
 
-            //Movement
+            //Will update the world position of the player (its using the new computed rotations)
             EntityMovementsOnInputs(Player.DisplacementMode, ref timeSpent);
 
             //Physic simulation !
             PhysicOnEntity(Player.DisplacementMode, ref timeSpent);
 
-            // slowly rotate the body in the moving direction
+            //Assign to the PlayerCharacter object the newly computed positions and rotations values
+            // Assign Body rotation by slowly rotate the body in the moving direction
             if (Player.Position != _worldPosition.Value)
             {
-                // take only y-axis rotation
-
+                // take only y-axis rotation of the head
                 var targetRotation = Player.HeadRotation;
 
                 targetRotation.X = 0;
                 targetRotation.Z = 0;
                 targetRotation.Normalize();
 
+                //rotate from Current body rotation to Y axis head rotation "slowly"
                 Player.BodyRotation = Quaternion.Lerp(Player.BodyRotation, targetRotation, (float)Vector3D.Distance(Player.Position, _worldPosition.Value));
             }
-
-            //Send the Actual Position to the Entity object only of it has change !!!
-            //The Change check is done at DynamicEntity level
             Player.Position = _worldPosition.Value;
-            Player.HeadRotation = _entityMovement.EyeOrientation.Value;
-            //Player.BodyRotation = _entityMovement.BodyOrientation.Value;
+            Player.HeadRotation = _entityRotations.EyeOrientation.Value;
         }
 
         /// <summary>
@@ -119,12 +116,12 @@ namespace Utopia.Entities.Managers
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                 _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
 
-            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * _moveDelta * 20 });            
+            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 20 });            
         }
 
         private void FreeFirstPersonMove()
         {
-            _worldPosition.Value += _entityMovement.EntityMoveVector * _moveDelta;
+            _worldPosition.Value += _entityRotations.EntityMoveVector * _moveDelta;
         }
 
         private void WalkingFirstPersonOnGround(ref GameTime timeSpent)
@@ -159,7 +156,7 @@ namespace Utopia.Entities.Managers
                 if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                     _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
 
-                if (_entityMovement.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
+                if (_entityRotations.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
             }
 
             //Run only if Move forward and run button pressed at the same time.
@@ -168,7 +165,7 @@ namespace Utopia.Entities.Managers
                 moveModifier = 1.5f;
             }
 
-            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityMovement.EntityMoveVector * 1.2f * moveModifier });
+            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * 1.2f * moveModifier });
         }
 
         private void WalkingFirstPersonNotOnGround(ref GameTime timeSpent)
@@ -186,7 +183,7 @@ namespace Utopia.Entities.Managers
                 moveModifier = 2;
             }
 
-            _physicSimu.PrevPosition -= _entityMovement.EntityMoveVector * _moveDelta * moveModifier;
+            _physicSimu.PrevPosition -= _entityRotations.EntityMoveVector * _moveDelta * moveModifier;
         }
 
 

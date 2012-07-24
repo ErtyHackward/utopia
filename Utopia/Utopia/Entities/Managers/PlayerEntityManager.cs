@@ -74,7 +74,6 @@ namespace Utopia.Entities.Managers
 
         //Mouvement handling variables
         private VerletSimulator _physicSimu;
-        private float _accumPitchDegrees;
         private float _gravityInfluence;
         private double _groundBelowEntity;
         private float _moveDelta;
@@ -93,14 +92,14 @@ namespace Utopia.Entities.Managers
         private CubeProfile _groundCubeProgile;
 
         //Will be used to compute entity rotation movements
-        private EntityMovements _entityMovement;
+        private EntityRotations _entityRotations;
         #endregion
 
         #region Public variables/properties
 
         public Vector3 LookAt
         {
-            get { return _entityMovement.LookAt.ValueInterp; }
+            get { return _entityRotations.LookAt.ValueInterp; }
         }
 
         /// <summary>
@@ -115,8 +114,8 @@ namespace Utopia.Entities.Managers
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
-        public virtual Quaternion CameraOrientation { get { return _entityMovement.EyeOrientation.Value; } }
-        public virtual Quaternion CameraYAxisOrientation { get { return _entityMovement.BodyOrientation.Value; } }
+        public virtual Quaternion CameraOrientation { get { return _entityRotations.EyeOrientation.Value; } }
+        public virtual Quaternion CameraYAxisOrientation { get { return _entityRotations.BodyOrientation.Value; } }
         public virtual int CameraUpdateOrder { get { return this.UpdateOrder; } }
 
         public bool IsHeadInsideWater { get; set; }
@@ -129,7 +128,7 @@ namespace Utopia.Entities.Managers
             set
             {
                 Player.DisplacementMode = value;
-                _entityMovement.SetDisplacementMode(Player.DisplacementMode, _worldPosition.Value + _entityEyeOffset);
+                _entityRotations.SetDisplacementMode(Player.DisplacementMode, _worldPosition.Value + _entityEyeOffset);
 #if DEBUG
                 logger.Info("{0} is now {1}", Player.CharacterName, value.ToString());
 #endif
@@ -245,6 +244,7 @@ namespace Utopia.Entities.Managers
 
             this.ShowDebugInfo = true;
 
+            //Create a visualVoxelEntity
             VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
             
             HasMouseFocus = Updatable;
@@ -287,9 +287,9 @@ namespace Utopia.Entities.Managers
             _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;
             _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity;
 
-            _entityMovement = new EntityMovements(_inputsManager, _physicSimu);
-            _entityMovement.EntityRotationSpeed = Player.RotationSpeed;
-            _entityMovement.SetOrientation(Player.HeadRotation, _worldPosition.Value + _entityEyeOffset);
+            _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
+            _entityRotations.EntityRotationSpeed = Player.RotationSpeed;
+            _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition.Value + _entityEyeOffset);
 
             //Set displacement mode
             DisplacementMode = Player.DisplacementMode;
@@ -339,18 +339,14 @@ namespace Utopia.Entities.Managers
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             //Interpolate rotations values
-            _entityMovement.Interpolation(interpolationHd, interpolationLd, timePassed);
-
+            _entityRotations.Interpolation(interpolationHd, interpolationLd, timePassed);
+            //Interpolate the world position of the player
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             //TODO To remove when Voxel Entity merge will done with Entity
-            //Update the position and World Matrix of the Voxel body of the Entity.
-            Vector3 entityCenteredPosition = _worldPosition.ValueInterp.AsVector3();
-            //entityCenteredPosition.X -= Player.Size.X / 2;
-            //entityCenteredPosition.Z -= Player.Size.Z / 2;
-            VisualEntity.World = Matrix.RotationQuaternion(_entityMovement.EyeOrientation.ValueInterp) * Matrix.Translation(entityCenteredPosition);
-            //VisualEntity.World = Matrix.Scaling(Player.Size) * Matrix.Translation(entityCenteredPosition);
+            VisualEntity.World = Matrix.RotationQuaternion(_entityRotations.EyeOrientation.ValueInterp) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
             //===================================================================================================================================
+            
             CheckHeadUnderWater();      //Under water head test
 
             _playerRenderer.Interpolation(interpolationHd, interpolationLd, timePassed);
