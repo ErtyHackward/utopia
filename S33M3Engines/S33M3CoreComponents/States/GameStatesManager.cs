@@ -124,7 +124,7 @@ namespace S33M3CoreComponents.States
             _engine = engine;
             _game = game;
             SwitchComponent = switchComponent;
-            _loadContext = ToDispose(new DeviceContext(_engine.Device));
+            _loadContext = new DeviceContext(_engine.Device);
 #if DEBUG
             _loadContext.DebugName = "GameState Deffered Context";
 #endif

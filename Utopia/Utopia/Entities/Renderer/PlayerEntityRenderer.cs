@@ -44,15 +44,12 @@ namespace Utopia.Entities.Renderer
     public class PlayerEntityRenderer : BaseComponent, IEntitiesRenderer
     {
         #region Private variables
-        private HLSLTerran _entityEffect;
         private D3DEngine _d3DEngine;
         private CameraManager<ICameraFocused> _camManager;
         private WorldFocusManager _worldFocusManager;
         private SingleArrayChunkContainer _chunkContainer;
         private readonly VoxelModelManager _modelManager;
         private readonly InputsManager _inputsManager;
-        private readonly PlayerEntityManager _entityManager;
-        private ShaderResourceView _cubeTexture_View;
         public SharedFrameCB SharedFrameCB { get; set;}
 
         private FTSValue<Vector3D> _worldPosition = new FTSValue<Vector3D>();
@@ -60,9 +57,7 @@ namespace Utopia.Entities.Renderer
         private FTSValue<Quaternion> _bodyRotation = new FTSValue<Quaternion>();
         private FTSValue<Color3> _modelLight = new FTSValue<Color3>();
 
-        private BoundingBox3D renderer;
         private IVisualEntityContainer _visualEntity;
-        private HLSLVertexPositionColor _dummyEntityRenderer;
         private VisualVoxelModel _model;
         private VoxelModelInstance _playerModelInstance;
         private HLSLVoxelModelInstanced _voxelEffect;
@@ -107,22 +102,17 @@ namespace Utopia.Entities.Renderer
             _worldFocusManager = worldFocusManager;
             _modelManager = modelManager;
             _inputsManager = inputsManager;
-
-
-            _dummyEntityRenderer = new HLSLVertexPositionColor(_d3DEngine.Device);
-
         }
 
         private void SetUpRenderer()
         {
-            renderer = new BoundingBox3D(_d3DEngine, _worldFocusManager, _visualEntity.VisualEntity.Entity.DefaultSize, _dummyEntityRenderer, Color.Red);
-            _worldPosition = new FTSValue<Vector3D>(_visualEntity.VisualEntity.Position);
+            //Set the default world Position at the time the entity is binded to the renderer
+            _worldPosition.Initialize(_visualEntity.VisualEntity.Position);
         }
 
         #region Private Methods
         public void Initialize()
         {
-
         }
 
         public void LoadContent(DeviceContext context)
@@ -133,63 +123,29 @@ namespace Utopia.Entities.Renderer
             if (_model != null)
             {
                 _model.BuildMesh();
-            }
-
-            if (_model != null)
                 _playerModelInstance = _model.VoxelModel.CreateInstance();
+            }
         }
 
         public void UnloadContent()
         {
-            
         }
 
         #endregion
 
         #region Public Methods
-        public void Draw(DeviceContext context, int index)
-        {
-            //If camera is first person Don't draw the body.
-            if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
-
-            //Applying Correct Render States
-            if (_model != null)
-            {
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
-                
-                _voxelEffect.Begin(context);
-                _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
-                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-                _voxelEffect.CBPerFrame.IsDirty = true;
-                _voxelEffect.Apply(context);
-                
-                _playerModelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
-                _playerModelInstance.LightColor = _modelLight.ValueInterp;
-
-                _model.DrawInstanced(context, _voxelEffect, new [] { _playerModelInstance });
-            }
-            else
-            {
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled,
-                                             DXStates.DepthStencils.DepthEnabled);
-                renderer.Draw(context, _camManager.ActiveCamera);
-            }
-        }
-
         public void Update(GameTime timeSpend)
         {
             _worldPosition.BackUpValue();
             _worldPosition.Value = _visualEntity.VisualEntity.Position;
 
-
             var playerChar = (PlayerCharacter)VisualEntity.VisualEntity.Entity;
-
+            
             _headRotation.BackUpValue();
             _headRotation.Value = playerChar.HeadRotation;
 
             _bodyRotation.BackUpValue();
             _bodyRotation.Value = playerChar.BodyRotation;
-            
             
 
             var moveKeysPressed = ( _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) ||
@@ -219,9 +175,7 @@ namespace Utopia.Entities.Renderer
         {
             Quaternion.Lerp(ref _headRotation.ValuePrev, ref _headRotation.Value, interpolationLd, out _headRotation.ValueInterp);
             Quaternion.Lerp(ref _bodyRotation.ValuePrev, ref _bodyRotation.Value, interpolationLd, out _bodyRotation.ValueInterp);
-            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
-
-            renderer.Update(_worldPosition.ValueInterp.AsVector3() + new Vector3(0, _visualEntity.VisualEntity.Entity.DefaultSize.Y/2.0f, 0), Vector3.One);
+            //Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             if (_playerModelInstance != null)
             {
@@ -250,6 +204,31 @@ namespace Utopia.Entities.Renderer
                 }
             }
 
+            
+        }
+
+
+        public void Draw(DeviceContext context, int index)
+        {
+            //If camera is first person Don't draw the body.
+            if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
+
+            //Applying Correct Render States
+            if (_model != null)
+            {
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+
+                _voxelEffect.Begin(context);
+                _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+                _voxelEffect.CBPerFrame.IsDirty = true;
+                _voxelEffect.Apply(context);
+
+                _playerModelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
+                _playerModelInstance.LightColor = _modelLight.ValueInterp;
+
+                _model.DrawInstanced(context, _voxelEffect, new[] { _playerModelInstance });
+            }
             
         }
 
