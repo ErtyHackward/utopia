@@ -160,17 +160,13 @@ namespace Utopia.Entities
             Vector3D.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
             //Refresh the VisualEntity World matrix based on the latest interpolated values
-            Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3(); //currentLocation.AsVector3();
-            //entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
-            //entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
-            VisualVoxelEntity.World = Matrix.Translation(entityCenteredPosition);  //Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
+            VisualVoxelEntity.World = Matrix.Translation(WorldPosition.ValueInterp.AsVector3()); 
             //===================================================================================================================================
 
             if (ModelInstance != null)
             {
                 ModelInstance.HeadRotation = LookAtDirection.ValueInterp;
                 ModelInstance.Rotation = DynamicEntity.BodyRotation;
-
                 ModelInstance.Interpolation(timePassed);
             }
         }

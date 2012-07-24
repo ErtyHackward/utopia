@@ -40,6 +40,7 @@ namespace Utopia.Entities.Voxel
             _voxelEntity = wrapped;
             _manager = manager;
 
+            //Create the world position of the Voxel Entity, based on its initial position
             World = Matrix.Translation(wrapped.Position.AsVector3());
 
             if (wrapped.ModelInstance == null)

@@ -330,12 +330,7 @@ namespace Utopia.Entities.Managers
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
-            //TODO To remove when Voxel Entity merge will done with Entity
-            //VisualVoxelEntity.World = Matrix.RotationQuaternion(_entityRotations.EyeOrientation.ValueInterp) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
-            //===================================================================================================================================
-            
             CheckHeadUnderWater();      //Under water head test
-
             _playerRenderer.Interpolation(interpolationHd, interpolationLd, timePassed);
         }
 
