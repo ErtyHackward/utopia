@@ -16,7 +16,7 @@ namespace Utopia.Entities.Managers.Interfaces
         void RemoveEntityById(uint entityId,bool dispose=true);
         IDynamicEntity GetEntityById(uint p);
 
-        List<IVisualEntityContainer> DynamicEntities { get; set; }
+        List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
 
         event EventHandler<DynamicEntityEventArgs> EntityAdded;
         event EventHandler<DynamicEntityEventArgs> EntityRemoved;

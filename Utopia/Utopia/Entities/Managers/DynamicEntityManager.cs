@@ -52,7 +52,7 @@ namespace Utopia.Entities.Managers
         private readonly VisualWorldParameters _visualWorldParameters;
         private SingleArrayChunkContainer _chunkContainer;
         private int _staticEntityViewRange;
-        public List<IVisualEntityContainer> DynamicEntities { get; set; }
+        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
 
         // collection of the models and instances
         private Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
@@ -98,7 +98,7 @@ namespace Utopia.Entities.Managers
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
 
-            DynamicEntities = new List<IVisualEntityContainer>();
+            DynamicEntities = new List<IVisualVoxelEntityContainer>();
         }
 
         void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
@@ -215,9 +215,9 @@ namespace Utopia.Entities.Managers
 
                     //Draw only the entities that are in Client view range
                     //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
-                    if(MVector3.Distance2D(entityToRender.VisualEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
+                    if(MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
                     {
-                        pairs.Value.World = Matrix.Scaling(1f / 16) * entityToRender.VisualEntity.World;
+                        pairs.Value.World = Matrix.Scaling(1f / 16) * entityToRender.VisualVoxelEntity.World;
                         pairs.Value.LightColor = entityToRender.ModelLight.ValueInterp;
                     }
                     else
@@ -306,7 +306,7 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
             {
                 ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.VisualEntity.VoxelEntity.ModelName, out instances))
+                if (!_models.TryGetValue(entity.VisualVoxelEntity.VoxelEntity.ModelName, out instances))
                 {
                     throw new InvalidOperationException("we have no such model");
                 }
@@ -334,7 +334,7 @@ namespace Utopia.Entities.Managers
         {
             foreach (var visualEntityContainer in DynamicEntities)
             {
-                yield return visualEntityContainer.VisualEntity;
+                yield return visualEntityContainer.VisualVoxelEntity;
             }
 
         }

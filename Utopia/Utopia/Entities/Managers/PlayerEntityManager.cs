@@ -44,7 +44,7 @@ namespace Utopia.Entities.Managers
     /// 3) player entity drawing
     /// 4) picking of the block
     /// </summary>
-    public partial class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualEntityContainer, IDebugInfo
+    public partial class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualVoxelEntityContainer, IDebugInfo
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -110,7 +110,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// The Player Voxel body
         /// </summary>
-        public VisualVoxelEntity VisualEntity { get; set; }
+        public VisualVoxelEntity VisualVoxelEntity { get; set; }
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition.Value + _entityEyeOffset; } }
@@ -172,7 +172,7 @@ namespace Utopia.Entities.Managers
             { 
                 _playerRenderer = value;
                 //Give the Renderer acces to the Voxel buffers, ...
-                _playerRenderer.VisualEntity = this;
+                _playerRenderer.VoxelEntityContainer = this;
             }
         }
 
@@ -245,7 +245,7 @@ namespace Utopia.Entities.Managers
             this.ShowDebugInfo = true;
 
             //Create a visualVoxelEntity
-            VisualEntity = new VisualVoxelEntity(player, voxelModelManager);
+            VisualVoxelEntity = new VisualVoxelEntity(player, voxelModelManager);
             
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
@@ -280,10 +280,10 @@ namespace Utopia.Entities.Managers
             _worldPosition.ValuePrev = Player.Position;
 
             //Compute the initial Player world bounding box
-            VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
+            VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
 
             //Init Velret physic simulator
-            _physicSimu = new VerletSimulator(ref VisualEntity.LocalBBox) { WithCollisionBouncing = false };
+            _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
             _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;
             _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity;
 
@@ -330,7 +330,7 @@ namespace Utopia.Entities.Managers
             CheckAfterNewPosition();
 
             //Refresh the player Bounding box
-            VisualEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
+            VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition.Value);
             
             _playerRenderer.Update(timeSpend);
         }
@@ -344,7 +344,7 @@ namespace Utopia.Entities.Managers
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             //TODO To remove when Voxel Entity merge will done with Entity
-            VisualEntity.World = Matrix.RotationQuaternion(_entityRotations.EyeOrientation.ValueInterp) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
+            VisualVoxelEntity.World = Matrix.RotationQuaternion(_entityRotations.EyeOrientation.ValueInterp) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
             //===================================================================================================================================
             
             CheckHeadUnderWater();      //Under water head test

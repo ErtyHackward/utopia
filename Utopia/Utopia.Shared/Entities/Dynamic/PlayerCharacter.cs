@@ -11,7 +11,6 @@ namespace Utopia.Shared.Entities.Dynamic
     /// <remarks></remarks>
     public sealed class PlayerCharacter : SpecialCharacterEntity
     {
-
         #region Public variables/properties
 
         public static float DefaultMoveSpeed = 5f;

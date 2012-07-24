@@ -71,7 +71,7 @@ namespace Utopia.Entities.Managers
             Vector3D newWorldPosition;
             double BlockOffset;
 
-            _cubesHolder.GetNextSolidBlockToPlayer(ref VisualEntity.WorldBBox, ref GroundDirection, out _groundCube);
+            _cubesHolder.GetNextSolidBlockToPlayer(ref VisualVoxelEntity.WorldBBox, ref GroundDirection, out _groundCube);
             //Half cube below me ??
             _groundCubeProgile = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id];
             BlockOffset = _groundCubeProgile.YBlockOffset;

@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Utopia.Entities.Voxel
 {
-    public interface IVisualEntityContainer
+    public interface IVisualVoxelEntityContainer
     {
-         VisualVoxelEntity VisualEntity { get; set; }
+         VisualVoxelEntity VisualVoxelEntity { get; set; }
     }
 }
