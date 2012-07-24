@@ -6,7 +6,7 @@ using S33M3Resources.Structs;
 namespace Utopia.Entities.Voxel
 {
     /// <summary>
-    /// VisualEntiy is a pure client side class that wraps a VoxelEntity.
+    /// VisualVoxelEntity is a pure client side class that wraps a IVoxelEntity.
     /// it has visualVoxelModel instance  
     /// </summary>
     public class VisualVoxelEntity : VisualEntity, IDisposable
@@ -21,15 +21,6 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         public IVoxelEntity VoxelEntity { get { return _voxelEntity; } }
 
-        /// <summary>
-        /// Gets or sets wrapped entity position
-        /// </summary>
-        public Vector3D Position
-        {
-            get { return _voxelEntity.Position; }
-            set { _voxelEntity.Position = value; }
-        }
-        
         /// <summary>
         /// Gets current visualmodel instance
         /// </summary>

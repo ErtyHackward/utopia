@@ -440,7 +440,7 @@ namespace Utopia.Worlds.Chunks
 
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
 
-                visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(visualVoxelEntity.Position).EmissiveColor;
+                visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position).EmissiveColor;
                 
                 if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
                 {

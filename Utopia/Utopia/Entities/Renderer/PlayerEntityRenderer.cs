@@ -57,7 +57,7 @@ namespace Utopia.Entities.Renderer
         private FTSValue<Quaternion> _bodyRotation = new FTSValue<Quaternion>();
         private FTSValue<Color3> _modelLight = new FTSValue<Color3>();
 
-        private IVisualEntityContainer _visualEntity;
+        private VisualVoxelEntity _visualVoxelEntity;
         private VisualVoxelModel _model;
         private VoxelModelInstance _playerModelInstance;
         private HLSLVoxelModelInstanced _voxelEffect;
@@ -66,11 +66,14 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region Public variables/properties
-        public List<IVisualEntityContainer> VisualEntities { get; set; }
-        public IVisualEntityContainer VisualEntity
+        //Give the possibility to assign the VixualVoxelEntity to the renderer via the VoxelEntityContainer
+        public IVisualVoxelEntityContainer VoxelEntityContainer
         {
-            get { return _visualEntity; }
-            set { _visualEntity = value; SetUpRenderer(); }
+            set
+            {
+                _visualVoxelEntity = value.VisualVoxelEntity;
+                SetUpRenderer();
+            }
         }
 
         public VoxelModelInstance ModelInstance { get { return _playerModelInstance; } }
@@ -107,7 +110,7 @@ namespace Utopia.Entities.Renderer
         private void SetUpRenderer()
         {
             //Set the default world Position at the time the entity is binded to the renderer
-            _worldPosition.Initialize(_visualEntity.VisualEntity.Position);
+            _worldPosition.Initialize(_visualVoxelEntity.VoxelEntity.Position);
         }
 
         #region Private Methods
@@ -137,9 +140,9 @@ namespace Utopia.Entities.Renderer
         public void Update(GameTime timeSpend)
         {
             _worldPosition.BackUpValue();
-            _worldPosition.Value = _visualEntity.VisualEntity.Position;
+            _worldPosition.Value = _visualVoxelEntity.VoxelEntity.Position;
 
-            var playerChar = (PlayerCharacter)VisualEntity.VisualEntity.Entity;
+            var playerChar = (PlayerCharacter)_visualVoxelEntity.Entity;
             
             _headRotation.BackUpValue();
             _headRotation.Value = playerChar.HeadRotation;
@@ -175,7 +178,7 @@ namespace Utopia.Entities.Renderer
         {
             Quaternion.Lerp(ref _headRotation.ValuePrev, ref _headRotation.Value, interpolationLd, out _headRotation.ValueInterp);
             Quaternion.Lerp(ref _bodyRotation.ValuePrev, ref _bodyRotation.Value, interpolationLd, out _bodyRotation.ValueInterp);
-            //Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             if (_playerModelInstance != null)
             {

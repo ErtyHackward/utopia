@@ -12,7 +12,7 @@ using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Entities
 {
-    public class VisualDynamicEntity : IVisualEntityContainer, IDisposable
+    public class VisualDynamicEntity : IVisualVoxelEntityContainer, IDisposable
     {
         #region Private variables
         //Server interpolated variables
@@ -29,7 +29,7 @@ namespace Utopia.Entities
         /// <summary>
         /// The Player Voxel body
         /// </summary>
-        public VisualVoxelEntity VisualEntity { get; set; }
+        public VisualVoxelEntity VisualVoxelEntity { get; set; }
 
         public FTSValue<Vector3D> WorldPosition = new FTSValue<Vector3D>();         //World Position
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
@@ -46,22 +46,22 @@ namespace Utopia.Entities
         public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualVoxelEntity visualEntity)
         {
             this.DynamicEntity = dynamicEntity;
-            this.VisualEntity = visualEntity;
+            this.VisualVoxelEntity = visualEntity;
             
             Initialize();
         }
 
         public void Dispose()
         {
-            VisualEntity.Dispose();
+            VisualVoxelEntity.Dispose();
         }
 
         #region Private Methods
         private void Initialize()
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
-            VisualEntity.LocalBBox.Minimum = new Vector3(-(DynamicEntity.DefaultSize.X / 2.0f), 0, -(DynamicEntity.DefaultSize.Z / 2.0f));
-            VisualEntity.LocalBBox.Maximum = new Vector3(+(DynamicEntity.DefaultSize.X / 2.0f), DynamicEntity.DefaultSize.Y, +(DynamicEntity.DefaultSize.Z / 2.0f));
+            VisualVoxelEntity.LocalBBox.Minimum = new Vector3(-(DynamicEntity.DefaultSize.X / 2.0f), 0, -(DynamicEntity.DefaultSize.Z / 2.0f));
+            VisualVoxelEntity.LocalBBox.Maximum = new Vector3(+(DynamicEntity.DefaultSize.X / 2.0f), DynamicEntity.DefaultSize.Y, +(DynamicEntity.DefaultSize.Z / 2.0f));
 
             //Set Position
             //Set the entity world position following the position received from server
@@ -69,7 +69,7 @@ namespace Utopia.Entities
             WorldPosition.ValuePrev = DynamicEntity.Position;
 
             //Compute the initial Player world bounding box
-            VisualEntity.RefreshWorldBoundingBox(ref WorldPosition.Value);
+            VisualVoxelEntity.RefreshWorldBoundingBox(ref WorldPosition.Value);
 
             //Set LookAt
             LookAtDirection.Value = DynamicEntity.HeadRotation;
@@ -131,7 +131,7 @@ namespace Utopia.Entities
                     _netLocation.Interpolated = _netLocation.Value;
 
                     //Refresh World Entity bounding box - only if entity did move !
-                    VisualEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
+                    VisualVoxelEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
             }
             else
                 if (_netLocation.Distance > 0.1)
@@ -139,7 +139,7 @@ namespace Utopia.Entities
                     _netLocation.Interpolated += _netLocation.DeltaValue * _interpolationRate;
 
                     //Refresh World Entity bounding box - only if entity did move !
-                    VisualEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
+                    VisualVoxelEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
                 }
 
             WorldPosition.Value = _netLocation.Interpolated;
@@ -163,7 +163,7 @@ namespace Utopia.Entities
             Vector3 entityCenteredPosition = WorldPosition.ValueInterp.AsVector3(); //currentLocation.AsVector3();
             //entityCenteredPosition.X -= DynamicEntity.Size.X / 2;
             //entityCenteredPosition.Z -= DynamicEntity.Size.Z / 2;
-            VisualEntity.World = Matrix.Translation(entityCenteredPosition);  //Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
+            VisualVoxelEntity.World = Matrix.Translation(entityCenteredPosition);  //Matrix.Scaling(DynamicEntity.Size) * Matrix.Translation(entityCenteredPosition);
             //===================================================================================================================================
 
             if (ModelInstance != null)
