@@ -58,6 +58,7 @@ namespace Utopia.Entities.Renderer
         private FTSValue<Color3> _modelLight = new FTSValue<Color3>();
 
         private VisualVoxelEntity _visualVoxelEntity;
+        private PlayerCharacter _playerCharacter;
         private VisualVoxelModel _model;
         private VoxelModelInstance _playerModelInstance;
         private HLSLVoxelModelInstanced _voxelEffect;
@@ -71,7 +72,8 @@ namespace Utopia.Entities.Renderer
         {
             set
             {
-                _visualVoxelEntity = value.VisualVoxelEntity;
+                _visualVoxelEntity = value.VisualVoxelEntity; //Extract the VixualVoxelBody to store it. (== MUST be a PlayerCharacter)
+                _playerCharacter = (PlayerCharacter)_visualVoxelEntity.VoxelEntity;
                 SetUpRenderer();
             }
         }
@@ -120,8 +122,8 @@ namespace Utopia.Entities.Renderer
 
         public void LoadContent(DeviceContext context)
         {
+            //Load the default Player model
             _model = _modelManager.GetModel("Player");
-
             _voxelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
             if (_model != null)
             {
@@ -139,17 +141,15 @@ namespace Utopia.Entities.Renderer
         #region Public Methods
         public void Update(GameTime timeSpend)
         {
+            //Back Up the previous values that needs to be interpolated
             _worldPosition.BackUpValue();
-            _worldPosition.Value = _visualVoxelEntity.VoxelEntity.Position;
-
-            var playerChar = (PlayerCharacter)_visualVoxelEntity.Entity;
-            
             _headRotation.BackUpValue();
-            _headRotation.Value = playerChar.HeadRotation;
-
             _bodyRotation.BackUpValue();
-            _bodyRotation.Value = playerChar.BodyRotation;
-            
+
+            //Assign newly computed position/rotations value from character.
+            _worldPosition.Value = _playerCharacter.Position;
+            _headRotation.Value = _playerCharacter.HeadRotation;
+            _bodyRotation.Value = _playerCharacter.BodyRotation;
 
             var moveKeysPressed = ( _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) ||
                                     _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Backward) ||
@@ -170,14 +170,13 @@ namespace Utopia.Entities.Renderer
                 _isWalking = false;
                 _playerModelInstance.Stop();
             }
-
-            
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
-            Quaternion.Lerp(ref _headRotation.ValuePrev, ref _headRotation.Value, interpolationLd, out _headRotation.ValueInterp);
-            Quaternion.Lerp(ref _bodyRotation.ValuePrev, ref _bodyRotation.Value, interpolationLd, out _bodyRotation.ValueInterp);
+            //Interpolated between frame movements
+            Quaternion.Slerp(ref _headRotation.ValuePrev, ref _headRotation.Value, interpolationLd, out _headRotation.ValueInterp);
+            Quaternion.Slerp(ref _bodyRotation.ValuePrev, ref _bodyRotation.Value, interpolationLd, out _bodyRotation.ValueInterp);
             Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
 
             if (_playerModelInstance != null)
@@ -206,8 +205,6 @@ namespace Utopia.Entities.Renderer
                     }
                 }
             }
-
-            
         }
 
 

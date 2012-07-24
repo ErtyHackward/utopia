@@ -80,7 +80,6 @@ namespace Utopia.Entities.Managers
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
-        private bool _isWalking;
 
         //Drawing component
         private IEntitiesRenderer _playerRenderer;
@@ -108,7 +107,7 @@ namespace Utopia.Entities.Managers
         public readonly PlayerCharacter Player;
 
         /// <summary>
-        /// The Player Voxel body
+        /// The Player Voxel body, its a class that will wrap the player character object with a Voxel Body
         /// </summary>
         public VisualVoxelEntity VisualVoxelEntity { get; set; }
 
@@ -244,7 +243,7 @@ namespace Utopia.Entities.Managers
 
             this.ShowDebugInfo = true;
 
-            //Create a visualVoxelEntity
+            //Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
             VisualVoxelEntity = new VisualVoxelEntity(player, voxelModelManager);
             
             HasMouseFocus = Updatable;
