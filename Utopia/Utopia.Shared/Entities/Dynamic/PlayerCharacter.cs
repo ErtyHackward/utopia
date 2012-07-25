@@ -61,12 +61,13 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
-        public void RightToolUse()
+        public void RightToolUse(ToolUseMode useMode)
         {
             if (Equipment.RightTool != null)
             {
                 var args = EntityUseEventArgs.FromState(EntityState);
                 args.Tool = Equipment.RightTool;
+                args.UseMode = useMode;
                 OnUse(args);
             }
         }

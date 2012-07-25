@@ -75,6 +75,8 @@ namespace Utopia.Entities.Renderer
                 _visualVoxelEntity = value.VisualVoxelEntity; //Extract the VixualVoxelBody to store it. (== MUST be a PlayerCharacter)
                 _playerCharacter = (PlayerCharacter)_visualVoxelEntity.VoxelEntity;
                 SetUpRenderer();
+
+
             }
         }
 

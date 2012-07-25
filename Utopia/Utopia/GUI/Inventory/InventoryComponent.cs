@@ -193,7 +193,7 @@ namespace Utopia.GUI.Inventory
                     {
                         ContainedSlot taken;
                         player.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount);
-                        player.Equipment.Equip(EquipmentSlotType.LeftHand, slot, out taken);
+                        player.Equipment.Equip(EquipmentSlotType.RightHand, slot, out taken);
 
                         if (taken != null)
                         {
