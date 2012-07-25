@@ -43,19 +43,19 @@ namespace Utopia.Entities.Managers
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left, CatchExclusiveAction))
             {
-                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool != null)
+                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
                 {
                     //sends the client server event that does tool.use on server
-                    Player.LeftToolUse(ToolUseMode.LeftMouse);
+                    Player.RightToolUse(ToolUseMode.LeftMouse);
 
-                    //client invocation to keep the client inventory in synch
-                    Player.Equipment.LeftTool.Use(Player, ToolUseMode.LeftMouse);
+                    //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
+                    Player.Equipment.RightTool.Use(Player, ToolUseMode.LeftMouse);
                 }
             }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
             {
-                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.LeftTool != null)
+                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
                 {
                     //Avoid the player to add a block where he is located !            
                     BoundingBox playerPotentialNewBlock;
@@ -64,10 +64,10 @@ namespace Utopia.Entities.Managers
                     if (!MBoundingBox.Intersects(ref VisualVoxelEntity.WorldBBox, ref playerPotentialNewBlock))
                     {
                         //sends the client server event that does tool.use on server
-                        Player.LeftToolUse(ToolUseMode.RightMouse);
+                        Player.RightToolUse(ToolUseMode.RightMouse);
 
                         //client invocation to keep the client inventory in synch
-                        Player.Equipment.LeftTool.Use(Player, ToolUseMode.RightMouse);
+                        Player.Equipment.RightTool.Use(Player, ToolUseMode.RightMouse);
                     }
                 }
             }

@@ -89,14 +89,14 @@ namespace Utopia.GUI.Inventory
 
         public void Update(GameTime gameTime)
         {
-            if (_player.Equipment.LeftTool == null)
+            if (_player.Equipment.RightTool == null)
                 return;
 
             for (int i = 0; i < _toolbarSlots.Count; i++)
             {
                 if (_player.Toolbar[i] != 0)
                 {
-                    _toolbarSlots[i].IsCellSelected = _player.Equipment.LeftTool.StaticId == _player.Toolbar[i];
+                    _toolbarSlots[i].IsCellSelected = _player.Equipment.RightTool.StaticId == _player.Toolbar[i];
                 }
                 else
                     _toolbarSlots[i].IsCellSelected = false;

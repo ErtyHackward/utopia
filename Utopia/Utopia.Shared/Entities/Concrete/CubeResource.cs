@@ -25,7 +25,7 @@ namespace Utopia.Shared.Entities.Concrete
     
         public EquipmentSlotType AllowedSlots
         {
-            get { return EquipmentSlotType.LeftHand; }
+            get { return EquipmentSlotType.RightHand; }
             set { throw new NotSupportedException(); }
         }
 
