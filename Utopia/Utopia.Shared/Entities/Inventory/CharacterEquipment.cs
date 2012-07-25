@@ -101,6 +101,9 @@ namespace Utopia.Shared.Entities.Inventory
             return TakeItem(internalPosition, actualSlot.ItemsCount);
         }
 
+        /// <summary>
+        /// Return equiped tool (ITool) to the Left Hand
+        /// </summary>
         public ITool LeftTool
         {
             get {
@@ -111,6 +114,9 @@ namespace Utopia.Shared.Entities.Inventory
             }
         }
 
+        /// <summary>
+        /// Return equiped tool (ITool) to the Right Hand
+        /// </summary>
         public ITool RightTool
         {
             get

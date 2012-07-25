@@ -35,6 +35,12 @@ using Utopia.Resources.ModelComp;
 using S33M3Resources.Effects.Basics;
 using S33M3Resources.Structs;
 using UtopiaContent.Effects.Entities;
+using Utopia.Shared.Entities.Interfaces;
+using S33M3CoreComponents.Meshes;
+using S33M3CoreComponents.Meshes.Factories;
+using S33M3DXEngine.Buffers;
+using Utopia.Shared.Entities.Concrete;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Entities.Renderer
 {
@@ -59,9 +65,20 @@ namespace Utopia.Entities.Renderer
 
         private VisualVoxelEntity _visualVoxelEntity;
         private PlayerCharacter _playerCharacter;
-        private VisualVoxelModel _model;
+        private VisualVoxelModel _playerModel;
         private VoxelModelInstance _playerModelInstance;
         private HLSLVoxelModelInstanced _voxelEffect;
+        private ISkyDome _skyDome;
+
+        //Use to draw textured cubes
+        private HLSLCubeTool _cubeToolEffect;
+        private IMeshFactory _milkShapeMeshfactory;
+        private Mesh _cubeMeshBluePrint;
+        private Mesh _cubeMesh;
+        private VertexBuffer<VertexMesh> _cubeVb;
+        private IndexBuffer<ushort> _cubeIb;
+        private ShaderResourceView _cubeTextureView;
+        private Matrix _orthoProjection;
 
         private bool _isWalking;
         #endregion
@@ -75,25 +92,10 @@ namespace Utopia.Entities.Renderer
                 _visualVoxelEntity = value.VisualVoxelEntity; //Extract the VixualVoxelBody to store it. (== MUST be a PlayerCharacter)
                 _playerCharacter = (PlayerCharacter)_visualVoxelEntity.VoxelEntity;
                 SetUpRenderer();
-
-
             }
         }
 
         public VoxelModelInstance ModelInstance { get { return _playerModelInstance; } }
-
-        [Inject]
-        public ISkyDome SkyDome { get; set; }
-
-        [Inject]
-        public PlayerEntityManager PlayerManager { get; set; }
-        
-        [Inject]
-        public SingleArrayChunkContainer ChunkContainer
-        {
-            get { return _chunkContainer; }
-            set { _chunkContainer = value; }
-        }
 
         #endregion
 
@@ -102,13 +104,18 @@ namespace Utopia.Entities.Renderer
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
                                     VoxelModelManager modelManager,
-                                    InputsManager inputsManager)
+                                    InputsManager inputsManager,
+                                    ISkyDome skyDome,
+                                    SingleArrayChunkContainer chunkContainer
+                                    )
         {
             _d3DEngine = d3DEngine;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
             _modelManager = modelManager;
             _inputsManager = inputsManager;
+            _skyDome = skyDome;
+            _chunkContainer = chunkContainer;
         }
 
         private void SetUpRenderer()
@@ -118,31 +125,75 @@ namespace Utopia.Entities.Renderer
         }
 
         #region Private Methods
+        private void EquipedCubeChanged(CubeProfile cubeProfile, DeviceContext context)
+        {
+            Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
+            MaterialChangeMapping[0] = cubeProfile.Tex_Back;    //Change the Back Texture Id
+            MaterialChangeMapping[1] = cubeProfile.Tex_Front;   //Change the Front Texture Id
+            MaterialChangeMapping[2] = cubeProfile.Tex_Bottom;  //Change the Bottom Texture Id
+            MaterialChangeMapping[3] = cubeProfile.Tex_Top;     //Change the Top Texture Id
+            MaterialChangeMapping[4] = cubeProfile.Tex_Left;    //Change the Left Texture Id
+            MaterialChangeMapping[5] = cubeProfile.Tex_Right;   //Change the Right Texture Id
+
+            _cubeMesh = _cubeMeshBluePrint.Clone(MaterialChangeMapping);
+
+            //Store the mesh data inside the buffers
+            _cubeVb.SetData(context, _cubeMesh.Vertices);
+            _cubeIb.SetData(context, _cubeMesh.Indices);
+        }
+        #endregion
+
+        #region Public Methods
         public void Initialize()
         {
+            _milkShapeMeshfactory = new MilkShape3DMeshFactory();
         }
 
         public void LoadContent(DeviceContext context)
         {
             //Load the default Player model
-            _model = _modelManager.GetModel("Player");
+            _playerModel = _modelManager.GetModel("Player");
             _voxelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
-            if (_model != null)
+            if (_playerModel != null)
             {
-                _model.BuildMesh();
-                _playerModelInstance = _model.VoxelModel.CreateInstance();
+                _playerModel.BuildMesh();
+                _playerModelInstance = _playerModel.VoxelModel.CreateInstance();
+            }
+
+            //Prepare Textured Block rendering when equiped ==============================================================
+            _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
+            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
+            ToDispose(_cubeTextureView);
+            //Create Vertex/Index Buffer to store the loaded cube mesh.
+            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device,
+                                                                       _cubeMeshBluePrint.Vertices.Length,
+                                                                       VertexMesh.VertexDeclaration,
+                                                                       SharpDX.Direct3D.PrimitiveTopology.TriangleList,
+                                                                       "Block VB"));
+            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
+
+            _cubeToolEffect = ToDispose(new HLSLCubeTool(context.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
+            _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
+            _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _orthoProjection = Matrix.OrthoLH(_camManager.ActiveCamera.Viewport.Width, _camManager.ActiveCamera.Viewport.Height, _camManager.ActiveCamera.NearPlane, _camManager.ActiveCamera.FarPlane);
+            if (_cubeMeshBluePrint != null && _playerCharacter.Equipment.RightTool is CubeResource)
+            {
+                EquipedCubeChanged(GameSystemSettings.Current.Settings.CubesProfile[((CubeResource)_playerCharacter.Equipment.RightTool).CubeId], context);
             }
         }
 
-        public void UnloadContent()
+        public override void BeforeDispose()
         {
         }
 
-        #endregion
-
-        #region Public Methods
         public void Update(GameTime timeSpend)
         {
+
+            if (_cubeMeshBluePrint != null && _playerCharacter.Equipment.RightTool is CubeResource)
+            {
+                EquipedCubeChanged(GameSystemSettings.Current.Settings.CubesProfile[((CubeResource)_playerCharacter.Equipment.RightTool).CubeId], _d3DEngine.ImmediateContext);
+            }
+
             //Back Up the previous values that needs to be interpolated
             _worldPosition.BackUpValue();
             _headRotation.BackUpValue();
@@ -196,7 +247,7 @@ namespace Utopia.Entities.Renderer
                 {
                     // we take the max color
                     var sunPart = (float) block.EmissiveColor.A/255;
-                    var sunColor = SkyDome.SunColor*sunPart;
+                    var sunColor = _skyDome.SunColor * sunPart;
                     var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
 
                     _modelLight.Value = resultColor;
@@ -212,16 +263,34 @@ namespace Utopia.Entities.Renderer
 
         public void Draw(DeviceContext context, int index)
         {
+
+            //Drawing Cube
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+            _cubeToolEffect.Begin(context);
+            _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_orthoProjection);
+            _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(Matrix.Scaling(130.0f) * Matrix.RotationY(MathHelper.Pi * 0.75f) * Matrix.RotationX(MathHelper.Pi * 0.75f) * Matrix.Translation(390.0f, -250.0f, 0.0f));// * Matrix.Translation(10.0f, (float)_camManager.ActiveCamera.WorldPosition.Value.Y, 10.0f));
+            _cubeToolEffect.CBPerDraw.IsDirty = true;
+
+            _cubeToolEffect.Apply(context);
+            //Set the buffer to the device
+            _cubeVb.SetToDevice(context, 0);
+            _cubeIb.SetToDevice(context, 0);
+
+            //Draw things here.
+            context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
+
+
+
             //If camera is first person Don't draw the body.
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
 
             //Applying Correct Render States
-            if (_model != null)
+            if (_playerModel != null)
             {
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
                 _voxelEffect.Begin(context);
-                _voxelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+                _voxelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
                 _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelEffect.CBPerFrame.IsDirty = true;
                 _voxelEffect.Apply(context);
@@ -229,13 +298,11 @@ namespace Utopia.Entities.Renderer
                 _playerModelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(_worldPosition.ValueInterp.AsVector3());
                 _playerModelInstance.LightColor = _modelLight.ValueInterp;
 
-                _model.DrawInstanced(context, _voxelEffect, new[] { _playerModelInstance });
+                _playerModel.DrawInstanced(context, _voxelEffect, new[] { _playerModelInstance });
             }
-            
-        }
 
-        public override void BeforeDispose()
-        {
+
+            
         }
         #endregion
     }

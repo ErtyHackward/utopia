@@ -14,7 +14,6 @@ namespace Utopia.Entities.Renderer.Interfaces
         IVisualVoxelEntityContainer VoxelEntityContainer { set; }
         void Initialize();
         void LoadContent(DeviceContext context);
-        void UnloadContent();
         SharedFrameCB SharedFrameCB { get; set; } 
     }
 }
