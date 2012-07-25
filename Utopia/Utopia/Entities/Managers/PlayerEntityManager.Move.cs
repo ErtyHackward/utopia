@@ -210,7 +210,7 @@ namespace Utopia.Entities.Managers
                         handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
                     }
 #if DEBUG
-                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Value.Y, CubeId.GetCubeTypeName(_groundCube.Cube.Id));
+                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, CubeId.GetCubeTypeName(_groundCube.Cube.Id));
 #endif
                     _fallMaxHeight = int.MinValue;
                 }

@@ -25,6 +25,8 @@ namespace S33M3CoreComponents.Cameras.Interfaces
         CameraType CameraType { get; set; }
         FTSValue<Vector3> LookAt { get; }
         bool NewlyActivatedCamera { get; set; }
+        float NearPlane { get; set; }
+        float FarPlane { get; set; }
 
         /// <summary>
         /// Event that must be raised when the UpdateOrderId is changed

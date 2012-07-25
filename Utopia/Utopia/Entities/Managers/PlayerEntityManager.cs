@@ -300,7 +300,6 @@ namespace Utopia.Entities.Managers
         public override void UnloadContent()
         {
             this.DisableComponent();
-            _playerRenderer.UnloadContent();
             this.IsInitialized = false;
         }
 
