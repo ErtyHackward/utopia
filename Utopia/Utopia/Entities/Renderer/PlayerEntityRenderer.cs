@@ -82,7 +82,9 @@ namespace Utopia.Entities.Renderer
             set
             {
                 _visualVoxelEntity = value.VisualVoxelEntity; //Extract the VixualVoxelBody to store it. (== MUST be a PlayerCharacter)
+                _playerCharacter.Equipment.ItemEquipped -= Equipment_ItemEquipped;
                 _playerCharacter = (PlayerCharacter)_visualVoxelEntity.VoxelEntity;
+                RegisterEquipementEvents(_playerCharacter);
                 SetUpRenderer();
             }
         }
@@ -110,16 +112,34 @@ namespace Utopia.Entities.Renderer
             _skyDome = skyDome;
             _chunkContainer = chunkContainer;
             _playerCharacter = playerCharacter;
+
+            RegisterEquipementEvents(_playerCharacter);
         }
 
+        public override void BeforeDispose()
+        {
+
+        }
+
+        #region Private Methods
         private void SetUpRenderer()
         {
             //Set the default world Position at the time the entity is binded to the renderer
             _worldPosition.Initialize(_visualVoxelEntity.VoxelEntity.Position);
         }
 
-        #region Private Methods
+        private void RegisterEquipementEvents(PlayerCharacter player)
+        {
+            player.Equipment.ItemEquipped += Equipment_ItemEquipped;
+        }
 
+        private void Equipment_ItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
+        {
+            if (e.Slot == Shared.Entities.Inventory.EquipmentSlotType.RightHand)
+            {
+                _rightHandToolRenderer.Tool = (ITool)e.EquippedItem.Item;   //Equiped item MUST be a tool !
+            }
+        }
         #endregion
 
         #region Public Methods
@@ -138,16 +158,13 @@ namespace Utopia.Entities.Renderer
                 _playerModel.BuildMesh();
                 _playerModelInstance = _playerModel.VoxelModel.CreateInstance();
             }
-        }
 
-        public override void BeforeDispose()
-        {
+            //Set current tool handled by character
+            _rightHandToolRenderer.Tool = (ITool)_playerCharacter.Equipment.RightTool;
         }
 
         public void Update(GameTime timeSpend)
         {
-            _rightHandToolRenderer.Tool = _playerCharacter.Equipment.RightTool;
-
             //Back Up the previous values that needs to be interpolated
             _worldPosition.BackUpValue();
             _headRotation.BackUpValue();
