@@ -70,15 +70,7 @@ namespace Utopia.Entities.Renderer
         private HLSLVoxelModelInstanced _voxelEffect;
         private ISkyDome _skyDome;
 
-        //Use to draw textured cubes
-        private HLSLCubeTool _cubeToolEffect;
-        private IMeshFactory _milkShapeMeshfactory;
-        private Mesh _cubeMeshBluePrint;
-        private Mesh _cubeMesh;
-        private VertexBuffer<VertexMesh> _cubeVb;
-        private IndexBuffer<ushort> _cubeIb;
-        private ShaderResourceView _cubeTextureView;
-        private Matrix _orthoProjection;
+        private ToolRenderer _rightHandToolRenderer;
 
         private bool _isWalking;
         #endregion
@@ -106,7 +98,8 @@ namespace Utopia.Entities.Renderer
                                     VoxelModelManager modelManager,
                                     InputsManager inputsManager,
                                     ISkyDome skyDome,
-                                    SingleArrayChunkContainer chunkContainer
+                                    SingleArrayChunkContainer chunkContainer,
+                                    PlayerCharacter playerCharacter
                                     )
         {
             _d3DEngine = d3DEngine;
@@ -116,6 +109,7 @@ namespace Utopia.Entities.Renderer
             _inputsManager = inputsManager;
             _skyDome = skyDome;
             _chunkContainer = chunkContainer;
+            _playerCharacter = playerCharacter;
         }
 
         private void SetUpRenderer()
@@ -125,32 +119,17 @@ namespace Utopia.Entities.Renderer
         }
 
         #region Private Methods
-        private void EquipedCubeChanged(CubeProfile cubeProfile, DeviceContext context)
-        {
-            Dictionary<int, int> MaterialChangeMapping = new Dictionary<int, int>();
-            MaterialChangeMapping[0] = cubeProfile.Tex_Back;    //Change the Back Texture Id
-            MaterialChangeMapping[1] = cubeProfile.Tex_Front;   //Change the Front Texture Id
-            MaterialChangeMapping[2] = cubeProfile.Tex_Bottom;  //Change the Bottom Texture Id
-            MaterialChangeMapping[3] = cubeProfile.Tex_Top;     //Change the Top Texture Id
-            MaterialChangeMapping[4] = cubeProfile.Tex_Left;    //Change the Left Texture Id
-            MaterialChangeMapping[5] = cubeProfile.Tex_Right;   //Change the Right Texture Id
 
-            _cubeMesh = _cubeMeshBluePrint.Clone(MaterialChangeMapping);
-
-            //Store the mesh data inside the buffers
-            _cubeVb.SetData(context, _cubeMesh.Vertices);
-            _cubeIb.SetData(context, _cubeMesh.Indices);
-        }
         #endregion
 
         #region Public Methods
         public void Initialize()
         {
-            _milkShapeMeshfactory = new MilkShape3DMeshFactory();
         }
 
         public void LoadContent(DeviceContext context)
         {
+            _rightHandToolRenderer = new ToolRenderer(_d3DEngine, _camManager, _playerCharacter);
             //Load the default Player model
             _playerModel = _modelManager.GetModel("Player");
             _voxelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
@@ -158,27 +137,6 @@ namespace Utopia.Entities.Renderer
             {
                 _playerModel.BuildMesh();
                 _playerModelInstance = _playerModel.VoxelModel.CreateInstance();
-            }
-
-            //Prepare Textured Block rendering when equiped ==============================================================
-            _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
-            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
-            ToDispose(_cubeTextureView);
-            //Create Vertex/Index Buffer to store the loaded cube mesh.
-            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device,
-                                                                       _cubeMeshBluePrint.Vertices.Length,
-                                                                       VertexMesh.VertexDeclaration,
-                                                                       SharpDX.Direct3D.PrimitiveTopology.TriangleList,
-                                                                       "Block VB"));
-            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
-
-            _cubeToolEffect = ToDispose(new HLSLCubeTool(context.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
-            _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
-            _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
-            _orthoProjection = Matrix.OrthoLH(_camManager.ActiveCamera.Viewport.Width, _camManager.ActiveCamera.Viewport.Height, _camManager.ActiveCamera.NearPlane, _camManager.ActiveCamera.FarPlane);
-            if (_cubeMeshBluePrint != null && _playerCharacter.Equipment.RightTool is CubeResource)
-            {
-                EquipedCubeChanged(GameSystemSettings.Current.Settings.CubesProfile[((CubeResource)_playerCharacter.Equipment.RightTool).CubeId], context);
             }
         }
 
@@ -188,11 +146,7 @@ namespace Utopia.Entities.Renderer
 
         public void Update(GameTime timeSpend)
         {
-
-            if (_cubeMeshBluePrint != null && _playerCharacter.Equipment.RightTool is CubeResource)
-            {
-                EquipedCubeChanged(GameSystemSettings.Current.Settings.CubesProfile[((CubeResource)_playerCharacter.Equipment.RightTool).CubeId], _d3DEngine.ImmediateContext);
-            }
+            _rightHandToolRenderer.Tool = _playerCharacter.Equipment.RightTool;
 
             //Back Up the previous values that needs to be interpolated
             _worldPosition.BackUpValue();
@@ -263,23 +217,7 @@ namespace Utopia.Entities.Renderer
 
         public void Draw(DeviceContext context, int index)
         {
-
-            //Drawing Cube
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
-            _cubeToolEffect.Begin(context);
-            _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_orthoProjection);
-            _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(Matrix.Scaling(130.0f) * Matrix.RotationY(MathHelper.Pi * 0.75f) * Matrix.RotationX(MathHelper.Pi * 0.75f) * Matrix.Translation(390.0f, -250.0f, 0.0f));// * Matrix.Translation(10.0f, (float)_camManager.ActiveCamera.WorldPosition.Value.Y, 10.0f));
-            _cubeToolEffect.CBPerDraw.IsDirty = true;
-
-            _cubeToolEffect.Apply(context);
-            //Set the buffer to the device
-            _cubeVb.SetToDevice(context, 0);
-            _cubeIb.SetToDevice(context, 0);
-
-            //Draw things here.
-            context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
-
-
+            _rightHandToolRenderer.Draw(context, index);
 
             //If camera is first person Don't draw the body.
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson) return;
