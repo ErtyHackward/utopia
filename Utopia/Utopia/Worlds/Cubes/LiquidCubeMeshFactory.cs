@@ -139,7 +139,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -151,7 +151,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackTop_Cube, BackRightTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -163,7 +163,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackBottom_Cube, BackLeftBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -175,7 +175,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackBottom_Cube, BackRightBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Front, ref  newColor, ref vertexInfo2, ref vertexInfo1));
@@ -216,7 +216,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontLeftTop_Cube, FrontLeft_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -228,7 +228,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontRight_Cube, FrontRightTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -240,7 +240,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontLeft_Cube, FrontLeftBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -252,7 +252,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontRight_Cube, FrontRightBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Back, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -294,7 +294,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomLeft_Cube, BottomLeftTop_Cube, BottomTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -306,7 +306,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomRight_Cube, BottomBottom_Cube, BottomRightBottom_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -318,7 +318,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomBottom_Cube, BottomLeft_Cube, BottomLeftBottom_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -330,7 +330,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomTop_Cube, BottomRight_Cube, BottomRightTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Top, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -450,7 +450,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightRight_Cube, RightRightTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -462,7 +462,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightLeft_Cube, RightLeftTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -474,7 +474,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightRight_Cube, RightRightBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -486,7 +486,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightLeft_Cube, RightLeftBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Left, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -527,7 +527,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset0 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LefttRight_Cube, LeftRightTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -539,7 +539,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset1 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LeftLeft_Cube, LeftLeftTop_Cube);
                         vertexInfo1.Y = 1;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref topLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -551,7 +551,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset2 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LeftLeft_Cube, LeftLeftBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomLeft, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
@@ -563,7 +563,7 @@ namespace Utopia.Worlds.Cubes
                     if (vertexInDico == false)
                     {
                         vertexOffset3 = generatedVertex + verticeCubeOffset;
-                        if (!vertexInDico) chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
+                        chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LefttRight_Cube, LeftRightBottom_Cube);
                         vertexInfo1.Y = 0;
                         chunk.LiquidCubeVertices.Add(new VertexCubeLiquid(ref bottomRight, GameSystemSettings.Current.Settings.CubesProfile[cube.Id].Tex_Right, ref newColor, ref vertexInfo2, ref vertexInfo1));
