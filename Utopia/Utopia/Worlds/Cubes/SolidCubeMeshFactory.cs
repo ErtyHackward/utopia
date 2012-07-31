@@ -11,6 +11,7 @@ using Utopia.Shared.Enums;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
+using Utopia.Resources.VertexFormats;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -55,7 +56,7 @@ namespace Utopia.Worlds.Cubes
 
             //x = Is Upper VErtex or not
             //y = Cube Face
-            //z = OA Factor for light (0 to 85 * 3) (== 0 to 3)
+            //z = Not used
             //w = Cube "Offset"
 
             //GetBlock Offset
@@ -65,7 +66,7 @@ namespace Utopia.Worlds.Cubes
                 yBlockOffset = (byte)(cubeProfile.YBlockOffset * 255);
             }
 
-            Vector4B vertexInfo = new Vector4B((byte)0, (byte)cubeFace, (byte)85, yBlockOffset);
+            Vector4B vertexInfo = new Vector4B((byte)0, (byte)cubeFace, (byte)(0), yBlockOffset);
 
             long hashVertex;
             int generatedVertex = 0;

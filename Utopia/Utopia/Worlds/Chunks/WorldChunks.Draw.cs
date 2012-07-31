@@ -15,6 +15,7 @@ using S33M3CoreComponents.Maths;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using UtopiaContent.Effects.Entities;
+using Utopia.Resources.VertexFormats;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -143,7 +144,6 @@ namespace Utopia.Worlds.Chunks
                     {
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
-                        _terraEffect.CBPerDraw.Values.popUpYOffset = 0;
                         _terraEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _terraEffect.CBPerDraw.IsDirty = true;
                         _terraEffect.Apply(context);
@@ -179,7 +179,6 @@ namespace Utopia.Worlds.Chunks
                     if (chunk.LiquidCubeVB != null)
                     {
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
-                        _liquidEffect.CBPerDraw.Values.popUpYOffset = 0;
                         _liquidEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;

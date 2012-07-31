@@ -10,7 +10,7 @@ using S33M3Resources.Structs;
 using S33M3Resources.VertexFormats.Interfaces;
 using S33M3DXEngine.VertexFormat;
 
-namespace S33M3Resources.Structs.Vertex
+namespace Utopia.Resources.VertexFormats
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexCubeSolid : IVertexType
@@ -19,8 +19,8 @@ namespace S33M3Resources.Structs.Vertex
 
         public Vector4B Position;
         public ByteColor Color;
-        public Vector4B VertexInfo;  //X = Vertex Y offset; Y = texture index;Z=Additional Texture Index
-        public Vector4B BiomeInfo;   //X = Temperature, Y = Humidity, Z = TextureArray
+        public Vector4B VertexInfo;  //(bool)x = is Upper vertex;  y = facetype, z = not used, w = Offset
+        public Vector4B BiomeInfo;   //X = Temperature, Y = Moisture, Z = ArrayTextureID for Biome, W SideOffset multiplier
 
         VertexDeclaration IVertexType.VertexDeclaration
         {

@@ -10,7 +10,7 @@ using S33M3Resources.VertexFormats.Interfaces;
 using S33M3DXEngine.VertexFormat;
 using S33M3Resources.Structs;
 
-namespace S33M3Resources.Structs.Vertex
+namespace Utopia.Resources.VertexFormats
 {
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexCubeLiquid : IVertexType

@@ -15,6 +15,7 @@ using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using Utopia.Shared.Chunks.Tags;
+using Utopia.Resources.VertexFormats;
 
 namespace Utopia.Worlds.Cubes
 {

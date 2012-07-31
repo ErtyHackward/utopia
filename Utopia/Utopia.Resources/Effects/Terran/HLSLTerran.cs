@@ -33,12 +33,6 @@ namespace Utopia.Resources.Effects.Terran
             /// Allows to create chunk pop-up effect
             /// </summary>
             [FieldOffset(64)]
-            public float popUpYOffset;
-
-            /// <summary>
-            /// Allows to create chunk slowly appear effect
-            /// </summary>
-            [FieldOffset(68)]
             public float Opaque;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;

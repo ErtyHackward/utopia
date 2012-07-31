@@ -113,8 +113,6 @@
     <Compile Include="VertexFormats\VertexCubeCloud.cs" />
     <Compile Include="VertexFormats\VertexCubeFaceHQ.cs" />
     <Compile Include="VertexFormats\VertexCubeFaceLQ.cs" />
-    <Compile Include="VertexFormats\VertexCubeLiquid.cs" />
-    <Compile Include="VertexFormats\VertexCubeSolid.cs" />
     <Compile Include="VertexFormats\VertexMesh.cs" />
     <Compile Include="VertexFormats\VertexPointSprite.cs" />
     <Compile Include="VertexFormats\VertexPosition.cs" />
