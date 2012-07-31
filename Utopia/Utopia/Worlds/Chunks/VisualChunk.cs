@@ -30,6 +30,7 @@ using Utopia.Entities.Voxel;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Resources.VertexFormats;
 
 namespace Utopia.Worlds.Chunks
 {

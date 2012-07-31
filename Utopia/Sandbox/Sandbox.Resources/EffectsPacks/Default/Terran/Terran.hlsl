@@ -5,7 +5,6 @@
 cbuffer PerDraw
 {
 	matrix World;
-	float popUpYOffset;
 	float Opaque;
 };
 
@@ -106,8 +105,7 @@ PS_IN VS(VS_IN input)
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.Position.w );
 
-	//VertexInfo.z/85 => Will transform the Z into a range from 0 to 3
-	output.EmissiveLight = input.VertexInfo.z/85 * saturate(input.Col.rgb +  SunColor * input.Col.a);
+	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
 	output.EmissiveLight *= faceshades[facetype];
 
 	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);

@@ -5,7 +5,6 @@
 cbuffer PerDraw
 {
 	matrix World;
-	float popUpYOffset;
 	float Opaque;
 };
 
