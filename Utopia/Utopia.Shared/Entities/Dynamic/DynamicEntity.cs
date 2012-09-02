@@ -56,8 +56,8 @@ namespace Utopia.Shared.Entities.Dynamic
         
         protected DynamicEntity()
         {
-            HeadRotation = new Quaternion(0, 0, 0, 1);
-            BodyRotation = new Quaternion(0, 0, 0, 1);
+            HeadRotation = Quaternion.Identity;
+            BodyRotation = Quaternion.Identity;
         }
 
         #region Properties
