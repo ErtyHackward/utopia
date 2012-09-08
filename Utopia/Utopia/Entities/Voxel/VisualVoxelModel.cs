@@ -212,7 +212,7 @@ namespace Utopia.Entities.Voxel
                 effect.CBPerPart.IsDirty = true;
                 effect.Apply(context);
 
-                _voxelMeshFactory.Engine.ImmediateContext.DrawIndexed(ib.IndicesCount, 0, 0);
+                context.DrawIndexed(ib.IndicesCount, 0, 0);
             }
         }
 

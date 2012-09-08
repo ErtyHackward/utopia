@@ -295,8 +295,8 @@ namespace Utopia.Worlds.Chunks
             //_staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
             //_staticSpriteEffect.BiomesColor.Value = _biomesColors_View;
 
-            _voxelModelEffect = new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
-            _voxelModelInstancedEffect = new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
+            _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
+            _voxelModelInstancedEffect = ToDispose(new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
         }
 
         private void UnloadDrawComponents()

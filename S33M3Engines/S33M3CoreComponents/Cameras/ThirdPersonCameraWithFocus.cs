@@ -56,6 +56,11 @@ namespace S33M3CoreComponents.Cameras
             get { return _view_focused; }
         }
 
+        public Matrix Projection
+        {
+            get { return _projection3D; }
+        }
+
         public delegate bool CheckCameraPosition(ref Vector3D newPosition2Evaluate);
         public CheckCameraPosition CheckCamera;
         #endregion

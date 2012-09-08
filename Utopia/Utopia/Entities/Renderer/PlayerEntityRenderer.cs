@@ -149,7 +149,7 @@ namespace Utopia.Entities.Renderer
 
         public void LoadContent(DeviceContext context)
         {
-            _rightHandToolRenderer = new ToolRenderer(_d3DEngine, _camManager, _playerCharacter);
+            _rightHandToolRenderer = new ToolRenderer(_d3DEngine, _camManager, _playerCharacter, _modelManager);
             //Load the default Player model
             _playerModel = _modelManager.GetModel("Player");
             _voxelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
