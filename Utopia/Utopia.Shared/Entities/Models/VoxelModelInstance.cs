@@ -192,6 +192,7 @@ namespace Utopia.Shared.Entities.Models
             _animationStepIndexTo = 0;
             _elapsed = 0;
             _repeat = repeat;
+            _stopping = false;
         }
 
         /// <summary>
@@ -209,6 +210,7 @@ namespace Utopia.Shared.Entities.Models
             _animationStepIndexTo = 0;
             _elapsed = 0;
             _repeat = repeat;
+            _stopping = false;
         }
 
         /// <summary>

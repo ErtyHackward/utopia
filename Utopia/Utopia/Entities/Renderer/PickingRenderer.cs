@@ -42,9 +42,6 @@ namespace Utopia.Entities.Renderer
         private double _cubeYOffset;
         #endregion
 
-        #region Public Variable
-        #endregion
-
         public PickingRenderer(D3DEngine engine,
                                       WorldFocusManager focusManager,
                                       IDynamicEntity player,

@@ -92,14 +92,16 @@ namespace Utopia.Entities
         {
             LookAtDirection.BackUpValue();
 
-            if (_walking && Vector3D.Distance(_netLocation.Interpolated, _netLocation.Value) < 0.2d)
+            var distanceSquared = Vector3D.DistanceSquared(DynamicEntity.Position, _netLocation.Interpolated);
+
+            if (_walking && distanceSquared < 0.06d)
             {
                 if (ModelInstance != null)
                     ModelInstance.Stop();
                 _walking = false;
             }
 
-            if (!_walking && _netLocation.Value != DynamicEntity.Position)
+            if (!_walking && distanceSquared >= 0.06d)
             {
                 if (ModelInstance != null && ModelInstance.CanPlay("Walk"))
                     ModelInstance.Play("Walk", true);
@@ -111,6 +113,11 @@ namespace Utopia.Entities
 
             var moveQuaternion = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
 
+            // leave only Y-rotation
+            moveQuaternion.X = 0;
+            moveQuaternion.Z = 0;
+            moveQuaternion.Normalize();
+            
             DynamicEntity.BodyRotation = Quaternion.Lerp(DynamicEntity.BodyRotation, moveQuaternion, (float)Vector3D.Distance(DynamicEntity.Position, _netLocation.Value));
 
             _netLocation.Value = DynamicEntity.Position;

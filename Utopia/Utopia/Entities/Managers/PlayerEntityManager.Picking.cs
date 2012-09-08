@@ -10,15 +10,6 @@ namespace Utopia.Entities.Managers
 {
     public partial class PlayerEntityManager
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
-        #endregion
-
-        #region Public Methods
-        #endregion
-
         #region Private Methods
         //Get the entity being picked up
         private void GetSelectedEntity()
@@ -48,6 +39,8 @@ namespace Utopia.Entities.Managers
                 }
                 else
                 {
+                    if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.ThirdPerson && _pickedUpEntity.Entity == Player)
+                        return;
                     _pickingRenderer.SetPickedEntity(_pickedUpEntity);
                 }
             }
