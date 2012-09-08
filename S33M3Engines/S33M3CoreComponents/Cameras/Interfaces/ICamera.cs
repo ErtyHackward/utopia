@@ -15,6 +15,7 @@ namespace S33M3CoreComponents.Cameras.Interfaces
 {
     public interface ICamera : IUpdatable, IDebugInfo
     {
+        Matrix Projection { get; }
         Matrix ViewProjection3D { get; }
         FTSValue<Vector3D> WorldPosition { get; }
         FTSValue<Quaternion> Orientation { get; }
@@ -32,5 +33,7 @@ namespace S33M3CoreComponents.Cameras.Interfaces
         /// Event that must be raised when the UpdateOrderId is changed
         /// </summary>
         event CameraUpdateOrder CameraUpdateOrderChanged;
+
+        
     }
 }

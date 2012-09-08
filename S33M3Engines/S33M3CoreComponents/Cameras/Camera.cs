@@ -135,6 +135,12 @@ namespace S33M3CoreComponents.Cameras
                 newCameraPluginDriver();
             }
         }
+
+        public Matrix Projection
+        {
+            get { return _projection3D; }
+        }
+
         #endregion
 
         #region Public methods
