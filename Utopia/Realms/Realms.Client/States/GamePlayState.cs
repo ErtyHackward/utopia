@@ -5,6 +5,7 @@ using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
@@ -80,6 +81,7 @@ namespace Realms.Client.States
             chunkEntityImpactManager.BlockReplaced += ChunkEntityImpactManagerBlockReplaced;
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var adminConsole = _ioc.Get<AdminConsole>();
+            var toolRenderer = _ioc.Get<ToolRenderer>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -103,6 +105,7 @@ namespace Realms.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);
+            AddComponent(toolRenderer);
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in _ioc.Get<LoadingGameState>().GameComponents.Except(GameComponents))

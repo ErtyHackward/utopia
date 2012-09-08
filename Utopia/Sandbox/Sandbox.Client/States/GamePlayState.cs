@@ -5,6 +5,7 @@ using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
@@ -76,6 +77,8 @@ namespace Sandbox.Client.States
             var fadeComponent = _ioc.Get<FadeComponent>();
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             fadeComponent.Visible = false;
+            var toolRenderer = _ioc.Get<ToolRenderer>();
+
 
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
 
@@ -101,6 +104,7 @@ namespace Sandbox.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);
+            AddComponent(toolRenderer);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

@@ -1,37 +1,25 @@
 ﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
-using Utopia.Network;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
 using Ninject;
 using Utopia.Worlds.Chunks;
-using Utopia.Worlds.Cubes;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine;
 using S33M3CoreComponents.Cameras;
-using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.WorldFocus;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Physics.Verlet;
-using S33M3CoreComponents.Maths;
 using SharpDX.Direct3D11;
-using Utopia.Action;
-using S33M3CoreComponents.Physics;
 using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
 
@@ -41,12 +29,11 @@ namespace Utopia.Entities.Managers
     /// Responsible for:
     /// 1) current player physics interaction with the world. 
     /// 2) player movement input handling
-    /// 3) player entity drawing
-    /// 4) picking of the block
+    /// 3) picking of the block
     /// </summary>
-    public partial class PlayerEntityManager : DrawableGameComponent, ICameraPlugin, IVisualVoxelEntityContainer, IDebugInfo
+    public partial class PlayerEntityManager : GameComponent, ICameraPlugin, IVisualVoxelEntityContainer, IDebugInfo
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private variables
         //Engine System variables
@@ -81,9 +68,6 @@ namespace Utopia.Entities.Managers
         private IEntityPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
 
-        //Drawing component
-        private IEntitiesRenderer _playerRenderer;
-
         //Event related variables
         private double _fallMaxHeight;
 
@@ -107,9 +91,12 @@ namespace Utopia.Entities.Managers
 
         //Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition + _entityEyeOffset; } }
+
         public virtual Quaternion CameraOrientation { get { return _entityRotations.EyeOrientation; } }
+
         public virtual Quaternion CameraYAxisOrientation { get { return _entityRotations.BodyOrientation; } }
-        public virtual int CameraUpdateOrder { get { return this.UpdateOrder; } }
+
+        public virtual int CameraUpdateOrder { get { return UpdateOrder; } }
 
         public bool IsHeadInsideWater { get; set; }
 
@@ -157,18 +144,6 @@ namespace Utopia.Entities.Managers
         
         public float OffsetBlockHitted { get; set; }
         
-        [Inject, Named("PlayerEntityRenderer")]
-        public IEntitiesRenderer PlayerRenderer
-        {
-            get { return _playerRenderer; }
-            set 
-            { 
-                _playerRenderer = value;
-                //Give the Renderer acces to the Voxel buffers, ...
-                _playerRenderer.VoxelEntityContainer = this;
-            }
-        }
-
         public SingleArrayChunkContainer CubesHolder
         {
             get { return _cubesHolder; }
@@ -191,28 +166,6 @@ namespace Utopia.Entities.Managers
 
         public delegate void LandingGround(double fallHeight, TerraCubeWithPosition landedCube);
         public event LandingGround OnLanding;
-
-        /// <summary>
-        /// Occurs when player press one or more moves keys
-        /// </summary>
-        public event EventHandler WalkStart;
-
-        private void OnWalkStart()
-        {
-            var handler = WalkStart;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Occurs when player releases all move keys
-        /// </summary>
-        public event EventHandler WalkEnd;
-
-        private void OnWalkEnd()
-        {
-            var handler = WalkEnd;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
 
         #endregion
 
@@ -250,16 +203,13 @@ namespace Utopia.Entities.Managers
             if (OnLanding != null)
             {
                 //Remove all Events associated to this Event (That haven't been unsubscribed !)
-                foreach (Delegate d in OnLanding.GetInvocationList())
+                foreach (var d in OnLanding.GetInvocationList())
                 {
                     OnLanding -= (LandingGround)d;
                 }
             }
 
         }
-
-        #region Private Methods
-        #endregion
 
         #region Public Methods
         public override void Initialize()
@@ -285,8 +235,6 @@ namespace Utopia.Entities.Managers
 
             //Set displacement mode
             DisplacementMode = Player.DisplacementMode;
-
-            _playerRenderer.Initialize();
         }
 
         /// <summary>
@@ -294,18 +242,15 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public override void LoadContent(DeviceContext context)
         {
-            _playerRenderer.LoadContent(context);
+
         }
 
         public override void UnloadContent()
         {
-            this.DisableComponent();
-            this.IsInitialized = false;
+            DisableComponent();
+            IsInitialized = false;
         }
 
-        //string[] test = new string[100];
-        //int i;
-        //long from, to;
         public override void Update( GameTime timeSpend)
         {
             if (_landscapeInitiazed == false) return;
@@ -323,19 +268,13 @@ namespace Utopia.Entities.Managers
             //Refresh the player Bounding box
             VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
             
-            _playerRenderer.Update(timeSpend);
+
         }
 
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             CheckHeadUnderWater();      //Under water head test
-            _playerRenderer.Interpolation(interpolationHd, interpolationLd, timePassed);
-        }
-
-        public override void Draw(DeviceContext context, int index)
-        {
-            _playerRenderer.Draw(context, index);
         }
 
         #endregion

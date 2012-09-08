@@ -7,6 +7,7 @@ using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
@@ -217,7 +218,6 @@ namespace Sandbox.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
-            var playerEntityRenderer = _ioc.Get<IEntitiesRenderer>("PlayerEntityRenderer");
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
@@ -225,6 +225,7 @@ namespace Sandbox.Client.States
             var soundManager = _ioc.Get<GameSoundManager>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
+            var toolRenderer = _ioc.Get<ToolRenderer>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -256,6 +257,7 @@ namespace Sandbox.Client.States
             AddComponent(soundManager);
             AddComponent(staggingBackBuffer);
             AddComponent(voxelModelManager);
+            AddComponent(toolRenderer);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

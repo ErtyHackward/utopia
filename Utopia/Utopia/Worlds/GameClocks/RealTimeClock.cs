@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3DXEngine.Main;
 
 namespace Utopia.Worlds.GameClocks
@@ -34,11 +31,6 @@ namespace Utopia.Worlds.GameClocks
             _clockTime.Value = (float)(DateTime.Now.Hour * 60 + DateTime.Now.Minute) * (float)(Math.PI) / 12.0f / 60.0f;
 
             _visualClockTime.Time = _clockTime.ValueInterp;
-        }
-
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
-        {
-            base.Interpolation(interpolation_hd, interpolation_ld, timePassed);
         }
 
         #endregion

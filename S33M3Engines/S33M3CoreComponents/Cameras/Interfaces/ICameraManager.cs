@@ -1,15 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.Cameras.Interfaces
 {
-    public delegate void CameraChange(ICamera newCamera);
+    /// <summary>
+    /// Provides possibility to catch camera change event or get active camera
+    /// </summary>
     public interface ICameraManager
     {
+        /// <summary>
+        /// Gets currently active camera
+        /// </summary>
         ICamera ActiveBaseCamera { get; }
-        event CameraChange ActiveCamera_Changed;
+
+        /// <summary>
+        /// Occurs when current active camera was changed
+        /// </summary>
+        event EventHandler<CameraChangedEventArgs> ActiveCameraChanged;
     }
 }

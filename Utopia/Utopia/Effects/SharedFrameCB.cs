@@ -55,7 +55,6 @@ namespace Utopia.Effects.Shared
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
-                             [Named("PlayerEntityRenderer")] IEntitiesRenderer playerEntityRenderer,
                              StaggingBackBuffer backBuffer)
             
         {
@@ -65,9 +64,6 @@ namespace Utopia.Effects.Shared
             _visualWorldParam = visualWorldParam;
             _playerManager = playerManager;
             _backBuffer = backBuffer;
-
-            //Self Injecting to avoid Cyclical problem
-            playerEntityRenderer.SharedFrameCB = this;
 
             DrawOrders.UpdateIndex(0, 0);
 

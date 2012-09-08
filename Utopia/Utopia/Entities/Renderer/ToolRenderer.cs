@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using S33M3DXEngine.Main.Interfaces;
-using S33M3_DXEngine.Main;
+﻿using System.Collections.Generic;
+using S33M3DXEngine.Main;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Models;
 using UtopiaContent.Effects.Entities;
@@ -26,10 +24,11 @@ using S33M3CoreComponents.Maths;
 namespace Utopia.Entities.Renderer
 {
     /// <summary>
-    /// Will render a specific equiped tool by an entity, this tool can be a texture block or a IVoxelEntity.
-    /// It will give the possibility to "render" the tool as First person view, or Third person view.
+    /// Renders a specific equipped tool by an entity, this tool can be a texture block or an IVoxelEntity.
+    /// It tool is an IVoxel entity then also draws the arm of the player model
+    /// Works only in first person mode
     /// </summary>
-    public class ToolRenderer : BaseComponent, IDrawable
+    public class ToolRenderer : DrawableGameComponent
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -53,24 +52,22 @@ namespace Utopia.Entities.Renderer
         private VertexBuffer<VertexMesh> _cubeVb;
         private IndexBuffer<ushort> _cubeIb;
         private ShaderResourceView _cubeTextureView;
-        private Matrix _orthoProjection;
         private IDynamicEntity _dynamicEntity;
         private readonly VoxelModelManager _voxelModelManager;
         private bool _isPlayerCharacterOwner;
-        private Matrix _view;
         private VisualVoxelModel _voxelModel;
         private VoxelModelInstance _voxelInstance;
         private HLSLVoxelModel _voxelModelEffect;
 
         #endregion
 
-        #region Public Properties
+
         public ITool Tool
         {
             get { return _tool; }
             set { _tool = value; ToolChange(); }
         }
-        #endregion
+
 
         public ToolRenderer(D3DEngine d3DEngine,
                             CameraManager<ICameraFocused> camManager,
@@ -83,69 +80,73 @@ namespace Utopia.Entities.Renderer
             _dynamicEntity = dynamicEntity;
             _voxelModelManager = voxelModelManager;
             _isPlayerCharacterOwner = _dynamicEntity is PlayerCharacter;
-            Initialize();
+
+            DrawOrders.UpdateIndex(0, 5000);
+        }
+
+        void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
+        {
+            Tool = e.EquippedItem.Item as ITool;
         }
 
         #region Public Methods
-        public void Update(S33M3DXEngine.Main.GameTime timeSpend)
+        public override void Update(GameTime timeSpend)
         {
 
         }
 
-        public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
 
         }
 
-        public void Draw(DeviceContext context, int index)
+        public override void Draw(DeviceContext context, int index)
         {
-            if (_tool == null) return; //No Tool equiped, render nothing !
+            //No tool equipped or not in first person mode, render nothing !
+            if (_tool == null) 
+                return;
+            
+            if (!_isPlayerCharacterOwner || _camManager.ActiveCamera.CameraType != CameraType.FirstPerson) 
+                return;
 
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
-            if (_isPlayerCharacterOwner && _camManager.ActiveCamera.CameraType == CameraType.FirstPerson)
+
+            var screenPosition = Matrix.RotationY(MathHelper.Pi * 2) * Matrix.RotationX(MathHelper.Pi * 2f) *
+                                 Matrix.Translation(1, -1, 0) *
+                                 Matrix.Invert(_camManager.ActiveCamera.View_focused) * Matrix.Scaling(0.5f) *
+                                 Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp);
+
+            if (_renderingType == ToolRenderingType.Cube)
             {
+                //Render First person view of the tool, only if the tool is used by the current playing person !
+                _cubeToolEffect.Begin(context);
+                _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+                _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(screenPosition);
+                _cubeToolEffect.CBPerDraw.IsDirty = true;
 
-                var screenPosition = Matrix.RotationY(MathHelper.Pi * 2) * Matrix.RotationX(MathHelper.Pi * 2f) *
-                                                                               Matrix.Translation(1, -1, 0) *
-                                                                               Matrix.Invert(_camManager.ActiveCamera.View_focused) * Matrix.Scaling(0.5f) *
-                                                                               Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp);
+                _cubeToolEffect.Apply(context);
+                //Set the buffer to the device
+                _cubeVb.SetToDevice(context, 0);
+                _cubeIb.SetToDevice(context, 0);
 
-                if (_renderingType == ToolRenderingType.Cube)
-                {
-                    //Render First person view of the tool, only if the tool is used by the current playing person !
-                    _cubeToolEffect.Begin(context);
-                    _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                    _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(screenPosition);
-                    _cubeToolEffect.CBPerDraw.IsDirty = true;
-
-                    _cubeToolEffect.Apply(context);
-                    //Set the buffer to the device
-                    _cubeVb.SetToDevice(context, 0);
-                    _cubeIb.SetToDevice(context, 0);
-
-                    //Draw things here.
-                    context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
-                }
-                if (_renderingType == ToolRenderingType.Voxel && _voxelModel != null)
-                {
-                    _voxelModelEffect.Begin(context);
-                    _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                    _voxelModelEffect.CBPerFrame.IsDirty = true;
-                    _voxelInstance.World = Matrix.Scaling(1f/16) * screenPosition;
-                    _voxelModel.Draw(context, _voxelModelEffect, _voxelInstance);
-                }
+                //Draw things here.
+                context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
             }
-            else 
+            if (_renderingType == ToolRenderingType.Voxel && _voxelModel != null)
             {
-                //Render 3th person mode of the tool == attached to the IDynamicEntity "Hand" position
+                _voxelModelEffect.Begin(context);
+                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+                _voxelModelEffect.CBPerFrame.IsDirty = true;
+                _voxelInstance.World = Matrix.Scaling(1f/16) * screenPosition;
+                _voxelModel.Draw(context, _voxelModelEffect, _voxelInstance);
             }
         }
         #endregion
 
         #region Private Methods
-        private void Initialize()
+        public override void Initialize()
         {
             //Prepare Textured Block rendering when equiped ==============================================================
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
@@ -160,6 +161,15 @@ namespace Utopia.Entities.Renderer
             _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
 
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
+
+            var player = _dynamicEntity as PlayerCharacter;
+
+            if (player != null)
+            {
+                player.Equipment.ItemEquipped += EquipmentItemEquipped;
+                Tool = player.Equipment.RightTool;
+            }
+
         }
 
         //The tool has been changed !
