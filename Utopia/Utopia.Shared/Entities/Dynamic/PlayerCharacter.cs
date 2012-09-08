@@ -41,12 +41,9 @@ namespace Utopia.Shared.Entities.Dynamic
             RotationSpeed = 10f;          //Default Player Rotation Speed
             DefaultSize = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
             
-            //Default Player Voxel Body
-            //Model.Blocks = new byte[1, 1, 1];
-            //Model.Blocks[0, 0, 0] = CubeId.PlayerHead;
-
             Type = EntityType.Dynamic;
-            BodyRotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), 0);
+            BodyRotation = Quaternion.Identity;
+            ModelName = "s33m3";
         }
 
         #region Public Methods

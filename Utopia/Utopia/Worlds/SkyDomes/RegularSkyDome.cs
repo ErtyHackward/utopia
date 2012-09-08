@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Worlds.GameClocks;
 using SharpDX.Direct3D11;
 using SharpDX;
 using SharpDX.Direct3D;
-using Utopia.Worlds.SkyDomes.SharedComp;
 using Utopia.Worlds.Weather;
-using Utopia.Shared.World;
 using Ninject;
 using Utopia.Resources.Effects.Skydome;
 using S33M3Resources.Structs.Vertex;
@@ -146,10 +141,10 @@ namespace Utopia.Worlds.SkyDomes
             base.Update(timeSpend);
         }
 
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
-            _clouds.Interpolation(interpolation_hd, interpolation_ld, timePassed);
-            base.Interpolation(interpolation_hd, interpolation_ld, timePassed);
+            _clouds.Interpolation(interpolationHd, interpolationLd, timePassed);
+            base.Interpolation(interpolationHd, interpolationLd, timePassed);
         }
 
         public override void Draw(DeviceContext context, int index)

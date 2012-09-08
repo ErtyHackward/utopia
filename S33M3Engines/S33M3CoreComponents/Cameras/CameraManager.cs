@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
-using SharpDX.Direct3D11;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.WorldFocus;
@@ -12,22 +9,25 @@ using S33M3CoreComponents.WorldFocus.Interfaces;
 
 namespace S33M3CoreComponents.Cameras
 {
-    //Class handling the currently active camera.
-    public class CameraManager<CamType> : GameComponent, ICameraManager where CamType : ICamera
+    /// <summary>
+    /// Class handling the currently active camera.
+    /// </summary>
+    /// <typeparam name="TCamType"></typeparam>
+    public class CameraManager<TCamType> : GameComponent, ICameraManager where TCamType : class, ICamera
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private variables
-        private CamType _activeCamera;
+        private TCamType _activeCamera;
         private WorldFocusManager _worldFocusManager;
 
         private InputsManager _inputManager;
         private int _cameraChangeIndex = -1;
-        private List<CamType> _registeredCameras = new List<CamType>();
+        private List<TCamType> _registeredCameras = new List<TCamType>();
         #endregion
 
         #region Public properties/variables
-        public CamType ActiveCamera
+        public TCamType ActiveCamera
         {
             get { return _activeCamera; }
         }
@@ -37,7 +37,17 @@ namespace S33M3CoreComponents.Cameras
             get { return _activeCamera; }
         }
 
-        public event CameraChange ActiveCamera_Changed;
+        /// <summary>
+        /// Occurs when current active camera was changed
+        /// </summary>
+        public event EventHandler<CameraChangedEventArgs> ActiveCameraChanged;
+
+        private void OnActiveCameraChanged(ICamera camera)
+        {
+            var handler = ActiveCameraChanged;
+            if (handler != null) handler(this, new CameraChangedEventArgs { Camera = camera });
+        }
+
         #endregion
 
         public CameraManager(InputsManager inputManager, WorldFocusManager worldFocusManager)
@@ -46,31 +56,8 @@ namespace S33M3CoreComponents.Cameras
             _worldFocusManager = worldFocusManager;
         }
 
-        public override void BeforeDispose()
-        {
-            if (ActiveCamera_Changed != null)
-            {
-                //Remove all Events associated to this control (That haven't been unsubscribed !)
-                foreach (Delegate d in ActiveCamera_Changed.GetInvocationList())
-                {
-                    ActiveCamera_Changed -= (CameraChange)d;
-                }
-            }
-        }
 
         #region Public methods
-
-        public override void Initialize()
-        {
-        }
-
-        public override void LoadContent(DeviceContext context)
-        {
-        }
-
-        public override void UnloadContent()
-        {
-        }
 
         public override void Update(GameTime timeSpend)
         {
@@ -82,12 +69,12 @@ namespace S33M3CoreComponents.Cameras
             ActiveCamera.Update(timeSpend);
         }
 
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            ActiveCamera.Interpolation(interpolation_hd, interpolation_ld, elapsedTime);
+            ActiveCamera.Interpolation(interpolationHd, interpolationLd, elapsedTime);
         }
 
-        public void RegisterNewCamera(CamType camera)
+        public void RegisterNewCamera(TCamType camera)
         {
             _registeredCameras.Add(camera);
             if (_activeCamera == null) MoveToNextActiveCamera();
@@ -111,7 +98,7 @@ namespace S33M3CoreComponents.Cameras
             ChangeActiveCamera(_registeredCameras[_cameraChangeIndex]);
         }
 
-        private void ChangeActiveCamera(CamType newCamera)
+        private void ChangeActiveCamera(TCamType newCamera)
         {
             _activeCamera = newCamera;
             _activeCamera.CameraUpdateOrderChanged -= ActiveCamera_CameraUpdateOrderChanged;
@@ -120,7 +107,7 @@ namespace S33M3CoreComponents.Cameras
             //Change the focus
             _worldFocusManager.WorldFocus = (IWorldFocus)newCamera;
             newCamera.NewlyActivatedCamera = true;
-            if (ActiveCamera_Changed != null) ActiveCamera_Changed(newCamera);
+            OnActiveCameraChanged(newCamera);
         }
 
         private void ActiveCamera_CameraUpdateOrderChanged(ICamera camera, int newOrderId)
@@ -134,5 +121,10 @@ namespace S33M3CoreComponents.Cameras
             UpdateOrder = newOrder;
         }
         #endregion
+    }
+
+    public class CameraChangedEventArgs : EventArgs
+    {
+        public ICamera Camera { get; set; }
     }
 }

@@ -150,9 +150,17 @@ namespace Utopia.Shared.Entities.Inventory
 
     public class CharacterEquipmentEventArgs : EventArgs
     {
+        /// <summary>
+        /// Parent dynamic entity object
+        /// </summary>
         public IDynamicEntity Entity { get; set; }
+
         public ContainedSlot EquippedItem { get; set; }
         public ContainedSlot UnequippedItem { get; set; }
+
+        /// <summary>
+        /// Slot like "Left arm"
+        /// </summary>
         public EquipmentSlotType Slot { get; set; }
     }
 }

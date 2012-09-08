@@ -119,7 +119,7 @@ namespace Utopia.Worlds.GameClocks
         {
         }
 
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             float recomputedClock = _clockTime.Value;
             if (_clockTime.Value < _clockTime.ValuePrev)
@@ -127,7 +127,7 @@ namespace Utopia.Worlds.GameClocks
                 recomputedClock = _clockTime.Value + MathHelper.TwoPi;
             }
 
-            _clockTime.ValueInterp = MathHelper.Lerp(_clockTime.ValuePrev, recomputedClock, interpolation_ld);
+            _clockTime.ValueInterp = MathHelper.Lerp(_clockTime.ValuePrev, recomputedClock, interpolationLd);
             if (_clockTime.ValueInterp > Math.PI * 2)
             {
                 //+1 Day

@@ -6,13 +6,11 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.WorldFocus;
 using S33M3DXEngine;
 using S33M3DXEngine.RenderStates;
-using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -29,8 +27,9 @@ using S33M3CoreComponents.Maths;
 namespace Utopia.Entities.Managers
 {
     /// <summary>
-    /// Keeps a collection of IDynamicEntity received from server.
-    /// Responsible to Draw them, also used to check collision detection with Player
+    /// Keeps a collection of IDynamicEntities received from the server.
+    /// Responsible to draw them, also used to check collission detection with the player
+    /// Draws the player entity if player is in 3rd person mode
     /// </summary>
     public class DynamicEntityManager : DrawableGameComponent, IDynamicEntityManager
     {
@@ -50,22 +49,39 @@ namespace Utopia.Entities.Managers
         private readonly CameraManager<ICameraFocused> _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
+        private readonly PlayerEntityManager _playerEntityManager;
         private SingleArrayChunkContainer _chunkContainer;
         private int _staticEntityViewRange;
         public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
 
         // collection of the models and instances
-        private Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
-        
-        [Inject]
-        public SingleArrayChunkContainer ChunkContainer
-        {
-            get { return _chunkContainer; }
-            set { _chunkContainer = value; }
-        }
+        private readonly Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
 
-        [Inject]
-        public ISkyDome SkyDome { get; set; }
+        private IDynamicEntity _playerEntity;
+
+        /// <summary>
+        /// Gets or sets current player entity to display
+        /// Set to null in first person mode
+        /// </summary>
+        public IDynamicEntity PlayerEntity
+        {
+            get { return _playerEntity; }
+            set {
+                if (_playerEntity == value)
+                    return;
+
+                if (value != null)
+                {
+                    AddEntity(value);
+                }
+                else
+                {
+                    RemoveEntity(_playerEntity);
+                }
+
+                _playerEntity = value;
+            }
+        }
 
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
 
@@ -83,22 +99,51 @@ namespace Utopia.Entities.Managers
             if (handler != null) handler(this, e);
         }
 
+        // Dependencies vvv
+
+        [Inject]
+        public SingleArrayChunkContainer ChunkContainer
+        {
+            get { return _chunkContainer; }
+            set { _chunkContainer = value; }
+        }
+
+        [Inject]
+        public ISkyDome SkyDome { get; set; }
 
         public DynamicEntityManager(D3DEngine d3DEngine, 
                                     VoxelModelManager voxelModelManager, 
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
-                                    VisualWorldParameters visualWorldParameters)
+                                    VisualWorldParameters visualWorldParameters,
+                                    PlayerEntityManager playerEntityManager)
         {
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
+            _playerEntityManager = playerEntityManager;
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
 
+            _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
+
             DynamicEntities = new List<IVisualVoxelEntityContainer>();
+        }
+
+        void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
+        {
+            if (e.Camera.CameraType == CameraType.FirstPerson)
+            {
+                PlayerEntity = null;
+            }
+            else
+            {
+                PlayerEntity = null;
+                PlayerEntity = _playerEntityManager.Player;
+            }
+
         }
 
         void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
@@ -154,13 +199,11 @@ namespace Utopia.Entities.Managers
             this.IsInitialized = false;
         }
 
-        #region Private Methods
         private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
         {
             return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
         }
-        #endregion
-
+        
         #region Public Methods
         public override void Update(GameTime timeSpent)
         {
@@ -233,7 +276,7 @@ namespace Utopia.Entities.Managers
 
         public void AddEntity(IDynamicEntity entity)
         {
-            //Do we already have thise entity ??
+            //Do we already have this entity ??
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
             {
                 ModelAndInstances modelWithInstances;

@@ -60,12 +60,12 @@ namespace S33M3CoreComponents.Cameras
         }
 
         //Called once before the drawing sequence ==> Computed interpolated values here !
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long elapsedTime)
+        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             //Do interpolation on the value received at update time
-            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolation_hd, out _worldPosition.ValueInterp);
-            Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, interpolation_ld, out _cameraOrientation.ValueInterp);
-            Quaternion.Slerp(ref _cameraYAxisOrientation.ValuePrev, ref _cameraYAxisOrientation.Value, interpolation_ld, out _cameraYAxisOrientation.ValueInterp);
+            Vector3D.Lerp(ref _worldPosition.ValuePrev, ref _worldPosition.Value, interpolationHd, out _worldPosition.ValueInterp);
+            Quaternion.Slerp(ref _cameraOrientation.ValuePrev, ref _cameraOrientation.Value, interpolationLd, out _cameraOrientation.ValueInterp);
+            Quaternion.Slerp(ref _cameraYAxisOrientation.ValuePrev, ref _cameraYAxisOrientation.Value, interpolationLd, out _cameraYAxisOrientation.ValueInterp);
 
             ComputeCameraMatrices();
 
