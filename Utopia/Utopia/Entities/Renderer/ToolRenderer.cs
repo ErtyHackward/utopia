@@ -148,6 +148,13 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public override void Initialize()
         {
+
+
+
+        }
+
+        public override void LoadContent(DeviceContext context)
+        {
             //Prepare Textured Block rendering when equiped ==============================================================
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, _d3dEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
