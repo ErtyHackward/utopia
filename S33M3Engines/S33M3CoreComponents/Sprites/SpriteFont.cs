@@ -143,11 +143,11 @@ namespace S33M3CoreComponents.Sprites
             // Create a temporary Bitmap + Graphics for creating a full character set
             Bitmap textBitmap = new Bitmap(TexWidth, texHeight, PixelFormat.Format32bppArgb);
             Graphics textGraphics = Graphics.FromImage(textBitmap);
-            textGraphics.Clear(new Color(255, 255, 255, 0));
+            textGraphics.Clear(System.Drawing.Color.FromArgb(0, 255, 255, 255));
             textGraphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 
             // Solid brush for text rendering
-            SolidBrush brush = new SolidBrush(new Color(255, 255, 255, 255));
+            SolidBrush brush = new SolidBrush(System.Drawing.Color.FromArgb(255, 255, 255, 255));
 
             // Draw all of the characters, and copy them to the full character set               
             char[] charString = new char[2];
@@ -159,7 +159,7 @@ namespace S33M3CoreComponents.Sprites
                 charString[0] = allCharsString[i];
 
                 // Draw the character
-                drawGraphics.Clear(new Color(255, 255, 255, 0));
+                drawGraphics.Clear(System.Drawing.Color.FromArgb(0, 255, 255, 255));
                 drawGraphics.DrawString(new string(charString[0], 1), _font, brush, new PointF(0, 0));
                 
                 // Figure out the amount of blank space before the character
@@ -168,9 +168,7 @@ namespace S33M3CoreComponents.Sprites
                 {
                     for (int y = 0; y < tempSize; ++y)
                     {
-                        Color color;
-                        color = drawBitmap.GetPixel(x, y);
-                        if (color.A > 0)
+                        if (drawBitmap.GetPixel(x, y).A > 0)
                         {
                             minX = x;
                             x = tempSize;
@@ -185,9 +183,7 @@ namespace S33M3CoreComponents.Sprites
                 {
                     for (int y = 0; y < tempSize; ++y)
                     {
-                        Color color;
-                        color = drawBitmap.GetPixel(x, y);
-                        if (color.A > 0)
+                        if (drawBitmap.GetPixel(x, y).A > 0)
                         {
                             maxX = x;
                             x = -1;

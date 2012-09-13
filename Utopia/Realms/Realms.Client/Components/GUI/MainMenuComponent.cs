@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using S33M3CoreComponents.Sprites;
+using S33M3Resources.Structs.Helpers;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
@@ -203,7 +204,7 @@ namespace Realms.Client.Components.GUI
 
             _helloLabel = new LabelControl { 
                 Text = "HELLO",
-                Color = new SharpDX.Color4(Color.FromArgb(198,0,75).ToArgb()),
+                Color = ColorHelper.ToColor4(Color.FromArgb(198,0,75)),
                 CustomFont = _commonResources.FontBebasNeue25
             };
             

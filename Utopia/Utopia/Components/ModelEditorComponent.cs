@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using S33M3Resources.Structs.Helpers;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -791,7 +792,7 @@ namespace Utopia.Components
             {
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = colorDialog.Color;
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_colorPalette.Count] = ColorHelper.ToColor4(colorDialog.Color);
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
                 }
             }
@@ -803,10 +804,10 @@ namespace Utopia.Components
         {
             using (var colorDialog = new ColorDialog())
             {
-                colorDialog.Color = _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex];
+                colorDialog.Color = ColorHelper.ToSystemColor(_visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex]);
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = colorDialog.Color;
+                    _visualVoxelModel.VoxelModel.ColorMapping.BlockColors[_selectedColorIndex] = ColorHelper.ToColor4(colorDialog.Color);
                     UpdateColorPalette(_visualVoxelModel.VoxelModel.ColorMapping, _selectedColorIndex);
                     _visualVoxelModel.BuildMesh();
                 }
