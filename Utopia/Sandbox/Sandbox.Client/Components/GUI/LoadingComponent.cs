@@ -55,7 +55,7 @@ namespace Sandbox.Client.Components.GUI
             _pleaseWaitLabel = new LabelControl 
             {
                 Text = "PLEASE WAIT",
-                Color = new Color4(new Color(198, 0, 75, 255).ToArgb()),
+                Color = new Color4(new Color(198, 0, 75, 255).ToRgba()),
                 CustomFont = _commonResources.FontBebasNeue25
             };
             
