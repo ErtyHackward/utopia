@@ -128,7 +128,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(PROGRAMFILES)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\sgen" /a:Utopia.Shared.dll /t:Utopia.Shared.Settings.ClientConfig /force /compiler:/platform:x86</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
