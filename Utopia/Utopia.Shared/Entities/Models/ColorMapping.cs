@@ -27,7 +27,7 @@ namespace Utopia.Shared.Entities.Models
 
                 for (var i = 0; i < colorMappingLength; i++)
                 {
-                    colorMapping.BlockColors[i] = reader.ReadInt32();
+                    colorMapping.BlockColors[i] = (Color4)reader.ReadInt32();
                 }
             }
 
@@ -46,7 +46,7 @@ namespace Utopia.Shared.Entities.Models
 
                 foreach (var t in mapping.BlockColors)
                 {
-                    writer.Write(t);
+                    writer.Write((int)t);
                 }
             }
         }

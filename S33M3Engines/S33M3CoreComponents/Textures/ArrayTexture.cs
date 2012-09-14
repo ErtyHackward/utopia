@@ -89,14 +89,7 @@ namespace S33M3DXEngine.Textures
                 //Foreach mipmap level
                 for (int mipSlice = 0; mipSlice < Imagesdesc.MipLevels; mipSlice++)
                 {
-                    box = context.MapSubresource(texturesCollection[arraySlice], mipSlice, MapMode.Read, MapFlags.None);
-
-                    context.UpdateSubresource(box,
-                                                texArray,
-                                                ArrayTextureHelper.CalcSubresource(mipSlice, arraySlice, Imagesdesc.MipLevels)
-                                                );
-
-                    context.UnmapSubresource(texturesCollection[arraySlice], mipSlice);
+                    context.CopySubresourceRegion(texturesCollection[arraySlice], mipSlice, null, texArray, Resource.CalculateSubResourceIndex(mipSlice, arraySlice, Imagesdesc.MipLevels));
                 }
             }
 
