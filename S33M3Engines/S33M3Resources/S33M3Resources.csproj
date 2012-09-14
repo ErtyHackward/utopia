@@ -8,8 +8,8 @@
     <ProjectGuid>{52E1F2EF-4462-4CC3-A783-2D3A352A2602}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>S33M3_Resources</RootNamespace>
-    <AssemblyName>S33M3_Resources</AssemblyName>
+    <RootNamespace>S33M3Resources</RootNamespace>
+    <AssemblyName>S33M3Resources</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -37,7 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\S33M3_Resources.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\S33M3Resources.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,7 +47,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\S33M3_Resources.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\S33M3Resources.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
@@ -88,6 +88,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\FloatAsInt.cs" />
+    <Compile Include="Structs\Helpers\ColorHelper.cs" />
     <Compile Include="Structs\Interpolations\IInterpolable.cs" />
     <Compile Include="Structs\Interpolations\InterpBase.cs" />
     <Compile Include="Structs\Interpolations\InterpVector3.cs" />
