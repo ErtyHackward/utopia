@@ -390,7 +390,6 @@ namespace Utopia.Components
 
         private void InitPlanes(Vector3I chunkSize)
         {
-            chunkSize = new Vector3I() - chunkSize;
             _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
             _gridFrontPlane = new Plane(chunkSize, _gridFrontNormal);
             _gridTopPlane = new Plane(chunkSize, _gridTopNormal);
@@ -1726,7 +1725,6 @@ namespace Utopia.Components
                         Vector3 point;
                         r.Intersects(ref _gridPlanes[i], out point);
 
-                        //var pos = new Vector3I(Math.Floor(point.X), Math.Floor(point.Y), Math.Floor(point.Z));
                         var pos = (Vector3I)point;
                         if (_gridPlanes[i] == _gridBottomPlane)
                         {
