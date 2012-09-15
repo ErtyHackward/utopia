@@ -61,53 +61,51 @@ namespace S33M3DXEngine.Textures
             CreateTexture2DFromFiles(device, new string[] { directory }, fileNames, miPfilterFlag, ResourceName, out textureArray, MaxMipLevels);
         }
 
-        public static void CreateTexture2D(Device device ,DeviceContext context, Texture2D[] texturesCollection, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView)
+        public static void CreateTexture2D(Device device ,DeviceContext context, Texture2D[] texturesCollection, FilterFlags miPfilterFlag, string resourceName, out ShaderResourceView textureArrayView)
         {
-
             //Create TextureArray object
-            Texture2DDescription Imagesdesc = texturesCollection[0].Description;
-            Texture2DDescription texArrayDesc = new Texture2DDescription()
-            {
-                Width = Imagesdesc.Width,
-                Height = Imagesdesc.Height,
-                MipLevels = Imagesdesc.MipLevels,
-                ArraySize = texturesCollection.Length,
-                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
-                SampleDescription = new SharpDX.DXGI.SampleDescription() { Count = 1, Quality = 0 },
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None
-            };
+            var imagesdesc = texturesCollection[0].Description;
+            var texArrayDesc = new Texture2DDescription
+                                   {
+                                       Width = imagesdesc.Width,
+                                       Height = imagesdesc.Height,
+                                       MipLevels = imagesdesc.MipLevels,
+                                       ArraySize = texturesCollection.Length,
+                                       Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                                       SampleDescription = new SharpDX.DXGI.SampleDescription { Count = 1, Quality = 0 },
+                                       Usage = ResourceUsage.Default,
+                                       BindFlags = BindFlags.ShaderResource,
+                                       CpuAccessFlags = CpuAccessFlags.None,
+                                       OptionFlags = ResourceOptionFlags.None
+                                   };
 
-            Texture2D texArray = new Texture2D(device, texArrayDesc);
-            DataBox box;
+            var texArray = new Texture2D(device, texArrayDesc);
+
             //Foreach Texture
-            //Foreach Texture
-            for (int arraySlice = 0; arraySlice < texturesCollection.Length; arraySlice++)
+            for (var arraySlice = 0; arraySlice < texturesCollection.Length; arraySlice++)
             {
                 //Foreach mipmap level
-                for (int mipSlice = 0; mipSlice < Imagesdesc.MipLevels; mipSlice++)
+                for (var mipSlice = 0; mipSlice < imagesdesc.MipLevels; mipSlice++)
                 {
-                    context.CopySubresourceRegion(texturesCollection[arraySlice], mipSlice, null, texArray, Resource.CalculateSubResourceIndex(mipSlice, arraySlice, Imagesdesc.MipLevels));
+                    context.CopySubresourceRegion(texturesCollection[arraySlice], mipSlice, null, texArray, Resource.CalculateSubResourceIndex(mipSlice, arraySlice, imagesdesc.MipLevels));
                 }
             }
 
             //Create Resource view to texture array
-            ShaderResourceViewDescription viewDesc = new ShaderResourceViewDescription()
-            {
-                Format = texArrayDesc.Format,
-                Dimension = ShaderResourceViewDimension.Texture2DArray,
-                Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource()
-                {
-                    MostDetailedMip = 0,
-                    MipLevels = texArrayDesc.MipLevels,
-                    FirstArraySlice = 0,
-                    ArraySize = texturesCollection.Length
-                }
-            };
+            var viewDesc = new ShaderResourceViewDescription
+                               {
+                                   Format = texArrayDesc.Format,
+                                   Dimension = ShaderResourceViewDimension.Texture2DArray,
+                                   Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource
+                                                        {
+                                                            MostDetailedMip = 0,
+                                                            MipLevels = texArrayDesc.MipLevels,
+                                                            FirstArraySlice = 0,
+                                                            ArraySize = texturesCollection.Length
+                                                        }
+                               };
 
-            TextureArrayView = new ShaderResourceView(device, texArray, viewDesc);
+            textureArrayView = new ShaderResourceView(device, texArray, viewDesc);
 
             //Set resource Name, will only be done at debug time.
 #if DEBUG
