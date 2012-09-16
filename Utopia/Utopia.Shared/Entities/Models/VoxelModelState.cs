@@ -93,6 +93,10 @@ namespace Utopia.Shared.Entities.Models
             for (int i = 0; i < PartsStates.Count; i++)
             {
                 var partState = PartsStates[i];
+
+                if (partState.ActiveFrame == byte.MaxValue)
+                    continue;
+
                 var bb = new BoundingBox(new Vector3(), _parentModel.Parts[i].Frames[partState.ActiveFrame].BlockData.ChunkSize);
                 
                 bb = bb.Transform(partState.GetTransformation());
