@@ -63,7 +63,7 @@ namespace Utopia.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        bool IVoxelModelStorage.Contains(string name)
+        public bool Contains(string name)
         {
             CheckName(name);
             using (var reader = Query(string.Format("SELECT id FROM models WHERE id = '{0}'", name)))
@@ -97,7 +97,10 @@ namespace Utopia.Entities
             CheckName(model.Name);
             var bytes = model.Serialize();
 
-            InsertBlob(string.Format("INSERT INTO models (id,updated,data) VALUES ('{0}', datetime('now'), @blob)", model.Name), bytes);
+            if (Contains(model.Name))
+                Delete(model.Name);
+
+            InsertBlob(string.Format("INSERT INTO models (id, updated, data) VALUES ('{0}', datetime('now'), @blob)", model.Name), bytes);
         }
 
         /// <summary>
@@ -129,7 +132,19 @@ namespace Utopia.Entities
             {
                 while (reader.Read())
                 {
-                    yield return ((byte[])reader.GetValue(0)).Deserialize<VoxelModel>();
+                    VoxelModel model = null;
+
+                    try
+                    {
+                        model = ((byte[])reader.GetValue(0)).Deserialize<VoxelModel>();
+                    }
+                    catch (InvalidDataException x)
+                    {
+                        Logger.Error("Unable to load model: " + x.Message);
+                    }
+
+                    if (model != null)
+                        yield return model;
                 }
             }
         }

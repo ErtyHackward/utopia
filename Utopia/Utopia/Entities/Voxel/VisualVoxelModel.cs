@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SharpDX;
 using Utopia.Shared.Entities.Models;
 using UtopiaContent.Effects.Entities;
@@ -46,13 +44,11 @@ namespace Utopia.Entities.Voxel
         {
             get { return _visualParts; }
         }
-    
 
         public VisualVoxelModel(VoxelModel model, VoxelMeshFactory voxelMeshFactory)
         {
             _model = model;
             _voxelMeshFactory = voxelMeshFactory;
-            
         }
 
         /// <summary>
@@ -109,7 +105,7 @@ namespace Utopia.Entities.Voxel
         {
             if (_visualParts != null)
             {
-                // dispose prevoious dx data
+                // dispose prevoious DX data
                 foreach (var visualVoxelPart in _visualParts)
                 {
                     for (int i = 0; i < visualVoxelPart.VertexBuffers.Length; i++)
@@ -180,6 +176,9 @@ namespace Utopia.Entities.Voxel
                 var voxelModelPartState = state.PartsStates[i];
 
                 if (_visualParts[i] == null) continue;
+
+                if (voxelModelPartState.ActiveFrame == byte.MaxValue)
+                    continue;
 
                 var vb = _visualParts[i].VertexBuffers[voxelModelPartState.ActiveFrame];
                 var ib = _visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];

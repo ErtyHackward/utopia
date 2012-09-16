@@ -18,7 +18,7 @@ namespace Utopia.Shared.Entities.Models
         private Matrix? _transform;
 
         /// <summary>
-        /// Current active frame
+        /// Current active frame, set byte.MaxValue to hide
         /// </summary>
         public byte ActiveFrame;
         
@@ -131,8 +131,7 @@ namespace Utopia.Shared.Entities.Models
             Translation = reader.ReadVector3();
             RotationOffset = reader.ReadVector3();
             
-
-            bool havePalmTransform = reader.ReadBoolean();
+            var havePalmTransform = reader.ReadBoolean();
             if (havePalmTransform)
             {
                 PalmTransform = reader.ReadMatrix();

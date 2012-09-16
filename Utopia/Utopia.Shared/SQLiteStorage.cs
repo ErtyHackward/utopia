@@ -10,7 +10,7 @@ namespace Utopia.Shared
     /// </summary>
     public abstract class SQLiteStorage : IDisposable
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private bool _isDisposed = false;
         private SQLiteConnection _connection;

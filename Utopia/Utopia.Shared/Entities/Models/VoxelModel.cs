@@ -12,6 +12,8 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModel : IBinaryStorable
     {
+        public const int ModelFormatVersion = 1;
+
         public VoxelModel()
         {
             Parts = new List<VoxelModelPart>();
@@ -58,6 +60,8 @@ namespace Utopia.Shared.Entities.Models
             {
                 var writer = new BinaryWriter(ms);
 
+                writer.Write(ModelFormatVersion);
+
                 ColorMapping.Write(writer, ColorMapping);
 
                 foreach (var voxelModelPart in Parts)
@@ -96,6 +100,8 @@ namespace Utopia.Shared.Entities.Models
         {
             UpdateHash();
 
+            writer.Write(ModelFormatVersion);
+
             writer.Write(Name);
 
             if (Hash != null)
@@ -126,6 +132,11 @@ namespace Utopia.Shared.Entities.Models
 
         public void Load(BinaryReader reader)
         {
+            var version = reader.ReadInt32();
+
+            if (version != ModelFormatVersion)
+                throw new InvalidDataException("Invalid model format version. Convert models to the v" + ModelFormatVersion + " format to use");
+
             Name = reader.ReadString();
 
             var count = reader.ReadByte();
@@ -217,6 +228,18 @@ namespace Utopia.Shared.Entities.Models
                 voxelModel.Load(reader);
             }
             return voxelModel;
+        }
+
+        /// <summary>
+        /// Returns first arm (if any) otherwise null
+        /// </summary>
+        /// <returns></returns>
+        public VoxelModelPartState GetArm()
+        {
+            var index = Parts.FindIndex(p => p.IsArm);
+            if (index == -1)
+                return null;
+            return States[0].PartsStates[index];
         }
     }
 }

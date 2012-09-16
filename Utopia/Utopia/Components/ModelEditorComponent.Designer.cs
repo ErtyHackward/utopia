@@ -106,6 +106,7 @@ namespace Utopia.Components
         private ListControl _partsList;
         private ListControl _framesList;
         private ButtonControl _saveButton;
+        private StickyButtonControl _toolSetPositionButton;
 
 
         private void InitializeGui()
@@ -263,11 +264,11 @@ namespace Utopia.Components
 
 
 
-            var framesLabel = new LabelControl { Text = "Frames" };
-            framesLabel.Bounds = new UniRectangle(0, 0, 60, 20);
+            var framesLabel = new LabelControl { Text = "Frames", Bounds = new UniRectangle(0, 0, 25, 20) };
             var framesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 35, 20) };
             var framesEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
             var framesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
+            var framesHideButton = new ButtonControl { Text = "Hide", Bounds = new UniRectangle(0, 0, 35, 20) };
             _framesList = new ListControl { Name = "framesList", LayoutFlags = ControlLayoutFlags.WholeRow };
             _framesList.Bounds = new UniRectangle(0, 0, 180, 50);
             _framesList.SelectionMode = ListSelectionMode.Single;
@@ -276,12 +277,14 @@ namespace Utopia.Components
             framesAddButton.Pressed += delegate { OnFrameAddPressed(); };
             framesEditButton.Pressed += delegate { OnFrameEditPressed(); };
             framesDeleteButton.Pressed += delegate { OnFrameDeletePressed(); };
+            framesHideButton.Pressed += delegate { OnFrameHidePressed(); };
             _framesGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 90), LayoutFlags = ControlLayoutFlags.WholeRow };
 
             _framesGroup.Children.Add(framesLabel);
             _framesGroup.Children.Add(framesAddButton);
             _framesGroup.Children.Add(framesEditButton);
             _framesGroup.Children.Add(framesDeleteButton);
+            _framesGroup.Children.Add(framesHideButton);
             _framesGroup.Children.Add(_framesList);
 
 
@@ -446,9 +449,16 @@ namespace Utopia.Components
             var importButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import" };
             importButton.Pressed += delegate { OnImport(); };
 
+            var exportAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Export all" };
+            exportAllButton.Pressed += delegate { OnExportAll(); };
+            var importAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import all" };
+            importAllButton.Pressed += delegate { OnImportAll(); };
+
             _mainToolsGroup.Children.Add(_saveButton);
             _mainToolsGroup.Children.Add(importButton);
             _mainToolsGroup.Children.Add(exportButton);
+            _mainToolsGroup.Children.Add(importAllButton);
+            _mainToolsGroup.Children.Add(exportAllButton);
 
             #endregion
 
@@ -648,15 +658,23 @@ namespace Utopia.Components
             scaleTools.Pressed += delegate { OnLayoutGroupSelected(LayoutTool.Scale); };
 
             #region Layout tools
-            _vpLayout = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _vpLayout = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             var copyLayoutButton = new ButtonControl { Text = "Copy layout", Bounds = new UniRectangle(0, 0, 100, 20) };
             copyLayoutButton.Pressed += delegate { OnLayoutCopy(); };
             var pasteLayoutButton = new ButtonControl { Text = "Paste layout", Bounds = new UniRectangle(0, 0, 100, 20) };
             pasteLayoutButton.Pressed += delegate { OnLayoutPaste(); };
+            var toolLabel = new LabelControl { Text = "Tool position:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow };
+            _toolSetPositionButton = new StickyButtonControl { Text = "Set tool mount point", Bounds = new UniRectangle(0, 0, 120, 20) };
+            _toolSetPositionButton.Pressed += delegate { OnSetToolPosition(); };
+            var rotateToolButton = new ButtonControl { Text = "Rotate tool", Bounds = new UniRectangle(0, 0, 100, 20) };
+            rotateToolButton.Pressed += delegate { OnRotateTool(); };
 
             _vpLayout.Children.Add(copyLayoutButton);
             _vpLayout.Children.Add(pasteLayoutButton);
+            _vpLayout.Children.Add(toolLabel);
+            _vpLayout.Children.Add(_toolSetPositionButton);
+            _vpLayout.Children.Add(rotateToolButton);
             _vpLayout.UpdateLayout();
 
             #endregion
