@@ -4,9 +4,9 @@ using Utopia.Shared.Entities.Inventory;
 namespace Utopia.Shared.Entities.Dynamic
 {
     /// <summary>
-    /// Provides character base properties. Character entity has an equipment and inventory
+    /// Provides character base properties. Character entity has an equipment and inventory. It can wear the tool.
     /// </summary>
-    public abstract class CharacterEntity : DynamicEntity
+    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity
     {
         protected CharacterEntity()
         {

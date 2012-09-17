@@ -109,7 +109,7 @@ namespace S33M3DXEngine.Textures
 
             //Set resource Name, will only be done at debug time.
 #if DEBUG
-            TextureArrayView.DebugName = ResourceName;
+            textureArrayView.DebugName = resourceName;
 #endif
 
             //Disposing resources used to create the texture array
