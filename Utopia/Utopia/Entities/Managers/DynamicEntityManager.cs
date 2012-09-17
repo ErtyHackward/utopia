@@ -12,6 +12,7 @@ using Utopia.Entities.Voxel;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
@@ -43,6 +44,8 @@ namespace Utopia.Entities.Managers
         }
         
         private HLSLVoxelModelInstanced _voxelModelEffect;
+        private HLSLVoxelModel _voxelToolEffect;
+
         private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
         private readonly D3DEngine _d3DEngine;
         private readonly VoxelModelManager _voxelModelManager;
@@ -52,12 +55,13 @@ namespace Utopia.Entities.Managers
         private readonly PlayerEntityManager _playerEntityManager;
         private SingleArrayChunkContainer _chunkContainer;
         private int _staticEntityViewRange;
-        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
-
+        private IDynamicEntity _playerEntity;
+        private Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>> _toolsModels = new Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>>();
+        
         // collection of the models and instances
         private readonly Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
-
-        private IDynamicEntity _playerEntity;
+        
+        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
 
         /// <summary>
         /// Gets or sets current player entity to display
@@ -188,15 +192,16 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent(DeviceContext context)
         {
-            _voxelModelEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
+            _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
+            _voxelToolEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
         }
 
         public override void UnloadContent()
         {
-            this.DisableComponent();
+            DisableComponent();
             foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
             _dynamicEntitiesDico.Clear();
-            this.IsInitialized = false;
+            IsInitialized = false;
         }
 
         private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
@@ -248,6 +253,8 @@ namespace Utopia.Entities.Managers
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
 
+
+
             //For each existing model
             foreach (var modelAndInstances in _models)
             {
@@ -272,6 +279,42 @@ namespace Utopia.Entities.Managers
                 var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero);
                 modelAndInstances.Value.VisualModel.DrawInstanced(_d3DEngine.ImmediateContext, _voxelModelEffect, instancesToDraw);
             }
+
+            _voxelToolEffect.Begin(context);
+            _voxelToolEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+            _voxelToolEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelToolEffect.CBPerFrame.IsDirty = true;
+            _voxelToolEffect.Apply(context);
+
+            // draw tools 
+            foreach (var pair in _dynamicEntitiesDico)
+            {
+                var charEntity = pair.Value.DynamicEntity as CharacterEntity;
+                if (charEntity != null)
+                {
+                    var voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
+                    if (voxelItem != null && !string.IsNullOrEmpty(voxelItem.ModelName))
+                    {
+                        // get the model and instance
+                        KeyValuePair<VisualVoxelModel, VoxelModelInstance> mPair;
+                        if (!_toolsModels.TryGetValue(voxelItem.ModelName, out mPair))
+                        {
+                            var model = _voxelModelManager.GetModel(voxelItem.ModelName, false);
+                            mPair = new KeyValuePair<VisualVoxelModel, VoxelModelInstance>(model,
+                                                                                           model.VoxelModel.
+                                                                                               CreateInstance());
+                            _toolsModels.Add(voxelItem.ModelName, mPair);
+                        }
+
+                        // setup the tool position
+                        mPair.Value.World = charEntity.ModelInstance.GetToolTransform();
+
+                        // draw it
+                        mPair.Key.Draw(_d3DEngine.ImmediateContext, _voxelToolEffect, mPair.Value);
+                    }
+                }
+            }
+
         }
 
         public void AddEntity(IDynamicEntity entity)
@@ -305,11 +348,12 @@ namespace Utopia.Entities.Managers
                 _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
                 DynamicEntities.Add(newEntity);
 
-                //If the Model do have a Voxel Model (Search by Name)
+                //If the Model has a Voxel Model (Search by Name)
                 if (modelWithInstances.VisualModel != null)
                 {
                     //Create a new Instance of the Model
                     var instance = new VoxelModelInstance(modelWithInstances.VisualModel.VoxelModel);
+                    entity.ModelInstance = instance;
                     modelWithInstances.Instances.Add(entity.DynamicId, instance);
                     _dynamicEntitiesDico[entity.DynamicId].ModelInstance = instance;
                 }

@@ -161,6 +161,25 @@ namespace Utopia.Shared.Entities.Models
         }
 
         /// <summary>
+        /// Returns world matrix to draw the tool
+        /// </summary>
+        /// <returns></returns>
+        public Matrix GetToolTransform()
+        {
+            var armIndex = VoxelModel.GetArmIndex();
+
+            var arm = VoxelModel.GetArm();
+
+            if (armIndex == -1 || !arm.PalmTransform.HasValue)
+                return Matrix.Identity;
+
+            // palmTransform value is stored only in the first state (wich is returned by GetArm())
+            // so we can't use current state palmTrasform value
+
+            return arm.PalmTransform.Value * State.PartsStates[armIndex].GetTransformation() * Matrix.RotationQuaternion(Quaternion.Invert(Rotation)) * World;
+        }
+
+        /// <summary>
         /// Determines whether the animation can be played
         /// </summary>
         /// <param name="animationName"></param>

@@ -1,7 +1,5 @@
-﻿using System.IO;
-using S33M3Resources.Structs;
+﻿using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
-using SharpDX;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
 {

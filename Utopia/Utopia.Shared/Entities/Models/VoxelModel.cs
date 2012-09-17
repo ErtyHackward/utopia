@@ -236,10 +236,31 @@ namespace Utopia.Shared.Entities.Models
         /// <returns></returns>
         public VoxelModelPartState GetArm()
         {
-            var index = Parts.FindIndex(p => p.IsArm);
+            var index = GetArmIndex();
+
             if (index == -1)
                 return null;
+
             return States[0].PartsStates[index];
+        }
+
+        public int GetArmIndex()
+        {
+            return Parts.FindIndex(p => p.IsArm);
+        }
+
+        /// <summary>
+        /// Returns main state (called main or the first)
+        /// </summary>
+        /// <returns></returns>
+        public VoxelModelState GetMainState()
+        {
+            var mainIndex = States.FindIndex(s => s.Name == "Main");
+
+            if (mainIndex == -1)
+                mainIndex = 0;
+
+            return States[mainIndex];
         }
     }
 }
