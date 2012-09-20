@@ -1,12 +1,12 @@
 ﻿using System;
 using SharpDX;
 using SharpDX.Direct3D11;
+using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using UtopiaContent.Effects.Entities;
 using Utopia.Shared.Cubes;
-using Utopia.Worlds.Cubes;
 using System.Collections.Generic;
 using SharpDX.DXGI;
 using Utopia.Shared.Settings;
@@ -22,23 +22,26 @@ using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3Resources.Structs;
-using S33M3CoreComponents.Cameras.Interfaces;
-using Resource = SharpDX.Direct3D11.Resource;
 using Utopia.Shared.GameDXStates;
 
 namespace Utopia.Entities
 {
     /// <summary>
-    /// Provides cached access to items icons
+    /// Provides cached access to item icons
     /// </summary>
     public class IconFactory : GameComponent
     {
         #region private variables
         private readonly D3DEngine _d3DEngine;
+        private readonly VoxelModelManager _modelManager;
         public const int IconSize = 64;
         private ShaderResourceView _iconsTextureArray;
-
         private SpriteTexture _iconTextureArray;
+
+        // holds cached textures of the voxel models
+        private Dictionary<string, SpriteTexture> _dictionary = new Dictionary<string, SpriteTexture>();
+
+        private HLSLVoxelModel _voxelEffect;
 
         private int _nbrCubeIcon;
 
@@ -47,9 +50,10 @@ namespace Utopia.Entities
         #region public Variables/properties
         #endregion
 
-        public IconFactory(D3DEngine d3DEngine)
+        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager)
         {
             _d3DEngine = d3DEngine;
+            _modelManager = modelManager;
         }
 
         public override void LoadContent(DeviceContext context)
@@ -74,7 +78,7 @@ namespace Utopia.Entities
             }
 
             cubeTextureView.Dispose();
-            foreach (Texture2D tex in spriteTextures) tex.Dispose();
+            foreach (var tex in spriteTextures) tex.Dispose();
         }
 
         public override void BeforeDispose()
