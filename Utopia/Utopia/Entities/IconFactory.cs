@@ -23,6 +23,7 @@ using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3Resources.Structs;
 using Utopia.Shared.GameDXStates;
+using Resource = SharpDX.Direct3D11.Resource;
 
 namespace Utopia.Entities
 {
@@ -147,7 +148,7 @@ namespace Utopia.Entities
             //Create the render texture
             var texture = ToDispose(new RenderedTexture2D(_d3DEngine, IconSize, IconSize, Format.R8G8B8A8_UNorm)
             {
-                BackGroundColor = new Color4(255, 255, 255, 0)
+                BackGroundColor = new Color4(255, 0, 0, 0)
             });
 
             float aspectRatio = IconSize / IconSize;
@@ -159,7 +160,7 @@ namespace Utopia.Entities
             {
                 texture.Begin();
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
 
                 _voxelEffect.Begin(context);
 
@@ -186,7 +187,12 @@ namespace Utopia.Entities
 
                 texture.End(false);
 
-                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(_d3DEngine.Device, texture.CloneTexture(ResourceUsage.Default)));
+
+                var tex2D = texture.CloneTexture(ResourceUsage.Default);
+
+                //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
+
+                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(tex2D));
 
             }
 
@@ -242,7 +248,7 @@ namespace Utopia.Entities
             context.UnmapSubresource(sTexture, 0);
             dataStream.Dispose();
 
-            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture);
+            SpriteTexture spriteTexture = new SpriteTexture(sTexture);
             spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, spriteTexture.ScreenPosition.X + textureSize, spriteTexture.ScreenPosition.Y + textureSize) ;
             sTexture.Dispose();
 
