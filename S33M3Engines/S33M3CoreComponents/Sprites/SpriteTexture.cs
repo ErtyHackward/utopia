@@ -68,11 +68,11 @@ namespace S33M3CoreComponents.Sprites
             tex.Dispose();
         }
 
-        public SpriteTexture(Device device, Texture2D texture)
+        public SpriteTexture(Texture2D texture)
         {
             if (texture == null) throw new ArgumentNullException("texture");
 
-            CreateResource(device, texture, Vector2I.Zero);
+            CreateResource(texture.Device, texture, Vector2I.Zero);
         }
 
         public SpriteTexture(Device device, Texture2D texture, Vector2I screenPosition)
