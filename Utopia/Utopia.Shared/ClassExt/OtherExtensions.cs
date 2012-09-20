@@ -36,6 +36,16 @@ namespace S33M3Resources.Structs
         }
 
         /// <summary>
+        /// Gets the size of the bounding box
+        /// </summary>
+        /// <param name="box"></param>
+        /// <returns></returns>
+        public static Vector3 GetSize(this BoundingBox box)
+        {
+            return box.Maximum - box.Minimum;
+        }
+
+        /// <summary>
         /// Transforms all corners of the bounding box and produces a new box containing all corners
         /// </summary>
         /// <param name="box"></param>

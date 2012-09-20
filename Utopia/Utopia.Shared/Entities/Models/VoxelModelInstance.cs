@@ -157,7 +157,16 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public void UpdateStates()
         {
-            _internalState = new VoxelModelState(VoxelModel.States[0]);
+            SetState(new VoxelModelState(VoxelModel.States[0]));
+        }
+
+        /// <summary>
+        /// Changes current instance active state
+        /// </summary>
+        /// <param name="state"></param>
+        public void SetState(VoxelModelState state)
+        {
+            _internalState = new VoxelModelState(state);
         }
 
         /// <summary>
