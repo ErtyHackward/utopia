@@ -148,7 +148,7 @@ namespace Utopia.Entities
             //Create the render texture
             var texture = ToDispose(new RenderedTexture2D(_d3DEngine, IconSize, IconSize, Format.R8G8B8A8_UNorm)
             {
-                BackGroundColor = new Color4(255, 0, 0, 0)
+                BackGroundColor = new Color4(0, 0, 0, 0)
             });
 
             float aspectRatio = IconSize / IconSize;
@@ -223,7 +223,7 @@ namespace Utopia.Entities
             //Create the render texture
             RenderedTexture2D texture = ToDispose(new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)
             {
-                BackGroundColor = new Color4(255, 255, 255, 0)
+                BackGroundColor = new Color4(0, 0, 0, 0)
             });
 
             Texture2DDescription SpriteTextureDesc = new Texture2DDescription()
