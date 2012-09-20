@@ -39,7 +39,7 @@ namespace Utopia.Entities
         private SpriteTexture _iconTextureArray;
 
         // holds cached textures of the voxel models
-        private Dictionary<string, SpriteTexture> _dictionary = new Dictionary<string, SpriteTexture>();
+        private readonly Dictionary<string, SpriteTexture> _voxelIcons = new Dictionary<string, SpriteTexture>();
 
         private HLSLVoxelModel _voxelEffect;
 
@@ -79,6 +79,9 @@ namespace Utopia.Entities
 
             cubeTextureView.Dispose();
             foreach (var tex in spriteTextures) tex.Dispose();
+
+            _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+            CreateVoxelIcons(context);
         }
 
         public override void BeforeDispose()
@@ -115,7 +118,9 @@ namespace Utopia.Entities
             }
             else if (item is Item)
             {
-                Item voxelItem = item as Item;
+                var voxelItem = item as Item;
+
+                _voxelIcons.TryGetValue(voxelItem.ModelName, out texture);
 
                 //2 options : 
                 // option 1 :  draw voxelModel in a render target texture (reuse/pool while unchanged)
@@ -137,7 +142,59 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
-        private List<Texture2D> Create3DBlockIcons(DeviceContext context, ShaderResourceView _cubesTexture)
+        private void CreateVoxelIcons(DeviceContext context)
+        {
+            //Create the render texture
+            var texture = ToDispose(new RenderedTexture2D(_d3DEngine, IconSize, IconSize, Format.R8G8B8A8_UNorm)
+            {
+                BackGroundColor = new Color4(255, 255, 255, 0)
+            });
+
+            float aspectRatio = IconSize / IconSize;
+            Matrix projection;
+            Matrix.PerspectiveFovLH((float)Math.PI / 3.6f, aspectRatio, 0.5f, 100f, out projection);
+            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
+
+            foreach (var visualVoxelModel in _modelManager.Enumerate())
+            {
+                texture.Begin();
+
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+
+                _voxelEffect.Begin(context);
+
+                _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
+                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(view * projection);
+                _voxelEffect.CBPerFrame.IsDirty = true;
+
+                var instance = visualVoxelModel.VoxelModel.CreateInstance();
+
+                var state = visualVoxelModel.VoxelModel.GetMainState();
+
+                instance.SetState(state);
+                var size = state.BoundingBox.GetSize();
+
+                var offset = - size / 2 - state.BoundingBox.Minimum;
+
+                const float scaleFactor = 1.6f; // the bigger factor the bigger items
+
+                var scale = Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
+
+                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+
+                visualVoxelModel.Draw(context, _voxelEffect, instance);
+
+                texture.End(false);
+
+                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(_d3DEngine.Device, texture.CloneTexture(ResourceUsage.Default)));
+
+            }
+
+            //Reset device Default render target
+            _d3DEngine.SetRenderTargetsAndViewPort();
+        }
+
+        private List<Texture2D> Create3DBlockIcons(DeviceContext context, ShaderResourceView cubesTexture)
         {
             List<Texture2D> createdIconsTexture = new List<Texture2D>();
 
@@ -185,7 +242,7 @@ namespace Utopia.Entities
             context.UnmapSubresource(sTexture, 0);
             dataStream.Dispose();
 
-            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture, Vector2I.Zero);
+            SpriteTexture spriteTexture = new SpriteTexture(_d3DEngine.Device, sTexture);
             spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, spriteTexture.ScreenPosition.X + textureSize, spriteTexture.ScreenPosition.Y + textureSize) ;
             sTexture.Dispose();
 
@@ -265,7 +322,7 @@ namespace Utopia.Entities
                 shader.CBPerDraw.Values.World = Matrix.Transpose(WorldScale * Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5));
                 shader.CBPerDraw.IsDirty = true;
 
-                shader.DiffuseTexture.Value = _cubesTexture;
+                shader.DiffuseTexture.Value = cubesTexture;
 
                 shader.Apply(context);
                 //Set the buffer to the device
