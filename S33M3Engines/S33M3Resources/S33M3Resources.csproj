@@ -78,6 +78,7 @@
     <Compile Include="Effects\Basics\HLSLScreenSpaceRect.cs" />
     <Compile Include="Effects\Debug\DebugEffect.cs" />
     <Compile Include="Effects\Debug\HLSLColumnChart.cs" />
+    <Compile Include="Effects\Sprites\HLSLBlur.cs" />
     <Compile Include="Effects\Sprites\HLSLPointSprite3D.cs" />
     <Compile Include="Effects\Sprites\HLSLSprites.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionColor.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="VertexFormats\VertexPointSprite.cs" />
     <Compile Include="VertexFormats\VertexPosition.cs" />
     <Compile Include="VertexFormats\VertexPosition2.cs" />
+    <Compile Include="VertexFormats\VertexPosition2Texture.cs" />
     <Compile Include="VertexFormats\VertexPosition3Color.cs" />
     <Compile Include="VertexFormats\VertexPosition4Color.cs" />
     <Compile Include="VertexFormats\VertexPositionColorTexture.cs" />
@@ -136,13 +138,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Sprites\Billboard.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Sprites\PointSprite3D.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Sprites\Sprites.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Basics\VertexPositionColor.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -158,7 +160,7 @@
     </None>
     <None Include="Effects\Basics\VertexPositionTextureArrays.fx" />
     <None Include="Effects\Sprites\Sprites2.hlsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +195,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Effects\Sprites\Blur.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
