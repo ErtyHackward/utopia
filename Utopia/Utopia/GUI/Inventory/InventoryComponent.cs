@@ -155,7 +155,8 @@ namespace Utopia.GUI.Inventory
             {
                 Bounds = new UniRectangle(-100, -100, InventoryWindow.CellSize, InventoryWindow.CellSize),
                 DrawCellBackground = false,
-                IsClickTransparent = true
+                IsClickTransparent = true, 
+                DrawGroupId = 1
             };
         }
 
