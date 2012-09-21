@@ -1,5 +1,7 @@
 ﻿using System;
+using S33M3Resources.Effects.Sprites;
 using SharpDX;
+using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Concrete;
@@ -44,6 +46,10 @@ namespace Utopia.Entities
 
         private HLSLVoxelModel _voxelEffect;
 
+        private HLSLBlur _blurEffect;
+        private VertexBuffer<VertexPosition2Texture> _blurVertexBuffer;
+        private IndexBuffer<short> _iBuffer;
+
         private int _nbrCubeIcon;
 
         #endregion
@@ -81,7 +87,25 @@ namespace Utopia.Entities
             cubeTextureView.Dispose();
             foreach (var tex in spriteTextures) tex.Dispose();
 
-            _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
+            _iBuffer = ToDispose(new IndexBuffer<short>(_d3DEngine.Device, 6, SharpDX.DXGI.Format.R16_UInt, "Blur_iBuffer"));
+            _blurVertexBuffer = ToDispose(new VertexBuffer<VertexPosition2Texture>(_d3DEngine.Device, 4, VertexPosition2Texture.VertexDeclaration, PrimitiveTopology.TriangleList, "Blur_vBuffer", ResourceUsage.Immutable));
+
+            //Load data into the VB  => NOT Thread safe, MUST be done in the loadcontent
+            VertexPosition2Texture[] vertices =
+                {
+                    new VertexPosition2Texture(new Vector2(-1.00f, -1.00f), new Vector2(-1.00f, -1.00f)),
+                    new VertexPosition2Texture(new Vector2(1.00f, -1.00f), new Vector2(1.00f, -1.00f)),
+                    new VertexPosition2Texture(new Vector2(1.00f, 1.00f), new Vector2(1.00f, 1.00f)),
+                    new VertexPosition2Texture(new Vector2(-1.00f, 1.00f), new Vector2(-1.00f, 1.00f))
+                };
+            _blurVertexBuffer.SetData(context, vertices);
+
+            //Load data into the IB => NOT Thread safe, MUST be done in the loadcontent
+            short[] indices = { 3, 0, 2, 0, 1, 2 };
+            _iBuffer.SetData(context, indices);
+
+            _blurEffect = ToDispose(new HLSLBlur(_d3DEngine.Device));
+            _voxelEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             CreateVoxelIcons(context);
         }
 
@@ -151,6 +175,11 @@ namespace Utopia.Entities
                 BackGroundColor = new Color4(0, 0, 0, 0)
             });
 
+            var blurredTex = ToDispose(new RenderedTexture2D(_d3DEngine, IconSize, IconSize, Format.R8G8B8A8_UNorm)
+            {
+                BackGroundColor = new Color4(0, 0, 0, 0)
+            });
+
             float aspectRatio = IconSize / IconSize;
             Matrix projection;
             Matrix.PerspectiveFovLH((float)Math.PI / 3.6f, aspectRatio, 0.5f, 100f, out projection);
@@ -190,7 +219,26 @@ namespace Utopia.Entities
 
                 var tex2D = texture.CloneTexture(ResourceUsage.Default);
 
-                //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
+
+
+                blurredTex.Begin();
+
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+
+                _blurVertexBuffer.SetToDevice(context, 0);
+                _iBuffer.SetToDevice(context, 0);
+
+                _blurEffect.Begin(context);
+                _blurEffect.SpriteTexture.Value = new SpriteTexture(tex2D).Texture;
+                _blurEffect.Apply(context);
+
+                context.DrawIndexed(6, 0, 0);
+                
+                blurredTex.End(false);
+
+                var tex2DBlurred = blurredTex.CloneTexture(ResourceUsage.Default);
+
+                Resource.ToFile(context, tex2DBlurred, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + "-blur.png");
 
                 _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(tex2D));
 
