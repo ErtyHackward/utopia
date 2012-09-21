@@ -291,7 +291,7 @@ namespace S33M3CoreComponents.Sprites
                                                 AddressV = TextureAddressMode.Wrap,
                                                 AddressW = TextureAddressMode.Wrap,
                                                 //Filter = Filter.MinLinearMagMipPoint,
-                                                Filter = Filter.MinMagMipPoint,
+                                                Filter = Filter.MinMagMipPoint, // MinMagMipPoint,
                                                 MaximumLod = float.MaxValue,
                                                 MinimumLod = 0
                                             }));

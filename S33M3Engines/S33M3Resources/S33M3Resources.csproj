@@ -79,6 +79,7 @@
     <Compile Include="Effects\Debug\DebugEffect.cs" />
     <Compile Include="Effects\Debug\HLSLColumnChart.cs" />
     <Compile Include="Effects\Sprites\HLSLBlur.cs" />
+    <Compile Include="Effects\Sprites\HLSLColorOverlay.cs" />
     <Compile Include="Effects\Sprites\HLSLPointSprite3D.cs" />
     <Compile Include="Effects\Sprites\HLSLSprites.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionColor.cs" />
@@ -200,6 +201,9 @@
     <Content Include="Effects\Sprites\Blur.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Effects\Sprites\ColorOverlay.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

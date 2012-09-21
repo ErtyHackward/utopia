@@ -24,7 +24,7 @@ namespace Utopia.GUI.Inventory
         private readonly IconFactory _iconFactory;
         private readonly Point _windowStartPosition;
         protected readonly Point GridOffset;
-        public const int CellSize = 38;
+        public const int CellSize = 52;
         
         /// <summary>
         /// Occurs when some slot get clicked
