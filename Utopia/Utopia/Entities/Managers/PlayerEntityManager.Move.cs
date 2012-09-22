@@ -72,7 +72,14 @@ namespace Utopia.Entities.Managers
                 Player.BodyRotation = Quaternion.Lerp(Player.BodyRotation, targetRotation, (float)Vector3D.Distance(Player.Position, _worldPosition));
             }
             Player.Position = _worldPosition;
-            Player.HeadRotation = _entityRotations.EyeOrientation;
+            if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.FirstPerson)
+            {
+                Player.HeadRotation = _entityRotations.EyeOrientation;
+            }
+            else
+            {
+                Player.HeadRotation = Player.BodyRotation;
+            }
         }
 
         /// <summary>
