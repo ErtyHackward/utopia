@@ -468,22 +468,22 @@ namespace Utopia.Components
             _frameToolsGroup.Children.Add(new LabelControl { Text = "Tools", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
             var toolEditButton = new StickyButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 70, 20), Sticked = true };
-            toolEditButton.Pressed += delegate { _selectedFrameToolIndex = 0; OnFrameToolSelected(FrameEditorTools.Edit); };
+            toolEditButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.Edit); };
 
             var toolColorBrushButton = new StickyButtonControl { Text = "Color brush", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorBrushButton.Pressed += delegate { _selectedFrameToolIndex = 1; OnFrameToolSelected(FrameEditorTools.ColorBrush); };
+            toolColorBrushButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.ColorBrush); };
 
             var toolColorFillButton = new StickyButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorFillButton.Pressed += delegate { _selectedFrameToolIndex = 2; OnFrameToolSelected(FrameEditorTools.FillBrush); };
+            toolColorFillButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.FillBrush); };
 
             var toolSliceColorBrush = new StickyButtonControl { Text = "Slice color", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolSliceColorBrush.Pressed += delegate { _selectedFrameToolIndex = 3; OnFrameToolSelected(FrameEditorTools.SliceBrush); };
+            toolSliceColorBrush.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.SliceBrush); };
 
             var presetTool = new StickyButtonControl { Text = "Preset", Bounds = new UniRectangle(0, 0, 70, 20) };
-            presetTool.Pressed += delegate { _selectedFrameToolIndex = -1; OnFrameToolSelected(FrameEditorTools.Preset); };
+            presetTool.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.Preset); };
 
             var selectionTool = new StickyButtonControl { Text = "Selection", Bounds = new UniRectangle(0, 0, 70, 20) };
-            selectionTool.Pressed += delegate { _selectedFrameToolIndex = 4; OnFrameToolSelected(FrameEditorTools.Selection); };
+            selectionTool.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.Selection); };
 
             _frameToolsGroup.Children.Add(toolEditButton);
             _frameToolsGroup.Children.Add(toolColorBrushButton);
@@ -779,13 +779,14 @@ namespace Utopia.Components
             _toolsWindow.Children.Clear();
             _toolsWindow.Children.Add(_modesButtonsGroup);
             _toolsWindow.Children.Add(_layoutToolsGroup);
-            
+            _cursorMode = false;
             switch (group)
             {
                 case LayoutTool.Move:
                     _toolsWindow.Children.Add(_vpLayout);
                     break;
                 case LayoutTool.Rotate:
+                    _cursorMode = true;
                     _toolsWindow.Children.Add(_vpRotate);
                     break;
                 case LayoutTool.Scale:
@@ -800,6 +801,7 @@ namespace Utopia.Components
 
         private void OnFrameToolSelected(FrameEditorTools tool)
         {
+            _frameEditorTool = tool;
             _toolsWindow.Children.Clear();
             _toolsWindow.Children.Add(_modesButtonsGroup);
             _toolsWindow.Children.Add(_frameToolsGroup);
@@ -853,6 +855,7 @@ namespace Utopia.Components
 
     public enum FrameEditorTools
     {
+        None,
         Edit,
         ColorBrush,
         FillBrush,

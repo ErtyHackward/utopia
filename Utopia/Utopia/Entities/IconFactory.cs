@@ -213,7 +213,7 @@ namespace Utopia.Entities
 
                 var scale = Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
 
-                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
 
                 visualVoxelModel.Draw(context, _voxelEffect, instance);
 
@@ -224,7 +224,7 @@ namespace Utopia.Entities
 
                 tex2D = DrawOuterShadow(context, texture, tex2D);
                 
-                Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
+                //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
 
                 _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(tex2D));
 
