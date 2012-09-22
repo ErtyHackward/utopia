@@ -15,11 +15,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
             if (control.Stretch)
             {
-                graphics.DrawCustomTexture(control.Image, ref rect);
+                graphics.DrawCustomTexture(control.Image, ref rect, 0, control.DrawGroupId);
             }
             else
             {
-                graphics.DrawCustomTextureTiled(control.Image, ref rect);
+                graphics.DrawCustomTextureTiled(control.Image, ref rect, 0 , control.DrawGroupId);
             }
         }
     }

@@ -43,6 +43,19 @@ namespace Utopia.GUI.Inventory
             set { _slot = value; }
         }
 
+        public int DrawIconsActiveCellId { get; set; }
+
+        private int _drawIconsGroupId;
+        public int DrawIconsGroupId
+        {
+            get {
+                if (IsCellSelected || MouseHovering)
+                    return DrawIconsActiveCellId;
+                return _drawIconsGroupId; 
+            }
+            set { _drawIconsGroupId = value; }
+        }
+
         /// <summary>
         /// Whether to draw the cell background
         /// </summary>
@@ -75,7 +88,7 @@ namespace Utopia.GUI.Inventory
         {
             get { return _iconFactory; }
         }
-        
+
         public bool MouseHovering
         {
             get
@@ -126,6 +139,7 @@ namespace Utopia.GUI.Inventory
             _iconFactory = iconFactory;
             InventoryPosition = position;
             DrawCellBackground = true;
+            DrawIconsGroupId = 2;
         }
 
         protected override void OnMouseEntered()

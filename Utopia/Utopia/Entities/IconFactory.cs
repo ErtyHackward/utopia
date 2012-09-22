@@ -224,7 +224,7 @@ namespace Utopia.Entities
 
                 tex2D = DrawOuterShadow(context, texture, tex2D);
                 
-                //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
+                Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
 
                 _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(tex2D));
 
@@ -236,6 +236,18 @@ namespace Utopia.Entities
 
         private Texture2D DrawOuterShadow(DeviceContext context, RenderedTexture2D texture, Texture2D tex2D)
         {
+            var clampSampler = ToDispose(new SamplerState(_d3DEngine.Device,
+                            new SamplerStateDescription
+                            {
+                                AddressU = TextureAddressMode.Clamp,
+                                AddressV = TextureAddressMode.Clamp,
+                                AddressW = TextureAddressMode.Clamp,
+                                //Filter = Filter.MinLinearMagMipPoint,
+                                Filter = Filter.MinMagMipLinear,
+                                MaximumLod = float.MaxValue,
+                                MinimumLod = 0
+                            }));
+
             SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine);
             texture.Begin();
 
@@ -265,7 +277,7 @@ namespace Utopia.Entities
 
             _blurHorisontalEffect.Begin(context);
             _blurHorisontalEffect.SpriteTexture.Value = new SpriteTexture(tex2DOverlayed).Texture;
-            _blurHorisontalEffect.SpriteSampler.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _blurHorisontalEffect.SpriteSampler.Value = clampSampler;
             _blurHorisontalEffect.CBPerDraw.Values.Size = IconSize;
             _blurHorisontalEffect.CBPerDraw.IsDirty = true;
             _blurHorisontalEffect.Apply(context);
@@ -283,7 +295,7 @@ namespace Utopia.Entities
 
             _blurVerticalEffect.Begin(context);
             _blurVerticalEffect.SpriteTexture.Value = new SpriteTexture(tex2DHorisontalBlurred).Texture;
-            _blurVerticalEffect.SpriteSampler.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
+            _blurVerticalEffect.SpriteSampler.Value = clampSampler;
             _blurVerticalEffect.CBPerDraw.Values.Size = IconSize;
             _blurVerticalEffect.CBPerDraw.IsDirty = true;
             _blurVerticalEffect.Apply(context);
