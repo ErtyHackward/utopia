@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using S33M3Resources.Structs.Helpers;
@@ -107,7 +108,7 @@ namespace Utopia.Components
         private Vector3I? _newCube;
 
         private int _selectedColorIndex;
-        private int _selectedFrameToolIndex;
+        private FrameEditorTools _frameEditorTool;
         private EditorAxis _sliceAxis = EditorAxis.Y;
         private EditorAxis _mirror = EditorAxis.None;
 
@@ -246,6 +247,8 @@ namespace Utopia.Components
             private set
             {
                 _selectedFrameIndex = value;
+
+                ClearSelection();
 
                 if (Mode == EditorMode.ModelLayout)
                 {
@@ -767,6 +770,7 @@ namespace Utopia.Components
 
             frame.BlockData.UpdateChunkSize(new Vector3I(e.SizeX, e.SizeY, e.SizeZ), true);
             RebuildFrameVertices();
+            ClearSelection();
         }
 
         private void OnFrameDeletePressed()
@@ -1302,6 +1306,8 @@ namespace Utopia.Components
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
+            if (timePassed == 0)
+                timePassed = 1;
             if (_instance != null)
                 _instance.Interpolation(timePassed);
         }
@@ -1499,9 +1505,17 @@ namespace Utopia.Components
 
                                 var translationVector = intersectPoint - _translatePoint.Value;
 
-                                if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.Alt))
+                                if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.ControlKey))
                                 {
-                                    _translatePoint = intersectPoint;
+                                    translationVector.X = (float)Math.Round(translationVector.X, 1);
+                                    translationVector.Y = (float)Math.Round(translationVector.Y, 1);
+                                    translationVector.Z = (float)Math.Round(translationVector.Z, 1);
+                                    if (Math.Abs(translationVector.X) >= 0.1f ||
+                                        Math.Abs(translationVector.Y) >= 0.1f ||
+                                        Math.Abs(translationVector.Z) >= 0.1f)
+                                    {
+                                        _translatePoint = intersectPoint;
+                                    }
                                 }
                                 else
                                 {
@@ -1565,15 +1579,15 @@ namespace Utopia.Components
                             {
                                 foreach (var cubePos in GetSelectedCubes())
                                 {
-                                    switch (_selectedFrameToolIndex)
+                                    switch (_frameEditorTool)
                                     {
-                                        case 0:
+                                        case FrameEditorTools.Edit:
                                             frame.BlockData.SetBlock(cubePos, 0);
                                             break;
-                                        case 1:
+                                        case FrameEditorTools.ColorBrush:
                                             frame.BlockData.SetBlock(cubePos, (byte) (_selectedColorIndex + 1));
                                             break;
-                                        case 2:
+                                        case FrameEditorTools.FillBrush:
                                             {
                                                 // color fill 
                                                 var fillIndex = frame.BlockData.GetBlock(cubePos);
@@ -1583,7 +1597,7 @@ namespace Utopia.Components
                                                     ColorFill(frame, cubePos, fillIndex, fillWith);
                                             }
                                             break;
-                                        case 3:
+                                        case FrameEditorTools.SliceBrush:
                                             {
                                                 // slice fill
                                                 var fillWith = (byte) (_selectedColorIndex + 1);
@@ -1638,7 +1652,7 @@ namespace Utopia.Components
 
                                             }
                                             break;
-                                        case 4: // selection tool
+                                        case FrameEditorTools.Selection : // selection tool
 
                                             if (_selectionEnd.HasValue || !_selectionStart.HasValue)
                                             {
@@ -1665,16 +1679,16 @@ namespace Utopia.Components
                             {
                                 foreach (var cubePos in GetSelectedCubes(true))
                                 {
-                                    switch (_selectedFrameToolIndex)
+                                    switch (_frameEditorTool)
                                     {
-                                        case 0:
+                                        case FrameEditorTools.Edit:
                                             frame.BlockData.SetBlock(cubePos, (byte)(_selectedColorIndex + 1));
                                             break;
-                                        case 1:
+                                        case FrameEditorTools.ColorBrush:
                                             break;
-                                        case 2:
+                                        case FrameEditorTools.FillBrush:
                                             break;
-                                        case 4: // selection tool
+                                        case FrameEditorTools.Selection: // selection tool
 
                                             if (_selectionEnd.HasValue || !_selectionStart.HasValue)
                                             {
@@ -1712,6 +1726,15 @@ namespace Utopia.Components
                     for (int z = -1; z < 2; z++)
                     {
                         var checkVector = vector3I + new Vector3I(x, y, z);
+
+                        if (HaveSelection())
+                        {
+                            var range = GetSelectionRange();
+
+                            if (!range.Contains(checkVector))
+                                continue;
+                        }
+
                         if (InChunk(frame.BlockData.ChunkSize, checkVector) && frame.BlockData.GetBlock(checkVector) == fillIndex)
                         {
                             frame.BlockData.SetBlock(checkVector, newIndex);
@@ -2317,7 +2340,7 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
-                if (_selectedFrameToolIndex == 4 || _selectedFrameToolIndex == -1)
+                if (IsSelectionAllplicable())
                 {
                     if (GetSelectedCubes().Any())
                     {
@@ -2325,7 +2348,7 @@ namespace Utopia.Components
                         DrawBox(new BoundingBox(selection, new Vector3(1f) + selection), new Color4(1, 0, 0, 1f));
                     }
 
-                    if (_selectionStart.HasValue && _selectionEnd.HasValue)
+                    if (HaveSelection())
                     {
                         var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                         var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -2748,6 +2771,32 @@ namespace Utopia.Components
             NeedSave();
         }
 
+        private bool HaveSelection()
+        {
+            return _selectionStart.HasValue && _selectionEnd.HasValue;
+        }
+
+        private Range3I GetSelectionRange()
+        {
+            var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+            var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+
+            var size = max - min + Vector3I.One;
+
+            return new Range3I(min, size);
+        }
+
+        private void ClearSelection()
+        {
+            _selectionStart = null;
+            _selectionEnd = null;
+        }
+
+        private bool IsSelectionAllplicable()
+        {
+            return _frameEditorTool == FrameEditorTools.Selection || _frameEditorTool == FrameEditorTools.Preset || _frameEditorTool == FrameEditorTools.FillBrush;
+        }
+
         private void OnFrameCopyPressed()
         {
             if (SelectedPartIndex == -1 || SelectedFrameIndex == -1)
@@ -2757,23 +2806,18 @@ namespace Utopia.Components
             }
             
             // if we have selection then copy only selected blocks
-            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            if (HaveSelection() && IsSelectionAllplicable())
             {
-                var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
-                var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
-
-                var size = max - min + Vector3I.One;
+                var range = GetSelectionRange();
 
                 _clipboardBlock = new InsideDataProvider();
-                _clipboardBlock.UpdateChunkSize(size);
+                _clipboardBlock.UpdateChunkSize(range.Size);
 
                 var copyFrom = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
 
-                var range = new Range3I(min, size);
-
                 foreach (var vector in range)
                 {
-                    var clipPosition = vector - min;
+                    var clipPosition = vector - range.Position;
                     _clipboardBlock.SetBlock(clipPosition, copyFrom.GetBlock(vector));
                 }
             }
@@ -2802,7 +2846,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            if (HaveSelection() && IsSelectionAllplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -2842,7 +2886,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            if (HaveSelection() && IsSelectionAllplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -2906,7 +2950,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            if (HaveSelection() && IsSelectionAllplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -2957,7 +3001,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (_selectionStart.HasValue && _selectionEnd.HasValue && _selectedFrameToolIndex == 4)
+            if (HaveSelection() && IsSelectionAllplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);

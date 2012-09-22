@@ -47,7 +47,6 @@ struct PS_IN
 	int colorIndex              : VARIOUS1;
 	float EmissiveLight         : Light0;
 	float Light					: Light1;
-	float3 normal				: NORMAL0;
 };
 
 struct PS_OUT
