@@ -83,7 +83,7 @@ namespace Utopia.GUI.Inventory
                         controlBounds.Width - innerBorder * 2, 
                         controlBounds.Height - innerBorder * 2
                         );
-                    graphics.DrawCustomTexture(tex, ref texBounds, textureArrayIndex, control.DrawGroupId);
+                    graphics.DrawCustomTexture(tex, ref texBounds, textureArrayIndex, control.DrawIconsGroupId);
                 }
                 else
                 {

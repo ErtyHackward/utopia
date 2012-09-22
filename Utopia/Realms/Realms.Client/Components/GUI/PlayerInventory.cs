@@ -24,7 +24,7 @@ namespace Realms.Client.Components.GUI
         {
             get
             {
-                return 1;
+                return 2;
             }
         }
 
@@ -57,6 +57,8 @@ namespace Realms.Client.Components.GUI
                     cell.CustomBackground = _commonResources.StInventorySlot;
                     cell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
                     cell.Bounds = new S33M3CoreComponents.GUI.Nuclex.UniRectangle(GridOffset.X + x * cellSize.X, GridOffset.Y + y * cellSize.Y, 42, 42);
+                    cell.DrawIconsGroupId = 5;
+                    cell.DrawIconsActiveCellId = 6;
                 }
             }
         }

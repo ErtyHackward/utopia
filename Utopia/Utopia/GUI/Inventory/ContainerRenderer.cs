@@ -14,7 +14,7 @@ namespace Utopia.GUI.Inventory
             if (control.background != null)
             {
                 RectangleF absoluteBounds = control.GetAbsoluteBounds();
-                graphics.DrawCustomTexture(control.background, ref absoluteBounds);
+                graphics.DrawCustomTexture(control.background, ref absoluteBounds, 0, control.DrawGroupId);
             }
         }
     }

@@ -28,7 +28,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
     /// <summary>Renders window controls in a traditional flat style</summary>
     public class FlatWindowControlRenderer :
-      IFlatControlRenderer<Controls.Desktop.WindowControl>
+        IFlatControlRenderer<Controls.Desktop.WindowControl>
     {
         /// <summary>
         ///   Renders the specified control using the provided graphics interface
@@ -38,15 +38,15 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
         ///   Graphics interface that will be used to draw the control
         /// </param>
         public void Render(
-          Controls.Desktop.WindowControl control, IFlatGuiGraphics graphics
-        )
+            Controls.Desktop.WindowControl control, IFlatGuiGraphics graphics
+            )
         {
             RectangleF controlBounds = control.GetAbsoluteBounds();
             if (control.CustomWindowImage == null)
                 graphics.DrawElement("window", ref controlBounds);
             else
             {
-                graphics.DrawCustomTexture(control.CustomWindowImage, ref controlBounds);
+                graphics.DrawCustomTexture(control.CustomWindowImage, ref controlBounds, 0, control.DrawGroupId);
             }
 
             if (control.Title != null)

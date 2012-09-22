@@ -11,6 +11,14 @@ namespace Realms.Client.Components.GUI
 {
     public class SandboxToolBar : ToolBarUi
     {
+        public override int DrawGroupId
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
         readonly SpriteTexture _stBackground;
         readonly SpriteTexture _stToolbarSlot;
         readonly SpriteTexture _stToolbatSlotHover;
@@ -35,6 +43,8 @@ namespace Realms.Client.Components.GUI
                 inventoryCell.Bounds = new UniRectangle(offset.X + (size.X) * i, offset.Y, 42, 42);
                 inventoryCell.CustomBackground = _stToolbarSlot;
                 inventoryCell.CustomBackgroundHover = _stToolbatSlotHover;
+                inventoryCell.DrawIconsGroupId = 3;
+                inventoryCell.DrawIconsActiveCellId = 4;
             }
         }
     }
