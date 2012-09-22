@@ -199,7 +199,11 @@ namespace Utopia.Entities.Voxel
                     var move = (bb.Maximum - bb.Minimum) / 2;
                     rotation = instance.HeadRotation;
                     rotation.Invert();
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.GetTransformation());
+
+                    var partTransform = voxelModelPartState.GetTransformation();
+                    move = Vector3.TransformCoordinate(move, partTransform);
+
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(partTransform * Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move));
                 }
                 else
                 {
@@ -237,7 +241,12 @@ namespace Utopia.Entities.Voxel
                     var move = (bb.Maximum - bb.Minimum) / 2;
                     rotation = instance.HeadRotation;
                     rotation.Invert();
-                    instanceData[instanceIndex].Transform = Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move) * voxelModelPartState.GetTransformation();
+
+                    var partTransform = voxelModelPartState.GetTransformation();
+
+                    move = Vector3.TransformCoordinate(move, partTransform);
+                    
+                    instanceData[instanceIndex].Transform = partTransform * Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move); 
                 }
                 else
                 {
