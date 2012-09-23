@@ -559,7 +559,7 @@ namespace Utopia.Components
 
             _tpMirror.UpdateLayout();
 
-            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _tpEdit = new Control { Bounds = new UniRectangle(0, 0, 180, 120), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
             
             var frameLabel = new LabelControl { Text = "Frame:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow };
             
@@ -574,6 +574,12 @@ namespace Utopia.Components
             mergeFrame.Pressed += delegate { OnFrameMergePressed(); };
             var undoFrame = new ButtonControl { Text = "Undo", Bounds = new UniRectangle(0, 0, 40, 20) };
             undoFrame.Pressed += delegate { OnFrameUndoPressed(); };
+            var flipX = new ButtonControl { Text = "Flip by X", Bounds = new UniRectangle(0, 0, 60, 20) };
+            flipX.Pressed += delegate { OnFlip(EditorAxis.X); };
+            var flipY = new ButtonControl { Text = "Flip by Y", Bounds = new UniRectangle(0, 0, 60, 20) };
+            flipY.Pressed += delegate { OnFlip(EditorAxis.Z); };
+            var flipZ = new ButtonControl { Text = "Flip by Z", Bounds = new UniRectangle(0, 0, 60, 20) };
+            flipZ.Pressed += delegate { OnFlip(EditorAxis.Y); };
 
             var shiftLabel = new LabelControl { Text = "Shift:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow };
 
@@ -598,6 +604,9 @@ namespace Utopia.Components
             _tpEdit.Children.Add(undoFrame);
             _tpEdit.Children.Add(replaceFrame);
             _tpEdit.Children.Add(mergeFrame);
+            _tpEdit.Children.Add(flipX);
+            _tpEdit.Children.Add(flipY);
+            _tpEdit.Children.Add(flipZ);
 
             _tpEdit.Children.Add(shiftLabel);
             _tpEdit.Children.Add(shiftXPlus);

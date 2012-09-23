@@ -83,7 +83,8 @@ namespace Utopia.Shared.Chunks
             _chunkColumns = (ChunkColumnInfo[])insideDataProvider._chunkColumns.Clone();
             _chunkMetaData = new ChunkMetaData(insideDataProvider.ChunkMetaData);
             _tags = new Dictionary<Vector3I, BlockTag>(insideDataProvider._tags);
-            _blockBytes = (byte[])insideDataProvider._blockBytes.Clone();
+            if (insideDataProvider._blockBytes != null)
+                _blockBytes = (byte[])insideDataProvider._blockBytes.Clone();
         }
 
         /// <summary>
