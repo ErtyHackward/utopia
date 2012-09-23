@@ -5,6 +5,7 @@ cbuffer PerDraw
 {
 	matrix Screen;
 	matrix Projection;
+	float3 LightColor;
 }
 
 static const float4 DiffuseColor = {1.0f, 1.0f, 1.0f, 1.0f };
@@ -54,7 +55,7 @@ float4 PS( PS_IN input ) : SV_Target
 	// Sample our texture at the specified texture coordinates to get the texture color
 	float4 texColor = DiffuseTexture.Sample(SamplerDiffuse, input.UVW);
 
-	float4 color = texColor;
+	float4 color = float4(texColor.rgb * LightColor,1);
 
 	return color;
 }

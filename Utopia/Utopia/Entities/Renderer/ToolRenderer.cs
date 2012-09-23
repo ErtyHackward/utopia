@@ -1,7 +1,12 @@
 ﻿using System.Collections.Generic;
+using Ninject;
 using S33M3DXEngine.Main;
+using S33M3Resources.Structs;
+using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Models;
+using Utopia.Worlds.SkyDomes;
 using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3CoreComponents.Meshes;
@@ -54,10 +59,15 @@ namespace Utopia.Entities.Renderer
         private ShaderResourceView _cubeTextureView;
         private IDynamicEntity _dynamicEntity;
         private readonly VoxelModelManager _voxelModelManager;
+        private readonly PlayerEntityManager _playerManager;
         private bool _isPlayerCharacterOwner;
         private VisualVoxelModel _voxelModel;
         private VoxelModelInstance _voxelInstance;
         private HLSLVoxelModel _voxelModelEffect;
+        private PlayerCharacter _player;
+        private SingleArrayChunkContainer _chunkContainer;
+
+        private FTSValue<Color3> _lightColor = new FTSValue<Color3>();
 
         #endregion
 
@@ -68,17 +78,28 @@ namespace Utopia.Entities.Renderer
             set { _tool = value; ToolChange(); }
         }
 
+        [Inject]
+        public ISkyDome SkyDome { get; set; }
+
+        [Inject]
+        public SingleArrayChunkContainer ChunkContainer
+        {
+            get { return _chunkContainer; }
+            set { _chunkContainer = value; }
+        }
 
         public ToolRenderer(D3DEngine d3DEngine,
                             CameraManager<ICameraFocused> camManager,
                             IDynamicEntity dynamicEntity,
-                            VoxelModelManager voxelModelManager)
+                            VoxelModelManager voxelModelManager, 
+                            PlayerEntityManager playerManager)
         {
             _d3dEngine = d3DEngine;
             _milkShapeMeshfactory = new MilkShape3DMeshFactory();
             _camManager = camManager;
             _dynamicEntity = dynamicEntity;
             _voxelModelManager = voxelModelManager;
+            _playerManager = playerManager;
             _isPlayerCharacterOwner = _dynamicEntity is PlayerCharacter;
 
             DrawOrders.UpdateIndex(0, 5000);
@@ -97,7 +118,24 @@ namespace Utopia.Entities.Renderer
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
+            
+            
+            // update model color, get the cube where model is
+            var block = _chunkContainer.GetCube(_playerManager.CameraWorldPosition);
+            if (block.Id == 0)
+            {
+                // we take the max color
+                var sunPart = (float)block.EmissiveColor.A / 255;
+                var sunColor = SkyDome.SunColor * sunPart;
+                var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
 
+                _lightColor.Value = resultColor;
+
+                if (_lightColor.ValueInterp != _lightColor.Value)
+                {
+                    Color3.Lerp(ref _lightColor.ValueInterp, ref _lightColor.Value, elapsedTime / 100f, out _lightColor.ValueInterp);
+                }
+            }
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -124,6 +162,7 @@ namespace Utopia.Entities.Renderer
                 _cubeToolEffect.Begin(context);
                 _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
                 _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(screenPosition);
+                _cubeToolEffect.CBPerDraw.Values.LightColor = _lightColor.ValueInterp;
                 _cubeToolEffect.CBPerDraw.IsDirty = true;
 
                 _cubeToolEffect.Apply(context);
@@ -140,6 +179,8 @@ namespace Utopia.Entities.Renderer
                 _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
                 _voxelInstance.World = Matrix.Scaling(1f/16) * screenPosition;
+                _voxelInstance.LightColor = _lightColor.ValueInterp;
+
                 _voxelModel.Draw(context, _voxelModelEffect, _voxelInstance);
             }
         }
@@ -169,12 +210,12 @@ namespace Utopia.Entities.Renderer
 
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
 
-            var player = _dynamicEntity as PlayerCharacter;
+            _player = _dynamicEntity as PlayerCharacter;
 
-            if (player != null)
+            if (_player != null)
             {
-                player.Equipment.ItemEquipped += EquipmentItemEquipped;
-                Tool = player.Equipment.RightTool;
+                _player.Equipment.ItemEquipped += EquipmentItemEquipped;
+                Tool = _player.Equipment.RightTool;
             }
 
         }
@@ -204,6 +245,7 @@ namespace Utopia.Entities.Renderer
                     }
 
                     _voxelInstance = _voxelModel.VoxelModel.CreateInstance();
+                    _voxelInstance.SetState(_voxelModel.VoxelModel.GetMainState());
                 }
                 else
                 {
