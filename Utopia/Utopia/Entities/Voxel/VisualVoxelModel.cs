@@ -192,22 +192,17 @@ namespace Utopia.Entities.Voxel
                     effect.CBPerModel.IsDirty = true;
                 }
 
-                Quaternion rotation;
                 if (_model.Parts[i].IsHead)
                 {
                     var bb = _visualParts[i].BoundingBoxes[voxelModelPartState.ActiveFrame];
-                    var move = (bb.Maximum - bb.Minimum) / 2;
-                    rotation = instance.HeadRotation;
-                    rotation.Invert();
+                    
+                    RotateHead(voxelModelPartState, instance, bb, out effect.CBPerPart.Values.Transform);
 
-                    var partTransform = voxelModelPartState.GetTransformation();
-                    move = Vector3.TransformCoordinate(move, partTransform);
-
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(partTransform * Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move));
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(effect.CBPerPart.Values.Transform);
                 }
                 else
                 {
-                    rotation = instance.Rotation;
+                    var rotation = instance.Rotation;
                     rotation.Invert();
                     effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation));
                 }
@@ -217,6 +212,36 @@ namespace Utopia.Entities.Voxel
 
                 context.DrawIndexed(ib.IndicesCount, 0, 0);
             }
+        }
+
+        private void RotateHead(VoxelModelPartState partState, VoxelModelInstance instance, BoundingBox bb, out Matrix result)
+        {
+            var move = (bb.Maximum - bb.Minimum) / 2;
+
+            var instanceRotation = instance.Rotation;
+            instanceRotation.Invert();
+            
+            var rotation = instance.HeadRotation;
+            rotation.Invert();
+
+            var partTransform = partState.GetTransformation();
+            
+            // get the point of the head center
+            move = Vector3.TransformCoordinate(move, partTransform * Matrix.RotationQuaternion(instanceRotation));
+            
+            // 1. apply model part transform
+            // 2. then rotate head as any other part
+            // 3. move to the head center
+            // 4. decrease model rotation to rotate head to Identity state
+            // 5. rotate head with head rotation
+            // 6. return to the 0,0,0 point
+
+            result = partTransform * 
+                     Matrix.RotationQuaternion(instanceRotation) * 
+                     Matrix.Translation(-move) * 
+                     Matrix.RotationQuaternion(instance.Rotation) * 
+                     Matrix.RotationQuaternion(rotation) * 
+                     Matrix.Translation(move);
         }
 
         private void DrawGroup(byte activeFrame, int partIndex, IList<VoxelModelInstance> instances)
@@ -234,23 +259,15 @@ namespace Utopia.Entities.Voxel
                 instanceData[instanceIndex].LightColor = instance.LightColor;
 
                 // apply rotations from the state and instance (if the head)
-                Quaternion rotation;
                 if (_model.Parts[partIndex].IsHead)
                 {
                     var bb = _visualParts[partIndex].BoundingBoxes[activeFrame];
-                    var move = (bb.Maximum - bb.Minimum) / 2;
-                    rotation = instance.HeadRotation;
-                    rotation.Invert();
-
-                    var partTransform = voxelModelPartState.GetTransformation();
-
-                    move = Vector3.TransformCoordinate(move, partTransform);
                     
-                    instanceData[instanceIndex].Transform = partTransform * Matrix.Translation(-move) * Matrix.RotationQuaternion(rotation) * Matrix.Translation(move); 
+                    RotateHead(voxelModelPartState, instance, bb, out instanceData[instanceIndex].Transform);
                 }
                 else
                 {
-                    rotation = instance.Rotation;
+                    var rotation = instance.Rotation;
                     rotation.Invert();
                     instanceData[instanceIndex].Transform = voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation);
                 }

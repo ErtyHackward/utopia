@@ -2340,7 +2340,7 @@ namespace Utopia.Components
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
             {
-                if (IsSelectionAllplicable())
+                if (IsSelectionApplicable())
                 {
                     if (GetSelectedCubes().Any())
                     {
@@ -2792,7 +2792,7 @@ namespace Utopia.Components
             _selectionEnd = null;
         }
 
-        private bool IsSelectionAllplicable()
+        private bool IsSelectionApplicable()
         {
             return _frameEditorTool == FrameEditorTools.Selection || _frameEditorTool == FrameEditorTools.Preset || _frameEditorTool == FrameEditorTools.FillBrush;
         }
@@ -2806,7 +2806,7 @@ namespace Utopia.Components
             }
             
             // if we have selection then copy only selected blocks
-            if (HaveSelection() && IsSelectionAllplicable())
+            if (HaveSelection() && IsSelectionApplicable())
             {
                 var range = GetSelectionRange();
 
@@ -2846,7 +2846,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (HaveSelection() && IsSelectionAllplicable())
+            if (HaveSelection() && IsSelectionApplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -2886,7 +2886,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (HaveSelection() && IsSelectionAllplicable())
+            if (HaveSelection() && IsSelectionApplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -2950,7 +2950,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (HaveSelection() && IsSelectionAllplicable())
+            if (HaveSelection() && IsSelectionApplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -3001,7 +3001,7 @@ namespace Utopia.Components
 
             Range3I range;
 
-            if (HaveSelection() && IsSelectionAllplicable())
+            if (HaveSelection() && IsSelectionApplicable())
             {
                 var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
                 var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
@@ -3020,6 +3020,52 @@ namespace Utopia.Components
                     pasteTo.SetBlock(position, _backupBlock.GetBlock(shifted));
                 else
                     pasteTo.SetBlock(position, 0);
+            }
+
+            RebuildFrameVertices();
+        }
+
+        private void OnFlip(EditorAxis editorAxis)
+        {
+            Range3I range;
+
+            var blockBuffer = _visualVoxelModel.VoxelModel.Parts[SelectedPartIndex].Frames[SelectedFrameIndex].BlockData;
+
+            _backupBlock = new InsideDataProvider(blockBuffer);
+
+            if (IsSelectionApplicable())
+                range = GetSelectionRange();
+            else
+                range = new Range3I { Size = blockBuffer.ChunkSize };
+
+            var newBuffer = new InsideDataProvider();
+            newBuffer.UpdateChunkSize(range.Size);
+
+            foreach (var pos in range)
+            {
+                var readFrom = pos;
+
+                switch (editorAxis)
+                {
+                    case EditorAxis.X:
+                        readFrom.X = range.Size.X - readFrom.X - 1;
+                        break;
+                    case EditorAxis.Y:
+                        readFrom.Y = range.Size.Y - readFrom.Y - 1;
+                        break;
+                    case EditorAxis.Z:
+                        readFrom.Z = range.Size.Z - readFrom.Z - 1;
+                        break;
+                }
+
+                var value = blockBuffer.GetBlock(readFrom);
+                newBuffer.SetBlock(pos - range.Position, value);
+            }
+
+            foreach (var pos in range)
+            {
+                var val = newBuffer.GetBlock(pos - range.Position);
+                blockBuffer.SetBlock(pos, val);
             }
 
             RebuildFrameVertices();
