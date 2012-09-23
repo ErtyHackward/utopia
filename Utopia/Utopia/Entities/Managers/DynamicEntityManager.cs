@@ -303,14 +303,18 @@ namespace Utopia.Entities.Managers
                             mPair = new KeyValuePair<VisualVoxelModel, VoxelModelInstance>(model,
                                                                                            model.VoxelModel.
                                                                                                CreateInstance());
+                            mPair.Value.SetState(model.VoxelModel.GetMainState());
                             _toolsModels.Add(voxelItem.ModelName, mPair);
                         }
 
-                        // setup the tool position
-                        mPair.Value.World = charEntity.ModelInstance.GetToolTransform();
+                        var instance = mPair.Value;
+
+                        // setup the tool instance
+                        instance.World = charEntity.ModelInstance.GetToolTransform();
+                        instance.LightColor = charEntity.ModelInstance.LightColor;
 
                         // draw it
-                        mPair.Key.Draw(_d3DEngine.ImmediateContext, _voxelToolEffect, mPair.Value);
+                        mPair.Key.Draw(_d3DEngine.ImmediateContext, _voxelToolEffect, instance);
                     }
                 }
             }

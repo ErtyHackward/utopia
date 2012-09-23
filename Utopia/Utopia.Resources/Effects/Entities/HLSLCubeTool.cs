@@ -23,13 +23,15 @@ namespace UtopiaContent.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 128)]
+        [StructLayout(LayoutKind.Explicit, Size = 144)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
             public Matrix Screen;
             [FieldOffset(64)]
             public Matrix Projection;
+            [FieldOffset(128)]
+            public Color3 LightColor;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion
