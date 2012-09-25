@@ -198,7 +198,7 @@ namespace Utopia.Worlds.Chunks
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
-            ENTITIES_DRAW = DrawOrders.AddIndex(99, "ENTITIES_DRAW");
+            ENTITIES_DRAW = DrawOrders.AddIndex(101, "ENTITIES_DRAW");
 
             //Subscribe to chunk modifications
             _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
