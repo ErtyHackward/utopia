@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Design;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
 namespace Utopia.Shared.Entities
@@ -12,6 +13,8 @@ namespace Utopia.Shared.Entities
         public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             var svc = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+
+            //svc.DropDownControl();
 
             return value;
         }

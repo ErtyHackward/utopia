@@ -95,7 +95,7 @@ namespace Utopia.Shared
         {
             var currentFormat = reader.ReadInt32();
             if (currentFormat != RealmFormat)
-                throw new InvalidDataException("Unsupported realm config format, expected " + RealmFormat + " actual " + currentFormat);
+                throw new InvalidDataException("Unsupported realm config format, expected " + RealmFormat + " current " + currentFormat);
 
             RealmName = reader.ReadString();
             Author = reader.ReadString();
