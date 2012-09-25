@@ -102,26 +102,13 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Return equiped tool (ITool) to the Left Hand
-        /// </summary>
-        public ITool LeftTool
-        {
-            get {
-                var leftTool = PeekSlot(new Vector2I(0, (int)EquipmentSlotType.LeftHand));
-                if (leftTool != null)
-                    return (ITool)leftTool.Item;
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Return equiped tool (ITool) to the Right Hand
         /// </summary>
         public ITool RightTool
         {
             get
             {
-                var tool = PeekSlot(new Vector2I(0, (int)EquipmentSlotType.RightHand));
+                var tool = PeekSlot(new Vector2I(0, (int)EquipmentSlotType.Hand));
                 if (tool != null)
                     return (ITool)tool.Item;
                 return null;
@@ -132,15 +119,13 @@ namespace Utopia.Shared.Entities.Inventory
         {
             switch ((EquipmentSlotType)position.Y)
             {
-                case EquipmentSlotType.LeftHand: return item is ITool;
-                case EquipmentSlotType.RightHand: return item is ITool;
+                case EquipmentSlotType.Hand: return item is ITool;
                 case EquipmentSlotType.Head: return item is IHeadArmor;
                 case EquipmentSlotType.Torso: return item is ITorsoArmor;
                 case EquipmentSlotType.Legs: return item is ILegsArmor;
                 case EquipmentSlotType.Feet: return item is IFeetArmor;
                 case EquipmentSlotType.Arms: return item is IArmsArmor;
-                case EquipmentSlotType.LeftRing: return item is IRing;
-                case EquipmentSlotType.RightRing: return item is IRing;
+                case EquipmentSlotType.Ring: return item is IRing;
                 case EquipmentSlotType.Neck: return item is INecklace;
                 default:
                     throw new ArgumentOutOfRangeException();

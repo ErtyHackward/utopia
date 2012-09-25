@@ -47,11 +47,10 @@ namespace Utopia.Editor
 
         private void UpdateList()
         {
+            listView1.Items.Clear();
+
             if (_configuration == null)
-            {
-                listView1.Items.Clear();
                 return;
-            }
 
             {
                 var item = new ListViewItem("General");

@@ -3,7 +3,7 @@ using System;
 namespace Utopia.Shared.Entities.Interfaces
 {
     [Flags]
-    public enum BlockFace
+    public enum BlockFace : byte
     {
         Top = 0x1,
         Sides = 0x2,

@@ -49,7 +49,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InventoryTest.cs" />
     <Compile Include="Md5HashTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
