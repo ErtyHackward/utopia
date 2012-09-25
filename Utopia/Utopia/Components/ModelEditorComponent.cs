@@ -7,6 +7,7 @@ using S33M3Resources.Structs.Helpers;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
+using Utopia.Entities;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Models;
@@ -39,6 +40,7 @@ namespace Utopia.Components
         #region Fields
 
         private readonly InputsManager _inputManager;
+        private readonly IconFactory _iconFactory;
         private readonly D3DEngine _d3DEngine;
         private HLSLColorLine _lines3DEffect;
         private SpriteFont _font;
@@ -372,9 +374,10 @@ namespace Utopia.Components
         /// <param name="meshFactory"> </param>
         /// <param name="gui"> </param>
         /// <param name="inputManager"> </param>
-        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui, InputsManager inputManager)
+        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui, InputsManager inputManager, IconFactory iconFactory)
         {
             _inputManager = inputManager;
+            _iconFactory = iconFactory;
             _d3DEngine = d3DEngine;
             _screen = screen;
             _manager = manager;
@@ -2555,7 +2558,14 @@ namespace Utopia.Components
             foreach (var visualVoxelModel in _manager.Enumerate())
             {
                 var modelPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".uvm");
+                var previewPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".png");
                 visualVoxelModel.VoxelModel.SaveToFile(modelPath);
+
+                // create icon
+
+                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new DrawingSize { Width = 128, Height = 128 }))
+                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
+
                 count++;
             }
             _gui.MessageBox(count + " models saved", "Success");
