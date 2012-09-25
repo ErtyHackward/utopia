@@ -12,9 +12,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         #region Private Variables
         private RangeI _treePerChunk = new RangeI(8, 15);
-        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Grass, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
-        private BiomeEntity _flower1Entities = new BiomeEntity() { EntityId = EntityClassId.Flower2, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
-        private BiomeEntity _mushroomEntities = new BiomeEntity() { EntityId = EntityClassId.Mushroom1, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
+        private BiomeEntity _grassEntities = new BiomeEntity() { EntityId = EntityClassId.Plant, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
+        private BiomeEntity _flower1Entities = new BiomeEntity() { EntityId = EntityClassId.Plant, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
+        private BiomeEntity _mushroomEntities = new BiomeEntity() { EntityId = EntityClassId.Plant, EntityPerChunk = 15, ChanceOfSpawning = 0.6 };
         #endregion
 
         #region Public Properties

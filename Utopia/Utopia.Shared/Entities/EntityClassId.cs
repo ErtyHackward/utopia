@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities
         public const ushort Chair = 1001;
         public const ushort Door = 1002;
         public const ushort Bed = 1003;
-        public const ushort Torch = 1004;
+        public const ushort SideLightSource = 1004;
 
         // tools 
         public const ushort CubeResource = 1500;
@@ -26,13 +26,6 @@ namespace Utopia.Shared.Entities
         public const ushort NonPlayerCharacter = 3001;
         public const ushort Zombie = 3002;
 
-        //Static Sprite
-        public const ushort Grass = 4000;
-        public const ushort Flower1 = 4001;
-        public const ushort Flower2 = 4002;
-        public const ushort Flower3 = 4003;
-        public const ushort Mushroom1 = 4004;
-        public const ushort CactusFlower = 4005;
-        public const ushort Cactus = 4006;        
+        public const ushort Plant = 4000;       
     }
 }

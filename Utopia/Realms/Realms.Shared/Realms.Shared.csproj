@@ -69,12 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RealmsEntityClassId.cs" />
-    <Compile Include="RealmsEntityFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\Annihilator.cs" />
-    <Compile Include="Tools\BlockRemover.cs" />
-    <Compile Include="Tools\Shovel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\S33M3Engines\S33M3Resources\S33M3Resources.csproj">
