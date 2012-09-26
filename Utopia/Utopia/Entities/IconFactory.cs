@@ -47,8 +47,8 @@ namespace Utopia.Entities
 
         private HLSLVoxelModel _voxelEffect;
 
-        private HLSLBlurHorisontal _blurHorisontalEffect;
-        private HLSLBlurVertical _blurVerticalEffect;
+        private HLSLBlur _blurHorisontalEffect;
+        private HLSLBlur _blurVerticalEffect;
         private VertexBuffer<VertexPosition2Texture> _blurVertexBuffer;
         private IndexBuffer<short> _iBuffer;
         private HLSLColorOverlay _overlayEffect;
@@ -68,10 +68,10 @@ namespace Utopia.Entities
 
         public override void LoadContent(DeviceContext context)
         {
-            _iBuffer = ToDispose(new IndexBuffer<short>(_d3DEngine.Device, 6, Format.R16_UInt, "Blur_iBuffer"));
-            _blurVertexBuffer = ToDispose(new VertexBuffer<VertexPosition2Texture>(_d3DEngine.Device, 4, VertexPosition2Texture.VertexDeclaration, PrimitiveTopology.TriangleList, "Blur_vBuffer", ResourceUsage.Immutable));
+            _iBuffer = ToDispose(new IndexBuffer<short>(context.Device, 6, Format.R16_UInt, "Blur_iBuffer"));
+            _blurVertexBuffer = ToDispose(new VertexBuffer<VertexPosition2Texture>(context.Device, 4, VertexPosition2Texture.VertexDeclaration, PrimitiveTopology.TriangleList, "Blur_vBuffer", ResourceUsage.Immutable));
 
-            //Load data into the VB  => NOT Thread safe, MUST be done in the loadcontent
+            //Create Vertices for Icon Plane.
             VertexPosition2Texture[] vertices =
                 {
                     new VertexPosition2Texture(new Vector2(-1.00f, -1.00f), new Vector2(0.00f, 1.00f)),
@@ -79,14 +79,15 @@ namespace Utopia.Entities
                     new VertexPosition2Texture(new Vector2( 1.00f,  1.00f), new Vector2(1.00f, 0.00f)),
                     new VertexPosition2Texture(new Vector2(-1.00f,  1.00f), new Vector2(0.00f, 0.00f))
                 };
-            _blurVertexBuffer.SetData(context, vertices);
+            _blurVertexBuffer.SetData(context, vertices); //Send the vertices inside the VBuffer
 
-            //Load data into the IB => NOT Thread safe, MUST be done in the loadcontent
+            //Create the Indices for icon plane
             short[] indices = { 0, 3, 1, 1, 3, 2 };
-            _iBuffer.SetData(context, indices);
+            _iBuffer.SetData(context, indices); //Send the vertices inside the IBuffer
 
-            _blurHorisontalEffect = ToDispose(new HLSLBlurHorisontal(_d3DEngine.Device));
-            _blurVerticalEffect = ToDispose(new HLSLBlurVertical(_d3DEngine.Device));
+            //Create the various Effect for rendering the icons
+            _blurHorisontalEffect = ToDispose(new HLSLBlur(_d3DEngine.Device, HLSLBlur.BlurPass.Horizontal));
+            _blurVerticalEffect = ToDispose(new HLSLBlur(_d3DEngine.Device, HLSLBlur.BlurPass.Vertical));
             _voxelEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _overlayEffect = ToDispose(new HLSLColorOverlay(_d3DEngine.Device));
 
@@ -97,10 +98,8 @@ namespace Utopia.Entities
             icons = Create3DBlockIcons(context, cubeTextureView);
             
             _nbrCubeIcon = icons.Count;
-
             Texture2D[] spriteTextures;
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures, 1);
-
             icons.AddRange(spriteTextures);
             CreateTextureArray(context, icons);
 
@@ -109,7 +108,6 @@ namespace Utopia.Entities
             {
                 icon.Dispose();
             }
-
             cubeTextureView.Dispose();
             foreach (var tex in spriteTextures) tex.Dispose();
 
@@ -220,14 +218,14 @@ namespace Utopia.Entities
                 texture.End(false);
 
 
-                var tex2D = texture.CloneTexture(ResourceUsage.Default);
+                var tex2D = texture.CloneTexture(ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
 
+                //Create shadow around icon
                 tex2D = DrawOuterShadow(context, texture, tex2D);
                 
                 //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
 
                 _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(tex2D));
-
             }
 
             //Reset device Default render target
@@ -242,7 +240,6 @@ namespace Utopia.Entities
                                 AddressU = TextureAddressMode.Clamp,
                                 AddressV = TextureAddressMode.Clamp,
                                 AddressW = TextureAddressMode.Clamp,
-                                //Filter = Filter.MinLinearMagMipPoint,
                                 Filter = Filter.MinMagMipLinear,
                                 MaximumLod = float.MaxValue,
                                 MinimumLod = 0
@@ -259,7 +256,7 @@ namespace Utopia.Entities
             _overlayEffect.Begin(context);
             _overlayEffect.SpriteTexture.Value = voxelIconSpriteTexture.Texture;
             _overlayEffect.SpriteSampler.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
-            _overlayEffect.CBPerDraw.Values.Color = new Color4(0, 0, 0, 1);
+            _overlayEffect.CBPerDraw.Values.Color = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
             _overlayEffect.CBPerDraw.IsDirty = true;
             _overlayEffect.Apply(context);
 
@@ -287,8 +284,6 @@ namespace Utopia.Entities
             texture.End(false);
 
             var tex2DHorisontalBlurred = texture.CloneTexture(ResourceUsage.Default);
-
-
 
             // blur vertical
             texture.Begin();
@@ -472,13 +467,11 @@ namespace Utopia.Entities
 
                 var tex2d = texture.CloneTexture(ResourceUsage.Default);
 
+                //Create Shadow around Icon object displayed
                 if (!profile.IsEmissiveColorLightSource)
                 {
                     tex2d = DrawOuterShadow(context, texture, tex2d);
                 }
-
-
-                //Texture2D.ToFile<Texture2D>(_d3DEngine.ImmediateContext, texture.RenderTargetTexture, ImageFileFormat.Png, @"E:\text\Block" + profile.Name + ".png");
 
                 createdIconsTexture.Add(tex2d);
             }

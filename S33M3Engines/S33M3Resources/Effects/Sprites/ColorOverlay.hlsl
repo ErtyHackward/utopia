@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------------------
 cbuffer PerDraw
 {
-    float4 Color;
+    float4 OverlayColor;
 };
 
 //======================================================================================
@@ -47,9 +47,9 @@ PSInput VS(in VSInput input)
 //======================================================================================
 float4 PS(in PSInput input) : SV_Target
 {
-	float4 color = SpriteTexture.Sample(SpriteSampler, input.TexCoord);
+	float4 spriteSampledColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);
 
-	clip(color.a < 0.1f ? -1:1);
+	clip(spriteSampledColor.a < 0.1f ? -1:1);
 
-	return Color;
+	return OverlayColor;
 }
