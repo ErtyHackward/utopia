@@ -62,7 +62,6 @@ namespace Realms.Client.States
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var skyDome = _ioc.Get<ISkyDome>();
-            skyDome.DrawOrders.UpdateIndex(0, 40);
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
@@ -70,6 +69,7 @@ namespace Realms.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
+            staggingBackBuffer.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer"); 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
