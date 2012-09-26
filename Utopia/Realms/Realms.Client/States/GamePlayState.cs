@@ -62,6 +62,17 @@ namespace Realms.Client.States
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var skyDome = _ioc.Get<ISkyDome>();
+
+            //Rendering time changed depending on landscape fog option, TRUE = Faster drawing (Because we are actively using depth testing)
+            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == "SkyFog")
+            {
+                skyDome.DrawOrders.UpdateIndex(0, 40);
+            }
+            else
+            {
+                skyDome.DrawOrders.UpdateIndex(0, 990);
+            }
+
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
@@ -69,9 +80,15 @@ namespace Realms.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
-            staggingBackBuffer.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer"); 
-            var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
-            skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
+            staggingBackBuffer.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer");
+
+            StaggingBackBuffer skyBackBuffer = null;
+            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == "SkyFog")
+            {
+                skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
+                skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
+            }
+
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
@@ -102,10 +119,11 @@ namespace Realms.Client.States
             AddComponent(sharedFrameCB);
             AddComponent(_sandboxGameSoundManager);
             AddComponent(staggingBackBuffer);
-            AddComponent(skyBackBuffer);
+            if (skyBackBuffer != null) AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
+
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in _ioc.Get<LoadingGameState>().GameComponents.Except(GameComponents))

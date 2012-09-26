@@ -638,7 +638,7 @@ namespace Utopia.Worlds.Chunks
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
             var chunk = (VisualChunk)sender;
-            chunk.Opaque = 0f;
+            chunk.PopUpValue.Initialize(0.5f);
 
             _transparentChunks.Add(chunk);
 

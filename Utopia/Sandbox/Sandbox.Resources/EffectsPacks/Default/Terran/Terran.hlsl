@@ -5,7 +5,8 @@
 cbuffer PerDraw
 {
 	matrix World;
-	float Opaque;
+	float PopUpValue;
+	float FogType;
 };
 
 cbuffer PerFrame
@@ -93,7 +94,7 @@ PS_IN VS(VS_IN input)
 
 	float YOffset = 0;
 	if(input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w/255.0f);
-	newPosition.y -= YOffset;
+	newPosition.y -= (YOffset + (PopUpValue * 128));
 
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
@@ -108,7 +109,7 @@ PS_IN VS(VS_IN input)
 	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
 	output.EmissiveLight *= faceshades[facetype];
 
-	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
+	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.BiomeData = input.BiomeData;
 	output.Various = input.Various;
 
@@ -122,8 +123,8 @@ PS_OUT PS(PS_IN input)
 {
 	PS_OUT output;
 
-	float fogvalue = min( Opaque, 1 - input.fogPower);
-	clip(fogvalue <= 0.001 ? -1:1); 
+	float fogvalue = input.fogPower;
+	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1); 
 
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	
@@ -147,14 +148,28 @@ PS_OUT PS(PS_IN input)
 		float4 backBufferColor = { 0.0f, 0.0f, 0.2f, 1.0f }; //Defaulted Set to underWaterColor
 		if(Various.x != 1) //Not Under Water and Fog present
 		{
-			//Get sky Color
-			float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
-			backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+			if(FogType == 0.0)
+			{
+				//Get sky Color
+				float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
+				backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+			}else{
+				if(FogType == 1.0)
+				{
+					backBufferColor.xyz = SunColor / 1.5;
+					backBufferColor.w = color.a;
+				}
+			}
 		}
 
 		//Compute Transparency, and blend current color with sky color in a blended way
-		finalColor.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
-		finalColor.a = fogvalue;
+		if(FogType != 2.0)
+		{
+			finalColor.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
+		}else{
+			finalColor = color;
+		}
+
 	}
 
 	// Apply fog on output color
