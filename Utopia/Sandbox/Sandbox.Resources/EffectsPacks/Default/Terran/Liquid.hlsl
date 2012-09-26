@@ -186,7 +186,7 @@ PS_OUT PS(PS_IN input)
 
 		if(FogType != 2.0)
 		{
-			color.rgb = (color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
+			color.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
 		}
 
 	}
