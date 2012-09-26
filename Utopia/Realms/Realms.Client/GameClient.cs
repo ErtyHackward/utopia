@@ -168,6 +168,12 @@ namespace Realms.Client
                 needSave = true;
             }
 
+                        //Set Default Threads - initializing the thread Engine component
+            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == null)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog = "SkyFog";
+            }
+
             return needSave;
         }
 
