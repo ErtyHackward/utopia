@@ -80,6 +80,7 @@ namespace S33M3CoreComponents.States
         /// <param name="gc"></param>
         protected void AddComponent(GameComponent gc)
         {
+            if (gc == null) return;
             //Should only be called "once", but doesn't hurt to check the collection state before each modification
             CleanUpComponents();
             //Add a component only if not already added
