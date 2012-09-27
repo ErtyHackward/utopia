@@ -245,5 +245,10 @@ namespace Utopia.Editor
                 item.Text = (string)e.ChangedItem.Value;
             }
         }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }

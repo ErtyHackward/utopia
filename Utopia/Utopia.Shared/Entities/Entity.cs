@@ -61,8 +61,8 @@ namespace Utopia.Shared.Entities
         /// <param name="factory"> </param>
         public virtual void Load(BinaryReader reader, EntityFactory factory)
         {
-            // skipping entity class id
-            reader.ReadUInt16();
+            // we no need to read class id because it is read by entity factory
+            // to find the final type of the class
 
             Type = (EntityType)reader.ReadByte();
 
@@ -92,5 +92,18 @@ namespace Utopia.Shared.Entities
         }
 
         public abstract EntityLink GetLink();
+
+
+        /// <summary>
+        /// Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>
+        /// A new object that is a copy of this instance.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

@@ -76,8 +76,8 @@ namespace Utopia.Shared
         {
             writer.Write(RealmFormat);
 
-            writer.Write(RealmName);
-            writer.Write(Author);
+            writer.Write(RealmName ?? string.Empty);
+            writer.Write(Author ?? string.Empty);
             writer.Write(CreatedAt.ToBinary());
             writer.Write(UpdatedAt.ToBinary());
             writer.Write((byte)WorldProcessor);
