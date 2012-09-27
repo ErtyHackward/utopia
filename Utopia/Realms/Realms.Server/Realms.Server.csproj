@@ -118,10 +118,6 @@
       <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
       <Name>Utopia.Resources</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Realms.Shared\Realms.Shared.csproj">
-      <Project>{F1802365-2422-40CA-9962-21BD6B93B6D3}</Project>
-      <Name>Realms.Shared</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

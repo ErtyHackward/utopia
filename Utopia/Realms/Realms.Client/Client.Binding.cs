@@ -6,8 +6,6 @@ using Realms.Client.Components.GUI;
 using Realms.Client.Components.GUI.Settings;
 using Realms.Client.Components.GUI.SinglePlayer;
 using Realms.Client.States;
-using Realms.Shared;
-using Sandbox.Client;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Net.Web;
@@ -168,9 +166,9 @@ namespace Realms.Client
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
             _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<RealmsEntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //_iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<EntityFactory>().To<RealmsEntityFactory>().InScope(x => GameScope.CurrentGameScope).Named("Client");
+            //_iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("Client");
 
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);

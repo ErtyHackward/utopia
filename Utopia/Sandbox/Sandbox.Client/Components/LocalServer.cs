@@ -86,7 +86,7 @@ namespace Sandbox.Client.Components
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
             adder.CubeId = CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
 
-            dEntity.Equipment.Equip(EquipmentSlotType.RightHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
+            dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             foreach (var cubeId in CubeId.All())
             {

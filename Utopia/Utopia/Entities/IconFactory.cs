@@ -173,6 +173,69 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
+        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, DrawingSize iconSize, DeviceContext context = null)
+        {
+            if (context == null)
+                context = _d3DEngine.ImmediateContext;
+
+            //Create the render texture
+            var texture = ToDispose(new RenderedTexture2D(_d3DEngine, iconSize.Width, iconSize.Height, Format.R8G8B8A8_UNorm)
+            {
+                BackGroundColor = new Color4(0, 0, 0, 0)
+            });
+
+            float aspectRatio = IconSize / IconSize;
+            Matrix projection;
+            var fov = (float)Math.PI / 3.6f;
+            Matrix.PerspectiveFovLH(fov, aspectRatio, 0.5f, 100f, out projection);
+            Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
+
+            texture.Begin();
+
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+
+            _voxelEffect.Begin(context);
+
+            _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
+            _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(view * projection);
+            _voxelEffect.CBPerFrame.IsDirty = true;
+
+            var instance = visualVoxelModel.VoxelModel.CreateInstance();
+
+            var state = visualVoxelModel.VoxelModel.GetMainState();
+
+            instance.SetState(state);
+
+            var sphere = BoundingSphere.FromBox(state.BoundingBox);
+
+            var rMax = 2f * Math.Sin(fov / 2);
+
+            var size = state.BoundingBox.GetSize();
+
+            var offset = -size / 2 - state.BoundingBox.Minimum;
+
+            const float scaleFactor = 1.4f; // the bigger factor the bigger items
+
+            var scale = (float)rMax / sphere.Radius; // Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
+
+            instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+
+            visualVoxelModel.Draw(context, _voxelEffect, instance);
+
+            texture.End(false);
+
+
+            var tex2D = texture.CloneTexture(ResourceUsage.Default);
+
+            tex2D = DrawOuterShadow(context, texture, tex2D);
+
+            _d3DEngine.SetRenderTargetsAndViewPort();
+
+            return tex2D;
+            
+            
+        }
+
         private void CreateVoxelIcons(DeviceContext context)
         {
             //Create the render texture
@@ -232,8 +295,11 @@ namespace Utopia.Entities
             _d3DEngine.SetRenderTargetsAndViewPort();
         }
 
-        private Texture2D DrawOuterShadow(DeviceContext context, RenderedTexture2D texture, Texture2D tex2D)
+        private Texture2D DrawOuterShadow(DeviceContext context, RenderedTexture2D texture, Texture2D tex2D, int size = 0)
         {
+            if (size == 0)
+                size = IconSize;
+
             var clampSampler = ToDispose(new SamplerState(_d3DEngine.Device,
                             new SamplerStateDescription
                             {
@@ -275,7 +341,7 @@ namespace Utopia.Entities
             _blurHorisontalEffect.Begin(context);
             _blurHorisontalEffect.SpriteTexture.Value = new SpriteTexture(tex2DOverlayed).Texture;
             _blurHorisontalEffect.SpriteSampler.Value = clampSampler;
-            _blurHorisontalEffect.CBPerDraw.Values.Size = IconSize;
+            _blurHorisontalEffect.CBPerDraw.Values.Size = size;
             _blurHorisontalEffect.CBPerDraw.IsDirty = true;
             _blurHorisontalEffect.Apply(context);
 
@@ -291,7 +357,7 @@ namespace Utopia.Entities
             _blurVerticalEffect.Begin(context);
             _blurVerticalEffect.SpriteTexture.Value = new SpriteTexture(tex2DHorisontalBlurred).Texture;
             _blurVerticalEffect.SpriteSampler.Value = clampSampler;
-            _blurVerticalEffect.CBPerDraw.Values.Size = IconSize;
+            _blurVerticalEffect.CBPerDraw.Values.Size = size;
             _blurVerticalEffect.CBPerDraw.IsDirty = true;
             _blurVerticalEffect.Apply(context);
 

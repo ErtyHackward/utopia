@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using Ninject;
-using Realms.Shared;
 using Utopia.Server;
 using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
@@ -77,7 +76,7 @@ namespace Realms.Server
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
-            var serverFactory = new RealmsEntityFactory(null);
+            var serverFactory = new EntityFactory(null);
 
             _iocContainer.Bind<EntityFactory>().ToConstant(serverFactory).InSingletonScope();
 
