@@ -130,7 +130,7 @@ namespace Utopia.Worlds.Chunks
         /// <summary>
         /// Gets or sets the value of chunk opaque. Allows to create slowly appearing effect
         /// </summary>
-        public float Opaque { get; set; }
+        public FTSValue<float> PopUpValue = new FTSValue<float>(0.0f);
         
         public bool isFrustumCulled { get; set; }             // Chunk Frustum culled
         public Int64 ChunkID { get; set; }                    // Chunk ID

@@ -30,7 +30,9 @@ namespace Utopia.Resources.Effects.Terran
             [FieldOffset(0)]
             public Matrix World;
             [FieldOffset(64)]
-            public float Opaque;
+            public float PopUpValue;
+            [FieldOffset(68)]
+            public float FogType;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion

@@ -5,7 +5,8 @@
 cbuffer PerDraw
 {
 	matrix World;
-	float Opaque;
+	float PopUpValue;
+	float FogType;
 };
 
 cbuffer PerFrame
@@ -100,7 +101,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	float4 newPosition = {input.Position.xyz, 1.0f};
 	float YOffset = 0;
 	if(input.VertexInfo1.y == 1) YOffset = input.VertexInfo2.x;
-	newPosition.y -= YOffset;
+	newPosition.y -= (YOffset + (PopUpValue * 128));
 
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
@@ -120,7 +121,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.EmissiveLight.a = (1 - abs(dot(normalize(worldPosition.xyz), facenorm))) * 1.3 ;
 	output.EmissiveLight.a = clamp(output.EmissiveLight.a, 0.6, 1);
 
-	output.fogPower = clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
+	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.causticPower = clamp( ((length(worldPosition.xyz) - 30) / 20), 0, 1);
 	if(facetype != 3) output.causticPower = 1;
 	output.BiomeData = input.VertexInfo2.yz;
@@ -134,8 +135,8 @@ PS_OUT PS(PS_IN input)
 {
 	PS_OUT output;
 
-	float fogvalue = min( Opaque, 1 - input.fogPower);
-	clip(fogvalue <= 0.001 ? -1:1); //If fog maximum, pixel clamped (Will leave the sky buffer at this place)
+	float fogvalue = input.fogPower;
+	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1); //If fog maximum, pixel clamped (Will leave the sky buffer at this place)
 
 	//The alpha value is following the Angle of view to the face
 	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.StaticUVW).rgb, 1) * input.EmissiveLight;
@@ -151,7 +152,8 @@ PS_OUT PS(PS_IN input)
 	
 	float4 color = colorInput;
 
-	if(colorInput.a < 1.0f){
+	if(colorInput.a < 1.0f)
+	{
 		//Get Solid landscape value (Saw trough seethourgh water)
 		float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
 
@@ -161,20 +163,34 @@ PS_OUT PS(PS_IN input)
 	}
 
 	//Add overlay only when needed
-	if(input.causticPower < 1){
+	if(input.causticPower < 1)
+	{
 		color.rgb += ((AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb * (1 - input.causticPower)) * color.rgb) * 2;
 	}
 
 	//To execute only when Fog is present !
-	if(fogvalue < 1){
-		//Sample BackGround Sky
-		float4 backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+	if(fogvalue < 1)
+	{
+		float4 backBufferColor;
+		if(FogType == 0.0)
+		{
+			//Sample BackGround Sky
+			backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+		}else{
+			if(FogType == 1.0)
+			{
+				backBufferColor.xyz = SunColor / 1.5;
+				backBufferColor.w = color.a;
+			}
+		}
 
-		color.a = min( Opaque, 1 - input.fogPower);
+		if(FogType != 2.0)
+		{
+			color.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
+		}
 
-		color.rgb = (color.rgb * color.a) + (backBufferColor.rgb * (1 - color.a));
-		color.a = color.a;
 	}
+
 	output.Color = color;
 
     return output;
