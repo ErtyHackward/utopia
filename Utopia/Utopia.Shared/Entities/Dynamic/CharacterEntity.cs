@@ -55,8 +55,6 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <returns>Tool instance or null</returns>
         public ITool FindToolById(uint toolId)
         {
-            if (Equipment.LeftTool != null && Equipment.LeftTool.StaticId == toolId)
-                return Equipment.LeftTool;
             if (Equipment.RightTool != null && Equipment.RightTool.StaticId == toolId)
                 return Equipment.RightTool;
 

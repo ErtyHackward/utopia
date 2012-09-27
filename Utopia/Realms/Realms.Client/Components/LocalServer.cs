@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Realms.Shared;
 using S33M3CoreComponents.Config;
 using S33M3Resources.Structs;
 using Utopia.Server;
@@ -28,7 +27,7 @@ namespace Realms.Client.Components
     {
         private readonly RuntimeVariables _vars;
         private Server _server;
-        private RealmsEntityFactory _serverFactory;
+        private EntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
 
         public LocalServer(RuntimeVariables vars)
@@ -41,7 +40,7 @@ namespace Realms.Client.Components
             if (_server != null)
                 throw new InvalidOperationException("Already initialized");
 
-            _serverFactory = new RealmsEntityFactory(null);
+            _serverFactory = new EntityFactory(null);
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
             _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory, worldParam);
@@ -90,7 +89,7 @@ namespace Realms.Client.Components
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
             adder.CubeId = CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
 
-            dEntity.Equipment.Equip(EquipmentSlotType.RightHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
+            dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             foreach (var cubeId in CubeId.All())
             {
@@ -102,7 +101,7 @@ namespace Realms.Client.Components
                 dEntity.Inventory.PutItem(item3);
             }
 
-            dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<Torch>());
+            dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<SideLightSource>());
 
             e.PlayerEntity = dEntity;
         }

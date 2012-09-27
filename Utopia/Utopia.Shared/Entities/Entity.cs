@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
@@ -14,36 +15,43 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Pickable entity Property
         /// </summary>
-        public virtual bool IsPickable { get { return true; } }
+        [Category("Entity")]
+        public bool IsPickable { get; set; }
 
         /// <summary>
         /// Player Collision checked entity Property
         /// </summary>
-        public virtual bool IsPlayerCollidable { get { return false; } }
+        [Category("Entity")]
+        public bool IsPlayerCollidable { get; set; }
 
         /// <summary>
         /// Gets entity class id
         /// </summary>
+        [Category("Entity")]
         public abstract ushort ClassId { get; }
 
         /// <summary>
         /// Gets current entity type
         /// </summary>
+        [Category("Entity")]
         public EntityType Type { get; protected set; }
 
         /// <summary>
         /// Entity maximum size
         /// </summary>
-        public virtual Vector3 DefaultSize { get; set; }
+        [Category("Entity")]
+        public Vector3 DefaultSize { get; set; }
 
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
+        [Browsable(false)]
         public virtual Vector3D Position { get; set; }
         
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
+        [Category("Entity")]
         public abstract string DisplayName { get; }
 
         /// <summary>
@@ -60,6 +68,10 @@ namespace Utopia.Shared.Entities
 
             DefaultSize = reader.ReadVector3();
             Position = reader.ReadVector3D();
+
+            IsPickable = reader.ReadBoolean();
+            IsPlayerCollidable = reader.ReadBoolean();
+
         }
 
         /// <summary>
@@ -74,6 +86,9 @@ namespace Utopia.Shared.Entities
 
             writer.Write(DefaultSize);
             writer.Write(Position);
+
+            writer.Write(IsPickable);
+            writer.Write(IsPlayerCollidable);
         }
 
         public abstract EntityLink GetLink();
