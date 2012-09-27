@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Structs;
@@ -8,7 +9,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Base interface for entities
     /// </summary>
-    public interface IEntity
+    public interface IEntity : ICloneable
     {
         /// <summary>
         /// Pickable entity Property

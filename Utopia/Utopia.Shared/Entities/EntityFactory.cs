@@ -127,9 +127,7 @@ namespace Utopia.Shared.Entities
         public Entity CreateFromBytes(BinaryReader reader)
         {
             var classId = reader.ReadUInt16();
-
-            reader.BaseStream.Seek(-2, SeekOrigin.Current);
-
+            
             var entity = CreateEntity(classId);
 
             entity.Load(reader, this);
