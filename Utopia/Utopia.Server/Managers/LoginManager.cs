@@ -150,6 +150,8 @@ namespace Utopia.Server.Managers
                         using (var ms = new MemoryStream(bytes))
                         {
                             var reader = new BinaryReader(ms);
+                            // skip 2 bytes
+                            reader.ReadUInt16();
                             playerEntity.DynamicEntity.Load(reader, _factory);
                         }
 
