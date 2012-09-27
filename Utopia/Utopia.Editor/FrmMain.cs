@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Utopia.Shared;
@@ -10,7 +12,9 @@ namespace Utopia.Editor
     public partial class FrmMain : Form
     {
         private string _filePath;
-        
+
+        private int _entitiesOffset;
+
         private RealmConfiguration _configuration;
         public RealmConfiguration Configuration
         {
@@ -24,8 +28,7 @@ namespace Utopia.Editor
 
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
-                    buttonAdd.Enabled = true;
-                    buttonRemove.Enabled = true;
+                    treeView1.Enabled = true;
                 }
                 else
                 {
@@ -33,8 +36,7 @@ namespace Utopia.Editor
 
                     saveToolStripMenuItem.Enabled = false;
                     saveAsToolStripMenuItem.Enabled = false;
-                    buttonAdd.Enabled = false;
-                    buttonRemove.Enabled = false;
+                    treeView1.Enabled = false;
                 }
                 UpdateList();
             }
@@ -43,28 +45,52 @@ namespace Utopia.Editor
         public FrmMain()
         {
             InitializeComponent();
+
+            _entitiesOffset = imageList1.Images.Count;
+
+            foreach (var file in Program.ModelsRepository.ModelsFiles)
+            {
+                imageList1.Images.Add(Image.FromFile(file));
+            }
+
+            treeView1.ImageList = imageList1;
+
+            if (Program.ModelsRepository.ModelsFiles.Count == 0)
+            {
+                MessageBox.Show(
+                    "Unable to find models images. Use 'export all' feature of the model editor to create them. And restart the program",
+                    "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
         }
 
         private void UpdateList()
         {
-            listView1.Items.Clear();
+            //treeView1.Nodes.Clear();
 
             if (_configuration == null)
                 return;
 
-            {
-                var item = new ListViewItem("General");
-                item.Tag = _configuration;
-                listView1.Items.Add(item);
-            }
+            treeView1.Nodes["General"].Tag = _configuration;
 
-            foreach (var entity in _configuration.EntityExamples)
+            var entitiesNode = treeView1.Nodes["Entities"];
+
+            entitiesNode.Nodes.Clear();
+
+            for (var i = 0; i < _configuration.EntityExamples.Count; i++)
             {
-                var item = new ListViewItem(entity.DisplayName);
+                var entity = _configuration.EntityExamples[i];
+                var item = new TreeNode(entity.DisplayName);
                 item.Tag = entity;
-                listView1.Items.Add(item);
-            }
 
+                if (entity is IVoxelEntity)
+                {
+                    var voxelEntity = entity as IVoxelEntity;
+                    item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1: _entitiesOffset + i;
+                    item.SelectedImageIndex = item.ImageIndex;
+                }
+                entitiesNode.Nodes.Add(item);
+            }
         }
 
         private void officialSiteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -134,18 +160,27 @@ namespace Utopia.Editor
 
         private void listView1_Click(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
-            {
-                var selectedItem = listView1.SelectedItems[0];
-                propertyGrid1.SelectedObject = selectedItem.Tag;
-            }
-            else
-            {
-                propertyGrid1.SelectedObject = null;
-            }
+
+                
+
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            propertyGrid1.SelectedObject = treeView1.SelectedNode.Tag;
+        }
+
+        private void buttonRemove_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var form = new FrmEntityChoose();
 
@@ -158,6 +193,56 @@ namespace Utopia.Editor
                 Configuration.EntityExamples.Add(instance);
 
                 UpdateList();
+
+                treeView1.SelectedNode = FindByTag(instance);
+            }
+            
+        }
+
+        private TreeNode FindByTag(object tag, TreeNode node = null)
+        {
+            TreeNodeCollection nodes;
+            if (node == null)
+                nodes = treeView1.Nodes;
+            else
+                nodes = node.Nodes;
+
+            foreach (TreeNode node1 in nodes)
+            {
+                if (node1.Tag == tag)
+                    return node1;
+            }
+
+            foreach (TreeNode node1 in nodes)
+            {
+                var result = FindByTag(tag, node1);
+
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+
+        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if (e.ChangedItem.Label == "ModelName")
+            {
+                var item = treeView1.SelectedNode;
+
+                var entity = propertyGrid1.SelectedObject;
+                
+                var voxelEntity = entity as IVoxelEntity;
+                item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
+                item.SelectedImageIndex = item.ImageIndex;
+            }
+
+            if (e.ChangedItem.Label == "UniqueName")
+            {
+                var item = treeView1.SelectedNode;
+
+                item.Text = (string)e.ChangedItem.Value;
             }
         }
     }

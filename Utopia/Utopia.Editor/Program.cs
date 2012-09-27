@@ -8,7 +8,7 @@ namespace Utopia.Editor
 {
     static class Program
     {
-        private static ModelsRepository ModelsRepository { get; set; }
+        public static ModelsRepository ModelsRepository { get; set; }
 
         /// <summary>
         /// The main entry point for the application.
