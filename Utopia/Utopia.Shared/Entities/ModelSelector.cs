@@ -14,15 +14,24 @@ namespace Utopia.Shared.Entities
     {
         public static List<string> Models = new List<string>();
 
+        private IWindowsFormsEditorService _service;
         private ListView _list;
 
         private void Initialize()
         {
+            if (_list != null)
+            {
+                _list.Click -= _list_Click;
+            }
+
             _list = new ListView();
             _list.View = View.LargeIcon;
+            _list.Click += _list_Click;
 
             var imgList = new ImageList();
 
+            imgList.ImageSize = new Size(32, 32);
+            imgList.ColorDepth = ColorDepth.Depth32Bit;
             _list.LargeImageList = imgList;
             _list.SmallImageList = imgList;
 
@@ -40,16 +49,25 @@ namespace Utopia.Shared.Entities
             }
         }
 
+        void _list_Click(object sender, EventArgs e)
+        {
+            if (_list.SelectedItems.Count > 0)
+            {
+                _list.Tag = _list.SelectedItems[0].Text;
+                _service.CloseDropDown();
+            }
+        }
+
         public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             if (_list == null)
                 Initialize();
 
-            var svc = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+            _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
 
-            svc.DropDownControl(_list);
-
-            return value;
+            _service.DropDownControl(_list);
+            
+            return _list.Tag;
         }
 
         public override UITypeEditorEditStyle GetEditStyle(System.ComponentModel.ITypeDescriptorContext context)
