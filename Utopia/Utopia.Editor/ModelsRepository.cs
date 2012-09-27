@@ -14,6 +14,9 @@ namespace Utopia.Editor
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
 
+            //Create the Directory if needed
+            if (Directory.Exists(path) == false) Directory.CreateDirectory(path);
+
             foreach (var file in Directory.EnumerateFiles(path, "*.png"))
             {
                 ModelsFiles.Add(file);
