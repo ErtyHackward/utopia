@@ -47,16 +47,6 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         #region Public Methods
-        public void LeftToolUse(ToolUseMode useMode)
-        {
-            if (Equipment.LeftTool != null)
-            {
-                var args = EntityUseEventArgs.FromState(EntityState);
-                args.Tool = Equipment.LeftTool;
-                args.UseMode = useMode;
-                OnUse(args);
-            }
-        }
 
         public void RightToolUse(ToolUseMode useMode)
         {

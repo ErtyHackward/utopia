@@ -1,5 +1,3 @@
-using System.IO;
-using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete.Collectible
@@ -7,31 +5,20 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
     /// <summary>
     /// Represents a top block linked item that can be picked and non-player collidable
     /// </summary>
-    public abstract class Plant : CubePlaceableItem
+    public class Plant : CubePlaceableItem
     {
-        public override bool IsPickable
+        public override ushort ClassId
         {
-            get { return true; }
+            get { return EntityClassId.Plant; }
         }
-
-        public override bool IsPlayerCollidable
-        { 
-            get { return false; }
-        }
-
-        public override BlockFace MountPoint
-        {
-            get { return BlockFace.Top; }
-        }
-
-        public override string StackType
-        {
-            get { return GetType().Name; }
-        }
-
-        protected Plant()
+        
+        public Plant()
         {
             Type = EntityType.Static;
+            UniqueName = "Plant";
+            MountPoint = BlockFace.Top;
+            IsPlayerCollidable = false;
+            IsPickable = true;
         }
 
     }

@@ -2,6 +2,7 @@
 using Ninject;
 using Realms.Client.Components.GUI;
 using Utopia.Components;
+using Utopia.Entities;
 using Utopia.Entities.Voxel;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
@@ -36,6 +37,7 @@ namespace Realms.Client.States
             var gui = _ioc.Get<GuiManager>();
             var modelManager = _ioc.Get<VoxelModelManager>();
             _modelEditor = _ioc.Get<ModelEditorComponent>();
+            var iconFactory = _ioc.Get<IconFactory>();
 
             _modelEditor.BackPressed += EditorBackPressed;
 
@@ -43,6 +45,7 @@ namespace Realms.Client.States
             AddComponent(modelManager);
             AddComponent(_modelEditor);
             AddComponent(gui);
+            AddComponent(iconFactory);
             base.Initialize(context);
         }
 
