@@ -416,7 +416,9 @@ namespace Utopia.Worlds.Chunks
             if (voxelEntity == null) return; //My entity is not a Voxel Entity => Not possible to render it so !!!
 
             //Create the Voxel Model Instance for the Item
-            VisualVoxelModel model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+            VisualVoxelModel model= null;
+            if (!string.IsNullOrEmpty(voxelEntity.ModelName))
+                model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
             if (model != null && voxelEntity.ModelInstance == null)
             {
                 voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);

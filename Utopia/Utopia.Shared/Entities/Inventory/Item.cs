@@ -86,12 +86,9 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to save base information
             base.Save(writer);
 
-            if (UniqueName == null)
-                UniqueName = "";
-
-            writer.Write(UniqueName);
-            writer.Write(ModelName);
-            writer.Write(Description);
+            writer.Write(UniqueName ?? string.Empty);
+            writer.Write(ModelName ?? string.Empty);
+            writer.Write(Description ?? string.Empty);
             writer.Write(MaxStackSize);
         }      
     }
