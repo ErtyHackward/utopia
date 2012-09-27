@@ -144,7 +144,22 @@ namespace Utopia.Worlds.Chunks
                     {
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
-                        _terraEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
+                        _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
+
+                        switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
+	                    {
+                            case "SkyFog":
+                                _terraEffect.CBPerDraw.Values.FogType = 0.0f;
+                                break;
+                            case "SimpleFog":
+                                _terraEffect.CBPerDraw.Values.FogType = 1.0f;
+                                break;
+                            case "NoFog":
+                            default:
+                                _terraEffect.CBPerDraw.Values.FogType = 2.0f;
+                            break;
+	                    }
+
                         _terraEffect.CBPerDraw.IsDirty = true;
                         _terraEffect.Apply(context);
 
@@ -179,7 +194,22 @@ namespace Utopia.Worlds.Chunks
                     if (chunk.LiquidCubeVB != null)
                     {
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
-                        _liquidEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
+                        _liquidEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
+
+                        switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
+                        {
+                            case "SkyFog":
+                                _liquidEffect.CBPerDraw.Values.FogType = 0.0f;
+                                break;
+                            case "SimpleFog":
+                                _liquidEffect.CBPerDraw.Values.FogType = 1.0f;
+                                break;
+                            case "NoFog":
+                            default:
+                                _liquidEffect.CBPerDraw.Values.FogType = 2.0f;
+                                break;
+                        }
+
                         _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _liquidEffect.CBPerDraw.IsDirty = true;
                         _liquidEffect.Apply(context);

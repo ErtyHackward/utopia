@@ -28,6 +28,14 @@ namespace Utopia.Worlds.Chunks
         public override void Update(GameTime timeSpend)
         {
             PlayerDisplacementChunkEvents();
+
+            // make chunks pop Up
+            for (int i = _transparentChunks.Count - 1; i >= 0; i--)
+            {
+                var transparentChunk = _transparentChunks[i];
+                transparentChunk.PopUpValue.BackUpValue();
+                transparentChunk.PopUpValue.Value -= 0.02f;
+            }
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -43,10 +51,12 @@ namespace Utopia.Worlds.Chunks
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
             {
                 var transparentChunk = _transparentChunks[i];
-                transparentChunk.Opaque += 2f * elapsedTime;
-                if (transparentChunk.Opaque >= 1)
+
+                transparentChunk.PopUpValue.ValueInterp = MathHelper.Lerp(transparentChunk.PopUpValue.ValuePrev, transparentChunk.PopUpValue.Value, interpolationLd);
+
+                if (transparentChunk.PopUpValue.ValueInterp <= 0)
                 {
-                    transparentChunk.Opaque = 1;
+                    transparentChunk.PopUpValue.ValueInterp = 0;
                     _transparentChunks.RemoveAt(i);
                 }
             }

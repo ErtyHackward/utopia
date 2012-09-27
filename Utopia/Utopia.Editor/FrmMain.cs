@@ -10,7 +10,7 @@ namespace Utopia.Editor
     public partial class FrmMain : Form
     {
         private string _filePath;
-
+        
         private RealmConfiguration _configuration;
         public RealmConfiguration Configuration
         {

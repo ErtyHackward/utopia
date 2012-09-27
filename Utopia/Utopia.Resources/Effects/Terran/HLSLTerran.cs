@@ -33,7 +33,9 @@ namespace Utopia.Resources.Effects.Terran
             /// Allows to create chunk pop-up effect
             /// </summary>
             [FieldOffset(64)]
-            public float Opaque;
+            public float PopUpValue;
+            [FieldOffset(68)]
+            public float FogType;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion

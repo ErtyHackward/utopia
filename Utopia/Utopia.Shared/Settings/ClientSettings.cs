@@ -129,8 +129,8 @@ namespace Utopia.Shared.Settings
         public int WorldSize { get; set; }
         [ParameterAttribute("Visible World Entity range", "World entities view range in chunk unit between [1 and 32]", " chunk(s)", ParamInputMethod.Slider, 1, 32, true)]
         public int StaticEntityViewSize { get; set; }
-        [ParameterAttribute("Light propagation", "Maximum size of light propagation in block unit", " block(s)", ParamInputMethod.Slider, 4, 12, true)]
-        public int LightPropagateSteps { get; set; }
+        [ParameterAttribute("Landscape fog", "Foggy far away landscape", null, ParamInputMethod.ButtonList, true, "SkyFog", "SimpleFog", "NoFog")]
+        public string LandscapeFog { get; set; }
         [ParameterAttribute("Textures pack", "Textures used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_TexturePacks")]
         public string TexturePack { get; set; }
         [ParameterAttribute("VSync enabled", "Vertical refresh synchronization", null, ParamInputMethod.CheckBox, false)]
@@ -303,8 +303,8 @@ namespace Utopia.Shared.Settings
                     {
                         WorldSize = 32,
                         StaticEntityViewSize = 20,
-                        LightPropagateSteps = 8,
                         TexturePack = "Default",
+                        LandscapeFog = "SkyFog",
                         VSync = true,
                         MSAA = new SampleDescriptionSetting() { SampleDescription = new SampleDescription(1, 0) }
                     },

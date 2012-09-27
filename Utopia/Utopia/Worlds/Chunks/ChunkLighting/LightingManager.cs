@@ -50,7 +50,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             _cubesHolder = cubesHolder;
             _visualWorldParameters = visualWorldParameters;
 
-            _lightPropagateSteps = (byte)ClientSettings.Current.Settings.GraphicalParameters.LightPropagateSteps;
+            _lightPropagateSteps = 8;
             _lightDecreaseStep = (byte)(256 / _lightPropagateSteps);
         }
 
