@@ -405,7 +405,7 @@ namespace Utopia.Worlds.Chunks
                 Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
                                                             MathHelper.Fastfloor(entityWorldPosition.Y),
                                                             MathHelper.Fastfloor(entityWorldPosition.Z));
-                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, Utopia.Shared.Cubes.CubeId.Air), this);
+                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, Shared.Cubes.CubeId.Air), this);
             }
         }
 
