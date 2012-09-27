@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Chunks;
@@ -17,16 +18,20 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
+        [Browsable(false)]
         public ILandscapeManager2D LandscapeManager { get; set; }
 
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
+        [Browsable(false)]
         public EntityFactory Factory { get; set; }
 
+        [Browsable(false)]
         public Vector3I LinkedCube { get; set; }
-
-        public abstract BlockFace MountPoint { get; }
+        
+        [Description("Allows to specify the possible face of the block where entity can be attached to")]
+        public BlockFace MountPoint { get; set; }
         
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
@@ -116,6 +121,7 @@ namespace Utopia.Shared.Entities
             // first we need to load base information
             base.Load(reader, factory);
             LinkedCube = reader.ReadVector3I();
+            MountPoint = (BlockFace)reader.ReadByte();
         }
 
         public override void Save(BinaryWriter writer)
@@ -123,6 +129,7 @@ namespace Utopia.Shared.Entities
             // first we need to save base information
             base.Save(writer);
             writer.Write(LinkedCube);
+            writer.Write((byte)MountPoint);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Realms.Server
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
             adder.CubeId = CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
 
-            dEntity.Equipment.Equip(EquipmentSlotType.RightHand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
+            dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Add Items in inventory, every cubes
             foreach (var cubeId in CubeId.All())
@@ -47,7 +47,7 @@ namespace Realms.Server
                 dEntity.Inventory.PutItem(item3);
             }
             //Add coins + Torch
-            var torch = _server.EntityFactory.CreateEntity<Torch>();
+            var torch = _server.EntityFactory.CreateEntity<SideLightSource>();
             dEntity.Inventory.PutItem(torch);
 
             //var item = (IItem)EntityFactory.Instance.CreateEntity((SandboxEntityClassId.Shovel));

@@ -13,7 +13,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Variables
         private RangeI _cactusPerChunk = new RangeI(0, 4);
         private Cavern _moonStoneCavern = new Cavern() { CubeId = CubeId.MoonStone, CavernHeightSize = new RangeB(5, 10), CavernPerChunk = 3, SpawningHeight = new RangeB(20, 60), ChanceOfSpawning = 0.1 };
-        private BiomeEntity _flower1Entities = new BiomeEntity() { EntityId = EntityClassId.Cactus, EntityPerChunk = 10, ChanceOfSpawning = 0.5 };
+        private BiomeEntity _flower1Entities = new BiomeEntity() { EntityId = EntityClassId.Plant, EntityPerChunk = 10, ChanceOfSpawning = 0.5 };
 
         #endregion
 

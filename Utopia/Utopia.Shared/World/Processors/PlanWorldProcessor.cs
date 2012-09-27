@@ -126,7 +126,7 @@ namespace Utopia.Shared.World.Processors
                                             double result = r.NextDouble();
                                             if (result < 0.3)
                                             {
-                                                var grass = _factory.CreateEntity<Grass>();
+                                                var grass = _factory.CreateEntity<Plant>();
 
                                                 grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);
@@ -140,7 +140,7 @@ namespace Utopia.Shared.World.Processors
                                             double result = r.NextDouble();
                                             if (result <= 0.4)
                                             {
-                                                var grass = _factory.CreateEntity<Grass>();
+                                                var grass = _factory.CreateEntity<Plant>();
 
                                                 grass.Position = globalPos + new Vector3D(0.5, 1, 0.5);
                                                 grass.LinkedCube = new Vector3I(globalPos.X, globalPos.Y, globalPos.Z);

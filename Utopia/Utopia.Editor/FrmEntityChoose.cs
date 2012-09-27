@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Utopia.Shared.Entities.Interfaces;
 
@@ -34,6 +30,8 @@ namespace Utopia.Editor
         private void buttonOk_Click(object sender, EventArgs e)
         {
             SelectedType = (Type)comboBoxTypes.SelectedItem;
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

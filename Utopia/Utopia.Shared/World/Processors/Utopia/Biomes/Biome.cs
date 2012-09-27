@@ -532,7 +532,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     if (treeTemplate.TreeType == TreeTemplates.TreeType.Cactus)
                     {
                         Vector3I posi = cursor.InternalPosition;
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, EntityClassId.CactusFlower, posi.X, posi.Y, posi.Z, rnd, entityFactory, true, true);
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, EntityClassId.Plant /* Cactus */, posi.X, posi.Y, posi.Z, rnd, entityFactory, true, true);
                     }
 
                     //Remove OFfset

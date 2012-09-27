@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
@@ -17,16 +18,19 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets static entity id. This id is unique only in current container. Invalid without Container property set
         /// </summary>
+        [Browsable(false)]
         public uint StaticId { get; set; }
         
         /// <summary>
         /// Gets or sets entity world rotation
         /// </summary>
+        [Browsable(false)]
         public Quaternion Rotation { get; set; }
 
         /// <summary>
         /// Gets or sets current parent container
         /// </summary>
+        [Browsable(false)]
         public IStaticContainer Container { get; set; }
 
         protected StaticEntity()
