@@ -6,26 +6,29 @@ using System.Reflection;
 using System.Windows.Forms;
 using Utopia.Shared;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Editor
 {
     public partial class FrmMain : Form
     {
+        #region Private Variables
         private string _filePath;
-
         private int _entitiesOffset;
-
         private RealmConfiguration _configuration;
+        #endregion
+
+        #region Public Properties
         public RealmConfiguration Configuration
         {
             get { return _configuration; }
-            set { 
+            set
+            {
                 _configuration = value;
 
                 if (_configuration != null)
                 {
                     Text = _configuration.RealmName + " - Utopia realm editor";
-
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
                     treeView1.Enabled = true;
@@ -33,7 +36,6 @@ namespace Utopia.Editor
                 else
                 {
                     Text = "Utopia realm editor";
-
                     saveToolStripMenuItem.Enabled = false;
                     saveAsToolStripMenuItem.Enabled = false;
                     treeView1.Enabled = false;
@@ -41,6 +43,7 @@ namespace Utopia.Editor
                 UpdateList();
             }
         }
+        #endregion
 
         public FrmMain()
         {
@@ -64,50 +67,22 @@ namespace Utopia.Editor
 
         }
 
-        private void UpdateList()
-        {
-            //treeView1.Nodes.Clear();
+        #region Public Methods
+        #endregion
 
-            if (_configuration == null)
-                return;
+        #region Private Methods
 
-            treeView1.Nodes["General"].Tag = _configuration;
+        #region Menu related
+        
+        //Events from FILE ===========================
 
-            var entitiesNode = treeView1.Nodes["Entities"];
-
-            entitiesNode.Nodes.Clear();
-
-            for (var i = 0; i < _configuration.EntityExamples.Count; i++)
-            {
-                var entity = _configuration.EntityExamples[i];
-                var item = new TreeNode(entity.DisplayName);
-                item.Tag = entity;
-
-                if (entity is IVoxelEntity)
-                {
-                    var voxelEntity = entity as IVoxelEntity;
-                    item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1: _entitiesOffset + i;
-                    item.SelectedImageIndex = item.ImageIndex;
-                }
-                entitiesNode.Nodes.Add(item);
-            }
-        }
-
-        private void officialSiteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Process.Start("http://utopiarealms.com");
-        }
-
-        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Utopia Realms configuration editor. v" + Assembly.GetExecutingAssembly().GetName().Version);
-        }
-
+        //New
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration = new RealmConfiguration {RealmName = "noname", CreatedAt = DateTime.Now};
+            Configuration = new RealmConfiguration(withDefaultValueCreation: true) { RealmName = "noname", CreatedAt = DateTime.Now };
         }
 
+        //Open
         private void openRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -124,15 +99,7 @@ namespace Utopia.Editor
             }
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.FileName = Configuration.RealmName;
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                Save(saveFileDialog1.FileName);
-            }
-        }
-
+        //Save
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(_filePath))
@@ -143,6 +110,79 @@ namespace Utopia.Editor
 
             Save(_filePath);
         }
+
+        //SaveAs
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.FileName = Configuration.RealmName;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Save(saveFileDialog1.FileName);
+            }
+        }
+
+        // ===========================================
+
+        //Events from HELP ===========================
+
+        //Official Site
+        private void officialSiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://utopiarealms.com");
+        }
+
+        //About...
+        private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Utopia Realms configuration editor. v" + Assembly.GetExecutingAssembly().GetName().Version);
+        }
+        // ===========================================
+
+        
+        #endregion
+
+        //Create the various SubNode (Items, Cubes, ...) in the TreeView
+        private void UpdateList()
+        {
+            if (_configuration == null)
+                return;
+
+            //Bind Configuration object to General root Node
+            treeView1.Nodes["General"].Tag = _configuration;
+
+            //Get Entities Root node collection
+            TreeNode entitiesRootNode = treeView1.Nodes["Entities"];
+            entitiesRootNode.Nodes.Clear();
+
+            //Add new Entities nodes
+            for (var i = 0; i < _configuration.EntityBluePrint.Count; i++)
+            {
+                var entity = _configuration.EntityBluePrint[i];
+                var item = new TreeNode(entity.DisplayName);
+                item.Tag = entity;
+
+                if (entity is IVoxelEntity)
+                {
+                    var voxelEntity = entity as IVoxelEntity;
+                    item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + i;
+                    item.SelectedImageIndex = item.ImageIndex;
+                }
+                entitiesRootNode.Nodes.Add(item);
+            }
+
+            //Clear all the Cube node items
+            TreeNode cubesRootNode = treeView1.Nodes["Cubes"];
+            cubesRootNode.Nodes.Clear();
+
+            for (var i = 0; i < _configuration.CubeProfiles.Count; i++)
+            {
+                var cubeProfile = _configuration.CubeProfiles[i];
+                var item = new TreeNode(cubeProfile.Name);
+                item.Tag = cubeProfile;
+                cubesRootNode.Nodes.Add(item);
+            }
+        }
+
 
         private void Save(string filePath)
         {
@@ -160,24 +200,31 @@ namespace Utopia.Editor
 
         private void listView1_Click(object sender, EventArgs e)
         {
-
-                
-
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+
+            if (treeView1.SelectedNode.Tag is CubeProfile)
+            {
+                if (((CubeProfile)treeView1.SelectedNode.Tag).CanBeModified == false) propertyGrid1.Enabled = false;
+                else propertyGrid1.Enabled = true;
+            }
+            else
+            {
+                propertyGrid1.Enabled = true;
+            }
+               
+
             propertyGrid1.SelectedObject = treeView1.SelectedNode.Tag;
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
         {
-
         }
 
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
@@ -190,13 +237,12 @@ namespace Utopia.Editor
 
                 var instance = (IEntity)Activator.CreateInstance(type);
 
-                Configuration.EntityExamples.Add(instance);
+                Configuration.EntityBluePrint.Add(instance);
 
                 UpdateList();
 
                 treeView1.SelectedNode = FindByTag(instance);
             }
-            
         }
 
         private TreeNode FindByTag(object tag, TreeNode node = null)
@@ -232,7 +278,7 @@ namespace Utopia.Editor
                 var item = treeView1.SelectedNode;
 
                 var entity = propertyGrid1.SelectedObject;
-                
+
                 var voxelEntity = entity as IVoxelEntity;
                 item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
                 item.SelectedImageIndex = item.ImageIndex;
@@ -250,5 +296,9 @@ namespace Utopia.Editor
         {
             Application.Exit();
         }
+        #endregion
+
+
+        
     }
 }
