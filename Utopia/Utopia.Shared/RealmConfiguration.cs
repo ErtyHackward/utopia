@@ -530,6 +530,139 @@ namespace Utopia.Shared
                 CanBeModified = true,
             });
 
+            //Snow Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "Snow",
+                Id = 18,
+                Tex_Top = 17,
+                Tex_Bottom = 17,
+                Tex_Back = 17,
+                Tex_Front = 17,
+                Tex_Left = 17,
+                Tex_Right = 17,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.9f,
+                CanBeModified = false,
+                YBlockOffset = 0.9f
+            });
+
+            //Ice Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "Ice",
+                Id = 19,
+                Tex_Top = 18,
+                Tex_Bottom = 18,
+                Tex_Back = 18,
+                Tex_Front = 18,
+                Tex_Left = 18,
+                Tex_Right = 18,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                SlidingValue = 0.05f,
+                CanBeModified = false
+            });
+
+            //StillLava Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "StillLava",
+                Id = 20,
+                Tex_Top = 19,
+                Tex_Bottom = 19,
+                Tex_Back = 19,
+                Tex_Front = 19,
+                Tex_Left = 19,
+                Tex_Right = 19,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                CanBeModified = false,
+                IsEmissiveColorLightSource = true,
+                EmissiveColorA = 255,
+                EmissiveColorR = 255,
+                EmissiveColorG = 161,
+                EmissiveColorB = 38
+            });
+
+            //DynamicLava Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "DynamicLava",
+                Id = 21,
+                Tex_Top = 20,
+                Tex_Bottom = 20,
+                Tex_Back = 20,
+                Tex_Front = 20,
+                Tex_Left = 20,
+                Tex_Right = 20,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                IsTaggable = true,
+                CanBeModified = false,
+                IsEmissiveColorLightSource = true,
+                EmissiveColorA = 255,
+                EmissiveColorR = 255,
+                EmissiveColorG = 161,
+                EmissiveColorB = 38
+            });
+
+            //Cactus Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "Cactus",
+                Id = 22,
+                Tex_Top = 22,
+                Tex_Bottom = 22,
+                Tex_Back = 20,
+                Tex_Front = 20,
+                Tex_Left = 20,
+                Tex_Right = 20,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                CanBeModified = false,
+                SideOffsetMultiplier = 1
+            });
+
+            //CactusTop Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "CactusTop",
+                Id = 23,
+                Tex_Top = 22,
+                Tex_Bottom = 20,
+                Tex_Back = 20,
+                Tex_Front = 20,
+                Tex_Left = 20,
+                Tex_Right = 20,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                CanBeModified = false,
+                SideOffsetMultiplier = 1
+            });
         }
         #endregion
     }
