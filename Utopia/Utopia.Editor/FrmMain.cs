@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Utopia.Shared;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
 
@@ -31,14 +32,14 @@ namespace Utopia.Editor
                     Text = _configuration.RealmName + " - Utopia realm editor";
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
-                    treeView1.Enabled = true;
+                    tvMainCategories.Enabled = true;
                 }
                 else
                 {
                     Text = "Utopia realm editor";
                     saveToolStripMenuItem.Enabled = false;
                     saveAsToolStripMenuItem.Enabled = false;
-                    treeView1.Enabled = false;
+                    tvMainCategories.Enabled = false;
                 }
                 UpdateList();
             }
@@ -56,7 +57,7 @@ namespace Utopia.Editor
                 imageList1.Images.Add(Image.FromFile(file));
             }
 
-            treeView1.ImageList = imageList1;
+            tvMainCategories.ImageList = imageList1;
 
             if (Program.ModelsRepository.ModelsFiles.Count == 0)
             {
@@ -148,10 +149,10 @@ namespace Utopia.Editor
                 return;
 
             //Bind Configuration object to General root Node
-            treeView1.Nodes["General"].Tag = _configuration;
+            tvMainCategories.Nodes["General"].Tag = _configuration;
 
             //Get Entities Root node collection
-            TreeNode entitiesRootNode = treeView1.Nodes["Entities"];
+            TreeNode entitiesRootNode = tvMainCategories.Nodes["Entities"];
             entitiesRootNode.Nodes.Clear();
 
             //Add new Entities nodes
@@ -171,16 +172,29 @@ namespace Utopia.Editor
             }
 
             //Clear all the Cube node items
-            TreeNode cubesRootNode = treeView1.Nodes["Cubes"];
+            TreeNode cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
-
             for (var i = 0; i < _configuration.CubeProfiles.Count; i++)
             {
                 var cubeProfile = _configuration.CubeProfiles[i];
+                if (cubeProfile.Name == "System Reserved") continue;
                 var item = new TreeNode(cubeProfile.Name);
                 item.Tag = cubeProfile;
                 cubesRootNode.Nodes.Add(item);
             }
+
+            //Clear all the Biomes node items
+            TreeNode biomesRootNode = tvMainCategories.Nodes["Biomes"];
+            biomesRootNode.Nodes.Clear();
+
+            for (var i = 0; i < _configuration.Biomes.Count; i++)
+            {
+                var biome = _configuration.Biomes[i];
+                var item = new TreeNode(biome.Name);
+                item.Tag = biome;
+                biomesRootNode.Nodes.Add(item);
+            }
+
         }
 
 
@@ -206,42 +220,56 @@ namespace Utopia.Editor
         {
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
         {
 
-            if (treeView1.SelectedNode.Tag is CubeProfile)
+            if (tvMainCategories.SelectedNode.Tag is CubeProfile)
             {
-                if (((CubeProfile)treeView1.SelectedNode.Tag).CanBeModified == false) propertyGrid1.Enabled = false;
-                else propertyGrid1.Enabled = true;
+                if (((CubeProfile)tvMainCategories.SelectedNode.Tag).CanBeModified == false) pgDetails.Enabled = false;
+                else pgDetails.Enabled = true;
             }
             else
             {
-                propertyGrid1.Enabled = true;
+                pgDetails.Enabled = true;
             }
                
 
-            propertyGrid1.SelectedObject = treeView1.SelectedNode.Tag;
+            pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
         {
         }
 
+        //Called when the ADD button is cliques on a Main Category treeview
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = new FrmEntityChoose();
-
-            if (form.ShowDialog() == DialogResult.OK)
+            switch (tvMainCategories.SelectedNode.Name)
             {
-                var type = form.SelectedType;
+                case "Entities":
+                        var form = new FrmEntityChoose();
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            var type = form.SelectedType;
 
-                var instance = (IEntity)Activator.CreateInstance(type);
+                            var instance = (IEntity)Activator.CreateInstance(type);
 
-                Configuration.EntityBluePrint.Add(instance);
+                            Configuration.EntityBluePrint.Add(instance);
 
-                UpdateList();
+                            UpdateList();
 
-                treeView1.SelectedNode = FindByTag(instance);
+                            tvMainCategories.SelectedNode = FindByTag(instance);
+                        }
+                    break;
+                case "Cubes":
+
+                    Configuration.CreateNewCube();
+
+                    UpdateList();
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -249,7 +277,7 @@ namespace Utopia.Editor
         {
             TreeNodeCollection nodes;
             if (node == null)
-                nodes = treeView1.Nodes;
+                nodes = tvMainCategories.Nodes;
             else
                 nodes = node.Nodes;
 
@@ -275,9 +303,9 @@ namespace Utopia.Editor
         {
             if (e.ChangedItem.Label == "ModelName")
             {
-                var item = treeView1.SelectedNode;
+                var item = tvMainCategories.SelectedNode;
 
-                var entity = propertyGrid1.SelectedObject;
+                var entity = pgDetails.SelectedObject;
 
                 var voxelEntity = entity as IVoxelEntity;
                 item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
@@ -286,7 +314,7 @@ namespace Utopia.Editor
 
             if (e.ChangedItem.Label == "UniqueName")
             {
-                var item = treeView1.SelectedNode;
+                var item = tvMainCategories.SelectedNode;
 
                 item.Text = (string)e.ChangedItem.Value;
             }
@@ -298,7 +326,12 @@ namespace Utopia.Editor
         }
         #endregion
 
-
-        
+        private void pgDetails_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if (e.ChangedItem.Label == "Name")
+            {
+                UpdateList();
+            }
+        }        
     }
 }
