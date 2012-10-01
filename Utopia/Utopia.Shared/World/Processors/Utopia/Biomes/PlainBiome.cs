@@ -20,7 +20,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Public Properties
         public override byte SurfaceCube { get { return CubeId.Grass; } }
         public override byte UnderSurfaceCube { get { return CubeId.Dirt; } }
-        public override RangeI UnderSurfaceLayers { get { return _underSurfaceLayers; } }
         public override byte GroundCube { get { return CubeId.Stone; } }
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
 

@@ -24,11 +24,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             get { return CubeId.Dirt; }
         }
 
-        public override RangeI UnderSurfaceLayers
-        {
-            get { return _montainUnderSurfaceLayers; }
-        }
-
         public override byte GroundCube
         {
             get { return CubeId.Stone; }

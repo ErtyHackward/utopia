@@ -8,8 +8,11 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
+using System.Linq;
+using S33M3_Resources.Structs;
 
-namespace Utopia.Shared
+namespace Utopia.Shared.Configuration
 {
     /// <summary>
     /// Contains all gameplay parameters of the realm
@@ -71,6 +74,13 @@ namespace Utopia.Shared
         /// </summary>
         [Browsable(false)]
         public List<CubeProfile> CubeProfiles { get; set; }
+
+        /// <summary>
+        /// Holds Biomes Profiles configuration
+        /// </summary>
+        [Browsable(false)]
+        public List<BiomeConfig> Biomes { get; set; }
+
         #endregion
 
         public RealmConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false)
@@ -81,8 +91,12 @@ namespace Utopia.Shared
             _factory = factory;
             EntityBluePrint = new List<IEntity>();
             CubeProfiles = new List<CubeProfile>();
+            Biomes = new List<BiomeConfig>();
 
-            if (withDefaultValueCreation) CreateDefaultValues();
+            if (withDefaultValueCreation)
+            {
+                CreateDefaultValues();
+            }
         }
 
         #region Public Methods
@@ -108,10 +122,21 @@ namespace Utopia.Shared
             writer.Write((byte)WorldProcessor);
 
             writer.Write(EntityBluePrint.Count);
-
-            foreach (var entitySample in EntityBluePrint)
+            foreach (IEntity entitySample in EntityBluePrint)
             {
                 entitySample.Save(writer);
+            }
+
+            writer.Write(CubeProfiles.Count);
+            foreach (CubeProfile cubeProfile in CubeProfiles.Where(x => x.Name != "System Reserved"))
+            {
+                cubeProfile.Save(writer);
+            }
+
+            writer.Write(Biomes.Count);
+            foreach (Biome biome in Biomes)
+            {
+                biome.Save(writer);
             }
         }
 
@@ -128,11 +153,28 @@ namespace Utopia.Shared
             WorldProcessor = (WorldProcessors)reader.ReadByte();
 
             EntityBluePrint.Clear();
-            var count = reader.ReadInt32();
-
-            for (var i = 0; i < count; i++)
+            int countEntity = reader.ReadInt32();
+            for (var i = 0; i < countEntity; i++)
             {
                 EntityBluePrint.Add(_factory.CreateFromBytes(reader));
+            }
+
+            CubeProfiles.Clear();
+            var countCubes = reader.ReadInt32();
+            for (var i = 0; i < countCubes; i++)
+            {
+                CubeProfile cp = new CubeProfile();
+                cp.Load(reader);
+                CubeProfiles.Add(cp);
+            }
+            FilledUpReservedCubeInArray();
+
+            var countBiomes = reader.ReadInt32();
+            for (var i = 0; i < countBiomes; i++)
+            {
+                BiomeConfig bio = new BiomeConfig(CubeProfiles);
+                bio.Load(reader);
+                Biomes.Add(bio);
             }
         }
 
@@ -148,6 +190,43 @@ namespace Utopia.Shared
         }
         #endregion
 
+        public void CreateNewCube()
+        {
+            //Get New Cube ID.
+            //We keep the id from 0 to 100 for "System" cubes
+            //101 to 254 for Custom created cubes
+            byte newProfileId;
+            if (CubeProfiles.Count(x => x.Id > 100) > 1)
+            {
+                newProfileId = CubeProfiles.Where(x => x.Id > 100).Select(y => y.Id).Max();
+            }
+            else newProfileId = 101;
+
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "NewCustomCube",
+                Id = newProfileId,
+                Tex_Top = 1,
+                Tex_Bottom = 1,
+                Tex_Back = 1,
+                Tex_Front = 1,
+                Tex_Left = 1,
+                Tex_Right = 1,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                CanBeModified = true
+            });
+
+        }
+
+        public void CreateNewBiome()
+        {
+        }
+
         #endregion
 
         #region Private Methods
@@ -155,6 +234,7 @@ namespace Utopia.Shared
         private void CreateDefaultValues()
         {
             CreateDefaultCubeProfiles();
+            CreateDefaultBiomes();
         }
 
         //Definition of default cube profile
@@ -527,10 +607,202 @@ namespace Utopia.Shared
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = true,
+                CanBeModified = true
             });
 
+            //Snow Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "Snow",
+                Id = 18,
+                Tex_Top = 17,
+                Tex_Bottom = 17,
+                Tex_Back = 17,
+                Tex_Front = 17,
+                Tex_Left = 17,
+                Tex_Right = 17,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                YBlockOffset = 0.9,
+                Friction = 0.35f,
+                CanBeModified = false
+            });
+
+            //Ice Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "Ice",
+                Id = 19,
+                Tex_Top = 18,
+                Tex_Bottom = 18,
+                Tex_Back = 18,
+                Tex_Front = 18,
+                Tex_Left = 18,
+                Tex_Right = 18,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.15f,
+                SlidingValue = 0.05f,
+                CanBeModified = false
+            });
+
+            //StillLava Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "StillLava",
+                Id = 20,
+                Tex_Top = 19,
+                Tex_Bottom = 19,
+                Tex_Back = 19,
+                Tex_Front = 19,
+                Tex_Left = 19,
+                Tex_Right = 19,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.15f,
+                SlidingValue = 0.05f,
+                CanBeModified = false,
+                IsEmissiveColorLightSource = true,
+                EmissiveColorA = 255,
+                EmissiveColorR = 255,
+                EmissiveColorG = 161,
+                EmissiveColorB = 38
+            });
+
+            //DynamicLava Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "DynamicLava",
+                Id = 21,
+                Tex_Top = 19,
+                Tex_Bottom = 19,
+                Tex_Back = 19,
+                Tex_Front = 19,
+                Tex_Left = 19,
+                Tex_Right = 19,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.15f,
+                SlidingValue = 0.05f,
+                CanBeModified = false,
+                IsEmissiveColorLightSource = true,
+                EmissiveColorA = 255,
+                EmissiveColorR = 255,
+                EmissiveColorG = 161,
+                EmissiveColorB = 38,
+                IsTaggable = true
+            });
+
+
+            //Cactus Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "Cactus",
+                Id = 22,
+                Tex_Top = 22,
+                Tex_Bottom = 22,
+                Tex_Back = 20,
+                Tex_Front = 20,
+                Tex_Left = 20,
+                Tex_Right = 20,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.15f,
+                SlidingValue = 0.05f,
+                CanBeModified = false,
+                SideOffsetMultiplier = 1
+            });
+
+            //CactusTop Block
+            CubeProfiles.Add(new CubeProfile()
+            {
+                Name = "CactusTop",
+                Id = 23,
+                Tex_Top = 21,
+                Tex_Bottom = 22,
+                Tex_Back = 20,
+                Tex_Front = 20,
+                Tex_Left = 20,
+                Tex_Right = 20,
+                IsBlockingLight = true,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.15f,
+                SlidingValue = 0.05f,
+                CanBeModified = false,
+                SideOffsetMultiplier = 1
+            });
+
+            FilledUpReservedCubeInArray();
+
         }
+
+        private void FilledUpReservedCubeInArray()
+        {
+            //Field up to 100 included for Reserved Cube ID
+            for (byte currentCubeId = (byte)(CubeProfiles.Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
+            {
+                CubeProfiles.Add(new CubeProfile() { Name = "System Reserved", Id = currentCubeId });
+            }
+        }
+
+        //Definition of default biomes
+        private void CreateDefaultBiomes()
+        {
+            //Desert Biome Definition
+            Biomes.Add(new BiomeConfig(CubeProfiles)
+            {
+                Name = "Desert",
+                SurfaceCube = CubeId.Sand,
+                UnderSurfaceCube = CubeId.Sand,
+                UnderSurfaceLayers = new RangeI(1, 3),  // = The layer under the surface is 1 to 3 block height, then after you have the ground Cubes
+                GroundCube = CubeId.Stone
+            });
+        }
+        #endregion
+
+        #region Inner Classes
+        //Helper inner class, to quickly get the corresponding static cube ID (These cannot be modified by users), they are "system" blocks
+        public static class CubeId
+        {
+            public const byte Air = 0;
+            public const byte Stone = 1;
+            public const byte Dirt = 2;
+            public const byte Grass = 3;
+            public const byte StillWater = 5;
+            public const byte DynamicWater = 6;
+            public const byte Rock = 8;
+            public const byte Sand = 9;
+            public const byte Gravel = 10;
+            public const byte Trunk = 11;
+            public const byte GoldOre = 12;
+            public const byte CoalOre = 13;
+            public const byte MoonStone = 14;
+            public const byte Foliage = 16;
+            public const byte Snow = 18;
+            public const byte Ice = 19;
+            public const byte StillLava = 20;
+            public const byte DynamicLava = 21;
+            public const byte Cactus = 22;
+            public const byte CactusTop = 23;
+        }
+
         #endregion
     }
 

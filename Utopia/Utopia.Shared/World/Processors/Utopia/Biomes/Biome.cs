@@ -13,10 +13,13 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Interfaces;
+using System.IO;
+using System.ComponentModel;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public abstract class Biome
+    public class Biome : IBinaryStorable
     {
         #region Static Attributes
         //Static Class components
@@ -81,7 +84,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Private Variables
-        protected RangeI _underSurfaceLayers = new RangeI(1, 3);
+        private RangeI _underSurfaceLayers = new RangeI(1, 3);
 
         //Default mineral vein resources configurations
         private CubeVein _sandVein = new CubeVein() { CubeId = CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40, 128) };
@@ -121,13 +124,23 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
+
         #endregion
 
         #region Public Properties
-        public abstract byte SurfaceCube { get; }
-        public abstract byte UnderSurfaceCube { get; }
-        public abstract RangeI UnderSurfaceLayers { get; }
-        public abstract byte GroundCube { get; }
+        public string Name { get; set; }
+        [Browsable(false)]
+        public virtual byte SurfaceCube { get; set; }
+        [Browsable(false)]
+        public virtual byte UnderSurfaceCube { get; set; }
+        [Browsable(false)]
+        public virtual byte GroundCube { get; set; }
+        public virtual RangeI UnderSurfaceLayers
+        {
+            get { return _underSurfaceLayers; }
+            set { _underSurfaceLayers = value; }
+        }
+
         #endregion
 
         public Biome()
@@ -661,5 +674,25 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         #endregion
+
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write(Name);
+            writer.Write(SurfaceCube);
+            writer.Write(UnderSurfaceCube);
+            writer.Write(UnderSurfaceLayers.Min);
+            writer.Write(UnderSurfaceLayers.Max);
+            writer.Write(GroundCube);
+        }
+
+        public void Load(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+            SurfaceCube = reader.ReadByte();
+            UnderSurfaceCube = reader.ReadByte();
+            _underSurfaceLayers.Min = reader.ReadInt32();
+            _underSurfaceLayers.Max = reader.ReadInt32();
+            GroundCube = reader.ReadByte();
+        }
     }
 }

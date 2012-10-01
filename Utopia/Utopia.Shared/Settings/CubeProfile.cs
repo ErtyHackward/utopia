@@ -8,11 +8,14 @@ using Utopia.Shared.Enums;
 using SharpDX;
 using S33M3Resources.Structs;
 using System.ComponentModel;
+using System.IO;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Settings
 {
     [Serializable]
-    public partial class CubeProfile
+    public partial class CubeProfile : IBinaryStorable
     {
         [Browsable(false)]
         public bool CanBeModified { get; set; }
@@ -80,5 +83,75 @@ namespace Utopia.Shared.Settings
         public byte Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
         [Description("Bottom texture Id"), Category("Textures")]
         public byte Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
+
+
+        /// <summary>
+        /// Saves current object state to binary form
+        /// </summary>
+        /// <param name="writer"></param>
+        public void Save(BinaryWriter writer)
+        {
+            writer.Write(CanBeModified);
+            writer.Write(Name);
+            writer.Write(Id);
+            writer.Write(IsPickable);
+            writer.Write(IsBlockingLight);
+            writer.Write(IsSeeThrough);
+            writer.Write(IsBlockingWater);
+            writer.Write(IsSolidToEntity);
+            writer.Write(IsTaggable);
+            writer.Write(YBlockOffset);
+            writer.Write((byte)CubeFamilly);
+            writer.Write(SideOffsetMultiplier);
+            writer.Write(EmissiveColor.R);
+            writer.Write(EmissiveColor.G);
+            writer.Write(EmissiveColor.B);
+            writer.Write(EmissiveColor.A);
+            writer.Write(Friction);
+            writer.Write(SlidingValue);
+            writer.Write(BiomeColorArrayTexture);
+            writer.Write(Textures[0]);
+            writer.Write(Textures[1]);
+            writer.Write(Textures[2]);
+            writer.Write(Textures[3]);
+            writer.Write(Textures[4]);
+            writer.Write(Textures[5]);
+
+        }
+
+        /// <summary>
+        /// Loads current object from binary form
+        /// </summary>
+        /// <param name="reader"></param>
+        public void Load(BinaryReader reader)
+        {
+            CanBeModified = reader.ReadBoolean();
+            Name = reader.ReadString();
+            Id = reader.ReadByte();
+            IsPickable = reader.ReadBoolean();
+            IsBlockingLight = reader.ReadBoolean();
+            IsSeeThrough = reader.ReadBoolean();
+            IsBlockingWater = reader.ReadBoolean();
+            IsSolidToEntity = reader.ReadBoolean();
+            IsTaggable = reader.ReadBoolean();
+            IsSolidToEntity = reader.ReadBoolean();
+            YBlockOffset = reader.ReadDouble();
+            CubeFamilly = (enuCubeFamilly)reader.ReadByte();
+            SideOffsetMultiplier = reader.ReadByte();
+            EmissiveColor = new ByteColor();
+            EmissiveColor.R = reader.ReadByte();
+            EmissiveColor.G = reader.ReadByte();
+            EmissiveColor.B = reader.ReadByte();
+            EmissiveColor.A = reader.ReadByte();
+            Friction = reader.ReadSingle();
+            SlidingValue = reader.ReadSingle();
+            BiomeColorArrayTexture = reader.ReadByte();
+            Textures[0] = reader.ReadByte();
+            Textures[1] = reader.ReadByte();
+            Textures[2] = reader.ReadByte();
+            Textures[3] = reader.ReadByte();
+            Textures[4] = reader.ReadByte();
+            Textures[5] = reader.ReadByte();
+        }
     }
 }

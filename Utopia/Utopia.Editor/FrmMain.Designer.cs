@@ -32,10 +32,11 @@
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 1, 1);
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Biomes");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.pgDetails = new System.Windows.Forms.PropertyGrid();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newRealmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,11 +50,11 @@
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tvMainCategories = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuCategories.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -61,12 +62,12 @@
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // contextMenuStrip1
+            // contextMenuCategories
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextMenuCategories.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(106, 26);
+            this.contextMenuCategories.Name = "contextMenuStrip1";
+            this.contextMenuCategories.Size = new System.Drawing.Size(106, 26);
             // 
             // addToolStripMenuItem
             // 
@@ -75,14 +76,14 @@
             this.addToolStripMenuItem.Text = "Add...";
             this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
-            // propertyGrid1
+            // pgDetails
             // 
-            this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid1.Location = new System.Drawing.Point(3, 3);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(661, 530);
-            this.propertyGrid1.TabIndex = 0;
-            this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
+            this.pgDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pgDetails.Location = new System.Drawing.Point(3, 3);
+            this.pgDetails.Name = "pgDetails";
+            this.pgDetails.Size = new System.Drawing.Size(661, 530);
+            this.pgDetails.TabIndex = 0;
+            this.pgDetails.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgDetails_PropertyValueChanged);
             // 
             // menuStrip1
             // 
@@ -185,34 +186,39 @@
             this.saveFileDialog1.Filter = "Utopia realm|*.realm|Any file|*.*";
             this.saveFileDialog1.Title = "Save the utopia realm as...";
             // 
-            // treeView1
+            // tvMainCategories
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Enabled = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Location = new System.Drawing.Point(3, 22);
-            this.treeView1.Name = "treeView1";
+            this.tvMainCategories.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvMainCategories.Enabled = false;
+            this.tvMainCategories.ImageIndex = 0;
+            this.tvMainCategories.ImageList = this.imageList1;
+            this.tvMainCategories.Location = new System.Drawing.Point(3, 22);
+            this.tvMainCategories.Name = "tvMainCategories";
             treeNode1.ImageIndex = 1;
             treeNode1.Name = "General";
             treeNode1.SelectedImageIndex = 1;
             treeNode1.Text = "General";
-            treeNode2.ContextMenuStrip = this.contextMenuStrip1;
+            treeNode2.ContextMenuStrip = this.contextMenuCategories;
             treeNode2.ImageIndex = 2;
             treeNode2.Name = "Entities";
             treeNode2.SelectedImageIndex = 2;
             treeNode2.Text = "Entities";
+            treeNode3.ContextMenuStrip = this.contextMenuCategories;
             treeNode3.ImageIndex = 0;
             treeNode3.Name = "Cubes";
             treeNode3.Text = "Cubes";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode4.ContextMenuStrip = this.contextMenuCategories;
+            treeNode4.Name = "Biomes";
+            treeNode4.Text = "Biomes";
+            this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
-            treeNode3});
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.Size = new System.Drawing.Size(182, 511);
-            this.treeView1.TabIndex = 5;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            treeNode3,
+            treeNode4});
+            this.tvMainCategories.SelectedImageIndex = 0;
+            this.tvMainCategories.Size = new System.Drawing.Size(182, 511);
+            this.tvMainCategories.TabIndex = 5;
+            this.tvMainCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMainCategories_AfterSelect);
             // 
             // imageList1
             // 
@@ -242,13 +248,13 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
+            this.splitContainer1.Panel1.Controls.Add(this.tvMainCategories);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Padding = new System.Windows.Forms.Padding(3);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.propertyGrid1);
+            this.splitContainer1.Panel2.Controls.Add(this.pgDetails);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(3);
             this.splitContainer1.Size = new System.Drawing.Size(859, 536);
             this.splitContainer1.SplitterDistance = 188;
@@ -263,7 +269,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Name = "FrmMain";
             this.Text = "Utopia realm editor";
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuCategories.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -278,7 +284,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
+        private System.Windows.Forms.PropertyGrid pgDetails;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newRealmToolStripMenuItem;
@@ -292,9 +298,9 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView tvMainCategories;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuCategories;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
