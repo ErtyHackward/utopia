@@ -26,9 +26,10 @@ namespace Utopia.Editor
         {
             InitializeComponent();
 
-            Ranges.Add(new Range() { Name = "TEST", Color = Color.Red, Size = 0.1 });
-            Ranges.Add(new Range() { Name = "TEST2", Color = Color.Yellow, Size = 0.2 });
-            Ranges.Add(new Range() { Name = "TEST2", Color = Color.Green, Size = 0.7 });
+            Ranges.Add(new Range() { Name = "Flat", Color = Color.Red, Size = 0.1 });
+            Ranges.Add(new Range() { Name = "Plain", Color = Color.Yellow, Size = 0.2 });
+            Ranges.Add(new Range() { Name = "Hill", Color = Color.Green, Size = 0.5 });
+            Ranges.Add(new Range() { Name = "Montain", Color = Color.Blue, Size = 0.2 });
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -65,27 +66,44 @@ namespace Utopia.Editor
                 RangeToX = (int)(RangeFromX + ((range.Size * this.Width)));
 
                 //Draw Colored Rectangle
-                Rectangle ColoredSurface = new Rectangle(RangeFromX, lineYPosi - 10, RangeToX, 10);
+                Rectangle ColoredSurface = new Rectangle(RangeFromX, lineYPosi - 10, RangeToX - RangeFromX, 10);
+                Console.WriteLine(ColoredSurface.ToString());
                 Brush bColor = new SolidBrush(range.Color);
                 e.Graphics.FillRectangle(bColor, ColoredSurface);
                 bColor.Dispose();
-                RangeFromX = RangeToX;
+
+                //Draw text below color Carret
+                FontFamily ff = new FontFamily("Times New Roman");
+                Font fnt = new Font(ff, 12, GraphicsUnit.Pixel);
+                Brush fontBursh = new SolidBrush(Color.Black);
+                
+                e.Graphics.DrawString(range.Name, fnt, fontBursh, ColoredSurface.X + ((RangeToX - RangeFromX) / 2) - (e.Graphics.MeasureString(range.Name, fnt).Width / 2), ColoredSurface.Y + 15);
+
+                RangeFromX += RangeToX - RangeFromX;
             }
 
             RangeFromX = 1;
             RangeToX = 0;
             int nbrCarretToDraw = Ranges.Count - 1;
+            double runningPourc = 0.0;
             foreach (var range in Ranges)
             {
                 RangeToX = (int)(RangeFromX + ((range.Size * this.Width)));
-
+                runningPourc += range.Size;
                 //Draw Carret
                 if (nbrCarretToDraw > 0 && VisualStyleRenderer.IsElementDefined(VisualStyleElement.TrackBar.ThumbBottom.Normal))
                 {
                     VisualStyleRenderer renderer = new VisualStyleRenderer(VisualStyleElement.TrackBar.ThumbBottom.Normal);
                     Rectangle surface = new Rectangle(RangeToX - 10, lineYPosi - 18, 20, 20);
                     renderer.DrawBackground(e.Graphics, surface);
+                
+                    //Draw text over Carret
+                    FontFamily ff = new FontFamily("Times New Roman");
+                    Font fnt = new Font(ff, 12, GraphicsUnit.Pixel);
+                    Brush fontBursh = new SolidBrush(Color.Black);
+                    e.Graphics.DrawString(runningPourc * 100 +  " %", fnt, fontBursh, surface.X, surface.Y - 15);
                 }
+
 
                 nbrCarretToDraw--;
                 RangeFromX = RangeToX;
