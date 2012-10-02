@@ -33,6 +33,7 @@
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Biomes");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Landscape Generator");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -210,11 +211,14 @@
             treeNode4.ContextMenuStrip = this.contextMenuCategories;
             treeNode4.Name = "Biomes";
             treeNode4.Text = "Biomes";
+            treeNode5.Name = "Landscape Generator";
+            treeNode5.Text = "Landscape Generator";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode5});
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 511);
             this.tvMainCategories.TabIndex = 5;
