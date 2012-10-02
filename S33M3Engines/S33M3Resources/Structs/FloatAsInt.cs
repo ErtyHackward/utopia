@@ -116,6 +116,11 @@ namespace S33M3_Resources.Structs
             return new FloatAsInt(val1.InternalValue - val2.InternalValue);
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         //public static FloatAsInt operator +(FloatAsInt val1, float val2)
         //{
         //    return new FloatAsInt(val1.InternalValue + (int)(val2 * FloatPrecision));

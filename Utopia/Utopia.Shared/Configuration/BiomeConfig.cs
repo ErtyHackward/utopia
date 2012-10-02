@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
-using System.Linq;
 
 namespace Utopia.Shared.Configuration
 {

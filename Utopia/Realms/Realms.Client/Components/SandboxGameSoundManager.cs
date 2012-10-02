@@ -57,13 +57,13 @@ namespace Realms.Client.Components
 
         }
 
-        public void PlayBlockPut(Vector3I blockPos)
+        public override void PlayBlockPut(Vector3I blockPos)
         {
             var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
             sound.MaxDistance = 16;
         }
 
-        public void PlayBlockTake(Vector3I blockPos)
+        public override void PlayBlockTake(Vector3I blockPos)
         {
             var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
             sound.MaxDistance = 16;

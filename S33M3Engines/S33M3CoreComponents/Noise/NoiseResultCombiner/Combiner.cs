@@ -17,7 +17,6 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         }
 
         #region Private Variables
-        private INoise _source;
         private CombinerType _combinerType;
         private List<INoise> _noises;
         #endregion

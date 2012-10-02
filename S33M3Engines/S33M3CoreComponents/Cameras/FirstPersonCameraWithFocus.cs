@@ -44,11 +44,6 @@ namespace S33M3CoreComponents.Cameras
             get { return _view_focused; }
         }
 
-        public Matrix Projection
-        {
-            get { return _projection3D; }
-        }
-
         #endregion
 
         public FirstPersonCameraWithFocus(D3DEngine d3dEngine, 

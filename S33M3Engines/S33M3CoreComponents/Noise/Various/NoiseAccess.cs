@@ -18,7 +18,7 @@ namespace S33M3CoreComponents.Noise.Various
 
         #region Private Variables
         private INoise _source;
-        private enuDimUsage _noiseDimUsage;
+        private enuDimUsage _noiseDimUsage = enuDimUsage.Noise2D;
         private INoise2 _noise2D;
         private INoise3 _noise3D;
         private INoise4 _noise4D;

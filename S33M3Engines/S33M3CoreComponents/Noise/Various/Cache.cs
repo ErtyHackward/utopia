@@ -9,7 +9,12 @@ namespace S33M3CoreComponents.Noise.Various
     {
         private class NoiseCache
         {
-            public double x, y, z, w, u, v;
+            public double x = 0;
+            public double y = 0;
+            public double z = 0;
+            public double w = 0;
+            public double u = 0;
+            public double v = 0;
             public double val;
             public bool valid = false;
         }

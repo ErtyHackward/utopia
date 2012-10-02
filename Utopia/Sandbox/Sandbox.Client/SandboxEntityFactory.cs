@@ -12,15 +12,15 @@ namespace Sandbox.Client
 
         protected override Entity CreateCustomEntity(ushort classId)
         {
-            switch (classId)
-            {
-                //case SandboxEntityClassId.Annihilator: return new Annihilator();
-                //case SandboxEntityClassId.Shovel: return new Shovel();
-                //case SandboxEntityClassId.GoldCoin: return new GoldCoin();
-                //case SandboxEntityClassId.Editor: return new Editor();
-                //case SandboxEntityClassId.Carver: return new Carver();
-                //case SandboxEntityClassId.Torch: return new Torch();
-            }
+            //switch (classId)
+            //{
+            //    //case SandboxEntityClassId.Annihilator: return new Annihilator();
+            //    //case SandboxEntityClassId.Shovel: return new Shovel();
+            //    //case SandboxEntityClassId.GoldCoin: return new GoldCoin();
+            //    //case SandboxEntityClassId.Editor: return new Editor();
+            //    //case SandboxEntityClassId.Carver: return new Carver();
+            //    //case SandboxEntityClassId.Torch: return new Torch();
+            //}
 
             return null;
         }
