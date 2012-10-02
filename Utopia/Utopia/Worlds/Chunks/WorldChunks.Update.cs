@@ -16,7 +16,6 @@ namespace Utopia.Worlds.Chunks
     public partial class WorldChunks : IWorldChunks
     {
         #region Private variables
-        private bool processInsync;
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
         #endregion

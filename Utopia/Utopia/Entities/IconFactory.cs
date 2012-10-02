@@ -214,8 +214,6 @@ namespace Utopia.Entities
 
             var offset = -size / 2 - state.BoundingBox.Minimum;
 
-            const float scaleFactor = 1.4f; // the bigger factor the bigger items
-
             var scale = (float)rMax / sphere.Radius; // Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
 
             instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);

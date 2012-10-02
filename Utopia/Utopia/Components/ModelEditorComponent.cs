@@ -92,7 +92,7 @@ namespace Utopia.Components
         private Matrix _view;
 
         private EditorMode _mode;
-        private VoxelFrame _voxelFrame;
+        private VoxelFrame _voxelFrame = null;
 
         private readonly MainScreen _screen;
         private readonly VoxelModelManager _manager;
@@ -126,7 +126,6 @@ namespace Utopia.Components
         /// Provides a plane for a part translating
         /// </summary>
         private Plane _translatePlane;
-        private bool _drawGround;
         private Vector3? _translatePoint;
 
         private bool _needSave;

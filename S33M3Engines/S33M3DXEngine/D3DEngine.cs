@@ -139,7 +139,7 @@ namespace S33M3DXEngine
 
             using (Adapter1 adapter = _dx11factory.GetAdapter1(0))
             {
-                using (Output output = adapter.GetOutput(0))
+                using (Output output = adapter.Outputs[0])
                 {
                     IsB8G8R8A8_UNormSupport = false;
                     foreach (var mode in output.GetDisplayModeList(Format.B8G8R8A8_UNorm, DisplayModeEnumerationFlags.Interlaced))

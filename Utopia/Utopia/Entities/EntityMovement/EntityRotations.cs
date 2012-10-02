@@ -25,7 +25,6 @@ namespace Utopia.Entities.EntityMovement
 
         private float _entityRotationSpeed;
         private VerletSimulator _physicSimu;
-        private float OffsetBlockHitted;
 
         private Vector3 _entityEyeXAxis = Vector3.UnitX;
         private Vector3 _entityEyeYAxis = Vector3.UnitY;

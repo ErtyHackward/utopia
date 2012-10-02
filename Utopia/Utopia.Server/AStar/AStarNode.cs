@@ -117,6 +117,11 @@ namespace Utopia.Server.AStar
 
         #region IComparable Members
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public int CompareTo(object obj)
         {
             var otherNode = (AStarNode<T>)obj;

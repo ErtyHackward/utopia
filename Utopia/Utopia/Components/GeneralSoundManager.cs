@@ -17,7 +17,7 @@ namespace Utopia.Components
         private readonly ISoundEngine _soundEngine;
 
         private string _buttonPressSound;
-        private string _debugInfo;
+        private string _debugInfo = null;
 
         /// <summary>
         /// Gets irrKlang sound engine object
