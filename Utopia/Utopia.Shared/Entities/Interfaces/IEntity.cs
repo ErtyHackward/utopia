@@ -27,6 +27,11 @@ namespace Utopia.Shared.Entities.Interfaces
         ushort ClassId { get; }
 
         /// <summary>
+        /// Gets entity id
+        /// </summary>
+        ushort Id { get; set; }
+
+        /// <summary>
         /// Entity size
         /// </summary>
         Vector3 DefaultSize { get; set; }
@@ -40,6 +45,11 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets a displayed entity name
         /// </summary>
         string DisplayName { get; }
+
+        /// <summary>
+        /// Gets a displayed entity name
+        /// </summary>
+        string Name { get; set; }
 
         /// <summary>
         /// Gets current entity type

@@ -67,19 +67,40 @@ namespace Utopia.Shared.Configuration
         /// Holds examples of entities of all types in the realm
         /// </summary>
         [Browsable(false)]
-        public List<IEntity> EntityBluePrint { get; set; }
+        public static List<IEntity> Entities { get; set; }
+
+        [Browsable(false)]
+        public List<IEntity> RealmEntities
+        {
+            get { return RealmConfiguration.Entities; }
+            set { RealmConfiguration.Entities = value; }
+        }
 
         /// <summary>
         /// Holds Cube Profiles configuration
         /// </summary>
         [Browsable(false)]
-        public List<CubeProfile> CubeProfiles { get; set; }
+        public static List<CubeProfile> CubeProfiles { get; set; }
+
+        [Browsable(false)]
+        public List<CubeProfile> RealmCubeProfiles
+        {
+            get { return RealmConfiguration.CubeProfiles; }
+            set { RealmConfiguration.CubeProfiles = value; }
+        }
 
         /// <summary>
         /// Holds Biomes Profiles configuration
         /// </summary>
         [Browsable(false)]
-        public List<BiomeConfig> Biomes { get; set; }
+        public static List<Biome> Biomes { get; set; }
+
+        [Browsable(false)]
+        public List<Biome> RealmBiomes
+        {
+            get { return RealmConfiguration.Biomes; }
+            set { RealmConfiguration.Biomes = value; }
+        }
 
         #endregion
 
@@ -89,9 +110,9 @@ namespace Utopia.Shared.Configuration
                 factory = new EntityFactory(null);
 
             _factory = factory;
-            EntityBluePrint = new List<IEntity>();
+            Entities = new List<IEntity>();
             CubeProfiles = new List<CubeProfile>();
-            Biomes = new List<BiomeConfig>();
+            Biomes = new List<Biome>();
 
             if (withDefaultValueCreation)
             {
@@ -121,8 +142,8 @@ namespace Utopia.Shared.Configuration
             writer.Write(UpdatedAt.ToBinary());
             writer.Write((byte)WorldProcessor);
 
-            writer.Write(EntityBluePrint.Count);
-            foreach (IEntity entitySample in EntityBluePrint)
+            writer.Write(Entities.Count);
+            foreach (IEntity entitySample in Entities)
             {
                 entitySample.Save(writer);
             }
@@ -152,11 +173,11 @@ namespace Utopia.Shared.Configuration
             UpdatedAt = DateTime.FromBinary(reader.ReadInt64());
             WorldProcessor = (WorldProcessors)reader.ReadByte();
 
-            EntityBluePrint.Clear();
+            Entities.Clear();
             int countEntity = reader.ReadInt32();
             for (var i = 0; i < countEntity; i++)
             {
-                EntityBluePrint.Add(_factory.CreateFromBytes(reader));
+                Entities.Add(_factory.CreateFromBytes(reader));
             }
 
             CubeProfiles.Clear();
@@ -172,10 +193,12 @@ namespace Utopia.Shared.Configuration
             var countBiomes = reader.ReadInt32();
             for (var i = 0; i < countBiomes; i++)
             {
-                BiomeConfig bio = new BiomeConfig(CubeProfiles);
+                BiomeConfig bio = new BiomeConfig();
                 bio.Load(reader);
                 Biomes.Add(bio);
             }
+
+            RealmCubeProfiles = CubeProfiles;
         }
 
         public static RealmConfiguration LoadFromFile(string path, EntityFactory factory = null)
@@ -190,7 +213,7 @@ namespace Utopia.Shared.Configuration
         }
         #endregion
 
-        public void CreateNewCube()
+        public object CreateNewCube()
         {
             //Get New Cube ID.
             //We keep the id from 0 to 100 for "System" cubes
@@ -202,7 +225,7 @@ namespace Utopia.Shared.Configuration
             }
             else newProfileId = 101;
 
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfile newCubeProfile = new CubeProfile()
             {
                 Name = "NewCustomCube",
                 Id = newProfileId,
@@ -219,12 +242,33 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 CanBeModified = true
-            });
+            };
 
+            CubeProfiles.Add(newCubeProfile);
+
+            return newCubeProfile;
         }
 
-        public void CreateNewBiome()
+        public object CreateNewEntity(Type entityClassType)
         {
+            //Create a new EntityClass object
+            IEntity instance = (IEntity)Activator.CreateInstance(entityClassType);
+
+            //Generate a new Entity ID, it must be unic
+            ushort newId;
+            if (RealmEntities.Count == 0) newId = 0;
+            else newId = (ushort)(RealmEntities.Select(x => x.Id).Max(y => y) + 1);
+
+            instance.Id = newId;
+
+            RealmEntities.Add(instance);
+
+            return instance;
+        }
+
+        public object CreateNewBiome()
+        {
+            return null;
         }
 
         #endregion
@@ -766,7 +810,7 @@ namespace Utopia.Shared.Configuration
         private void CreateDefaultBiomes()
         {
             //Desert Biome Definition
-            Biomes.Add(new BiomeConfig(CubeProfiles)
+            Biomes.Add(new BiomeConfig()
             {
                 Name = "Desert",
                 SurfaceCube = CubeId.Sand,
@@ -774,6 +818,8 @@ namespace Utopia.Shared.Configuration
                 UnderSurfaceLayers = new RangeI(1, 3),  // = The layer under the surface is 1 to 3 block height, then after you have the ground Cubes
                 GroundCube = CubeId.Stone
             });
+
+            RealmCubeProfiles = CubeProfiles;
         }
         #endregion
 

@@ -15,7 +15,7 @@ namespace Utopia.Shared.Entities.Concrete.Collectible
         public Plant()
         {
             Type = EntityType.Static;
-            UniqueName = "Plant";
+            Name = "Plant";
             MountPoint = BlockFace.Top;
             IsPlayerCollidable = false;
             IsPickable = true;

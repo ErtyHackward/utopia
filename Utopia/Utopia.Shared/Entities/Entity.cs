@@ -12,6 +12,8 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public abstract class Entity : IEntity
     {
+        private string _name = "No name";
+
         /// <summary>
         /// Pickable entity Property
         /// </summary>
@@ -55,6 +57,21 @@ namespace Utopia.Shared.Entities
         public abstract string DisplayName { get; }
 
         /// <summary>
+        /// Gets a displayed entity name
+        /// </summary>
+        public virtual string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets Entity ID
+        /// </summary>
+        [Browsable(false)]
+        public ushort Id { get; set; }
+
+        /// <summary>
         /// Loads current entity from a binaryReader
         /// </summary>
         /// <param name="reader"></param>
@@ -63,6 +80,8 @@ namespace Utopia.Shared.Entities
         {
             // we no need to read class id because it is read by entity factory
             // to find the final type of the class
+
+            Id = reader.ReadUInt16();
 
             Type = (EntityType)reader.ReadByte();
 
@@ -82,6 +101,7 @@ namespace Utopia.Shared.Entities
         {
             writer.Write(ClassId);
 
+            writer.Write(Id);
             writer.Write((byte)Type);
 
             writer.Write(DefaultSize);

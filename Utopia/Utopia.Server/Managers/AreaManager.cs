@@ -28,7 +28,7 @@ namespace Utopia.Server.Managers
 
         #region Properties
 #if DEBUG
-        public volatile int entityAreaChangesCount;
+        public int entityAreaChangesCount;
 
         /// <summary>
         /// Use only for test purposes. Thread safty is NOT guaranteed.

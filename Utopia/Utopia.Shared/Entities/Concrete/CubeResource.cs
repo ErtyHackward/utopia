@@ -34,12 +34,6 @@ namespace Utopia.Shared.Entities.Concrete
             get { return 999; }
         }
 
-        public string UniqueName
-        {
-            get { return DisplayName; }
-            set { throw new NotSupportedException(); }
-        }
-
         public override ushort ClassId
         {
             get { return EntityClassId.CubeResource; }

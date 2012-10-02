@@ -156,9 +156,9 @@ namespace Utopia.Editor
             entitiesRootNode.Nodes.Clear();
 
             //Add new Entities nodes
-            for (var i = 0; i < _configuration.EntityBluePrint.Count; i++)
+            for (var i = 0; i < _configuration.RealmEntities.Count; i++)
             {
-                var entity = _configuration.EntityBluePrint[i];
+                var entity = _configuration.RealmEntities[i];
                 var item = new TreeNode(entity.DisplayName);
                 item.Tag = entity;
 
@@ -174,9 +174,9 @@ namespace Utopia.Editor
             //Clear all the Cube node items
             TreeNode cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
-            for (var i = 0; i < _configuration.CubeProfiles.Count; i++)
+            for (var i = 0; i < _configuration.RealmCubeProfiles.Count; i++)
             {
-                var cubeProfile = _configuration.CubeProfiles[i];
+                var cubeProfile = _configuration.RealmCubeProfiles[i];
                 if (cubeProfile.Name == "System Reserved") continue;
                 var item = new TreeNode(cubeProfile.Name);
                 item.Tag = cubeProfile;
@@ -187,9 +187,9 @@ namespace Utopia.Editor
             TreeNode biomesRootNode = tvMainCategories.Nodes["Biomes"];
             biomesRootNode.Nodes.Clear();
 
-            for (var i = 0; i < _configuration.Biomes.Count; i++)
+            for (var i = 0; i < _configuration.RealmBiomes.Count; i++)
             {
-                var biome = _configuration.Biomes[i];
+                var biome = _configuration.RealmBiomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
                 biomesRootNode.Nodes.Add(item);
@@ -250,22 +250,15 @@ namespace Utopia.Editor
                         var form = new FrmEntityChoose();
                         if (form.ShowDialog() == DialogResult.OK)
                         {
-                            var type = form.SelectedType;
-
-                            var instance = (IEntity)Activator.CreateInstance(type);
-
-                            Configuration.EntityBluePrint.Add(instance);
-
+                            var entityInstance = Configuration.CreateNewEntity(form.SelectedType);
                             UpdateList();
-
-                            tvMainCategories.SelectedNode = FindByTag(instance);
+                            tvMainCategories.SelectedNode = FindByTag(entityInstance);
                         }
                     break;
                 case "Cubes":
-
-                    Configuration.CreateNewCube();
-
+                    var cubeInstance = Configuration.CreateNewCube();
                     UpdateList();
+                    tvMainCategories.SelectedNode = FindByTag(cubeInstance);
                     break;
 
                 default:
@@ -298,28 +291,6 @@ namespace Utopia.Editor
             return null;
         }
 
-
-        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            if (e.ChangedItem.Label == "ModelName")
-            {
-                var item = tvMainCategories.SelectedNode;
-
-                var entity = pgDetails.SelectedObject;
-
-                var voxelEntity = entity as IVoxelEntity;
-                item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
-                item.SelectedImageIndex = item.ImageIndex;
-            }
-
-            if (e.ChangedItem.Label == "UniqueName")
-            {
-                var item = tvMainCategories.SelectedNode;
-
-                item.Text = (string)e.ChangedItem.Value;
-            }
-        }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -328,7 +299,7 @@ namespace Utopia.Editor
 
         private void pgDetails_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "Name")
+            if (e.ChangedItem.Label == "Name" || e.ChangedItem.Label == "ModelName")
             {
                 UpdateList();
             }
