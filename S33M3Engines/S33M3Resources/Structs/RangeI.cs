@@ -21,7 +21,7 @@ namespace S33M3_Resources.Structs
         }
 
         //Property Grid editing Purpose
-        public class RangeITypeConverter : ExpandableObjectConverter 
+        internal class RangeITypeConverter : ExpandableObjectConverter 
         {
             public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
             {   //This method is used to shown information in the PropertyGrid.

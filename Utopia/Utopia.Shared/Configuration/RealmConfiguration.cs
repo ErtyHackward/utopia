@@ -193,7 +193,7 @@ namespace Utopia.Shared.Configuration
             var countBiomes = reader.ReadInt32();
             for (var i = 0; i < countBiomes; i++)
             {
-                BiomeConfig bio = new BiomeConfig();
+                Biome bio = new Biome();
                 bio.Load(reader);
                 Biomes.Add(bio);
             }
@@ -810,7 +810,7 @@ namespace Utopia.Shared.Configuration
         private void CreateDefaultBiomes()
         {
             //Desert Biome Definition
-            Biomes.Add(new BiomeConfig()
+            Biomes.Add(new Biome()
             {
                 Name = "Desert",
                 SurfaceCube = CubeId.Sand,

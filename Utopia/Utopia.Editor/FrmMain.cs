@@ -299,7 +299,18 @@ namespace Utopia.Editor
 
         private void pgDetails_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (e.ChangedItem.Label == "Name" || e.ChangedItem.Label == "ModelName")
+            if (e.ChangedItem.Label == "ModelName")
+            {
+                var item = tvMainCategories.SelectedNode;
+
+                var entity = pgDetails.SelectedObject;
+
+                var voxelEntity = entity as IVoxelEntity;
+                item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
+                item.SelectedImageIndex = item.ImageIndex;
+            }
+
+            if (e.ChangedItem.Label == "Name")
             {
                 UpdateList();
             }
