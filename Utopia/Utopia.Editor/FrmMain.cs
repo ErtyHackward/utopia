@@ -17,6 +17,7 @@ namespace Utopia.Editor
         private string _filePath;
         private int _entitiesOffset;
         private RealmConfiguration _configuration;
+        private FrmUtopiaConfig _utopiaConfig;
         #endregion
 
         #region Public Properties
@@ -49,6 +50,10 @@ namespace Utopia.Editor
         public FrmMain()
         {
             InitializeComponent();
+
+            _utopiaConfig = new FrmUtopiaConfig();
+            _utopiaConfig.Visible = false;
+            splitContainer1.Panel2.Controls.Add(_utopiaConfig);
 
             _entitiesOffset = imageList1.Images.Count;
 
@@ -222,19 +227,26 @@ namespace Utopia.Editor
 
         private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
         {
-
-            if (tvMainCategories.SelectedNode.Tag is CubeProfile)
+            if (tvMainCategories.SelectedNode.Name == "Landscape Generator")
             {
-                if (((CubeProfile)tvMainCategories.SelectedNode.Tag).CanBeModified == false) pgDetails.Enabled = false;
-                else pgDetails.Enabled = true;
+                pgDetails.Visible = false;
+                _utopiaConfig.Visible = true;
             }
             else
             {
-                pgDetails.Enabled = true;
+                _utopiaConfig.Visible = false;
+                pgDetails.Visible = true;
+                if (tvMainCategories.SelectedNode.Tag is CubeProfile)
+                {
+                    if (((CubeProfile)tvMainCategories.SelectedNode.Tag).CanBeModified == false) pgDetails.Enabled = false;
+                    else pgDetails.Enabled = true;
+                }
+                else
+                {
+                    pgDetails.Enabled = true;
+                }
+                pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
             }
-               
-
-            pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
