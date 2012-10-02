@@ -68,6 +68,12 @@
     <Compile Include="FrmUtopiaConfig.Designer.cs">
       <DependentUpon>FrmUtopiaConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="RangeBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RangeBar.Designer.cs">
+      <DependentUpon>RangeBar.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="FrmEntityChoose.resx">
       <DependentUpon>FrmEntityChoose.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +92,9 @@
     </Compile>
     <EmbeddedResource Include="FrmUtopiaConfig.resx">
       <DependentUpon>FrmUtopiaConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RangeBar.resx">
+      <DependentUpon>RangeBar.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
