@@ -9,16 +9,10 @@ using Utopia.Shared.World.Processors.Utopia.Biomes;
 namespace Utopia.Shared.Configuration
 {
     /// <summary>
-    /// Special Class that will wrap the biome class in order to support special PropertyGrid behaviours (Property in dorp down list, ....)
+    /// Special Class that will wrap the biome class in order to support special PropertyGrid behaviours (Property in drop down list, ....)
     /// </summary>
     public class BiomeConfig : Biome
     {
-        private static List<CubeProfile> _cubeProfiles;
-
-        public BiomeConfig(List<CubeProfile> cubeProfiles)
-        {
-            _cubeProfiles = cubeProfiles;
-        }
 
         [TypeConverter(typeof(CubeConverter))]
         [DisplayName("Surface Cube")]
@@ -27,12 +21,12 @@ namespace Utopia.Shared.Configuration
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return _cubeProfiles.First(x => x.Id == SurfaceCube).Name;
+                return RealmConfiguration.CubeProfiles.First(x => x.Id == SurfaceCube).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                SurfaceCube = _cubeProfiles.First(x => x.Name == value).Id;
+                SurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
 
@@ -43,12 +37,12 @@ namespace Utopia.Shared.Configuration
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return _cubeProfiles.First(x => x.Id == UnderSurfaceCube).Name;
+                return RealmConfiguration.CubeProfiles.First(x => x.Id == UnderSurfaceCube).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                UnderSurfaceCube = _cubeProfiles.First(x => x.Name == value).Id;
+                UnderSurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
 
@@ -59,16 +53,16 @@ namespace Utopia.Shared.Configuration
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return _cubeProfiles.First(x => x.Id == GroundCube).Name;
+                return RealmConfiguration.CubeProfiles.First(x => x.Id == GroundCube).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                GroundCube = _cubeProfiles.First(x => x.Name == value).Id;
+                GroundCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
 
-        public class CubeConverter : StringConverter
+        internal class CubeConverter : StringConverter
         {
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
@@ -83,10 +77,9 @@ namespace Utopia.Shared.Configuration
                 return true;
             }
 
-            public override System.ComponentModel.TypeConverter.StandardValuesCollection
-                   GetStandardValues(ITypeDescriptorContext context)
+            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(_cubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
+                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
             }
         }
     }

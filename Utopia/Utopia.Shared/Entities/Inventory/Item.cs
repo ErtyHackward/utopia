@@ -27,11 +27,6 @@ namespace Utopia.Shared.Entities.Inventory
         public VoxelModelInstance ModelInstance { get; set; }
         
         /// <summary>
-        /// This is name can vary for concrete class instance (Example: Simon's steel shovel)
-        /// </summary>
-        public string UniqueName { get; set; }
-
-        /// <summary>
         /// Gets stack string. Entities with the same stack string will be possible to put together in a single slot
         /// </summary>
         public virtual string StackType
@@ -59,7 +54,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public override string DisplayName
         {
-            get { return UniqueName; }
+            get { return Name; }
         }
 
         #endregion
@@ -75,7 +70,7 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to load base information
             base.Load(reader, factory);
 
-            UniqueName = reader.ReadString();
+            Name = reader.ReadString();
             ModelName = reader.ReadString();
             Description = reader.ReadString();
             MaxStackSize = reader.ReadInt32();
@@ -86,7 +81,7 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to save base information
             base.Save(writer);
 
-            writer.Write(UniqueName ?? string.Empty);
+            writer.Write(Name ?? string.Empty);
             writer.Write(ModelName ?? string.Empty);
             writer.Write(Description ?? string.Empty);
             writer.Write(MaxStackSize);

@@ -84,6 +84,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Private Variables
+        //Cube veins collections for the biome !
+        private List<CubeVein> _cubeVeins = new List<CubeVein>();
+        private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
+        private List<Cavern> _caverns = new List<Cavern>();
         private RangeI _underSurfaceLayers = new RangeI(1, 3);
 
         //Default mineral vein resources configurations
@@ -140,6 +144,26 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             get { return _underSurfaceLayers; }
             set { _underSurfaceLayers = value; }
         }
+
+        public List<CubeVein> CubeVeins
+        {
+            get { return _cubeVeins; }
+            set { _cubeVeins = value; }
+        }
+
+        public List<BiomeEntity> BiomeEntities
+        {
+            get { return _biomeEntities; }
+            set { _biomeEntities = value; }
+        }
+
+        public List<Cavern> Caverns
+        {
+            get { return _caverns; }
+            set { _caverns = value; }
+        }
+
+
 
         #endregion
 
