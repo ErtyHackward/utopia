@@ -13,7 +13,6 @@ namespace Utopia.Shared.Entities
     public abstract class Entity : IEntity
     {
         private string _name = "No name";
-
         /// <summary>
         /// Pickable entity Property
         /// </summary>

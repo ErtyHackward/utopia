@@ -16,6 +16,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using System.IO;
 using System.ComponentModel;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -89,6 +90,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
         private List<Cavern> _caverns = new List<Cavern>();
         private RangeI _underSurfaceLayers = new RangeI(1, 3);
+        private BiomeTrees _biomeTrees = new BiomeTrees();
 
         //Default mineral vein resources configurations
         private CubeVein _sandVein = new CubeVein() { CubeId = CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40, 128) };
@@ -132,13 +134,66 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Public Properties
-        public string Name { get; set; }
+        [TypeConverter(typeof(CubeConverter))]
+        [DisplayName("Surface Cube")]
+        public string SurfaceCubeName
+        {
+            //When first loaded set property with the first item in the rule list.
+            get
+            {
+                return RealmConfiguration.CubeProfiles.First(x => x.Id == SurfaceCube).Name;
+            }
+            set
+            {
+                //Get ID from name, name must be unic !
+                SurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+            }
+        }
+
         [Browsable(false)]
         public virtual byte SurfaceCube { get; set; }
+
+        [TypeConverter(typeof(CubeConverter))]
+        [DisplayName("Under-surface Cube")]
+        public string UnderSurfaceCubeName
+        {
+            //When first loaded set property with the first item in the rule list.
+            get
+            {
+                return RealmConfiguration.CubeProfiles.First(x => x.Id == UnderSurfaceCube).Name;
+            }
+            set
+            {
+                //Get ID from name, name must be unic !
+                UnderSurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+            }
+        }
+
         [Browsable(false)]
         public virtual byte UnderSurfaceCube { get; set; }
+
+        [TypeConverter(typeof(CubeConverter))]
+        [DisplayName("Ground Cube")]
+        public string GroundCubeName
+        {
+            //When first loaded set property with the first item in the rule list.
+            get
+            {
+                return RealmConfiguration.CubeProfiles.First(x => x.Id == GroundCube).Name;
+            }
+            set
+            {
+                //Get ID from name, name must be unic !
+                GroundCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+            }
+        }
+
         [Browsable(false)]
         public virtual byte GroundCube { get; set; }
+
+
+        public string Name { get; set; }
+
         public virtual RangeI UnderSurfaceLayers
         {
             get { return _underSurfaceLayers; }
@@ -163,7 +218,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             set { _caverns = value; }
         }
 
-
+        public BiomeTrees BiomeTrees
+        {
+            get { return _biomeTrees; }
+            set { _biomeTrees = value; }
+        }
 
         #endregion
 
@@ -717,6 +776,27 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             _underSurfaceLayers.Min = reader.ReadInt32();
             _underSurfaceLayers.Max = reader.ReadInt32();
             GroundCube = reader.ReadByte();
+        }
+
+        internal class CubeConverter : StringConverter
+        {
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                //true means show a combobox
+                return true;
+            }
+
+            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+            {
+                //true will limit to list. false will show the list, 
+                //but allow free-form entry
+                return true;
+            }
+
+            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
+            }
         }
     }
 }

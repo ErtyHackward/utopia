@@ -107,7 +107,6 @@
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
-    <Compile Include="Configuration\BiomeConfig.cs" />
     <Compile Include="Entities\Concrete\Collectible\Plant.cs" />
     <Compile Include="Entities\Concrete\Collectible\SideLightSource.cs" />
     <Compile Include="Entities\Dynamic\ICharacterEntity.cs" />
@@ -292,6 +291,7 @@
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeEntity.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\Cavern.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\CubeVein.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\MontainBiome.cs" />
