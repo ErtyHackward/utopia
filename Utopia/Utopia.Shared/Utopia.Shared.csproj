@@ -107,6 +107,7 @@
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
+    <Compile Include="Configuration\UtopiaProcessorParams.cs" />
     <Compile Include="Entities\Concrete\Collectible\Plant.cs" />
     <Compile Include="Entities\Concrete\Collectible\SideLightSource.cs" />
     <Compile Include="Entities\Dynamic\ICharacterEntity.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\SurfaceCtrl.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\WorldCtrl.cs" />
+    <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\ErtyHackwardWorldConfig.cs" />

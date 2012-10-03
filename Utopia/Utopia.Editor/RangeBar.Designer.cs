@@ -36,7 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.DoubleBuffered = true;
             this.Name = "RangeBar";
-            this.Size = new System.Drawing.Size(480, 122);
+            this.Size = new System.Drawing.Size(480, 70);
             this.ResumeLayout(false);
 
         }

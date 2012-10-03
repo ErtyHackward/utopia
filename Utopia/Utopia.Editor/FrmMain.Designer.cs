@@ -33,7 +33,7 @@
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Biomes");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Landscape Generator");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("WorldProcessor Params");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +82,7 @@
             this.pgDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgDetails.Location = new System.Drawing.Point(3, 3);
             this.pgDetails.Name = "pgDetails";
-            this.pgDetails.Size = new System.Drawing.Size(661, 530);
+            this.pgDetails.Size = new System.Drawing.Size(661, 640);
             this.pgDetails.TabIndex = 0;
             this.pgDetails.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgDetails_PropertyValueChanged);
             // 
@@ -211,8 +211,8 @@
             treeNode4.ContextMenuStrip = this.contextMenuCategories;
             treeNode4.Name = "Biomes";
             treeNode4.Text = "Biomes";
-            treeNode5.Name = "Landscape Generator";
-            treeNode5.Text = "Landscape Generator";
+            treeNode5.Name = "WorldProcessor Params";
+            treeNode5.Text = "WorldProcessor Params";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
@@ -220,7 +220,7 @@
             treeNode4,
             treeNode5});
             this.tvMainCategories.SelectedImageIndex = 0;
-            this.tvMainCategories.Size = new System.Drawing.Size(182, 511);
+            this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
             this.tvMainCategories.TabIndex = 5;
             this.tvMainCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMainCategories_AfterSelect);
             // 
@@ -260,7 +260,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgDetails);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            this.splitContainer1.Size = new System.Drawing.Size(859, 536);
+            this.splitContainer1.Size = new System.Drawing.Size(859, 646);
             this.splitContainer1.SplitterDistance = 188;
             this.splitContainer1.TabIndex = 8;
             // 
@@ -268,7 +268,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(859, 560);
+            this.ClientSize = new System.Drawing.Size(859, 670);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "FrmMain";
