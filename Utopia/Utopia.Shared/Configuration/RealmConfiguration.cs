@@ -11,6 +11,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using System.Linq;
 using S33M3_Resources.Structs;
+using Utopia.Shared.World.Processors.Utopia;
 
 namespace Utopia.Shared.Configuration
 {
@@ -102,6 +103,12 @@ namespace Utopia.Shared.Configuration
             set { RealmConfiguration.Biomes = value; }
         }
 
+        /// <summary>
+        /// Hold Params for Utopia processor
+        /// </summary>
+        [Browsable(false)]
+        public UtopiaProcessorParams UtopiaProcessorParam { get; set; }
+
         #endregion
 
         public RealmConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false)
@@ -113,7 +120,8 @@ namespace Utopia.Shared.Configuration
             Entities = new List<IEntity>();
             CubeProfiles = new List<CubeProfile>();
             Biomes = new List<Biome>();
-
+            UtopiaProcessorParam = new UtopiaProcessorParams();
+            
             if (withDefaultValueCreation)
             {
                 CreateDefaultValues();
@@ -159,6 +167,8 @@ namespace Utopia.Shared.Configuration
             {
                 biome.Save(writer);
             }
+
+            UtopiaProcessorParam.Save(writer);
         }
 
         public void Load(BinaryReader reader)
@@ -197,6 +207,8 @@ namespace Utopia.Shared.Configuration
                 bio.Load(reader);
                 Biomes.Add(bio);
             }
+            
+            UtopiaProcessorParam.Load(reader);
 
             RealmCubeProfiles = CubeProfiles;
         }
@@ -279,6 +291,7 @@ namespace Utopia.Shared.Configuration
         {
             CreateDefaultCubeProfiles();
             CreateDefaultBiomes();
+            CreateDefaultUtopiaProcessorParam();
         }
 
         //Definition of default cube profile
@@ -821,6 +834,13 @@ namespace Utopia.Shared.Configuration
 
             RealmCubeProfiles = CubeProfiles;
         }
+
+        //Definition of all default Utopia processor params
+        private void CreateDefaultUtopiaProcessorParam()
+        {
+            UtopiaProcessorParam.CreateDefaultConfiguration();
+        }
+
         #endregion
 
         #region Inner Classes

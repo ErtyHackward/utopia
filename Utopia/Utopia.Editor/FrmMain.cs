@@ -34,6 +34,8 @@ namespace Utopia.Editor
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
+
+                    _utopiaConfig.LoadConfigParam(_configuration.UtopiaProcessorParam);
                 }
                 else
                 {
@@ -42,6 +44,7 @@ namespace Utopia.Editor
                     saveAsToolStripMenuItem.Enabled = false;
                     tvMainCategories.Enabled = false;
                 }
+
                 UpdateList();
             }
         }
@@ -227,10 +230,14 @@ namespace Utopia.Editor
 
         private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (tvMainCategories.SelectedNode.Name == "Landscape Generator")
+            if (tvMainCategories.SelectedNode.Name == "WorldProcessor Params")
             {
-                pgDetails.Visible = false;
-                _utopiaConfig.Visible = true;
+                //Display Utopia World Processor
+                if (_configuration.WorldProcessor == WorldProcessors.Utopia)
+                {
+                    pgDetails.Visible = false;
+                    _utopiaConfig.Visible = true;
+                }
             }
             else
             {
