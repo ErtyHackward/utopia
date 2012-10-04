@@ -47,13 +47,20 @@ namespace Utopia.Shared.Configuration
 
         public UtopiaProcessorParams()
         {
+            BasicPlain = new List<LandscapeRange>();
+            BasicMidland = new List<LandscapeRange>();
+            BasicMontain = new List<LandscapeRange>();
+            BasicOcean = new List<LandscapeRange>();
+            Ground = new List<LandscapeRange>();
+            Ocean = new List<LandscapeRange>();
+            World = new List<LandscapeRange>();
         }
 
         #region Public Methods
         public void CreateDefaultConfiguration()
         {
+            ClearAllCollections();
             //Create BasicPlain
-            BasicPlain = new List<LandscapeRange>();
             BasicPlain.Add(new LandscapeRange()
             {
                 Name = "Flat",
@@ -76,7 +83,6 @@ namespace Utopia.Shared.Configuration
             });
 
             //Create BasicMidLand
-            BasicMidland = new List<LandscapeRange>();
             BasicMidland.Add(new LandscapeRange()
             {
                 Name = "Midland",
@@ -84,7 +90,6 @@ namespace Utopia.Shared.Configuration
                 Size = 1
             });
             //Create BasicMontain
-            BasicMontain = new List<LandscapeRange>();
             BasicMontain.Add(new LandscapeRange()
             {
                 Name = "Montain",
@@ -92,7 +97,6 @@ namespace Utopia.Shared.Configuration
                 Size = 1
             });
             //Create BasicOcean
-            BasicOcean = new List<LandscapeRange>();
             BasicOcean.Add(new LandscapeRange()
             {
                 Name = "Ocean",
@@ -100,10 +104,7 @@ namespace Utopia.Shared.Configuration
                 Size = 1
             });
 
-
-
             //Create Ground 
-            Ground = new List<LandscapeRange>();
             Ground.Add(new LandscapeRange()
             {
                 Name = "BasicPlain",
@@ -125,9 +126,7 @@ namespace Utopia.Shared.Configuration
                 Size = 0.3
             });
 
-
             //Create Ocean
-            Ocean = new List<LandscapeRange>();
             Ocean.Add(new LandscapeRange()
             {
                 Name = "BasicOcean",
@@ -135,9 +134,7 @@ namespace Utopia.Shared.Configuration
                 Size = 1
             });
 
-
             //Create World
-            World = new List<LandscapeRange>();
             World.Add(new LandscapeRange()
             {
                 Name = "Ocean",
@@ -145,6 +142,7 @@ namespace Utopia.Shared.Configuration
                 Size = 0.1,
                 MixedNextArea = 0.02
             });
+
             World.Add(new LandscapeRange()
             {
                 Name = "Ground",
@@ -155,14 +153,128 @@ namespace Utopia.Shared.Configuration
         #endregion
 
         #region Private Methods
+        private void ClearAllCollections()
+        {
+            BasicPlain.Clear();
+            BasicMidland.Clear();
+            BasicMontain.Clear();
+            BasicOcean.Clear();
+            Ground.Clear();
+            Ocean.Clear();
+            World.Clear();
+        }
         #endregion
 
         public void Save(System.IO.BinaryWriter writer)
         {
+            writer.Write(BasicPlain.Count);
+            for (int i = 0; i < BasicPlain.Count; i++)
+            {
+                BasicPlain[i].Save(writer);
+            }
+
+            writer.Write(BasicMidland.Count);
+            for (int i = 0; i < BasicMidland.Count; i++)
+            {
+                BasicMidland[i].Save(writer);
+            }
+
+            writer.Write(BasicMontain.Count);
+            for (int i = 0; i < BasicMontain.Count; i++)
+            {
+                BasicMontain[i].Save(writer);
+            }
+
+            writer.Write(BasicOcean.Count);
+            for (int i = 0; i < BasicOcean.Count; i++)
+            {
+                BasicOcean[i].Save(writer);
+            }
+
+            writer.Write(Ground.Count);
+            for (int i = 0; i < Ground.Count; i++)
+            {
+                Ground[i].Save(writer);
+            }
+
+            writer.Write(Ocean.Count);
+            for (int i = 0; i < Ocean.Count; i++)
+            {
+                Ocean[i].Save(writer);
+            }
+
+            writer.Write(World.Count);
+            for (int i = 0; i < World.Count; i++)
+            {
+                World[i].Save(writer);
+            }
         }
 
         public void Load(System.IO.BinaryReader reader)
         {
+            ClearAllCollections();
+            LandscapeRange landscapeRange;
+            int count;
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                BasicPlain.Add(landscapeRange);
+            }
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                BasicMidland.Add(landscapeRange);
+            }
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                BasicMontain.Add(landscapeRange);
+            }
+
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                BasicOcean.Add(landscapeRange);
+            }
+
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                Ground.Add(landscapeRange);
+            }
+
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                Ocean.Add(landscapeRange);
+            }
+
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                landscapeRange = new LandscapeRange();
+                landscapeRange.Load(reader);
+                World.Add(landscapeRange);
+            }
+
         }
     }
 }

@@ -134,7 +134,6 @@ namespace Utopia.Shared.Settings
             IsBlockingWater = reader.ReadBoolean();
             IsSolidToEntity = reader.ReadBoolean();
             IsTaggable = reader.ReadBoolean();
-            IsSolidToEntity = reader.ReadBoolean();
             YBlockOffset = reader.ReadDouble();
             CubeFamilly = (enuCubeFamilly)reader.ReadByte();
             SideOffsetMultiplier = reader.ReadByte();
