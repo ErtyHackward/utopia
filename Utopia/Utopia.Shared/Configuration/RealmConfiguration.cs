@@ -156,7 +156,7 @@ namespace Utopia.Shared.Configuration
                 entitySample.Save(writer);
             }
 
-            writer.Write(CubeProfiles.Count);
+            writer.Write(CubeProfiles.Where(x => x.Name != "System Reserved").Count());
             foreach (CubeProfile cubeProfile in CubeProfiles.Where(x => x.Name != "System Reserved"))
             {
                 cubeProfile.Save(writer);
@@ -207,7 +207,7 @@ namespace Utopia.Shared.Configuration
                 bio.Load(reader);
                 Biomes.Add(bio);
             }
-            
+
             UtopiaProcessorParam.Load(reader);
 
             RealmCubeProfiles = CubeProfiles;
@@ -215,13 +215,13 @@ namespace Utopia.Shared.Configuration
 
         public static RealmConfiguration LoadFromFile(string path, EntityFactory factory = null)
         {
-            var voxelModel = new RealmConfiguration(factory ?? new EntityFactory(null));
+            var configuration = new RealmConfiguration(factory ?? new EntityFactory(null));
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
                 var reader = new BinaryReader(fs);
-                voxelModel.Load(reader);
+                configuration.Load(reader);
             }
-            return voxelModel;
+            return configuration;
         }
         #endregion
 
