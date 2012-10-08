@@ -301,6 +301,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Air",
+                Description = "A cube",
                 Id = 0,
                 Tex_Top = 255,
                 Tex_Bottom = 255,
@@ -318,6 +319,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Stone",
+                Description = "A cube",
                 Id = 1,
                 Tex_Top = 1,
                 Tex_Bottom = 1,
@@ -338,6 +340,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Dirt",
+                Description = "A cube",
                 Id = 2,
                 Tex_Top = 2,
                 Tex_Bottom = 2,
@@ -358,6 +361,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Grass",
+                Description = "A cube",
                 Id = 3,
                 Tex_Top = 0,
                 Tex_Bottom = 2,
@@ -379,6 +383,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "WoodPlank",
+                Description = "A cube",
                 Id = 4,
                 Tex_Top = 4,
                 Tex_Bottom = 4,
@@ -399,6 +404,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "StillWater",
+                Description = "A cube",
                 Id = 5,
                 Tex_Top = 5,
                 Tex_Bottom = 5,
@@ -418,6 +424,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "DynamicWater",
+                Description = "A cube",
                 Id = 6,
                 Tex_Top = 5,
                 Tex_Bottom = 5,
@@ -438,6 +445,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "LightWhite",
+                Description = "A cube",
                 Id = 7,
                 Tex_Top = 1,
                 Tex_Bottom = 1,
@@ -463,6 +471,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Rock",
+                Description = "A cube",
                 Id = 8,
                 Tex_Top = 6,
                 Tex_Bottom = 6,
@@ -484,6 +493,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Sand",
+                Description = "A cube",
                 Id = 9,
                 Tex_Top = 7,
                 Tex_Bottom = 7,
@@ -504,6 +514,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Gravel",
+                Description = "A cube",
                 Id = 10,
                 Tex_Top = 8,
                 Tex_Bottom = 8,
@@ -524,6 +535,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Trunk",
+                Description = "A cube",
                 Id = 11,
                 Tex_Top = 10,
                 Tex_Bottom = 10,
@@ -544,6 +556,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "GoldOre",
+                Description = "A cube",
                 Id = 12,
                 Tex_Top = 11,
                 Tex_Bottom = 11,
@@ -564,6 +577,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "CoalOre",
+                Description = "A cube",
                 Id = 13,
                 Tex_Top = 12,
                 Tex_Bottom = 12,
@@ -584,6 +598,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "MoonStone",
+                Description = "A cube",
                 Id = 14,
                 Tex_Top = 13,
                 Tex_Bottom = 13,
@@ -609,6 +624,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Brick",
+                Description = "A cube",
                 Id = 15,
                 Tex_Top = 14,
                 Tex_Bottom = 14,
@@ -629,6 +645,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Foliage",
+                Description = "A cube",
                 Id = 16,
                 Tex_Top = 15,
                 Tex_Bottom = 15,
@@ -651,6 +668,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Glass",
+                Description = "A cube",
                 Id = 17,
                 Tex_Top = 16,
                 Tex_Bottom = 16,
@@ -671,6 +689,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Snow",
+                Description = "A cube",
                 Id = 18,
                 Tex_Top = 17,
                 Tex_Bottom = 17,
@@ -691,6 +710,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Ice",
+                Description = "A cube",
                 Id = 19,
                 Tex_Top = 18,
                 Tex_Bottom = 18,
@@ -712,6 +732,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "StillLava",
+                Description = "A cube",
                 Id = 20,
                 Tex_Top = 19,
                 Tex_Bottom = 19,
@@ -738,6 +759,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "DynamicLava",
+                Description = "A cube",
                 Id = 21,
                 Tex_Top = 19,
                 Tex_Bottom = 19,
@@ -766,6 +788,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Cactus",
+                Description = "A cube",
                 Id = 22,
                 Tex_Top = 22,
                 Tex_Bottom = 22,
@@ -788,6 +811,7 @@ namespace Utopia.Shared.Configuration
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "CactusTop",
+                Description = "A cube",
                 Id = 23,
                 Tex_Top = 21,
                 Tex_Bottom = 22,

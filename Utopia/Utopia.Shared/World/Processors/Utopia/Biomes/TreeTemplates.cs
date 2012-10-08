@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3_Resources.Structs;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
@@ -34,8 +35,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Small,
                 Radius = 3,
                 TrunkSize = new RangeB(5,6),
-                TrunkCubeId = CubeId.Trunk,
-                FoliageCubeId = CubeId.Foliage
+                TrunkCubeId = RealmConfiguration.CubeId.Trunk,
+                FoliageCubeId = RealmConfiguration.CubeId.Foliage
             };
             smallTreeTemplate.FoliageStructure = new List<List<int>>();
             smallTreeTemplate.FoliageStructure.Add (new List<int>() 
@@ -53,8 +54,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Medium,
                 Radius = 4,
                 TrunkSize = new RangeB(5,7),
-                TrunkCubeId = CubeId.Trunk,
-                FoliageCubeId = CubeId.Foliage
+                TrunkCubeId = RealmConfiguration.CubeId.Trunk,
+                FoliageCubeId = RealmConfiguration.CubeId.Foliage
             };
             mediumTreeTemplate.FoliageStructure = new List<List<int>>();
             mediumTreeTemplate.FoliageStructure.Add(new List<int>() 
@@ -72,8 +73,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Big,
                 Radius = 5,
                 TrunkSize = new RangeB(9, 13),
-                TrunkCubeId = CubeId.Trunk,
-                FoliageCubeId = CubeId.Foliage
+                TrunkCubeId = RealmConfiguration.CubeId.Trunk,
+                FoliageCubeId = RealmConfiguration.CubeId.Foliage
             };
             bigTreeTemplate.FoliageStructure = new List<List<int>>();
             bigTreeTemplate.FoliageStructure.Add(new List<int>() 
@@ -119,8 +120,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Cactus,
                 Radius = 2,
                 TrunkSize = new RangeB(1, 3),
-                TrunkCubeId = CubeId.Cactus,
-                FoliageCubeId = CubeId.CactusTop
+                TrunkCubeId = RealmConfiguration.CubeId.Cactus,
+                FoliageCubeId = RealmConfiguration.CubeId.CactusTop
             };
             cactusTemplate.FoliageStructure = new List<List<int>>();
             cactusTemplate.FoliageStructure.Add(new List<int>() { 5 });

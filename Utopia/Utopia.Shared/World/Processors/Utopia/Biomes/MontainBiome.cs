@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Cubes;
 using S33M3_Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -16,17 +17,17 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Public Properties
         public override byte SurfaceCube
         {
-            get { return CubeId.Grass; }
+            get { return RealmConfiguration.CubeId.Grass; }
         }
 
         public override byte UnderSurfaceCube
         {
-            get { return CubeId.Dirt; }
+            get { return RealmConfiguration.CubeId.Dirt; }
         }
 
         public override byte GroundCube
         {
-            get { return CubeId.Stone; }
+            get { return RealmConfiguration.CubeId.Stone; }
         }
         #endregion
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3_Resources.Structs;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 
@@ -18,9 +19,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Public Properties
-        public override byte SurfaceCube { get { return CubeId.Grass; } }
-        public override byte UnderSurfaceCube { get { return CubeId.Dirt; } }
-        public override byte GroundCube { get { return CubeId.Stone; } }
+        public override byte SurfaceCube { get { return RealmConfiguration.CubeId.Grass; } }
+        public override byte UnderSurfaceCube { get { return RealmConfiguration.CubeId.Dirt; } }
+        public override byte GroundCube { get { return RealmConfiguration.CubeId.Stone; } }
         protected override RangeI TreePerChunk { get { return _treePerChunk; } }
 
         protected override BiomeEntity GrassEntities { get { return _grassEntities; } }

@@ -21,6 +21,8 @@ namespace Utopia.Shared.Settings
         public bool CanBeModified { get; set; }
         [Description("The cube's name"), Category("General")]
         public string Name { get; set; }
+        [Description("The cube's description"), Category("General")]
+        public string Description { get; set; }
         [Browsable(false), Description("Cube internal ID"), Category("General")]
         public byte Id { get; set; }
         [Description("Can be picked-up by player"), Category("General")]
