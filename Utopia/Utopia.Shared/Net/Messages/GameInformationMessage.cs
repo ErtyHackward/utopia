@@ -4,6 +4,8 @@ using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.PlanGenerator;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
+using Utopia.Shared.World;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -22,8 +24,7 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         private Vector3I _chunkSize;
 
-        private string _worldSeed;
-        private GenerationParameters _planGenerationParameters;
+        private WorldParameters _worldParameter;
 
         /// <summary>
         /// Gets message id
@@ -51,19 +52,13 @@ namespace Utopia.Shared.Net.Messages
             set { _chunkSize = value; }
         }
 
-        public string WorldSeed
-        {
-            get { return _worldSeed; }
-            set { _worldSeed = value; }
-        }
-        
         /// <summary>
         /// Contains plan generation details
         /// </summary>
-        public GenerationParameters PlanGenerationParameters
+        public WorldParameters WorldParameter
         {
-            get { return _planGenerationParameters; }
-            set { _planGenerationParameters = value; }
+            get { return _worldParameter; }
+            set { _worldParameter = value; }
         }
 
         public static GameInformationMessage Read(BinaryReader reader)
@@ -73,10 +68,9 @@ namespace Utopia.Shared.Net.Messages
             gi._maxViewRange = reader.ReadInt32();
 
             gi._chunkSize = reader.ReadVector3I();
-            gi._worldSeed = reader.ReadString();
-            var plan = new GenerationParameters();
-            plan.Load(reader);
-            gi._planGenerationParameters = plan;
+            WorldParameters _worldParameter = new WorldParameters();
+            _worldParameter.Load(reader);
+            gi._worldParameter = _worldParameter;
 
             return gi;
         }
@@ -85,8 +79,7 @@ namespace Utopia.Shared.Net.Messages
         {
             writer.Write(info._maxViewRange);
             writer.Write(info._chunkSize);
-            writer.Write(info._worldSeed);
-            info._planGenerationParameters.Save(writer);
+            info.WorldParameter.Save(writer);
         }
         
         public void Write(BinaryWriter writer)

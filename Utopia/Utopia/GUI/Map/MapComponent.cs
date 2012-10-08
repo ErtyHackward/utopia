@@ -47,7 +47,7 @@ namespace Utopia.GUI.Map
 
             _planGenerator = plan;
             _playerManager = playerManager;
-            _planGenerator.Parameters = _server.GameInformations.PlanGenerationParameters;
+            //_planGenerator.Parameters = _server.GameInformations.PlanGenerationParameters;
         }
 
         public override void Initialize()
