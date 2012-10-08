@@ -220,7 +220,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if (Y == _worldParameters.SeaLevel && cube == CubeId.Air && valueUnderground == 1)
+                        if (Y == 64 && cube == CubeId.Air && valueUnderground == 1)
                         {
                             cube = CubeId.StillWater;
                         }                       
@@ -284,7 +284,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         byte cubeId = ChunkCubes[index];
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (_worldParameters.SeaLevel - 5)) surfaceLayer = 1;
+                        if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (64 - 5)) surfaceLayer = 1;
 
                         if (cubeId == CubeId.Stone)
                         {
@@ -297,7 +297,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             cubeId = currentBiome.GroundCube;
 
                             //Under water soil
-                            if (Y < _worldParameters.SeaLevel && inWaterMaxLevel != 0)
+                            if (Y < 64 && inWaterMaxLevel != 0)
                             {
                                 if (cubeId == currentBiome.GroundCube)
                                 {

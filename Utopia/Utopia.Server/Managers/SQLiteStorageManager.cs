@@ -35,7 +35,7 @@ namespace Utopia.Server.Managers
             dbCreate.Append(@"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);");
             dbCreate.Append(@"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
             dbCreate.Append(@"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
-            dbCreate.Append(@"CREATE TABLE [WorldParameters] ([WorldName] varchar(120) PRIMARY KEY NOT NULL, [SeedName] varchar(120) NOT NULL, [SeaLevel] integer NOT NULL);");
+            dbCreate.Append(@"CREATE TABLE [WorldParameters] ([WorldName] varchar(120) PRIMARY KEY NOT NULL, [SeedName] varchar(120) NOT NULL, [RealmConfiguration] blob NOT NULL);");
             return dbCreate.ToString();
         }
 
@@ -43,19 +43,27 @@ namespace Utopia.Server.Managers
         {
             string SqlStatment;
             //Upsert a specific chunk
-            SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName], [SeaLevel]) VALUES (@WorldName, @SeedName, @SeaLevel)";
+            SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName], [RealmConfiguration]) VALUES (@WorldName, @SeedName, @realmConfiguration)";
             _worldParametersInsertCmd = new SQLiteCommand(SqlStatment, Connection);
             _worldParametersInsertCmd.Parameters.Add("@WorldName", System.Data.DbType.String);
             _worldParametersInsertCmd.Parameters.Add("@SeedName", System.Data.DbType.String);
-            _worldParametersInsertCmd.Parameters.Add("@SeaLevel", System.Data.DbType.Int32);
+            _worldParametersInsertCmd.Parameters.Add("@realmConfiguration", System.Data.DbType.Binary);
         }
 
         private void InsertWorldParametersData(WorldParameters worldParam)
         {
             _worldParametersInsertCmd.Parameters[0].Value = worldParam.WorldName;
             _worldParametersInsertCmd.Parameters[1].Value = worldParam.SeedName;
-            _worldParametersInsertCmd.Parameters[2].Value = worldParam.SeaLevel;
 
+            //Binary serialize the Configuration object into an array of byte[]
+            using (var ms = new MemoryStream())
+            {
+                var writer = new BinaryWriter(ms);
+                worldParam.Configuration.Save(writer);
+                byte[] ConfigurationBytes = ms.ToArray();
+                _worldParametersInsertCmd.Parameters[2].Value = ConfigurationBytes;
+            }
+            
             //Launch the insert
             _worldParametersInsertCmd.ExecuteNonQuery();
         }

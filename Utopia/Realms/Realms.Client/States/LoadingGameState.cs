@@ -106,11 +106,10 @@ namespace Realms.Client.States
                 {
                     wp.WorldName = "SandBox World";
                     wp.SeedName = "Utopia SandBox";
-                    wp.SeaLevel = (AbstractChunk.ChunkSize.Y / 2) - 3;
                 }
 
-                if (_vars.LocalServer == null)
-                    _vars.LocalServer = _ioc.Get<LocalServer>();
+                //Create a local server for single player purpose
+                if (_vars.LocalServer == null) _vars.LocalServer = _ioc.Get<LocalServer>();
 
                 _vars.LocalServer.InitSinglePlayerServer(wp);
 
@@ -157,7 +156,6 @@ namespace Realms.Client.States
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
             clientSideworldParam.SeedName = _ioc.Get<ServerComponent>().GameInformations.WorldSeed;
-            clientSideworldParam.SeaLevel = _ioc.Get<ServerComponent>().GameInformations.WaterLevel;
 
 
             //IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);

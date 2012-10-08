@@ -225,7 +225,7 @@ namespace Utopia.Shared.World.Processors
                     for (int Y = 0; Y <= YSamplingCount; Y++)
                     {
                         //Si mon altitude est en dessous de la moitire de ma hauteur max + 5 && JE suis sur une rivière
-                        if ((Y * YPointLerpedCount <= (_worldParameters.SeaLevel) + 5 && RiverOceanDepth > 0) || endOfWorld > 0)
+                        if ((Y * YPointLerpedCount <= (64) + 5 && RiverOceanDepth > 0) || endOfWorld > 0)
                         {
                             sealevel = basesealevel - RiverOceanDepth;
                         }
@@ -326,7 +326,7 @@ namespace Utopia.Shared.World.Processors
                                         cube = CubeId.Stone;
                                     }
 
-                                    if (Y == _worldParameters.SeaLevel && cube == CubeId.Air)
+                                    if (Y == 64 && cube == CubeId.Air)
                                     {
                                         cube = CubeId.StillWater;
                                     }

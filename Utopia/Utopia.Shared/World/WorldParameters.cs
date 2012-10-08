@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World
 {
@@ -20,10 +21,7 @@ namespace Utopia.Shared.World
 
         public string SeedName { get; set; }
 
-        /// <summary>
-        /// Sea height Level (blocks)
-        /// </summary>
-        public int SeaLevel { get; set; }
+        public RealmConfiguration Configuration { get; set; }
 
         /// <summary>
         /// The World Name
@@ -33,7 +31,6 @@ namespace Utopia.Shared.World
         public void Clear()
         {
             WorldName = null;
-            SeaLevel = -1;
             SeedName = null;
         }
     }

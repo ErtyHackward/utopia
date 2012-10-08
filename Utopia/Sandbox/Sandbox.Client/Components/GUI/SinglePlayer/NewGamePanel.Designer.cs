@@ -128,7 +128,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
                         //Assign to currentWorldParameters the news parameters
                         _currentWorldParameter.WorldName = _inputWorldName.Text;
                         _currentWorldParameter.SeedName = _inputSeedName.Text;
-                        _currentWorldParameter.SeaLevel = _inputOceanLevel.Value;
 
                         //Reset field values
                         _inputWorldName.Text = string.Empty;

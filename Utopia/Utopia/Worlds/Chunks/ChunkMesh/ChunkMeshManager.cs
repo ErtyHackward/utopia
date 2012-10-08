@@ -225,13 +225,13 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             case enuCubeFamilly.Solid:
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube,  ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, 64)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-                                if (!yOffsetDiff && !_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, _visualWorldParameters.WorldParameters.SeaLevel)) continue;
+                                if (!yOffsetDiff && !_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, 64)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;

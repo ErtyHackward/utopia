@@ -23,7 +23,6 @@ namespace Utopia.Shared.Net.Messages
         private Vector3I _chunkSize;
 
         private string _worldSeed;
-        private int _waterLevel;
         private GenerationParameters _planGenerationParameters;
 
         /// <summary>
@@ -58,12 +57,6 @@ namespace Utopia.Shared.Net.Messages
             set { _worldSeed = value; }
         }
         
-        public int WaterLevel
-        {
-            get { return _waterLevel; }
-            set { _waterLevel = value; }
-        }
-        
         /// <summary>
         /// Contains plan generation details
         /// </summary>
@@ -81,7 +74,6 @@ namespace Utopia.Shared.Net.Messages
 
             gi._chunkSize = reader.ReadVector3I();
             gi._worldSeed = reader.ReadString();
-            gi._waterLevel = reader.ReadInt32();
             var plan = new GenerationParameters();
             plan.Load(reader);
             gi._planGenerationParameters = plan;
@@ -94,7 +86,6 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(info._maxViewRange);
             writer.Write(info._chunkSize);
             writer.Write(info._worldSeed);
-            writer.Write(info._waterLevel);
             info._planGenerationParameters.Save(writer);
         }
         
