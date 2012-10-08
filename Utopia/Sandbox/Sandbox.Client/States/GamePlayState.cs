@@ -10,7 +10,6 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
 using Utopia.Network;
-using Utopia.Shared.Cubes;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.GameClocks;

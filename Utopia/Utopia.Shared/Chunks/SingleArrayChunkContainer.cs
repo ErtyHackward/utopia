@@ -9,11 +9,11 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using SharpDX;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
 using S33M3_Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Chunks
 {
@@ -401,7 +401,7 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == CubeId.Air) cube = new TerraCube(CubeId.Error);
+                // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == RealmConfiguration.CubeId.Air) cube = new TerraCube(CubeId.Error);
                 return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
             }
 
@@ -577,7 +577,7 @@ namespace Utopia.Shared.Chunks
         {
             int index = 0;
             cubeWithPosition = new TerraCubeWithPosition();
-            cubeWithPosition.Cube = new TerraCube(CubeId.Air);
+            cubeWithPosition.Cube = new TerraCube(RealmConfiguration.CubeId.Air);
 
             int X = MathHelper.Fastfloor(FromPosition.X);
             int Z = MathHelper.Fastfloor(FromPosition.Z);
@@ -661,7 +661,7 @@ namespace Utopia.Shared.Chunks
             {
                 if (!IndexSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
                 {
-                    return new TerraCube(CubeId.Error);
+                    return new TerraCube(255);
                 }
             }
             else
@@ -676,7 +676,7 @@ namespace Utopia.Shared.Chunks
             if (offset == 0f || offset > pos.Y % 1)
                 return cube;
 
-            cube.Id = CubeId.Air;
+            cube.Id = RealmConfiguration.CubeId.Air;
             return cube;
         }
 
@@ -694,7 +694,7 @@ namespace Utopia.Shared.Chunks
             {
                 if (!IndexSafe(cubePos.X, cubePos.Y, cubePos.Z, out cubeIndex))
                 {
-                    return new TerraCube(CubeId.Error);
+                    return new TerraCube(255);
                 }
             }
             else
@@ -709,7 +709,7 @@ namespace Utopia.Shared.Chunks
             if (offset == 0f || offset > pos.Y % 1)
                 return cube;
 
-            cube.Id = CubeId.Air;
+            cube.Id = RealmConfiguration.CubeId.Air;
             return cube;
         }
     }

@@ -2,13 +2,13 @@
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using System;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities;
 using S33M3CoreComponents.Maths.Noises;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -137,30 +137,30 @@ namespace Utopia.Shared.World.Processors
                         index = localX * AbstractChunk.ChunkSize.Y + localY + localZ * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y;
                         cubeId = Cubes[index];
 
-                        if (surfaceMudLayer > 0 && cubeId == CubeId.Air) surfaceMudLayer = 0;
+                        if (surfaceMudLayer > 0 && cubeId == RealmConfiguration.CubeId.Air) surfaceMudLayer = 0;
 
                         //Be sure that the lowest Y level is "Solid"
                         if (Y <= _rnd.Next(5))
                         {
-                            Cubes[index] = CubeId.Rock;
+                            Cubes[index] = RealmConfiguration.CubeId.Rock;
                             continue;
                         }
 
-                        if (cubeId == CubeId.Stone)
+                        if (cubeId == RealmConfiguration.CubeId.Stone)
                         {
 
                             if (Y > 64 - 3 && Y <= 64 + 1 && sandResult.Value > 0.7)
                             {
-                                Cubes[index] = CubeId.Sand;
+                                Cubes[index] = RealmConfiguration.CubeId.Sand;
                                 sandPlaced = true;
                                 continue;
                             }
 
                             if (Y < 64 && inWaterMaxLevel != 0)
                             {
-                                if (cubeId == CubeId.Stone)
+                                if (cubeId == RealmConfiguration.CubeId.Stone)
                                 {
-                                    Cubes[index] = CubeId.Dirt;
+                                    Cubes[index] = RealmConfiguration.CubeId.Dirt;
 
                                 }
                                 break;
@@ -172,7 +172,7 @@ namespace Utopia.Shared.World.Processors
                             {
                                 if (surfaceMudLayer == 0 && sandPlaced == false)
                                 {
-                                    Cubes[index] = CubeId.Grass;
+                                    Cubes[index] = RealmConfiguration.CubeId.Grass;
 
                                     //if (randomizer.NextDouble() < 0.005d)
                                     //{
@@ -239,12 +239,12 @@ namespace Utopia.Shared.World.Processors
                                 {
                                     if (Y > 64 - 1 && Y <= 64 + 4 && gravelResult.Value > 1.8)
                                     {
-                                        Cubes[index] = CubeId.Gravel;
+                                        Cubes[index] = RealmConfiguration.CubeId.Gravel;
                                         continue;
                                     }
                                     else
                                     {
-                                        Cubes[index] = CubeId.Dirt;
+                                        Cubes[index] = RealmConfiguration.CubeId.Dirt;
                                     }
                                 }
                                 surfaceMudLayer++;
@@ -252,15 +252,15 @@ namespace Utopia.Shared.World.Processors
                         }
                         else
                         {
-                            if (cubeId == CubeId.StillWater)
+                            if (cubeId == RealmConfiguration.CubeId.StillWater)
                             {
                                 inWaterMaxLevel = Y;
                             }
                             else
                             {
-                                if (inWaterMaxLevel > 0 && cubeId == CubeId.Air)
+                                if (inWaterMaxLevel > 0 && cubeId == RealmConfiguration.CubeId.Air)
                                 {
-                                    Cubes[index] = CubeId.StillWater;
+                                    Cubes[index] = RealmConfiguration.CubeId.StillWater;
                                 }
                             }
                         }
@@ -278,7 +278,7 @@ namespace Utopia.Shared.World.Processors
 
             for (int i = 0; i < 7; i++)
             {
-                TryAddBlock(chunk, vector3i, CubeId.Trunk);
+                TryAddBlock(chunk, vector3i, RealmConfiguration.CubeId.Trunk);
                 vector3i.Y++;
             }
 
@@ -290,7 +290,7 @@ namespace Utopia.Shared.World.Processors
                 {
                     for (int z = -radius; z <= radius; z++)
                     {
-                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Foliage);
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), RealmConfiguration.CubeId.Foliage);
                     }
                 }
                 vector3i.Y--;

@@ -136,7 +136,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                         //change the Block to AIR
                         cursor.Write(RealmConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = Cubes.CubeId.Air });
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = RealmConfiguration.CubeId.Air });
                         
                         impact.Success = true;
 

@@ -6,7 +6,7 @@ using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
-using Utopia.Shared.Cubes;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
@@ -84,13 +84,13 @@ namespace Sandbox.Client.Components
             ContainedSlot outItem;
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.CubeId = RealmConfiguration.CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
-            foreach (var cubeId in CubeId.All())
+            foreach (var cubeId in RealmConfiguration.CubeId.All())
             {
-                if (cubeId == CubeId.Air)
+                if (cubeId == RealmConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();

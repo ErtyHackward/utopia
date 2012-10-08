@@ -11,8 +11,8 @@ using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Entities.Managers
 {
@@ -217,7 +217,7 @@ namespace Utopia.Entities.Managers
                         handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
                     }
 #if DEBUG
-                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, CubeId.GetCubeTypeName(_groundCube.Cube.Id));
+                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, RealmConfiguration.CubeProfiles[_groundCube.Cube.Id].Name);
 #endif
                     _fallMaxHeight = int.MinValue;
                 }
@@ -250,10 +250,10 @@ namespace Utopia.Entities.Managers
                 }
 
                 //Eyes under water (Used to change view Color)
-                if (_headCube.Id == CubeId.StillWater || _headCube.Id == CubeId.DynamicWater)
+                if (_headCube.Id == RealmConfiguration.CubeId.StillWater || _headCube.Id == RealmConfiguration.CubeId.DynamicWater)
                 {
                     int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
-                    if (_cubesHolder.Cubes[AboveHead].Id == CubeId.Air)
+                    if (_cubesHolder.Cubes[AboveHead].Id == RealmConfiguration.CubeId.Air)
                     {
                         //Check the offset of the water
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);

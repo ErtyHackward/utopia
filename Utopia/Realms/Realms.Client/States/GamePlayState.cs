@@ -10,7 +10,6 @@ using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
 using Utopia.Network;
-using Utopia.Shared.Cubes;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.GameClocks;
@@ -27,6 +26,7 @@ using Utopia.GUI.Inventory;
 using Utopia.Components;
 using Utopia.Shared.Settings;
 using System.Linq;
+using Utopia.Shared.Configuration;
 
 namespace Realms.Client.States
 {
@@ -149,11 +149,11 @@ namespace Realms.Client.States
         
         void ChunkEntityImpactManagerBlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            if (e.NewBlockType == CubeId.Air && e.PreviousBlock == CubeId.DynamicWater)
+            if (e.NewBlockType == RealmConfiguration.CubeId.Air && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
                 return;
-            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.Air)
+            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.Air)
                 return;
-            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.DynamicWater)
+            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
                 return;
 
             if (e.NewBlockType == 0)

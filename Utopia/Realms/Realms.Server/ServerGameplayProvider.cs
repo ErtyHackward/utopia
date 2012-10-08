@@ -1,11 +1,11 @@
-﻿using Utopia.Shared.Cubes;
-using Utopia.Shared.Entities;
+﻿using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Realms.Server
 {
@@ -32,14 +32,14 @@ namespace Realms.Server
             //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.CubeId = RealmConfiguration.CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Add Items in inventory, every cubes
-            foreach (var cubeId in CubeId.All())
+            foreach (var cubeId in RealmConfiguration.CubeId.All())
             {
-                if (cubeId == CubeId.Air)
+                if (cubeId == RealmConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();

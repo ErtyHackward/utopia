@@ -1,7 +1,6 @@
 ﻿using System;
 using Amib.Threading;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
@@ -19,6 +18,7 @@ using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Worlds.Chunks.ChunkMesh
 {
@@ -135,7 +135,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         currentCube = _cubesHolder.Cubes[cubeIndex];
 
                         // ? Am I an Air Cube ? ==> Default Value, not needed to render !
-                        if (currentCube.Id == CubeId.Air) continue;
+                        if (currentCube.Id == RealmConfiguration.CubeId.Air) continue;
 
                         //The Cube profile contain the value that are fixed for a block type.
                         cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[currentCube.Id];

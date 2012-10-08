@@ -8,7 +8,6 @@ using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using IrrVector3 = IrrKlang.Vector3D;
@@ -17,6 +16,7 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Components
 {
@@ -215,8 +215,8 @@ namespace Utopia.Components
                 TerraCube cubeUnderFeet = _singleArray.GetCube(underTheFeets);
 
                 // no need to play step if the entity is in air or not in walking displacement mode
-                if (cubeUnderFeet.Id == CubeId.Error ||
-                    cubeUnderFeet.Id == CubeId.Air ||
+                if (cubeUnderFeet.Id == RealmConfiguration.CubeId.Error ||
+                    cubeUnderFeet.Id == RealmConfiguration.CubeId.Air ||
                     _stepsTracker[i].Entity.DisplacementMode != Shared.Entities.EntityDisplacementModes.Walking)
                 {
                     var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position }; //Save the position of the entity
@@ -236,18 +236,18 @@ namespace Utopia.Components
                 // do we need to play the step sound?
                 //Trigger only if the difference between previous memorize position and current is > 2.0 meters
                 //Or if the previous position was in the air
-                if (distance >= 1.5f || prevCube.Id == CubeId.Air)
+                if (distance >= 1.5f || prevCube.Id == RealmConfiguration.CubeId.Air)
                 {
                     TerraCube currentCube = _singleArray.GetCube(entity.Position);
 
                     var soundIndex = pair.LastSound;
 
                     //If walking on the ground, but with Feets and legs inside water block
-                    if (currentCube.Id == CubeId.StillWater && cubeUnderFeet.Id != CubeId.StillWater)
+                    if (currentCube.Id == RealmConfiguration.CubeId.StillWater && cubeUnderFeet.Id != RealmConfiguration.CubeId.StillWater)
                     {
                         //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
                         TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.DefaultSize.Y, 0));
-                        if (headCube.Id == CubeId.Air)
+                        if (headCube.Id == RealmConfiguration.CubeId.Air)
                         {
                             List<string> sounds;
                             // play a water sound
@@ -258,7 +258,7 @@ namespace Utopia.Components
                         }
                         else
                         {
-                            if (headCube.Id == CubeId.StillWater)
+                            if (headCube.Id == RealmConfiguration.CubeId.StillWater)
                             {
                                 //Play Sound ??
                                 //Entity having its head, and feet inside water, but "walking" on the ground.
@@ -408,11 +408,11 @@ namespace Utopia.Components
         //Handle Cube removed / added sound
         private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            if (e.NewBlockType == CubeId.Air && e.PreviousBlock == CubeId.DynamicWater)
+            if (e.NewBlockType == RealmConfiguration.CubeId.Air && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
                 return;
-            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.Air)
+            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.Air)
                 return;
-            if (e.NewBlockType == CubeId.DynamicWater && e.PreviousBlock == CubeId.DynamicWater)
+            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
                 return;
 
             if (e.NewBlockType == 0)

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using S33M3_Resources.Structs;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Cubes;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
