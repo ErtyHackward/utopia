@@ -15,6 +15,7 @@ using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -80,16 +81,16 @@ namespace Utopia.Shared.World.Processors
                 {
                     var pointData = GetPointData(new Point(pos.X * AbstractChunk.ChunkSize.X + x, pos.Y * AbstractChunk.ChunkSize.Z + z));
 
-                    var topGroundBlock = CubeId.Grass;
-                    var undegroundBlock = CubeId.Dirt;
+                    var topGroundBlock = RealmConfiguration.CubeId.Grass;
+                    var undegroundBlock = RealmConfiguration.CubeId.Dirt;
 
                     if (pointData.IsRiver)
-                        topGroundBlock = CubeId.StillWater;
+                        topGroundBlock = RealmConfiguration.CubeId.StillWater;
 
                     if (Biome.IsDesert(pointData.Biome))
                     {
-                        topGroundBlock = CubeId.Sand;
-                        undegroundBlock = CubeId.Sand;
+                        topGroundBlock = RealmConfiguration.CubeId.Sand;
+                        undegroundBlock = RealmConfiguration.CubeId.Sand;
                     }
 
                     bool trees = Biome.IsForest(pointData.Biome);
@@ -104,7 +105,7 @@ namespace Utopia.Shared.World.Processors
                         }
                         else if (y <= 64)
                         {
-                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.StillWater;
+                            chunk.BlockData[new Vector3I(x, y, z)] = RealmConfiguration.CubeId.StillWater;
                         }
 
                         if (y == pointData.Elevation)
@@ -113,7 +114,7 @@ namespace Utopia.Shared.World.Processors
                             {
                                 chunk.BlockData[new Vector3I(x, y, z)] = topGroundBlock;
 
-                                if (topGroundBlock == CubeId.Grass)
+                                if (topGroundBlock == RealmConfiguration.CubeId.Grass)
                                 {
                                     if (trees && r.NextDouble() < 0.005d)
                                     {

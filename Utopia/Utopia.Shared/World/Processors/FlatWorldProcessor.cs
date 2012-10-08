@@ -2,6 +2,7 @@
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Cubes;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors
 {
@@ -59,9 +60,9 @@ namespace Utopia.Shared.World.Processors
                             var index = x * AbstractChunk.ChunkSize.Y + y + z * AbstractChunk.ChunkSize.Y * AbstractChunk.ChunkSize.X;
 
                             if (y >= AbstractChunk.ChunkSize.Y / 2)
-                                chunkBytes[index] = CubeId.Air;
+                                chunkBytes[index] = RealmConfiguration.CubeId.Air;
                             else
-                                chunkBytes[index] = CubeId.Stone;
+                                chunkBytes[index] = RealmConfiguration.CubeId.Stone;
                         }
                     }
                 }

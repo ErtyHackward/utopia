@@ -6,6 +6,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using System;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -53,12 +54,12 @@ namespace Utopia.Shared.Entities.Concrete
         
         public override string DisplayName
         {
-            get { return Cubes.CubeId.GetCubeTypeName(CubeId); }
+            get { return RealmConfiguration.CubeProfiles[CubeId].Name; }
         }
 
         public string Description
         {
-            get { return Cubes.CubeId.GetCubeDescription(CubeId); }
+            get { return RealmConfiguration.CubeProfiles[CubeId].Description; }
         }
 
         public static event EventHandler<CubeChangedEventArgs> CubeChanged;
@@ -112,7 +113,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
                     var cube = cursor.Read();
-                    if (cube != Cubes.CubeId.Air)
+                    if (cube != RealmConfiguration.CubeId.Air)
                     {
                         var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
@@ -134,7 +135,7 @@ namespace Utopia.Shared.Entities.Concrete
                         chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                         //change the Block to AIR
-                        cursor.Write(Cubes.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                        cursor.Write(RealmConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = Cubes.CubeId.Air });
                         
                         impact.Success = true;
@@ -146,7 +147,7 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     //Add new block
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-                    if (cursor.Read() == Cubes.CubeId.Air)
+                    if (cursor.Read() == RealmConfiguration.CubeId.Air)
                     {
                         cursor.Write(CubeId);
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = CubeId });

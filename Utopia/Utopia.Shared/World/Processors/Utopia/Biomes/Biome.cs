@@ -93,13 +93,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private BiomeTrees _biomeTrees = new BiomeTrees();
 
         //Default mineral vein resources configurations
-        private CubeVein _sandVein = new CubeVein() { CubeId = CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40, 128) };
-        private CubeVein _rockVein = new CubeVein() { CubeId = CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1, 50)};
-        private CubeVein _dirtVein = new CubeVein() { CubeId = CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 128) };
-        private CubeVein _gravelVein = new CubeVein() { CubeId = CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40, 128) };
-        private CubeVein _goldVein = new CubeVein() { CubeId = CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1, 40)};
-        private CubeVein _coalVein = new CubeVein() { CubeId = CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 80) };
-        private CubeVein _moonStoneVein = new CubeVein() { CubeId = CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1, 20) };
+        private CubeVein _sandVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40, 128) };
+        private CubeVein _rockVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1, 50) };
+        private CubeVein _dirtVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 128) };
+        private CubeVein _gravelVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40, 128) };
+        private CubeVein _goldVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1, 40) };
+        private CubeVein _coalVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 80) };
+        private CubeVein _moonStoneVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1, 20) };
         //Default Liquid block spawning resource
         private CubeVein _waterSource = new CubeVein() { CubeId = CubeId.DynamicWater,  VeinPerChunk = 20, SpawningHeight = new RangeB(60, 120) };
         private CubeVein _lavaSource = new CubeVein() { CubeId = CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 60) };
