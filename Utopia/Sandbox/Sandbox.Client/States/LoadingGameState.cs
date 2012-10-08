@@ -159,8 +159,7 @@ namespace Sandbox.Client.States
             //_ioc.Get<ServerComponent>().GameInformations was set by the MessageGameInformation received by the server
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
-            clientSideworldParam.SeedName = _ioc.Get<ServerComponent>().GameInformations.WorldSeed;
-
+            clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
 
             //IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
             //IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));

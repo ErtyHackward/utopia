@@ -111,6 +111,7 @@ namespace Realms.Client.States
                 //Create a local server for single player purpose
                 if (_vars.LocalServer == null) _vars.LocalServer = _ioc.Get<LocalServer>();
 
+                //Passed the WorldParameters to the server for single use purpose mode
                 _vars.LocalServer.InitSinglePlayerServer(wp);
 
                 if (serverComponent.ServerConnection == null ||
@@ -152,16 +153,10 @@ namespace Realms.Client.States
 
         private void GameplayComponentsCreation()
         {
-            //_ioc.Get<ServerComponent>().GameInformations was set by the MessageGameInformation received by the server
+            //_ioc.Get<ServerComponent>().GameInformations is set by the MessageGameInformation received by the server
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
-            clientSideworldParam.SeedName = _ioc.Get<ServerComponent>().GameInformations.WorldSeed;
-
-
-            //IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
-            //IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
-            //var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
-            //_ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
+            clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
 
             IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
