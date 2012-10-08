@@ -34,7 +34,7 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// General realm display name
         /// </summary>
-        public string RealmName { get; set; }
+        public string ConfigurationName { get; set; }
 
         /// <summary>
         /// Author name of the realm
@@ -144,7 +144,7 @@ namespace Utopia.Shared.Configuration
         {
             writer.Write(RealmFormat);
 
-            writer.Write(RealmName ?? string.Empty);
+            writer.Write(ConfigurationName ?? string.Empty);
             writer.Write(Author ?? string.Empty);
             writer.Write(CreatedAt.ToBinary());
             writer.Write(UpdatedAt.ToBinary());
@@ -177,7 +177,7 @@ namespace Utopia.Shared.Configuration
             if (currentFormat != RealmFormat)
                 throw new InvalidDataException("Unsupported realm config format, expected " + RealmFormat + " current " + currentFormat);
 
-            RealmName = reader.ReadString();
+            ConfigurationName = reader.ReadString();
             Author = reader.ReadString();
             CreatedAt = DateTime.FromBinary(reader.ReadInt64());
             UpdatedAt = DateTime.FromBinary(reader.ReadInt64());

@@ -6,6 +6,9 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using SharpDX;
 using System.IO;
 using Utopia.Shared.Settings;
+using System.Collections.Generic;
+using System.Linq;
+using Utopia.Shared.Configuration;
 
 namespace Realms.Client.Components.GUI.SinglePlayer
 {
@@ -20,8 +23,8 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         protected InputControl _inputWorldName;
         protected LabelControl _inputSeedNameLabel;
         protected InputControl _inputSeedName;
-        protected HorizontalSliderControl _inputOceanLevel;
-        protected LabelControl _inputOceanLevelLabel;
+        protected LabelControl _configurationsFilesLabel;
+        protected ListControl _configurationsFiles;
         public ButtonControl BtCreate;
         #endregion
 
@@ -56,25 +59,6 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 Color = SharpDX.Color.Black
             });
 
-            int oceanMinLevel = 30;
-            int oceanMaxLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y - 30;
-            _inputOceanLevel = ToDispose(new HorizontalSliderControl()
-            {
-                ThumbSize = 1 / (float)(oceanMaxLevel - oceanMinLevel),
-                ThumbSmoothMovement = true,
-                ThumbMinValue = oceanMinLevel,
-                ThumbMaxValue = oceanMaxLevel,
-                Value = 64
-            });
-            _inputOceanLevel.Moved += _inputOceanLevel_Moved;
-
-            _inputOceanLevelLabel = ToDispose(new LabelControl()
-            {
-                Text = "Ocean level : " + _inputOceanLevel.Value.ToString(),
-                Color = new ByteColor(255, 255, 255),
-                CustomFont = _commonResources.FontBebasNeue17
-            });
-
             _inputWorldNameLabel = ToDispose(new LabelControl()
             {
                 Text = "World Name : ",
@@ -89,17 +73,48 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 CustomFont = _commonResources.FontBebasNeue17
             });
 
+            _configurationsFilesLabel = ToDispose(new LabelControl()
+            {
+                Text = "Configurations : ",
+                Color = new ByteColor(255, 255, 255),
+                CustomFont = _commonResources.FontBebasNeue17
+            });
+
+            _configurationsFiles = ToDispose(new ListControl());
+            _configurationsFiles.IsClickTransparent = false;
+            _configurationsFiles.SelectionMode = ListSelectionMode.Single;
+            _configurationsFiles.SelectionChanged += _configurationsFiles_SelectionChanged;
+
+            foreach (var configurationFile in GetConfigurationsList())
+            {
+                _configurationsFiles.Items.Add(configurationFile);
+            }
+            _configurationsFiles.SelectItem = 0;
+
             BtCreate = ToDispose(new ButtonControl()
             {
                 Text = "Create",
                 TextFontId = 1
             });
             BtCreate.Pressed += BtCreate_Pressed;
+
         }
 
-        void _inputOceanLevel_Moved(object sender, EventArgs e)
+        void _configurationsFiles_SelectionChanged(object sender, EventArgs e)
         {
-            _inputOceanLevelLabel.Text = "Ocean level : " + _inputOceanLevel.Value.ToString();
+        }
+
+        private IEnumerable<string> GetConfigurationsList()
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
+
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+            yield return "Default Configuration";
+            foreach (var file in Directory.GetFiles(path).Where(x => x.EndsWith(".realm")))
+            {
+                yield return Path.GetFileNameWithoutExtension(file);
+            }
         }
 
         //[DebuggerStepThrough]
@@ -124,12 +139,11 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                         //Assign to currentWorldParameters the news parameters
                         _currentWorldParameter.WorldName = _inputWorldName.Text;
                         _currentWorldParameter.SeedName = _inputSeedName.Text;
-                        _currentWorldParameter.SeaLevel = _inputOceanLevel.Value;
+                        _currentWorldParameter.Configuration = GetConfigurationObject();
 
                         //Reset field values
                         _inputWorldName.Text = string.Empty;
                         _inputSeedName.Text = string.Empty;
-                        _inputOceanLevel.Value = 64;
                     }
                 }
                 catch (Exception)
@@ -144,16 +158,43 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
         }
 
+        private RealmConfiguration GetConfigurationObject()
+        {
+            RealmConfiguration config = null;
+            if (_configurationsFiles.SelectedItem.ToString() == "Default Configuration")
+            {
+                //Create new default RealmConfiguration
+                config = new RealmConfiguration(null, true);
+                config.Author = "Default Utopia";
+                config.ConfigurationName = "Default";
+                config.CreatedAt = DateTime.Now;
+            }
+            else
+            {
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia", _configurationsFiles.SelectedItem.ToString() + ".realm");
+                if (File.Exists(path))
+                {
+                    config = RealmConfiguration.LoadFromFile(path);
+                }
+                else
+                {
+                    _guiManager.MessageBox("Configuration file missing !", "Error");
+                }
+            }
+
+            return config;
+        }
+
         private void BindComponents()
         {
             this.Children.Add(BtCreate);
-            this.Children.Add(_inputOceanLevel);
-            this.Children.Add(_inputOceanLevelLabel);
             this.Children.Add(_inputSeedName);
             this.Children.Add(_inputSeedNameLabel);
             this.Children.Add(_inputWorldName);
             this.Children.Add(_inputWorldNameLabel);
             this.Children.Add(_panelLabel);
+            this.Children.Add(_configurationsFiles);
+            this.Children.Add(_configurationsFilesLabel);
         }
 
         public void Resize()
@@ -175,11 +216,10 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
             Yposi += 40;
 
-            _inputOceanLevelLabel.Bounds = new UniRectangle(BorderMargin, Yposi + 3, 130, 0);
-            _inputOceanLevel.Bounds = new UniRectangle(_inputOceanLevelLabel.Bounds.Location.X.Offset + _inputOceanLevelLabel.Bounds.Size.X.Offset + 10, Yposi, 300, 20);
+            _configurationsFilesLabel.Bounds = new UniRectangle(BorderMargin, Yposi + 5, 130, 0);
+            _configurationsFiles.Bounds = new UniRectangle(_configurationsFilesLabel.Bounds.Location.X.Offset + _configurationsFilesLabel.Bounds.Size.X.Offset + 10, Yposi, 400, 200);
 
-            Yposi += 40;
-
+            Yposi += 240;
             BtCreate.Bounds = new UniRectangle(BorderMargin, Yposi, 80, 30);
         }
         #endregion

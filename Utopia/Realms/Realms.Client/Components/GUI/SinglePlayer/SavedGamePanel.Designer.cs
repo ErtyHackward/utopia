@@ -89,9 +89,9 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 LocalWorlds.LocalWorldsParam info = (LocalWorlds.LocalWorldsParam)_savedGameList.SelectedItem;
 
                 //Assign the choosen World parameter to the Active WorldParameter
-                _currentWorldParameter.SeaLevel = info.WorldParameters.SeaLevel;
                 _currentWorldParameter.WorldName = info.WorldParameters.WorldName;
                 _currentWorldParameter.SeedName = info.WorldParameters.SeedName;
+                _currentWorldParameter.Configuration = info.WorldParameters.Configuration;
             }
         }
 

@@ -102,14 +102,14 @@ namespace Utopia.Shared.World.Processors
                         {
                             chunk.BlockData[new Vector3I(x, y, z)] = undegroundBlock;
                         }
-                        else if (y <= _worldParameters.SeaLevel)
+                        else if (y <= 64)
                         {
                             chunk.BlockData[new Vector3I(x, y, z)] = CubeId.StillWater;
                         }
 
                         if (y == pointData.Elevation)
                         {
-                            if (y >= _worldParameters.SeaLevel)
+                            if (y >= 64)
                             {
                                 chunk.BlockData[new Vector3I(x, y, z)] = topGroundBlock;
 

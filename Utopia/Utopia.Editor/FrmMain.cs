@@ -30,7 +30,7 @@ namespace Utopia.Editor
 
                 if (_configuration != null)
                 {
-                    Text = _configuration.RealmName + " - Utopia realm editor";
+                    Text = _configuration.ConfigurationName + " - Utopia realm editor";
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
@@ -88,7 +88,7 @@ namespace Utopia.Editor
         //New
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration = new RealmConfiguration(withDefaultValueCreation: true) { RealmName = "noname", CreatedAt = DateTime.Now };
+            Configuration = new RealmConfiguration(withDefaultValueCreation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
         //Open
@@ -123,7 +123,7 @@ namespace Utopia.Editor
         //SaveAs
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.FileName = Configuration.RealmName;
+            saveFileDialog1.FileName = Configuration.ConfigurationName;
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 Save(saveFileDialog1.FileName);

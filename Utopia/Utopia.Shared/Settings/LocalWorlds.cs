@@ -6,6 +6,7 @@ using System.IO;
 using System.Data.SQLite;
 using Utopia.Shared.World;
 using System.Globalization;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Settings
 {
@@ -89,11 +90,17 @@ namespace Utopia.Shared.Settings
                     {
                         dataReader.Read();
 
+                        RealmConfiguration configuration = new RealmConfiguration();
+                        using (var ms = new MemoryStream((byte[])dataReader.GetValue(2)))
+                        {
+                            configuration.Load(new BinaryReader(ms));
+                        }
+
                         worldParameters = new WorldParameters()
                                               {
                                                   WorldName = dataReader.GetString(0),
                                                   SeedName = dataReader.GetString(1),
-                                                  SeaLevel = dataReader.GetInt32(2)
+                                                  Configuration = configuration
                                               };
                     }
                 }
