@@ -453,7 +453,7 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
             //Create a texture for each cubes existing !
-            foreach (byte cubeId in RealmConfiguration.CubeProfiles.Select(x => x.Id))
+            foreach (byte cubeId in RealmConfiguration.CubeId.All())
             {
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;

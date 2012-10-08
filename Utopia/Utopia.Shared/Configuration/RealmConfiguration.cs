@@ -896,7 +896,7 @@ namespace Utopia.Shared.Configuration
 
             public static IEnumerable<byte> All()
             {
-                foreach (var profile in CubeProfiles)
+                foreach (var profile in CubeProfiles.Where(x => x.Name != "System Reserved"))
                 {
                     yield return profile.Id;
                 }
