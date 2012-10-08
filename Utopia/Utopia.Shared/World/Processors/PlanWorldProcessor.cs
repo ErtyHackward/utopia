@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
@@ -187,7 +186,7 @@ namespace Utopia.Shared.World.Processors
                                         }
                                     }
                                 }
-                                if (topGroundBlock == CubeId.Sand)
+                                if (topGroundBlock == RealmConfiguration.CubeId.Sand)
                                 {
                                     double result = r.NextDouble();
                                     if (result <= 0.001)
@@ -203,7 +202,7 @@ namespace Utopia.Shared.World.Processors
 
                                 break;
                             }
-                            chunk.BlockData[new Vector3I(x, y, z)] = CubeId.Sand;
+                            chunk.BlockData[new Vector3I(x, y, z)] = RealmConfiguration.CubeId.Sand;
                         }
                     }
                 }
@@ -218,7 +217,7 @@ namespace Utopia.Shared.World.Processors
 
             for (int i = 0; i < 7; i++)
             {
-                TryAddBlock(chunk, vector3i, CubeId.Trunk);
+                TryAddBlock(chunk, vector3i, RealmConfiguration.CubeId.Trunk);
                 vector3i.Y++;
             }
 
@@ -230,7 +229,7 @@ namespace Utopia.Shared.World.Processors
                 {
                     for (int z = -radius; z <= radius; z++)
                     {
-                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), CubeId.Foliage);
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), RealmConfiguration.CubeId.Foliage);
                     }
                 }
 

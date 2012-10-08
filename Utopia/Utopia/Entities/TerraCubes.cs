@@ -8,10 +8,11 @@ using S33M3DXEngine.RenderStates;
 using S33M3DXEngine.Textures;
 using S33M3Resources.Structs.Vertex;
 using SharpDX.Direct3D11;
-using Utopia.Shared.Cubes;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using UtopiaContent.Effects.Entities;
+using System.Linq;
 
 namespace Utopia.Entities
 {
@@ -64,7 +65,7 @@ namespace Utopia.Entities
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
             
-            foreach (var cubeId in CubeId.All())
+            foreach (var cubeId in RealmConfiguration.CubeProfiles.Select(x => x.Id))
             {
                 CubePack pack;
 

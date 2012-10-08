@@ -9,7 +9,6 @@ using Utopia.Server.AStar;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
@@ -18,6 +17,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Server.Managers
 {
@@ -523,7 +523,7 @@ namespace Utopia.Server.Managers
 
             for (y = 127; y >= 0; y--)
             {
-                if(chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != CubeId.Air)
+                if(chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != RealmConfiguration.CubeId.Air)
                     break;
                 
             }

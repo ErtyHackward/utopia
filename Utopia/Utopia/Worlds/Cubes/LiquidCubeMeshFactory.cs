@@ -9,13 +9,13 @@ using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Chunks;
 using SharpDX;
 using Utopia.Worlds.Liquid;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Enums;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Resources.VertexFormats;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Worlds.Cubes
 {
@@ -40,7 +40,7 @@ namespace Utopia.Worlds.Cubes
                     return true;
                 }
             }else{
-                if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == CubeId.Air)
+                if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == RealmConfiguration.CubeId.Air)
                 {
                     return true;
                 }
@@ -83,7 +83,7 @@ namespace Utopia.Worlds.Cubes
             else
             {
                 //Add a naturel Offset to StillWater when touching water at the surface !
-                if (topCube.Id == CubeId.Air && cube.Id == CubeId.StillWater)
+                if (topCube.Id == RealmConfiguration.CubeId.Air && cube.Id == RealmConfiguration.CubeId.StillWater)
                 {
                     yBlockOffset = 0.1f;
                 }

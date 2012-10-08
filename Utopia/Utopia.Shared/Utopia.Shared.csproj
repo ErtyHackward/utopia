@@ -203,7 +203,6 @@
     <Compile Include="Interfaces\IUsersStorage.cs" />
     <Compile Include="Interfaces\IWorldProcessor.cs" />
     <Compile Include="Interfaces\IWorldProcessorConfig.cs" />
-    <Compile Include="Cubes\CubeId.cs" />
     <Compile Include="Net\Connections\ProtocolMessageEventArgs.cs" />
     <Compile Include="Net\Connections\ServerConnection.cs" />
     <Compile Include="Net\Connections\TcpConnection.cs" />

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Shared.Cubes;
 using S33M3_Resources.Structs;
 using Utopia.Shared.Configuration;
 

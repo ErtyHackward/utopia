@@ -6,7 +6,6 @@ using S33M3CoreComponents.Noise.Sampler;
 using S33M3CoreComponents.Noise.Various;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Cubes;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
@@ -15,6 +14,7 @@ using S33M3CoreComponents.Maths;
 using Utopia.Shared.World.Processors.Utopia.ClimateFct;
 using System.Linq;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -196,37 +196,37 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                         value *= valueUnderground;
 
-                        cube = CubeId.Air;
+                        cube = RealmConfiguration.CubeId.Air;
                         if (value > 0.5)
                         {
-                            cube = CubeId.Stone;
+                            cube = RealmConfiguration.CubeId.Stone;
                         }
 
                         //BedRock
                         if (Y == 0)
                         {
-                            cube = CubeId.Rock;
+                            cube = RealmConfiguration.CubeId.Rock;
                         }
                         //Be sure that the last landscape row is composed of air
                         if (Y == AbstractChunk.ChunkSize.Y - 1)
                         {
-                            cube = CubeId.Air;
+                            cube = RealmConfiguration.CubeId.Air;
                         }
 
                         //Create Bottom Lava lake
-                        if (Y <= 3 && cube == CubeId.Air)
+                        if (Y <= 3 && cube == RealmConfiguration.CubeId.Air)
                         {
-                            cube = CubeId.StillLava;
+                            cube = RealmConfiguration.CubeId.StillLava;
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if (Y == 64 && cube == CubeId.Air && valueUnderground == 1)
+                        if (Y == 64 && cube == RealmConfiguration.CubeId.Air && valueUnderground == 1)
                         {
-                            cube = CubeId.StillWater;
+                            cube = RealmConfiguration.CubeId.StillWater;
                         }                       
 
                         //Save block if changed
-                        if(cube != CubeId.Air)
+                        if(cube != RealmConfiguration.CubeId.Air)
                         {
                             ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y] = cube;
                         }
@@ -284,9 +284,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                         byte cubeId = ChunkCubes[index];
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == CubeId.Air && Y > (64 - 5)) surfaceLayer = 1;
+                        if (surfaceLayer > 0 && cubeId == RealmConfiguration.CubeId.Air && Y > (64 - 5)) surfaceLayer = 1;
 
-                        if (cubeId == CubeId.Stone)
+                        if (cubeId == RealmConfiguration.CubeId.Stone)
                         {
                             if (solidGroundHitted == false)
                             {
@@ -317,7 +317,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                     {
                                         //Get cube index above this one
                                         //Place a snow block on it
-                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = CubeId.Snow;
+                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = RealmConfiguration.CubeId.Snow;
                                         mustPlacedSnow = false;
                                     }
 
@@ -333,22 +333,22 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else //This block is not Stone (Air, Water, or BedRock)
                         {
-                            if (cubeId == CubeId.StillWater)
+                            if (cubeId == RealmConfiguration.CubeId.StillWater)
                             {
                                 if (mustPlacedSnow)
                                 {
                                     //Get cube index above this one
                                     //Place a snow block on it
-                                    ChunkCubes[index] = CubeId.Ice;
+                                    ChunkCubes[index] = RealmConfiguration.CubeId.Ice;
                                 }
 
                                 inWaterMaxLevel = Y;
                             }
                             else
                             {
-                                if (inWaterMaxLevel > 0 && cubeId == CubeId.Air)
+                                if (inWaterMaxLevel > 0 && cubeId == RealmConfiguration.CubeId.Air)
                                 {
-                                    ChunkCubes[index] = CubeId.StillWater;
+                                    ChunkCubes[index] = RealmConfiguration.CubeId.StillWater;
                                 }
                             }
                         }

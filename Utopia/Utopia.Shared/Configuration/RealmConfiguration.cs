@@ -459,7 +459,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = true,
+                CanBeModified = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -850,10 +850,10 @@ namespace Utopia.Shared.Configuration
             Biomes.Add(new Biome()
             {
                 Name = "Desert",
-                SurfaceCube = CubeId.Sand,
-                UnderSurfaceCube = CubeId.Sand,
+                SurfaceCube = RealmConfiguration.CubeId.Sand,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
                 UnderSurfaceLayers = new RangeI(1, 3),  // = The layer under the surface is 1 to 3 block height, then after you have the ground Cubes
-                GroundCube = CubeId.Stone
+                GroundCube = RealmConfiguration.CubeId.Stone
             });
 
             RealmCubeProfiles = CubeProfiles;
@@ -877,6 +877,7 @@ namespace Utopia.Shared.Configuration
             public const byte Grass = 3;
             public const byte StillWater = 5;
             public const byte DynamicWater = 6;
+            public const byte LightWhite = 7;
             public const byte Rock = 8;
             public const byte Sand = 9;
             public const byte Gravel = 10;
@@ -891,6 +892,15 @@ namespace Utopia.Shared.Configuration
             public const byte DynamicLava = 21;
             public const byte Cactus = 22;
             public const byte CactusTop = 23;
+            public const byte Error = 255;
+
+            public static IEnumerable<byte> All()
+            {
+                foreach (var profile in CubeProfiles)
+                {
+                    yield return profile.Id;
+                }
+            }
         }
 
         #endregion

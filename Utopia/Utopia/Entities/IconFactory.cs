@@ -9,7 +9,6 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using UtopiaContent.Effects.Entities;
-using Utopia.Shared.Cubes;
 using System.Collections.Generic;
 using SharpDX.DXGI;
 using Utopia.Shared.Settings;
@@ -27,6 +26,8 @@ using S33M3CoreComponents.Meshes.Factories;
 using S33M3Resources.Structs;
 using Utopia.Shared.GameDXStates;
 using Resource = SharpDX.Direct3D11.Resource;
+using Utopia.Shared.Configuration;
+using System.Linq;
 
 namespace Utopia.Entities
 {
@@ -452,7 +453,7 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
             //Create a texture for each cubes existing !
-            foreach (byte cubeId in CubeId.All())
+            foreach (byte cubeId in RealmConfiguration.CubeProfiles.Select(x => x.Id))
             {
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;
