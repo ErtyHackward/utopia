@@ -27,11 +27,9 @@ namespace S33M3DXEngine
         //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
         //CANNOT be use in a multithreaded buffer approch !
         public static bool SingleThreadRenderingOptimization = true;
-#if DEBUG
-        public static bool FULLDEBUGMODE = true;
-#else
+        
+        //public static bool FULLDEBUGMODE = true;
         public static bool FULLDEBUGMODE = false;
-#endif
         #endregion
 
         #region Private variables

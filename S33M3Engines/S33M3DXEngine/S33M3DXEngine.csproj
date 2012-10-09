@@ -119,8 +119,10 @@
     <Compile Include="Main\Interfaces\IUpdatableComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderStates\StatesRepository.cs" />
+    <Compile Include="Threading\QueuedTaskScheduler.cs" />
     <Compile Include="Threading\SmartThread.cs" />
     <Compile Include="Main\GameTime.cs" />
+    <Compile Include="Threading\ThreadsManager.cs" />
     <Compile Include="VertexFormat\FormatSize.cs" />
     <Compile Include="VertexFormat\VertexDeclaration.cs" />
   </ItemGroup>
