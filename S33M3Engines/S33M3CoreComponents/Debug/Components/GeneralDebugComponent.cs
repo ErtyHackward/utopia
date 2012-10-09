@@ -129,7 +129,9 @@ namespace S33M3CoreComponents.Debug.Components
         public string GetDebugInfo()
         {
             _proc = Process.GetCurrentProcess();
-            return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Used Ram : ", _usedRam, "MB Free Ram : ", _freeRam);
+            //return string.Concat("FPS : ", _fps.ToString("000"), " Active background threads : ", SmartThread.ThreadPool.InUseThreads, " Used Ram : ", _usedRam, "MB Free Ram : ", _freeRam);
+            return string.Concat("FPS : ", _fps.ToString("000"), " Working threads : ", S33M3_DXEngine.Threading.ThreadsManager.RunningThreads, " Used Ram : ", _usedRam, "MB Free Ram : ", _freeRam);
+            
         }
         #endregion
 

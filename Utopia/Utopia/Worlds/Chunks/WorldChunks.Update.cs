@@ -102,7 +102,8 @@ namespace Utopia.Worlds.Chunks
             {
                 //Start chunk creation process in a threaded way !
                 chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
-                SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
+                //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
+                S33M3_DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(chunk));
             }
         }
 
@@ -139,7 +140,8 @@ namespace Utopia.Worlds.Chunks
                 {
                     //Check if the surrounding chunk from this chunk are in the correct state = ChunkState.InnerLightsSourcePropagated
                     chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
-                    SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
+                    //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
+                    S33M3_DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(chunk));
                 }
             }
         }
@@ -162,7 +164,8 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.SurroundingChunksMinimumState(ChunkState.OuterLightSourcesProcessed))
                 {
                     chunk.ThreadStatus = ThreadStatus.Locked; 
-                    SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
+                    //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
+                    S33M3_DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(chunk));
                 }
             }
         }
@@ -180,6 +183,7 @@ namespace Utopia.Worlds.Chunks
         //Maybe it will be worth to check is a limit of chunk by update must be placed (But this will slow down chunk creation time)
         private void SendMeshesToGC()
         {
+            int nbrchunksSend2GC = 0;
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged && 
@@ -188,6 +192,9 @@ namespace Utopia.Worlds.Chunks
             {
                 chunk.UpdateOrder = 0;
                 chunk.SendCubeMeshesToBuffers();
+                nbrchunksSend2GC++;
+
+                if (nbrchunksSend2GC > VisualWorldParameters.VisibleChunkInWorld.X) break;
             }
         }
 
