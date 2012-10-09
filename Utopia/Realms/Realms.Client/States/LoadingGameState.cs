@@ -88,7 +88,7 @@ namespace Realms.Client.States
         //The state is enabled, start loading other components in background while the Loading is shown
         public override void OnEnabled(GameState previousState)
         {
-            if (this.PreviousGameState != this) SmartThread.ThreadPool.QueueWorkItem(GameplayInitializeAsync);
+            if (this.PreviousGameState != this) ThreadsManager.RunAsync(GameplayInitializeAsync);
 
             base.OnEnabled(previousState);
         }

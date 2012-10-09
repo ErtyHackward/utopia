@@ -12,7 +12,6 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
-using Amib.Threading;
 using System.Collections.Generic;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
@@ -93,7 +92,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private void ServerConnection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
             //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
-            SmartThread.ThreadPoolSingleConcurrency.QueueWorkItem(ReplaceBlockThreaded, e, Amib.Threading.WorkItemPriority.Highest);
+            ThreadsManager.RunAsync(() => ReplaceBlockThreaded(e), singleConcurrencyRun: true);
         }
 
         private void ReplaceBlockThreaded(ProtocolMessageEventArgs<BlocksChangedMessage> e)
@@ -220,7 +219,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             //Find the chunks that have been impacted around the 8 surrounding chunks
             cubeChunk.State = ChunkState.OuterLightSourcesProcessed;
-            cubeChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
             cubeChunk.UpdateOrder = !profile.IsBlockingLight ? 1 : 2;
             mainChunkId = cubeChunk.ChunkID;
 
@@ -232,7 +230,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -242,7 +239,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -252,7 +248,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -262,7 +257,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -272,7 +266,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -282,7 +275,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -292,7 +284,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
@@ -302,7 +293,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (NeightBorChunk.ChunkID != mainChunkId)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-                NeightBorChunk.ThreadPriority = Amib.Threading.WorkItemPriority.Highest;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);

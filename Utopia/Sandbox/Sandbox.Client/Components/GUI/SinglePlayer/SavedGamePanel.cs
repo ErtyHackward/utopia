@@ -86,7 +86,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             _savedGameList.SelectItem = -1;
             _savedGameList.Items.Add("Loading...");
             NeedShowResults = false;
-            SmartThread.ThreadPool.QueueWorkItem(RefreshWorldList);
+            ThreadsManager.RunAsync(RefreshWorldList);
         }
         #endregion
     }

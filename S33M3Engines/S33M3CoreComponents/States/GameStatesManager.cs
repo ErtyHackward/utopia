@@ -6,11 +6,11 @@ using S33M3DXEngine.Main;
 using S33M3CoreComponents.States.Interfaces;
 using System.Threading;
 using S33M3DXEngine.Threading;
-using Amib.Threading;
 using S33M3DXEngine.Main.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;
+using System.Threading.Tasks;
 
 namespace S33M3CoreComponents.States
 {
@@ -31,13 +31,8 @@ namespace S33M3CoreComponents.States
         private CommandList _loadContextCommandList;
         private bool _inActivationProcess;
 
-        //Thread Helper objects
-        internal IWorkItemsGroup GameStatesManagerThreadPoolGrp;
-        internal IWorkItemsGroup InitializeThreadPoolGrp;
-        private List<IWorkItemResult<GameState>> AsyncStateInitResults = new List<IWorkItemResult<GameState>>();
+        private List<Task<GameState>> AsyncStateInitResults = new List<Task<GameState>>();
 
-        //The GameStateManager will use its own ThreadPool, in order to not impact the Main rendering default pool !
-        private SmartThreadPool _statesThreadPool;
         #endregion
 
         #region Public properties/variables
@@ -128,14 +123,6 @@ namespace S33M3CoreComponents.States
 #if DEBUG
             _loadContext.DebugName = "GameState Deffered Context";
 #endif
-            //Create a pool with 3 threads.
-            STPStartInfo _stpInfo = new STPStartInfo() { MaxWorkerThreads = allocatedThreadPool, MinWorkerThreads = allocatedThreadPool, ThreadPriority = System.Threading.ThreadPriority.Lowest };
-            _statesThreadPool = ToDispose(new SmartThreadPool());
-
-            //Create the 2 ThreadPool "Group" with a concurrency of 1 (Only one running at the same time)
-            GameStatesManagerThreadPoolGrp = _statesThreadPool.CreateWorkItemsGroup(1);                        //Single thread concurrency
-            InitializeThreadPoolGrp = _statesThreadPool.CreateWorkItemsGroup(_statesThreadPool.Concurrency);   //Max possible concurrency possible
-
             //Activate this component
             this.EnableComponent();
         }
@@ -314,7 +301,7 @@ namespace S33M3CoreComponents.States
             logger.Debug("State Initialization requested (by Prepare) : {0}", state.Name);
 #endif
             state.PreviousGameState = _currentState;
-             AsyncStateInitResults.Add(GameStatesManagerThreadPoolGrp.QueueWorkItem(new Amib.Threading.Func<GameState, GameState>(InitializeComponentsAsync), state));
+            AsyncStateInitResults.Add(ThreadsManager.RunAsync(() => InitializeComponentsAsync(state), singleConcurrencyRun: true));
         }
 
         /// <summary>
@@ -352,7 +339,7 @@ namespace S33M3CoreComponents.States
 #if DEBUG
                 logger.Debug("State Initialization requested in Async Mode : {0}", state.Name);
 #endif
-                AsyncStateInitResults.Add(GameStatesManagerThreadPoolGrp.QueueWorkItem(new Amib.Threading.Func<GameState, GameState>(InitializeComponentsAsync), state));
+                AsyncStateInitResults.Add(ThreadsManager.RunAsync(() => InitializeComponentsAsync(state)));
             }
             else
             {

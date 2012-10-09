@@ -5,7 +5,6 @@ using System.Text;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using System.Threading;
 using Utopia.Shared.Chunks;
-using Amib.Threading;
 using S33M3DXEngine.Threading;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
@@ -98,10 +97,10 @@ namespace Utopia.Worlds.Chunks
         private void CreateNewChunk()
         {
             //Process each chunk that are in Empty state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadStatus.Idle))
+            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 //Start chunk creation process in a threaded way !
-                chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
+                chunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
                 //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
                 S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(chunk));
             }
@@ -124,7 +123,7 @@ namespace Utopia.Worlds.Chunks
                 //The Thread status will be ChunkState.InnerLightsSourcePropagated if going out of this
             }
 
-            chunk.ThreadStatus = ThreadStatus.Idle;
+            chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
         }
 
         //Will take the newly created chunks || the chunk that didn't had the outside light propagate (Border chunk), and propagate the light from the surroundings chunks
@@ -132,14 +131,14 @@ namespace Utopia.Worlds.Chunks
         {
             //Process each chunk that are in InnerLightsSourcePropagated state, and not being currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x =>
-                                                       (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false && x.State >= ChunkState.InnerLightsSourcePropagated)) && 
-                                                       x.ThreadStatus == ThreadStatus.Idle))
+                                                       (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false && x.State >= ChunkState.InnerLightsSourcePropagated)) &&
+                                                       x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
                 if (chunk.IsBorderChunk == true || chunk.SurroundingChunksMinimumState(ChunkState.InnerLightsSourcePropagated))
                 {
                     //Check if the surrounding chunk from this chunk are in the correct state = ChunkState.InnerLightsSourcePropagated
-                    chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
+                    chunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
                     //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
                     S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(chunk));
                 }
@@ -150,7 +149,7 @@ namespace Utopia.Worlds.Chunks
         private void ChunkOuterLightPropagation_Threaded(VisualChunk chunk)
         {
             _lightingManager.PropagateOutsideChunkLightSources(chunk);
-            chunk.ThreadStatus = ThreadStatus.Idle;
+            chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
             //The state will always be OuterLightSourcesProcessed, but the logic could not be implementated if the chunk was a Border chunk. In this case its 
             //IsOutsideLightSourcePropagated will be False, it will be process as soon as the chunk isBorderChunk change to false !
         }
@@ -158,12 +157,12 @@ namespace Utopia.Worlds.Chunks
         private void CreateChunkMeshes()
         {
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.OuterLightSourcesProcessed && x.ThreadStatus == ThreadStatus.Idle))
+            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.OuterLightSourcesProcessed && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
                 if (chunk.SurroundingChunksMinimumState(ChunkState.OuterLightSourcesProcessed))
                 {
-                    chunk.ThreadStatus = ThreadStatus.Locked; 
+                    chunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked; 
                     //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
                     S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(chunk));
                 }
@@ -175,7 +174,7 @@ namespace Utopia.Worlds.Chunks
         {
             //The chunk surrounding me must all have their landscape created !
             _chunkMeshManager.CreateChunkMesh(chunk);
-            chunk.ThreadStatus = ThreadStatus.Idle;
+            chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
         }
 
         //Sending newly created Mesh to the GC, making the change visible, this is NOT threadsafe, the chunk must be done one by one.
@@ -186,8 +185,8 @@ namespace Utopia.Worlds.Chunks
             int nbrchunksSend2GC = 0;
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged && 
-                                                             x.ThreadStatus == ThreadStatus.Idle &&
+            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged &&
+                                                             x.ThreadStatus == ThreadsManager.ThreadStatus.Idle &&
                                                              x.UpdateOrder == maximumUpdateOrderPossible))
             {
                 chunk.UpdateOrder = 0;

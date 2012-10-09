@@ -143,7 +143,6 @@ namespace S33M3DXEngine.Main
         public virtual void Run()
         {
             //Check if the Threading engine has been initialize or not
-            SmartThread.CheckInit();
             ThreadsManager.CheckInit();
 
             //Call the game Initialize !
@@ -254,10 +253,10 @@ namespace S33M3DXEngine.Main
             if (_isFormClosed) return;
             try
             {
-                Threading.SmartThread.ThreadPool.Shutdown(forced, 0);
-                logger.Info("Engine shutDown requested, active background threads are being forced to close : {0}", Threading.SmartThread.ThreadPool.ActiveThreads);
-                while (Threading.SmartThread.ThreadPool.ActiveThreads > 0) { }
-                logger.Info("Engine shutDown requested,  all background thread are closed");
+                //Threading.SmartThread.ThreadPool.Shutdown(forced, 0);
+                //logger.Info("Engine shutDown requested, active background threads are being forced to close : {0}", Threading.SmartThread.ThreadPool.ActiveThreads);
+                //while (Threading.SmartThread.ThreadPool.ActiveThreads > 0) { }
+                //logger.Info("Engine shutDown requested,  all background thread are closed");
 
             }
             catch (Exception)

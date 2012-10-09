@@ -14,6 +14,7 @@ namespace S33M3DXEngine.Threading
     public static class ThreadsManager
     {
         #region Private Variables
+        private static QueuedTaskScheduler _monoConcurrencyTaskSheduler;
         private static QueuedTaskScheduler _mainTaskSheduler;
         private static TaskScheduler _lowPrioritySchedduler;
         private static TaskScheduler _normalPrioritySchedduler;
@@ -63,7 +64,11 @@ namespace S33M3DXEngine.Threading
             return _totThread;
         }
 
-
+        public static void CleanUp()
+        {
+            if (_mainTaskSheduler != null) _mainTaskSheduler.Dispose();
+            if (_monoConcurrencyTaskSheduler != null) _monoConcurrencyTaskSheduler.Dispose();
+        }
 
         public static void CheckInit()
         {
@@ -71,31 +76,37 @@ namespace S33M3DXEngine.Threading
         }
 
 
-        public static void RunAsync(Action action,
-                             ThreadTaskPriority priority = ThreadTaskPriority.Normal)
+        public static Task RunAsync(Action action, 
+                                ThreadTaskPriority priority = ThreadTaskPriority.Normal,
+                                bool singleConcurrencyRun = false)
         {
-            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority));
+            return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority, singleConcurrencyRun));
         }
 
-        public static void RunAsync(Action action,
+        public static Task RunAsync(Action action,
                              Action<Task> CallBack,
-                             ThreadTaskPriority priority = ThreadTaskPriority.Normal)
+                             ThreadTaskPriority priority = ThreadTaskPriority.Normal,
+                             bool singleConcurrencyRun = false)
         {
-            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority)).ContinueWith(CallBack);
+            return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority, singleConcurrencyRun)).ContinueWith(CallBack);
         }
 
-        public static void RunAsync<T>(Func<T> func,
-                                Action<Task<T>> CallBack,
-                                ThreadTaskPriority priority = ThreadTaskPriority.Normal)
+        public static Task<TResult> RunAsync<TResult>(Func<TResult> func,
+                                Action<Task<TResult>> CallBack = null,
+                                ThreadTaskPriority priority = ThreadTaskPriority.Normal,
+                                bool singleConcurrencyRun = false)
         {
-            Task.Factory.StartNew(func, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority)).ContinueWith(CallBack);
+            Task<TResult> t = Task.Factory.StartNew(func, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority, singleConcurrencyRun));
+            if(CallBack != null) t.ContinueWith(CallBack);
+            return t;
         }
 
         #endregion
 
         #region Private Methods
-        private static TaskScheduler getScheduler(ThreadTaskPriority priority)
+        private static TaskScheduler getScheduler(ThreadTaskPriority priority, bool singleConcurrencyRun)
         {
+            if (singleConcurrencyRun) return _monoConcurrencyTaskSheduler;
             switch (priority)
             {
                 case ThreadTaskPriority.High:
@@ -112,6 +123,10 @@ namespace S33M3DXEngine.Threading
         private static void CreateTaskScheduler()
         {
             if (_mainTaskSheduler != null) _mainTaskSheduler.Dispose();
+            if (_monoConcurrencyTaskSheduler == null)
+            {
+                _monoConcurrencyTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, 1);
+            }
             //We will never start more thread than the number of Virutal processor on the computer !
             int nbrThreads = ThreadsManager._isBoostMode ? _totThread + 4 : _totThread;
             _mainTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, nbrThreads);
@@ -127,6 +142,12 @@ namespace S33M3DXEngine.Threading
             High = 0,
             Normal = 1,
             Low = 2
+        }
+
+        public enum ThreadStatus
+        {
+            Idle,
+            Locked
         }
 
     }

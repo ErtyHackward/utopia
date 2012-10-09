@@ -7,6 +7,7 @@ using S33M3DXEngine.Main.Interfaces;
 using S33M3DXEngine.Threading;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;
+using System.Threading.Tasks;
 
 namespace S33M3CoreComponents.States
 {
@@ -111,17 +112,17 @@ namespace S33M3CoreComponents.States
         {
             //Call the Initialized from each Registered component, if needed !
             //Will be thread dispatched !
+            List<Task> _startedTask = new List<Task>();
             GameComponents.ForEach(gc =>
             {
                 if (gc.IsInitialized == false)
                 {
                     //Start the Initialize()
-                    StatesManager.InitializeThreadPoolGrp.QueueWorkItem(gc.Initialize);
+                    _startedTask.Add(ThreadsManager.RunAsync(gc.Initialize));
                 }
             });
 
-            //Wait for all the Initialize to be finished
-            StatesManager.InitializeThreadPoolGrp.WaitForIdle();
+            Task.WaitAll(_startedTask.ToArray());
 
             //Call the LoadContents from each Registered component, if needed !
             //!! Those methods are not Thread Safe !! => cannot thread dispatch them, can only run once at a time in this thread context

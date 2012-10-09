@@ -93,7 +93,6 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
                         chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.X;
@@ -117,7 +116,6 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
                         chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Position.X;
@@ -141,7 +139,6 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
                         chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.Z;
@@ -164,7 +161,6 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.ThreadPriority = Amib.Threading.WorkItemPriority.Normal;
                         chunk.isExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Position.Z;
