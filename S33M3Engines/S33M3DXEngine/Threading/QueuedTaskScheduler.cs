@@ -61,7 +61,14 @@ namespace System.Threading.Tasks.Schedulers
         /// The maximum allowed concurrency level of this scheduler.  If custom threads are
         /// used, this represents the number of created threads.
         /// </summary>
-        private readonly int _concurrencyLevel;
+        private int _concurrencyLevel;
+
+        public int ConcurrencyLevel
+        {
+            get { return _concurrencyLevel; }
+            set { _concurrencyLevel = value; }
+        }
+
         /// <summary>Whether we're processing tasks on the current thread.</summary>
         private static ThreadLocal<bool> _taskProcessingThread = new ThreadLocal<bool>();
 
@@ -329,8 +336,7 @@ namespace System.Threading.Tasks.Schedulers
                 // If necessary, start processing asynchronously
                 if (launchTask)
                 {
-                    Task.Factory.StartNew(ProcessPrioritizedAndBatchedTasks,
-                        CancellationToken.None, TaskCreationOptions.None, _targetScheduler);
+                    Task.Factory.StartNew(ProcessPrioritizedAndBatchedTasks, CancellationToken.None, TaskCreationOptions.None, _targetScheduler);
                 }
             }
         }

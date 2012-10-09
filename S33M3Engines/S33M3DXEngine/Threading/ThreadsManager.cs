@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 
-namespace S33M3_DXEngine.Threading
+namespace S33M3DXEngine.Threading
 {
     /// <summary>
     /// Attempt to use TPL to manage threading in Utopia !
@@ -18,19 +18,59 @@ namespace S33M3_DXEngine.Threading
         private static TaskScheduler _lowPrioritySchedduler;
         private static TaskScheduler _normalPrioritySchedduler;
         private static TaskScheduler _highPrioritySchedduler;
+        private static int _totThread;
+        private static bool _isBoostMode;
         #endregion
 
         #region Public Properties
         public static int RunningThreads { get { return _mainTaskSheduler.RunningThreads; } }
         public static int TaskQueueSize { get { return _mainTaskSheduler.TaskCount; } }
+
+        public static bool IsBoostMode
+        {
+            get { return ThreadsManager._isBoostMode; }
+            set
+            {
+                if (value == ThreadsManager._isBoostMode) return;
+                ThreadsManager._isBoostMode = value;
+                CreateTaskScheduler();
+            }
+        }
         #endregion
 
-        static ThreadsManager()
+        #region Public Methods
+        //Get the qt of Thread to be use in the pool
+        public static int SetOptimumNbrThread(int ThreadAllocatedModifier, bool forced = false)
         {
-            Initialize();
+            if (forced == false)
+            {
+                //Get number or real Core CPU (Not hyper threaded ones)
+                int coreCount = 0;
+                foreach (var item in new System.Management.ManagementObjectSearcher("Select * from Win32_Processor").Get())
+                {
+                    coreCount += int.Parse(item["NumberOfCores"].ToString());
+                }
+
+                _totThread = 1 + coreCount + ThreadAllocatedModifier; //Remove the one use by the application itself
+            }
+            else
+            {
+                _totThread = ThreadAllocatedModifier;
+            }
+
+            if (_totThread < 1) _totThread = 2;
+            CreateTaskScheduler();
+            return _totThread;
         }
 
-        #region Public Methods
+
+
+        public static void CheckInit()
+        {
+            if (_totThread == 0) SetOptimumNbrThread(0, false);
+        }
+
+
         public static void RunAsync(Action action,
                              ThreadTaskPriority priority = ThreadTaskPriority.Normal)
         {
@@ -54,17 +94,6 @@ namespace S33M3_DXEngine.Threading
         #endregion
 
         #region Private Methods
-        private static void Initialize()
-        {
-            //We will never start more thread than the number of Virutal processor on the computer !
-            _mainTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, 0);
-            //Create the Priority queues
-            _highPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(0);
-            _normalPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(1);
-            _lowPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(2);
-
-        }
-
         private static TaskScheduler getScheduler(ThreadTaskPriority priority)
         {
             switch (priority)
@@ -79,6 +108,18 @@ namespace S33M3_DXEngine.Threading
                     return _normalPrioritySchedduler;
             }
         }
+
+        private static void CreateTaskScheduler()
+        {
+            if (_mainTaskSheduler != null) _mainTaskSheduler.Dispose();
+            //We will never start more thread than the number of Virutal processor on the computer !
+            int nbrThreads = ThreadsManager._isBoostMode ? _totThread + 4 : _totThread;
+            _mainTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, nbrThreads);
+            //Create the Priority queues
+            _highPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(0);
+            _normalPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(1);
+            _lowPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(2);
+        }
         #endregion
 
         public enum ThreadTaskPriority : byte
@@ -87,7 +128,6 @@ namespace S33M3_DXEngine.Threading
             Normal = 1,
             Low = 2
         }
-
 
     }
 }
