@@ -297,7 +297,6 @@ namespace Realms.Client.Components.GUI.Settings
 
         private void ChangeAllocatedThreads(int newValue)
         {
-            SmartThread.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + newValue, true);
             ThreadsManager.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + newValue, true);
         }
 

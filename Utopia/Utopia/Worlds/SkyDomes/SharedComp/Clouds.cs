@@ -24,7 +24,7 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
 using UtopiaContent.Effects.Weather;
 using S33M3DXEngine.Threading;
-using Amib.Threading;
+using System.Threading.Tasks;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -89,7 +89,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private List<VertexPosition2Cloud> _clouds;
         private bool _newCloudGenerated;
-        private IWorkItemResult _threadState;
+        private Task _threadState;
 
         private int _cloudBlocksCount;
 
@@ -220,7 +220,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
                 )
             {
                 // rebuild the grid in thread
-                _threadState = SmartThread.ThreadPool.QueueWorkItem(FormClouds);
+                _threadState = ThreadsManager.RunAsync(FormClouds);
             }
 
             if (_newCloudGenerated)

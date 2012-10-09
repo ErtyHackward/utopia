@@ -7,7 +7,6 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
-using Amib.Threading;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -38,7 +37,7 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Represents a chunk for 3d rendering
     /// </summary>
-    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IThreadStatus, IChunkLayout2D, IDisposable
+    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IChunkLayout2D, IDisposable
     {
         #region Private variables
         private VisualWorldParameters _visualWorldParameters;
@@ -98,8 +97,7 @@ namespace Utopia.Worlds.Chunks
         
         
         public bool IsOutsideLightSourcePropagated { get; set; }
-        public ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
-        public WorkItemPriority ThreadPriority { get; set; }  // Thread Priority value
+        public ThreadsManager.ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
         public int UpdateOrder { get; set; }              // Variable for sync drawing at rebuild time.
         public bool IsBorderChunk { get; set; }               // Set to true if the chunk is located at the border of the visible world !
         private bool _ready2Draw;
