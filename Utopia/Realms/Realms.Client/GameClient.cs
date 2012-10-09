@@ -143,12 +143,13 @@ namespace Realms.Client
             //Set Default Threads - initializing the thread Engine component
             if (ClientSettings.Current.Settings.DefaultAllocatedThreads == 0)
             {
-                ClientSettings.Current.Settings.DefaultAllocatedThreads = SmartThread.SetOptimumNbrThread(0);
+                ClientSettings.Current.Settings.DefaultAllocatedThreads = ThreadsManager.SetOptimumNbrThread(0);
                 needSave = true;
             }
             else
             {
                 SmartThread.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + ClientSettings.Current.Settings.EngineParameters.AllocatedThreadsModifier, true);
+                ThreadsManager.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + ClientSettings.Current.Settings.EngineParameters.AllocatedThreadsModifier, true);
             }
 
             if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize == 0)

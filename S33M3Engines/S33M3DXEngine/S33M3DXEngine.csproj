@@ -8,8 +8,8 @@
     <ProjectGuid>{27574C31-E46C-4E4D-BA36-404346F897C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>S33M3_DXEngine</RootNamespace>
-    <AssemblyName>S33M3_DXEngine</AssemblyName>
+    <RootNamespace>S33M3DXEngine</RootNamespace>
+    <AssemblyName>S33M3DXEngine</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>

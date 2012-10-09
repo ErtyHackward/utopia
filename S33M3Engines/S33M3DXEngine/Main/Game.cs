@@ -144,6 +144,7 @@ namespace S33M3DXEngine.Main
         {
             //Check if the Threading engine has been initialize or not
             SmartThread.CheckInit();
+            ThreadsManager.CheckInit();
 
             //Call the game Initialize !
             Initialize();

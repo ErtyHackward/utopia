@@ -103,7 +103,7 @@ namespace Utopia.Worlds.Chunks
                 //Start chunk creation process in a threaded way !
                 chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
                 //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
-                S33M3_DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(chunk));
+                S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(chunk));
             }
         }
 
@@ -141,7 +141,7 @@ namespace Utopia.Worlds.Chunks
                     //Check if the surrounding chunk from this chunk are in the correct state = ChunkState.InnerLightsSourcePropagated
                     chunk.ThreadStatus = ThreadStatus.Locked;           //Lock the thread before entering async process.
                     //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3_DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(chunk));
+                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(chunk));
                 }
             }
         }
@@ -165,7 +165,7 @@ namespace Utopia.Worlds.Chunks
                 {
                     chunk.ThreadStatus = ThreadStatus.Locked; 
                     //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3_DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(chunk));
+                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(chunk));
                 }
             }
         }
