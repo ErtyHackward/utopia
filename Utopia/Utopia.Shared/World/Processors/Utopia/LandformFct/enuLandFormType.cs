@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Utopia.Shared.World.Processors.Utopia.LandformFct
 {
-    public enum enuLandFormType
+    public enum enuLandFormType : byte
     {
         //Plaines Type
         Flat = 0,

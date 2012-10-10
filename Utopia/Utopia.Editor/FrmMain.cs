@@ -8,6 +8,7 @@ using Utopia.Shared;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
+using System.Linq;
 
 namespace Utopia.Editor
 {
@@ -17,7 +18,7 @@ namespace Utopia.Editor
         private string _filePath;
         private int _entitiesOffset;
         private RealmConfiguration _configuration;
-        private FrmUtopiaConfig _utopiaConfig;
+        private FrmUtopiaProcessorConfig _utopiaConfig;
         #endregion
 
         #region Public Properties
@@ -35,7 +36,7 @@ namespace Utopia.Editor
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
 
-                    _utopiaConfig.LoadConfigParam(_configuration.UtopiaProcessorParam);
+                    _utopiaConfig.LoadConfigParam(_configuration.UtopiaProcessorParam);                    
                 }
                 else
                 {
@@ -46,6 +47,7 @@ namespace Utopia.Editor
                 }
 
                 UpdateList();
+                RefreshEntitiesIcons();
             }
         }
         #endregion
@@ -54,9 +56,13 @@ namespace Utopia.Editor
         {
             InitializeComponent();
 
-            _utopiaConfig = new FrmUtopiaConfig();
+            _utopiaConfig = new FrmUtopiaProcessorConfig();
             _utopiaConfig.Visible = false;
+
             splitContainer1.Panel2.Controls.Add(_utopiaConfig);
+
+            _utopiaConfig.Dock = DockStyle.Fill;
+
 
             _entitiesOffset = imageList1.Images.Count;
 
@@ -87,6 +93,12 @@ namespace Utopia.Editor
 
         //New
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Configuration = new RealmConfiguration(withDefaultValueCreation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
+        }
+
+        //New From Default : Will load a pre-existing configuration file as startUp configuration
+        private void newFromDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Configuration = new RealmConfiguration(withDefaultValueCreation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
@@ -192,19 +204,18 @@ namespace Utopia.Editor
             }
 
             //Clear all the Biomes node items
-            TreeNode biomesRootNode = tvMainCategories.Nodes["Biomes"];
-            biomesRootNode.Nodes.Clear();
-
+            _utopiaConfig.tvBiomeList.Nodes.Clear();
+            _utopiaConfig.tvBiomeList.Nodes.Clear();
+            
             for (var i = 0; i < _configuration.RealmBiomes.Count; i++)
             {
                 var biome = _configuration.RealmBiomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
-                biomesRootNode.Nodes.Add(item);
+                _utopiaConfig.tvBiomeList.Nodes.Add(item);
             }
 
         }
-
 
         private void Save(string filePath)
         {
@@ -217,71 +228,6 @@ namespace Utopia.Editor
             catch (Exception x)
             {
                 MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void listView1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void buttonAdd_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (tvMainCategories.SelectedNode.Name == "WorldProcessor Params")
-            {
-                //Display Utopia World Processor
-                if (_configuration.WorldProcessor == WorldProcessors.Utopia)
-                {
-                    pgDetails.Visible = false;
-                    _utopiaConfig.Visible = true;
-                }
-            }
-            else
-            {
-                _utopiaConfig.Visible = false;
-                pgDetails.Visible = true;
-                if (tvMainCategories.SelectedNode.Tag is CubeProfile)
-                {
-                    if (((CubeProfile)tvMainCategories.SelectedNode.Tag).CanBeModified == false) pgDetails.Enabled = false;
-                    else pgDetails.Enabled = true;
-                }
-                else
-                {
-                    pgDetails.Enabled = true;
-                }
-                pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
-            }
-        }
-
-        private void buttonRemove_Click(object sender, EventArgs e)
-        {
-        }
-
-        //Called when the ADD button is cliques on a Main Category treeview
-        private void addToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            switch (tvMainCategories.SelectedNode.Name)
-            {
-                case "Entities":
-                        var form = new FrmEntityChoose();
-                        if (form.ShowDialog() == DialogResult.OK)
-                        {
-                            var entityInstance = Configuration.CreateNewEntity(form.SelectedType);
-                            UpdateList();
-                            tvMainCategories.SelectedNode = FindByTag(entityInstance);
-                        }
-                    break;
-                case "Cubes":
-                    var cubeInstance = Configuration.CreateNewCube();
-                    UpdateList();
-                    tvMainCategories.SelectedNode = FindByTag(cubeInstance);
-                    break;
-
-                default:
-                    break;
             }
         }
 
@@ -310,21 +256,75 @@ namespace Utopia.Editor
             return null;
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RefreshEntitiesIcons()
         {
-            Application.Exit();
-        }
-        #endregion
+            TreeNode entitiesNode = null;
+            //Get Entities tree node
+            foreach (TreeNode node in tvMainCategories.Nodes)
+            {
+                entitiesNode = node;
+                if (node.Text == "Entities") break;
+            }
 
+            foreach (TreeNode entityNode in entitiesNode.Nodes)
+            {
+                //Get the underlying entity
+                var entity = entityNode.Tag;
+
+                //Check if this entity can have a Voxel body
+                var voxelEntity = entity as IVoxelEntity;
+
+                //Look at currently existing Voxel Models following Entity Name
+                entityNode.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
+                entityNode.SelectedImageIndex = entityNode.ImageIndex;
+            }
+
+        }
+
+        #region GUI events Handling
+        //Called when the ADD button is cliques on a Main Category treeview
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            switch (tvMainCategories.SelectedNode.Name)
+            {
+                case "Entities":
+                    var form = new FrmEntityChoose();
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        var entityInstance = Configuration.CreateNewEntity(form.SelectedType);
+                        UpdateList();
+                        tvMainCategories.SelectedNode = FindByTag(entityInstance);
+                    }
+                    break;
+                case "Cubes":
+                    var cubeInstance = Configuration.CreateNewCube();
+                    UpdateList();
+                    tvMainCategories.SelectedNode = FindByTag(cubeInstance);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Event raised when a property change in the Details property grid.
+        /// </summary>
         private void pgDetails_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            //Update ListBox Icon when the modelName is changing
             if (e.ChangedItem.Label == "ModelName")
             {
-                var item = tvMainCategories.SelectedNode;
+                //Get the currently changed treeNode
+                TreeNode item = tvMainCategories.SelectedNode;
 
+                //Get the underlying entity
                 var entity = pgDetails.SelectedObject;
 
+                //Check if this entity can have a Voxel body
                 var voxelEntity = entity as IVoxelEntity;
+
+                //Look at currently existing Voxel Models following Entity Name
                 item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
                 item.SelectedImageIndex = item.ImageIndex;
             }
@@ -333,6 +333,46 @@ namespace Utopia.Editor
             {
                 UpdateList();
             }
-        }        
+        }
+
+
+        private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (tvMainCategories.SelectedNode.Name == "WorldProcessor Params")
+            {
+                //Display Utopia World Processor
+                if (_configuration.WorldProcessor == WorldProcessors.Utopia)
+                {
+                    pgDetails.Visible = false;
+                    _utopiaConfig.Visible = true;
+                }
+            }
+            else
+            {
+                _utopiaConfig.Visible = false;
+                pgDetails.Visible = true;
+                if (tvMainCategories.SelectedNode.Tag is CubeProfile)
+                {
+                    if (((CubeProfile)tvMainCategories.SelectedNode.Tag).IsSystemCube == true) pgDetails.Enabled = false;
+                    else pgDetails.Enabled = true;
+                }
+                else
+                {
+                    pgDetails.Enabled = true;
+                }
+                pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
+            }
+        }
+
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+        #endregion
+
+        #endregion
+
+
     }
 }

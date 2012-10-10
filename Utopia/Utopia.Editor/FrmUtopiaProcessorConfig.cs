@@ -10,15 +10,18 @@ using Utopia.Shared.Configuration;
 
 namespace Utopia.Editor
 {
-    public partial class FrmUtopiaConfig : UserControl
+    public partial class FrmUtopiaProcessorConfig : UserControl
     {
-        public FrmUtopiaConfig()
+        public TreeView tvBiomesList { get { return this.tvBiomeList; } }
+        public PropertyGrid gpBiome { get { return this.gpBiome; } }
+
+        public FrmUtopiaProcessorConfig()
         {
             InitializeComponent();
             worldType.SelectedIndex = 0;
         }
 
-        public FrmUtopiaConfig(UtopiaProcessorParams param)
+        public FrmUtopiaProcessorConfig(UtopiaProcessorParams param)
             :base()
         {
             LoadConfigParam(param);
@@ -67,6 +70,11 @@ namespace Utopia.Editor
             {
                 rangeBarWorld.Ranges.Add(item);
             }
+        }
+
+        private void tvBiomeList_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            pgBiomes.SelectedObject = tvBiomeList.SelectedNode.Tag;
         }
     }
 }

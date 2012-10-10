@@ -68,11 +68,11 @@
     <Compile Include="ModelsRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FrmUtopiaConfig.cs">
+    <Compile Include="FrmUtopiaProcessorConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FrmUtopiaConfig.Designer.cs">
-      <DependentUpon>FrmUtopiaConfig.cs</DependentUpon>
+    <Compile Include="FrmUtopiaProcessorConfig.Designer.cs">
+      <DependentUpon>FrmUtopiaProcessorConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="RangeBar.cs">
       <SubType>UserControl</SubType>
@@ -99,8 +99,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="FrmUtopiaConfig.resx">
-      <DependentUpon>FrmUtopiaConfig.cs</DependentUpon>
+    <EmbeddedResource Include="FrmUtopiaProcessorConfig.resx">
+      <DependentUpon>FrmUtopiaProcessorConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RangeBar.resx">
       <DependentUpon>RangeBar.cs</DependentUpon>

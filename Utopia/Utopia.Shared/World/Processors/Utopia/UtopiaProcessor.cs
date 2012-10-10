@@ -352,7 +352,6 @@ namespace Utopia.Shared.World.Processors.Utopia
                                 }
                             }
                         }
-
                     }
 
                     columnsInfo[noise2DIndex] = columnInfo;
