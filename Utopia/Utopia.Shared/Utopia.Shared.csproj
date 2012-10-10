@@ -303,18 +303,21 @@
     <Compile Include="World\PlanGenerator\VectorExtensions.cs" />
     <Compile Include="World\Processors\LandscapeLayersProcessor.cs" />
     <Compile Include="World\Processors\PlanWorldProcessor.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\Biome.Designer.cs">
+      <DependentUpon>Biome.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeEntity.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.Designer.cs">
+      <DependentUpon>BiomeTrees.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\Cavern.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\CubeVein.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\MontainBiome.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\OceanBiome.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\DesertBiome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\Biome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeType.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\GrasslandBiome.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\ForestBiome.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\PlainBiome.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\CubeVein.Designer.cs">
+      <DependentUpon>CubeVein.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\TreeTemplates.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Moisture.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Temperature.cs" />
