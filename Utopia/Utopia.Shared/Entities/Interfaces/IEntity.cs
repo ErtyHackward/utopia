@@ -57,6 +57,11 @@ namespace Utopia.Shared.Entities.Interfaces
         EntityType Type { get; }
 
         /// <summary>
+        /// This entity is mandatory for the system to run properly
+        /// </summary>
+        bool isSystemEntity { get; set; }
+
+        /// <summary>
         /// Returns link to the entity
         /// </summary>
         /// <returns></returns>

@@ -18,7 +18,7 @@ namespace Utopia.Shared.Settings
     public partial class CubeProfile : IBinaryStorable
     {
         [Browsable(false)]
-        public bool CanBeModified { get; set; }
+        public bool IsSystemCube { get; set; }
         [Description("The cube's name"), Category("General")]
         public string Name { get; set; }
         [Description("The cube's description"), Category("General")]
@@ -93,7 +93,7 @@ namespace Utopia.Shared.Settings
         /// <param name="writer"></param>
         public void Save(BinaryWriter writer)
         {
-            writer.Write(CanBeModified);
+            writer.Write(IsSystemCube);
             writer.Write(Name);
             writer.Write(Id);
             writer.Write(IsPickable);
@@ -127,7 +127,7 @@ namespace Utopia.Shared.Settings
         /// <param name="reader"></param>
         public void Load(BinaryReader reader)
         {
-            CanBeModified = reader.ReadBoolean();
+            IsSystemCube = reader.ReadBoolean();
             Name = reader.ReadString();
             Id = reader.ReadByte();
             IsPickable = reader.ReadBoolean();

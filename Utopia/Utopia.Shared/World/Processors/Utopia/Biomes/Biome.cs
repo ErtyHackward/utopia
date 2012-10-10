@@ -130,9 +130,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
         protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
 
+        private Range _temperatureFilter = new Range(0.0f, 1.0f);
+        private Range _moistureFilter = new Range(0.0f, 1.0f);
+        private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>() {enuLandFormType.Plain};
+
         #endregion
 
         #region Public Properties
+
+
         [TypeConverter(typeof(CubeConverter))]
         [DisplayName("Surface Cube")]
         public string SurfaceCubeName
@@ -190,7 +196,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [Browsable(false)]
         public virtual byte GroundCube { get; set; }
 
-
+        [Browsable(false)]
         public string Name { get; set; }
 
         public virtual RangeI UnderSurfaceLayers
@@ -221,6 +227,27 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             get { return _biomeTrees; }
             set { _biomeTrees = value; }
+        }
+
+        [Description("LandForm falling inside this biome"), Category("Filter")]
+        public List<enuLandFormType> LandFormFilters
+        {
+            get { return _landFormFilters; }
+            set { _landFormFilters = value; }
+        }
+
+        [Description("Temperature range [0.00 to 1.00] inside this biome"), Category("Filter")]
+        public Range TemperatureFilter
+        {
+            get { return _temperatureFilter; }
+            set { _temperatureFilter = value; }
+        }
+
+        [Description("Moisture range [0.00 to 1.00] inside this biome"), Category("Filter")]
+        public Range MoistureFilter
+        {
+            get { return _moistureFilter; }
+            set { _moistureFilter = value; }
         }
 
         #endregion

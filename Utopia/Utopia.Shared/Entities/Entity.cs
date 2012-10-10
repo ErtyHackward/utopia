@@ -56,6 +56,12 @@ namespace Utopia.Shared.Entities
         public abstract string DisplayName { get; }
 
         /// <summary>
+        /// Is this entity a system Entity (Mandatory for the system to run)
+        /// </summary>
+        [Browsable(false)]
+        public bool isSystemEntity { get; set; }
+
+        /// <summary>
         /// Gets a displayed entity name
         /// </summary>
         public virtual string Name
@@ -90,6 +96,8 @@ namespace Utopia.Shared.Entities
             IsPickable = reader.ReadBoolean();
             IsPlayerCollidable = reader.ReadBoolean();
 
+            isSystemEntity = reader.ReadBoolean();
+
         }
 
         /// <summary>
@@ -108,6 +116,8 @@ namespace Utopia.Shared.Entities
 
             writer.Write(IsPickable);
             writer.Write(IsPlayerCollidable);
+
+            writer.Write(isSystemEntity);
         }
 
         public abstract EntityLink GetLink();
@@ -124,5 +134,8 @@ namespace Utopia.Shared.Entities
         {
             return MemberwiseClone();
         }
+
+
+
     }
 }

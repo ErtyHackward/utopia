@@ -12,6 +12,7 @@ using Utopia.Shared.World.Processors.Utopia.Biomes;
 using System.Linq;
 using S33M3_Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.Entities.Concrete.Collectible;
 
 namespace Utopia.Shared.Configuration
 {
@@ -121,7 +122,8 @@ namespace Utopia.Shared.Configuration
             CubeProfiles = new List<CubeProfile>();
             Biomes = new List<Biome>();
             UtopiaProcessorParam = new UtopiaProcessorParams();
-            
+            WorldProcessor = WorldProcessors.Utopia;
+
             if (withDefaultValueCreation)
             {
                 CreateDefaultValues();
@@ -253,7 +255,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = true
+                IsSystemCube = false
             };
 
             CubeProfiles.Add(newCubeProfile);
@@ -266,12 +268,13 @@ namespace Utopia.Shared.Configuration
             //Create a new EntityClass object
             IEntity instance = (IEntity)Activator.CreateInstance(entityClassType);
 
-            //Generate a new Entity ID, it must be unic
+            //Generate a new Entity ID, it will represent this Blue print, and must be unique
             ushort newId;
             if (RealmEntities.Count == 0) newId = 0;
             else newId = (ushort)(RealmEntities.Select(x => x.Id).Max(y => y) + 1);
 
             instance.Id = newId;
+            instance.isSystemEntity = false;
 
             RealmEntities.Add(instance);
 
@@ -289,7 +292,9 @@ namespace Utopia.Shared.Configuration
 
         private void CreateDefaultValues()
         {
+            //These are mandatory configuration !!
             CreateDefaultCubeProfiles();
+            CreateDefaultEntities();
             CreateDefaultBiomes();
             CreateDefaultUtopiaProcessorParam();
         }
@@ -312,7 +317,7 @@ namespace Utopia.Shared.Configuration
                 IsSeeThrough = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false
+                IsSystemCube = true
             });
 
             //Stone Block
@@ -333,7 +338,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false
+                IsSystemCube = true
             });
 
             //Dirt Block
@@ -354,7 +359,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false
+                IsSystemCube = true
             });
 
             //Grass Block
@@ -375,30 +380,30 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 BiomeColorArrayTexture = 0
             });
 
-            //WoodPlank Block
-            CubeProfiles.Add(new CubeProfile()
-            {
-                Name = "WoodPlank",
-                Description = "A cube",
-                Id = 4,
-                Tex_Top = 4,
-                Tex_Bottom = 4,
-                Tex_Back = 4,
-                Tex_Front = 4,
-                Tex_Left = 4,
-                Tex_Right = 4,
-                IsBlockingLight = true,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                CanBeModified = true
-            });
+            ////WoodPlank Block
+            //CubeProfiles.Add(new CubeProfile()
+            //{
+            //    Name = "WoodPlank",
+            //    Description = "A cube",
+            //    Id = 4,
+            //    Tex_Top = 4,
+            //    Tex_Bottom = 4,
+            //    Tex_Back = 4,
+            //    Tex_Front = 4,
+            //    Tex_Left = 4,
+            //    Tex_Right = 4,
+            //    IsBlockingLight = true,
+            //    IsPickable = true,
+            //    IsSolidToEntity = true,
+            //    IsBlockingWater = true,
+            //    CubeFamilly = Enums.enuCubeFamilly.Solid,
+            //    Friction = 0.25f,
+            //    CanBeModified = true
+            //});
 
             //StillWater Block
             CubeProfiles.Add(new CubeProfile()
@@ -416,7 +421,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 BiomeColorArrayTexture = 2
             });
 
@@ -437,7 +442,7 @@ namespace Utopia.Shared.Configuration
                 IsTaggable = true,
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 BiomeColorArrayTexture = 2
             });
 
@@ -459,7 +464,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -485,7 +490,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 SlidingValue = 0.05f
             });
 
@@ -507,7 +512,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.3f,
-                CanBeModified = false,
+                IsSystemCube = true,
             });
 
             //Gravel Block
@@ -528,7 +533,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
             });
 
             //Trunk Block
@@ -549,7 +554,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
             });
 
             //GoldOre Block
@@ -570,7 +575,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
             });
 
             //CoalOre Block
@@ -591,7 +596,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
             });
 
             //MoonStone Block
@@ -612,7 +617,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 86,
@@ -620,26 +625,26 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorB = 255
             });
 
-            //Brick Block
-            CubeProfiles.Add(new CubeProfile()
-            {
-                Name = "Brick",
-                Description = "A cube",
-                Id = 15,
-                Tex_Top = 14,
-                Tex_Bottom = 14,
-                Tex_Back = 14,
-                Tex_Front = 14,
-                Tex_Left = 14,
-                Tex_Right = 14,
-                IsBlockingLight = true,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                CanBeModified = true,
-            });
+            ////Brick Block
+            //CubeProfiles.Add(new CubeProfile()
+            //{
+            //    Name = "Brick",
+            //    Description = "A cube",
+            //    Id = 15,
+            //    Tex_Top = 14,
+            //    Tex_Bottom = 14,
+            //    Tex_Back = 14,
+            //    Tex_Front = 14,
+            //    Tex_Left = 14,
+            //    Tex_Right = 14,
+            //    IsBlockingLight = true,
+            //    IsPickable = true,
+            //    IsSolidToEntity = true,
+            //    IsBlockingWater = true,
+            //    CubeFamilly = Enums.enuCubeFamilly.Solid,
+            //    Friction = 0.25f,
+            //    CanBeModified = true,
+            //});
 
             //Foliage Block
             CubeProfiles.Add(new CubeProfile()
@@ -660,30 +665,30 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 BiomeColorArrayTexture = 1
             });
 
-            //Glass Block
-            CubeProfiles.Add(new CubeProfile()
-            {
-                Name = "Glass",
-                Description = "A cube",
-                Id = 17,
-                Tex_Top = 16,
-                Tex_Bottom = 16,
-                Tex_Back = 16,
-                Tex_Front = 16,
-                Tex_Left = 16,
-                Tex_Right = 16,
-                IsBlockingLight = true,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                CanBeModified = true
-            });
+            ////Glass Block
+            //CubeProfiles.Add(new CubeProfile()
+            //{
+            //    Name = "Glass",
+            //    Description = "A cube",
+            //    Id = 17,
+            //    Tex_Top = 16,
+            //    Tex_Bottom = 16,
+            //    Tex_Back = 16,
+            //    Tex_Front = 16,
+            //    Tex_Left = 16,
+            //    Tex_Right = 16,
+            //    IsBlockingLight = true,
+            //    IsPickable = true,
+            //    IsSolidToEntity = true,
+            //    IsBlockingWater = true,
+            //    CubeFamilly = Enums.enuCubeFamilly.Solid,
+            //    Friction = 0.25f,
+            //    CanBeModified = true
+            //});
 
             //Snow Block
             CubeProfiles.Add(new CubeProfile()
@@ -703,7 +708,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 YBlockOffset = 0.9,
                 Friction = 0.35f,
-                CanBeModified = false
+                IsSystemCube = true
             });
 
             //Ice Block
@@ -725,7 +730,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                CanBeModified = false
+                IsSystemCube = true
             });
 
             //StillLava Block
@@ -747,7 +752,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -774,7 +779,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -803,7 +808,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 SideOffsetMultiplier = 1
             });
 
@@ -826,7 +831,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                CanBeModified = false,
+                IsSystemCube = true,
                 SideOffsetMultiplier = 1
             });
 
@@ -843,6 +848,16 @@ namespace Utopia.Shared.Configuration
             }
         }
 
+        private void CreateDefaultEntities()
+        {
+           //Cactus Entity blue print
+           Plant cactusFlower = (Plant)CreateNewEntity(typeof(Plant));
+           cactusFlower.Name = "Cactus Flower";
+           cactusFlower.MountPoint = BlockFace.Top;
+           cactusFlower.ModelName = "Flower4";
+           cactusFlower.isSystemEntity = true;      // Cannot de removed, mandatory Entity
+        }
+
         //Definition of default biomes
         private void CreateDefaultBiomes()
         {
@@ -852,11 +867,54 @@ namespace Utopia.Shared.Configuration
                 Name = "Desert",
                 SurfaceCube = RealmConfiguration.CubeId.Sand,
                 UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
-                UnderSurfaceLayers = new RangeI(1, 3),  // = The layer under the surface is 1 to 3 block height, then after you have the ground Cubes
                 GroundCube = RealmConfiguration.CubeId.Stone
             });
 
-            RealmCubeProfiles = CubeProfiles;
+            //Forest Biome Definition
+            Biomes.Add(new Biome()
+            {
+                Name = "Forest",
+                SurfaceCube = RealmConfiguration.CubeId.Grass,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+                GroundCube = RealmConfiguration.CubeId.Stone
+            });
+
+            //GrassLand Biome Definition
+            Biomes.Add(new Biome()
+            {
+                Name = "GrassLand",
+                SurfaceCube = RealmConfiguration.CubeId.Grass,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+                GroundCube = RealmConfiguration.CubeId.Stone
+            });
+
+            //Montains Biome Definition
+            Biomes.Add(new Biome()
+            {
+                Name = "Montains",
+                SurfaceCube = RealmConfiguration.CubeId.Grass,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+                GroundCube = RealmConfiguration.CubeId.Stone,
+                UnderSurfaceLayers = new RangeI(1, 2)
+            });
+
+            //Ocean Biome Definition
+            Biomes.Add(new Biome()
+            {
+                Name = "Ocean",
+                SurfaceCube = RealmConfiguration.CubeId.Sand,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
+                GroundCube = RealmConfiguration.CubeId.Stone
+            });
+
+            //Plain Biome Definition
+            Biomes.Add(new Biome()
+            {
+                Name = "Plain",
+                SurfaceCube = RealmConfiguration.CubeId.Grass,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+                GroundCube = RealmConfiguration.CubeId.Stone
+            });
         }
 
         //Definition of all default Utopia processor params
