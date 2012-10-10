@@ -31,7 +31,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabUtopiaProcessor = new System.Windows.Forms.TabControl();
             this.BiomesPage = new System.Windows.Forms.TabPage();
-            this.splitContainerBiomes = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tvBiomeList = new System.Windows.Forms.TreeView();
             this.pgBiomes = new System.Windows.Forms.PropertyGrid();
@@ -57,9 +56,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabUtopiaProcessor.SuspendLayout();
             this.BiomesPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerBiomes)).BeginInit();
-            this.splitContainerBiomes.Panel1.SuspendLayout();
-            this.splitContainerBiomes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -93,7 +89,7 @@
             // 
             // BiomesPage
             // 
-            this.BiomesPage.Controls.Add(this.splitContainerBiomes);
+            this.BiomesPage.Controls.Add(this.splitContainer1);
             this.BiomesPage.Location = new System.Drawing.Point(4, 22);
             this.BiomesPage.Name = "BiomesPage";
             this.BiomesPage.Padding = new System.Windows.Forms.Padding(3);
@@ -101,20 +97,6 @@
             this.BiomesPage.TabIndex = 0;
             this.BiomesPage.Text = "Biomes";
             this.BiomesPage.UseVisualStyleBackColor = true;
-            // 
-            // splitContainerBiomes
-            // 
-            this.splitContainerBiomes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerBiomes.Location = new System.Drawing.Point(3, 3);
-            this.splitContainerBiomes.Name = "splitContainerBiomes";
-            this.splitContainerBiomes.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainerBiomes.Panel1
-            // 
-            this.splitContainerBiomes.Panel1.Controls.Add(this.splitContainer1);
-            this.splitContainerBiomes.Size = new System.Drawing.Size(634, 578);
-            this.splitContainerBiomes.SplitterDistance = 361;
-            this.splitContainerBiomes.TabIndex = 0;
             // 
             // splitContainer1
             // 
@@ -129,7 +111,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgBiomes);
-            this.splitContainer1.Size = new System.Drawing.Size(634, 361);
+            this.splitContainer1.Size = new System.Drawing.Size(634, 375);
             this.splitContainer1.SplitterDistance = 183;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -138,7 +120,7 @@
             this.tvBiomeList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvBiomeList.Location = new System.Drawing.Point(0, 0);
             this.tvBiomeList.Name = "tvBiomeList";
-            this.tvBiomeList.Size = new System.Drawing.Size(183, 361);
+            this.tvBiomeList.Size = new System.Drawing.Size(183, 375);
             this.tvBiomeList.TabIndex = 0;
             this.tvBiomeList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvBiomeList_AfterSelect);
             // 
@@ -147,7 +129,7 @@
             this.pgBiomes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgBiomes.Location = new System.Drawing.Point(0, 0);
             this.pgBiomes.Name = "pgBiomes";
-            this.pgBiomes.Size = new System.Drawing.Size(447, 361);
+            this.pgBiomes.Size = new System.Drawing.Size(447, 375);
             this.pgBiomes.TabIndex = 0;
             // 
             // tabPage2
@@ -369,9 +351,6 @@
             this.Size = new System.Drawing.Size(648, 610);
             this.tabUtopiaProcessor.ResumeLayout(false);
             this.BiomesPage.ResumeLayout(false);
-            this.splitContainerBiomes.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerBiomes)).EndInit();
-            this.splitContainerBiomes.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -415,7 +394,6 @@
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.TreeView tvBiomeList;
         public System.Windows.Forms.SplitContainer splitContainer1;
-        public System.Windows.Forms.SplitContainer splitContainerBiomes;
         public System.Windows.Forms.PropertyGrid pgBiomes;
 
     }

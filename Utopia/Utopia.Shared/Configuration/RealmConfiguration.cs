@@ -864,57 +864,57 @@ namespace Utopia.Shared.Configuration
             //Desert Biome Definition
             Biomes.Add(new Biome()
             {
-                Name = "Desert",
-                SurfaceCube = RealmConfiguration.CubeId.Sand,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
-                GroundCube = RealmConfiguration.CubeId.Stone
-            });
-
-            //Forest Biome Definition
-            Biomes.Add(new Biome()
-            {
-                Name = "Forest",
+                Name = "Default",
                 SurfaceCube = RealmConfiguration.CubeId.Grass,
                 UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
                 GroundCube = RealmConfiguration.CubeId.Stone
             });
 
-            //GrassLand Biome Definition
-            Biomes.Add(new Biome()
-            {
-                Name = "GrassLand",
-                SurfaceCube = RealmConfiguration.CubeId.Grass,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-                GroundCube = RealmConfiguration.CubeId.Stone
-            });
+            ////Forest Biome Definition
+            //Biomes.Add(new Biome()
+            //{
+            //    Name = "Forest",
+            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
+            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+            //    GroundCube = RealmConfiguration.CubeId.Stone
+            //});
 
-            //Montains Biome Definition
-            Biomes.Add(new Biome()
-            {
-                Name = "Montains",
-                SurfaceCube = RealmConfiguration.CubeId.Grass,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-                GroundCube = RealmConfiguration.CubeId.Stone,
-                UnderSurfaceLayers = new RangeI(1, 2)
-            });
+            ////GrassLand Biome Definition
+            //Biomes.Add(new Biome()
+            //{
+            //    Name = "GrassLand",
+            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
+            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+            //    GroundCube = RealmConfiguration.CubeId.Stone
+            //});
 
-            //Ocean Biome Definition
-            Biomes.Add(new Biome()
-            {
-                Name = "Ocean",
-                SurfaceCube = RealmConfiguration.CubeId.Sand,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
-                GroundCube = RealmConfiguration.CubeId.Stone
-            });
+            ////Montains Biome Definition
+            //Biomes.Add(new Biome()
+            //{
+            //    Name = "Montains",
+            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
+            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+            //    GroundCube = RealmConfiguration.CubeId.Stone,
+            //    UnderSurfaceLayers = new RangeI(1, 2)
+            //});
 
-            //Plain Biome Definition
-            Biomes.Add(new Biome()
-            {
-                Name = "Plain",
-                SurfaceCube = RealmConfiguration.CubeId.Grass,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-                GroundCube = RealmConfiguration.CubeId.Stone
-            });
+            ////Ocean Biome Definition
+            //Biomes.Add(new Biome()
+            //{
+            //    Name = "Ocean",
+            //    SurfaceCube = RealmConfiguration.CubeId.Sand,
+            //    UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
+            //    GroundCube = RealmConfiguration.CubeId.Stone
+            //});
+
+            ////Plain Biome Definition
+            //Biomes.Add(new Biome()
+            //{
+            //    Name = "Plain",
+            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
+            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+            //    GroundCube = RealmConfiguration.CubeId.Stone
+            //});
         }
 
         //Definition of all default Utopia processor params

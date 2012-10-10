@@ -140,7 +140,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
 
         [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Surface Cube")]
+        [DisplayName("Surface Cube"), Category("Composition")]
         public string SurfaceCubeName
         {
             //When first loaded set property with the first item in the rule list.
@@ -159,7 +159,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public virtual byte SurfaceCube { get; set; }
 
         [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Under-surface Cube")]
+        [DisplayName("Under-surface Cube"), Category("Composition")]
         public string UnderSurfaceCubeName
         {
             //When first loaded set property with the first item in the rule list.
@@ -178,7 +178,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public virtual byte UnderSurfaceCube { get; set; }
 
         [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Ground Cube")]
+        [DisplayName("Ground Cube"), Category("Composition")]
         public string GroundCubeName
         {
             //When first loaded set property with the first item in the rule list.
@@ -196,33 +196,38 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [Browsable(false)]
         public virtual byte GroundCube { get; set; }
 
-        [Browsable(false)]
+        [Category("General")]
         public string Name { get; set; }
 
+        [Description("Under surface layer size"), Category("Composition")]
         public virtual RangeI UnderSurfaceLayers
         {
             get { return _underSurfaceLayers; }
             set { _underSurfaceLayers = value; }
         }
 
+        [Description("Mineral veins spawning configuration"), Category("Population")]
         public List<CubeVein> CubeVeins
         {
             get { return _cubeVeins; }
             set { _cubeVeins = value; }
         }
 
+        [Description("Entities spawning configuration"), Category("Population")]
         public List<BiomeEntity> BiomeEntities
         {
             get { return _biomeEntities; }
             set { _biomeEntities = value; }
         }
 
+        [Description("Cavern spawning configuration"), Category("Population")]
         public List<Cavern> Caverns
         {
             get { return _caverns; }
             set { _caverns = value; }
         }
 
+        [Description("Tree spawning configuration"), Category("Population")]
         public BiomeTrees BiomeTrees
         {
             get { return _biomeTrees; }
