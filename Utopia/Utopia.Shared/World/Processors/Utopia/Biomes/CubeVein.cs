@@ -9,50 +9,24 @@ using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public class CubeVein
+    public partial class CubeVein
     {
-        [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Cube")]
-        public string CubeName
-        {
-            //When first loaded set property with the first item in the rule list.
-            get
-            {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == CubeId).Name;
-            }
-            set
-            {
-                //Get ID from name, name must be unic !
-                CubeId = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
-            }
-        }
+        private byte _cubeId;
+
         [Browsable(false)]
-        public byte CubeId { get; set; }
+        public byte CubeId { get { return _cubeId; } set { _cubeId = value; RefreshCubeProfile(); } }
+        [Browsable(false)]
+        public CubeProfile CubeProfile { get; set; }
         public string Name { get; set; }
         public int VeinSize { get; set; }
         public RangeB SpawningHeight { get; set; }
         public int VeinPerChunk { get; set; }
         public double ChanceOfSpawning { get; set; }
 
-        public class CubeConverter : StringConverter
+
+        private void RefreshCubeProfile()
         {
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-            {
-                //true means show a combobox
-                return true;
-            }
-
-            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-            {
-                //true will limit to list. false will show the list, 
-                //but allow free-form entry
-                return true;
-            }
-
-            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-            {
-                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
-            }
+            CubeProfile = RealmConfiguration.CubeProfiles[_cubeId];
         }
     }
 }

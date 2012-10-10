@@ -261,7 +261,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     if (moisture < 0.0) moisture = 0.0;
                     byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
-                    currentBiome = Biome.BiomeList[biomeId];
+                    currentBiome = RealmConfiguration.Biomes[biomeId];
 
                     //Get Temperature and Moisture
                     columnInfo = new ChunkColumnInfo()
@@ -369,13 +369,13 @@ namespace Utopia.Shared.World.Processors.Utopia
         private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory)
         {
             //Get Chunk Master Biome
-            var masterBiome = Biome.BiomeList[chunkMetaData.ChunkMasterBiomeType];
+            var masterBiome = RealmConfiguration.Biomes[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData);
-            Biome.GenerateMoonStoneCavern(dataCursor, masterBiome, chunkRnd);
-            Biome.GenerateChunkLiquidSources(dataCursor, masterBiome,chunkRnd);
-            Biome.GenerateChunkResources(dataCursor, masterBiome, chunkRnd);
-            Biome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
-            Biome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+
+            masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
+            masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
+            masterBiome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+            masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
         }
 
         private ChunkMetaData CreateChunkMetaData(ChunkColumnInfo[] columnsInfo)

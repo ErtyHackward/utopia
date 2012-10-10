@@ -19,188 +19,71 @@ using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public class Biome : IBinaryStorable
+    public partial class Biome
     {
-        #region Static Attributes
-        //Static Class components
-        public static readonly Biome[] BiomeList;
-
-        static Biome()
-        {
-            BiomeList = new Biome[BiomeType.BiomeTypesCollection.Values.Count];
-            //Init Biomes Type
-            BiomeList[BiomeType.Grassland] = new GrasslandBiome();
-            BiomeList[BiomeType.Desert] = new DesertBiome();
-            BiomeList[BiomeType.Forest] = new ForestBiome();
-            BiomeList[BiomeType.Ocean] = new OceanBiome();
-            BiomeList[BiomeType.Montain] = new MontainBiome();
-            BiomeList[BiomeType.Plain] = new PlainBiome();
-        }
-
-        /// <summary>
-        /// Biomes From parameter fct
-        /// </summary>
-        /// <param name="landFormType">The Landscape Type</param>
-        /// <param name="temperature"></param>
-        /// <param name="moisture"></param>
-        /// <returns></returns>
+        #region Satic
         public static byte GetBiome(double landFormType, double temperature, double moisture)
         {
-            enuLandFormType landForm = (enuLandFormType)landFormType;
-
-            switch (landForm)
+            enuLandFormType landformtype = (enuLandFormType)landFormType;
+            for (byte biomeId = 0; biomeId <= RealmConfiguration.Biomes.Count - 1; biomeId++)
             {
-                case enuLandFormType.Plain:
-                case enuLandFormType.Flat:
-                    if (temperature > 0.7 && moisture < 0.6) 
-                        return BiomeType.Desert;
-                    if (moisture < 0.5)
+                Biome biome = RealmConfiguration.Biomes[biomeId];
+                //Does this biome support this land form type ?
+                if (biome.LandFormFilters.Contains(landformtype))
+                {
+                    //Check the temp range
+                    if (temperature >= biome.TemperatureFilter.Min &&
+                        temperature <= biome.TemperatureFilter.Max)
                     {
-                        return BiomeType.Grassland;
-                    }
-                    else
-                    {
-                        if (temperature > 0.5)
+                        if (moisture >= biome.MoistureFilter.Min &&
+                            moisture <= biome.MoistureFilter.Max)
                         {
-                            return BiomeType.Forest;
-                        }
-                        else
-                        {
-                            return BiomeType.Plain;
+                            return biomeId;
                         }
                     }
-                case enuLandFormType.Midland:
-                case enuLandFormType.Hill:
-                    return BiomeType.Grassland;
-                case enuLandFormType.Montain:
-                    return BiomeType.Montain;
-                case enuLandFormType.Ocean:
-                    return BiomeType.Ocean;
-                default:
-                    return BiomeType.Grassland;
+                }
             }
-        }
 
+            //By default return the first Biome from the list
+            return (byte)0;
+        }
         #endregion
 
         #region Private Variables
-        //Cube veins collections for the biome !
+        //Chunk Population elements
         private List<CubeVein> _cubeVeins = new List<CubeVein>();
         private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
         private List<Cavern> _caverns = new List<Cavern>();
-        private RangeI _underSurfaceLayers = new RangeI(1, 3);
         private BiomeTrees _biomeTrees = new BiomeTrees();
 
-        //Default mineral vein resources configurations
-        private CubeVein _sandVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40, 128) };
-        private CubeVein _rockVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1, 50) };
-        private CubeVein _dirtVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 128) };
-        private CubeVein _gravelVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40, 128) };
-        private CubeVein _goldVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1, 40) };
-        private CubeVein _coalVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1, 80) };
-        private CubeVein _moonStoneVein = new CubeVein() { CubeId = RealmConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1, 20) };
-        //Default Liquid block spawning resource
-        private CubeVein _waterSource = new CubeVein() { CubeId = RealmConfiguration.CubeId.DynamicWater,  VeinPerChunk = 20, SpawningHeight = new RangeB(60, 120) };
-        private CubeVein _lavaSource = new CubeVein() { CubeId = RealmConfiguration.CubeId.DynamicLava,  VeinPerChunk = 40, SpawningHeight = new RangeB(2, 60) };
-        //Default Spawning lake
-        private Cavern _moonStoneCavern = new Cavern() { CubeId = RealmConfiguration.CubeId.MoonStone, CavernHeightSize = new RangeB(4, 7) ,CavernPerChunk = 1, SpawningHeight = new RangeB(20, 60), ChanceOfSpawning = 0.01 };
+        //Chunk Composition elements
+        private RangeI _underSurfaceLayers = new RangeI(1, 3);
 
-        private RangeI _treePerChunk = new RangeI(0, 0);
-        protected int[] _treeTypeDistribution = new int[100];
-        //Default chunk Vein values
-        protected virtual CubeVein SandVein { get { return _sandVein; } }
-        protected virtual CubeVein RockVein { get { return _rockVein; } }
-        protected virtual CubeVein DirtVein { get { return _dirtVein; } }
-        protected virtual CubeVein GravelVein { get { return _gravelVein; } }
-        protected virtual CubeVein GoldVein { get { return _goldVein; } }
-        protected virtual CubeVein CoalVein { get { return _coalVein; } }
-        protected virtual CubeVein MoonStoneVein { get { return _moonStoneVein; } }
-
-        protected virtual CubeVein WaterSource { get { return _waterSource; } }
-        protected virtual CubeVein LavaSource { get { return _lavaSource; } }
-
-        protected virtual Cavern MoonStoneCavern { get { return _moonStoneCavern; } }
-
-        protected virtual BiomeEntity GrassEntities { get { return BiomeEntity.None; } }
-        protected virtual BiomeEntity Flower1Entities { get { return BiomeEntity.None; } }
-        protected virtual BiomeEntity Flower2Entities { get { return BiomeEntity.None; } }
-        protected virtual BiomeEntity Flower3Entities { get { return BiomeEntity.None; } }
-        protected virtual BiomeEntity MushroomEntities { get { return BiomeEntity.None; } }
-
-        protected virtual RangeI TreePerChunk { get { return _treePerChunk; } }
-        protected int[] TreeTypeDistribution { get { return _treeTypeDistribution; } }
-
-        private Range _temperatureFilter = new Range(0.0f, 1.0f);
-        private Range _moistureFilter = new Range(0.0f, 1.0f);
-        private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>() {enuLandFormType.Plain};
+        //Chunk filters needed to have this biome to spawn at a specific World Grid column (for a given X - Z cube world coord)
+        //A landFormType
+        //A temperature
+        //A moisture
+        private RangeD _temperatureFilter = new RangeD(0.0, 1.0);
+        private RangeD _moistureFilter = new RangeD(0.0, 1.0);
+        private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>() { enuLandFormType.Plain };
 
         #endregion
 
         #region Public Properties
-
-
-        [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Surface Cube"), Category("Composition")]
-        public string SurfaceCubeName
-        {
-            //When first loaded set property with the first item in the rule list.
-            get
-            {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == SurfaceCube).Name;
-            }
-            set
-            {
-                //Get ID from name, name must be unic !
-                SurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
-            }
-        }
+        [Browsable(false)]
+        public byte SurfaceCube { get; set; }
 
         [Browsable(false)]
-        public virtual byte SurfaceCube { get; set; }
-
-        [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Under-surface Cube"), Category("Composition")]
-        public string UnderSurfaceCubeName
-        {
-            //When first loaded set property with the first item in the rule list.
-            get
-            {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == UnderSurfaceCube).Name;
-            }
-            set
-            {
-                //Get ID from name, name must be unic !
-                UnderSurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
-            }
-        }
+        public byte UnderSurfaceCube { get; set; }
 
         [Browsable(false)]
-        public virtual byte UnderSurfaceCube { get; set; }
-
-        [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Ground Cube"), Category("Composition")]
-        public string GroundCubeName
-        {
-            //When first loaded set property with the first item in the rule list.
-            get
-            {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == GroundCube).Name;
-            }
-            set
-            {
-                //Get ID from name, name must be unic !
-                GroundCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
-            }
-        }
-
-        [Browsable(false)]
-        public virtual byte GroundCube { get; set; }
+        public byte GroundCube { get; set; }
 
         [Category("General")]
         public string Name { get; set; }
 
         [Description("Under surface layer size"), Category("Composition")]
-        public virtual RangeI UnderSurfaceLayers
+        public RangeI UnderSurfaceLayers
         {
             get { return _underSurfaceLayers; }
             set { _underSurfaceLayers = value; }
@@ -242,14 +125,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Temperature range [0.00 to 1.00] inside this biome"), Category("Filter")]
-        public Range TemperatureFilter
+        public RangeD TemperatureFilter
         {
             get { return _temperatureFilter; }
             set { _temperatureFilter = value; }
         }
 
         [Description("Moisture range [0.00 to 1.00] inside this biome"), Category("Filter")]
-        public Range MoistureFilter
+        public RangeD MoistureFilter
         {
             get { return _moistureFilter; }
             set { _moistureFilter = value; }
@@ -259,224 +142,88 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         public Biome()
         {
-            CreateTreeDistribution();
         }
 
         #region Public Methods
-        /// <summary>
-        /// Will populate the chunk with various resources
-        /// </summary>
-        /// <param name="chunkData"></param>
-        /// <param name="rnd"></param>
-        public static void GenerateChunkResources(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
+
+        public void GenerateChunkResources(ByteChunkCursor cursor, FastRandom rnd)
         {
-            //Generate Sand vein
-            for (int i = 0; i < biome.SandVein.VeinPerChunk; i++)
+            //Create the various Veins in the chunk
+            foreach (CubeVein vein in CubeVeins)
             {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0,16);
-                int y = rnd.Next(biome.SandVein.SpawningHeight.Min, biome.SandVein.SpawningHeight.Max);
-                int z = rnd.Next(0,16);
-                PopulateChunkWithResource(biome.SandVein.CubeId, cursor, x, y, z, biome.SandVein.VeinSize, rnd);
-            }
-
-            //Generate RockVein vein
-            for (int i = 0; i < biome.RockVein.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0, 16);
-                int y = rnd.Next(biome.RockVein.SpawningHeight.Min, biome.RockVein.SpawningHeight.Max);
-                int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(biome.RockVein.CubeId, cursor, x, y, z, biome.RockVein.VeinSize, rnd);
-            }
-
-            //Generate DirtVein vein
-            for (int i = 0; i < biome.DirtVein.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0, 16);
-                int y = rnd.Next(biome.DirtVein.SpawningHeight.Min, biome.DirtVein.SpawningHeight.Max);
-                int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(biome.DirtVein.CubeId, cursor, x, y, z, biome.DirtVein.VeinSize, rnd);
-            }
-
-            //Generate GravelVein vein
-            for (int i = 0; i < biome.GravelVein.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0, 16);
-                int y = rnd.Next(biome.GravelVein.SpawningHeight.Min, biome.GravelVein.SpawningHeight.Max);
-                int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(biome.GravelVein.CubeId, cursor, x, y, z, biome.GravelVein.VeinSize, rnd);
-            }
-
-            //Generate GoldVein vein
-            for (int i = 0; i < biome.GoldVein.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0, 16);
-                int y = rnd.Next(biome.GoldVein.SpawningHeight.Min, biome.GoldVein.SpawningHeight.Max);
-                int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(biome.GoldVein.CubeId, cursor, x, y, z, biome.GoldVein.VeinSize, rnd);
-            }
-
-            //Generate CoalVein vein
-            for (int i = 0; i < biome.CoalVein.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0, 16);
-                int y = rnd.Next(biome.CoalVein.SpawningHeight.Min, biome.CoalVein.SpawningHeight.Max);
-                int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(biome.CoalVein.CubeId, cursor, x, y, z, biome.CoalVein.VeinSize, rnd);
-            }
-
-            //Generate MoonStoneVein vein
-            for (int i = 0; i < biome.MoonStoneVein.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(0, 16);
-                int y = rnd.Next(biome.MoonStoneVein.SpawningHeight.Min, biome.MoonStoneVein.SpawningHeight.Max);
-                int z = rnd.Next(0, 16);
-                PopulateChunkWithResource(biome.MoonStoneVein.CubeId, cursor, x, y, z, biome.MoonStoneVein.VeinSize, rnd);
-            }
-        }
-
-        public static void GenerateChunkLiquidSources(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
-        {
-            int liquidPower = 5;
-            //Generate WaterSource
-            //for (int i = 0; i < biome.WaterSource.VeinPerChunk; i++)
-            //{
-            //    //Get Rnd chunk Location.
-            //    int x = rnd.Next(liquidPower, 16 - liquidPower);
-            //    int y = rnd.Next(biome.WaterSource.SpawningHeight.Min, biome.WaterSource.SpawningHeight.Max);
-            //    int z = rnd.Next(liquidPower, 16 - liquidPower);
-            //    PopulateChunkLiquidSources(biome.WaterSource.CubeId, cursor, x, y, z, liquidPower);
-            //}
-
-            liquidPower = 5;
-            //Generate LavaSources
-            for (int i = 0; i < biome.LavaSource.VeinPerChunk; i++)
-            {
-                //Get Rnd chunk Location.
-                int x = rnd.Next(liquidPower, 16 - liquidPower);
-                int y = rnd.Next(biome.LavaSource.SpawningHeight.Min, biome.LavaSource.SpawningHeight.Max);
-                int z = rnd.Next(liquidPower, 16 - liquidPower);
-                PopulateChunkLiquidSources(biome.LavaSource.CubeId, cursor, x, y, z, liquidPower);
-            }
-        }
-
-        public static void GenerateMoonStoneCavern(ByteChunkCursor cursor, Biome biome, FastRandom rnd)
-        {
-            //Generate MoonStoneCavern
-            for (int i = 0; i < biome.MoonStoneCavern.CavernPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.MoonStoneCavern.ChanceOfSpawning)
+                //Generate the vein X time
+                for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
                     //Get Rnd chunk Location.
-                    int x = rnd.Next(7, 9);
-                    int y = rnd.Next(biome.MoonStoneCavern.SpawningHeight.Min, biome.MoonStoneCavern.SpawningHeight.Max);
-                    int z = rnd.Next(7, 9);
-                    int layer = rnd.Next(biome.MoonStoneCavern.CavernHeightSize.Min, biome.MoonStoneCavern.CavernHeightSize.Max + 1);
-                    PopulateChunkWithCave(cursor, x, y, z, layer, biome, biome.MoonStoneCavern.CubeId, rnd);
+                    int x = rnd.Next(0, 16);
+                    int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
+                    int z = rnd.Next(0, 16);
+
+                    if (vein.CubeProfile.CubeFamilly == Enums.enuCubeFamilly.Liquid)
+                    {
+                        PopulateChunkWithResource(vein.CubeId, cursor, x, y, z, vein.VeinSize, rnd);
+                    }
+                    else
+                    {
+                        PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                    }
                 }
             }
         }
 
-        public static void GenerateChunkTrees(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
+        public void GenerateChunkCaverns(ByteChunkCursor cursor, FastRandom rnd)
         {
-            int nbrTree = rnd.Next(biome.TreePerChunk.Min, biome.TreePerChunk.Max + 1);
+            //Create the various Cavern in the chunk
+            foreach (Cavern cavern in Caverns)
+            {
+                //Nbr of cavern to generate
+                for (int i = 0; i < cavern.CavernPerChunk; i++)
+                {
+                    if (rnd.NextDouble() <= cavern.ChanceOfSpawning)
+                    {
+                        //Get Rnd chunk Location.
+                        int x = rnd.Next(7, 9);
+                        int y = rnd.Next(cavern.SpawningHeight.Min, cavern.SpawningHeight.Max);
+                        int z = rnd.Next(7, 9);
+                        int layer = rnd.Next(cavern.CavernHeightSize.Min, cavern.CavernHeightSize.Max + 1);
+                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.CubeId, rnd);
+                    }
+                }
+            }
+        }
+
+        public void GenerateChunkTrees(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
+        {
+            int nbrTree = rnd.Next(BiomeTrees.TreePerChunks.Min, BiomeTrees.TreePerChunks.Max + 1);
             for (int i = 0; i < nbrTree; i++)
             {
-                PopulateChunkWithTree(cursor, chunk, ref chunkWorldPosition, entityFactory,  columndInfo, biome, rnd);
+                PopulateChunkWithTree(cursor, chunk, ref chunkWorldPosition, entityFactory, columndInfo, biome, rnd);
             }
         }
 
-        public static void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
+        public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
         {
-            //Grass population
-            for (int i = 0; i < biome.GrassEntities.EntityPerChunk; i++)
+            foreach (BiomeEntity entity in BiomeEntities)
             {
-                if (rnd.NextDouble() <= biome.GrassEntities.ChanceOfSpawning)
+                //Entity population
+                for (int i = 0; i < entity.EntityPerChunk; i++)
                 {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+                    if (rnd.NextDouble() <= entity.ChanceOfSpawning)
+                    {
+                        //Get Rnd chunk Location.
+                        int x = rnd.Next(0, 16);
+                        int z = rnd.Next(0, 16);
+                        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.GrassEntities.EntityId, x, y, z, rnd, entityFactory, false);
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.EntityId, x, y, z, rnd, entityFactory, false);
+                    }
                 }
             }
-
-            //Flower 1 population
-            for (int i = 0; i < biome.Flower1Entities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.Flower1Entities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
-
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower1Entities.EntityId, x, y, z, rnd, entityFactory, false);
-                }
-            }
-
-            //Flower 2 population
-            for (int i = 0; i < biome.Flower2Entities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.Flower2Entities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
-
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower2Entities.EntityId, x, y, z, rnd, entityFactory, false);
-                }
-            }
-
-            //Flower 3 population
-            for (int i = 0; i < biome.Flower3Entities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.Flower3Entities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
-
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.Flower3Entities.EntityId, x, y, z, rnd, entityFactory, false);
-                }
-            }
-
-            //Mushroom population
-            for (int i = 0; i < biome.MushroomEntities.EntityPerChunk; i++)
-            {
-                if (rnd.NextDouble() <= biome.MushroomEntities.ChanceOfSpawning)
-                {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int z = rnd.Next(0, 16);
-                    int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
-
-                    PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, biome.MushroomEntities.EntityId, x, y, z, rnd, entityFactory, false);
-                }
-            }
-
         }
+
         #endregion
 
         #region Private Methods
-
-        private void CreateTreeDistribution()
-        {
-            //Default tree distribution
-            for (int i = 0; i < 50; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Small;
-            for (int i = 50; i < 85; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Medium;
-            for (int i = 85; i < 100; i++) TreeTypeDistribution[i] = (int)TreeTemplates.TreeType.Big;  
-        }
-
         /// <summary>
         /// Will create a resource vein
         /// </summary>
@@ -487,7 +234,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="z">InsideChunk Z starting position</param>
         /// <param name="qt">Vein size</param>
         /// <param name="rnd">Random generator for vein creation</param>
-        protected static void PopulateChunkWithResource(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int qt, FastRandom rnd)
+        private void PopulateChunkWithResource(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int qt, FastRandom rnd)
         {
             cursor.SetInternalPosition(x, y, z);
             int nbrCubePlaced;
@@ -516,9 +263,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="x">InsideChunk X starting position</param>
         /// <param name="y">InsideChunk Y starting position</param>
         /// <param name="z">InsideChunk Z starting position</param>
-        protected static void PopulateChunkLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int liquidPower)
+        private void PopulateChunkWithLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int liquidPower)
         {
-
             cursor.SetInternalPosition(x, y, z);
 
             //Check if this source is candidate as valid source = Must be surrended by 5 solid blocks and ahave one side block going to Air
@@ -526,7 +272,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             {
                 //Looking Up for Air
                 if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Up)].IsBlockingWater == false || cursor.Peek(CursorRelativeMovement.Up) == RealmConfiguration.CubeId.Snow) return;
-                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false ) return;
+                if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false) return;
                 int cpt = 0;
                 //Counting the number of holes arround the source
                 if (GameSystemSettings.Current.Settings.CubesProfile[cursor.Peek(CursorRelativeMovement.East)].IsBlockingWater == false) cpt++;
@@ -543,8 +289,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 PropagateLiquidSources(sourcesWithPower, cubeId);
             }
         }
-
-        protected static void PropagateLiquidSources(Queue<Tuple<ByteChunkCursor, int>> sourcesWithPower, byte cubeId)
+        private void PropagateLiquidSources(Queue<Tuple<ByteChunkCursor, int>> sourcesWithPower, byte cubeId)
         {
             Tuple<ByteChunkCursor, int> liquidSource = sourcesWithPower.Dequeue();
 
@@ -605,15 +350,63 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        protected static void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, EntityFactory entityFactory, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
+        private void PopulateChunkWithCave(ByteChunkCursor cursor, int x, int y, int z, int layers, byte cubeId, FastRandom rnd)
         {
-            var treeTemplate = TreeTemplates.Templates[biome.TreeTypeDistribution[rnd.Next(0, 100)]];
+            cursor.SetInternalPosition(x, y, z);
+
+            int caveRadius = rnd.Next(3, 8);
+
+            int layerRadiusModifier = 0;
+
+            for (int l = 0; l < layers; l++)
+            {
+                //Generate Lake Layers
+                for (int X = x - (caveRadius - layerRadiusModifier); X <= x + (caveRadius - layerRadiusModifier); X++)
+                {
+                    for (int Z = z - (caveRadius - layerRadiusModifier); Z <= z + (caveRadius - layerRadiusModifier); Z++)
+                    {
+                        //Create "Noise" at Cave border
+                        if ((X == x - (caveRadius - layerRadiusModifier) ||
+                             X == x + (caveRadius - layerRadiusModifier) ||
+                             Z == z - (caveRadius - layerRadiusModifier) ||
+                             Z == z + (caveRadius - layerRadiusModifier))
+                             && rnd.NextDouble() < 0.2)
+                        {
+                            continue;
+                        }
+
+                        cursor.SetInternalPosition(X, y + l, Z);
+                        if (l <= 1 && rnd.NextDouble() < 0.3)
+                        {
+                            cursor.Write(cubeId);
+                        }
+                        else
+                        {
+                            if (l != 0)
+                            {
+                                if (l == layers - 1)
+                                {
+                                    if (cursor.Read() == RealmConfiguration.CubeId.Stone) cursor.Write(RealmConfiguration.CubeId.LightWhite);
+                                }
+                                else cursor.Write(RealmConfiguration.CubeId.Air);
+
+                            }
+                        }
+                    }
+                }
+                if (layerRadiusModifier < caveRadius) layerRadiusModifier++;
+            }
+        }
+
+        private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, EntityFactory entityFactory, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
+        {
+            var treeTemplate = TreeTemplates.Templates[(int)BiomeTrees.GetNextTreeType(rnd)];
 
             //Get Rnd chunk Location.
             int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
             int z = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
             int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
-            
+
             cursor.SetInternalPosition(x, y, z);
             //No other tree around me ?
             byte trunkRootCube = cursor.Read();
@@ -707,55 +500,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        protected static void PopulateChunkWithCave(ByteChunkCursor cursor, int x, int y, int z, int layers ,Biome biome, byte cubeId, FastRandom rnd)
-        {
-            cursor.SetInternalPosition(x, y, z);
-
-                int caveRadius = rnd.Next(3, 8);
-
-                int layerRadiusModifier = 0;
-
-                for (int l = 0; l < layers; l++)
-                {
-                    //Generate Lake Layers
-                    for (int X = x - (caveRadius - layerRadiusModifier); X <= x + (caveRadius - layerRadiusModifier); X++)
-                    {
-                        for (int Z = z - (caveRadius - layerRadiusModifier); Z <= z + (caveRadius - layerRadiusModifier); Z++)
-                        {
-                            //Create "Noise" at Cave border
-                            if ((X == x - (caveRadius - layerRadiusModifier) ||
-                                 X == x + (caveRadius - layerRadiusModifier) ||
-                                 Z == z - (caveRadius - layerRadiusModifier) ||
-                                 Z == z + (caveRadius - layerRadiusModifier)) 
-                                 && rnd.NextDouble() < 0.2)
-                            {
-                                continue;
-                            }
-
-                            cursor.SetInternalPosition(X, y + l, Z);
-                            if (l <= 1 && rnd.NextDouble() < 0.3)
-                            {
-                                cursor.Write(cubeId);
-                            }
-                            else
-                            {
-                                if (l != 0)
-                                {
-                                    if (l == layers - 1)
-                                    {
-                                        if (cursor.Read() == RealmConfiguration.CubeId.Stone) cursor.Write(RealmConfiguration.CubeId.LightWhite);
-                                    }
-                                    else cursor.Write(RealmConfiguration.CubeId.Air);
-
-                                }
-                            }
-                        }
-                    }
-                    if (layerRadiusModifier < caveRadius) layerRadiusModifier++;
-                }
-        }
-
-        protected static void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true, bool test = false)
+        private void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true, bool test = false)
         {
             cursor.SetInternalPosition(x, y, z);
 
@@ -767,7 +512,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             if (blockBelowProfile.IsSolidToEntity)
             {
                 var entity = entityFactory.CreateEntity(entityId);
-                if(entity is IBlockLinkedEntity)
+                if (entity is IBlockLinkedEntity)
                 {
                     Vector3I linkedCubePosition = new Vector3I(chunkWorldPosition.X + x, y, chunkWorldPosition.Z + z);
                     ((IBlockLinkedEntity)entity).LinkedCube = linkedCubePosition;
@@ -788,46 +533,5 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         #endregion
-
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(Name);
-            writer.Write(SurfaceCube);
-            writer.Write(UnderSurfaceCube);
-            writer.Write(UnderSurfaceLayers.Min);
-            writer.Write(UnderSurfaceLayers.Max);
-            writer.Write(GroundCube);
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            Name = reader.ReadString();
-            SurfaceCube = reader.ReadByte();
-            UnderSurfaceCube = reader.ReadByte();
-            _underSurfaceLayers.Min = reader.ReadInt32();
-            _underSurfaceLayers.Max = reader.ReadInt32();
-            GroundCube = reader.ReadByte();
-        }
-
-        internal class CubeConverter : StringConverter
-        {
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-            {
-                //true means show a combobox
-                return true;
-            }
-
-            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-            {
-                //true will limit to list. false will show the list, 
-                //but allow free-form entry
-                return true;
-            }
-
-            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-            {
-                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
-            }
-        }
     }
 }
