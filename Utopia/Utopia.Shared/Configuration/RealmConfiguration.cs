@@ -272,9 +272,9 @@ namespace Utopia.Shared.Configuration
             //Generate a new Entity ID, it will represent this Blue print, and must be unique
             ushort newId;
             if (RealmEntities.Count == 0) newId = 0;
-            else newId = (ushort)(RealmEntities.Select(x => x.Id).Max(y => y) + 1);
+            else newId = (ushort)(RealmEntities.Select(x => x.ConcreteId).Max(y => y) + 1);
 
-            instance.Id = newId;
+            instance.ConcreteId = newId;
             instance.isSystemEntity = false;
 
             RealmEntities.Add(instance);

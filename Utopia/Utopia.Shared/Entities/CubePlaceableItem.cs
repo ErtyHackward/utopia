@@ -69,7 +69,7 @@ namespace Utopia.Shared.Entities
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
                     //Create a new version of the item, and put it into the world
-                    var cubeEntity = (IItem)RealmConfiguration.Entities[Id].Clone();
+                    var cubeEntity = (IItem)RealmConfiguration.Entities[ConcreteId].Clone();
 
                     var blockLinked = (IBlockLinkedEntity)cubeEntity;
                     blockLinked.LinkedCube = owner.EntityState.PickedBlockPosition;

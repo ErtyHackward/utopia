@@ -119,13 +119,13 @@ namespace Utopia.Shared.Entities.Concrete
 
                         if (character != null)
                         {
-                            foreach (var cubeEntity in chunk.Entities.EnumerateFast())
+                            foreach (var chunkEntity in chunk.Entities.EnumerateFast())
                             {
-                                IBlockLinkedEntity cubeBlockLinkedEntity = cubeEntity as IBlockLinkedEntity;
+                                IBlockLinkedEntity cubeBlockLinkedEntity = chunkEntity as IBlockLinkedEntity;
                                 if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                                 {
                                     //Insert in the inventory the entity that will be removed !
-                                    var adder = (IItem)Factory.CreateEntity(cubeEntity.ClassId);
+                                    var adder = (IItem)Factory.CreateFromConcreteId(chunkEntity.ConcreteId);
                                     character.Inventory.PutItem(adder);
                                 }
                             }
@@ -138,6 +138,8 @@ namespace Utopia.Shared.Entities.Concrete
                         cursor.Write(RealmConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = RealmConfiguration.CubeId.Air });
                         
+                        //Add the removed cube into the inventory
+
                         impact.Success = true;
 
                         return impact;
@@ -176,7 +178,7 @@ namespace Utopia.Shared.Entities.Concrete
             if (character != null && entityRemoved != null)
             {
                 //Create a new entity of the same clicked one and place it into the inventory
-                var adder = (IItem)RealmConfiguration.Entities[entityRemoved.Id].Clone();  
+                var adder = (IItem)RealmConfiguration.Entities[entityRemoved.ConcreteId].Clone();  
                 character.Inventory.PutItem(adder);
             }
             return impact;

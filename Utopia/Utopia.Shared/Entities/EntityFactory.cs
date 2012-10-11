@@ -8,6 +8,8 @@ using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Tags;
+using System.Collections.Generic;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities
 {
@@ -21,9 +23,18 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public ILandscapeManager2D LandscapeManager { get; set; }
 
+        //Create a dictionnary that will be used to Clone existing entities
+        private Dictionary<ushort, Entity> _concreteEntities;
+
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
             LandscapeManager = landscapeManager;
+            _concreteEntities = new Dictionary<ushort, Entity>();
+
+            foreach (Entity entity in RealmConfiguration.Entities)
+            {
+                _concreteEntities.Add(entity.ConcreteId, entity);
+            }
         }
 
         /// <summary>
@@ -64,7 +75,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="classId">Entity class identificator</param>
         /// <returns></returns>
-        public Entity CreateEntity(ushort classId)
+        public Entity CreateFromClassId(ushort classId)
         {
             // todo: implement this method correctly, create appropriate class here
             var entity = CreateCustomEntity(classId); // External implementation of the entity creation.
@@ -104,6 +115,23 @@ namespace Utopia.Shared.Entities
             return entity;
         }
 
+        public Entity CreateFromConcreteId(ushort concreteId)
+        {
+            Entity entity = null;
+            if (_concreteEntities.TryGetValue(concreteId, out entity) == false)
+            {
+                throw new ArgumentOutOfRangeException("concreteId");
+            }
+
+            //Create a clone of this entity.
+            entity = (Entity)entity.Clone();
+
+            // allow post produce prepare
+            OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
+
+            return entity;
+        }
+
         /// <summary>
         /// Sets required field for special types of entities
         /// </summary>
@@ -127,7 +155,7 @@ namespace Utopia.Shared.Entities
         {
             var classId = reader.ReadUInt16();
             
-            var entity = CreateEntity(classId);
+            var entity = CreateFromClassId(classId);
 
             entity.Load(reader, this);
 
