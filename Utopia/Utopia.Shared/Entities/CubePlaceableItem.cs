@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities
 {
@@ -68,7 +69,7 @@ namespace Utopia.Shared.Entities
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
                     //Create a new version of the item, and put it into the world
-                    var cubeEntity = (IItem)Factory.CreateEntity(ClassId);
+                    var cubeEntity = (IItem)RealmConfiguration.Entities[Id].Clone();
 
                     var blockLinked = (IBlockLinkedEntity)cubeEntity;
                     blockLinked.LinkedCube = owner.EntityState.PickedBlockPosition;

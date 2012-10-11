@@ -176,7 +176,7 @@ namespace Utopia.Shared.Entities.Concrete
             if (character != null && entityRemoved != null)
             {
                 //Create a new entity of the same clicked one and place it into the inventory
-                var adder = (IItem)Factory.CreateEntity(entityRemoved.ClassId);
+                var adder = (IItem)RealmConfiguration.Entities[entityRemoved.Id].Clone();  
                 character.Inventory.PutItem(adder);
             }
             return impact;
