@@ -23,18 +23,9 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public ILandscapeManager2D LandscapeManager { get; set; }
 
-        //Create a dictionnary that will be used to Clone existing entities
-        private Dictionary<ushort, Entity> _concreteEntities;
-
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
             LandscapeManager = landscapeManager;
-            _concreteEntities = new Dictionary<ushort, Entity>();
-
-            foreach (Entity entity in RealmConfiguration.Entities)
-            {
-                _concreteEntities.Add(entity.ConcreteId, entity);
-            }
         }
 
         /// <summary>
@@ -118,13 +109,15 @@ namespace Utopia.Shared.Entities
         public Entity CreateFromConcreteId(ushort concreteId)
         {
             Entity entity = null;
-            if (_concreteEntities.TryGetValue(concreteId, out entity) == false)
+            if (RealmConfiguration.ConcreteEntities.TryGetValue(concreteId, out entity) == false)
             {
                 throw new ArgumentOutOfRangeException("concreteId");
             }
 
             //Create a clone of this entity.
             entity = (Entity)entity.Clone();
+
+            InjectFields(entity);
 
             // allow post produce prepare
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
@@ -142,7 +135,7 @@ namespace Utopia.Shared.Entities
             {
                 var item = entity as IWorldIntercatingEntity;
                 item.LandscapeManager = LandscapeManager;
-                item.Factory = this;
+                item.entityFactory = this;
             }
         }
 

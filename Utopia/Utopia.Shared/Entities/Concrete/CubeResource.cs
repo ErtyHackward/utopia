@@ -20,7 +20,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
-        public EntityFactory Factory { get; set; }
+        public EntityFactory entityFactory { get; set; }
 
         public byte CubeId { get; set; }
     
@@ -125,7 +125,7 @@ namespace Utopia.Shared.Entities.Concrete
                                 if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                                 {
                                     //Insert in the inventory the entity that will be removed !
-                                    var adder = (IItem)Factory.CreateFromConcreteId(chunkEntity.ConcreteId);
+                                    var adder = (IItem)entityFactory.CreateFromConcreteId(chunkEntity.ConcreteId);
                                     character.Inventory.PutItem(adder);
                                 }
                             }
@@ -139,7 +139,6 @@ namespace Utopia.Shared.Entities.Concrete
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = RealmConfiguration.CubeId.Air });
                         
                         //Add the removed cube into the inventory
-
                         impact.Success = true;
 
                         return impact;
@@ -178,7 +177,7 @@ namespace Utopia.Shared.Entities.Concrete
             if (character != null && entityRemoved != null)
             {
                 //Create a new entity of the same clicked one and place it into the inventory
-                var adder = (IItem)RealmConfiguration.Entities[entityRemoved.ConcreteId].Clone();  
+                var adder = (IItem)entityFactory.CreateFromConcreteId(entityRemoved.ConcreteId);  
                 character.Inventory.PutItem(adder);
             }
             return impact;

@@ -31,7 +31,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public virtual string StackType
         {
-            get { return GetType().Name; }            
+            get { return ConcreteId.ToString(); }            
         }
 
         /// <summary>

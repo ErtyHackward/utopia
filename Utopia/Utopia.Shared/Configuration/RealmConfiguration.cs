@@ -79,6 +79,11 @@ namespace Utopia.Shared.Configuration
         }
 
         /// <summary>
+        /// Keep a list of the entities lookable by ConcreteId
+        /// </summary>
+        [Browsable(false)]
+        public static Dictionary<ushort, Entity> ConcreteEntities { get; set; }
+        /// <summary>
         /// Holds Cube Profiles configuration
         /// </summary>
         [Browsable(false)]
@@ -119,6 +124,7 @@ namespace Utopia.Shared.Configuration
 
             _factory = factory;
             Entities = new List<IEntity>();
+            ConcreteEntities = new Dictionary<ushort, Entity>();
             CubeProfiles = new List<CubeProfile>();
             Biomes = new List<Biome>();
             UtopiaProcessorParam = new UtopiaProcessorParams();
@@ -186,10 +192,13 @@ namespace Utopia.Shared.Configuration
             WorldProcessor = (WorldProcessors)reader.ReadByte();
 
             Entities.Clear();
+            ConcreteEntities.Clear();
             int countEntity = reader.ReadInt32();
             for (var i = 0; i < countEntity; i++)
             {
-                Entities.Add(_factory.CreateFromBytes(reader));
+                Entity entity = _factory.CreateFromBytes(reader);
+                Entities.Add(entity);
+                ConcreteEntities.Add(entity.ConcreteId, entity);
             }
 
             CubeProfiles.Clear();

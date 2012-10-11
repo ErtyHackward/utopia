@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
-using S33M3Resources.Structs;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks
