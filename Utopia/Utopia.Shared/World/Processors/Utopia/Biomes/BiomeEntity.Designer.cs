@@ -20,12 +20,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.Entities.First(x => x.Id == EntityId).Name;
+                return RealmConfiguration.Entities.First(x => x.ConcreteId == EntityId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                EntityId = RealmConfiguration.Entities.First(x => x.Name == value).Id;
+                EntityId = RealmConfiguration.Entities.First(x => x.Name == value).ConcreteId;
             }
         }
         #endregion

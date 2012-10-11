@@ -74,7 +74,7 @@ namespace Utopia.Shared.Entities
         /// Gets or sets Entity ID
         /// </summary>
         [Browsable(false)]
-        public ushort Id { get; set; }
+        public ushort ConcreteId { get; set; }
 
         /// <summary>
         /// Loads current entity from a binaryReader
@@ -86,7 +86,7 @@ namespace Utopia.Shared.Entities
             // we no need to read class id because it is read by entity factory
             // to find the final type of the class
 
-            Id = reader.ReadUInt16();
+            ConcreteId = reader.ReadUInt16();
 
             Type = (EntityType)reader.ReadByte();
 
@@ -108,7 +108,7 @@ namespace Utopia.Shared.Entities
         {
             writer.Write(ClassId);
 
-            writer.Write(Id);
+            writer.Write(ConcreteId);
             writer.Write((byte)Type);
 
             writer.Write(DefaultSize);

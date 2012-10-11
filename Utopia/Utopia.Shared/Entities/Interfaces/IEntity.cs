@@ -29,7 +29,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Gets entity id
         /// </summary>
-        ushort Id { get; set; }
+        ushort ConcreteId { get; set; }
 
         /// <summary>
         /// Entity size
