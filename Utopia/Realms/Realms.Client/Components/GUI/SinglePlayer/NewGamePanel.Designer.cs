@@ -164,10 +164,8 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             if (_configurationsFiles.SelectedItem.ToString() == "Default Configuration")
             {
                 //Create new default RealmConfiguration
-                config = new RealmConfiguration(null, true);
-                config.Author = "Default Utopia";
-                config.ConfigurationName = "Default";
-                config.CreatedAt = DateTime.Now;
+                var path = Directory.GetFiles("Config", "Default.realm")[0];
+                config = RealmConfiguration.LoadFromFile(path);
             }
             else
             {

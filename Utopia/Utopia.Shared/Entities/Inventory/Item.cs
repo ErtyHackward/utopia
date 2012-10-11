@@ -62,6 +62,7 @@ namespace Utopia.Shared.Entities.Inventory
         public Item()
         {
             AllowedSlots = EquipmentSlotType.Hand;
+            MaxStackSize = 1;
         }
 
         // we need to override save and load!

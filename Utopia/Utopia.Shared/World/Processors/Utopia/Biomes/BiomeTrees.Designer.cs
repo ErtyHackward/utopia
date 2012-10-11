@@ -4,11 +4,12 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using S33M3Resources.Structs;
 using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public partial class BiomeTrees : IBinaryStorable
+    public partial class BiomeTrees
     {
         #region Private Variables
         #endregion
@@ -19,12 +20,21 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Public Methods
         public void Save(System.IO.BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(_small);
+            writer.Write(_medium);
+            writer.Write(_big);
+            writer.Write(_cactus);
+            writer.Write(TreePerChunks.Min);
+            writer.Write(TreePerChunks.Max);
         }
 
         public void Load(System.IO.BinaryReader reader)
         {
-            throw new NotImplementedException();
+            _small = reader.ReadInt32();
+            _medium = reader.ReadInt32();
+            _big = reader.ReadInt32();
+            _cactus = reader.ReadInt32();
+            TreePerChunks = new RangeI(reader.ReadInt32(), reader.ReadInt32());
         }
         #endregion
 

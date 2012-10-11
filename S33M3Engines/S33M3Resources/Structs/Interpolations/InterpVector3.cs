@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 
-namespace S33M3_Resources.Structs.Interpolations
+namespace S33M3Resources.Structs.Interpolations
 {
     public class InterpVector3 : InterpBase<Vector3>
     {

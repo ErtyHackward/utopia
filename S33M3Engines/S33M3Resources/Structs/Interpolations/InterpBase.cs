@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace S33M3_Resources.Structs.Interpolations
+namespace S33M3Resources.Structs.Interpolations
 {
     public abstract class InterpBase<T> : IInterpolable
     {

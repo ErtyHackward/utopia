@@ -264,7 +264,6 @@
     <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
     <Compile Include="Settings\CubeProfile.cs" />
-    <Compile Include="Settings\GameSystemSettings.cs" />
     <Compile Include="Settings\LocalWorlds.cs" />
     <Compile Include="Settings\ParamRow.cs" />
     <Compile Include="Settings\ParamValue.cs" />
@@ -307,11 +306,17 @@
       <DependentUpon>Biome.cs</DependentUpon>
     </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeEntity.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeEntity.Designer.cs">
+      <DependentUpon>BiomeEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.Designer.cs">
       <DependentUpon>BiomeTrees.cs</DependentUpon>
     </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\Cavern.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\Cavern.Designer.cs">
+      <DependentUpon>Cavern.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\CubeVein.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\Biome.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeType.cs" />

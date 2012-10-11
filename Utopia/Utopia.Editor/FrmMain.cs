@@ -46,8 +46,9 @@ namespace Utopia.Editor
                     tvMainCategories.Enabled = false;
                 }
 
+                _utopiaConfig.Configuration = _configuration;
+
                 UpdateList();
-                RefreshEntitiesIcons();
             }
         }
         #endregion
@@ -205,7 +206,6 @@ namespace Utopia.Editor
 
             //Clear all the Biomes node items
             _utopiaConfig.tvBiomeList.Nodes.Clear();
-            _utopiaConfig.tvBiomeList.Nodes.Clear();
             
             for (var i = 0; i < _configuration.RealmBiomes.Count; i++)
             {
@@ -215,6 +215,7 @@ namespace Utopia.Editor
                 _utopiaConfig.tvBiomeList.Nodes.Add(item);
             }
 
+            RefreshEntitiesIcons();
         }
 
         private void Save(string filePath)
@@ -285,6 +286,7 @@ namespace Utopia.Editor
         //Called when the ADD button is cliques on a Main Category treeview
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (tvMainCategories.SelectedNode == null) return;
             switch (tvMainCategories.SelectedNode.Name)
             {
                 case "Entities":
