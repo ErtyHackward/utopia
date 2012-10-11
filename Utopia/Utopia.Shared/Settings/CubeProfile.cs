@@ -105,6 +105,7 @@ namespace Utopia.Shared.Settings
             writer.Write(YBlockOffset);
             writer.Write((byte)CubeFamilly);
             writer.Write(SideOffsetMultiplier);
+            writer.Write(IsEmissiveColorLightSource);
             writer.Write(EmissiveColor.R);
             writer.Write(EmissiveColor.G);
             writer.Write(EmissiveColor.B);
@@ -139,6 +140,7 @@ namespace Utopia.Shared.Settings
             YBlockOffset = reader.ReadDouble();
             CubeFamilly = (enuCubeFamilly)reader.ReadByte();
             SideOffsetMultiplier = reader.ReadByte();
+            IsEmissiveColorLightSource = reader.ReadBoolean();
             EmissiveColor = new ByteColor();
             EmissiveColor.R = reader.ReadByte();
             EmissiveColor.G = reader.ReadByte();

@@ -52,14 +52,14 @@ namespace S33M3DXEngine.Threading
                     coreCount += int.Parse(item["NumberOfCores"].ToString());
                 }
 
-                _totThread = 1 + coreCount + ThreadAllocatedModifier; //Remove the one use by the application itself
+                _totThread = coreCount + ThreadAllocatedModifier; //Remove the one use by the application itself
             }
             else
             {
                 _totThread = ThreadAllocatedModifier;
             }
 
-            if (_totThread < 1) _totThread = 2;
+            if (_totThread < 1) _totThread = 1;
             CreateTaskScheduler();
             return _totThread;
         }

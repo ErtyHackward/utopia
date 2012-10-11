@@ -154,18 +154,25 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-                    //Get Rnd chunk Location.
-                    int x = rnd.Next(0, 16);
-                    int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
-                    int z = rnd.Next(0, 16);
 
-                    if (vein.CubeProfile.CubeFamilly == Enums.enuCubeFamilly.Liquid)
+                    if (vein.CubeProfile.Id != RealmConfiguration.CubeId.DynamicLava &&
+                        vein.CubeProfile.Id != RealmConfiguration.CubeId.DynamicWater)
                     {
+                        //Get Rnd chunk Location.
+                        int x = rnd.Next(0, 16);
+                        int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
+                        int z = rnd.Next(0, 16);
+
                         PopulateChunkWithResource(vein.CubeId, cursor, x, y, z, vein.VeinSize, rnd);
                     }
                     else
                     {
-                        //PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                        //Get Rnd chunk Location.
+                        int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
+                        int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
+                        int z = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
+
+                        PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
                     }
                 }
             }
