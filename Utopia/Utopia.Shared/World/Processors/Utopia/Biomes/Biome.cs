@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Structs;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Chunks;
@@ -19,7 +19,7 @@ using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public partial class Biome
+    public partial class Biome : IBinaryStorable
     {
         #region Satic
         public static byte GetBiome(double landFormType, double temperature, double moisture)
@@ -511,7 +511,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             CubeProfile blockBelowProfile = GameSystemSettings.Current.Settings.CubesProfile[blockBelow];
             if (blockBelowProfile.IsSolidToEntity)
             {
-                var entity = entityFactory.CreateEntity(entityId);
+                //Cloning the Entity Blue Print !
+                var entity = (IEntity)RealmConfiguration.Entities[entityId].Clone();
+
                 if (entity is IBlockLinkedEntity)
                 {
                     Vector3I linkedCubePosition = new Vector3I(chunkWorldPosition.X + x, y, chunkWorldPosition.Z + z);

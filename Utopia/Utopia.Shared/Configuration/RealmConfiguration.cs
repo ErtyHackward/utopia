@@ -10,7 +10,7 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using System.Linq;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.Entities.Concrete.Collectible;
 
@@ -205,9 +205,9 @@ namespace Utopia.Shared.Configuration
             var countBiomes = reader.ReadInt32();
             for (var i = 0; i < countBiomes; i++)
             {
-                Biome bio = new Biome();
-                bio.Load(reader);
-                Biomes.Add(bio);
+                Biome biome = new Biome();
+                biome.Load(reader);
+                Biomes.Add(biome);
             }
 
             UtopiaProcessorParam.Load(reader);
@@ -281,9 +281,30 @@ namespace Utopia.Shared.Configuration
             return instance;
         }
 
-        public object CreateNewBiome()
+        public Biome CreateNewBiome()
         {
-            return null;
+            Biome newBiome = new Biome()
+            {
+                Name = "Default",
+                SurfaceCube = RealmConfiguration.CubeId.Grass,
+                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
+                GroundCube = RealmConfiguration.CubeId.Stone,
+                CubeVeins = new List<CubeVein>()
+                {
+                    new CubeVein(){ Name = "Sand Vein", CubeId = RealmConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "Rock Vein",CubeId = RealmConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
+                    new CubeVein(){ Name = "Dirt Vein",CubeId = RealmConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
+                    new CubeVein(){ Name = "Gravel Vein",CubeId = RealmConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "GoldOre Vein",CubeId = RealmConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
+                    new CubeVein(){ Name = "CoalOre Vein",CubeId = RealmConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
+                    new CubeVein(){ Name = "MoonStone Vein",CubeId = RealmConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
+                    new CubeVein(){ Name = "DynamicWater",CubeId = RealmConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = RealmConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                }
+            };
+
+            Biomes.Add(newBiome);
+            return newBiome;
         }
 
         #endregion
@@ -856,6 +877,7 @@ namespace Utopia.Shared.Configuration
            cactusFlower.MountPoint = BlockFace.Top;
            cactusFlower.ModelName = "Flower4";
            cactusFlower.isSystemEntity = true;      // Cannot de removed, mandatory Entity
+           cactusFlower.MaxStackSize = 99;
         }
 
         //Definition of default biomes
@@ -867,54 +889,20 @@ namespace Utopia.Shared.Configuration
                 Name = "Default",
                 SurfaceCube = RealmConfiguration.CubeId.Grass,
                 UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-                GroundCube = RealmConfiguration.CubeId.Stone
+                GroundCube = RealmConfiguration.CubeId.Stone,
+                CubeVeins = new List<CubeVein>()
+                {
+                    new CubeVein(){ Name = "Sand Vein", CubeId = RealmConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "Rock Vein",CubeId = RealmConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
+                    new CubeVein(){ Name = "Dirt Vein",CubeId = RealmConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
+                    new CubeVein(){ Name = "Gravel Vein",CubeId = RealmConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "GoldOre Vein",CubeId = RealmConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
+                    new CubeVein(){ Name = "CoalOre Vein",CubeId = RealmConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
+                    new CubeVein(){ Name = "MoonStone Vein",CubeId = RealmConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
+                    new CubeVein(){ Name = "DynamicWater",CubeId = RealmConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = RealmConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                }
             });
-
-            ////Forest Biome Definition
-            //Biomes.Add(new Biome()
-            //{
-            //    Name = "Forest",
-            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
-            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-            //    GroundCube = RealmConfiguration.CubeId.Stone
-            //});
-
-            ////GrassLand Biome Definition
-            //Biomes.Add(new Biome()
-            //{
-            //    Name = "GrassLand",
-            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
-            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-            //    GroundCube = RealmConfiguration.CubeId.Stone
-            //});
-
-            ////Montains Biome Definition
-            //Biomes.Add(new Biome()
-            //{
-            //    Name = "Montains",
-            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
-            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-            //    GroundCube = RealmConfiguration.CubeId.Stone,
-            //    UnderSurfaceLayers = new RangeI(1, 2)
-            //});
-
-            ////Ocean Biome Definition
-            //Biomes.Add(new Biome()
-            //{
-            //    Name = "Ocean",
-            //    SurfaceCube = RealmConfiguration.CubeId.Sand,
-            //    UnderSurfaceCube = RealmConfiguration.CubeId.Sand,
-            //    GroundCube = RealmConfiguration.CubeId.Stone
-            //});
-
-            ////Plain Biome Definition
-            //Biomes.Add(new Biome()
-            //{
-            //    Name = "Plain",
-            //    SurfaceCube = RealmConfiguration.CubeId.Grass,
-            //    UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-            //    GroundCube = RealmConfiguration.CubeId.Stone
-            //});
         }
 
         //Definition of all default Utopia processor params

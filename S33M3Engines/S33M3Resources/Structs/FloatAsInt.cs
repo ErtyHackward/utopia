@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace S33M3_Resources.Structs
+namespace S33M3Resources.Structs
 {
     /// <summary>
     /// Will help doing float comparison with more reliability than normal Float

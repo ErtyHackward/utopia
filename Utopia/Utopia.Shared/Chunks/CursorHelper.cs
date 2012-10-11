@@ -1,5 +1,6 @@
 using System;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 
@@ -13,7 +14,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public static bool IsSolid(this ILandscapeCursor cursor)
         {
-            return GameSystemSettings.Current.Settings.CubesProfile[cursor.Read()].IsSolidToEntity;
+            return RealmConfiguration.CubeProfiles[cursor.Read()].IsSolidToEntity;
         }
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace Utopia.Shared.Chunks
 
             var value = operation.Item2.IsZero() ? operation.Item1.Read() : operation.Item1.PeekValue(operation.Item2);
 
-            return GameSystemSettings.Current.Settings.CubesProfile[value].IsSolidToEntity;
+            return RealmConfiguration.CubeProfiles[value].IsSolidToEntity;
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace Utopia.Shared.Chunks
 
             var value = operation.Item2.IsZero() ? operation.Item1.Read() : operation.Item1.PeekValue(operation.Item2);
 
-            return !GameSystemSettings.Current.Settings.CubesProfile[value].IsSolidToEntity;
+            return !RealmConfiguration.CubeProfiles[value].IsSolidToEntity;
         }
 
         /// <summary>

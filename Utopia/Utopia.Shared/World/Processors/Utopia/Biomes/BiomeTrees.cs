@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using S33M3_Resources.Structs;
+using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     [TypeConverter(typeof(BiomeTreesTypeConverter))]
-    public partial class BiomeTrees
+    public partial class BiomeTrees : IBinaryStorable
     {
         #region Private Variables
         private int _small;

@@ -8,7 +8,7 @@ using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public partial class CubeVein
+    public partial class Cavern
     {
         #region Private Variables
         #endregion
@@ -36,10 +36,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             writer.Write(CubeId);
             writer.Write(Name);
-            writer.Write(VeinSize);
+            writer.Write(CavernHeightSize.Min);
+            writer.Write(CavernHeightSize.Max);
             writer.Write(SpawningHeight.Min);
             writer.Write(SpawningHeight.Max);
-            writer.Write(VeinPerChunk);
+            writer.Write(CavernPerChunk);
             writer.Write(ChanceOfSpawning);
         }
 
@@ -47,9 +48,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             CubeId = reader.ReadByte();
             Name = reader.ReadString();
-            VeinSize = reader.ReadInt32();
+            CavernHeightSize = new RangeB(reader.ReadByte(), reader.ReadByte());
             SpawningHeight = new RangeB(reader.ReadByte(), reader.ReadByte());
-            VeinPerChunk = reader.ReadInt32();
+            CavernPerChunk = reader.ReadInt32();
             ChanceOfSpawning = reader.ReadDouble();
         }
         #endregion
@@ -57,7 +58,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Methods
         #endregion
 
-        public class CubeConverter : StringConverter
+
+        internal class CubeConverter : StringConverter
         {
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
@@ -77,5 +79,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
             }
         }
+
     }
 }

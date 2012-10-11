@@ -28,11 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.tabUtopiaProcessor = new System.Windows.Forms.TabControl();
             this.BiomesPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tvBiomeList = new System.Windows.Forms.TreeView();
+            this.contextMenuUtopia = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pgBiomes = new System.Windows.Forms.PropertyGrid();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -60,6 +64,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.contextMenuUtopia.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -101,7 +106,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -111,26 +116,50 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgBiomes);
-            this.splitContainer1.Size = new System.Drawing.Size(634, 375);
+            this.splitContainer1.Size = new System.Drawing.Size(634, 578);
             this.splitContainer1.SplitterDistance = 183;
             this.splitContainer1.TabIndex = 0;
             // 
             // tvBiomeList
             // 
+            this.tvBiomeList.ContextMenuStrip = this.contextMenuUtopia;
             this.tvBiomeList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvBiomeList.Location = new System.Drawing.Point(0, 0);
             this.tvBiomeList.Name = "tvBiomeList";
-            this.tvBiomeList.Size = new System.Drawing.Size(183, 375);
+            this.tvBiomeList.Size = new System.Drawing.Size(183, 578);
             this.tvBiomeList.TabIndex = 0;
             this.tvBiomeList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvBiomeList_AfterSelect);
+            // 
+            // contextMenuUtopia
+            // 
+            this.contextMenuUtopia.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem,
+            this.removeToolStripMenuItem});
+            this.contextMenuUtopia.Name = "contextMenuStrip1";
+            this.contextMenuUtopia.Size = new System.Drawing.Size(118, 48);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
+            // 
+            // removeToolStripMenuItem
+            // 
+            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.removeToolStripMenuItem.Text = "Remove";
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
             // 
             // pgBiomes
             // 
             this.pgBiomes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgBiomes.Location = new System.Drawing.Point(0, 0);
             this.pgBiomes.Name = "pgBiomes";
-            this.pgBiomes.Size = new System.Drawing.Size(447, 375);
+            this.pgBiomes.Size = new System.Drawing.Size(447, 578);
             this.pgBiomes.TabIndex = 0;
+            this.pgBiomes.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgBiomes_PropertyValueChanged);
             // 
             // tabPage2
             // 
@@ -355,6 +384,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.contextMenuUtopia.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -395,6 +425,9 @@
         public System.Windows.Forms.TreeView tvBiomeList;
         public System.Windows.Forms.SplitContainer splitContainer1;
         public System.Windows.Forms.PropertyGrid pgBiomes;
+        private System.Windows.Forms.ContextMenuStrip contextMenuUtopia;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
 
     }
 }

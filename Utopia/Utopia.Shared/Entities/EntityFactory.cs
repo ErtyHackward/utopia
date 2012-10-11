@@ -67,7 +67,6 @@ namespace Utopia.Shared.Entities
         public Entity CreateEntity(ushort classId)
         {
             // todo: implement this method correctly, create appropriate class here
-
             var entity = CreateCustomEntity(classId); // External implementation of the entity creation.
 
             if (entity == null)

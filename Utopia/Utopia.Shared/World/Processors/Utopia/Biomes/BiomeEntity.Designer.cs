@@ -3,30 +3,29 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public partial class CubeVein
+    public partial class BiomeEntity
     {
         #region Private Variables
         #endregion
 
         #region Public Properties
         [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Cube")]
-        public string CubeName
+        [DisplayName("Entity")]
+        public string EntityName
         {
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == CubeId).Name;
+                return RealmConfiguration.Entities.First(x => x.Id == EntityId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                CubeId = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+                EntityId = RealmConfiguration.Entities.First(x => x.Name == value).Id;
             }
         }
         #endregion
@@ -34,22 +33,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Public Methods
         public void Save(System.IO.BinaryWriter writer)
         {
-            writer.Write(CubeId);
-            writer.Write(Name);
-            writer.Write(VeinSize);
-            writer.Write(SpawningHeight.Min);
-            writer.Write(SpawningHeight.Max);
-            writer.Write(VeinPerChunk);
+            writer.Write(EntityId);
+            writer.Write(EntityPerChunk);
             writer.Write(ChanceOfSpawning);
         }
 
         public void Load(System.IO.BinaryReader reader)
         {
-            CubeId = reader.ReadByte();
-            Name = reader.ReadString();
-            VeinSize = reader.ReadInt32();
-            SpawningHeight = new RangeB(reader.ReadByte(), reader.ReadByte());
-            VeinPerChunk = reader.ReadInt32();
+            EntityId = reader.ReadUInt16();
+            EntityPerChunk = reader.ReadInt32();
             ChanceOfSpawning = reader.ReadDouble();
         }
         #endregion
@@ -57,7 +49,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Methods
         #endregion
 
-        public class CubeConverter : StringConverter
+        internal class CubeConverter : StringConverter
         {
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
@@ -74,7 +66,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
+                return new StandardValuesCollection(RealmConfiguration.Entities.Select(x => x.Name).OrderBy(x => x).ToList());
             }
         }
     }

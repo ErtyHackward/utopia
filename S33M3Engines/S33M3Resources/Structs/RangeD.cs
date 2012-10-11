@@ -5,15 +5,16 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace S33M3_Resources.Structs
+namespace S33M3Resources.Structs
 {
     [TypeConverter(typeof(RangeDTypeConverter))]
     public struct RangeD
     {
-        public double Min;
-        public double Max;
+        public double Min { get; set; }
+        public double Max { get; set; }
 
         public RangeD(double min, double max)
+            :this()
         {
             Min = min;
             Max = max;

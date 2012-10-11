@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace S33M3_Resources.Structs
+namespace S33M3Resources.Structs
 {
     [TypeConverter(typeof(RangeITypeConverter))]
     public struct RangeI
