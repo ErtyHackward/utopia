@@ -12,7 +12,6 @@ using SharpDX;
 using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
-using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Chunks

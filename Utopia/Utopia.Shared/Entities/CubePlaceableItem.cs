@@ -26,7 +26,7 @@ namespace Utopia.Shared.Entities
         /// Gets entityFactory, this field is injected
         /// </summary>
         [Browsable(false)]
-        public EntityFactory Factory { get; set; }
+        public EntityFactory entityFactory { get; set; }
 
         [Browsable(false)]
         public Vector3I LinkedCube { get; set; }
@@ -69,7 +69,7 @@ namespace Utopia.Shared.Entities
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
                     //Create a new version of the item, and put it into the world
-                    var cubeEntity = (IItem)RealmConfiguration.Entities[ConcreteId].Clone();
+                    var cubeEntity = (IItem)entityFactory.CreateFromConcreteId(ConcreteId);
 
                     var blockLinked = (IBlockLinkedEntity)cubeEntity;
                     blockLinked.LinkedCube = owner.EntityState.PickedBlockPosition;
