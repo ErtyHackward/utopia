@@ -13,6 +13,7 @@ using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
 using System.Collections.Generic;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -141,7 +142,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             TerraCube newCube = new TerraCube(replacementCubeId);
 
             //Get Cube Profile
-            CubeProfile cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[replacementCubeId];
+            CubeProfile cubeProfile = RealmConfiguration.CubeProfiles[replacementCubeId];
 
             ////Check if the cube is not already the same ? ! ?
             TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
@@ -215,7 +216,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Propagate the light, we add one cube around the previous Range !! <= !!
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
-            CubeProfile profile = GameSystemSettings.Current.Settings.CubesProfile[cube.Cube.Id];
+            CubeProfile profile = RealmConfiguration.CubeProfiles[cube.Cube.Id];
 
             //Find the chunks that have been impacted around the 8 surrounding chunks
             cubeChunk.State = ChunkState.OuterLightSourcesProcessed;

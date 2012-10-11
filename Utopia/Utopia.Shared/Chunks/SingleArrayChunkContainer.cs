@@ -402,7 +402,7 @@ namespace Utopia.Shared.Chunks
             {
                 cube = Cubes[cubeIndex];
                 // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == RealmConfiguration.CubeId.Air) cube = new TerraCube(CubeId.Error);
-                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
+                return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -416,7 +416,7 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
+                return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -432,7 +432,7 @@ namespace Utopia.Shared.Chunks
             if (Index(ref cubePosition, true, out cubeIndex))
             {
                 cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex]);
-                return GameSystemSettings.Current.Settings.CubesProfile[cubewithPosition.Cube.Id].IsPickable;
+                return RealmConfiguration.CubeProfiles[cubewithPosition.Cube.Id].IsPickable;
             }
 
             cubewithPosition = new TerraCubeWithPosition();
@@ -446,7 +446,7 @@ namespace Utopia.Shared.Chunks
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsPickable;
+                return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -459,7 +459,7 @@ namespace Utopia.Shared.Chunks
             int cubeIndex;
             if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
             {
-                return GameSystemSettings.Current.Settings.CubesProfile[Cubes[cubeIndex].Id].IsPickable;
+                return RealmConfiguration.CubeProfiles[Cubes[cubeIndex].Id].IsPickable;
             }
 
             return false;
@@ -471,7 +471,7 @@ namespace Utopia.Shared.Chunks
             if (IndexSafe(MathHelper.Fastfloor(worldPosition.X), MathHelper.Fastfloor(worldPosition.Y), MathHelper.Fastfloor(worldPosition.Z), out index))
             {
                 TerraCube cube = Cubes[index];
-                return GameSystemSettings.Current.Settings.CubesProfile[cube.Id].IsSolidToEntity;
+                return RealmConfiguration.CubeProfiles[cube.Id].IsSolidToEntity;
             }
 
             return true;
@@ -497,7 +497,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            if (GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                            if (RealmConfiguration.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
                             {
                                 return true;
                             }
@@ -531,7 +531,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            profile = GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id];
+                            profile = RealmConfiguration.CubeProfiles[Cubes[index].Id];
                             if (profile.IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
@@ -555,7 +555,7 @@ namespace Utopia.Shared.Chunks
                                     {
                                         //check the head when On a Offseted Block
                                         IndexSafe(x, MathHelper.Fastfloor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
-                                        profile = GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id];
+                                        profile = RealmConfiguration.CubeProfiles[Cubes[index].Id];
                                         if (profile.IsSolidToEntity) return true;
                                     }
                                 }
@@ -585,11 +585,11 @@ namespace Utopia.Shared.Chunks
 
             if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
 
-            while (!GameSystemSettings.Current.Settings.CubesProfile[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
+            while (!RealmConfiguration.CubeProfiles[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
             {
                 if (IndexSafe(X, Y, Z, out index))
                 {
-                    if (GameSystemSettings.Current.Settings.CubesProfile[Cubes[index].Id].IsSolidToEntity)
+                    if (RealmConfiguration.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
                     {
                         cubeWithPosition.Cube = Cubes[index];
                         break;
@@ -671,7 +671,7 @@ namespace Utopia.Shared.Chunks
 
             var cube = Cubes[cubeIndex];
 
-            var offset = GameSystemSettings.Current.Settings.CubesProfile[cube.Id].YBlockOffset;
+            var offset = RealmConfiguration.CubeProfiles[cube.Id].YBlockOffset;
 
             if (offset == 0f || offset > pos.Y % 1)
                 return cube;
@@ -704,7 +704,7 @@ namespace Utopia.Shared.Chunks
 
             var cube = Cubes[cubeIndex];
 
-            var offset = GameSystemSettings.Current.Settings.CubesProfile[cube.Id].YBlockOffset;
+            var offset = RealmConfiguration.CubeProfiles[cube.Id].YBlockOffset;
 
             if (offset == 0f || offset > pos.Y % 1)
                 return cube;

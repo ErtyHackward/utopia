@@ -25,6 +25,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Entities.Dynamic;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Entities.Renderer
 {
@@ -257,7 +258,7 @@ namespace Utopia.Entities.Renderer
         private void PrepareCubeRendering(CubeResource cube)
         {
             //Get the cube profile.
-            var cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.CubeId];
+            var cubeProfile = RealmConfiguration.CubeProfiles[cube.CubeId];
 
             //Prapare to creation a new mesh with the correct texture mapping ID
             var materialChangeMapping = new Dictionary<int, int>();

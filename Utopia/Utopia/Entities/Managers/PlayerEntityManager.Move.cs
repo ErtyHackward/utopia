@@ -236,8 +236,8 @@ namespace Utopia.Entities.Managers
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
                 TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Fastfloor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
 
-                if (GameSystemSettings.Current.Settings.CubesProfile[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
-                   (GameSystemSettings.Current.Settings.CubesProfile[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
+                if (RealmConfiguration.CubeProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
+                   (RealmConfiguration.CubeProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || RealmConfiguration.CubeProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
                 {
                     if (DisplacementMode == EntityDisplacementModes.Walking)
                     {
@@ -257,7 +257,7 @@ namespace Utopia.Entities.Managers
                     {
                         //Check the offset of the water
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
-                        if (Offset >= 1 - GameSystemSettings.Current.Settings.CubesProfile[_headCube.Id].YBlockOffset)
+                        if (Offset >= 1 - RealmConfiguration.CubeProfiles[_headCube.Id].YBlockOffset)
                         {
                             IsHeadInsideWater = false;
                             return;

@@ -35,6 +35,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             _big = reader.ReadInt32();
             _cactus = reader.ReadInt32();
             TreePerChunks = new RangeI(reader.ReadInt32(), reader.ReadInt32());
+
+            RefreshTreeTypeDistribution();
         }
         #endregion
 

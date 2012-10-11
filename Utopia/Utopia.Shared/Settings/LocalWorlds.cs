@@ -12,6 +12,8 @@ namespace Utopia.Shared.Settings
 {
     public static class LocalWorlds
     {
+        public static List<LocalWorlds.LocalWorldsParam> LocalWorldsParams;
+
         public class LocalWorldsParam
         {
             public WorldParameters WorldParameters;

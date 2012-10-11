@@ -43,8 +43,8 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 //Try to delete the Client directory
                 Directory.Delete(info.WorldClientRootPath.FullName, true);
 
-                //Recreate the list of all existing Worlds, as one has been deleted
-                GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
+                //Recreate the list of all existing Worlds, as one as been deleted
+                LocalWorlds.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
 
                 RefreshWorldListAsync();
                 _currentWorldParameter.Clear();
@@ -58,7 +58,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
         private void RefreshWorldList()
         {
-            GameSystemSettings.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
+            LocalWorlds.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);
             NeedShowResults = true;
         }
 
@@ -68,7 +68,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             //Insert the various single world present on the computer
             _savedGameList.Items.Clear();
             _savedGameList.SelectItem = -1;
-            foreach (var worldp in GameSystemSettings.LocalWorldsParams)
+            foreach (var worldp in LocalWorlds.LocalWorldsParams)
             {
                 _savedGameList.Items.Add(worldp);
             }
