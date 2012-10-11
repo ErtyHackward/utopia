@@ -268,7 +268,7 @@ namespace Utopia.Components
                     else
                     {
                         //Play a foot step sound only if the block under feet is solid to entity. (No water, no air, ...)
-                        if (GameSystemSettings.Current.Settings.CubesProfile[cubeUnderFeet.Id].IsSolidToEntity)
+                        if (RealmConfiguration.CubeProfiles[cubeUnderFeet.Id].IsSolidToEntity)
                         {
                             List<string> sounds;
                             if (_stepsSounds.TryGetValue(cubeUnderFeet.Id, out sounds))

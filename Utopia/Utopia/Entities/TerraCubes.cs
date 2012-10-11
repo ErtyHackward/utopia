@@ -70,7 +70,7 @@ namespace Utopia.Entities
                 CubePack pack;
 
                 //Get the cube profile.
-                var cubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cubeId];
+                var cubeProfile = RealmConfiguration.CubeProfiles[cubeId];
 
                 //Prapare to creation of a new mesh with the correct texture mapping ID
                 var materialChangeMapping = new Dictionary<int, int>();

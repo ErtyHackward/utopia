@@ -5,6 +5,7 @@ using System.Text;
 using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Structs.Landscape
 {
@@ -19,7 +20,7 @@ namespace Utopia.Shared.Structs.Landscape
 
         public TerraCubePositionTag(Vector3I pos, TerraCube cube, BlockTag tag)
         {
-            CubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cube.Id];
+            CubeProfile = RealmConfiguration.CubeProfiles[cube.Id];
             Position = pos;
             Cube = cube;
             Tag = tag;
@@ -27,7 +28,7 @@ namespace Utopia.Shared.Structs.Landscape
 
         public TerraCubePositionTag(Vector3I pos, byte cubeId, BlockTag tag)
         {
-            CubeProfile = GameSystemSettings.Current.Settings.CubesProfile[cubeId];
+            CubeProfile = RealmConfiguration.CubeProfiles[cubeId];
             Position = pos;
             Cube = new TerraCube(cubeId);
             Tag = tag;

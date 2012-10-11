@@ -6,6 +6,7 @@ using S33M3Resources.Structs;
 using S33M3DXEngine.Main;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Entities.Managers
 {
@@ -73,7 +74,7 @@ namespace Utopia.Entities.Managers
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualVoxelEntity.WorldBBox, ref GroundDirection, out _groundCube);
             //Half cube below me ??
-            _groundCubeProgile = GameSystemSettings.Current.Settings.CubesProfile[_groundCube.Cube.Id];
+            _groundCubeProgile = RealmConfiguration.CubeProfiles[_groundCube.Cube.Id];
             BlockOffset = _groundCubeProgile.YBlockOffset;
             _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
             PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;

@@ -62,10 +62,10 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             _savedGameList.SelectionMode = ListSelectionMode.Single;
             _savedGameList.SelectionChanged += _savedGameList_SelectionChanged;
 
-            if (GameSystemSettings.LocalWorldsParams != null)
+            if (LocalWorlds.LocalWorldsParams != null)
             {
                 //Insert the various single world present on the computer
-                foreach (LocalWorlds.LocalWorldsParam worldp in GameSystemSettings.LocalWorldsParams)
+                foreach (LocalWorlds.LocalWorldsParam worldp in LocalWorlds.LocalWorldsParams)
                 {
                     _savedGameList.Items.Add(worldp);
                 }

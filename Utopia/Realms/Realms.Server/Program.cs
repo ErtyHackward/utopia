@@ -71,9 +71,6 @@ namespace Realms.Server
 
             _iocContainer = new StandardKernel(new NinjectSettings());
 
-            GameSystemSettings.Current = new XmlSettingsManager<GameSystemSetting>(@"GameSystemSettings.xml", SettingsStorage.CustomPath, @"Config\");
-            GameSystemSettings.Current.Load();
-
             System.Net.ServicePointManager.Expect100Continue = false;
 
             var serverFactory = new EntityFactory(null);

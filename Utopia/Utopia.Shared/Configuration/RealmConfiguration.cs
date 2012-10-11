@@ -223,6 +223,7 @@ namespace Utopia.Shared.Configuration
                 var reader = new BinaryReader(fs);
                 configuration.Load(reader);
             }
+
             return configuration;
         }
         #endregion
@@ -405,33 +406,12 @@ namespace Utopia.Shared.Configuration
                 BiomeColorArrayTexture = 0
             });
 
-            ////WoodPlank Block
-            //CubeProfiles.Add(new CubeProfile()
-            //{
-            //    Name = "WoodPlank",
-            //    Description = "A cube",
-            //    Id = 4,
-            //    Tex_Top = 4,
-            //    Tex_Bottom = 4,
-            //    Tex_Back = 4,
-            //    Tex_Front = 4,
-            //    Tex_Left = 4,
-            //    Tex_Right = 4,
-            //    IsBlockingLight = true,
-            //    IsPickable = true,
-            //    IsSolidToEntity = true,
-            //    IsBlockingWater = true,
-            //    CubeFamilly = Enums.enuCubeFamilly.Solid,
-            //    Friction = 0.25f,
-            //    CanBeModified = true
-            //});
-
             //StillWater Block
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "StillWater",
                 Description = "A cube",
-                Id = 5,
+                Id = 4,
                 Tex_Top = 5,
                 Tex_Bottom = 5,
                 Tex_Back = 5,
@@ -451,7 +431,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "DynamicWater",
                 Description = "A cube",
-                Id = 6,
+                Id = 5,
                 Tex_Top = 5,
                 Tex_Bottom = 5,
                 Tex_Back = 5,
@@ -472,7 +452,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "LightWhite",
                 Description = "A cube",
-                Id = 7,
+                Id = 6,
                 Tex_Top = 1,
                 Tex_Bottom = 1,
                 Tex_Back = 1,
@@ -498,7 +478,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "Rock",
                 Description = "A cube",
-                Id = 8,
+                Id = 7,
                 Tex_Top = 6,
                 Tex_Bottom = 6,
                 Tex_Back = 6,
@@ -520,7 +500,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "Sand",
                 Description = "A cube",
-                Id = 9,
+                Id = 8,
                 Tex_Top = 7,
                 Tex_Bottom = 7,
                 Tex_Back = 7,
@@ -541,7 +521,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "Gravel",
                 Description = "A cube",
-                Id = 10,
+                Id = 9,
                 Tex_Top = 8,
                 Tex_Bottom = 8,
                 Tex_Back = 8,
@@ -562,7 +542,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "Trunk",
                 Description = "A cube",
-                Id = 11,
+                Id = 10,
                 Tex_Top = 10,
                 Tex_Bottom = 10,
                 Tex_Back = 9,
@@ -583,7 +563,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "GoldOre",
                 Description = "A cube",
-                Id = 12,
+                Id = 11,
                 Tex_Top = 11,
                 Tex_Bottom = 11,
                 Tex_Back = 11,
@@ -604,7 +584,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "CoalOre",
                 Description = "A cube",
-                Id = 13,
+                Id = 12,
                 Tex_Top = 12,
                 Tex_Bottom = 12,
                 Tex_Back = 12,
@@ -625,7 +605,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "MoonStone",
                 Description = "A cube",
-                Id = 14,
+                Id = 13,
                 Tex_Top = 13,
                 Tex_Bottom = 13,
                 Tex_Back = 13,
@@ -646,33 +626,12 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorB = 255
             });
 
-            ////Brick Block
-            //CubeProfiles.Add(new CubeProfile()
-            //{
-            //    Name = "Brick",
-            //    Description = "A cube",
-            //    Id = 15,
-            //    Tex_Top = 14,
-            //    Tex_Bottom = 14,
-            //    Tex_Back = 14,
-            //    Tex_Front = 14,
-            //    Tex_Left = 14,
-            //    Tex_Right = 14,
-            //    IsBlockingLight = true,
-            //    IsPickable = true,
-            //    IsSolidToEntity = true,
-            //    IsBlockingWater = true,
-            //    CubeFamilly = Enums.enuCubeFamilly.Solid,
-            //    Friction = 0.25f,
-            //    CanBeModified = true,
-            //});
-
             //Foliage Block
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Foliage",
                 Description = "A cube",
-                Id = 16,
+                Id = 14,
                 Tex_Top = 15,
                 Tex_Bottom = 15,
                 Tex_Back = 15,
@@ -690,33 +649,12 @@ namespace Utopia.Shared.Configuration
                 BiomeColorArrayTexture = 1
             });
 
-            ////Glass Block
-            //CubeProfiles.Add(new CubeProfile()
-            //{
-            //    Name = "Glass",
-            //    Description = "A cube",
-            //    Id = 17,
-            //    Tex_Top = 16,
-            //    Tex_Bottom = 16,
-            //    Tex_Back = 16,
-            //    Tex_Front = 16,
-            //    Tex_Left = 16,
-            //    Tex_Right = 16,
-            //    IsBlockingLight = true,
-            //    IsPickable = true,
-            //    IsSolidToEntity = true,
-            //    IsBlockingWater = true,
-            //    CubeFamilly = Enums.enuCubeFamilly.Solid,
-            //    Friction = 0.25f,
-            //    CanBeModified = true
-            //});
-
             //Snow Block
             CubeProfiles.Add(new CubeProfile()
             {
                 Name = "Snow",
                 Description = "A cube",
-                Id = 18,
+                Id = 15,
                 Tex_Top = 17,
                 Tex_Bottom = 17,
                 Tex_Back = 17,
@@ -737,7 +675,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "Ice",
                 Description = "A cube",
-                Id = 19,
+                Id = 16,
                 Tex_Top = 18,
                 Tex_Bottom = 18,
                 Tex_Back = 18,
@@ -759,7 +697,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "StillLava",
                 Description = "A cube",
-                Id = 20,
+                Id = 17,
                 Tex_Top = 19,
                 Tex_Bottom = 19,
                 Tex_Back = 19,
@@ -786,7 +724,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "DynamicLava",
                 Description = "A cube",
-                Id = 21,
+                Id = 18,
                 Tex_Top = 19,
                 Tex_Bottom = 19,
                 Tex_Back = 19,
@@ -815,7 +753,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "Cactus",
                 Description = "A cube",
-                Id = 22,
+                Id = 19,
                 Tex_Top = 22,
                 Tex_Bottom = 22,
                 Tex_Back = 20,
@@ -838,7 +776,7 @@ namespace Utopia.Shared.Configuration
             {
                 Name = "CactusTop",
                 Description = "A cube",
-                Id = 23,
+                Id = 20,
                 Tex_Top = 21,
                 Tex_Bottom = 22,
                 Tex_Back = 20,
@@ -921,23 +859,23 @@ namespace Utopia.Shared.Configuration
             public const byte Stone = 1;
             public const byte Dirt = 2;
             public const byte Grass = 3;
-            public const byte StillWater = 5;
-            public const byte DynamicWater = 6;
-            public const byte LightWhite = 7;
-            public const byte Rock = 8;
-            public const byte Sand = 9;
-            public const byte Gravel = 10;
-            public const byte Trunk = 11;
-            public const byte GoldOre = 12;
-            public const byte CoalOre = 13;
-            public const byte MoonStone = 14;
-            public const byte Foliage = 16;
-            public const byte Snow = 18;
-            public const byte Ice = 19;
-            public const byte StillLava = 20;
-            public const byte DynamicLava = 21;
-            public const byte Cactus = 22;
-            public const byte CactusTop = 23;
+            public const byte StillWater = 4;
+            public const byte DynamicWater = 5;
+            public const byte LightWhite = 6;
+            public const byte Rock = 7;
+            public const byte Sand = 8;
+            public const byte Gravel = 9;
+            public const byte Trunk = 10;
+            public const byte GoldOre = 11;
+            public const byte CoalOre = 12;
+            public const byte MoonStone = 13;
+            public const byte Foliage = 14;
+            public const byte Snow = 15;
+            public const byte Ice = 16;
+            public const byte StillLava = 17;
+            public const byte DynamicLava = 18;
+            public const byte Cactus = 19;
+            public const byte CactusTop = 20;
             public const byte Error = 255;
 
             public static IEnumerable<byte> All()
@@ -947,6 +885,12 @@ namespace Utopia.Shared.Configuration
                     yield return profile.Id;
                 }
             }
+        }
+
+        public static class EntityId
+        {
+            public const byte CactusFlower = 0;
+
         }
 
         #endregion

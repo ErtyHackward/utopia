@@ -110,7 +110,6 @@ namespace Utopia
         public override void BeforeDispose()
         {
             DXStates.Dispose();
-            GameSystemSettings.Current.Settings.CleanUp();
         }
     }
 }

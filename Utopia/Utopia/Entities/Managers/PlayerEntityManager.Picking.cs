@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Managers
@@ -35,7 +36,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, GameSystemSettings.Current.Settings.CubesProfile[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, RealmConfiguration.CubeProfiles[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {

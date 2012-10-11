@@ -458,7 +458,7 @@ namespace Utopia.Entities
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;
                 //Create the new Material MeshMapping
-                var profile = GameSystemSettings.Current.Settings.CubesProfile[cubeId];
+                var profile = RealmConfiguration.CubeProfiles[cubeId];
                 
                 //Here the key parameter is the ID name given to the texture inside the file model.
                 //In our case the model loaded has these Materials/texture Ids :
