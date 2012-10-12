@@ -83,8 +83,6 @@ namespace Sandbox.Client.States
         {
             if (_isGameExited)
             {
-                //Before disposing, flush the thread work queue, and wait for all thread to finish their work
-                S33M3DXEngine.Threading.ThreadsManager.CleanUp();
                 //Disconnect in a clean way from the server
                 //var servercomp = _iocContainer.Get<ServerComponent>();
                 //servercomp.Disconnect();

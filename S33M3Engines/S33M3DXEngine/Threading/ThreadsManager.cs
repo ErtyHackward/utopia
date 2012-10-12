@@ -64,8 +64,9 @@ namespace S33M3DXEngine.Threading
             return _totThread;
         }
 
-        public static void CleanUp()
+        public static void Dispose()
         {
+            //Before disposing, Have to stop working thread on them           
             if (_mainTaskSheduler != null) _mainTaskSheduler.Dispose();
             if (_monoConcurrencyTaskSheduler != null) _monoConcurrencyTaskSheduler.Dispose();
         }
@@ -122,7 +123,8 @@ namespace S33M3DXEngine.Threading
 
         private static void CreateTaskScheduler()
         {
-            if (_mainTaskSheduler != null) _mainTaskSheduler.Dispose();
+            if (_mainTaskSheduler != null) 
+                _mainTaskSheduler.Dispose();
             if (_monoConcurrencyTaskSheduler == null)
             {
                 _monoConcurrencyTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, 1);
