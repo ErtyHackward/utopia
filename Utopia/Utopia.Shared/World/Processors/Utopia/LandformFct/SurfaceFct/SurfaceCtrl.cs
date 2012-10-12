@@ -35,9 +35,9 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         public INoise GetLandFormFct()
         {
             INoise SurfaceBiomeFractal = new FractalHybridMulti(new Perlin(_seed), _octaves, _frequency, enuBaseNoiseRange.ZeroToOne);
-            INoise SurfaceBiomeFractal_y_scale = new NoiseAccess(SurfaceBiomeFractal, NoiseAccess.enuDimUsage.Noise2D, true);
+            INoise SurfaceBiomeFractal_as2DNoise = new NoiseAccess(SurfaceBiomeFractal, NoiseAccess.enuDimUsage.Noise2D, true);
 
-            return SurfaceBiomeFractal_y_scale;
+            return SurfaceBiomeFractal_as2DNoise;
         }
         #endregion
 

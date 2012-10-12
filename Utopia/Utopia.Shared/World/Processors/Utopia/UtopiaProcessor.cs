@@ -151,13 +151,13 @@ namespace Utopia.Shared.World.Processors.Utopia
             LandscapeRange hillBasicParam = param.BasicPlain[2];
             
             //Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.4, 0.1);
-            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, flatBasicParam.Size, flatBasicParam.MixedNextArea + plainBasicParam.MixedPreviousArea);
-            INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold);   //Biome composition    
+            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, flatBasicParam.Size, flatBasicParam.MixedNextArea + plainBasicParam.MixedPreviousArea) { Name = "flat_Plain_select" };
+            INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold) { Name = "flat_Plain_result" };   //Biome composition    
 
             //Merge Plain with hill *************************************************************
             //Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.65, 0.1);
-            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, flat_Plain_select.Threshold.ScalarParam + plainBasicParam.Size, plainBasicParam.MixedNextArea + hillBasicParam.MixedPreviousArea);
-            INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold);     //Biome composition 
+            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, flat_Plain_select.Threshold.ScalarParam + plainBasicParam.Size, plainBasicParam.MixedNextArea + hillBasicParam.MixedPreviousArea) { Name = "mergedPlainFct" };
+            INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold) { Name = "mergedPlainFct_result" };     //Biome composition 
 
             //=====================================================================================================
             //Surface Noise selecting based on surfaceCtrl controler
@@ -167,13 +167,13 @@ namespace Utopia.Shared.World.Processors.Utopia
             LandscapeRange MontainGroundParam = param.Ground[2];
 
             //Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.45, 0.10);
-            Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, plainGroundParam.Size, plainGroundParam.MixedNextArea + midLandGroundParam.MixedPreviousArea);
-            INoise Plain_midland_result = new Select(mergedPlainFct_result, enuLandFormType.Midland, surfaceCtrl, Plain_midland_select.Threshold); //Biome composition
+            Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, plainGroundParam.Size, plainGroundParam.MixedNextArea + midLandGroundParam.MixedPreviousArea) { Name = "Plain_midland_select" };
+            INoise Plain_midland_result = new Select(mergedPlainFct_result, enuLandFormType.Midland, surfaceCtrl, Plain_midland_select.Threshold) { Name = "Plain_midland_result" }; //Biome composition
 
             //Merge MidLand with Montain ********************************************************
             //Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05);
-            Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, Plain_midland_select.Threshold.ScalarParam + midLandGroundParam.Size, midLandGroundParam.MixedNextArea + MontainGroundParam.MixedPreviousArea);
-            INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold); //Biome composition
+            Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, Plain_midland_select.Threshold.ScalarParam + midLandGroundParam.Size, midLandGroundParam.MixedNextArea + MontainGroundParam.MixedPreviousArea) { Name = "midland_montain_select" };
+            INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold) { Name = "midland_montain_result" }; //Biome composition
 
             //=====================================================================================================
             //Surface Noise selecting based on terrainDelimiter controler
@@ -182,8 +182,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             LandscapeRange groundWorldParam = param.World[1];
 
             //Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, 0.009, 0.20);
-            Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, waterWorldParam.Size, waterWorldParam.MixedNextArea + groundWorldParam.MixedPreviousArea);
-            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, terrainDelimiter, world_select.Threshold);         //Biome composition
+            Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, waterWorldParam.Size, waterWorldParam.MixedNextArea + groundWorldParam.MixedPreviousArea) { Name = "world_select" };
+            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, terrainDelimiter, world_select.Threshold) { Name = "world_select_result" };         //Biome composition
 
             landScapeTypeFct = world_select_result;
 
@@ -319,11 +319,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     //Get Biomes informations for this Column============================================
                     bool mustPlacedSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
-                    if (temperature > 1.0) temperature = 1.0;
-                    if (temperature < 0.0) temperature = 0.0;
                     double moisture = biomeMap[noise2DIndex, 2];
-                    if (moisture > 1.0) moisture = 1.0;
-                    if (moisture < 0.0) moisture = 0.0;
                     byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
                     currentBiome = RealmConfiguration.Biomes[biomeId];
