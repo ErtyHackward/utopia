@@ -20,7 +20,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public partial class Biome : IBinaryStorable
     {
-        #region Satic
+        #region Static
         public static byte GetBiome(double landFormType, double temperature, double moisture)
         {
             enuLandFormType landformtype = (enuLandFormType)landFormType;

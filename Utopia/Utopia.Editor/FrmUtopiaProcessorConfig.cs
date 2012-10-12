@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
-using System.Linq;
 
 namespace Utopia.Editor
 {
