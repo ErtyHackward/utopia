@@ -232,6 +232,7 @@
     <Compile Include="Noise\Fractal\FractalMulti.cs" />
     <Compile Include="Noise\Fractal\FractalRidgedMulti.cs" />
     <Compile Include="Noise\Fractal\enuBaseFractalRange.cs" />
+    <Compile Include="Noise\Generator\Constant.cs" />
     <Compile Include="Noise\Generator\ISeedable.cs" />
     <Compile Include="Noise\Generator\Perlin.cs" />
     <Compile Include="Noise\Generator\Sphere.cs" />

@@ -326,6 +326,7 @@
     <Compile Include="World\Processors\Utopia\Biomes\TreeTemplates.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Moisture.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Temperature.cs" />
+    <Compile Include="World\Processors\Utopia\LandformFct\enuWorldType.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\IslandCtrl.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\enuLandFormType.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\Plains\PlainCtrl.cs" />
@@ -393,9 +394,7 @@
       <Name>S33M3Resources</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="World\Processors\Utopia\CubesFct\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

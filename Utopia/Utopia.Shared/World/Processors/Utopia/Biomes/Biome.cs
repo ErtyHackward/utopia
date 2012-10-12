@@ -24,6 +24,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public static byte GetBiome(double landFormType, double temperature, double moisture)
         {
             enuLandFormType landformtype = (enuLandFormType)landFormType;
+
             for (byte biomeId = 0; biomeId <= RealmConfiguration.Biomes.Count - 1; biomeId++)
             {
                 Biome biome = RealmConfiguration.Biomes[biomeId];
@@ -37,7 +38,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         if (moisture >= biome.MoistureFilter.Min &&
                             moisture <= biome.MoistureFilter.Max)
                         {
-                            return biomeId;
+                           return biomeId;
                         }
                     }
                 }

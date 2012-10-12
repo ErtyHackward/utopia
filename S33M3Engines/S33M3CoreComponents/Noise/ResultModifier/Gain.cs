@@ -16,7 +16,7 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         #endregion
 
         /// <summary>
-        ///  Has the effect of pushing the values of the input either toward the ends and away from the middle (if bias is >0.5) or pushing values toward the middle and away from the ends (if bias is < 0.5)
+        ///  Has the effect of pushing the values of the input either toward the ends and away from the middle (if bias is >0.5) or pushing values toward the middle and away from the ends (if bias is below 0.5)
         /// </summary>
         /// <param name="source">Noise source, prefered to be in 0 to 1 range</param>
         /// <param name="gain">Bias value, below 0.5 to push toward the end of the noise range, and above 0.5 to push toward the beggining of the noise range</param>
