@@ -20,12 +20,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.Entities.First(x => x.BluePrintId == EntityId).Name;
+                return RealmConfiguration.Entities.First(x => x.BluePrintId == BluePrintId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                EntityId = RealmConfiguration.Entities.First(x => x.Name == value).BluePrintId;
+                BluePrintId = RealmConfiguration.Entities.First(x => x.Name == value).BluePrintId;
             }
         }
         #endregion
@@ -33,14 +33,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Public Methods
         public void Save(System.IO.BinaryWriter writer)
         {
-            writer.Write(EntityId);
+            writer.Write(BluePrintId);
             writer.Write(EntityPerChunk);
             writer.Write(ChanceOfSpawning);
         }
 
         public void Load(System.IO.BinaryReader reader)
         {
-            EntityId = reader.ReadUInt16();
+            BluePrintId = reader.ReadUInt16();
             EntityPerChunk = reader.ReadInt32();
             ChanceOfSpawning = reader.ReadDouble();
         }

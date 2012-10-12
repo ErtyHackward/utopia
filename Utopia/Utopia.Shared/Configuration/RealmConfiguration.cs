@@ -896,10 +896,9 @@ namespace Utopia.Shared.Configuration
             }
         }
 
-        public static class EntityId
+        public static class BluePrintId
         {
-            public const byte CactusFlower = 0;
-
+            public const byte CactusFlower = 1;
         }
 
         #endregion

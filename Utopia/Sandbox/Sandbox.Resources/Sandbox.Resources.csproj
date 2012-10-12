@@ -84,7 +84,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Config\Default.realm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="EffectsPacks\Default\Entities\CubeTool.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

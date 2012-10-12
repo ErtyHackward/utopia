@@ -221,7 +221,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         int z = rnd.Next(0, 16);
                         int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
 
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.EntityId, x, y, z, rnd, entityFactory, false);
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
                     }
                 }
             }
@@ -459,7 +459,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     if (treeTemplate.TreeType == TreeTemplates.TreeType.Cactus)
                     {
                         Vector3I posi = cursor.InternalPosition;
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, RealmConfiguration.EntityId.CactusFlower , posi.X, posi.Y, posi.Z, rnd, entityFactory, true, true);
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, RealmConfiguration.BluePrintId.CactusFlower , posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
                     }
 
                     //Remove OFfset
@@ -507,7 +507,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        private void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort entityId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true, bool test = false)
+        private void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort bluePrintId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true)
         {
             cursor.SetInternalPosition(x, y, z);
 
@@ -519,7 +519,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             if (blockBelowProfile.IsSolidToEntity)
             {
                 //Cloning the Entity Blue Print !
-                var entity = (IEntity)RealmConfiguration.Entities[entityId].Clone();
+                var entity = entityFactory.CreateFromBluePrint(bluePrintId);
 
                 if (entity is IBlockLinkedEntity)
                 {

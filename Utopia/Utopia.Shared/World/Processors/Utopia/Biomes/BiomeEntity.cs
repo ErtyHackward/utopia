@@ -11,7 +11,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     public partial class BiomeEntity : IBinaryStorable
     {
         [Browsable(false)]
-        public ushort EntityId { get; set; }
+        public ushort BluePrintId { get; set; }
         public int EntityPerChunk { get; set; }
         public double ChanceOfSpawning { get; set; }
     }
