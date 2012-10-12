@@ -27,9 +27,9 @@ namespace Utopia.Shared.Entities.Interfaces
         ushort ClassId { get; }
 
         /// <summary>
-        /// Gets entity id
+        /// Gets entity BluePrint ID
         /// </summary>
-        ushort ConcreteId { get; set; }
+        ushort BluePrintId { get; set; }
 
         /// <summary>
         /// Entity size

@@ -82,7 +82,7 @@ namespace Utopia.Shared.Configuration
         /// Keep a list of the entities lookable by ConcreteId
         /// </summary>
         [Browsable(false)]
-        public static Dictionary<ushort, Entity> ConcreteEntities { get; set; }
+        public static Dictionary<ushort, Entity> BluePrints { get; set; }
         /// <summary>
         /// Holds Cube Profiles configuration
         /// </summary>
@@ -124,7 +124,7 @@ namespace Utopia.Shared.Configuration
 
             _factory = factory;
             Entities = new List<IEntity>();
-            ConcreteEntities = new Dictionary<ushort, Entity>();
+            BluePrints = new Dictionary<ushort, Entity>();
             CubeProfiles = new List<CubeProfile>();
             Biomes = new List<Biome>();
             UtopiaProcessorParam = new UtopiaProcessorParams();
@@ -192,13 +192,13 @@ namespace Utopia.Shared.Configuration
             WorldProcessor = (WorldProcessors)reader.ReadByte();
 
             Entities.Clear();
-            ConcreteEntities.Clear();
+            BluePrints.Clear();
             int countEntity = reader.ReadInt32();
             for (var i = 0; i < countEntity; i++)
             {
                 Entity entity = _factory.CreateFromBytes(reader);
                 Entities.Add(entity);
-                ConcreteEntities.Add(entity.ConcreteId, entity);
+                BluePrints.Add(entity.BluePrintId, entity);
             }
 
             CubeProfiles.Clear();
@@ -280,10 +280,10 @@ namespace Utopia.Shared.Configuration
 
             //Generate a new Entity ID, it will represent this Blue print, and must be unique
             ushort newId;
-            if (RealmEntities.Count == 0) newId = 0;
-            else newId = (ushort)(RealmEntities.Select(x => x.ConcreteId).Max(y => y) + 1);
+            if (RealmEntities.Count == 0) newId = 1;
+            else newId = (ushort)(RealmEntities.Select(x => x.BluePrintId).Max(y => y) + 1);
 
-            instance.ConcreteId = newId;
+            instance.BluePrintId = newId;
             instance.isSystemEntity = false;
 
             RealmEntities.Add(instance);
