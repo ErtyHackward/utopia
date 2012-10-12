@@ -106,12 +106,23 @@ namespace Utopia.Shared.Entities
             return entity;
         }
 
-        public Entity CreateFromConcreteId(ushort concreteId)
+        public Entity CreateFromBluePrint(IEntity entity)
         {
-            Entity entity = null;
-            if (RealmConfiguration.ConcreteEntities.TryGetValue(concreteId, out entity) == false)
+            return CreateFromBluePrint(entity.BluePrintId);
+        }
+
+        public Entity CreateFromBluePrint(ushort bluePrintID)
+        {
+            if (bluePrintID == 0)
             {
-                throw new ArgumentOutOfRangeException("concreteId");
+                //The bluePrintID 0 means not linked to a blueprint !
+                throw new ArgumentOutOfRangeException("bluePrintID");
+            }
+
+            Entity entity = null;
+            if (RealmConfiguration.BluePrints.TryGetValue(bluePrintID, out entity) == false)
+            {
+                throw new ArgumentOutOfRangeException("bluePrintID");
             }
 
             //Create a clone of this entity.

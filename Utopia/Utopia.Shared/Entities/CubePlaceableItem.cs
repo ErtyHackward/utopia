@@ -69,7 +69,7 @@ namespace Utopia.Shared.Entities
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
                     //Create a new version of the item, and put it into the world
-                    var cubeEntity = (IItem)entityFactory.CreateFromConcreteId(ConcreteId);
+                    var cubeEntity = (IItem)entityFactory.CreateFromBluePrint(BluePrintId);
 
                     var blockLinked = (IBlockLinkedEntity)cubeEntity;
                     blockLinked.LinkedCube = owner.EntityState.PickedBlockPosition;
