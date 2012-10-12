@@ -60,6 +60,7 @@ namespace S33M3DXEngine.Threading
             }
 
             if (_totThread < 1) _totThread = 1;
+
             CreateTaskScheduler();
             return _totThread;
         }

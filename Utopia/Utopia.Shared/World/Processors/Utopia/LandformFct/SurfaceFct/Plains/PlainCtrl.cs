@@ -16,22 +16,28 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
     {
         #region Private Variables
         private int _seed;
+        private int _octaves;
+        private double _frequency;
+        private double _bias;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public PlainCtrl(int seed)
+        public PlainCtrl(int seed, int octave = 3, double frequency = 2.5, double bias = 0.6)
         {
             _seed = seed;
+            _octaves = octave;
+            _frequency = frequency;
+            _bias = bias;
         }
 
         #region Public Methods
         public INoise GetLandFormFct()
         {
-            INoise AnomaliesZonesFractal = new FractalFbm(new Perlin(_seed), 3, 2.5, enuBaseNoiseRange.ZeroToOne);
+            INoise AnomaliesZonesFractal = new FractalFbm(new Perlin(_seed), _octaves, _frequency, enuBaseNoiseRange.ZeroToOne);
             INoise AnomaliesZonesFractal_y_scale = new NoiseAccess(AnomaliesZonesFractal, NoiseAccess.enuDimUsage.Noise2D, true);
-            INoise AnomaliesZonesFractal_Bias = new Gain(AnomaliesZonesFractal_y_scale, 0.6);
+            INoise AnomaliesZonesFractal_Bias = new Gain(AnomaliesZonesFractal_y_scale, _bias);
 
             return AnomaliesZonesFractal_Bias;
         }

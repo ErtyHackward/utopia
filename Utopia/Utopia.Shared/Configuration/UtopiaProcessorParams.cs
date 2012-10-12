@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
 namespace Utopia.Shared.Configuration
 {
@@ -43,6 +44,7 @@ namespace Utopia.Shared.Configuration
         public List<LandscapeRange> Ground { get; set; }
         public List<LandscapeRange> Ocean { get; set; }
         public List<LandscapeRange> World { get; set; }
+        public enuWorldType WorldType { get; set; }
         #endregion
 
         public UtopiaProcessorParams()
@@ -54,6 +56,8 @@ namespace Utopia.Shared.Configuration
             Ground = new List<LandscapeRange>();
             Ocean = new List<LandscapeRange>();
             World = new List<LandscapeRange>();
+
+            WorldType = enuWorldType.Normal;
         }
 
         #region Public Methods
@@ -208,6 +212,8 @@ namespace Utopia.Shared.Configuration
             {
                 World[i].Save(writer);
             }
+
+            writer.Write((int)WorldType);
         }
 
         public void Load(System.IO.BinaryReader reader)
@@ -274,7 +280,7 @@ namespace Utopia.Shared.Configuration
                 landscapeRange.Load(reader);
                 World.Add(landscapeRange);
             }
-
+            WorldType = (enuWorldType)reader.ReadInt32();
         }
     }
 }

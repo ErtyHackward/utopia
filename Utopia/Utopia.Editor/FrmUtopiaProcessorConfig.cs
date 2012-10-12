@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
+using Utopia.Shared.World.Processors.Utopia.LandformFct;
+using System.Linq;
 
 namespace Utopia.Editor
 {
@@ -20,13 +22,35 @@ namespace Utopia.Editor
         public FrmUtopiaProcessorConfig()
         {
             InitializeComponent();
+
+            worldType.Items.Clear();
+
+            foreach (string worldtype in Enum.GetNames(typeof(enuWorldType)))
+            {
+                worldType.Items.Add(worldtype);
+            }
+
             worldType.SelectedIndex = 0;
+
+            worldType.SelectedIndexChanged += worldType_SelectedIndexChanged;
+        }
+
+        private void worldType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshValueWorldTypeValue();
+        }
+
+        private void RefreshValueWorldTypeValue()
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.WorldType = (enuWorldType)Enum.Parse(typeof(enuWorldType), worldType.SelectedItem.ToString());
         }
 
         public FrmUtopiaProcessorConfig(UtopiaProcessorParams param)
             :base()
         {
             LoadConfigParam(param);
+
         }
 
         public void LoadConfigParam(UtopiaProcessorParams param)
@@ -71,6 +95,15 @@ namespace Utopia.Editor
             foreach (var item in param.World)
             {
                 rangeBarWorld.Ranges.Add(item);
+            }
+
+
+            foreach (string value in worldType.Items)
+            {
+                if (value == param.WorldType.ToString())
+                {
+                    worldType.SelectedItem = value;
+                }
             }
         }
 

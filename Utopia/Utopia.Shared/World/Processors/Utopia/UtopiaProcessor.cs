@@ -95,9 +95,25 @@ namespace Utopia.Shared.World.Processors.Utopia
                                   out INoise landScapeType, 
                                   out INoise temperature, 
                                   out INoise moisture)
-        {           
-            INoise terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233).GetLandFormFct());
+        {
+
+            INoise terrainDelimiter;
+            switch (_worldParameters.Configuration.UtopiaProcessorParam.WorldType)
+            {
+                case enuWorldType.Island:
+                    terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233).GetLandFormFct());
+                    break;
+                case enuWorldType.Normal:
+                default:
+                    terrainDelimiter = new Cache<INoise>(new WorldCtrl(_worldParameters.Seed + 1698, 1, 0.5).GetLandFormFct());
+                    break;
+            }
+
+            //Normal Landscape creation
             mainLandscape = new Cache<INoise>(CreateLandFormFct(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
+            //Activate it in order to test single landscape configuration
+            //mainLandscape = new Cache<INoise>(FonctionTesting(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
+
             underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
             temperature = new Temperature(_worldParameters.Seed - 963).GetLandFormFct();
             moisture = new Moisture(_worldParameters.Seed - 96).GetLandFormFct();
@@ -112,11 +128,82 @@ namespace Utopia.Shared.World.Processors.Utopia
             //MidLand forms
             INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
 
+            //Plains forms ===========================================================
+            INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
+            INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
+            INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
+            //Controler to manage Plains form transitions
+            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96, 2, 1).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
+
+            //Oceans forms
+            INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
+
+            //Surface main controler
+            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123, 1, 0.5).GetLandFormFct();
+
+            var param = _worldParameters.Configuration.UtopiaProcessorParam;
+
+            //=====================================================================================================
+            //Plains Noise selecting based on plainsCtrl controler
+            //Merge flat with Plain *************************************************************
+            LandscapeRange flatBasicParam = param.BasicPlain[0];
+            LandscapeRange plainBasicParam = param.BasicPlain[1];
+            LandscapeRange hillBasicParam = param.BasicPlain[2];
+            
+            //Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.4, 0.1);
+            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, flatBasicParam.Size, flatBasicParam.MixedNextArea + plainBasicParam.MixedPreviousArea);
+            INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold);   //Biome composition    
+
+            //Merge Plain with hill *************************************************************
+            //Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.65, 0.1);
+            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, flat_Plain_select.Threshold.ScalarParam + plainBasicParam.Size, plainBasicParam.MixedNextArea + hillBasicParam.MixedPreviousArea);
+            INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold);     //Biome composition 
+
+            //=====================================================================================================
+            //Surface Noise selecting based on surfaceCtrl controler
+            //Merge Plains with Midland *********************************************************
+            LandscapeRange plainGroundParam = param.Ground[0];
+            LandscapeRange midLandGroundParam = param.Ground[1];
+            LandscapeRange MontainGroundParam = param.Ground[2];
+
+            //Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.45, 0.10);
+            Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, plainGroundParam.Size, plainGroundParam.MixedNextArea + midLandGroundParam.MixedPreviousArea);
+            INoise Plain_midland_result = new Select(mergedPlainFct_result, enuLandFormType.Midland, surfaceCtrl, Plain_midland_select.Threshold); //Biome composition
+
+            //Merge MidLand with Montain ********************************************************
+            //Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05);
+            Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, Plain_midland_select.Threshold.ScalarParam + midLandGroundParam.Size, midLandGroundParam.MixedNextArea + MontainGroundParam.MixedPreviousArea);
+            INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold); //Biome composition
+
+            //=====================================================================================================
+            //Surface Noise selecting based on terrainDelimiter controler
+            //Merge the Water landForm with the surface landForm
+            LandscapeRange waterWorldParam = param.World[0];
+            LandscapeRange groundWorldParam = param.World[1];
+
+            //Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, 0.009, 0.20);
+            Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, waterWorldParam.Size, waterWorldParam.MixedNextArea + groundWorldParam.MixedPreviousArea);
+            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, terrainDelimiter, world_select.Threshold);         //Biome composition
+
+            landScapeTypeFct = world_select_result;
+
+            return world_select;
+        }
+
+        public INoise FonctionTesting(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
+        {
+            //Create various landcreation Algo. ===================================================================
+            //Montains forms
+            INoise montainFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
+
+            //MidLand forms
+            INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
+
             //Plains forms
             INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
             INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
             INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
-            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge the plains type together
+            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
 
             //Oceans forms
             INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
@@ -124,33 +211,11 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Surface main controler
             INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123).GetLandFormFct();
 
+            var param = _worldParameters.Configuration.UtopiaProcessorParam;
             //=====================================================================================================
-            //Plains Noise selecting based on plainsCtrl controler
-            //Merge flat with Plain *************************************************************
-            Select flat_Plain_select = new Select(flatFct, plainFct, plainsCtrl, 0.4, 0.1);                                            
-            INoise flat_Plain_result = new Select(enuLandFormType.Flat, enuLandFormType.Plain, plainsCtrl, flat_Plain_select.Threshold);   //Biome composition    
-
-            //Merge Plain with hill *************************************************************
-            Select mergedPlainFct = new Select(flat_Plain_select, hillFct, plainsCtrl, 0.65, 0.1);
-            INoise mergedPlainFct_result = new Select(flat_Plain_result, enuLandFormType.Hill, plainsCtrl, mergedPlainFct.Threshold);     //Biome composition 
-
-            //=====================================================================================================
-            //Surface Noise selecting based on surfaceCtrl controler
-            //Merge Plains with Midland *********************************************************
-            Select Plain_midland_select = new Select(mergedPlainFct, midlandFct, surfaceCtrl, 0.45, 0.10);
-            INoise Plain_midland_result = new Select(mergedPlainFct_result, enuLandFormType.Midland, surfaceCtrl, Plain_midland_select.Threshold); //Biome composition
-
-            //Merge MidLand with Montain ********************************************************
-            Select midland_montain_select = new Select(Plain_midland_select, montainFct, surfaceCtrl, 0.55, 0.05);
-            INoise midland_montain_result = new Select(Plain_midland_result, enuLandFormType.Montain, surfaceCtrl, midland_montain_select.Threshold); //Biome composition
-
-            //Merge the Water landForm with the surface landForm
-            Select world_select = new Select(oceanBaseFct, midland_montain_select, terrainDelimiter, 0.009, 0.20);         
-            INoise world_select_result = new Select(enuLandFormType.Ocean, midland_montain_result, terrainDelimiter, world_select.Threshold);         //Biome composition
-
-            landScapeTypeFct = world_select_result;
-
-            return world_select;
+            // TESTING PURPOSE
+            landScapeTypeFct = new Constant((double)enuLandFormType.Hill);
+            return hillFct;
         }
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange, out double[,] biomeMap)

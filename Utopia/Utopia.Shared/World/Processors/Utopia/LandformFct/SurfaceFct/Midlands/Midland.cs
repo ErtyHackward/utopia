@@ -49,7 +49,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //This way no matter the the Gradient Range, the values impacting it will be rescaled.
 
             //Create the Lowland base fractal with range from 0 to 1 values
-            INoise midLand_shape_fractal = new FractalRidgedMulti(new Simplex(_seed), 4, 2, enuBaseNoiseRange.ZeroToOne);
+            INoise midLand_shape_fractal = new FractalRidgedMulti(new Simplex(_seed), 4, 0.7, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
             INoise midLand_scale = new ScaleOffset(midLand_shape_fractal, 0.2 * _groundGradientTyped.AdjustY, 0 * _groundGradientTyped.AdjustY);
             //Remove Y value from impacting the result (Fixed to 0), the value output range will not be changed, but the influence of the Y will be removed
