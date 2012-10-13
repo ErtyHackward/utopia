@@ -14,6 +14,8 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 {
     public partial class NewGamePanel
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variables
         #endregion
 
@@ -130,9 +132,6 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 //Validate the Name as Directory
                 try
                 {
-                    //Will fall in error if not right correct file name
-                    var result = Path.GetFullPath(@"c:\" + _inputWorldName.Text);
-
                     //Check if this world is not existing
                     if (Directory.Exists(Path.Combine(LocalWorlds.GetSinglePlayerServerRootPath(_vars.ApplicationDataPath), _inputWorldName.Text)) == false)
                     {
@@ -146,8 +145,10 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                         _inputSeedName.Text = string.Empty;
                     }
                 }
-                catch (Exception)
+                catch (Exception error)
                 {
+                    logger.Error("Error while loading the configuration file : {0}", error);
+                    throw;
                 }
             }
 
