@@ -148,7 +148,6 @@ namespace Utopia.Shared.World.Processors
 
                         if (cubeId == RealmConfiguration.CubeId.Stone)
                         {
-
                             if (Y > 64 - 3 && Y <= 64 + 1 && sandResult.Value > 0.7)
                             {
                                 Cubes[index] = RealmConfiguration.CubeId.Sand;

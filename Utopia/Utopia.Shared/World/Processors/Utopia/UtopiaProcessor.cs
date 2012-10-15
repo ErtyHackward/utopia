@@ -101,11 +101,12 @@ namespace Utopia.Shared.World.Processors.Utopia
             switch (_worldParameters.Configuration.UtopiaProcessorParam.WorldType)
             {
                 case enuWorldType.Island:
-                    terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233).GetLandFormFct());
+                    terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233, _worldParameters.Configuration.UtopiaProcessorParam.IslandCtrlSize).GetLandFormFct());
                     break;
                 case enuWorldType.Normal:
                 default:
-                    terrainDelimiter = new Cache<INoise>(new WorldCtrl(_worldParameters.Seed + 1698, 1, 0.5).GetLandFormFct());
+                    terrainDelimiter = new Cache<INoise>(new WorldCtrl(_worldParameters.Seed + 1698, _worldParameters.Configuration.UtopiaProcessorParam.WorldCtrlOctave,
+                                                                                                     _worldParameters.Configuration.UtopiaProcessorParam.WorldCtrlFrequency).GetLandFormFct());
                     break;
             }
 
@@ -133,13 +134,15 @@ namespace Utopia.Shared.World.Processors.Utopia
             INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
             INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
             //Controler to manage Plains form transitions
-            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96, 2, 1).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
+            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96, _worldParameters.Configuration.UtopiaProcessorParam.PlainCtrlOctave,
+                                                                          _worldParameters.Configuration.UtopiaProcessorParam.PlainCtrlFrequency).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
 
             //Oceans forms
             INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
 
             //Surface main controler
-            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123, 1, 0.5).GetLandFormFct();
+            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123, _worldParameters.Configuration.UtopiaProcessorParam.GroundCtrlOctave,
+                                                                              _worldParameters.Configuration.UtopiaProcessorParam.GroundCtrlFrequency).GetLandFormFct();
 
             var param = _worldParameters.Configuration.UtopiaProcessorParam;
 
@@ -285,7 +288,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if (Y == 64 && cube == RealmConfiguration.CubeId.Air && valueUnderground == 1)
+                        if (Y == _worldParameters.Configuration.UtopiaProcessorParam.WaterLevel && cube == RealmConfiguration.CubeId.Air && valueUnderground == 1)
                         {
                             cube = RealmConfiguration.CubeId.StillWater;
                         }                       

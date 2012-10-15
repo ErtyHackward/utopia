@@ -112,7 +112,12 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            yield return "Default Configuration";
+            //Yield Default Configurations files
+            foreach (var defaultFile in Directory.GetFiles("Config", "*.realm"))
+            {
+                yield return "Default " +  Path.GetFileNameWithoutExtension(defaultFile);
+            }
+
             foreach (var file in Directory.GetFiles(path).Where(x => x.EndsWith(".realm")))
             {
                 yield return Path.GetFileNameWithoutExtension(file);
@@ -162,10 +167,11 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         private RealmConfiguration GetConfigurationObject()
         {
             RealmConfiguration config = null;
-            if (_configurationsFiles.SelectedItem.ToString() == "Default Configuration")
+            if (_configurationsFiles.SelectedItem.ToString().StartsWith("Default "))
             {
                 //Create new default RealmConfiguration
-                var path = Directory.GetFiles("Config", "Default.realm")[0];
+                var path = Directory.GetFiles("Config", _configurationsFiles.SelectedItem.ToString().Replace("Default ", "") + ".realm")[0];
+
                 config = RealmConfiguration.LoadFromFile(path);
             }
             else
