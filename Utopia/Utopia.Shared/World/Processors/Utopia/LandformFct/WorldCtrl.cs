@@ -23,7 +23,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
         #region Public Properties
         #endregion
 
-        public WorldCtrl(int seed, int octave = 5, double frequency = 1.5, double bias = 0.6)
+        public WorldCtrl(int seed, int octave = 3, double frequency = 1.5, double bias = 0.6)
         {
             _seed = seed;
             _octaves = octave;

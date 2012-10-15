@@ -39,17 +39,10 @@ namespace Utopia.Editor
             RefreshValueWorldTypeValue();
         }
 
-        private void RefreshValueWorldTypeValue()
-        {
-            if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.WorldType = (enuWorldType)Enum.Parse(typeof(enuWorldType), worldType.SelectedItem.ToString());
-        }
-
         public FrmUtopiaProcessorConfig(UtopiaProcessorParams param)
             :base()
         {
             LoadConfigParam(param);
-
         }
 
         public void LoadConfigParam(UtopiaProcessorParams param)
@@ -96,7 +89,6 @@ namespace Utopia.Editor
                 rangeBarWorld.Ranges.Add(item);
             }
 
-
             foreach (string value in worldType.Items)
             {
                 if (value == param.WorldType.ToString())
@@ -104,6 +96,23 @@ namespace Utopia.Editor
                     worldType.SelectedItem = value;
                 }
             }
+
+            maxHeight.Value = param.WorldHeight;
+            trackBar2.Value = param.WaterLevel;
+
+            udPlainFreq.Value = (decimal)param.PlainCtrlFrequency;
+            udPlainOct.Value = (decimal)param.PlainCtrlOctave;
+
+            udGroundFeq.Value = (decimal)param.GroundCtrlFrequency;
+            udGroundOct.Value = (decimal)param.GroundCtrlOctave;
+
+            udIslandSize.Value = (decimal)param.IslandCtrlSize;
+
+            udContinentFreq.Value = (decimal)param.WorldCtrlFrequency;
+            udContinentOct.Value = (decimal)param.WorldCtrlOctave;
+
+            this.maxHeight_ValueChanged(this, null);
+            this.trackBar2_ValueChanged(this, null);
         }
 
         private void tvBiomeList_AfterSelect(object sender, TreeViewEventArgs e)
@@ -158,6 +167,81 @@ namespace Utopia.Editor
             }
         }
 
+        private void worldType_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            if (worldType.SelectedItem.ToString() == "Island")
+            {
+                pIsland.Visible = true;
+                pContinent.Visible = false;
+            }
+            else
+            {
+                pIsland.Visible = false;
+                pContinent.Visible = true;
+            }
+        }
+
+        private void RefreshValueWorldTypeValue()
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.WorldType = (enuWorldType)Enum.Parse(typeof(enuWorldType), worldType.SelectedItem.ToString());
+        }
+
+        private void maxHeight_ValueChanged(object sender, EventArgs e)
+        {
+            wHeight.Text = maxHeight.Value.ToString();
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.WorldHeight = maxHeight.Value;
+        }
+
+        private void trackBar2_ValueChanged(object sender, EventArgs e)
+        {
+            OceanHeight.Text = trackBar2.Value.ToString();
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.WaterLevel = trackBar2.Value;
+        }
+
+        private void udPlainFreq_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.PlainCtrlFrequency = (double)udPlainFreq.Value;
+        }
+
+        private void udPlainOct_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.PlainCtrlOctave = (int)udPlainOct.Value;
+        }
+
+        private void udGroundFeq_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.GroundCtrlFrequency = (double)udGroundFeq.Value;
+        }
+
+        private void udGroundOct_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.GroundCtrlOctave = (int)udGroundOct.Value;
+        }
+
+        private void udContinentFreq_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.WorldCtrlFrequency = (double)udContinentFreq.Value;
+        }
+
+        private void udContinentOct_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.WorldCtrlOctave = (int)udContinentOct.Value;
+        }
+
+        private void udIslandSize_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.IslandCtrlSize = (double)udIslandSize.Value;
+        }
 
     }
 }
