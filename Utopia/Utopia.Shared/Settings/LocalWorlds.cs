@@ -92,11 +92,13 @@ namespace Utopia.Shared.Settings
                     {
                         dataReader.Read();
 
-                        RealmConfiguration configuration = new RealmConfiguration();
-                        using (var ms = new MemoryStream((byte[])dataReader.GetValue(2)))
-                        {
-                            configuration.Load(new BinaryReader(ms));
-                        }
+                        //RealmConfiguration configuration = new RealmConfiguration();
+                        //using (var ms = new MemoryStream((byte[])dataReader.GetValue(2)))
+                        //{
+                        //    configuration.Load(new BinaryReader(ms));
+                        //}
+                        //Load configuration File from file (not from DB)
+                        RealmConfiguration configuration = RealmConfiguration.LoadFromFile(Path.GetDirectoryName(DBPath) + @"\" + Path.GetFileNameWithoutExtension(DBPath) + ".realm");
 
                         worldParameters = new WorldParameters()
                                               {
