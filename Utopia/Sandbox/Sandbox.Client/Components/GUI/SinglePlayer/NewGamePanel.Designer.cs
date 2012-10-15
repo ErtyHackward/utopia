@@ -24,8 +24,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         protected InputControl _inputWorldName;
         protected LabelControl _inputSeedNameLabel;
         protected InputControl _inputSeedName;
-        protected HorizontalSliderControl _inputOceanLevel;
-        protected LabelControl _inputOceanLevelLabel;
         public ButtonControl BtCreate;
         #endregion
 
@@ -60,25 +58,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
                 Color = SharpDX.Color.Black
             });
 
-            int oceanMinLevel = 30;
-            int oceanMaxLevel = Utopia.Shared.Chunks.AbstractChunk.ChunkSize.Y - 30;
-            _inputOceanLevel = ToDispose(new HorizontalSliderControl()
-            {
-                ThumbSize = 1 / (float)(oceanMaxLevel - oceanMinLevel),
-                ThumbSmoothMovement = true,
-                ThumbMinValue = oceanMinLevel,
-                ThumbMaxValue = oceanMaxLevel,
-                Value = 64
-            });
-            _inputOceanLevel.Moved += _inputOceanLevel_Moved;
-
-            _inputOceanLevelLabel = ToDispose(new LabelControl()
-            {
-                Text = "Ocean level : " + _inputOceanLevel.Value.ToString(),
-                Color = new ByteColor(255, 255, 255),
-                CustomFont = _commonResources.FontBebasNeue17
-            });
-
             _inputWorldNameLabel = ToDispose(new LabelControl()
             {
                 Text = "World Name : ",
@@ -99,11 +78,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
                 TextFontId = 1
             });
             BtCreate.Pressed += BtCreate_Pressed;
-        }
-
-        void _inputOceanLevel_Moved(object sender, EventArgs e)
-        {
-            _inputOceanLevelLabel.Text = "Ocean level : " + _inputOceanLevel.Value.ToString();
         }
 
         //[DebuggerStepThrough]
@@ -132,7 +106,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
                         //Reset field values
                         _inputWorldName.Text = string.Empty;
                         _inputSeedName.Text = string.Empty;
-                        _inputOceanLevel.Value = 64;
                     }
                 }
                 catch (Exception)
@@ -150,8 +123,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         private void BindComponents()
         {
             this.Children.Add(BtCreate);
-            this.Children.Add(_inputOceanLevel);
-            this.Children.Add(_inputOceanLevelLabel);
             this.Children.Add(_inputSeedName);
             this.Children.Add(_inputSeedNameLabel);
             this.Children.Add(_inputWorldName);
@@ -175,11 +146,6 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
 
             _inputSeedNameLabel.Bounds = new UniRectangle(BorderMargin, Yposi + 5, 130, 0);
             _inputSeedName.Bounds = new UniRectangle(_inputSeedNameLabel.Bounds.Location.X.Offset + _inputSeedNameLabel.Bounds.Size.X.Offset + 10, Yposi, 300, 30);
-
-            Yposi += 40;
-
-            _inputOceanLevelLabel.Bounds = new UniRectangle(BorderMargin, Yposi + 3, 130, 0);
-            _inputOceanLevel.Bounds = new UniRectangle(_inputOceanLevelLabel.Bounds.Location.X.Offset + _inputOceanLevelLabel.Bounds.Size.X.Offset + 10, Yposi, 300, 20);
 
             Yposi += 40;
 

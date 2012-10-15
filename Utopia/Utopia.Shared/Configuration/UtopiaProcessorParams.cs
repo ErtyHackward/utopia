@@ -84,7 +84,7 @@ namespace Utopia.Shared.Configuration
             World = new List<LandscapeRange>();
 
             WorldType = enuWorldType.Normal;
-            WorldHeight = 150;
+            WorldHeight = 128;
             WaterLevel = 64;
 
             PlainCtrlFrequency = 2.5;

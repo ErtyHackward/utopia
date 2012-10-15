@@ -83,8 +83,11 @@
     <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Config\Default.realm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Config\Island.realm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\World.realm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="EffectsPacks\Default\Entities\CubeTool.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
