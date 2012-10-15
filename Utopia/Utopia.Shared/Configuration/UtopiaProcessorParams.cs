@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,20 @@ namespace Utopia.Shared.Configuration
             public const int World_Ground = 1;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;          
+            if (handler != null)                                            
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));  
+            }
+        }
+
         #region Private Variables
+
+
         #endregion
 
         #region Public Properties
@@ -45,6 +59,18 @@ namespace Utopia.Shared.Configuration
         public List<LandscapeRange> Ocean { get; set; }
         public List<LandscapeRange> World { get; set; }
         public enuWorldType WorldType { get; set; }
+
+        public int WorldHeight { get; set; }
+
+        public int WaterLevel  { get; set; }
+        public double PlainCtrlFrequency { get; set; }
+        public int PlainCtrlOctave { get; set; }
+        public double GroundCtrlFrequency { get; set; }
+        public int GroundCtrlOctave { get; set; }
+        public double WorldCtrlFrequency  { get; set; }
+        public int WorldCtrlOctave { get; set; }
+        public double IslandCtrlSize { get; set; }
+
         #endregion
 
         public UtopiaProcessorParams()
@@ -58,6 +84,19 @@ namespace Utopia.Shared.Configuration
             World = new List<LandscapeRange>();
 
             WorldType = enuWorldType.Normal;
+            WorldHeight = 150;
+            WaterLevel = 64;
+
+            PlainCtrlFrequency = 2.5;
+            PlainCtrlOctave = 3;
+
+            GroundCtrlFrequency = 1.5;
+            GroundCtrlOctave = 2;
+
+            WorldCtrlFrequency = 1.5;
+            WorldCtrlOctave = 3;
+
+            IslandCtrlSize = 0.7;
         }
 
         #region Public Methods
@@ -214,6 +253,20 @@ namespace Utopia.Shared.Configuration
             }
 
             writer.Write((int)WorldType);
+
+            writer.Write(WorldHeight);
+            writer.Write(WaterLevel);
+
+            writer.Write(PlainCtrlFrequency);
+            writer.Write(PlainCtrlOctave);
+
+            writer.Write(GroundCtrlFrequency);
+            writer.Write(GroundCtrlOctave);
+
+            writer.Write(WorldCtrlFrequency);
+            writer.Write(WorldCtrlOctave);
+
+            writer.Write(IslandCtrlSize);
         }
 
         public void Load(System.IO.BinaryReader reader)
@@ -281,6 +334,20 @@ namespace Utopia.Shared.Configuration
                 World.Add(landscapeRange);
             }
             WorldType = (enuWorldType)reader.ReadInt32();
+
+            WorldHeight = reader.ReadInt32();
+            WaterLevel = reader.ReadInt32();
+
+            PlainCtrlFrequency = reader.ReadDouble();
+            PlainCtrlOctave = reader.ReadInt32();
+
+            GroundCtrlFrequency = reader.ReadDouble();
+            GroundCtrlOctave = reader.ReadInt32();
+
+            WorldCtrlFrequency = reader.ReadDouble();
+            WorldCtrlOctave = reader.ReadInt32();
+
+            IslandCtrlSize = reader.ReadDouble();
         }
     }
 }
