@@ -155,7 +155,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             case CubeFaces.Back:
                                 if (ZWorld - 1 < _visualWorldParameters.WorldRange.Position.Z) continue;
-                                //neightborCubeIndex = cubeIndex - _cubesHolder.MoveZ;
                                 neightborCubeIndex = _cubesHolder.FastIndex(cubeIndex, ZWorld, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1);
                                 zNeight--;
                                 break;
@@ -170,7 +169,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 yNeight--;
                                 break;
                             case CubeFaces.Top:
-                                if (YWorld + 1 >= worldRangeMaxY) continue;
+                                if (YWorld + 1 > worldRangeMaxY) continue;
                                 neightborCubeIndex = topCubeIndex;
                                 yNeight++;
                                 break;
@@ -188,7 +187,15 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 throw new NullReferenceException();
                         }
 
-                        neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
+                        if (YWorld + 1 < worldRangeMaxY)
+                        {
+                            neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
+                        }
+                        else
+                        {
+                            neightborCube = new TerraCube(RealmConfiguration.CubeId.Air);
+                        }
+
                         neightborCubeProfile = RealmConfiguration.CubeProfiles[neightborCube.Id];
 
                         //Check if a tag is present and ICubeYOffsetModifier is implementad by the tag;

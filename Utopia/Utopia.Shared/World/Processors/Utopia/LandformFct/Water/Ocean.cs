@@ -51,7 +51,7 @@ namespace Utopia.Shared.World.Processors.Utopia.LandformFct
             //Create the Lowland base fractal with range from 0 to 1 values
             INoise ocean_shape_fractal = new FractalFbm(new Simplex(_seed), 3, 3, enuBaseNoiseRange.ZeroToOne);
             //Rescale + offset the output result ==> Wil modify the Scope of output range value
-            INoise ocean_scale = new ScaleOffset(ocean_shape_fractal, 0.20 * _groundGradientTyped.AdjustY, 0.12 * _groundGradientTyped.AdjustY);
+            INoise ocean_scale = new ScaleOffset(ocean_shape_fractal, 0.20 * _groundGradientTyped.AdjustY, 0.08 * _groundGradientTyped.AdjustY);
 
             //Force the Fractal to be used as 2D Noise, I don't need to 3th dimension
             INoise ocean_y_scale = new NoiseAccess(ocean_scale, NoiseAccess.enuDimUsage.Noise2D, true);
