@@ -111,7 +111,9 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
 
             //Normal Landscape creation
-            mainLandscape = new Cache<INoise>(CreateLandFormFct(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
+            //A gradiant is created here, on the Z component, adjusted around 0.45
+            Gradient mainGradiant = new Gradient(0, 0, 0.45, 0);
+            mainLandscape = new Cache<INoise>(CreateLandFormFct(mainGradiant, terrainDelimiter, out landScapeType));
             //Activate it in order to test single landscape configuration
             //mainLandscape = new Cache<INoise>(FonctionTesting(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
 
@@ -193,33 +195,33 @@ namespace Utopia.Shared.World.Processors.Utopia
             return world_select;
         }
 
-        public INoise FonctionTesting(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
-        {
-            //Create various landcreation Algo. ===================================================================
-            //Montains forms
-            INoise montainFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
+        //public INoise FonctionTesting(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
+        //{
+        //    //Create various landcreation Algo. ===================================================================
+        //    //Montains forms
+        //    INoise montainFct = new Montain(_worldParameters.Seed + 28051979, ground_gradient).GetLandFormFct();
 
-            //MidLand forms
-            INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
+        //    //MidLand forms
+        //    INoise midlandFct = new Midland(_worldParameters.Seed + 08092007, ground_gradient).GetLandFormFct();
 
-            //Plains forms
-            INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
-            INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
-            INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
-            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
+        //    //Plains forms
+        //    INoise hillFct = new Hill(_worldParameters.Seed + 1, ground_gradient).GetLandFormFct();
+        //    INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
+        //    INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
+        //    INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
 
-            //Oceans forms
-            INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
+        //    //Oceans forms
+        //    INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
 
-            //Surface main controler
-            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123).GetLandFormFct();
+        //    //Surface main controler
+        //    INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123).GetLandFormFct();
 
-            var param = _worldParameters.Configuration.UtopiaProcessorParam;
-            //=====================================================================================================
-            // TESTING PURPOSE
-            landScapeTypeFct = new Constant((double)enuLandFormType.Hill);
-            return hillFct;
-        }
+        //    var param = _worldParameters.Configuration.UtopiaProcessorParam;
+        //    //=====================================================================================================
+        //    // TESTING PURPOSE
+        //    landScapeTypeFct = new Constant((double)enuLandFormType.Hill);
+        //    return hillFct;
+        //}
 
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange, out double[,] biomeMap)
         {
@@ -348,7 +350,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         byte cubeId = ChunkCubes[index];
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == RealmConfiguration.CubeId.Air && Y > (64 - 5)) surfaceLayer = 1;
+                        if (surfaceLayer > 0 && cubeId == RealmConfiguration.CubeId.Air && Y > (_worldParameters.Configuration.UtopiaProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
 
                         if (cubeId == RealmConfiguration.CubeId.Stone)
                         {

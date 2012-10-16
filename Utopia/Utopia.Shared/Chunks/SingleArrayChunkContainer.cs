@@ -412,7 +412,9 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+
+            if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
                 return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
@@ -428,7 +430,7 @@ namespace Utopia.Shared.Chunks
 
             var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
 
-            if (Index(ref cubePosition, true, out cubeIndex))
+            if (cubePosition.Y  < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex]);
                 return RealmConfiguration.CubeProfiles[cubewithPosition.Cube.Id].IsPickable;
@@ -442,7 +444,9 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+
+            if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
                 return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
@@ -456,7 +460,10 @@ namespace Utopia.Shared.Chunks
         public bool isPickable(ref Vector3 position)
         {
             int cubeIndex;
-            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+
+            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+
+            if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 return RealmConfiguration.CubeProfiles[Cubes[cubeIndex].Id].IsPickable;
             }
