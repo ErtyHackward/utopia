@@ -241,7 +241,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             //Assign The Block generated to the Chunk
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes(), generatedChunk.BlockData.GetTags());
             visualChunk.BlockData.ColumnsInfo = generatedChunk.BlockData.ColumnsInfo;
-
+            visualChunk.BlockData.ChunkMetaData = generatedChunk.BlockData.ChunkMetaData;
             //Copy the entities
             visualChunk.Entities.Import(generatedChunk.Entities, true);
         }

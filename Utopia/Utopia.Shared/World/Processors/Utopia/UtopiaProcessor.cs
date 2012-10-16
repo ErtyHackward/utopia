@@ -449,6 +449,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             ChunkMetaData metaData = new ChunkMetaData();
             //Compute the Master Biome for the chunk.
             metaData.ChunkMasterBiomeType = columnsInfo.GroupBy(item => item.Biome).OrderByDescending(x => x.Count()).First().Key;
+            metaData.ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
             return metaData;
         }
         

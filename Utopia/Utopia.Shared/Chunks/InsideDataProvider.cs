@@ -357,6 +357,15 @@ namespace Utopia.Shared.Chunks
             return _chunkColumns[inChunkPosition.Y * _chunkSize.X + inChunkPosition.X];
         }
 
+        public override ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ)
+        {
+            return _chunkColumns[inChunkPositionZ * _chunkSize.X + inChunkPositionX];
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ)
+        {
+            return _chunkColumns[inChunkPositionZ * _chunkSize.X + inChunkPositionX];
+        }
         #endregion
 
 
