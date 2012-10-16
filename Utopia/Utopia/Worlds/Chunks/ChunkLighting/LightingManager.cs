@@ -98,16 +98,18 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private void CreateLightSources(VisualChunk chunk)
         {
             Range3I cubeRange = chunk.CubeRange;
-            CreateLightSources(ref cubeRange);
+            CreateLightSources(ref cubeRange, chunk.BlockData.ChunkMetaData.ChunkMaxHeightBuilt);
         }
 
         //Create light source on a specific Cube Range (not specific to a single chunk)
-        public void CreateLightSources(ref Range3I cubeRange)
+        public void CreateLightSources(ref Range3I cubeRange, byte maxHeight = 0)
         {
             int index;
             bool blockLight = false;
             int maxSunLight;
             CubeProfile cubeprofile;
+
+            int maxheight = maxHeight == 0 ? cubeRange.Max.Y - 1 : maxHeight;
 
             for (int X = cubeRange.Position.X; X < cubeRange.Max.X; X++)
             {
@@ -115,11 +117,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 {
                     blockLight = false;
                     maxSunLight = 255;
-                    index = _cubesHolder.Index(X, cubeRange.Max.Y - 1, Z);
-                    for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Position.Y; Y--)
+                    index = _cubesHolder.Index(X, maxheight, Z);
+                    for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
-                        if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
-
                         //Create SunLight LightSources from AIR blocs
                         cubeprofile = RealmConfiguration.CubeProfiles[_cubesHolder.Cubes[index].Id];
                         if ((!blockLight && cubeprofile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
@@ -141,15 +141,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                             _cubesHolder.Cubes[index].EmissiveColor.G = 0;
                             _cubesHolder.Cubes[index].EmissiveColor.B = 0;
                         }
+
+                        index -= _cubesHolder.MoveY;
                     }
                 }
             }
-
-            ////Recreate the light sources from the entities on the impacted chunks
-            //foreach (var chunk in impactedChunks)
-            //{
-            //    CreateEntityLightSources(chunk);
-            //}
 
             //Find all chunk from the Cube range !
             foreach (VisualChunk chunk in WorldChunk.Chunks)
@@ -245,7 +241,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         cube = _cubesHolder.Cubes[index];
                         cubeprofile = RealmConfiguration.CubeProfiles[cube.Id];
 
-                        if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
+                        if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) 
+                            PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cube.EmissiveColor.R > 0 || (borderAsLightSource && borderchunk)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
                         if (cube.EmissiveColor.G > 0 || (borderAsLightSource && borderchunk)) 

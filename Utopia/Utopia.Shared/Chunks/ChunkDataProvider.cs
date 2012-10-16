@@ -54,6 +54,20 @@ namespace Utopia.Shared.Chunks
         public abstract ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition);
 
         /// <summary>
+        /// Gets a single ColumnInf from internal location specified
+        /// </summary>
+        /// <param name="inChunkPosition"></param>
+        /// <returns></returns>
+        public abstract ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ);
+
+        /// <summary>
+        /// Gets a single ColumnInf from internal location specified
+        /// </summary>
+        /// <param name="inChunkPosition"></param>
+        /// <returns></returns>
+        public abstract ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ);
+
+        /// <summary>
         /// Will return the Id of the Biome most present on the chunk.
         /// </summary>
         public abstract ChunkMetaData ChunkMetaData { get; set; }

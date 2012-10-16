@@ -141,6 +141,7 @@ namespace Utopia.Shared.Chunks
                                 cubeIndex += ChunkCubes.MoveY;
                             }
 
+                            //By default if air block set sunlight to maximum
                             ChunkCubes.Cubes[cubeIndex] = new TerraCube(bytes[byteArrayIndex]);
                             byteArrayIndex++;
                         }
@@ -183,6 +184,16 @@ namespace Utopia.Shared.Chunks
         public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
         {
             return ChunkColumns[inChunkPosition.X * _chunkSize.Z + inChunkPosition.Y];
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ)
+        {
+            return ChunkColumns[inChunkPositionX * _chunkSize.Z + inChunkPositionZ];
+        }
+
+        public override ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ)
+        {
+            return ChunkColumns[inChunkPositionX * _chunkSize.Z + inChunkPositionZ];
         }
         #endregion
 
