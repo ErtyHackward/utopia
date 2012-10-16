@@ -99,10 +99,11 @@ namespace Utopia.Worlds.Chunks
             //Process each chunk that are in Empty state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
+                VisualChunk localChunk = chunk;
                 //Start chunk creation process in a threaded way !
-                chunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
+                localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
                 //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
-                S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(chunk));
+                S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(localChunk));
             }
         }
 
@@ -134,13 +135,15 @@ namespace Utopia.Worlds.Chunks
                                                        (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false && x.State >= ChunkState.InnerLightsSourcePropagated)) &&
                                                        x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
+                VisualChunk localChunk = chunk;
+
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
-                if (chunk.IsBorderChunk == true || chunk.SurroundingChunksMinimumState(ChunkState.InnerLightsSourcePropagated))
+                if (localChunk.IsBorderChunk == true || localChunk.SurroundingChunksMinimumState(ChunkState.InnerLightsSourcePropagated))
                 {
                     //Check if the surrounding chunk from this chunk are in the correct state = ChunkState.InnerLightsSourcePropagated
-                    chunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
+                    localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
                     //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(chunk));
+                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(localChunk));
                 }
             }
         }
@@ -159,12 +162,14 @@ namespace Utopia.Worlds.Chunks
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.OuterLightSourcesProcessed && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
+                VisualChunk localChunk = chunk;
+
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
-                if (chunk.SurroundingChunksMinimumState(ChunkState.OuterLightSourcesProcessed))
+                if (localChunk.SurroundingChunksMinimumState(ChunkState.OuterLightSourcesProcessed))
                 {
-                    chunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked; 
+                    localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked; 
                     //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(chunk));
+                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk));
                 }
             }
         }
