@@ -704,11 +704,11 @@ namespace Utopia.Worlds.Chunks
 
                 }
 
-                var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices, Temperature {4:0.00}, Moisture {5:0.00}, BiomeType : {6}", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount, columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, Utopia.Shared.Configuration.RealmConfiguration.Biomes[columnInfo.Biome].Name);
+                var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount);
 
                 var line1 = string.Format("Static entity draw calls {2}: {0}, time {1}", _staticEntityDrawCalls, _staticEntityDrawTime, DrawStaticInstanced ? "[INSTANCED]": "");
-
-                return string.Join("\r\n", line0, line1);
+                var line2 = string.Format("MetaData : Temperature {0:0.00}, Moisture {1:0.00}, BiomeType : {2}, ColumnMaxHeight : {3}", columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, Utopia.Shared.Configuration.RealmConfiguration.Biomes[columnInfo.Biome].Name, columnInfo.MaxHeight);
+                return string.Join("\r\n", line0, line1, line2);
             }
             else
             {
