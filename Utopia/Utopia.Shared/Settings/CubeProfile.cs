@@ -27,8 +27,10 @@ namespace Utopia.Shared.Settings
         public byte Id { get; set; }
         [Description("Can be picked-up by player"), Category("General")]
         public bool IsPickable { get; set; }
+        [Browsable(false)]
+        public bool IsBlockingLight { get { return LightAbsorbed == 255; } }
         [Description("Blocking light block"), Category("General")]
-        public bool IsBlockingLight { get; set; }
+        public byte LightAbsorbed { get; set; }
         [Description("Is partially or completly transparent ?"), Category("General")]
         public bool IsSeeThrough { get; set; }
         [Description("Is blocking water propagation ?"), Category("General")]
@@ -97,7 +99,7 @@ namespace Utopia.Shared.Settings
             writer.Write(Name);
             writer.Write(Id);
             writer.Write(IsPickable);
-            writer.Write(IsBlockingLight);
+            writer.Write(LightAbsorbed);
             writer.Write(IsSeeThrough);
             writer.Write(IsBlockingWater);
             writer.Write(IsSolidToEntity);
@@ -132,7 +134,7 @@ namespace Utopia.Shared.Settings
             Name = reader.ReadString();
             Id = reader.ReadByte();
             IsPickable = reader.ReadBoolean();
-            IsBlockingLight = reader.ReadBoolean();
+            LightAbsorbed = reader.ReadByte();
             IsSeeThrough = reader.ReadBoolean();
             IsBlockingWater = reader.ReadBoolean();
             IsSolidToEntity = reader.ReadBoolean();

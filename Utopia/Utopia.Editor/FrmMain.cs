@@ -362,6 +362,7 @@ namespace Utopia.Editor
                 {
                     pgDetails.Enabled = true;
                 }
+                if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true; 
                 pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
             }
         }
