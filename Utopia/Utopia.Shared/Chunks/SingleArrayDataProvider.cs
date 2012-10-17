@@ -5,6 +5,8 @@ using S33M3Resources.Structs;
 using System.IO;
 using Utopia.Shared.Entities;
 using System.Collections.Generic;
+using S33M3CoreComponents.Maths;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Chunks
 {
@@ -82,12 +84,38 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Operation is not supported
         /// </summary>
-        /// <param name="inChunkPosition"></param>
+        /// <param name="worldPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
+        public override void SetBlock(Vector3I worldPosition, byte blockValue, BlockTag tag = null)
         {
-            throw new NotSupportedException();
+            TerraCube newCube = new TerraCube(blockValue);
+            int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
+            ChunkCubes.Cubes[index] = new TerraCube(blockValue);
+
+            if (tag != null) SetTag(tag, worldPosition);
+
+            RefreshMetaData(ref worldPosition);
+        }
+
+        private void RefreshMetaData(ref Vector3I worldPosition)
+        {
+            //Must look from World Top to bottom to recompute the new High Block !
+            int yPosi = AbstractChunk.ChunkSize.Y - 1;
+            int index = ChunkCubes.Index(worldPosition.X, yPosi, worldPosition.Z);
+            while (ChunkCubes.Cubes[index].Id == RealmConfiguration.CubeId.Air && yPosi > 0)
+            {
+                index = ChunkCubes.FastIndex(index, yPosi, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
+                yPosi--;
+            }
+
+            //From World Coordinate to Chunk Coordinate
+            int arrayX = MathHelper.Mod(worldPosition.X, AbstractChunk.ChunkSize.X);
+            int arrayZ = MathHelper.Mod(worldPosition.Z, AbstractChunk.ChunkSize.Z);
+            //Compute 2D index of ColumnInfo and update ColumnInfo
+            int index2D = arrayX * AbstractChunk.ChunkSize.Z + arrayZ;
+            ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
+            ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
         }
 
         /// <summary>
@@ -99,7 +127,10 @@ namespace Utopia.Shared.Chunks
         /// <exception cref="NotSupportedException"></exception>
         public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
         {
-            throw new NotSupportedException();
+            for (int i = 0; i < positions.Length; i++)
+            {
+                SetBlock(positions[i], values[i], tags[i]);
+            }
         }
 
         /// <summary>
@@ -141,7 +172,6 @@ namespace Utopia.Shared.Chunks
                                 cubeIndex += ChunkCubes.MoveY;
                             }
 
-                            //By default if air block set sunlight to maximum
                             ChunkCubes.Cubes[cubeIndex] = new TerraCube(bytes[byteArrayIndex]);
                             byteArrayIndex++;
                         }

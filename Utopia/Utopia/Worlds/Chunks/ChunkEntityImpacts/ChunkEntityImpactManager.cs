@@ -138,8 +138,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 return false;
             }
-            //Create the new cube
-            TerraCube newCube = new TerraCube(replacementCubeId);
 
             //Get Cube Profile
             CubeProfile cubeProfile = RealmConfiguration.CubeProfiles[replacementCubeId];
@@ -160,7 +158,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             //Change the cube in the big array
-            _cubesHolder.SetCube(cubeArrayIndex, ref cubeCoordinates, ref newCube);
+            impactedChunk.BlockData.SetBlock(cubeCoordinates, replacementCubeId);
 
             //Update chunk tag collection if needed
             if (cubeProfile.IsTaggable)

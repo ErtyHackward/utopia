@@ -194,7 +194,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private void PropagatesLightSources(VisualChunk chunk)
         {
             Range3I cubeRangeWithOffset = chunk.CubeRange;
-            PropagateLightSources(ref cubeRangeWithOffset, false);
+            PropagateLightSources(ref cubeRangeWithOffset, false, maxHeight: chunk.BlockData.ChunkMetaData.ChunkMaxHeightBuilt);
             PropagateLightInsideStaticEntities(chunk);
         }
 
@@ -233,7 +233,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         //Can only be done if surrounding chunks have their landscape initialized !
-        public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false)
+        public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false, byte maxHeight = 0)
         {
             CubeProfile cubeprofile;
             bool borderchunk = false;
@@ -241,13 +241,16 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             TerraCube cube;
 
+            int maxheight = maxHeight == 0 ? cubeRange.Max.Y - 1 : maxHeight;
+
             //Foreach Blocks in the Range
             for (int X = cubeRange.Position.X; X < cubeRange.Max.X; X++)
             {
                 for (int Z = cubeRange.Position.Z; Z < cubeRange.Max.Z; Z++)
                 {
-                    index = _cubesHolder.Index(X, cubeRange.Max.Y - 1, Z);
-                    for (int Y = cubeRange.Max.Y - 1; Y >= cubeRange.Position.Y; Y--)
+                    index = _cubesHolder.Index(X, maxheight, Z);
+
+                    for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         if (X == cubeRange.Position.X || X == cubeRange.Max.X || Z == cubeRange.Position.Z || Z == cubeRange.Max.Z) borderchunk = true;
                         else borderchunk = false;

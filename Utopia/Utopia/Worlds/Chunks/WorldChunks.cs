@@ -199,9 +199,6 @@ namespace Utopia.Worlds.Chunks
             DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
             ENTITIES_DRAW = DrawOrders.AddIndex(101, "ENTITIES_DRAW");
-
-            //Subscribe to chunk modifications
-            _cubesHolder.BlockDataChanged += ChunkCubes_BlockDataChanged;
         }
 
         #region Public methods
@@ -675,15 +672,7 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         #region Events Handling
-        /// <summary>
-        /// Fired when a block is change
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void ChunkCubes_BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
-        {
-            //Make the Chunk's block "Dirty"
-        }
+
         #endregion
 
         public bool ShowDebugInfo { get; set; }
@@ -693,7 +682,7 @@ namespace Utopia.Worlds.Chunks
             {
 
                 var c = GetChunk((int)_playerManager.CameraWorldPosition.X, (int)_playerManager.CameraWorldPosition.Z);
-                            //From World Coord to Cube Array Coord
+                //From World Coord to Cube Array Coord
                 int arrayX = MathHelper.Mod((int)_playerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
                 int arrayZ = MathHelper.Mod((int)_playerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
                 var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX,arrayZ));

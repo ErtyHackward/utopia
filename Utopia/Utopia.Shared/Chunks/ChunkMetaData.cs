@@ -21,6 +21,11 @@ namespace Utopia.Shared.Chunks
             ChunkMaxHeightBuilt = copyFrom.ChunkMaxHeightBuilt;
         }
 
+        public void setChunkMaxHeightBuilt(ChunkColumnInfo[] columnsInfo)
+        {
+            ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
+        }
+
         public void Save(System.IO.BinaryWriter writer)
         {
             writer.Write(ChunkMasterBiomeType);

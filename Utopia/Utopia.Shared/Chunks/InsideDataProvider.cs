@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Chunks
 {
@@ -196,7 +197,6 @@ namespace Utopia.Shared.Chunks
                 }
             }
 
-
             OnBlockBufferChanged(new ChunkDataProviderBufferChangedEventArgs { NewBuffer = bytes });
         }
 
@@ -257,7 +257,7 @@ namespace Utopia.Shared.Chunks
                 _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
             }
             _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
-
+            RefreshMetaData(ref inChunkPosition);
             SetTag(tag, inChunkPosition);
 
             if (_transaction)
@@ -300,6 +300,7 @@ namespace Utopia.Shared.Chunks
             for (var i = 0; i < positions.Length; i++)
             {
                 _blockBytes[positions[i].X * _chunkSize.Y + positions[i].Y + positions[i].Z * _chunkSize.Y * _chunkSize.X] = values[i];
+                RefreshMetaData(ref positions[i]);
             }
 
             if (tags != null)
@@ -365,6 +366,21 @@ namespace Utopia.Shared.Chunks
         public override ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ)
         {
             return _chunkColumns[inChunkPositionZ * _chunkSize.X + inChunkPositionX];
+        }
+
+        private void RefreshMetaData(ref Vector3I inChunkPosition)
+        {
+            //Must look from World Top to bottom to recompute the new High Block !
+            int yPosi = AbstractChunk.ChunkSize.Y - 1;
+            while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == RealmConfiguration.CubeId.Air && yPosi > 0)
+            {
+                yPosi--;
+            }
+
+            //Compute 2D index of ColumnInfo and update ColumnInfo
+            int index2D = inChunkPosition.X * AbstractChunk.ChunkSize.Z + inChunkPosition.Z;
+            ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
+            ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
         }
         #endregion
 
