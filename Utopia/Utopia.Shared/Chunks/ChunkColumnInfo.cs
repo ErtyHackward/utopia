@@ -10,6 +10,7 @@ namespace Utopia.Shared.Chunks
         public byte Temperature;
         public byte Moisture;
         public byte MaxHeight;
+        public byte MaxGroundHeight;
         public byte Biome;
 
         public void Save(System.IO.BinaryWriter writer)
@@ -17,6 +18,7 @@ namespace Utopia.Shared.Chunks
             writer.Write(Temperature);
             writer.Write(Moisture);
             writer.Write(MaxHeight);
+            writer.Write(MaxGroundHeight);
             writer.Write(Biome);
         }
 
@@ -25,6 +27,7 @@ namespace Utopia.Shared.Chunks
             Temperature = reader.ReadByte();
             Moisture = reader.ReadByte();
             MaxHeight = reader.ReadByte();
+            MaxGroundHeight = reader.ReadByte();
             Biome = reader.ReadByte();
         }
     }

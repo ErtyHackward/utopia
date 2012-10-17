@@ -106,7 +106,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             int index;
             bool blockLight = false;
-            int maxSunLight;
+            int SunLight;
             CubeProfile cubeprofile;
 
             int maxheight = maxHeight == 0 ? cubeRange.Max.Y - 1 : maxHeight;
@@ -116,8 +116,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 for (int Z = cubeRange.Position.Z; Z < cubeRange.Max.Z; Z++)
                 {
                     blockLight = false;
-                    maxSunLight = 255;
+                    SunLight = 255;
                     index = _cubesHolder.Index(X, maxheight, Z);
+
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         //Create SunLight LightSources from AIR blocs
@@ -125,9 +126,24 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         if ((!blockLight && cubeprofile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
                         if (!blockLight)
                         {
-                            _cubesHolder.Cubes[index].EmissiveColor.A = (byte)maxSunLight;
+                            SunLight -= cubeprofile.LightAbsorbed;
+                            if (SunLight < 0)
+                            {
+                                SunLight = 0;
+                                _cubesHolder.Cubes[index].IsSunLightSource = true;
+                            }
+                            else
+                            {
+                                _cubesHolder.Cubes[index].IsSunLightSource = true;
+                            }
+                            _cubesHolder.Cubes[index].EmissiveColor.A = (byte)SunLight;
+                            
                         }
-                        else _cubesHolder.Cubes[index].EmissiveColor.A = 0;
+                        else
+                        {
+                            _cubesHolder.Cubes[index].EmissiveColor.A = 0;
+                            _cubesHolder.Cubes[index].IsSunLightSource = false;
+                        }
 
                         if (cubeprofile.IsEmissiveColorLightSource)
                         {
@@ -236,12 +252,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         if (X == cubeRange.Position.X || X == cubeRange.Max.X || Z == cubeRange.Position.Z || Z == cubeRange.Max.Z) borderchunk = true;
                         else borderchunk = false;
 
-                        if (Y != cubeRange.Max.Y - 1) index -= _cubesHolder.MoveY;
-
                         cube = _cubesHolder.Cubes[index];
                         cubeprofile = RealmConfiguration.CubeProfiles[cube.Id];
 
-                        if (cube.EmissiveColor.A == 255 || (borderAsLightSource && borderchunk)) 
+                        if (cube.IsSunLightSource || (borderAsLightSource && borderchunk)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cube.EmissiveColor.R > 0 || (borderAsLightSource && borderchunk)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
@@ -249,6 +263,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                             PropagateLight(X, Y, Z, cube.EmissiveColor.G, LightComponent.Green, true, index);
                         if (cube.EmissiveColor.B > 0 || (borderAsLightSource && borderchunk)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.B, LightComponent.Blue, true, index);
+
+                        index -= _cubesHolder.MoveY;
                     }
                 }
             }
@@ -258,6 +274,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Propagate lights Algo.
         private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
+
             CubeProfile cubeprofile;
             TerraCube cube;
 

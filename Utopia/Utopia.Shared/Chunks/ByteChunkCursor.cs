@@ -14,6 +14,7 @@ namespace Utopia.Shared.Chunks
         private byte[] _chunkData;
         private Vector3I _internalPosition;
         private int _arrayIndex;
+        private ChunkColumnInfo[] _chunkColumn;
         #endregion
 
         #region Public Properties
@@ -32,17 +33,24 @@ namespace Utopia.Shared.Chunks
             get { return _arrayIndex; }
             set { _arrayIndex = value; }
         }
+        public ChunkColumnInfo[] ChunkColumn
+        {
+            get { return _chunkColumn; }
+            set { _chunkColumn = value; }
+        }
         #endregion
 
-        public ByteChunkCursor(byte[] chunkData, Vector3I internalChunkPosition)
+        public ByteChunkCursor(byte[] chunkData, Vector3I internalChunkPosition, ChunkColumnInfo[] chunkColumn)
         {
             _chunkData = chunkData;
+            _chunkColumn = chunkColumn;
             SetInternalPosition(internalChunkPosition);
         }
 
-        public ByteChunkCursor(byte[] chunkData)
+        public ByteChunkCursor(byte[] chunkData, ChunkColumnInfo[] chunkColumn)
         {
             _chunkData = chunkData;
+            _chunkColumn = chunkColumn;
         }
 
         public ByteChunkCursor(ByteChunkCursor cursor)
@@ -50,6 +58,7 @@ namespace Utopia.Shared.Chunks
             ChunkData = cursor.ChunkData;
             ArrayIndex = cursor.ArrayIndex;
             InternalPosition = cursor.InternalPosition;
+            _chunkColumn = cursor.ChunkColumn;
         }
 
         public ByteChunkCursor Clone()
@@ -145,6 +154,11 @@ namespace Utopia.Shared.Chunks
         public void Write(byte cubeId)
         {
             _chunkData[_arrayIndex] = cubeId;
+            //Check for new max height
+
+            int index2D = _internalPosition.X * AbstractChunk.ChunkSize.Z + _internalPosition.Z;
+            if (_internalPosition.Y > _chunkColumn[index2D].MaxHeight) 
+                _chunkColumn[index2D].MaxHeight = (byte)_internalPosition.Y;
         }
 
         public bool Move(CursorRelativeMovement relativeMove)

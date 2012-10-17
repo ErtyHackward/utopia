@@ -81,6 +81,8 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                 PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
 
+                RefreshChunkMetaData(metaData, columnsInfo);
+
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
                 chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
                 chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
@@ -356,14 +358,18 @@ namespace Utopia.Shared.World.Processors.Utopia
                         {
                             if (solidGroundHitted == false)
                             {
-                                columnInfo.MaxHeight = (byte)Y;
+                                if (columnInfo.MaxHeight < Y || inWaterMaxLevel == 0)
+                                {
+                                    columnInfo.MaxHeight = (byte)Y;
+                                }
+                                columnInfo.MaxGroundHeight = (byte)Y;
                                 solidGroundHitted = true;
                             }
 
                             cubeId = currentBiome.GroundCube;
 
                             //Under water soil
-                            if (Y < 64 && inWaterMaxLevel != 0)
+                            if (Y < _worldParameters.Configuration.UtopiaProcessorParam.WaterLevel && inWaterMaxLevel != 0)
                             {
                                 if (cubeId == currentBiome.GroundCube)
                                 {
@@ -409,6 +415,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                 }
 
                                 inWaterMaxLevel = Y;
+                                columnInfo.MaxHeight = (byte)Y;
                             }
                             else
                             {
@@ -436,7 +443,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             //Get Chunk Master Biome
             var masterBiome = RealmConfiguration.Biomes[chunkMetaData.ChunkMasterBiomeType];
-            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData);
+            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
 
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
@@ -449,8 +456,12 @@ namespace Utopia.Shared.World.Processors.Utopia
             ChunkMetaData metaData = new ChunkMetaData();
             //Compute the Master Biome for the chunk.
             metaData.ChunkMasterBiomeType = columnsInfo.GroupBy(item => item.Biome).OrderByDescending(x => x.Count()).First().Key;
-            metaData.ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
             return metaData;
+        }
+
+        private void RefreshChunkMetaData(ChunkMetaData metaData, ChunkColumnInfo[] columnsInfo)
+        {
+            metaData.ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
         }
         
         #endregion

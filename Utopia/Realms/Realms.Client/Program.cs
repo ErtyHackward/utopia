@@ -40,7 +40,6 @@ namespace Realms.Client
                 main.Run();
             }
 
-
         }
 
         private static void DeleteAllSavedGame()

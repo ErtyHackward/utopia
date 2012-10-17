@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Structs.Landscape
 {
@@ -18,6 +19,7 @@ namespace Utopia.Shared.Structs.Landscape
 
         //Lighting channels
         public ByteColor EmissiveColor; //Color received
+        public bool IsSunLightSource;
         #endregion
 
         public TerraCube(byte Id)
@@ -26,7 +28,16 @@ namespace Utopia.Shared.Structs.Landscape
             EmissiveColor.R = 0;
             EmissiveColor.G = 0;
             EmissiveColor.B = 0;
-            EmissiveColor.A = 255;
+            if (Id == RealmConfiguration.CubeId.Air)
+            {
+                EmissiveColor.A = 255;
+                IsSunLightSource = true;
+            }
+            else
+            {
+                EmissiveColor.A = 0;
+                IsSunLightSource = false;
+            }
         }
     }
 }

@@ -220,7 +220,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
                         int z = rnd.Next(0, 16);
-                        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+                        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
 
                         PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
                     }
@@ -413,7 +413,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //Get Rnd chunk Location.
             int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
             int z = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
-            int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxHeight;
+            int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
 
             cursor.SetInternalPosition(x, y, z);
             //No other tree around me ?
@@ -463,7 +463,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, RealmConfiguration.BluePrintId.CactusFlower , posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
                     }
 
-                    //Remove OFfset
+                    //Remove Offset
                     if (foliageStructOffset1 != 0)
                     {
                         switch (foliageStructOffset1)
@@ -502,9 +502,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         }
                     }
                 }
-
-
-
             }
         }
 
