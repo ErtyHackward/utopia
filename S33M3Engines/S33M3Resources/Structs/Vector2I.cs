@@ -42,6 +42,9 @@ namespace S33M3Resources.Structs
             return dx * dx + dy * dy;
         }
 
+        public static Vector2I XAxis = new Vector2I(1, 0);
+        public static Vector2I YAxis = new Vector2I(0, 1);
+
         #region IComparable Members
 
         public int CompareTo(object obj)
