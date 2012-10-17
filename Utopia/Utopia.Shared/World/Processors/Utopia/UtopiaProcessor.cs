@@ -461,7 +461,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         private void RefreshChunkMetaData(ChunkMetaData metaData, ChunkColumnInfo[] columnsInfo)
         {
-            metaData.ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
+            metaData.setChunkMaxHeightBuilt(columnsInfo);
         }
         
         #endregion

@@ -15,6 +15,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         void PropagateInnerChunkLightSources(VisualChunk chunk);
         void PropagateOutsideChunkLightSources(VisualChunk chunk);
         void CreateLightSources(ref Range3I cubeRange, byte maxHeight = 0);
-        void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false);
+        void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false, byte maxHeight = 0);
     }
 }

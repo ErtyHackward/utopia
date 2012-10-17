@@ -60,11 +60,6 @@ namespace Utopia.Shared.Chunks
         private VisualWorldParameters _visualWorldParam;
 
         /// <summary>
-        /// Occurs when block data was changed
-        /// </summary>
-        public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlockDataChanged;
-
-        /// <summary>
         /// Contains the array of visible cubes
         /// </summary>
         public TerraCube[] Cubes { get; set;}
@@ -87,7 +82,6 @@ namespace Utopia.Shared.Chunks
             MoveX = _visualWorldParam.WorldVisibleSize.Y;
             MoveZ = _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.X;
             MoveY = 1;
-
             //Initialize the Big Array
             Cubes = new TerraCube[_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z];
             _bigArraySize = Cubes.Length;
@@ -631,29 +625,6 @@ namespace Utopia.Shared.Chunks
             if (testCube.Position.Y > cubeWithPosition.Position.Y) cubeWithPosition = testCube;
         }
 
-        public void SetCube(int cubeIndex, ref Vector3I cubeCoordinates, ref TerraCube cube)
-        {
-            int index = cubeIndex;
-            Cubes[index] = cube;
-
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cube.Id } });
-        }
-
-        public void SetCube(ref Vector3I cubeCoordinates, ref TerraCube cube)
-        {
-            int index = Index(cubeCoordinates.X, cubeCoordinates.Y, cubeCoordinates.Z);
-            Cubes[index] = cube;
-
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { cubeCoordinates }, Bytes = new[] { cube.Id } });
-        }
-
-        public void SetCube(int X, int Y, int Z, ref TerraCube cube)
-        {
-            int index = Index(X, Y, Z);
-            Cubes[index] = cube;
-
-            if (BlockDataChanged != null) BlockDataChanged(this, new ChunkDataProviderDataChangedEventArgs { Count = 1, Locations = new[] { new Vector3I { X = X, Y = Y, Z = Z } }, Bytes = new[] { cube.Id } });
-        }
 
         /// <summary>
         /// Tells wich cube is at this cube position
