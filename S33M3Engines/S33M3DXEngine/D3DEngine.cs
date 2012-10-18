@@ -491,8 +491,8 @@ namespace S33M3DXEngine
             _renderTarget.Dispose();
             _swapChain.Dispose();
 
-            ImmediateContext.ClearState();
-            ImmediateContext.Flush();
+            //ImmediateContext.ClearState();
+            //ImmediateContext.Flush();
 
             //The Context is automaticaly disposed by the Device
             Device.Dispose();
