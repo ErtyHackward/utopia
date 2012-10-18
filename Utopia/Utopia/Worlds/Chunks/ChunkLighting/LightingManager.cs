@@ -51,7 +51,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             _visualWorldParameters = visualWorldParameters;
 
             _lightPropagateSteps = 8;
-            _lightDecreaseStep = (byte)(256 / _lightPropagateSteps);
+            _lightDecreaseStep = (byte)(159 / (_lightPropagateSteps - 1));
         }
 
         #region Public methods
@@ -137,12 +137,17 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                                 _cubesHolder.Cubes[index].IsSunLightSource = true;
                             }
                             _cubesHolder.Cubes[index].EmissiveColor.A = (byte)SunLight;
-                            
+
                         }
                         else
                         {
                             _cubesHolder.Cubes[index].EmissiveColor.A = 0;
                             _cubesHolder.Cubes[index].IsSunLightSource = false;
+                        }
+
+                        if (Z == -70 && X == 85 && Y == 70)
+                        {
+                            Console.WriteLine("New Light value FROM LightSource for block 85/70/-70 : " + _cubesHolder.Cubes[index].EmissiveColor.A + " islightsource : " + _cubesHolder.Cubes[index].IsSunLightSource.ToString());
                         }
 
                         if (cubeprofile.IsEmissiveColorLightSource)
@@ -236,7 +241,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false, byte maxHeight = 0)
         {
             CubeProfile cubeprofile;
-            bool borderchunk = false;
             int index;
 
             TerraCube cube;
@@ -252,19 +256,16 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
-                        if (X == cubeRange.Position.X || X == cubeRange.Max.X || Z == cubeRange.Position.Z || Z == cubeRange.Max.Z) borderchunk = true;
-                        else borderchunk = false;
-
                         cube = _cubesHolder.Cubes[index];
                         cubeprofile = RealmConfiguration.CubeProfiles[cube.Id];
 
-                        if (cube.IsSunLightSource || (borderAsLightSource && borderchunk)) 
+                        if (cube.IsSunLightSource || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
-                        if (cube.EmissiveColor.R > 0 || (borderAsLightSource && borderchunk)) 
+                        if (cube.EmissiveColor.R > 0 || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
-                        if (cube.EmissiveColor.G > 0 || (borderAsLightSource && borderchunk)) 
+                        if (cube.EmissiveColor.G > 0 || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.G, LightComponent.Green, true, index);
-                        if (cube.EmissiveColor.B > 0 || (borderAsLightSource && borderchunk)) 
+                        if (cube.EmissiveColor.B > 0 || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.B, LightComponent.Blue, true, index);
 
                         index -= _cubesHolder.MoveY;
@@ -302,6 +303,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     case LightComponent.SunLight:
                         if (cube.EmissiveColor.A >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
                         _cubesHolder.Cubes[index].EmissiveColor.A = (byte)LightValue;
+
+                        if (Z == -70 && X == 85 && Y == 70)
+                        {
+                            Console.WriteLine("New Light value for block 85/70/-70 : " + LightValue);
+                        }
+
                         break;
                     case LightComponent.Red:
                         if (cube.EmissiveColor.R >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
@@ -320,21 +327,23 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             //Don't propagate if I don't let the light going through me
 
+            byte lightAttenuation = LightValue == 255 ? (byte)96 : _lightDecreaseStep;
+
             //Call the 6 surrounding blocks !
             if (!isLightSource || lightComp != LightComponent.SunLight)
             {
-                PropagateLight(X, Y + 1, Z, LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveY);
-                PropagateLight(X, Y - 1, Z, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveY);
+                PropagateLight(X, Y + 1, Z, LightValue - lightAttenuation, lightComp, false, index + _cubesHolder.MoveY);
+                PropagateLight(X, Y - 1, Z, LightValue - lightAttenuation, lightComp, false, index - _cubesHolder.MoveY);
             }
 
             //X + 1, Y, Z
-            PropagateLight(X + 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveX);
+            PropagateLight(X + 1, Y, Z, LightValue - lightAttenuation, lightComp, false, index + _cubesHolder.MoveX);
             //X, Y, Z + 1
-            PropagateLight(X, Y, Z + 1, LightValue - _lightDecreaseStep, lightComp, false, index + _cubesHolder.MoveZ);
+            PropagateLight(X, Y, Z + 1, LightValue - lightAttenuation, lightComp, false, index + _cubesHolder.MoveZ);
             //X - 1, Y, Z
-            PropagateLight(X - 1, Y, Z, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveX);
+            PropagateLight(X - 1, Y, Z, LightValue - lightAttenuation, lightComp, false, index - _cubesHolder.MoveX);
             //X, Y, Z - 1
-            PropagateLight(X, Y, Z - 1, LightValue - _lightDecreaseStep, lightComp, false, index - _cubesHolder.MoveZ);
+            PropagateLight(X, Y, Z - 1, LightValue - lightAttenuation, lightComp, false, index - _cubesHolder.MoveZ);
         }
 
         //Propagate the light inside the chunk entities

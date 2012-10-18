@@ -200,20 +200,22 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Range3I cubeRange = new Range3I()
             {
                 Position = new Vector3I(cube.Position.X - _lightManager.LightPropagateSteps, 0, cube.Position.Z - _lightManager.LightPropagateSteps),
-                Size = new Vector3I(_lightManager.LightPropagateSteps * 2, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, _lightManager.LightPropagateSteps * 2)
+                Size = new Vector3I((_lightManager.LightPropagateSteps * 2) + 1, _worldChunks.VisualWorldParameters.WorldVisibleSize.Y, (_lightManager.LightPropagateSteps * 2) + 1)
             };
 
             //recompute the light sources without the range
             _lightManager.CreateLightSources(ref cubeRange);
-
+            Console.WriteLine("LightSource : " + cubeRange.Position + " " + cubeRange.Max);
             cubeRange.Position.X--;
             cubeRange.Position.Z--;
             cubeRange.Size.X += 2;
             cubeRange.Size.Z += 2;
 
-            //Propagate the light, we add one cube around the previous Range !! <= !!
-            _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
+            //Propagate the light, we add one cube around the previous Range !! <= !!
+            Console.WriteLine("PropagateLightSources : " + cubeRange.Position + " " + cubeRange.Max);
+            _lightManager.PropagateLightSources(ref cubeRange, true, true);
+            
             CubeProfile profile = RealmConfiguration.CubeProfiles[cube.Cube.Id];
 
             //Find the chunks that have been impacted around the 8 surrounding chunks
