@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IrrKlang;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3CoreComponents.Sound;
 
 namespace Utopia.Components
 {
@@ -42,7 +42,7 @@ namespace Utopia.Components
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            _soundEngine.Play2D(_buttonPressSound);
+            _soundEngine.PlaySound(_buttonPressSound, 1.0f);
         }
 
         public override void BeforeDispose()

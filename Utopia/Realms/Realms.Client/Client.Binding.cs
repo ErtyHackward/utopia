@@ -52,6 +52,7 @@ using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
+using S33M3CoreComponents.Sound;
 
 namespace Realms.Client
 {
@@ -133,6 +134,7 @@ namespace Realms.Client
 
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ISoundEngine>().To<SoundEngine>().InSingletonScope();
             _iocContainer.Bind<GeneralSoundManager>().To<SandboxGeneralSoundManager>().InSingletonScope();
 
             //Debug Components ===========================================

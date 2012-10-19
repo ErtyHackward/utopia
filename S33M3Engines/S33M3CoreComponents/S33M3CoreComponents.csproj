@@ -75,6 +75,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Utopia\packages\SharpDX.DXGI.2.3.1\lib\net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.XAudio2">
+      <HintPath>..\..\Utopia\packages\SharpDX.XAudio2.2.3.1\lib\net40\SharpDX.XAudio2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -263,6 +266,8 @@
     <Compile Include="Physics\States\EntityState.cs" />
     <Compile Include="Physics\Verlet\VerletSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sound\ISoundEngine.cs" />
+    <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sprites\Interfaces\ISpriteRenderer.cs" />
     <Compile Include="Sprites\LanguageUnicodeRanges.cs" />
     <Compile Include="Sprites\SpriteDrawBuffer.cs" />

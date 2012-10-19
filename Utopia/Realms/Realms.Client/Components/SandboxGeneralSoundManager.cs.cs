@@ -1,4 +1,4 @@
-﻿using IrrKlang;
+﻿using S33M3CoreComponents.Sound;
 using Utopia.Components;
 
 namespace Realms.Client.Components
