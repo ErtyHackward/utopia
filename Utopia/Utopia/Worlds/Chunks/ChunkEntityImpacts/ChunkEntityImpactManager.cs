@@ -205,15 +205,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             //recompute the light sources without the range
             _lightManager.CreateLightSources(ref cubeRange);
-            Console.WriteLine("LightSource : " + cubeRange.Position + " " + cubeRange.Max);
             cubeRange.Position.X--;
             cubeRange.Position.Z--;
             cubeRange.Size.X += 2;
             cubeRange.Size.Z += 2;
 
-
             //Propagate the light, we add one cube around the previous Range !! <= !!
-            Console.WriteLine("PropagateLightSources : " + cubeRange.Position + " " + cubeRange.Max);
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
             
             CubeProfile profile = RealmConfiguration.CubeProfiles[cube.Cube.Id];
