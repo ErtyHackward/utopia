@@ -145,10 +145,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                             _cubesHolder.Cubes[index].IsSunLightSource = false;
                         }
 
-                        if (Z == -70 && X == 85 && Y == 70)
-                        {
-                            Console.WriteLine("New Light value FROM LightSource for block 85/70/-70 : " + _cubesHolder.Cubes[index].EmissiveColor.A + " islightsource : " + _cubesHolder.Cubes[index].IsSunLightSource.ToString());
-                        }
 
                         if (cubeprofile.IsEmissiveColorLightSource)
                         {
@@ -303,12 +299,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     case LightComponent.SunLight:
                         if (cube.EmissiveColor.A >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
                         _cubesHolder.Cubes[index].EmissiveColor.A = (byte)LightValue;
-
-                        if (Z == -70 && X == 85 && Y == 70)
-                        {
-                            Console.WriteLine("New Light value for block 85/70/-70 : " + LightValue);
-                        }
-
                         break;
                     case LightComponent.Red:
                         if (cube.EmissiveColor.R >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
