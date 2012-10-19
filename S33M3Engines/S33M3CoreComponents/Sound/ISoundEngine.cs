@@ -7,6 +7,6 @@ namespace S33M3CoreComponents.Sound
 {
     public interface ISoundEngine
     {
-        public void PlaySound(string soundfile, float volume = 1);
+        void PlaySound(string soundfile, float volume = 1, int forcedChannel = -1);
     }
 }

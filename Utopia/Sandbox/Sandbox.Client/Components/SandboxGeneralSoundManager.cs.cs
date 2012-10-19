@@ -1,8 +1,8 @@
-﻿using System;
+﻿using S33M3CoreComponents.Sound;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IrrKlang;
 using Utopia.Components;
 
 namespace Sandbox.Client.Components
