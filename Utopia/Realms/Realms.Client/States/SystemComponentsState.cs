@@ -14,6 +14,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Entities;
 using System.IO;
 using S33M3CoreComponents.Config;
+using Utopia.Components;
 
 namespace Realms.Client.States
 {
@@ -42,6 +43,7 @@ namespace Realms.Client.States
         {
             var guiManager = _iocContainer.Get<GuiManager>();
             var inputManager = _iocContainer.Get<InputsManager>();
+            var generalSoundManager = _iocContainer.Get<GeneralSoundManager>();
 
             DebugComponent debugComponent = null;
             if (Program.ShowDebug) debugComponent = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
@@ -66,6 +68,7 @@ namespace Realms.Client.States
             AddComponent(debugComponent);
             AddComponent(guiManager);
             AddComponent(inputManager);
+            AddComponent(generalSoundManager);
             base.Initialize(context);
         }
 

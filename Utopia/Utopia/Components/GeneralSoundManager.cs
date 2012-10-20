@@ -30,6 +30,7 @@ namespace Utopia.Components
         public GeneralSoundManager(ISoundEngine soundEngine)
         {
             _soundEngine = soundEngine;
+            this.IsSystemComponent = true;
         }
 
         public void SetGuiButtonSound(string filePath)
@@ -42,7 +43,8 @@ namespace Utopia.Components
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            _soundEngine.PlaySound2D(_buttonPressSound, 1.0f);
+            //_soundEngine.PlaySound(_buttonPressSound, 1.0f);
+            _soundEngine.StartPlayingSound(_buttonPressSound, 1.0f, 100);
         }
 
         public override void BeforeDispose()
@@ -52,6 +54,12 @@ namespace Utopia.Components
                 _buttonPressSound = null;
                 ButtonControl.PressedSome -= PressableControlPressedSome;
             }
+        }
+
+        public override void Update(GameTime timeSpent)
+        {
+            _soundEngine.Update(timeSpent);
+            base.Update(timeSpent);
         }
 
         public bool ShowDebugInfo
