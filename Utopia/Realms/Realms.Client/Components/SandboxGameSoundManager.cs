@@ -54,7 +54,6 @@ namespace Realms.Client.Components
 
             PreLoadSound("Sounds\\Blocks\\put.wav");
             PreLoadSound("Sounds\\Blocks\\take.wav");
-
         }
 
         public override void PlayBlockPut(Vector3I blockPos)
