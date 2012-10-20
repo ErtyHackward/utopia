@@ -43,8 +43,7 @@ namespace Utopia.Components
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            //_soundEngine.PlaySound(_buttonPressSound, 1.0f);
-            _soundEngine.StartPlayingSound(_buttonPressSound, 1.0f, 100);
+            _soundEngine.PlaySound(_buttonPressSound, 1.0f);
         }
 
         public override void BeforeDispose()

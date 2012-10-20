@@ -233,7 +233,7 @@ namespace S33M3CoreComponents.Sound
                     source = _soundQueues[i] = new SourceVoiceAndMetaData(_soundDevice, waveFormat);
                     return true;
                 }
-                if (source.State.BuffersQueued == 0)
+                if (source.State.BuffersQueued == 0 && source.IsLooping == false)
                 {
                     return true;
                 }
