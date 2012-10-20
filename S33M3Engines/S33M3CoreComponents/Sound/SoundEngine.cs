@@ -1,5 +1,6 @@
 ﻿using SharpDX.IO;
 using SharpDX.Multimedia;
+using SharpDX.X3DAudio;
 using SharpDX.XAudio2;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace S33M3CoreComponents.Sound
         private MasteringVoice _masteringVoice;
 
         private XAudio2 _soundDevice;
+        private X3DAudio _x3DAudio;
         private sealed class AudioBufferAndMetaData : AudioBuffer
         {
             public WaveFormat WaveFormat { get; set; }
@@ -43,6 +45,9 @@ namespace S33M3CoreComponents.Sound
         {
             //Create new Xaudio2 engine
             _soundDevice = new XAudio2();
+            var deviceDetail = _soundDevice.GetDeviceDetails(0); //_soundDevice.DeviceCount;
+            logger.Info("s33m3 sound engine started for device : " + deviceDetail.DisplayName);
+            _x3DAudio = new X3DAudio(deviceDetail.OutputFormat.ChannelMask);
             //Create a Mastering Voice
             _masteringVoice = new MasteringVoice(_soundDevice);                       //Default interface sending sound stream to Hardware
             _masteringVoice.SetVolume(1, 0);
@@ -59,7 +64,12 @@ namespace S33M3CoreComponents.Sound
         }
         
         #region Public Methods
-        public void PlaySound(string soundfile, float volume = 1, int forcedChannel = -1)
+        public void PlaySound3D(string soundfile, float volume = 1, int forcedChannel = -1)
+        {
+            //_x3DAudio.Calculate();
+        }
+
+        public void PlaySound2D(string soundfile, float volume = 1, int forcedChannel = -1)
         {
             var buffer = GetBuffer(soundfile);
             SourceVoice sourceVoice;
