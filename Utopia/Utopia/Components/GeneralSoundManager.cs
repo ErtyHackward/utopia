@@ -42,7 +42,7 @@ namespace Utopia.Components
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            _soundEngine.PlaySound(_buttonPressSound, 1.0f);
+            _soundEngine.PlaySound2D(_buttonPressSound, 1.0f);
         }
 
         public override void BeforeDispose()
