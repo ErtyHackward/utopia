@@ -265,24 +265,27 @@
     <Content Include="Images\version.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Ambiance\beach_waves.ogg">
+    <None Include="Sounds\Ambiance\beach_waves.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Ambiance\bonfire.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\bonfire.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Ambiance\forest.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\forest.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Ambiance\lava.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\lava.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Ambiance\night_forest.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\night_forest.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Ambiance\water_stream.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\water_stream.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="Sounds\Ambiance\forest.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Sounds\Blocks\take.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

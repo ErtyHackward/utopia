@@ -11,6 +11,5 @@ namespace S33M3CoreComponents.Sound
         void PlaySound(string soundfile, float volume = 1, int forcedChannel = -1);
         void StartPlayingSound(string soundfile, float volume = 1, int delay = 0);
         void StopPlayingSound(string soundfile, float volume = 1);
-        void Update(GameTime timeSpend);
     }
 }
