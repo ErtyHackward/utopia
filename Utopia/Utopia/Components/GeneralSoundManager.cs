@@ -43,7 +43,7 @@ namespace Utopia.Components
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            _soundEngine.PlaySound(_buttonPressSound, 1.0f);
+            _soundEngine.PlaySound(_buttonPressSound, 2.0f);
         }
 
         public override void BeforeDispose()
@@ -53,12 +53,6 @@ namespace Utopia.Components
                 _buttonPressSound = null;
                 ButtonControl.PressedSome -= PressableControlPressedSome;
             }
-        }
-
-        public override void Update(GameTime timeSpent)
-        {
-            _soundEngine.Update(timeSpent);
-            base.Update(timeSpent);
         }
 
         public bool ShowDebugInfo

@@ -6,8 +6,11 @@ using SharpDX.XAudio2;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -25,7 +28,10 @@ namespace S33M3CoreComponents.Sound
         private XAudio2 _soundDevice;
         private X3DAudio _x3DAudio;
 
+        private Thread _thread;
         private List<string> _soundDevices;
+
+        private bool _isDisposing = false;
 
         private sealed class AudioBufferAndMetaData : AudioBuffer
         {
@@ -92,6 +98,9 @@ namespace S33M3CoreComponents.Sound
 
         public void Dispose()
         {
+            _isDisposing = true;
+            while (_thread.IsAlive) { };
+
             foreach(var channel in _soundQueues.Where(x => x != null)) channel.Dispose();
             _soundDevice.StopEngine();
             _soundDevice.Dispose();
@@ -100,10 +109,6 @@ namespace S33M3CoreComponents.Sound
         }
         
         #region Public Methods
-        public void Update(S33M3DXEngine.Main.GameTime timeSpend)
-        {
-            LoopingSoundRefresh(); //Ensure that soound that needs to "loop" are rebatched !
-        }
 
         /// <summary>
         /// Play a sound Once
@@ -187,6 +192,10 @@ namespace S33M3CoreComponents.Sound
             _masteringVoice = new MasteringVoice(_soundDevice);                       //Default interface sending sound stream to Hardware
             _masteringVoice.SetVolume(1, 0);
             _soundDevice.StartEngine();
+
+            //Start Sound voice processing thread
+            _thread = new Thread(SoundPocessingAsync); //Start the main loop
+            _thread.Start();
         }
 
         private AudioBufferAndMetaData GetBuffer(string soundfile)
@@ -196,8 +205,9 @@ namespace S33M3CoreComponents.Sound
             if (AudioBuffers.TryGetValue(soundfile, out buffer) == false)
             {
                 //Load the sound and bufferize it
-                var nativefilestream = new NativeFileStream(soundfile, NativeFileMode.Open, NativeFileAccess.Read, NativeFileShare.Read);
-                var soundstream = new SoundStream(nativefilestream);
+                //var nativefilestream = new NativeFileStream(soundfile, NativeFileMode.Open, NativeFileAccess.Read, NativeFileShare.Read);
+                //var soundstream = new SoundStream(nativefilestream);
+                var soundstream = new SoundStream(File.OpenRead(soundfile));
 
                 buffer = new AudioBufferAndMetaData()
                 {
@@ -244,6 +254,16 @@ namespace S33M3CoreComponents.Sound
             return false;
         }
 
+
+        private void SoundPocessingAsync()
+        {
+            while (_isDisposing == false)
+            {
+                Thread.Sleep(10);
+                LoopingSoundRefresh();         
+            }
+        }
+
         private void LoopingSoundRefresh()
         {
             for (int i = 0; i < _maxVoicesNbr; i++)
@@ -254,34 +274,30 @@ namespace S33M3CoreComponents.Sound
                     if (voice.LoopDelay == 0)
                     {
                         //Check the qt of buffer in the looping voice queue
-                        if (voice.State.BuffersQueued <= 0)
+                        if (voice.State.BuffersQueued == 0)
                         {
                             //Add a new sound in the queue the next sound !
                             voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
                         }
                     }
                     else
-                    {                       
+                    {
                         //No sound are playing ! Wait for the delay !
-                        if (voice.State.BuffersQueued == 0 )
+                        if (voice.State.BuffersQueued == 0)
                         {
-                            if (voice.LoopTimer.IsRunning == false)
+                            if (voice.LoopTimer.IsRunning == false) voice.LoopTimer.Restart();
+
+                            if (voice.LoopTimer.ElapsedMilliseconds >= voice.LoopDelay)
                             {
-                                voice.LoopTimer.Restart();
-                            }
-                            else
-                            {
-                                if (voice.LoopTimer.ElapsedMilliseconds >= voice.LoopDelay)
-                                {
-                                    voice.LoopTimer.Stop();
-                                    voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
-                                }
+                                voice.LoopTimer.Stop();
+                                voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
                             }
                         }
                     }
                 }
             }
         }
+
         #endregion
 
     }
