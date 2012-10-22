@@ -180,14 +180,16 @@ namespace S33M3DXEngine.Main
                 {
                     if (_updateWithoutrenderingCount == 1 && ComponentsPerfMonitor.Updatable)
                     {
-                        logger.Debug("Frame skipped because too late for : {0}, Updt maximum Delta {1}", Stopwatch.GetTimestamp() - _nextGameUpdateTime, _gameTime.GameUpdateDelta);
-                        logger.Debug("Last     Update time {0}, Draw time {1}, Present wait for {2}", ComponentsPerfMonitor.PerfTimer.GetLastUpdateTime, ComponentsPerfMonitor.PerfTimer.GetLastDrawTime, ComponentsPerfMonitor.PerfTimer.GetLastPresentTime);
-                        logger.Debug("Previous Update time {0}, Draw time {1}, Present wait for {2}", ComponentsPerfMonitor.PerfTimer.GetPrevUpdateTime, ComponentsPerfMonitor.PerfTimer.GetPrevDrawTime, ComponentsPerfMonitor.PerfTimer.GetPrevPresentTime);
+                        logger.Debug("Frame skipped because too late for : {0:0.000}, Updt maximum Delta {1:0.000}", _gameTime.Tick2Ms(Stopwatch.GetTimestamp() - _nextGameUpdateTime), _gameTime.Tick2Ms(_gameTime.GameUpdateDelta));
+                        logger.Debug("Last     Update time {0:0.000}, Draw time {1:0.000}, Present wait for {2:0.000}", _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastUpdateTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastDrawTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastPresentTime));
+                        logger.Debug("Previous Update time {0:0.000}, Draw time {1:0.000}, Present wait for {2:0.000}", _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevUpdateTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevDrawTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevPresentTime));
 
                         foreach (var result in ComponentsPerfMonitor.PerfTimer.GetComponentByDeltaPerf(5))
                         {
-                            logger.Debug("Perf problem could caused by {0}, Last duration {1}, previous duration {2}", result.Name, result.LastValue, result.PrevValue);
+                            logger.Debug("Perf problem could caused by {0:0.000}, Last duration {1:0.000}, previous duration {2:0.000}", result.Name,  _gameTime.Tick2Ms(result.LastValue), _gameTime.Tick2Ms(result.PrevValue));
                         }
+                        logger.Debug("=================================================================================");
+
                     }
 
                     Update(_gameTime);
