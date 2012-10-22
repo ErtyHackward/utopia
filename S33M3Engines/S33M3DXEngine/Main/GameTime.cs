@@ -17,6 +17,7 @@ namespace S33M3DXEngine.Main
         public readonly long GameUpdateDelta;
         public readonly double ElapsedGameTimeInS_HD;
         public readonly float ElapsedGameTimeInS_LD;
+        public readonly double TickPerMS;
 
         public GameTime(int TargetedGameUpdatePerSecond = 40)
         {
@@ -24,6 +25,7 @@ namespace S33M3DXEngine.Main
             //Nbr of tick per second
             _frequencyInSec = Stopwatch.Frequency;
             _frequencyInMiliSec = _frequencyInSec / 1000;
+            TickPerMS = (double)_frequencyInSec / 1000.0;
 
             //Compute nbr of tick per update in fixed time step of FTSTargetedGameUpdatePerSecond
             GameUpdateDelta = Stopwatch.Frequency / FTSTargetedGameUpdatePerSecond;
@@ -47,6 +49,11 @@ namespace S33M3DXEngine.Main
         public void ResetElapsedTimeCounter()
         {
             _lastUpdate = Stopwatch.GetTimestamp();
+        }
+
+        public double Tick2Ms(long ticks)
+        {
+            return (double)ticks / TickPerMS;
         }
 
     }
