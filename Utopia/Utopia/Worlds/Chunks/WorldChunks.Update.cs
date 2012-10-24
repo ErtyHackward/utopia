@@ -38,6 +38,8 @@ namespace Utopia.Worlds.Chunks
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
+            ChunkVisibilityTest();
+
             if (_camManager.ActiveCamera.WorldPosition.Value.Y < 400)
             {
                 ChunkUpdateManager();
@@ -45,7 +47,7 @@ namespace Utopia.Worlds.Chunks
                 SortChunks();
             }
 
-            // make chunks appear slowly and not hurt the eyes
+            // Manage chunk PopUp !
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
             {
                 var transparentChunk = _transparentChunks[i];
@@ -59,10 +61,11 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
+            //Do interpolation on static entities from chunk (Case of when the entity does have an animation
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 var chunk = SortedChunks[chunkIndice];
-                if (chunk.isExistingMesh4Drawing)
+                if (chunk.isFrustumCulled == false && chunk.isExistingMesh4Drawing)
                 {
                     foreach (var pair in chunk.VisualVoxelEntities)
                     {
