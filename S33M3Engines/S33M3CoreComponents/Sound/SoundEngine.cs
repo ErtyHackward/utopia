@@ -11,11 +11,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sound
 {
 
-    public class SoundEngine : ISoundEngine, IDisposable
+    public class SoundEngine : BaseComponent, ISoundEngine
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -31,8 +32,6 @@ namespace S33M3CoreComponents.Sound
         private ManualResetEvent _syncro;
         private Thread _thread;
         private List<string> _soundDevices;
-
-        private bool _isDisposing = false;
 
         private sealed class AudioBufferAndMetaData : AudioBuffer
         {
@@ -97,20 +96,13 @@ namespace S33M3CoreComponents.Sound
             Initialize();
         }
 
-        public void Dispose()
+        public override void AfterDispose()
         {
-            _isDisposing = true;
             _syncro.Set();
-            while (_thread.IsAlive) { };
-
-            foreach(var channel in _soundQueues.Where(x => x != null)) channel.Dispose();
-            _soundDevice.StopEngine();
-            _soundDevice.Dispose();
-            _masteringVoice.Dispose();
-            _soundDevice.Dispose();
+            while (_thread.IsAlive) { }
             _syncro.Dispose();
         }
-        
+
         #region Public Methods
 
         /// <summary>
@@ -136,6 +128,132 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
+        //private void PlayStreamedAsync()
+        //{
+        //    int currentPlayCounter = 0;
+        //    int nextBuffer = 0;
+
+        //    try
+        //    {
+        //        while (true)
+        //        {
+        //            // Check that this instanced is not disposed
+        //            while (!IsDisposed)
+        //            {
+        //                if (playEvent.WaitOne(WaitPrecision))
+        //                    break;
+        //            }
+
+        //            if (IsDisposed)
+        //                break;
+
+        //            clock.Restart();
+        //            playPositionStart = nextPlayPosition;
+        //            playPosition = playPositionStart;
+        //            currentPlayCounter = playCounter;
+
+        //            // Get the decoded samples from the specified starting position.
+        //            var sampleIterator = audioDecoder.GetSamples(playPositionStart).GetEnumerator();
+
+        //            bool isFirstTime = true;
+
+        //            bool endOfSong = false;
+
+        //            // Playing all the samples
+        //            while (true)
+        //            {
+        //                // If the player is stopped or disposed, then break of this loop
+        //                while (!IsDisposed && State != AudioPlayerState.Stopped)
+        //                {
+        //                    if (playEvent.WaitOne(WaitPrecision))
+        //                        break;
+        //                }
+
+        //                // If the player is stopped or disposed, then break of this loop
+        //                if (IsDisposed || State == AudioPlayerState.Stopped)
+        //                {
+        //                    nextPlayPosition = TimeSpan.Zero;
+        //                    break;
+        //                }
+
+        //                // If there was a change in the play position, restart the sample iterator.
+        //                if (currentPlayCounter != playCounter)
+        //                    break;
+
+        //                // If ring buffer queued is full, wait for the end of a buffer.
+        //                while (sourceVoice.State.BuffersQueued == audioBuffersRing.Length && !IsDisposed && State != AudioPlayerState.Stopped)
+        //                    bufferEndEvent.WaitOne(WaitPrecision);
+
+        //                // If the player is stopped or disposed, then break of this loop
+        //                if (IsDisposed || State == AudioPlayerState.Stopped)
+        //                {
+        //                    nextPlayPosition = TimeSpan.Zero;
+        //                    break;
+        //                }
+
+        //                // Check that there is a next sample
+        //                if (!sampleIterator.MoveNext())
+        //                {
+        //                    endOfSong = true;
+        //                    break;
+        //                }
+
+        //                // Retrieve a pointer to the sample data
+        //                var bufferPointer = sampleIterator.Current;
+
+        //                // If there was a change in the play position, restart the sample iterator.
+        //                if (currentPlayCounter != playCounter)
+        //                    break;
+
+        //                // Check that our ring buffer has enough space to store the audio buffer.
+        //                if (bufferPointer.Size > memBuffers[nextBuffer].Size)
+        //                {
+        //                    if (memBuffers[nextBuffer].Pointer != IntPtr.Zero)
+        //                        Utilities.FreeMemory(memBuffers[nextBuffer].Pointer);
+
+        //                    memBuffers[nextBuffer].Pointer = Utilities.AllocateMemory(bufferPointer.Size);
+        //                    memBuffers[nextBuffer].Size = bufferPointer.Size;
+        //                }
+
+        //                // Copy the memory from MediaFoundation AudioDecoder to the buffer that is going to be played.
+        //                Utilities.CopyMemory(memBuffers[nextBuffer].Pointer, bufferPointer.Pointer, bufferPointer.Size);
+
+        //                // Set the pointer to the data.
+        //                audioBuffersRing[nextBuffer].AudioDataPointer = memBuffers[nextBuffer].Pointer;
+        //                audioBuffersRing[nextBuffer].AudioBytes = bufferPointer.Size;
+
+        //                // If this is a first play, restart the clock and notify play method.
+        //                if (isFirstTime)
+        //                {
+        //                    clock.Restart();
+        //                    isFirstTime = false;
+
+        //                    waitForPlayToOutput.Set();
+        //                }
+
+        //                // Update the current position used for sync
+        //                playPosition = new TimeSpan(playPositionStart.Ticks + clock.Elapsed.Ticks);
+
+        //                // Submit the audio buffer to xaudio2
+        //                sourceVoice.SubmitSourceBuffer(audioBuffersRing[nextBuffer], null);
+
+        //                // Go to next entry in the ringg audio buffer
+        //                nextBuffer = ++nextBuffer % audioBuffersRing.Length;
+        //            }
+
+        //            // If the song is not looping (by default), then stop the audio player.
+        //            if (endOfSong && !IsRepeating && State == AudioPlayerState.Playing)
+        //            {
+        //                Stop();
+        //            }
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        DisposePlayer();
+        //    }
+        //}
+
         /// <summary>
         /// Play a song in Loop
         /// </summary>
@@ -160,7 +278,11 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
-        public void StopPlayingSound(string soundfile, float volume = 1)
+        /// <summary>
+        /// Stop Playing sound before it ends (Loop or single)
+        /// </summary>
+        /// <param name="soundfile">the sound file Id</param>
+        public void StopPlayingSound(string soundfile)
         {
             for (int i = 0; i < _maxVoicesNbr; i++)
             {
@@ -179,7 +301,7 @@ namespace S33M3CoreComponents.Sound
         private void Initialize()
         {
             //Create new Xaudio2 engine
-            _soundDevice = new XAudio2();
+            _soundDevice = ToDispose(new XAudio2());
 
             _soundDevices = new List<string>();
             //Get all sound devices
@@ -192,17 +314,22 @@ namespace S33M3CoreComponents.Sound
             logger.Info("s33m3 sound engine started for device : " + deviceDetail.DisplayName);
             _x3DAudio = new X3DAudio(deviceDetail.OutputFormat.ChannelMask);
             //Create a Mastering Voice
-            _masteringVoice = new MasteringVoice(_soundDevice);                       //Default interface sending sound stream to Hardware
+            _masteringVoice = ToDispose(new MasteringVoice(_soundDevice));                       //Default interface sending sound stream to Hardware
             _masteringVoice.SetVolume(1, 0);
             _soundDevice.StartEngine();
 
             _syncro = new ManualResetEvent(false);
 
             //Start Sound voice processing thread
-            _thread = new Thread(SoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
+            _thread = new Thread(DataSoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
             _thread.Start();
         }
 
+        /// <summary>
+        /// Get the Audio File memory buffer from FileName
+        /// </summary>
+        /// <param name="soundfile"></param>
+        /// <returns></returns>
         private AudioBufferAndMetaData GetBuffer(string soundfile)
         {
             AudioBufferAndMetaData buffer;
@@ -210,8 +337,6 @@ namespace S33M3CoreComponents.Sound
             if (AudioBuffers.TryGetValue(soundfile, out buffer) == false)
             {
                 //Load the sound and bufferize it
-                //var nativefilestream = new NativeFileStream(soundfile, NativeFileMode.Open, NativeFileAccess.Read, NativeFileShare.Read);
-                //var soundstream = new SoundStream(nativefilestream);
                 var soundstream = new SoundStream(File.OpenRead(soundfile));
 
                 buffer = new AudioBufferAndMetaData()
@@ -224,17 +349,25 @@ namespace S33M3CoreComponents.Sound
                 };
                 AudioBuffers[soundfile] = buffer;
             }
-
             return buffer;
         }
 
+        /// <summary>
+        /// Get a voice from the pool
+        /// By default it retrieve a voice doing nothing, but you can ask a specific voice by its ID
+        /// In this case, the voice may be currently rendereing a sound
+        /// </summary>
+        /// <param name="waveFormat">The format asked for the voice to play</param>
+        /// <param name="source"></param>
+        /// <param name="forcedVoiceId"></param>
+        /// <returns></returns>
         private bool GetVoice(WaveFormat waveFormat, out SourceVoiceAndMetaData source, int forcedVoiceId = -1)
         {
             if (forcedVoiceId > -1)
             {
                 if (_soundQueues[forcedVoiceId] == null)
                 {
-                    _soundQueues[forcedVoiceId] = new SourceVoiceAndMetaData(_soundDevice, waveFormat, true);
+                    _soundQueues[forcedVoiceId] = ToDispose(new SourceVoiceAndMetaData(_soundDevice, waveFormat, true));
                     _soundQueues[forcedVoiceId].BufferEnd += SoundEngine_BufferEnd;
                 }
                 source = _soundQueues[forcedVoiceId];
@@ -246,7 +379,7 @@ namespace S33M3CoreComponents.Sound
                 source = _soundQueues[i];
                 if (source == null)
                 {
-                    source = _soundQueues[i] = new SourceVoiceAndMetaData(_soundDevice, waveFormat, true);
+                    source = _soundQueues[i] = ToDispose(new SourceVoiceAndMetaData(_soundDevice, waveFormat, true));
                     _soundQueues[i].BufferEnd += SoundEngine_BufferEnd;
                     return true;
                 }
@@ -267,15 +400,20 @@ namespace S33M3CoreComponents.Sound
             _syncro.Set();
         }
 
-        private void SoundPocessingAsync()
+        //Function that is running its own thread responsible to do background stuff concerning sound
+        private void DataSoundPocessingAsync()
         {
-            while (_isDisposing == false)
+            while (!IsDisposed)
             {
                 if (LoopingSoundRefresh() == false) _syncro.Reset();
                 _syncro.WaitOne();
             }
         }
 
+        /// <summary>
+        /// Logic to implement "Looping" sound.
+        /// </summary>
+        /// <returns></returns>
         private bool LoopingSoundRefresh()
         {
             for (int i = 0; i < _maxVoicesNbr; i++)
