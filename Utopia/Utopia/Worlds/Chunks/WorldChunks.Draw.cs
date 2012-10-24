@@ -62,7 +62,6 @@ namespace Utopia.Worlds.Chunks
 
             if (index == SOLID_DRAW)
             {
-                ChunkVisibilityTest();
 
                 _chunkDrawByFrame = 0;
 
