@@ -28,6 +28,7 @@ namespace S33M3CoreComponents.Sound
 
         private XAudio2 _soundDevice;
         private X3DAudio _x3DAudio;
+        private DeviceDetails _deviceDetail;
 
         private ManualResetEvent _syncro;
         private Thread _thread;
@@ -111,11 +112,11 @@ namespace S33M3CoreComponents.Sound
         /// <param name="soundfile"></param>
         /// <param name="volume"></param>
         /// <param name="forcedVoiceId"></param>
-        public void PlaySound(string soundfile, float volume = 1, int forcedVoiceId = -1)
+        public void PlaySound(string soundfile, float volume = 1)
         {
             var buffer = GetBuffer(soundfile);
             SourceVoiceAndMetaData sourceVoice;
-            if (GetVoice(buffer.WaveFormat, out sourceVoice, forcedVoiceId))
+            if (GetVoice(buffer.WaveFormat, out sourceVoice))
             {
                 sourceVoice.SetVolume(volume, XAudio2.CommitNow);
                 sourceVoice.SubmitSourceBuffer(buffer, buffer.DecodedPacketsInfo);
@@ -128,131 +129,29 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
-        //private void PlayStreamedAsync()
-        //{
-        //    int currentPlayCounter = 0;
-        //    int nextBuffer = 0;
+        public void MakeSound3D()
+        {
+            Emitter emitter = new Emitter();
+            Listener listener = new Listener();
+            emitter.ChannelCount = 1;
+            emitter.CurveDistanceScaler = float.MinValue;
 
-        //    try
-        //    {
-        //        while (true)
-        //        {
-        //            // Check that this instanced is not disposed
-        //            while (!IsDisposed)
-        //            {
-        //                if (playEvent.WaitOne(WaitPrecision))
-        //                    break;
-        //            }
+            emitter.OrientFront = new SharpDX.Vector3();
+            emitter.OrientTop = new SharpDX.Vector3();
+            emitter.Position = new SharpDX.Vector3();
+            emitter.Velocity = new SharpDX.Vector3();
 
-        //            if (IsDisposed)
-        //                break;
+            listener.OrientFront = new SharpDX.Vector3();
+            listener.OrientTop = new SharpDX.Vector3();
+            listener.Position = new SharpDX.Vector3();
+            listener.Velocity = new SharpDX.Vector3();
 
-        //            clock.Restart();
-        //            playPositionStart = nextPlayPosition;
-        //            playPosition = playPositionStart;
-        //            currentPlayCounter = playCounter;
+            var settings = _x3DAudio.Calculate(listener, emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
 
-        //            // Get the decoded samples from the specified starting position.
-        //            var sampleIterator = audioDecoder.GetSamples(playPositionStart).GetEnumerator();
-
-        //            bool isFirstTime = true;
-
-        //            bool endOfSong = false;
-
-        //            // Playing all the samples
-        //            while (true)
-        //            {
-        //                // If the player is stopped or disposed, then break of this loop
-        //                while (!IsDisposed && State != AudioPlayerState.Stopped)
-        //                {
-        //                    if (playEvent.WaitOne(WaitPrecision))
-        //                        break;
-        //                }
-
-        //                // If the player is stopped or disposed, then break of this loop
-        //                if (IsDisposed || State == AudioPlayerState.Stopped)
-        //                {
-        //                    nextPlayPosition = TimeSpan.Zero;
-        //                    break;
-        //                }
-
-        //                // If there was a change in the play position, restart the sample iterator.
-        //                if (currentPlayCounter != playCounter)
-        //                    break;
-
-        //                // If ring buffer queued is full, wait for the end of a buffer.
-        //                while (sourceVoice.State.BuffersQueued == audioBuffersRing.Length && !IsDisposed && State != AudioPlayerState.Stopped)
-        //                    bufferEndEvent.WaitOne(WaitPrecision);
-
-        //                // If the player is stopped or disposed, then break of this loop
-        //                if (IsDisposed || State == AudioPlayerState.Stopped)
-        //                {
-        //                    nextPlayPosition = TimeSpan.Zero;
-        //                    break;
-        //                }
-
-        //                // Check that there is a next sample
-        //                if (!sampleIterator.MoveNext())
-        //                {
-        //                    endOfSong = true;
-        //                    break;
-        //                }
-
-        //                // Retrieve a pointer to the sample data
-        //                var bufferPointer = sampleIterator.Current;
-
-        //                // If there was a change in the play position, restart the sample iterator.
-        //                if (currentPlayCounter != playCounter)
-        //                    break;
-
-        //                // Check that our ring buffer has enough space to store the audio buffer.
-        //                if (bufferPointer.Size > memBuffers[nextBuffer].Size)
-        //                {
-        //                    if (memBuffers[nextBuffer].Pointer != IntPtr.Zero)
-        //                        Utilities.FreeMemory(memBuffers[nextBuffer].Pointer);
-
-        //                    memBuffers[nextBuffer].Pointer = Utilities.AllocateMemory(bufferPointer.Size);
-        //                    memBuffers[nextBuffer].Size = bufferPointer.Size;
-        //                }
-
-        //                // Copy the memory from MediaFoundation AudioDecoder to the buffer that is going to be played.
-        //                Utilities.CopyMemory(memBuffers[nextBuffer].Pointer, bufferPointer.Pointer, bufferPointer.Size);
-
-        //                // Set the pointer to the data.
-        //                audioBuffersRing[nextBuffer].AudioDataPointer = memBuffers[nextBuffer].Pointer;
-        //                audioBuffersRing[nextBuffer].AudioBytes = bufferPointer.Size;
-
-        //                // If this is a first play, restart the clock and notify play method.
-        //                if (isFirstTime)
-        //                {
-        //                    clock.Restart();
-        //                    isFirstTime = false;
-
-        //                    waitForPlayToOutput.Set();
-        //                }
-
-        //                // Update the current position used for sync
-        //                playPosition = new TimeSpan(playPositionStart.Ticks + clock.Elapsed.Ticks);
-
-        //                // Submit the audio buffer to xaudio2
-        //                sourceVoice.SubmitSourceBuffer(audioBuffersRing[nextBuffer], null);
-
-        //                // Go to next entry in the ringg audio buffer
-        //                nextBuffer = ++nextBuffer % audioBuffersRing.Length;
-        //            }
-
-        //            // If the song is not looping (by default), then stop the audio player.
-        //            if (endOfSong && !IsRepeating && State == AudioPlayerState.Playing)
-        //            {
-        //                Stop();
-        //            }
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        DisposePlayer();
-        //    }
-        //}
+            //Find the corresponding voice currently playing
+            _soundQueues[0].SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings.MatrixCoefficients); //Change volume power.
+            
+        }
 
         /// <summary>
         /// Play a song in Loop
@@ -310,9 +209,9 @@ namespace S33M3CoreComponents.Sound
                 _soundDevices.Add(_soundDevice.GetDeviceDetails(i).DisplayName);
             }
 
-            DeviceDetails deviceDetail = _soundDevice.GetDeviceDetails(0); //_soundDevice.DeviceCount;
-            logger.Info("s33m3 sound engine started for device : " + deviceDetail.DisplayName);
-            _x3DAudio = new X3DAudio(deviceDetail.OutputFormat.ChannelMask);
+            _deviceDetail = _soundDevice.GetDeviceDetails(0); //_soundDevice.DeviceCount;
+            logger.Info("s33m3 sound engine started for device : " + _deviceDetail.DisplayName);
+            _x3DAudio = new X3DAudio(_deviceDetail.OutputFormat.ChannelMask);            
             //Create a Mastering Voice
             _masteringVoice = ToDispose(new MasteringVoice(_soundDevice));                       //Default interface sending sound stream to Hardware
             _masteringVoice.SetVolume(1, 0);
@@ -361,19 +260,8 @@ namespace S33M3CoreComponents.Sound
         /// <param name="source"></param>
         /// <param name="forcedVoiceId"></param>
         /// <returns></returns>
-        private bool GetVoice(WaveFormat waveFormat, out SourceVoiceAndMetaData source, int forcedVoiceId = -1)
+        private bool GetVoice(WaveFormat waveFormat, out SourceVoiceAndMetaData source)
         {
-            if (forcedVoiceId > -1)
-            {
-                if (_soundQueues[forcedVoiceId] == null)
-                {
-                    _soundQueues[forcedVoiceId] = ToDispose(new SourceVoiceAndMetaData(_soundDevice, waveFormat, true));
-                    _soundQueues[forcedVoiceId].BufferEnd += SoundEngine_BufferEnd;
-                }
-                source = _soundQueues[forcedVoiceId];
-                return true;
-            }
-
             for (int i = 0; i < _maxVoicesNbr; i++)
             {
                 source = _soundQueues[i];
