@@ -87,10 +87,10 @@ namespace Utopia.Shared.Configuration
         /// Holds Cube Profiles configuration
         /// </summary>
         [Browsable(false)]
-        public static List<CubeProfile> CubeProfiles { get; set; }
+        public static CubeProfile[] CubeProfiles { get; set; }
 
         [Browsable(false)]
-        public List<CubeProfile> RealmCubeProfiles
+        public CubeProfile[] RealmCubeProfiles
         {
             get { return RealmConfiguration.CubeProfiles; }
             set { RealmConfiguration.CubeProfiles = value; }
@@ -125,7 +125,7 @@ namespace Utopia.Shared.Configuration
             _factory = factory;
             Entities = new List<IEntity>();
             BluePrints = new Dictionary<ushort, Entity>();
-            CubeProfiles = new List<CubeProfile>();
+            CubeProfiles = new CubeProfile[255];
             Biomes = new List<Biome>();
             UtopiaProcessorParam = new UtopiaProcessorParams();
             WorldProcessor = WorldProcessors.Utopia;
@@ -164,8 +164,8 @@ namespace Utopia.Shared.Configuration
                 entitySample.Save(writer);
             }
 
-            writer.Write(CubeProfiles.Where(x => x.Name != "System Reserved").Count());
-            foreach (CubeProfile cubeProfile in CubeProfiles.Where(x => x.Name != "System Reserved"))
+            writer.Write(CubeProfiles.Where(x => x != null && x.Name != "System Reserved").Count());
+            foreach (CubeProfile cubeProfile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
             {
                 cubeProfile.Save(writer);
             }
@@ -201,13 +201,13 @@ namespace Utopia.Shared.Configuration
                 BluePrints.Add(entity.BluePrintId, entity);
             }
 
-            CubeProfiles.Clear();
+            CubeProfiles = new CubeProfile[255];
             var countCubes = reader.ReadInt32();
             for (var i = 0; i < countCubes; i++)
             {
                 CubeProfile cp = new CubeProfile();
                 cp.Load(reader);
-                CubeProfiles.Add(cp);
+                CubeProfiles[i] = cp;
             }
             FilledUpReservedCubeInArray();
 
@@ -243,11 +243,11 @@ namespace Utopia.Shared.Configuration
             //We keep the id from 0 to 100 for "System" cubes
             //101 to 254 for Custom created cubes
             byte newProfileId;
-            if (CubeProfiles.Count(x => x.Id > 100) > 1)
+            if (CubeProfiles.Where(x => x != null).Count(x => x.Id > 100) > 1)
             {
                 newProfileId = CubeProfiles.Where(x => x.Id > 100).Select(y => y.Id).Max();
             }
-            else newProfileId = 101;
+            else newProfileId = 100;
 
             CubeProfile newCubeProfile = new CubeProfile()
             {
@@ -268,7 +268,7 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = false
             };
 
-            CubeProfiles.Add(newCubeProfile);
+            CubeProfiles[newProfileId] = newCubeProfile;
 
             return newCubeProfile;
         }
@@ -333,8 +333,9 @@ namespace Utopia.Shared.Configuration
         //Definition of default cube profile
         private void CreateDefaultCubeProfiles()
         {
+            int id = 0;
             //Air Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Air",
                 Description = "A cube",
@@ -351,8 +352,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true
             });
 
+            id++;
+
             //Stone Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Stone",
                 Description = "A cube",
@@ -372,8 +375,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true
             });
 
+            id++;
+
             //Dirt Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Dirt",
                 Description = "A cube",
@@ -393,8 +398,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true
             });
 
+            id++;
+
             //Grass Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Grass",
                 Description = "A cube",
@@ -415,8 +422,10 @@ namespace Utopia.Shared.Configuration
                 BiomeColorArrayTexture = 0
             });
 
+            id++;
+
             //StillWater Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "StillWater",
                 Description = "A cube",
@@ -436,8 +445,10 @@ namespace Utopia.Shared.Configuration
                 BiomeColorArrayTexture = 2
             });
 
+            id++;
+
             //DynamicWater Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "DynamicWater",
                 Description = "A cube",
@@ -458,8 +469,10 @@ namespace Utopia.Shared.Configuration
                 BiomeColorArrayTexture = 2
             });
 
+            id++;
+
             //LightWhite Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "LightWhite",
                 Description = "A cube",
@@ -484,8 +497,10 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorB = 255
             });
 
+            id++;
+
             //Rock Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Rock",
                 Description = "A cube",
@@ -506,8 +521,10 @@ namespace Utopia.Shared.Configuration
                 SlidingValue = 0.05f
             });
 
+            id++;
+
             //Sand Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Sand",
                 Description = "A cube",
@@ -527,8 +544,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true,
             });
 
+            id++;
+
             //Gravel Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Gravel",
                 Description = "A cube",
@@ -548,8 +567,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true,
             });
 
+            id++;
+
             //Trunk Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Trunk",
                 Description = "A cube",
@@ -569,8 +590,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true,
             });
 
+            id++;
+
             //GoldOre Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "GoldOre",
                 Description = "A cube",
@@ -590,8 +613,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true,
             });
 
+            id++;
+
             //CoalOre Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "CoalOre",
                 Description = "A cube",
@@ -611,8 +636,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true,
             });
 
+            id++;
+
             //MoonStone Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "MoonStone",
                 Description = "A cube",
@@ -637,8 +664,10 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorB = 255
             });
 
+            id++;
+
             //Foliage Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Foliage",
                 Description = "A cube",
@@ -660,8 +689,10 @@ namespace Utopia.Shared.Configuration
                 BiomeColorArrayTexture = 1
             });
 
+            id++;
+
             //Snow Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Snow",
                 Description = "A cube",
@@ -681,8 +712,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true
             });
 
+            id++;
+
             //Ice Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Ice",
                 Description = "A cube",
@@ -703,8 +736,10 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true
             });
 
+            id++;
+
             //StillLava Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "StillLava",
                 Description = "A cube",
@@ -730,8 +765,10 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorB = 38
             });
 
+            id++;
+
             //DynamicLava Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "DynamicLava",
                 Description = "A cube",
@@ -758,9 +795,10 @@ namespace Utopia.Shared.Configuration
                 IsTaggable = true
             });
 
+            id++;
 
             //Cactus Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "Cactus",
                 Description = "A cube",
@@ -782,8 +820,10 @@ namespace Utopia.Shared.Configuration
                 SideOffsetMultiplier = 1
             });
 
+            id++;
+
             //CactusTop Block
-            CubeProfiles.Add(new CubeProfile()
+            CubeProfiles[id] = (new CubeProfile()
             {
                 Name = "CactusTop",
                 Description = "A cube",
@@ -805,6 +845,8 @@ namespace Utopia.Shared.Configuration
                 SideOffsetMultiplier = 1
             });
 
+            id++;
+
             FilledUpReservedCubeInArray();
 
         }
@@ -812,9 +854,9 @@ namespace Utopia.Shared.Configuration
         private void FilledUpReservedCubeInArray()
         {
             //Field up to 100 included for Reserved Cube ID
-            for (byte currentCubeId = (byte)(CubeProfiles.Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
+            for (byte currentCubeId = (byte)(CubeProfiles.Where(x => x != null).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
             {
-                CubeProfiles.Add(new CubeProfile() { Name = "System Reserved", Id = currentCubeId });
+                CubeProfiles[currentCubeId] = new CubeProfile() { Name = "System Reserved", Id = currentCubeId };
             }
         }
 
@@ -891,7 +933,7 @@ namespace Utopia.Shared.Configuration
 
             public static IEnumerable<byte> All()
             {
-                foreach (var profile in CubeProfiles.Where(x => x.Name != "System Reserved"))
+                foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
                 {
                     yield return profile.Id;
                 }

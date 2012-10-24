@@ -110,7 +110,7 @@ namespace Utopia.Shared.Net.Connections
 
         private void StartSendThread()
         {
-            (_sendThread = new Thread(SendValuesThread) { IsBackground = true, Name = "sender" }).Start();
+            (_sendThread = new Thread(SendValuesThread) { IsBackground = true, Name = "TCP Server data processing" }).Start();
         }
 
         private void SendValuesThread()

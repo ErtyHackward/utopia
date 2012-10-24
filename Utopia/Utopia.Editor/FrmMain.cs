@@ -195,7 +195,7 @@ namespace Utopia.Editor
             //Clear all the Cube node items
             TreeNode cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
-            for (var i = 0; i < _configuration.RealmCubeProfiles.Count; i++)
+            for (var i = 0; i < _configuration.RealmCubeProfiles.Where(x => x != null).Count(); i++)
             {
                 var cubeProfile = _configuration.RealmCubeProfiles[i];
                 if (cubeProfile.Name == "System Reserved") continue;

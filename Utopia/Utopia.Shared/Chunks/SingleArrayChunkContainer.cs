@@ -62,14 +62,14 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Contains the array of visible cubes
         /// </summary>
-        public TerraCube[] Cubes { get; set;}
+        public TerraCube[] Cubes;
 
         /// <summary>
         /// Contains the value used to advance inside the array from a specific Index.
         /// </summary>
-        public int MoveX { get; private set; } // + = Move Est, - = Move West
-        public int MoveZ { get; private set; } // + = Move North, - = Move South
-        public int MoveY { get; private set; } // + = Move Up, - = Move Bellow
+        public readonly int MoveX; // + = Move Est, - = Move West
+        public readonly int MoveZ; // + = Move North, - = Move South
+        public readonly int MoveY; // + = Move Up, - = Move Bellow
 
         /// <summary>
         /// Constructor

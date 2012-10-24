@@ -19,6 +19,7 @@ namespace Utopia.Worlds.Storage
         private SQLiteCommand _landscapeGetHash;
         private SQLiteCommand _landscapeGetCmd;
         private SQLiteCommand _landscapeInsertCmd;
+        private ManualResetEvent _threadSync;
         #endregion
 
         #region Public Properties/Variables
@@ -42,24 +43,7 @@ namespace Utopia.Worlds.Storage
             GetChunksMd5();
 
             IsRunning = true;
-            _storageThread = new Thread(StorageMainLoop); //Start the main loop
-            _storageThread.Start();
-        }
-
-        public void Reset(string fileName, bool forceNew = false)
-        {
-            IsRunning = false;
-            CloseConnection();
-            CreateDBConnection(fileName, forceNew);
-
-            _landscapeInsertCmd.Dispose();
-            _landscapeGetCmd.Dispose();
-            _landscapeGetHash.Dispose();
-
-            ChunkStorageManagerInit();
-
-            IsRunning = true;
-            _storageThread = new Thread(StorageMainLoop); //Start the main loop
+            _storageThread = new Thread(StorageMainLoop) { Name = "SQLLite Client" }; //Start the main loop
             _storageThread.Start();
         }
 
@@ -90,18 +74,17 @@ namespace Utopia.Worlds.Storage
         {           
             while (IsRunning)
             {
-                ProcessQueues();
-                Thread.Sleep(1);
+                if (ProcessQueues() == false) _threadSync.Reset();
+                _threadSync.WaitOne();
             }
         }
         #endregion
 
         #region IChunkStorageManager implementation
 
-        private void ProcessQueues()
+        private bool ProcessQueues()
         {
-            ProcessRequestQueue();
-            ProcessStoreQueue();
+            return ProcessRequestQueue() || ProcessStoreQueue();
         }
 
         //GET + REQUEST Chunk DATA ======================================================================
@@ -136,6 +119,8 @@ namespace Utopia.Worlds.Storage
             _landscapeInsertCmd.Parameters.Add("@Z", System.Data.DbType.Int32);
             _landscapeInsertCmd.Parameters.Add("@MD5", System.Data.DbType.Binary);
             _landscapeInsertCmd.Parameters.Add("@DATA", System.Data.DbType.Binary);
+
+            _threadSync = new ManualResetEvent(false);
         }
 
         public int RequestDataTicket_async(long chunkID)
@@ -143,6 +128,7 @@ namespace Utopia.Worlds.Storage
             int ticket = _requestTickets.Dequeue();
             _dataRequestQueue.Enqueue(new CubeRequest { ChunkId = chunkID, Ticket = ticket });
             Data[ticket] = null;
+            _threadSync.Set();
             return ticket;
         }
 
@@ -151,13 +137,16 @@ namespace Utopia.Worlds.Storage
             _requestTickets.Enqueue(ticket);
         }
 
-        private void ProcessRequestQueue()
+        private bool ProcessRequestQueue()
         {
             CubeRequest processingRequest;
             if (_dataRequestQueue.TryDequeue(out processingRequest))
             {
                 ProcessRequest(ref processingRequest);
             }
+
+            if (_dataRequestQueue.Count > 0) return true;
+            return false;
         }
 
         private void ProcessRequest(ref CubeRequest processingRequest)
@@ -188,15 +177,20 @@ namespace Utopia.Worlds.Storage
         public void StoreData_async(ChunkDataStorage data)
         {
             _dataStoreQueue.Enqueue(data);
+
+            _threadSync.Set();
         }
 
-        private void ProcessStoreQueue()
+        private bool ProcessStoreQueue()
         {
             ChunkDataStorage data;
             if (_dataStoreQueue.TryDequeue(out data))
             {
                 SaveObject(ref data);
             }
+
+            if (_dataStoreQueue.Count > 0) return true;
+            return false;
         }
 
         private void SaveObject(ref ChunkDataStorage data)
@@ -225,10 +219,12 @@ namespace Utopia.Worlds.Storage
         {
             IsRunning = false;
             //Wait thread the exit
+            _threadSync.Set();
             while (_storageThread.ThreadState == ThreadState.Running) { }
             _landscapeInsertCmd.Dispose();
             _landscapeGetCmd.Dispose();
             _landscapeGetHash.Dispose();
+            _threadSync.Dispose();
             base.Dispose();
         }
     }

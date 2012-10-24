@@ -28,6 +28,7 @@ namespace S33M3CoreComponents.Sound
         private XAudio2 _soundDevice;
         private X3DAudio _x3DAudio;
 
+        private ManualResetEvent _syncro;
         private Thread _thread;
         private List<string> _soundDevices;
 
@@ -99,6 +100,7 @@ namespace S33M3CoreComponents.Sound
         public void Dispose()
         {
             _isDisposing = true;
+            _syncro.Set();
             while (_thread.IsAlive) { };
 
             foreach(var channel in _soundQueues.Where(x => x != null)) channel.Dispose();
@@ -106,6 +108,7 @@ namespace S33M3CoreComponents.Sound
             _soundDevice.Dispose();
             _masteringVoice.Dispose();
             _soundDevice.Dispose();
+            _syncro.Dispose();
         }
         
         #region Public Methods
@@ -193,8 +196,10 @@ namespace S33M3CoreComponents.Sound
             _masteringVoice.SetVolume(1, 0);
             _soundDevice.StartEngine();
 
+            _syncro = new ManualResetEvent(false);
+
             //Start Sound voice processing thread
-            _thread = new Thread(SoundPocessingAsync); //Start the main loop
+            _thread = new Thread(SoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
             _thread.Start();
         }
 
@@ -229,7 +234,8 @@ namespace S33M3CoreComponents.Sound
             {
                 if (_soundQueues[forcedVoiceId] == null)
                 {
-                    _soundQueues[forcedVoiceId] = new SourceVoiceAndMetaData(_soundDevice, waveFormat);
+                    _soundQueues[forcedVoiceId] = new SourceVoiceAndMetaData(_soundDevice, waveFormat, true);
+                    _soundQueues[forcedVoiceId].BufferEnd += SoundEngine_BufferEnd;
                 }
                 source = _soundQueues[forcedVoiceId];
                 return true;
@@ -240,7 +246,8 @@ namespace S33M3CoreComponents.Sound
                 source = _soundQueues[i];
                 if (source == null)
                 {
-                    source = _soundQueues[i] = new SourceVoiceAndMetaData(_soundDevice, waveFormat);
+                    source = _soundQueues[i] = new SourceVoiceAndMetaData(_soundDevice, waveFormat, true);
+                    _soundQueues[i].BufferEnd += SoundEngine_BufferEnd;
                     return true;
                 }
                 if (source.State.BuffersQueued == 0 && source.IsLooping == false)
@@ -254,23 +261,29 @@ namespace S33M3CoreComponents.Sound
             return false;
         }
 
+        //A sound finished playing
+        void SoundEngine_BufferEnd(IntPtr obj)
+        {
+            _syncro.Set();
+        }
 
         private void SoundPocessingAsync()
         {
             while (_isDisposing == false)
             {
-                Thread.Sleep(10);
-                LoopingSoundRefresh();         
+                if (LoopingSoundRefresh() == false) _syncro.Reset();
+                _syncro.WaitOne();
             }
         }
 
-        private void LoopingSoundRefresh()
+        private bool LoopingSoundRefresh()
         {
             for (int i = 0; i < _maxVoicesNbr; i++)
             {
                 SourceVoiceAndMetaData voice = _soundQueues[i];
                 if (voice != null && voice.IsLooping)
                 {
+                    //Loop without delay
                     if (voice.LoopDelay == 0)
                     {
                         //Check the qt of buffer in the looping voice queue
@@ -278,11 +291,12 @@ namespace S33M3CoreComponents.Sound
                         {
                             //Add a new sound in the queue the next sound !
                             voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
+                            return false;
                         }
                     }
                     else
                     {
-                        //No sound are playing ! Wait for the delay !
+                        //Loop with delay
                         if (voice.State.BuffersQueued == 0)
                         {
                             if (voice.LoopTimer.IsRunning == false) voice.LoopTimer.Restart();
@@ -291,11 +305,15 @@ namespace S33M3CoreComponents.Sound
                             {
                                 voice.LoopTimer.Stop();
                                 voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
+                                return false;
                             }
+                            return true;
                         }
                     }
                 }
             }
+
+            return false;
         }
 
         #endregion
