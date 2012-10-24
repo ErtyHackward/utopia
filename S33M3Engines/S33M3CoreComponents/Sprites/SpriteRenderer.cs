@@ -114,7 +114,7 @@ namespace S33M3CoreComponents.Sprites
             {
                 _vb.SetData(context, spriteGroup.Vertices.ToArray());
                 _ib.SetData(context, spriteGroup.Indices.ToArray());
-
+                
                 _effect.Begin(context);
                 _effect.SpriteTexture.Value = spriteGroup.Texture.Texture;
                 _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(_d3DEngine.Projection2D);
@@ -374,8 +374,8 @@ namespace S33M3CoreComponents.Sprites
             _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device));
 
             //Buffer creation
-            _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Default, 20));
-            _ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 24, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer2 IB", 20, ResourceUsage.Default));
+            _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Dynamic, 20));
+            _ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 24, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer2 IB", 20, ResourceUsage.Dynamic));
 
             //Sprite buffer creation
             _spriteBuffer = new SpriteDrawBuffer();
