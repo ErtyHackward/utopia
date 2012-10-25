@@ -25,7 +25,7 @@ namespace S33M3CoreComponents.Sound
         private Vector3 _listenerVelPerSecond;
         private Vector3 _listenerUpVector;
         private float _defaultSoundVolume;
-        private int _maxVoicesPerFileType = 8;
+        private int _maxVoicePoolPerFileType = 16; //Can play up to 16 differents song in parallel for each file type
 
         //XAudio2 variables
         //Sound engine objects
@@ -37,7 +37,7 @@ namespace S33M3CoreComponents.Sound
 
         //Buffers
         private Dictionary<string, ISoundDataSource> _soundDataSources;
-        private Dictionary<SoundBufferedDataSource.FileFormatType, ISoundVoice[]> _soundVoices;
+        private Dictionary<int, ISoundVoice[]> _soundVoices;
 
         //sound Threading Loop
         private ManualResetEvent _syncro;
@@ -142,19 +142,6 @@ namespace S33M3CoreComponents.Sound
                     SoundAlias = soundAlias,
                     SoundVolume = DefaultSoundVolume
                 };
-
-                switch (Path.GetExtension(FilePath).ToUpper())
-                {
-                    case ".WAV":
-                        soundDataSource.FormatType = SoundBufferedDataSource.FileFormatType.Wav;
-                        break;
-                    case ".ADPCM":
-                        soundDataSource.FormatType = SoundBufferedDataSource.FileFormatType.Adpcm;
-                        break;
-                    default:
-                        logger.Error("Not supported audio file format : {0}", Path.GetExtension(FilePath));
-                        throw new Exception("Not supported audio file format");
-                }
 
                 if (!streamedSound)
                 {
@@ -261,12 +248,10 @@ namespace S33M3CoreComponents.Sound
             DefaultSoundVolume = 0.5f;
             DefaultMaxDistance = 100.0f;
             DefaultMinDistance = 0.0f;
-            _maxVoicesPerFileType = maxVoicesNbr;
+            _maxVoicePoolPerFileType = maxVoicesNbr;
 
             _soundDataSources = new Dictionary<string, ISoundDataSource>();
-            _soundVoices = new Dictionary<SoundBufferedDataSource.FileFormatType, ISoundVoice[]>();
-            _soundVoices.Add(SoundBufferedDataSource.FileFormatType.Wav, new ISoundVoice[_maxVoicesPerFileType]);
-            _soundVoices.Add(SoundBufferedDataSource.FileFormatType.Adpcm, new ISoundVoice[_maxVoicesPerFileType]);
+            _soundVoices = new Dictionary<int, ISoundVoice[]>();
 
             //Start Sound voice processing thread
             _syncro = new ManualResetEvent(false);
@@ -278,27 +263,30 @@ namespace S33M3CoreComponents.Sound
 
         private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
-            //Get the soundqueue following fileFormat
-            var voiceQueue = _soundVoices[dataSource2Bplayed.FormatType];
+            //Get the soundqueue following SoundFormatCategory
+            ISoundVoice[] voiceQueue;
+            if (!_soundVoices.TryGetValue(dataSource2Bplayed.GetSoundFormatCategory(), out voiceQueue))
+            {
+                _soundVoices.Add(dataSource2Bplayed.GetSoundFormatCategory(), voiceQueue = new ISoundVoice[_maxVoicePoolPerFileType]);
+            }
 
-            for (int i = 0; i < _maxVoicesPerFileType; i++)
+            for (int i = 0; i < _maxVoicePoolPerFileType; i++)
             {
                 soundVoice = voiceQueue[i];
                 if (soundVoice == null)
                 {
-                    logger.Info("NEW Voice Id : " + i);
+                    //logger.Info("NEW Voice Id : {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
                     soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(_xaudio2, dataSource2Bplayed.WaveFormat, Voice_BufferEnd));
                     return true; //Return a newly created voice 
                 }
                 if (soundVoice.Voice.State.BuffersQueued == 0 && soundVoice.IsLooping == false)
                 {
-                    logger.Info("Reuse Voice Id : " + i);
+                    //logger.Info("Reuse Voice Id {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
 
                     return true;  //Return an already created voice, that was waiting to play a sound
                 }
             }
 
-            logger.Info("ERROOOR Voice Id");
             soundVoice = null;
             return false;
         }
@@ -328,7 +316,7 @@ namespace S33M3CoreComponents.Sound
         {
             foreach (var soundQueue in _soundVoices.Values)
             {
-                for (int i = 0; i < _maxVoicesPerFileType; i++)
+                for (int i = 0; i < _maxVoicePoolPerFileType; i++)
                 {
                     ISoundVoice soundVoice = soundQueue[i];
                     if (soundVoice != null && soundVoice.IsLooping)
