@@ -33,17 +33,20 @@ namespace Utopia.Components
             this.IsSystemComponent = true;
         }
 
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
+        {
+            _soundEngine.AddSoundSourceFromFile(_buttonPressSound, "ButtonPressed");
+        }
+
         public void SetGuiButtonSound(string filePath)
         {
-            if (_buttonPressSound == null)
-                ButtonControl.PressedSome += PressableControlPressedSome;
-
+            if (_buttonPressSound == null) ButtonControl.PressedSome += PressableControlPressedSome;
             _buttonPressSound = filePath;
         }
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            _soundEngine.PlaySound(_buttonPressSound, 1.0f);
+            _soundEngine.StartPlay2D("ButtonPressed");
         }
 
         public override void BeforeDispose()

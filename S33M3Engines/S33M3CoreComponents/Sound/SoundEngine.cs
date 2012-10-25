@@ -1,100 +1,76 @@
-﻿using S33M3DXEngine.Main.Interfaces;
-using SharpDX.IO;
-using SharpDX.Multimedia;
-using SharpDX.X3DAudio;
-using SharpDX.XAudio2;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using S33M3_DXEngine.Main;
+using S33M3Resources.Structs;
+using SharpDX;
+using SharpDX.Multimedia;
+using SharpDX.X3DAudio;
+using SharpDX.XAudio2;
 
 namespace S33M3CoreComponents.Sound
 {
-
     public class SoundEngine : BaseComponent, ISoundEngine
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private Variables
-        private static readonly int _maxVoicesNbr = 8;
-        private SourceVoiceAndMetaData[] _soundQueues = new SourceVoiceAndMetaData[_maxVoicesNbr]; //By default create the possibility to play 8 songs at the same time.
-        private Dictionary<string, AudioBufferAndMetaData> AudioBuffers = new Dictionary<string, AudioBufferAndMetaData>();
-        private MasteringVoice _masteringVoice;
+        //States variables
+        private bool _3DSoundEntitiesPositionsChanged = false;
+        private Vector3 _listenerPosition;
+        private Vector3 _listenerLookAt;
+        private Vector3 _listenerVelPerSecond;
+        private Vector3 _listenerUpVector;
+        private float _defaultSoundVolume;
+        private int _maxVoicesNbr = 8;
 
-        private XAudio2 _soundDevice;
+        //XAudio2 variables
+        //Sound engine objects
+        private XAudio2 _xaudio2;
         private X3DAudio _x3DAudio;
+        private MasteringVoice _masteringVoice;
         private DeviceDetails _deviceDetail;
-
-        private ManualResetEvent _syncro;
-        private Thread _thread;
         private List<string> _soundDevices;
 
-        private sealed class AudioBufferAndMetaData : AudioBuffer
-        {
-            public WaveFormat WaveFormat { get; set; }
-            public uint[] DecodedPacketsInfo { get; set; }
-        }
+        //Buffers
+        private Dictionary<string, ISoundDataSource> _soundDataSources;
+        private ISoundVoice[] _soundVoices;
 
-        private sealed class SourceVoiceAndMetaData : SourceVoice
-        {
-            public bool IsLooping { get; set; }
-            public string LoopingSourceFile { get; set; }
-            public AudioBufferAndMetaData Buffer { get; set; }
-            public Stopwatch LoopTimer { get; set; }
-            public int LoopDelay { get; set; }
+        //sound Threading Loop
+        private ManualResetEvent _syncro;
+        private Thread _thread;
 
-            public SourceVoiceAndMetaData(XAudio2 device, WaveFormat sourceFormat, bool withCallBack = false)
-                : base(device, sourceFormat, withCallBack)
-            {
-            }
-
-            public void SetLoopState(string fileName, AudioBufferAndMetaData buffer, int loopDelay)
-            {
-                LoopingSourceFile = fileName;
-                IsLooping = true;
-                Buffer = buffer;
-                LoopDelay = loopDelay;
-                if (LoopTimer == null) LoopTimer = new Stopwatch();
-                LoopTimer.Reset();
-            }
-
-            public void UnSetLoopState()
-            {
-                LoopingSourceFile = null;
-                IsLooping = false;
-                LoopDelay = 0;
-                Buffer = null;
-                LoopTimer.Reset();
-            }
-        }
         #endregion
 
         #region Public Properties
-        public MasteringVoice MasteringVoice
+        public float DefaultSoundVolume
         {
-            get { return _masteringVoice; }
+            get { return _defaultSoundVolume; }
+            set
+            {
+                _defaultSoundVolume = value;
+                if (_masteringVoice != null) _masteringVoice.SetVolume(value, XAudio2.CommitNow);
+            }
         }
+        public float DefaultMaxDistance { get; set; }
+        public float DefaultMinDistance { get; set; }
+        public List<string> SoundDevices { get { return _soundDevices; } }
+       
 
-        public XAudio2 XAudio
-        {
-            get { return _soundDevice; }
-        }
 
-        public List<string> SoundDevices
-        {
-            get { return _soundDevices; }
-            set { _soundDevices = value; }
-        }
         #endregion
 
-        public SoundEngine()
+        public SoundEngine(int maxVoicesNbr = 8)
+            : this(null, maxVoicesNbr)
         {
-            Initialize();
+        }
+
+        public SoundEngine(string SoundDeviceName, int maxVoicesNbr = 8)
+        {
+            Initialize(SoundDeviceName, maxVoicesNbr);
         }
 
         public override void AfterDispose()
@@ -105,185 +81,207 @@ namespace S33M3CoreComponents.Sound
         }
 
         #region Public Methods
-
-        /// <summary>
-        /// Play a sound Once
-        /// </summary>
-        /// <param name="soundfile"></param>
-        /// <param name="volume"></param>
-        /// <param name="forcedVoiceId"></param>
-        public void PlaySound(string soundfile, float volume = 1)
+        public void SetListenerPosition(Vector3D pos, Vector3D lookDir, Vector3D velPerSecond, Vector3D upVector)
         {
-            var buffer = GetBuffer(soundfile);
-            SourceVoiceAndMetaData sourceVoice;
-            if (GetVoice(buffer.WaveFormat, out sourceVoice))
+            _listenerPosition = pos.AsVector3();
+            _listenerLookAt = lookDir.AsVector3();
+            _listenerVelPerSecond = velPerSecond.AsVector3();
+            _listenerUpVector = upVector.AsVector3();
+            _3DSoundEntitiesPositionsChanged = true;
+        }
+
+        public void SetListenerPosition(Vector3D pos, Vector3D lookDir)
+        {
+            _listenerPosition = pos.AsVector3();
+            _listenerLookAt = lookDir.AsVector3();
+            _3DSoundEntitiesPositionsChanged = true;
+        }
+
+        public void SetListenerPosition(Vector3 pos, Vector3 lookDir, Vector3 velPerSecond, Vector3 upVector)
+        {
+            _listenerPosition = pos;
+            _listenerLookAt = lookDir;
+            _listenerVelPerSecond = velPerSecond;
+            _listenerUpVector = upVector;
+            _3DSoundEntitiesPositionsChanged = true;
+        }
+
+        public void SetListenerPosition(Vector3 pos, Vector3 lookDir)
+        {
+            _listenerPosition = pos;
+            _listenerLookAt = lookDir;
+            _3DSoundEntitiesPositionsChanged = true;
+        }
+
+        public void Update3DSounds()
+        {
+            if (!_3DSoundEntitiesPositionsChanged) return;
+
+            //Update 3D sound here
+            _3DSoundEntitiesPositionsChanged = false;
+        }
+
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false)
+        {
+            ISoundDataSource soundDataSource;
+
+            if (_soundDataSources.TryGetValue(soundAlias, out soundDataSource) == false)
             {
-                sourceVoice.SetVolume(volume, XAudio2.CommitNow);
-                sourceVoice.SubmitSourceBuffer(buffer, buffer.DecodedPacketsInfo);
-                sourceVoice.Start(); //Play the song
+                //Check File
+                if (File.Exists(FilePath) == false)
+                {
+                    logger.Error("Cannot find the sound file {0}", FilePath);
+                    return null;
+                }
+
+                //Creating the source, was not existing
+                soundDataSource = new SoundBufferedDataSource()
+                {
+                    MaxDistance = DefaultMaxDistance,
+                    MinDistance = DefaultMinDistance,
+                    SoundAlias = soundAlias,
+                    SoundVolume = DefaultSoundVolume
+                };
+
+                if (!streamedSound)
+                {
+                    //Load the sound and bufferize it
+                    SoundStream soundstream = new SoundStream(File.OpenRead(FilePath));
+                    soundDataSource.DecodedPacketsInfo = soundstream.DecodedPacketsInfo;
+                    soundDataSource.WaveFormat = soundstream.Format;
+                    soundDataSource.AudioBuffer = new AudioBuffer()
+                    {
+                        Stream = soundstream.ToDataStream(),
+                        AudioBytes = (int)soundstream.Length,
+                        Flags = BufferFlags.EndOfStream
+                    };
+                    
+                }
+
+                //Add DataSound into collection
+                _soundDataSources.Add(soundAlias, soundDataSource);
+            }
+
+            return soundDataSource;
+        }
+
+        public ISoundDataSource GetSoundSource(string soundAlias)
+        {
+            ISoundDataSource soundDataSource = null;
+            _soundDataSources.TryGetValue(soundAlias, out soundDataSource);
+            return soundDataSource;
+        }
+
+        public void RemoveAllSoundSources()
+        {
+            _soundDataSources.Clear();
+        }
+
+        public void RemoveSoundSource(string soundAlias)
+        {
+            _soundDataSources.Remove(soundAlias);
+        }
+
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false)
+        {
+            ISoundVoice soundVoice = null;
+            if (GetVoice(soundSource.WaveFormat, out soundVoice))
+            {
+                soundVoice.IsLooping = playLooped;
+                soundVoice.PlayingDataSource = soundSource;
+                soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
+                soundVoice.Voice.SubmitSourceBuffer(soundSource.AudioBuffer, soundSource.DecodedPacketsInfo);
+                soundVoice.Voice.Start();
             }
             else
             {
-                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundfile);
-                //Error sound not played, no channel free for use !
+                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundSource.SoundAlias);
             }
+
+            return soundVoice;
         }
 
-        public void MakeSound3D()
+        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, bool playLooped = false)
         {
-            Emitter emitter = new Emitter();
-            Listener listener = new Listener();
-            emitter.ChannelCount = 1;
-            emitter.CurveDistanceScaler = float.MinValue;
-
-            emitter.OrientFront = new SharpDX.Vector3();
-            emitter.OrientTop = new SharpDX.Vector3();
-            emitter.Position = new SharpDX.Vector3();
-            emitter.Velocity = new SharpDX.Vector3();
-
-            listener.OrientFront = new SharpDX.Vector3();
-            listener.OrientTop = new SharpDX.Vector3();
-            listener.Position = new SharpDX.Vector3();
-            listener.Velocity = new SharpDX.Vector3();
-
-            var settings = _x3DAudio.Calculate(listener, emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
-
-            //Find the corresponding voice currently playing
-            _soundQueues[0].SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings.MatrixCoefficients); //Change volume power.
-            
+            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias), playLooped);
         }
 
-        /// <summary>
-        /// Play a song in Loop
-        /// </summary>
-        /// <param name="soundfile">The sound file</param>
-        /// <param name="volume"></param>
-        /// <param name="delay">A delay between the repeating of the sound</param>
-        public void StartPlayingSound(string soundfile, float volume = 1, int delay = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, bool playLooped = false)
         {
-            //Get the sound buffer
-            var buffer = GetBuffer(soundfile);
-            //Get the first free Voice
-            SourceVoiceAndMetaData sourceVoiceForLooping;
-            if (GetVoice(buffer.WaveFormat, out sourceVoiceForLooping))
-            {
-                sourceVoiceForLooping.SetLoopState(soundfile, GetBuffer(soundfile), delay);
-
-                //Get sound buffer
-                sourceVoiceForLooping.Buffer = sourceVoiceForLooping.Buffer;
-                sourceVoiceForLooping.SetVolume(volume, XAudio2.CommitNow);
-                sourceVoiceForLooping.SubmitSourceBuffer(buffer, buffer.DecodedPacketsInfo);
-                sourceVoiceForLooping.Start(); //Play the song                
-            }
-        }
-
-        /// <summary>
-        /// Stop Playing sound before it ends (Loop or single)
-        /// </summary>
-        /// <param name="soundfile">the sound file Id</param>
-        public void StopPlayingSound(string soundfile)
-        {
-            for (int i = 0; i < _maxVoicesNbr; i++)
-            {
-                SourceVoiceAndMetaData voice = _soundQueues[i];
-                if (voice != null && voice.IsLooping && voice.LoopingSourceFile == soundfile)
-                {
-                    voice.Stop();
-                    voice.UnSetLoopState();
-                }
-            }
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), playLooped);
         }
 
         #endregion
 
         #region Private Methods
-        private void Initialize()
+        private void Initialize(string SoundDeviceName, int maxVoicesNbr)
         {
-            //Create new Xaudio2 engine
-            _soundDevice = ToDispose(new XAudio2());
+            //Default Xaudio2 objects ==========
+            _xaudio2 = ToDispose(new XAudio2());
+
+            if (SoundDeviceName == null) _deviceDetail = _xaudio2.GetDeviceDetails(0);
 
             _soundDevices = new List<string>();
+            int customDeviceId = 0;
             //Get all sound devices
-            for (int i = 0; i < _soundDevice.DeviceCount; i++)
+            for (int i = 0; i < _xaudio2.DeviceCount; i++)
             {
-                _soundDevices.Add(_soundDevice.GetDeviceDetails(i).DisplayName);
+                _soundDevices.Add(_xaudio2.GetDeviceDetails(i).DisplayName);
+                if (SoundDeviceName == _xaudio2.GetDeviceDetails(i).DisplayName)
+                {
+                    _deviceDetail = _xaudio2.GetDeviceDetails(i);
+                    customDeviceId = i;
+                }
             }
 
-            _deviceDetail = _soundDevice.GetDeviceDetails(0); //_soundDevice.DeviceCount;
             logger.Info("s33m3 sound engine started for device : " + _deviceDetail.DisplayName);
-            _x3DAudio = new X3DAudio(_deviceDetail.OutputFormat.ChannelMask);            
-            //Create a Mastering Voice
-            _masteringVoice = ToDispose(new MasteringVoice(_soundDevice));                       //Default interface sending sound stream to Hardware
-            _masteringVoice.SetVolume(1, 0);
-            _soundDevice.StartEngine();
 
-            _syncro = new ManualResetEvent(false);
+            _x3DAudio = new X3DAudio(_deviceDetail.OutputFormat.ChannelMask);
+
+            if(SoundDeviceName == null) _masteringVoice = ToDispose(new MasteringVoice(_xaudio2));
+            else _masteringVoice = ToDispose(new MasteringVoice(_xaudio2, 2, 44100, customDeviceId));
+
+            //Default state values =============
+            DefaultSoundVolume = 1.0f;
+            DefaultMaxDistance = 100.0f;
+            DefaultMinDistance = 0.0f;
+            _maxVoicesNbr = maxVoicesNbr;
+
+            _soundDataSources = new Dictionary<string, ISoundDataSource>();
+            _soundVoices = new ISoundVoice[_maxVoicesNbr];
+
 
             //Start Sound voice processing thread
+            _syncro = new ManualResetEvent(false);
             _thread = new Thread(DataSoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
             _thread.Start();
+
+            _xaudio2.StartEngine();
         }
 
-        /// <summary>
-        /// Get the Audio File memory buffer from FileName
-        /// </summary>
-        /// <param name="soundfile"></param>
-        /// <returns></returns>
-        private AudioBufferAndMetaData GetBuffer(string soundfile)
-        {
-            AudioBufferAndMetaData buffer;
-
-            if (AudioBuffers.TryGetValue(soundfile, out buffer) == false)
-            {
-                //Load the sound and bufferize it
-                var soundstream = new SoundStream(File.OpenRead(soundfile));
-
-                buffer = new AudioBufferAndMetaData()
-                {
-                    Stream = soundstream.ToDataStream(),
-                    AudioBytes = (int)soundstream.Length,
-                    Flags = BufferFlags.EndOfStream,
-                    WaveFormat = soundstream.Format,
-                    DecodedPacketsInfo = soundstream.DecodedPacketsInfo
-                };
-                AudioBuffers[soundfile] = buffer;
-            }
-            return buffer;
-        }
-
-        /// <summary>
-        /// Get a voice from the pool
-        /// By default it retrieve a voice doing nothing, but you can ask a specific voice by its ID
-        /// In this case, the voice may be currently rendereing a sound
-        /// </summary>
-        /// <param name="waveFormat">The format asked for the voice to play</param>
-        /// <param name="source"></param>
-        /// <param name="forcedVoiceId"></param>
-        /// <returns></returns>
-        private bool GetVoice(WaveFormat waveFormat, out SourceVoiceAndMetaData source)
+        private bool GetVoice(WaveFormat waveFormat, out ISoundVoice soundVoice)
         {
             for (int i = 0; i < _maxVoicesNbr; i++)
             {
-                source = _soundQueues[i];
-                if (source == null)
+                soundVoice = _soundVoices[i];
+                if (soundVoice == null)
                 {
-                    source = _soundQueues[i] = ToDispose(new SourceVoiceAndMetaData(_soundDevice, waveFormat, true));
-                    _soundQueues[i].BufferEnd += SoundEngine_BufferEnd;
-                    return true;
+                    soundVoice = _soundVoices[i] = ToDispose(new SoundVoice(_xaudio2, waveFormat, Voice_BufferEnd));
+                    return true; //Return a newly created voice 
                 }
-                if (source.State.BuffersQueued == 0 && source.IsLooping == false)
+                if (soundVoice.Voice.State.BuffersQueued == 0 && soundVoice.IsLooping == false)
                 {
-                    return true;
+                    return true;  //Return an already created voice, that was waiting to play a sound
                 }
             }
 
-            //By default, if all channel are playing a sound, skip Sound playing
-            source = null;
+            soundVoice = null;
             return false;
         }
 
-        //A sound finished playing
-        void SoundEngine_BufferEnd(IntPtr obj)
+
+        //Voice end sound reading call back
+        private void Voice_BufferEnd(IntPtr obj)
         {
             _syncro.Set();
         }
@@ -306,43 +304,88 @@ namespace S33M3CoreComponents.Sound
         {
             for (int i = 0; i < _maxVoicesNbr; i++)
             {
-                SourceVoiceAndMetaData voice = _soundQueues[i];
-                if (voice != null && voice.IsLooping)
+                ISoundVoice soundVoice = _soundVoices[i];
+                if (soundVoice != null && soundVoice.IsLooping)
                 {
-                    //Loop without delay
-                    if (voice.LoopDelay == 0)
+                    //Check the qt of buffer in the looping voice queue
+                    if (soundVoice.Voice.State.BuffersQueued == 0)
                     {
-                        //Check the qt of buffer in the looping voice queue
-                        if (voice.State.BuffersQueued == 0)
-                        {
-                            //Add a new sound in the queue the next sound !
-                            voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        //Loop with delay
-                        if (voice.State.BuffersQueued == 0)
-                        {
-                            if (voice.LoopTimer.IsRunning == false) voice.LoopTimer.Restart();
-
-                            if (voice.LoopTimer.ElapsedMilliseconds >= voice.LoopDelay)
-                            {
-                                voice.LoopTimer.Stop();
-                                voice.SubmitSourceBuffer(voice.Buffer, voice.Buffer.DecodedPacketsInfo);
-                                return false;
-                            }
-                            return true;
-                        }
+                        //Add the sound a new time in queue for playing !
+                        soundVoice.Voice.SubmitSourceBuffer(soundVoice.PlayingDataSource.AudioBuffer, soundVoice.PlayingDataSource.DecodedPacketsInfo);
+                        return false;
                     }
                 }
             }
 
             return false;
         }
-
+        
         #endregion
 
+
+
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlia, float posX, float posY, float posZ, bool playLooped = false)
+        {
+            throw new NotImplementedException();
+
+            //        public void MakeSound3D()
+            //        {
+            //            Emitter emitter = new Emitter();
+            //            Listener listener = new Listener();
+            //            emitter.ChannelCount = 1;
+            //            emitter.CurveDistanceScaler = float.MinValue;
+
+            //            emitter.OrientFront = new SharpDX.Vector3();
+            //            emitter.OrientTop = new SharpDX.Vector3();
+            //            emitter.Position = new SharpDX.Vector3();
+            //            emitter.Velocity = new SharpDX.Vector3();
+
+            //            listener.OrientFront = new SharpDX.Vector3();
+            //            listener.OrientTop = new SharpDX.Vector3();
+            //            listener.Position = new SharpDX.Vector3();
+            //            listener.Velocity = new SharpDX.Vector3();
+
+            //            var settings = _x3DAudio.Calculate(listener, emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
+
+            //            //Find the corresponding voice currently playing
+            //            _soundQueues[0].SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings.MatrixCoefficients); //Change volume power.
+
+            //        }
+        }
+
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlia, SharpDX.Vector3 position, bool playLooped = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlia, S33M3Resources.Structs.Vector3D position, bool playLooped = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, float posX, float posY, float posZ, bool playLooped = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, SharpDX.Vector3 position, bool playLooped = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, S33M3Resources.Structs.Vector3D position, bool playLooped = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsCurrentlyPlaying(string soundAlias)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopAllSounds()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
