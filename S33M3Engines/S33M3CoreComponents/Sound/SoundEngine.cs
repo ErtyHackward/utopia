@@ -20,10 +20,7 @@ namespace S33M3CoreComponents.Sound
         #region Private Variables
         //States variables
         private bool _3DSoundEntitiesPositionsChanged = false;
-        private Vector3 _listenerPosition;
-        private Vector3 _listenerLookAt;
-        private Vector3 _listenerVelPerSecond;
-        private Vector3 _listenerUpVector;
+        private Listener _listener;
         private float _defaultSoundVolume;
         private int _maxVoicePoolPerFileType = 16; //Can play up to 16 differents song in parallel for each file type
 
@@ -60,8 +57,6 @@ namespace S33M3CoreComponents.Sound
         public float DefaultMinDistance { get; set; }
         public List<string> SoundDevices { get { return _soundDevices; } }
        
-
-
         #endregion
 
         public SoundEngine(int maxVoicesNbr = 8)
@@ -82,35 +77,21 @@ namespace S33M3CoreComponents.Sound
         }
 
         #region Public Methods
-        public void SetListenerPosition(Vector3D pos, Vector3D lookDir, Vector3D velPerSecond, Vector3D upVector)
-        {
-            _listenerPosition = pos.AsVector3();
-            _listenerLookAt = lookDir.AsVector3();
-            _listenerVelPerSecond = velPerSecond.AsVector3();
-            _listenerUpVector = upVector.AsVector3();
-            _3DSoundEntitiesPositionsChanged = true;
-        }
-
-        public void SetListenerPosition(Vector3D pos, Vector3D lookDir)
-        {
-            _listenerPosition = pos.AsVector3();
-            _listenerLookAt = lookDir.AsVector3();
-            _3DSoundEntitiesPositionsChanged = true;
-        }
-
         public void SetListenerPosition(Vector3 pos, Vector3 lookDir, Vector3 velPerSecond, Vector3 upVector)
         {
-            _listenerPosition = pos;
-            _listenerLookAt = lookDir;
-            _listenerVelPerSecond = velPerSecond;
-            _listenerUpVector = upVector;
+            _listener.OrientFront = lookDir;
+            _listener.Position = pos;
+            _listener.Velocity = velPerSecond;
+            _listener.OrientTop = upVector;
             _3DSoundEntitiesPositionsChanged = true;
         }
 
         public void SetListenerPosition(Vector3 pos, Vector3 lookDir)
         {
-            _listenerPosition = pos;
-            _listenerLookAt = lookDir;
+            _listener.OrientFront = lookDir;
+            _listener.Position = pos;
+            _listener.Velocity = Vector3.Zero;
+            _listener.OrientTop = Vector3.UnitY;
             _3DSoundEntitiesPositionsChanged = true;
         }
 
@@ -118,7 +99,15 @@ namespace S33M3CoreComponents.Sound
         {
             if (!_3DSoundEntitiesPositionsChanged) return;
 
-            //Update 3D sound here
+            foreach (var soundVoicesQueue in _soundVoices.Values)
+            {
+                foreach (var soundVoice in soundVoicesQueue.Where(x => x != null && x.is3DSound && (x.Voice.State.BuffersQueued > 0 || x.IsLooping)))
+                {
+                    soundVoice.Refresh3DParameters(); //Refresh because the Listener did change its position !
+                }
+            }
+
+
             _3DSoundEntitiesPositionsChanged = false;
         }
 
@@ -191,6 +180,7 @@ namespace S33M3CoreComponents.Sound
             ISoundVoice soundVoice = null;
             if (GetVoice(soundSource, out soundVoice))
             {
+                soundVoice.is3DSound = false;
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
                 soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
@@ -214,6 +204,79 @@ namespace S33M3CoreComponents.Sound
         public ISoundVoice StartPlay2D(string soundAlias, bool playLooped = false)
         {
             return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), playLooped);
+        }
+
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false)
+        {
+            if (soundSource == null) throw new ArgumentNullException();
+
+            ISoundVoice soundVoice = null;
+            if (GetVoice(soundSource, out soundVoice))
+            {
+                soundVoice.is3DSound = true;
+                soundVoice.Emitter.Position = position;
+                soundVoice.Emitter.OrientTop = Vector3.UnitY;
+                soundVoice.Emitter.Velocity = Vector3.Zero;
+                soundVoice.IsLooping = playLooped;
+                soundVoice.PlayingDataSource = soundSource;
+                soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
+                soundVoice.Voice.SubmitSourceBuffer(soundSource.AudioBuffer, soundSource.DecodedPacketsInfo);
+                soundVoice.Refresh3DParameters();
+
+                soundVoice.Voice.Start();
+                if (playLooped) _activelyLoopingSounds.Add(soundVoice);
+            }
+            else
+            {
+                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundSource.SoundAlias);
+            }
+
+            return soundVoice;
+
+            //        public void MakeSound3D()
+            //        {
+            //            Emitter emitter = new Emitter();
+            //            Listener listener = new Listener();
+            //            emitter.ChannelCount = 1;
+            //            emitter.CurveDistanceScaler = float.MinValue;
+
+            //            emitter.OrientFront = new SharpDX.Vector3();
+            //            emitter.OrientTop = new SharpDX.Vector3();
+            //            emitter.Position = new SharpDX.Vector3();
+            //            emitter.Velocity = new SharpDX.Vector3();
+
+            //            listener.OrientFront = new SharpDX.Vector3();
+            //            listener.OrientTop = new SharpDX.Vector3();
+            //            listener.Position = new SharpDX.Vector3();
+            //            listener.Velocity = new SharpDX.Vector3();
+
+            //            var settings = _x3DAudio.Calculate(listener, emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
+
+            //            //Find the corresponding voice currently playing
+            //            _soundQueues[0].SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings.MatrixCoefficients); //Change volume power.
+
+            //        }
+        }
+
+        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false)
+        {
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, playLooped);
+        }
+
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false)
+        {
+            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias), position, playLooped);
+        }
+
+        public void StopAllSounds()
+        {
+            foreach (var soundCatQueue in _soundVoices.Values)
+            {
+                foreach (var sound in soundCatQueue.Where(x => x != null && x.Voice.State.BuffersQueued > 0))
+                {
+                    sound.Stop();
+                }
+            }
         }
 
         #endregion
@@ -256,6 +319,8 @@ namespace S33M3CoreComponents.Sound
             _soundVoices = new Dictionary<int, ISoundVoice[]>();
             _activelyLoopingSounds = new List<ISoundVoice>();
 
+            _listener = new Listener();
+
             //Start Sound voice processing thread
             _syncro = new ManualResetEvent(false);
             _thread = new Thread(DataSoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
@@ -279,7 +344,8 @@ namespace S33M3CoreComponents.Sound
                 if (soundVoice == null)
                 {
                     //logger.Info("NEW Voice Id : {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
-                    soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(_xaudio2, dataSource2Bplayed.WaveFormat, Voice_BufferEnd));
+                    soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(_xaudio2, dataSource2Bplayed.WaveFormat,_listener, _x3DAudio , _deviceDetail, Voice_BufferEnd));
+                    soundVoice.Emitter = new Emitter();
                     return true; //Return a newly created voice 
                 }
                 if (soundVoice.Voice.State.BuffersQueued == 0 && soundVoice.IsLooping == false)
@@ -293,7 +359,6 @@ namespace S33M3CoreComponents.Sound
             soundVoice = null;
             return false;
         }
-
 
         //Voice end sound reading call back
         private void Voice_BufferEnd(IntPtr obj)
@@ -338,68 +403,14 @@ namespace S33M3CoreComponents.Sound
         
         #endregion
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlia, float posX, float posY, float posZ, bool playLooped = false)
-        {
-            throw new NotImplementedException();
 
-            //        public void MakeSound3D()
-            //        {
-            //            Emitter emitter = new Emitter();
-            //            Listener listener = new Listener();
-            //            emitter.ChannelCount = 1;
-            //            emitter.CurveDistanceScaler = float.MinValue;
+       
 
-            //            emitter.OrientFront = new SharpDX.Vector3();
-            //            emitter.OrientTop = new SharpDX.Vector3();
-            //            emitter.Position = new SharpDX.Vector3();
-            //            emitter.Velocity = new SharpDX.Vector3();
 
-            //            listener.OrientFront = new SharpDX.Vector3();
-            //            listener.OrientTop = new SharpDX.Vector3();
-            //            listener.Position = new SharpDX.Vector3();
-            //            listener.Velocity = new SharpDX.Vector3();
 
-            //            var settings = _x3DAudio.Calculate(listener, emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
 
-            //            //Find the corresponding voice currently playing
-            //            _soundQueues[0].SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings.MatrixCoefficients); //Change volume power.
 
-            //        }
-        }
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlia, SharpDX.Vector3 position, bool playLooped = false)
-        {
-            throw new NotImplementedException();
-        }
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlia, S33M3Resources.Structs.Vector3D position, bool playLooped = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, float posX, float posY, float posZ, bool playLooped = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, SharpDX.Vector3 position, bool playLooped = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, S33M3Resources.Structs.Vector3D position, bool playLooped = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsCurrentlyPlaying(string soundAlias)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StopAllSounds()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

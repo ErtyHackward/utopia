@@ -5,6 +5,7 @@ using System.Text;
 using SharpDX;
 using SharpDX.Multimedia;
 using SharpDX.XAudio2;
+using SharpDX.X3DAudio;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -18,23 +19,35 @@ namespace S33M3CoreComponents.Sound
         private XAudio2 _xAudio2;
         private ISoundDataSource _playingDataSource;
         private Action<IntPtr> _callback;
+        private Listener _listener;
+        private X3DAudio _x3DAudio;
+        private DeviceDetails _deviceDetail;
         #endregion
 
         #region Public Properties
-        public Vector3 Position { get; set; }
+        public Emitter Emitter { get; set; }
+        public bool is3DSound { get; set; }
         public SourceVoice Voice { get { return _voice; } }
         public ISoundDataSource PlayingDataSource
         {
             get { return _playingDataSource; }
             set { _playingDataSource = value; CheckSourceVoice(value); }
         }
+        public Vector3 Position
+        {
+            get { return Emitter.Position; }
+            set { Emitter.Position = Position; Refresh3DParameters(); }
+        }
         public bool IsLooping{ get; set; }
         #endregion
 
-        public SoundVoice(XAudio2 xAudio2, WaveFormat linkedWaveFormat, Action<IntPtr> callBack)
+        public SoundVoice(XAudio2 xAudio2, WaveFormat linkedWaveFormat, Listener listener, X3DAudio x3DAudio, DeviceDetails deviceDetail,  Action<IntPtr> callBack)
         {
             if (linkedWaveFormat == null) throw new ArgumentNullException();
             _callback = callBack;
+            _deviceDetail = deviceDetail;
+            _x3DAudio = x3DAudio;
+            _listener = listener;
             _xAudio2 = xAudio2;
             _linkedWaveFormat = linkedWaveFormat;
             CheckSourceVoice(_linkedWaveFormat);
@@ -44,6 +57,13 @@ namespace S33M3CoreComponents.Sound
         public void Dispose()
         {
             if (_voice != null && _voice.IsDisposed == false) _voice.Dispose();
+        }
+
+        public void Refresh3DParameters()
+        {
+            DspSettings settings3D = _x3DAudio.Calculate(_listener, Emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
+            //Adapt output channel volume in 3D
+            //Voice.SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
         }
 
         public void Stop()

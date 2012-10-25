@@ -31,6 +31,7 @@ namespace Utopia.Components
             public IDynamicEntity Entity;
             public Vector3D Position;
             public byte LastSound;
+            public bool isLocalSound;
         }
 
         #region Private Variables
@@ -82,7 +83,7 @@ namespace Utopia.Components
             _chunkEntityImpactManager = chunkEntityImpactManager;
 
             _dynamicEntityManager = dynamicEntityManager;
-            _stepsTracker.Add(new Track { Entity = player, Position = player.Position });
+            _stepsTracker.Add(new Track { Entity = player, Position = player.Position, isLocalSound = true });
 
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
@@ -161,15 +162,11 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpent)
         {
-            _listenerPosition = new Vector3((float)_cameraManager.ActiveCamera.WorldPosition.Value.X,
-                                   (float)_cameraManager.ActiveCamera.WorldPosition.Value.Y,
-                                   (float)_cameraManager.ActiveCamera.WorldPosition.Value.Z);
-            var lookAt = new Vector3(_cameraManager.ActiveCamera.LookAt.Value.X, _cameraManager.ActiveCamera.LookAt.Value.Y,
-                                        _cameraManager.ActiveCamera.LookAt.Value.Z);
+            _listenerPosition = _cameraManager.ActiveCamera.WorldPosition.Value.AsVector3();
 
             var sw = Stopwatch.StartNew();
 
-            _soundEngine.SetListenerPosition(_listenerPosition, lookAt);
+            _soundEngine.SetListenerPosition(_listenerPosition, _cameraManager.ActiveCamera.LookAt.Value);
             _soundEngine.Update3DSounds();
             sw.Stop();
 
@@ -220,7 +217,7 @@ namespace Utopia.Components
                     cubeUnderFeet.Id == RealmConfiguration.CubeId.Air ||
                     _stepsTracker[i].Entity.DisplacementMode != Shared.Entities.EntityDisplacementModes.Walking)
                 {
-                    var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position }; //Save the position of the entity
+                    var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position, isLocalSound = _stepsTracker[i].isLocalSound }; //Save the position of the entity
                     _stepsTracker[i] = item;
                     continue;
                 }
@@ -254,8 +251,14 @@ namespace Utopia.Components
                             // play a water sound
                             if (_stepsSounds.TryGetValue(currentCube.Id, out sounds))
                             {
-                                //_soundEngine.Play3D(sounds[0], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
-                                _soundEngine.StartPlay2D(sounds[0]);
+                                if (_stepsTracker[i].isLocalSound)
+                                {
+                                    _soundEngine.StartPlay2D(sounds[0]);
+                                }
+                                else
+                                {
+                                    //_soundEngine.Play3D(sounds[0], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                }
                             }
                         }
                         else
@@ -281,14 +284,21 @@ namespace Utopia.Components
                                 while (sounds.Count > 1 && prevSound == soundIndex)
                                     soundIndex = (byte)rnd.Next(0, sounds.Count);
 
-                                //_soundEngine.Play3D(sounds[soundIndex], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
-                                _soundEngine.StartPlay2D(sounds[soundIndex]);
+                                if (_stepsTracker[i].isLocalSound)
+                                {
+                                    _soundEngine.StartPlay2D(sounds[soundIndex]);
+                                }
+                                else
+                                {
+                                    //_soundEngine.Play3D(sounds[soundIndex], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                }
+
                             }
                         }
                     }
 
                     //Save the Entity last position.
-                    var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position, LastSound = soundIndex };
+                    var item = new Track { Entity = _stepsTracker[i].Entity, Position = entity.Position, LastSound = soundIndex, isLocalSound = _stepsTracker[i].isLocalSound };
                     _stepsTracker[i] = item;
                 }
             }
@@ -344,8 +354,8 @@ namespace Utopia.Components
                         else
                         {
                             // Add new sound type collection
-                            //var sound = _soundEngine.Play3D(soundPath, soundPosition, true, false, StreamMode.AutoDetect);
-                            var sound = _soundEngine.StartPlay2D(soundPath, true);
+                            var sound = _soundEngine.StartPlay3D(soundPath, soundPosition, true);
+                            //var sound = _soundEngine.StartPlay2D(soundPath, true);
                             _sharedSounds.Add(soundPath, new KeyValuePair<ISoundVoice, List<Vector3>>(sound, new List<Vector3> { soundPosition }));
                         }
                     }
@@ -384,18 +394,30 @@ namespace Utopia.Components
         }
 
 
-        public virtual void PlayBlockPut(Vector3I blockPos)
+        public virtual void PlayBlockPut(Vector3I blockPos, bool isLocalPlayerAction)
         {
-            //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-            var sound = SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Put Bock");
-            //sound.MaxDistance = 16;
+            if (isLocalPlayerAction)
+            {
+                SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Put Bock");
+            }
+            else
+            {
+                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+                //sound.MaxDistance = 16;
+            }
         }
 
-        public virtual void PlayBlockTake(Vector3I blockPos)
+        public virtual void PlayBlockTake(Vector3I blockPos, bool isLocalPlayerAction)
         {
-            //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-            var sound = SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "take Bock");
-            //sound.MaxDistance = 16;
+            if (isLocalPlayerAction)
+            {
+                SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "take Bock");
+            }
+            else
+            {
+                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+                //sound.MaxDistance = 16;
+            }
         }
 
         public bool ShowDebugInfo
@@ -421,10 +443,10 @@ namespace Utopia.Components
             if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
                 return;
 
-            if (e.NewBlockType == 0)
-                PlayBlockTake(e.Position);
+            if (e.NewBlockType == RealmConfiguration.CubeId.Air)
+                PlayBlockTake(e.Position, e.IsLocalPLayerAction);
             else
-                PlayBlockPut(e.Position);
+                PlayBlockPut(e.Position, e.IsLocalPLayerAction);
         }
 
         private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
@@ -434,7 +456,7 @@ namespace Utopia.Components
 
         private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
-            _stepsTracker.Add(new Track { Entity = e.Entity, Position = e.Entity.Position });
+            _stepsTracker.Add(new Track { Entity = e.Entity, Position = e.Entity.Position, isLocalSound = false });
         }
         #endregion
     }

@@ -55,18 +55,31 @@ namespace Sandbox.Client.Components
             PreLoadSound(@"Sounds\Blocks\take.wav");
         }
 
-        public override void PlayBlockPut(Vector3I blockPos)
+        public override void PlayBlockPut(Vector3I blockPos, bool isLocalPlayerAction)
         {
-            //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-            var sound = SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Block put");
-            //sound.MaxDistance = 16;
+            if (isLocalPlayerAction)
+            {
+                SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Put Bock");
+            }
+            else
+            {
+                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+                //sound.MaxDistance = 16;
+            }
         }
 
-        public override void PlayBlockTake(Vector3I blockPos)
+        public override void PlayBlockTake(Vector3I blockPos, bool isLocalPlayerAction)
         {
-            //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-            var sound = SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "Block take");
-            //sound.MaxDistance = 16;
+            if (isLocalPlayerAction)
+            {
+                SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "take Bock");
+            }
+            else
+            {
+                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+                //sound.MaxDistance = 16;
+            }
         }
+
     }
 }
