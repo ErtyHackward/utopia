@@ -232,30 +232,6 @@ namespace S33M3CoreComponents.Sound
             }
 
             return soundVoice;
-
-            //        public void MakeSound3D()
-            //        {
-            //            Emitter emitter = new Emitter();
-            //            Listener listener = new Listener();
-            //            emitter.ChannelCount = 1;
-            //            emitter.CurveDistanceScaler = float.MinValue;
-
-            //            emitter.OrientFront = new SharpDX.Vector3();
-            //            emitter.OrientTop = new SharpDX.Vector3();
-            //            emitter.Position = new SharpDX.Vector3();
-            //            emitter.Velocity = new SharpDX.Vector3();
-
-            //            listener.OrientFront = new SharpDX.Vector3();
-            //            listener.OrientTop = new SharpDX.Vector3();
-            //            listener.Position = new SharpDX.Vector3();
-            //            listener.Velocity = new SharpDX.Vector3();
-
-            //            var settings = _x3DAudio.Calculate(listener, emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
-
-            //            //Find the corresponding voice currently playing
-            //            _soundQueues[0].SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings.MatrixCoefficients); //Change volume power.
-
-            //        }
         }
 
         public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false)
@@ -345,7 +321,11 @@ namespace S33M3CoreComponents.Sound
                 {
                     //logger.Info("NEW Voice Id : {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
                     soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(_xaudio2, dataSource2Bplayed.WaveFormat,_listener, _x3DAudio , _deviceDetail, Voice_BufferEnd));
-                    soundVoice.Emitter = new Emitter();
+                    soundVoice.Emitter = new Emitter()
+                    {
+                        ChannelCount = 1,
+                        CurveDistanceScaler = float.MinValue
+                    };
                     return true; //Return a newly created voice 
                 }
                 if (soundVoice.Voice.State.BuffersQueued == 0 && soundVoice.IsLooping == false)
