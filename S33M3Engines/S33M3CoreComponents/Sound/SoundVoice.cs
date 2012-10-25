@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SharpDX;
 using SharpDX.Multimedia;
 using SharpDX.XAudio2;
 
@@ -9,6 +10,8 @@ namespace S33M3CoreComponents.Sound
 {
     public class SoundVoice : ISoundVoice, IDisposable
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         private SourceVoice _voice;
         private WaveFormat _linkedWaveFormat;
@@ -18,6 +21,7 @@ namespace S33M3CoreComponents.Sound
         #endregion
 
         #region Public Properties
+        public Vector3 Position { get; set; }
         public SourceVoice Voice { get { return _voice; } }
         public ISoundDataSource PlayingDataSource
         {
@@ -29,6 +33,7 @@ namespace S33M3CoreComponents.Sound
 
         public SoundVoice(XAudio2 xAudio2, WaveFormat linkedWaveFormat, Action<IntPtr> callBack)
         {
+            if (linkedWaveFormat == null) throw new ArgumentNullException();
             _callback = callBack;
             _xAudio2 = xAudio2;
             _linkedWaveFormat = linkedWaveFormat;
@@ -40,6 +45,13 @@ namespace S33M3CoreComponents.Sound
         {
             if (_voice != null && _voice.IsDisposed == false) _voice.Dispose();
         }
+
+        public void Stop()
+        {
+            IsLooping = false;
+            _voice.Stop();
+            _voice.FlushSourceBuffers();
+        }
         #endregion
 
         #region Private Methods
@@ -50,14 +62,8 @@ namespace S33M3CoreComponents.Sound
 
         private void CheckSourceVoice(WaveFormat format)
         {
-            if (_voice == null || _linkedWaveFormat != format)
+            if (_voice == null)
             {
-                if (_voice != null)
-                {
-                    ///UnRegister all delegates
-                    _voice.BufferEnd -= _callback;
-                    _voice.Dispose();
-                }
                 _linkedWaveFormat = format;
                 _voice = new SourceVoice(_xAudio2, _linkedWaveFormat, true);
                 _voice.BufferEnd += _callback;
