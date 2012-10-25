@@ -22,7 +22,11 @@ namespace S33M3CoreComponents.Sound
         public WaveFormat WaveFormat { get; set; }
         public uint[] DecodedPacketsInfo { get; set; }
         public AudioBuffer AudioBuffer { get; set; }
-        public SoundBufferedDataSource.FileFormatType FormatType { get; set; }
+
+        public int GetSoundFormatCategory()
+        {
+            return ((int)WaveFormat.Encoding << 16) ^ WaveFormat.Channels;
+        }
         #endregion
 
         #region Public Methods
@@ -30,11 +34,5 @@ namespace S33M3CoreComponents.Sound
 
         #region Private Methods
         #endregion
-
-        public enum FileFormatType
-        {
-            Wav,
-            Adpcm
-        }
     }
 }

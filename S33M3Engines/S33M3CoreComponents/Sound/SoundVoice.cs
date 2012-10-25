@@ -68,6 +68,14 @@ namespace S33M3CoreComponents.Sound
                 _voice = new SourceVoice(_xAudio2, _linkedWaveFormat, true);
                 _voice.BufferEnd += _callback;
             }
+            else
+            {
+                if (_linkedWaveFormat.SampleRate != format.SampleRate)
+                {
+                    _voice.SourceSampleRate = format.SampleRate;
+                    _linkedWaveFormat = format;
+                }
+            }
         }
         #endregion
     }

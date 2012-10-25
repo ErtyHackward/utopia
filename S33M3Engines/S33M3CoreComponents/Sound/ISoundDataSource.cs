@@ -19,6 +19,6 @@ namespace S33M3CoreComponents.Sound
         uint[] DecodedPacketsInfo { get; set; }
         AudioBuffer AudioBuffer { get; set; }
 
-        SoundBufferedDataSource.FileFormatType FormatType { get; set; }
+        int GetSoundFormatCategory();
     }
 }
