@@ -8,8 +8,12 @@ namespace Realms.Client.Components
         public SandboxGeneralSoundManager(ISoundEngine soundEngine)
             : base(soundEngine)
         {
-            SetGuiButtonSound("Sounds\\Interface\\button_press.wav");
         }
 
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
+        {
+            SetGuiButtonSound(@"Sounds\Interface\button_press.wav");
+            base.LoadContent(context);
+        }
     }
 }
