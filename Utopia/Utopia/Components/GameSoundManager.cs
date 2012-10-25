@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using IrrKlang;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
@@ -10,13 +9,14 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
-using IrrVector3 = IrrKlang.Vector3D;
 using Vector3D = S33M3Resources.Structs.Vector3D;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Shared.Configuration;
+using S33M3CoreComponents.Sound;
+using SharpDX;
 
 namespace Utopia.Components
 {
@@ -42,9 +42,9 @@ namespace Utopia.Components
 
         private Vector3I _lastPosition;
         private Range3I _lastRange;
-        private IrrVector3 _listenerPosition;
+        private Vector3 _listenerPosition;
 
-        private readonly SortedList<string, KeyValuePair<ISound, List<IrrVector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISound, List<IrrVector3>>>();
+        private readonly SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>>();
 
         private string _debugInfo;
         private long _listenCubesTime;
@@ -134,25 +134,26 @@ namespace Utopia.Components
             _preLoad.Add(path);
         }
 
+        //? ?????? Async load possible ????
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
             // load all sounds
             foreach (var pair in _ambientSounds)
             {
-                _soundEngine.AddSoundSourceFromFile(pair.Value, StreamMode.AutoDetect, true);
+                _soundEngine.AddSoundSourceFromFile(pair.Value, pair.Value);
             }
 
             foreach (var pair in _stepsSounds)
             {
                 foreach (var path in pair.Value)
                 {
-                    _soundEngine.AddSoundSourceFromFile(path, StreamMode.AutoDetect, true);
+                    _soundEngine.AddSoundSourceFromFile(path, path);
                 }
             }
 
             foreach (var path in _preLoad)
             {
-                _soundEngine.AddSoundSourceFromFile(path, StreamMode.AutoDetect, true);
+                _soundEngine.AddSoundSourceFromFile(path, path);
             }
 
             base.LoadContent(context);
@@ -160,16 +161,16 @@ namespace Utopia.Components
 
         public override void Update(GameTime timeSpent)
         {
-            _listenerPosition = new IrrVector3((float)_cameraManager.ActiveCamera.WorldPosition.Value.X,
+            _listenerPosition = new Vector3((float)_cameraManager.ActiveCamera.WorldPosition.Value.X,
                                    (float)_cameraManager.ActiveCamera.WorldPosition.Value.Y,
                                    (float)_cameraManager.ActiveCamera.WorldPosition.Value.Z);
-            var lookAt = new IrrVector3(_cameraManager.ActiveCamera.LookAt.Value.X, _cameraManager.ActiveCamera.LookAt.Value.Y,
+            var lookAt = new Vector3(_cameraManager.ActiveCamera.LookAt.Value.X, _cameraManager.ActiveCamera.LookAt.Value.Y,
                                         _cameraManager.ActiveCamera.LookAt.Value.Z);
 
             var sw = Stopwatch.StartNew();
 
             _soundEngine.SetListenerPosition(_listenerPosition, lookAt);
-            _soundEngine.Update();
+            _soundEngine.Update3DSounds();
             sw.Stop();
 
             _debugInfo = "Sounds playing: " + _sharedSounds.Count + ", Update " + sw.ElapsedMilliseconds + " ms, ";
@@ -253,7 +254,8 @@ namespace Utopia.Components
                             // play a water sound
                             if (_stepsSounds.TryGetValue(currentCube.Id, out sounds))
                             {
-                                _soundEngine.Play3D(sounds[0], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                //_soundEngine.Play3D(sounds[0], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                _soundEngine.StartPlay2D(sounds[0]);
                             }
                         }
                         else
@@ -279,7 +281,8 @@ namespace Utopia.Components
                                 while (sounds.Count > 1 && prevSound == soundIndex)
                                     soundIndex = (byte)rnd.Next(0, sounds.Count);
 
-                                _soundEngine.Play3D(sounds[soundIndex], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                //_soundEngine.Play3D(sounds[soundIndex], (float)entity.Position.X, (float)entity.Position.Y, (float)entity.Position.Z);
+                                _soundEngine.StartPlay2D(sounds[soundIndex]);
                             }
                         }
                     }
@@ -333,7 +336,7 @@ namespace Utopia.Components
                     {
                         var soundPath = _ambientSounds[index].Value;
                         // put the ambient sound right in the center of a cube
-                        var soundPosition = new IrrVector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
+                        var soundPosition = new Vector3(position.X + 0.5f, position.Y + 0.5f, position.Z + 0.5f);
 
                         // Add the 3d position of a sound instance in the collection
                         if (_sharedSounds.ContainsKey(soundPath))
@@ -341,8 +344,9 @@ namespace Utopia.Components
                         else
                         {
                             // Add new sound type collection
-                            var sound = _soundEngine.Play3D(soundPath, soundPosition, true, false, StreamMode.AutoDetect);
-                            _sharedSounds.Add(soundPath, new KeyValuePair<ISound, List<IrrVector3>>(sound, new List<IrrVector3> { soundPosition }));
+                            //var sound = _soundEngine.Play3D(soundPath, soundPosition, true, false, StreamMode.AutoDetect);
+                            var sound = _soundEngine.StartPlay2D(soundPath, true);
+                            _sharedSounds.Add(soundPath, new KeyValuePair<ISoundVoice, List<Vector3>>(sound, new List<Vector3> { soundPosition }));
                         }
                     }
                 }
@@ -362,12 +366,12 @@ namespace Utopia.Components
                 if (pair.Value.Value.Count == 1) continue;
 
                 // choose the closest
-                var distance = _listenerPosition.GetDistanceFrom(pair.Value.Value[0]);
+                var distance = Vector3.Distance(_listenerPosition,pair.Value.Value[0]);
                 var position = pair.Value.Value[0];
 
                 for (int i = 1; i < pair.Value.Value.Count; i++)
                 {
-                    var d = _listenerPosition.GetDistanceFrom(pair.Value.Value[i]);
+                    var d = Vector3.Distance(_listenerPosition,pair.Value.Value[i]);
                     if (d < distance)
                     {
                         position = pair.Value.Value[i];
@@ -382,14 +386,16 @@ namespace Utopia.Components
 
         public virtual void PlayBlockPut(Vector3I blockPos)
         {
-            var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-            sound.MaxDistance = 16;
+            //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+            var sound = SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Put Bock");
+            //sound.MaxDistance = 16;
         }
 
         public virtual void PlayBlockTake(Vector3I blockPos)
         {
-            var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-            sound.MaxDistance = 16;
+            //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
+            var sound = SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "take Bock");
+            //sound.MaxDistance = 16;
         }
 
         public bool ShowDebugInfo

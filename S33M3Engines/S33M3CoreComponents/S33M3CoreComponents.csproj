@@ -75,9 +75,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Utopia\packages\SharpDX.DXGI.2.3.1\lib\net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.MediaFoundation">
-      <HintPath>..\..\Utopia\packages\SharpDX.MediaFoundation.2.3.1\lib\net40\SharpDX.MediaFoundation.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX.XAudio2">
       <HintPath>..\..\Utopia\packages\SharpDX.XAudio2.2.3.1\lib\net40\SharpDX.XAudio2.dll</HintPath>
     </Reference>
@@ -274,7 +271,6 @@
     <Compile Include="Sound\ISoundDataSource.cs" />
     <Compile Include="Sound\SoundBufferedDataSource.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
-    <Compile Include="Sound\SoundEngineOLD.cs" />
     <Compile Include="Sound\SoundVoice.cs" />
     <Compile Include="Sprites\Interfaces\ISpriteRenderer.cs" />
     <Compile Include="Sprites\LanguageUnicodeRanges.cs" />

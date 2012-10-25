@@ -55,10 +55,6 @@
     <ApplicationIcon>Resources\Utopia.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="irrKlang.NET4, Version=1.0.3861.18767, Culture=neutral, PublicKeyToken=a854741bd80517c7, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Library\irrKlang.NET4.dll</HintPath>
-    </Reference>
     <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>

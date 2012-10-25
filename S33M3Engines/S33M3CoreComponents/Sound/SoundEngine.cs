@@ -25,7 +25,7 @@ namespace S33M3CoreComponents.Sound
         private Vector3 _listenerVelPerSecond;
         private Vector3 _listenerUpVector;
         private float _defaultSoundVolume;
-        private int _maxVoicesNbr = 8;
+        private int _maxVoicesPerFileType = 8;
 
         //XAudio2 variables
         //Sound engine objects
@@ -37,7 +37,7 @@ namespace S33M3CoreComponents.Sound
 
         //Buffers
         private Dictionary<string, ISoundDataSource> _soundDataSources;
-        private ISoundVoice[] _soundVoices;
+        private Dictionary<SoundBufferedDataSource.FileFormatType, ISoundVoice[]> _soundVoices;
 
         //sound Threading Loop
         private ManualResetEvent _syncro;
@@ -143,12 +143,26 @@ namespace S33M3CoreComponents.Sound
                     SoundVolume = DefaultSoundVolume
                 };
 
+                switch (Path.GetExtension(FilePath).ToUpper())
+                {
+                    case ".WAV":
+                        soundDataSource.FormatType = SoundBufferedDataSource.FileFormatType.Wav;
+                        break;
+                    case ".ADPCM":
+                        soundDataSource.FormatType = SoundBufferedDataSource.FileFormatType.Adpcm;
+                        break;
+                    default:
+                        logger.Error("Not supported audio file format : {0}", Path.GetExtension(FilePath));
+                        throw new Exception("Not supported audio file format");
+                }
+
                 if (!streamedSound)
                 {
                     //Load the sound and bufferize it
                     SoundStream soundstream = new SoundStream(File.OpenRead(FilePath));
                     soundDataSource.DecodedPacketsInfo = soundstream.DecodedPacketsInfo;
                     soundDataSource.WaveFormat = soundstream.Format;
+
                     soundDataSource.AudioBuffer = new AudioBuffer()
                     {
                         Stream = soundstream.ToDataStream(),
@@ -184,8 +198,10 @@ namespace S33M3CoreComponents.Sound
 
         public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false)
         {
+            if (soundSource == null) throw new ArgumentNullException();
+
             ISoundVoice soundVoice = null;
-            if (GetVoice(soundSource.WaveFormat, out soundVoice))
+            if (GetVoice(soundSource, out soundVoice))
             {
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
@@ -242,14 +258,15 @@ namespace S33M3CoreComponents.Sound
             else _masteringVoice = ToDispose(new MasteringVoice(_xaudio2, 2, 44100, customDeviceId));
 
             //Default state values =============
-            DefaultSoundVolume = 1.0f;
+            DefaultSoundVolume = 0.5f;
             DefaultMaxDistance = 100.0f;
             DefaultMinDistance = 0.0f;
-            _maxVoicesNbr = maxVoicesNbr;
+            _maxVoicesPerFileType = maxVoicesNbr;
 
             _soundDataSources = new Dictionary<string, ISoundDataSource>();
-            _soundVoices = new ISoundVoice[_maxVoicesNbr];
-
+            _soundVoices = new Dictionary<SoundBufferedDataSource.FileFormatType, ISoundVoice[]>();
+            _soundVoices.Add(SoundBufferedDataSource.FileFormatType.Wav, new ISoundVoice[_maxVoicesPerFileType]);
+            _soundVoices.Add(SoundBufferedDataSource.FileFormatType.Adpcm, new ISoundVoice[_maxVoicesPerFileType]);
 
             //Start Sound voice processing thread
             _syncro = new ManualResetEvent(false);
@@ -259,22 +276,29 @@ namespace S33M3CoreComponents.Sound
             _xaudio2.StartEngine();
         }
 
-        private bool GetVoice(WaveFormat waveFormat, out ISoundVoice soundVoice)
+        private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
-            for (int i = 0; i < _maxVoicesNbr; i++)
+            //Get the soundqueue following fileFormat
+            var voiceQueue = _soundVoices[dataSource2Bplayed.FormatType];
+
+            for (int i = 0; i < _maxVoicesPerFileType; i++)
             {
-                soundVoice = _soundVoices[i];
+                soundVoice = voiceQueue[i];
                 if (soundVoice == null)
                 {
-                    soundVoice = _soundVoices[i] = ToDispose(new SoundVoice(_xaudio2, waveFormat, Voice_BufferEnd));
+                    logger.Info("NEW Voice Id : " + i);
+                    soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(_xaudio2, dataSource2Bplayed.WaveFormat, Voice_BufferEnd));
                     return true; //Return a newly created voice 
                 }
                 if (soundVoice.Voice.State.BuffersQueued == 0 && soundVoice.IsLooping == false)
                 {
+                    logger.Info("Reuse Voice Id : " + i);
+
                     return true;  //Return an already created voice, that was waiting to play a sound
                 }
             }
 
+            logger.Info("ERROOOR Voice Id");
             soundVoice = null;
             return false;
         }
@@ -302,17 +326,20 @@ namespace S33M3CoreComponents.Sound
         /// <returns></returns>
         private bool LoopingSoundRefresh()
         {
-            for (int i = 0; i < _maxVoicesNbr; i++)
+            foreach (var soundQueue in _soundVoices.Values)
             {
-                ISoundVoice soundVoice = _soundVoices[i];
-                if (soundVoice != null && soundVoice.IsLooping)
+                for (int i = 0; i < _maxVoicesPerFileType; i++)
                 {
-                    //Check the qt of buffer in the looping voice queue
-                    if (soundVoice.Voice.State.BuffersQueued == 0)
+                    ISoundVoice soundVoice = soundQueue[i];
+                    if (soundVoice != null && soundVoice.IsLooping)
                     {
-                        //Add the sound a new time in queue for playing !
-                        soundVoice.Voice.SubmitSourceBuffer(soundVoice.PlayingDataSource.AudioBuffer, soundVoice.PlayingDataSource.DecodedPacketsInfo);
-                        return false;
+                        //Check the qt of buffer in the looping voice queue
+                        if (soundVoice.Voice.State.BuffersQueued == 0)
+                        {
+                            //Add the sound a new time in queue for playing !
+                            soundVoice.Voice.SubmitSourceBuffer(soundVoice.PlayingDataSource.AudioBuffer, soundVoice.PlayingDataSource.DecodedPacketsInfo);
+                            return false;
+                        }
                     }
                 }
             }

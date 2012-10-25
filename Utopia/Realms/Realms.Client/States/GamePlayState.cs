@@ -93,9 +93,6 @@ namespace Realms.Client.States
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
-
-            var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
-            chunkEntityImpactManager.BlockReplaced += ChunkEntityImpactManagerBlockReplaced;
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var adminConsole = _ioc.Get<AdminConsole>();
             var toolRenderer = _ioc.Get<ToolRenderer>();
@@ -145,21 +142,6 @@ namespace Realms.Client.States
 
 #endif
             base.Initialize(context);
-        }
-        
-        void ChunkEntityImpactManagerBlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
-        {
-            if (e.NewBlockType == RealmConfiguration.CubeId.Air && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
-                return;
-            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.Air)
-                return;
-            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
-                return;
-
-            if (e.NewBlockType == 0)
-                _sandboxGameSoundManager.PlayBlockTake(e.Position);
-            else
-                _sandboxGameSoundManager.PlayBlockPut(e.Position);
         }
 
         void InventorySwitchInventory(object sender, System.EventArgs e)

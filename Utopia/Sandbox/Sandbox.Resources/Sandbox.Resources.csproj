@@ -283,72 +283,141 @@
     <None Include="Sounds\Ambiance\water_stream.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Sounds\Ambiance\forest.adpcm.wav">
+    <None Include="Sounds\Ambiance\forest.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="Sounds\Blocks\take.wav">
+    <None Include="Sounds\Ambiance\beach_waves.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Blocks\put.wav">
+    </None>
+    <None Include="Sounds\Ambiance\bonfire.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_dirt01.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\lava.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_dirt02.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\night_forest.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_dirt03.ogg">
+    </None>
+    <None Include="Sounds\Ambiance\water_stream.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_dirt04.ogg">
+    </None>
+    <None Include="Sounds\Blocks\take.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_grass01.ogg">
+    </None>
+    <None Include="Sounds\Blocks\put.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_grass02.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt01.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_grass03.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt01.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_grass04.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt02.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_sand01.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt02.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_sand02.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt03.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_sand03.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt03.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_snow01.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt04.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_snow02.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_dirt04.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_stone01.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass01.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_stone02.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass01.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_stone03.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass02.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_stone04.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass02.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Footsteps\footsteps_water01.ogg">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass03.adpcm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Interface\button_press.wav">
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass03.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass04.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_grass04.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_sand01.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_sand01.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_sand02.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_sand02.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_sand03.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_sand03.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_snow01.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_snow01.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_snow02.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_snow02.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone01.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone01.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone02.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone02.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone03.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone03.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone04.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_stone04.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_water01.adpcm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Footsteps\footsteps_water01.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Interface\button_press.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Models\Cactus.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
