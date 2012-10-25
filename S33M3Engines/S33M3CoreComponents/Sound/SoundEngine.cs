@@ -38,6 +38,7 @@ namespace S33M3CoreComponents.Sound
         //Buffers
         private Dictionary<string, ISoundDataSource> _soundDataSources;
         private Dictionary<int, ISoundVoice[]> _soundVoices;
+        private List<ISoundVoice> _activelyLoopingSounds;
 
         //sound Threading Loop
         private ManualResetEvent _syncro;
@@ -195,6 +196,7 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
                 soundVoice.Voice.SubmitSourceBuffer(soundSource.AudioBuffer, soundSource.DecodedPacketsInfo);
                 soundVoice.Voice.Start();
+                if (playLooped) _activelyLoopingSounds.Add(soundVoice);
             }
             else
             {
@@ -252,6 +254,7 @@ namespace S33M3CoreComponents.Sound
 
             _soundDataSources = new Dictionary<string, ISoundDataSource>();
             _soundVoices = new Dictionary<int, ISoundVoice[]>();
+            _activelyLoopingSounds = new List<ISoundVoice>();
 
             //Start Sound voice processing thread
             _syncro = new ManualResetEvent(false);
@@ -303,7 +306,8 @@ namespace S33M3CoreComponents.Sound
         {
             while (!IsDisposed)
             {
-                if (LoopingSoundRefresh() == false) _syncro.Reset();
+                LoopingSoundRefresh();
+                _syncro.Reset();
                 _syncro.WaitOne();
             }
         }
@@ -312,32 +316,27 @@ namespace S33M3CoreComponents.Sound
         /// Logic to implement "Looping" sound.
         /// </summary>
         /// <returns></returns>
-        private bool LoopingSoundRefresh()
+        private void LoopingSoundRefresh()
         {
-            foreach (var soundQueue in _soundVoices.Values)
+            ISoundVoice soundVoice;
+            for (int i = _activelyLoopingSounds.Count - 1; i >= 0; i--)
             {
-                for (int i = 0; i < _maxVoicePoolPerFileType; i++)
+                soundVoice = _activelyLoopingSounds[i];
+                if (soundVoice.Voice.State.BuffersQueued == 0)
                 {
-                    ISoundVoice soundVoice = soundQueue[i];
-                    if (soundVoice != null && soundVoice.IsLooping)
+                    if (soundVoice.IsLooping)
                     {
-                        //Check the qt of buffer in the looping voice queue
-                        if (soundVoice.Voice.State.BuffersQueued == 0)
-                        {
-                            //Add the sound a new time in queue for playing !
-                            soundVoice.Voice.SubmitSourceBuffer(soundVoice.PlayingDataSource.AudioBuffer, soundVoice.PlayingDataSource.DecodedPacketsInfo);
-                            return false;
-                        }
+                        soundVoice.Voice.SubmitSourceBuffer(soundVoice.PlayingDataSource.AudioBuffer, soundVoice.PlayingDataSource.DecodedPacketsInfo);
+                    }
+                    else
+                    {
+                        _activelyLoopingSounds.RemoveAt(i);
                     }
                 }
             }
-
-            return false;
         }
         
         #endregion
-
-
 
         public ISoundVoice StartPlay3D(string FilePath, string soundAlia, float posX, float posY, float posZ, bool playLooped = false)
         {
