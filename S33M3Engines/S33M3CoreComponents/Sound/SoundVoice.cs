@@ -61,9 +61,10 @@ namespace S33M3CoreComponents.Sound
 
         public void Refresh3DParameters()
         {
-            DspSettings settings3D = _x3DAudio.Calculate(_listener, Emitter, CalculateFlags.Matrix, 1, _deviceDetail.OutputFormat.Channels);
+            DspSettings settings3D = _x3DAudio.Calculate(_listener, Emitter, CalculateFlags.Matrix | CalculateFlags.Doppler, 1, _deviceDetail.OutputFormat.Channels);
             //Adapt output channel volume in 3D
-            //Voice.SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
+            Voice.SetOutputMatrix(1, _deviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
+            Voice.SetFrequencyRatio(settings3D.DopplerFactor);
         }
 
         public void Stop()
