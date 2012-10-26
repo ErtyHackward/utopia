@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using S33M3Resources.Structs;
 using SharpDX;
+using SharpDX.X3DAudio;
+using SharpDX.XAudio2;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -23,30 +25,28 @@ namespace S33M3CoreComponents.Sound
         /// <summary>
         /// Default SoundVolume
         /// </summary>
-        float DefaultSoundVolume { get; set; }
-        /// <summary>
-        /// Default Maximum Distance for playing a sound in 3d mode.
-        /// </summary>
-        float DefaultMaxDistance { get; set; }
-        /// <summary>
-        /// Default Minimum Distance for playing a sound in 3d mode.
-        /// </summary>
-        float DefaultMinDistance { get; set; }
+        float GeneralSoundVolume { get; set; }
 
         /// <summary>
-        /// Set the Listener Position for 3D mode playing
+        /// Acces of the Listener object
         /// </summary>
-        /// <param name="pos">The current position of the Listener</param>
-        /// <param name="lookdir">The current looking direction of the listener</param>
-        /// <param name="velPerSecond">The velocity m/s of the listener</param>
-        /// <param name="upVector">The listener Up Vector</param>
-        void SetListenerPosition(Vector3D pos, Vector3D lookDir, Vector3D velPerSecond, Vector3D upVector);
+        Listener Listener { get; }
+
         /// <summary>
-        /// Set the Listener Position for 3D mode playing
+        /// Acces to the Detail of the hardware device being played against
         /// </summary>
-        /// <param name="pos">The current position of the Listener</param>
-        /// <param name="lookdir">The current looking direction of the listener</param>
-        void SetListenerPosition(Vector3D pos, Vector3D lookDir);
+        DeviceDetails DeviceDetail { get; }
+
+        /// <summary>
+        /// Access to the 3D audio engine
+        /// </summary>
+        X3DAudio X3DAudio { get; }
+
+        /// <summary>
+        /// Access to wrapped root XAudio Engine
+        /// </summary>
+        XAudio2 Xaudio2 { get; }
+
         /// <summary>
         /// Set the Listener Position for 3D mode playing
         /// </summary>
@@ -73,8 +73,9 @@ namespace S33M3CoreComponents.Sound
         /// <param name="FilePath">The sound file Path</param>
         /// <param name="soundAlias">Alias given to the sound : An alias MUST be unic</param>
         /// <param name="streamedSound">Will the sound be played in stream mode or not (Stream = less heavy on memory needed)</param>
+        /// <param name="soundPower">The maximum distance at wich the sound can be propagated : its "power", value in World unit</param>
         /// <returns>The soundDataSource object</returns>
-        ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false);
+        ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false, float soundPower = 16);
         /// <summary>
         /// Get a sound source via its alias
         /// </summary>
@@ -105,18 +106,6 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
         ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false);
-
-        /// <summary>
-        /// Start Playing a sound in 3D Mode
-        /// </summary>
-        /// <param name="FilePath">Path to the sound, in case the sound datasource was not created, will only be used if the alias is unknown</param>
-        /// <param name="soundAlia">Sound Alias</param>
-        /// <param name="posX">Sound X world position</param>
-        /// <param name="posY">Sound Y world position</param>
-        /// <param name="posZ">Sound Z world position</param>
-        /// <param name="playLooped">Keep on playing sound when finished</param>
-        /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(string FilePath, string soundAlia, float posX, float posY, float posZ, bool playLooped = false);
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
@@ -125,26 +114,15 @@ namespace S33M3CoreComponents.Sound
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(string FilePath, string soundAlia, Vector3 position, bool playLooped = false);
+        ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false);
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
-        /// <param name="FilePath">Path to the sound, in case the sound datasource was not created, will only be used if the alias is unknown</param>
         /// <param name="soundAlia">Sound Alias</param>
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(string FilePath, string soundAlia, Vector3D position, bool playLooped = false);
-        /// <summary>
-        /// Start Playing a sound in 3D Mode
-        /// </summary>
-        /// <param name="soundSource">The sound source to use for playing</param>
-        /// <param name="posX">Sound X world position</param>
-        /// <param name="posY">Sound Y world position</param>
-        /// <param name="posZ">Sound Z world position</param>
-        /// <param name="playLooped">Keep on playing sound when finished</param>
-        /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(ISoundDataSource soundSource, float posX, float posY, float posZ, bool playLooped = false);
+        ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false);
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
@@ -153,21 +131,6 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
         ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false);
-        /// <summary>
-        /// Start Playing a sound in 3D Mode
-        /// </summary>
-        /// <param name="soundSource">The sound source to use for playing</param>
-        /// <param name="position">Sound world position</param>
-        /// <param name="playLooped">Keep on playing sound when finished</param>
-        /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3D position, bool playLooped = false);
-
-        /// <summary>
-        /// Check if a sound is currently being played
-        /// </summary>
-        /// <param name="soundAlias"></param>
-        /// <returns></returns>
-        bool IsCurrentlyPlaying(string soundAlias);
 
         /// <summary>
         /// Remove all buffered sound sources, will free up memory
