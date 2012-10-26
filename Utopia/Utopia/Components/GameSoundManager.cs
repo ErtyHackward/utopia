@@ -127,7 +127,6 @@ namespace Utopia.Components
                 throw new InvalidOperationException("Only one ambient sound is allowed per cube type");
 
             _ambientSounds.Add(new KeyValuePair<int, string>(cubeId, sound));
-            PreLoadSound(sound);
         }
 
         public void PreLoadSound(string path)
@@ -141,20 +140,24 @@ namespace Utopia.Components
             // load all sounds
             foreach (var pair in _ambientSounds)
             {
-                _soundEngine.AddSoundSourceFromFile(pair.Value, pair.Value);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(pair.Value, pair.Value);
+                dataSource.SoundVolume = 0.5f;
+                dataSource.SoundPower = 32.0f;
             }
 
             foreach (var pair in _stepsSounds)
             {
                 foreach (var path in pair.Value)
                 {
-                    _soundEngine.AddSoundSourceFromFile(path, path);
+                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(path, path);
+                    dataSource.SoundVolume = 0.1f;
                 }
             }
 
-            foreach (var path in _preLoad)
+             foreach (var path in _preLoad)
             {
-                _soundEngine.AddSoundSourceFromFile(path, path);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(path, path);
+                dataSource.SoundVolume = 0.1f;
             }
 
             base.LoadContent(context);
@@ -396,28 +399,10 @@ namespace Utopia.Components
 
         public virtual void PlayBlockPut(Vector3I blockPos, bool isLocalPlayerAction)
         {
-            if (isLocalPlayerAction)
-            {
-                SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Put Bock");
-            }
-            else
-            {
-                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-                //sound.MaxDistance = 16;
-            }
         }
 
         public virtual void PlayBlockTake(Vector3I blockPos, bool isLocalPlayerAction)
         {
-            if (isLocalPlayerAction)
-            {
-                SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "take Bock");
-            }
-            else
-            {
-                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-                //sound.MaxDistance = 16;
-            }
         }
 
         public bool ShowDebugInfo

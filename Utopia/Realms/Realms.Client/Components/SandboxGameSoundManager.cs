@@ -59,7 +59,7 @@ namespace Realms.Client.Components
         {
             if (isLocalPlayerAction)
             {
-                SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav", "Put Bock");
+                SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav");
             }
             else
             {
@@ -72,7 +72,7 @@ namespace Realms.Client.Components
         {
             if (isLocalPlayerAction)
             {
-                SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav", "take Bock");
+                SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav");
             }
             else
             {

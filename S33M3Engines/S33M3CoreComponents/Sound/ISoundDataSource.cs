@@ -12,8 +12,7 @@ namespace S33M3CoreComponents.Sound
         string SoundAlias { get; set; }
 
         float SoundVolume { get; set; }
-        float MaxDistance { get; set; }
-        float MinDistance { get; set; }
+        float SoundPower { get; set; }
 
         WaveFormat WaveFormat { get; set; }
         uint[] DecodedPacketsInfo { get; set; }

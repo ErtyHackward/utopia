@@ -21,8 +21,8 @@ namespace S33M3CoreComponents.Sound
         //States variables
         private bool _3DSoundEntitiesPositionsChanged = false;
         private Listener _listener;
-        private float _defaultSoundVolume;
-        private int _maxVoicePoolPerFileType = 16; //Can play up to 16 differents song in parallel for each file type
+        private float _generalSoundVolume;
+        private int _maxVoicePoolPerFileType = 32; //Can play up to 32 differents song in parallel for each file type
 
         //XAudio2 variables
         //Sound engine objects
@@ -44,17 +44,35 @@ namespace S33M3CoreComponents.Sound
         #endregion
 
         #region Public Properties
-        public float DefaultSoundVolume
+        public Listener Listener
         {
-            get { return _defaultSoundVolume; }
+            get { return _listener; }
+        }
+
+        public DeviceDetails DeviceDetail
+        {
+            get { return _deviceDetail; }
+        }
+
+        public X3DAudio X3DAudio
+        {
+            get { return _x3DAudio; }
+        }
+
+        public XAudio2 Xaudio2
+        {
+            get { return _xaudio2; }
+        }
+
+        public float GeneralSoundVolume
+        {
+            get { return _generalSoundVolume; }
             set
             {
-                _defaultSoundVolume = value;
+                _generalSoundVolume = value;
                 if (_masteringVoice != null) _masteringVoice.SetVolume(value, XAudio2.CommitNow);
             }
         }
-        public float DefaultMaxDistance { get; set; }
-        public float DefaultMinDistance { get; set; }
         public List<string> SoundDevices { get { return _soundDevices; } }
        
         #endregion
@@ -106,12 +124,10 @@ namespace S33M3CoreComponents.Sound
                     soundVoice.Refresh3DParameters(); //Refresh because the Listener did change its position !
                 }
             }
-
-
             _3DSoundEntitiesPositionsChanged = false;
         }
 
-        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false)
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false, float soundPower = 16)
         {
             ISoundDataSource soundDataSource;
 
@@ -127,10 +143,9 @@ namespace S33M3CoreComponents.Sound
                 //Creating the source, was not existing
                 soundDataSource = new SoundBufferedDataSource()
                 {
-                    MaxDistance = DefaultMaxDistance,
-                    MinDistance = DefaultMinDistance,
                     SoundAlias = soundAlias,
-                    SoundVolume = DefaultSoundVolume
+                    SoundVolume = 1.0f,
+                    SoundPower = soundPower
                 };
 
                 if (!streamedSound)
@@ -218,6 +233,7 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.Emitter.Velocity = Vector3.Zero;
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
+                //Set default Sound Volume for the Data
                 soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
                 soundVoice.Voice.SubmitSourceBuffer(soundSource.AudioBuffer, soundSource.DecodedPacketsInfo);
                 soundVoice.Refresh3DParameters();
@@ -284,9 +300,6 @@ namespace S33M3CoreComponents.Sound
             else _masteringVoice = ToDispose(new MasteringVoice(_xaudio2, _deviceDetail.OutputFormat.Channels, _deviceDetail.OutputFormat.SampleRate, customDeviceId));
 
             //Default state values =============
-            DefaultSoundVolume = 0.5f;
-            DefaultMaxDistance = 100.0f;
-            DefaultMinDistance = 0.0f;
             _maxVoicePoolPerFileType = maxVoicesNbr;
 
             _soundDataSources = new Dictionary<string, ISoundDataSource>();
@@ -299,6 +312,8 @@ namespace S33M3CoreComponents.Sound
             _syncro = new ManualResetEvent(false);
             _thread = new Thread(DataSoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
             _thread.Start();
+
+            GeneralSoundVolume = 1.0f;
 
             _xaudio2.StartEngine();
         }
@@ -318,7 +333,7 @@ namespace S33M3CoreComponents.Sound
                 if (soundVoice == null)
                 {
                     //logger.Info("NEW Voice Id : {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
-                    soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(_xaudio2, dataSource2Bplayed.WaveFormat,_listener, _x3DAudio , _deviceDetail, Voice_BufferEnd));
+                    soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(this, dataSource2Bplayed.WaveFormat, Voice_BufferEnd));
                     soundVoice.Emitter = new Emitter()
                     {
                         ChannelCount = 1,
