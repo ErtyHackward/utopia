@@ -146,7 +146,6 @@ namespace S33M3CoreComponents.Sound
                         AudioBytes = (int)soundstream.Length,
                         Flags = BufferFlags.EndOfStream
                     };
-                    
                 }
 
                 //Add DataSound into collection
@@ -262,10 +261,9 @@ namespace S33M3CoreComponents.Sound
         {
             //Default Xaudio2 objects ==========
             _xaudio2 = ToDispose(new XAudio2());
-
             if (SoundDeviceName == null) _deviceDetail = _xaudio2.GetDeviceDetails(0);
-
             _soundDevices = new List<string>();
+
             int customDeviceId = 0;
             //Get all sound devices
             for (int i = 0; i < _xaudio2.DeviceCount; i++)
@@ -282,8 +280,8 @@ namespace S33M3CoreComponents.Sound
 
             _x3DAudio = new X3DAudio(_deviceDetail.OutputFormat.ChannelMask);
 
-            if(SoundDeviceName == null) _masteringVoice = ToDispose(new MasteringVoice(_xaudio2));
-            else _masteringVoice = ToDispose(new MasteringVoice(_xaudio2, 2, 44100, customDeviceId));
+            if (SoundDeviceName == null) _masteringVoice = ToDispose(new MasteringVoice(_xaudio2, XAudio2.DefaultChannels, XAudio2.DefaultSampleRate, 0));
+            else _masteringVoice = ToDispose(new MasteringVoice(_xaudio2, _deviceDetail.OutputFormat.Channels, _deviceDetail.OutputFormat.SampleRate, customDeviceId));
 
             //Default state values =============
             DefaultSoundVolume = 0.5f;
