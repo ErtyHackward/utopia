@@ -16,12 +16,16 @@ namespace S33M3CoreComponents.Sound
         public string SoundAlias { get; set; }
 
         public float SoundVolume { get; set; }
-        public float MaxDistance { get; set; }
-        public float MinDistance { get; set; }
+        public float SoundPower { get; set; }
 
         public WaveFormat WaveFormat { get; set; }
         public uint[] DecodedPacketsInfo { get; set; }
         public AudioBuffer AudioBuffer { get; set; }
+
+        public int GetSoundFormatCategory()
+        {
+            return ((int)WaveFormat.Encoding << 16) ^ WaveFormat.Channels;
+        }
         #endregion
 
         #region Public Methods
