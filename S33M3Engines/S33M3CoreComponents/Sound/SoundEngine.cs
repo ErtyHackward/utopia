@@ -198,7 +198,12 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
                 soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
+                float[] coef = new float[DeviceDetail.OutputFormat.Channels];
+                for (int i = 0; i < coef.Length; i++) coef[i] = 1.0f;
+                soundVoice.Voice.SetOutputMatrix(soundSource.WaveFormat.Channels, DeviceDetail.OutputFormat.Channels, coef);
                 soundVoice.Voice.SubmitSourceBuffer(soundSource.AudioBuffer, soundSource.DecodedPacketsInfo);
+                soundVoice.Refresh3DParameters();
+
                 soundVoice.Voice.Start();
                 if (playLooped) _activelyLoopingSounds.Add(soundVoice);
             }
@@ -234,7 +239,6 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
                 //Set default Sound Volume for the Data
-                soundVoice.Voice.SetVolume(soundSource.SoundVolume, XAudio2.CommitNow);
                 soundVoice.Voice.SubmitSourceBuffer(soundSource.AudioBuffer, soundSource.DecodedPacketsInfo);
                 soundVoice.Refresh3DParameters();
 

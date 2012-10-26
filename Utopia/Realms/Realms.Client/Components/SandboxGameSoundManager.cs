@@ -8,6 +8,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Sound;
+using SharpDX;
 
 namespace Realms.Client.Components
 {
@@ -55,30 +56,14 @@ namespace Realms.Client.Components
             PreLoadSound(@"Sounds\Blocks\take.wav");
         }
 
-        public override void PlayBlockPut(Vector3I blockPos, bool isLocalPlayerAction)
+        public override void PlayBlockPut(Vector3I blockPos)
         {
-            if (isLocalPlayerAction)
-            {
-                SoundEngine.StartPlay2D(@"Sounds\Blocks\put.wav");
-            }
-            else
-            {
-                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\put.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-                //sound.MaxDistance = 16;
-            }
+            SoundEngine.StartPlay3D(@"Sounds\Blocks\put.wav", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
 
-        public override void PlayBlockTake(Vector3I blockPos, bool isLocalPlayerAction)
+        public override void PlayBlockTake(Vector3I blockPos)
         {
-            if (isLocalPlayerAction)
-            {
-                SoundEngine.StartPlay2D(@"Sounds\Blocks\take.wav");
-            }
-            else
-            {
-                //var sound = SoundEngine.Play3D("Sounds\\Blocks\\take.wav", blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f);
-                //sound.MaxDistance = 16;
-            }
+            SoundEngine.StartPlay3D(@"Sounds\Blocks\take.wav", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
     }
 }
