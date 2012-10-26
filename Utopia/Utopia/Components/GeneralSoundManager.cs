@@ -35,7 +35,7 @@ namespace Utopia.Components
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
-            _soundEngine.AddSoundSourceFromFile(_buttonPressSound, "ButtonPressed");
+            _soundEngine.AddSoundSourceFromFile(_buttonPressSound, "ButtonPressed").SoundVolume = 0.3f;
         }
 
         public void SetGuiButtonSound(string filePath)

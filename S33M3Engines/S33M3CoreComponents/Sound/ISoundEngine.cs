@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using S33M3Resources.Structs;
 using SharpDX;
+using SharpDX.X3DAudio;
+using SharpDX.XAudio2;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -23,15 +25,27 @@ namespace S33M3CoreComponents.Sound
         /// <summary>
         /// Default SoundVolume
         /// </summary>
-        float DefaultSoundVolume { get; set; }
+        float GeneralSoundVolume { get; set; }
+
         /// <summary>
-        /// Default Maximum Distance for playing a sound in 3d mode.
+        /// Acces of the Listener object
         /// </summary>
-        float DefaultMaxDistance { get; set; }
+        Listener Listener { get; }
+
         /// <summary>
-        /// Default Minimum Distance for playing a sound in 3d mode.
+        /// Acces to the Detail of the hardware device being played against
         /// </summary>
-        float DefaultMinDistance { get; set; }
+        DeviceDetails DeviceDetail { get; }
+
+        /// <summary>
+        /// Access to the 3D audio engine
+        /// </summary>
+        X3DAudio X3DAudio { get; }
+
+        /// <summary>
+        /// Access to wrapped root XAudio Engine
+        /// </summary>
+        XAudio2 Xaudio2 { get; }
 
         /// <summary>
         /// Set the Listener Position for 3D mode playing
@@ -59,8 +73,9 @@ namespace S33M3CoreComponents.Sound
         /// <param name="FilePath">The sound file Path</param>
         /// <param name="soundAlias">Alias given to the sound : An alias MUST be unic</param>
         /// <param name="streamedSound">Will the sound be played in stream mode or not (Stream = less heavy on memory needed)</param>
+        /// <param name="soundPower">The maximum distance at wich the sound can be propagated : its "power", value in World unit</param>
         /// <returns>The soundDataSource object</returns>
-        ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false);
+        ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false, float soundPower = 16);
         /// <summary>
         /// Get a sound source via its alias
         /// </summary>
