@@ -58,19 +58,16 @@ namespace S33M3CoreComponents.Sound
         {
             if (is3DSound)
             {
-                DspSettings settings3D = _soundEngine.X3DAudio.Calculate(_soundEngine.Listener, Emitter, CalculateFlags.Matrix | CalculateFlags.Doppler, 1, _soundEngine.DeviceDetail.OutputFormat.Channels);
+                DspSettings settings3D = _soundEngine.X3DAudio.Calculate(_soundEngine.Listener, Emitter, CalculateFlags.Matrix, 1, _soundEngine.DeviceDetail.OutputFormat.Channels);
                 float soundVolume = _playingDataSource.SoundVolume * (1.0f - (Math.Max(0.0f, Math.Min(1.0f, settings3D.EmitterToListenerDistance / _playingDataSource.SoundPower))));
 
                 Voice.SetVolume(soundVolume, XAudio2.CommitNow);
-                Voice.SetOutputMatrix(1, _soundEngine.DeviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
-                Voice.SetFrequencyRatio(settings3D.DopplerFactor);
+                Voice.SetOutputMatrix(PlayingDataSource.WaveFormat.Channels, _soundEngine.DeviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
             }
         }
 
         public void Stop()
         {
-            //Reset to default ChannelVolumes
-
             IsLooping = false;
             _voice.Stop();
             _voice.FlushSourceBuffers();

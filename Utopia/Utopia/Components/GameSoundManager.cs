@@ -157,7 +157,8 @@ namespace Utopia.Components
              foreach (var path in _preLoad)
             {
                 ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(path, path);
-                dataSource.SoundVolume = 0.1f;
+                dataSource.SoundVolume = 0.3f;
+                dataSource.SoundPower = 12.0f;
             }
 
             base.LoadContent(context);
@@ -397,11 +398,11 @@ namespace Utopia.Components
         }
 
 
-        public virtual void PlayBlockPut(Vector3I blockPos, bool isLocalPlayerAction)
+        public virtual void PlayBlockPut(Vector3I blockPos)
         {
         }
 
-        public virtual void PlayBlockTake(Vector3I blockPos, bool isLocalPlayerAction)
+        public virtual void PlayBlockTake(Vector3I blockPos)
         {
         }
 
@@ -429,9 +430,9 @@ namespace Utopia.Components
                 return;
 
             if (e.NewBlockType == RealmConfiguration.CubeId.Air)
-                PlayBlockTake(e.Position, e.IsLocalPLayerAction);
+                PlayBlockTake(e.Position);
             else
-                PlayBlockPut(e.Position, e.IsLocalPLayerAction);
+                PlayBlockPut(e.Position);
         }
 
         private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
