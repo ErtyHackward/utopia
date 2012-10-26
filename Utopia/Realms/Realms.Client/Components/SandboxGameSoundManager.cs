@@ -56,12 +56,12 @@ namespace Realms.Client.Components
             PreLoadSound(@"Sounds\Blocks\take.wav");
         }
 
-        public override void PlayBlockPut(Vector3I blockPos)
+        protected override void PlayBlockPut(Vector3I blockPos)
         {
             SoundEngine.StartPlay3D(@"Sounds\Blocks\put.wav", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
 
-        public override void PlayBlockTake(Vector3I blockPos)
+        protected override void PlayBlockTake(Vector3I blockPos)
         {
             SoundEngine.StartPlay3D(@"Sounds\Blocks\take.wav", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
