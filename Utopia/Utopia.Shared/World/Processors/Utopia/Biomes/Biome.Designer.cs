@@ -8,6 +8,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -84,6 +85,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             writer.Write(MoistureFilter.Min);
             writer.Write(MoistureFilter.Max);
 
+            writer.Write(AmbientSound.Count);
+            foreach (BiomeSoundSource soundSource in AmbientSound)
+            {
+                soundSource.Save(writer);
+            }
+
             writer.Write(LandFormFilters.Count);
             foreach (enuLandFormType landType in LandFormFilters)
             {
@@ -121,6 +128,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             MoistureFilter = new RangeD(reader.ReadDouble(), reader.ReadDouble());
 
             int nbrObjectsInCollection;
+
+            AmbientSound.Clear();
+            nbrObjectsInCollection = reader.ReadInt32();
+            for (int i = 0; i < nbrObjectsInCollection; i++)
+            {
+                BiomeSoundSource soundSource = new BiomeSoundSource();
+                soundSource.Load(reader);
+                AmbientSound.Add(soundSource);
+            }
 
             LandFormFilters.Clear();
             nbrObjectsInCollection = reader.ReadInt32();

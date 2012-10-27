@@ -9,6 +9,7 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Sound;
 using SharpDX;
+using Utopia.Worlds.Chunks;
 
 namespace Realms.Client.Components
 {
@@ -19,8 +20,9 @@ namespace Realms.Client.Components
                                     SingleArrayChunkContainer singleArray,
                                     IDynamicEntityManager dynamicEntityManager,
                                     IDynamicEntity player,
-                                    IChunkEntityImpactManager chunkEntityImpactManager)
-            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager)
+                                    IChunkEntityImpactManager chunkEntityImpactManager,
+                                    IWorldChunks worldChunk)
+            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager, worldChunk)
         {
 
             // steps

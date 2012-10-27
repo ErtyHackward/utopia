@@ -55,6 +55,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
         private List<Cavern> _caverns = new List<Cavern>();
         private BiomeTrees _biomeTrees = new BiomeTrees();
+        private List<BiomeSoundSource> _ambientSound = new List<BiomeSoundSource>();
 
         //Chunk Composition elements
         private RangeI _underSurfaceLayers = new RangeI(1, 3);
@@ -101,6 +102,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             get { return _biomeEntities; }
             set { _biomeEntities = value; }
+        }
+
+        [Description("Biome linked ambient music"), Category("Sound")]
+        public List<BiomeSoundSource> AmbientSound
+        {
+            get { return _ambientSound; }
+            set { _ambientSound = value; }
         }
 
         [Description("Cavern spawning configuration"), Category("Population")]
