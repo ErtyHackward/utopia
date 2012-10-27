@@ -269,6 +269,7 @@
     <Compile Include="Settings\ParamValue.cs" />
     <Compile Include="Settings\SampleDescriptionSetting.cs" />
     <Compile Include="Settings\Settings2Components.cs" />
+    <Compile Include="Settings\SoundSource.cs" />
     <Compile Include="Settings\TexturePackConfig.cs" />
     <Compile Include="SQLiteStorage.cs" />
     <Compile Include="ClassExt\BinaryExtensions.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="World\Processors\Utopia\Biomes\BiomeEntity.Designer.cs">
       <DependentUpon>BiomeEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeSoundSource.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.Designer.cs">
       <DependentUpon>BiomeTrees.cs</DependentUpon>

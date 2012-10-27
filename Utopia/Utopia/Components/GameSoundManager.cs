@@ -18,6 +18,8 @@ using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Sound;
 using SharpDX;
 using S33M3CoreComponents.Maths;
+using Utopia.Worlds.Chunks;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Components
 {
@@ -41,16 +43,16 @@ namespace Utopia.Components
         private readonly ISoundEngine _soundEngine;
         private SingleArrayChunkContainer _singleArray;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
+        private IWorldChunks _worldChunk;
 
         private FastRandom _rnd;
 
         private Vector3I _lastPosition;
         private Range3I _lastRange;
         private Vector3 _listenerPosition;
+        private IDynamicEntity _player;
 
         private readonly SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>>();
-
-        private string _debugInfo;
 
         // collection of remembered positions of entities to detect the moment of playing next step sound
         private readonly List<DynamicEntitySoundTrack> _stepsTracker = new List<DynamicEntitySoundTrack>();
@@ -79,15 +81,18 @@ namespace Utopia.Components
                                 SingleArrayChunkContainer singleArray,
                                 IDynamicEntityManager dynamicEntityManager,
                                 IDynamicEntity player,
-                                IChunkEntityImpactManager chunkEntityImpactManager)
+                                IChunkEntityImpactManager chunkEntityImpactManager,
+                                IWorldChunks worldChunk)
         {
             _cameraManager = cameraManager;
             _soundEngine = soundEngine;
             _singleArray = singleArray;
+            _worldChunk = worldChunk;
             _chunkEntityImpactManager = chunkEntityImpactManager;
 
             _dynamicEntityManager = dynamicEntityManager;
             _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = player, Position = player.Position, isLocalSound = true });
+            _player = player;
 
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
@@ -131,6 +136,18 @@ namespace Utopia.Components
                 dataSource.SoundVolume = 0.3f;
                 dataSource.SoundPower = 12.0f;
             }
+
+            //Prepare Sound for biomes
+            foreach (var biome in Utopia.Shared.Configuration.RealmConfiguration.Biomes)
+            {
+                foreach (var biomeSound in biome.AmbientSound)
+                {
+                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias);
+                    dataSource.SoundVolume = biomeSound.DefaultVolume;
+                }
+            }
+
+
             base.LoadContent(context);
         }
 
@@ -315,7 +332,49 @@ namespace Utopia.Components
         #endregion
 
         #region Ambiant Sound Processing
+        private Vector3I _playerWorldCubePosition;
+        private ISoundVoice _currentlyPLayingAmbiantSound;
         private void AmbiantSoundProcessing()
+        {
+            //Do nothing if player did not move ! => Check how to do it ...
+
+            //Get current player chunk
+            //Get Player Cube Position
+            Vector3I newWorldCubePosition = (Vector3I)_player.Position;
+            if (newWorldCubePosition == _playerWorldCubePosition) return; //Player did not move
+
+            VisualChunk chunk = _worldChunk.GetChunk(ref newWorldCubePosition);
+
+            Biome biome = Utopia.Shared.Configuration.RealmConfiguration.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
+
+            if (biome.AmbientSound.Count == 0)
+            {
+                if (_currentlyPLayingAmbiantSound != null)
+                {
+                    _currentlyPLayingAmbiantSound.Stop();
+                    _currentlyPLayingAmbiantSound = null;
+                }
+            }
+            else
+            {
+                if (_currentlyPLayingAmbiantSound == null || biome.AmbientSound[0].SoundAlias != _currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias)
+                {
+                    if (_currentlyPLayingAmbiantSound != null)
+                    {
+                        _currentlyPLayingAmbiantSound.Stop();
+                        _currentlyPLayingAmbiantSound = null;
+                    }
+                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(biome.AmbientSound[0].SoundAlias, true);
+                }
+            }
+
+            _playerWorldCubePosition = newWorldCubePosition;
+
+        }
+        #endregion
+
+        #region OLD and Slow Ambiant Sound Processing
+        private void AmbiantSoundProcessingOLD()
         {
             // update all cubes sounds if Camera did move a little !
             if ((Vector3I)_cameraManager.ActiveCamera.WorldPosition.Value != _lastPosition)
