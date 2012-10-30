@@ -101,6 +101,8 @@ namespace Realms.Client.States
             {
                 var wp = _ioc.Get<WorldParameters>();
 
+                AbstractChunk.SetChunkHeight(wp.Configuration.WorldHeight);
+
                 //wp not initialized ==> We are in "SandBox" mode, load from the "Utopia SandBox" Default WorldParameters
                 if (wp.SeedName == null)
                 {

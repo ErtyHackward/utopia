@@ -32,12 +32,26 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabUtopiaProcessor = new System.Windows.Forms.TabControl();
             this.WorldParam = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.maxHeight = new System.Windows.Forms.TrackBar();
             this.OceanHeight = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
             this.wHeight = new System.Windows.Forms.Label();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
-            this.label18 = new System.Windows.Forms.Label();
-            this.maxHeight = new System.Windows.Forms.TrackBar();
-            this.label17 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.udOctMoist = new System.Windows.Forms.NumericUpDown();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.udFreqMoist = new System.Windows.Forms.NumericUpDown();
+            this.udOctTemp = new System.Windows.Forms.NumericUpDown();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.udFreqTemp = new System.Windows.Forms.NumericUpDown();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
             this.LandscapeParam = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.pContinent = new System.Windows.Forms.Panel();
@@ -74,20 +88,6 @@
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pgBiomes = new System.Windows.Forms.PropertyGrid();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.udOctTemp = new System.Windows.Forms.NumericUpDown();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.udFreqTemp = new System.Windows.Forms.NumericUpDown();
-            this.udOctMoist = new System.Windows.Forms.NumericUpDown();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.udFreqMoist = new System.Windows.Forms.NumericUpDown();
             this.rangeBarWorld = new Utopia.Editor.RangeBar();
             this.rangeBarOcean = new Utopia.Editor.RangeBar();
             this.rangeBarGround = new Utopia.Editor.RangeBar();
@@ -97,8 +97,16 @@
             this.rangeBarBasicMidLand = new Utopia.Editor.RangeBar();
             this.tabUtopiaProcessor.SuspendLayout();
             this.WorldParam.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
+            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxHeight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udOctMoist)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqMoist)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udOctTemp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqTemp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.LandscapeParam.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.pContinent.SuspendLayout();
@@ -118,14 +126,6 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.contextMenuUtopia.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udOctTemp)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udFreqTemp)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udOctMoist)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udFreqMoist)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -162,36 +162,55 @@
             this.WorldParam.Text = "Global World Parameters";
             this.WorldParam.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.label17);
+            this.groupBox4.Controls.Add(this.maxHeight);
+            this.groupBox4.Controls.Add(this.OceanHeight);
+            this.groupBox4.Controls.Add(this.label18);
+            this.groupBox4.Controls.Add(this.wHeight);
+            this.groupBox4.Controls.Add(this.trackBar2);
+            this.groupBox4.Location = new System.Drawing.Point(6, 6);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(652, 130);
+            this.groupBox4.TabIndex = 7;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "World parameters :";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(8, 19);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(123, 13);
+            this.label17.TabIndex = 0;
+            this.label17.Text = "World Generator height :";
+            // 
+            // maxHeight
+            // 
+            this.maxHeight.BackColor = System.Drawing.Color.White;
+            this.maxHeight.LargeChange = 16;
+            this.maxHeight.Location = new System.Drawing.Point(160, 15);
+            this.maxHeight.Maximum = 256;
+            this.maxHeight.Minimum = 128;
+            this.maxHeight.Name = "maxHeight";
+            this.maxHeight.Size = new System.Drawing.Size(304, 45);
+            this.maxHeight.SmallChange = 16;
+            this.maxHeight.TabIndex = 1;
+            this.maxHeight.TickFrequency = 16;
+            this.maxHeight.Value = 128;
+            this.maxHeight.ValueChanged += new System.EventHandler(this.maxHeight_ValueChanged);
+            // 
             // OceanHeight
             // 
             this.OceanHeight.AutoSize = true;
-            this.OceanHeight.Location = new System.Drawing.Point(422, 75);
+            this.OceanHeight.Location = new System.Drawing.Point(470, 68);
             this.OceanHeight.Name = "OceanHeight";
             this.OceanHeight.Size = new System.Drawing.Size(26, 13);
             this.OceanHeight.TabIndex = 5;
             this.OceanHeight.Text = "XxX";
-            // 
-            // wHeight
-            // 
-            this.wHeight.AutoSize = true;
-            this.wHeight.Location = new System.Drawing.Point(422, 21);
-            this.wHeight.Name = "wHeight";
-            this.wHeight.Size = new System.Drawing.Size(24, 13);
-            this.wHeight.TabIndex = 4;
-            this.wHeight.Text = "xXx";
-            // 
-            // trackBar2
-            // 
-            this.trackBar2.BackColor = System.Drawing.Color.White;
-            this.trackBar2.Location = new System.Drawing.Point(112, 73);
-            this.trackBar2.Maximum = 256;
-            this.trackBar2.Minimum = 1;
-            this.trackBar2.Name = "trackBar2";
-            this.trackBar2.Size = new System.Drawing.Size(304, 45);
-            this.trackBar2.TabIndex = 3;
-            this.trackBar2.TickFrequency = 10;
-            this.trackBar2.Value = 64;
-            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
             // 
             // label18
             // 
@@ -202,28 +221,226 @@
             this.label18.TabIndex = 2;
             this.label18.Text = "World Ocean level :";
             // 
-            // maxHeight
+            // wHeight
             // 
-            this.maxHeight.BackColor = System.Drawing.Color.White;
-            this.maxHeight.LargeChange = 16;
-            this.maxHeight.Location = new System.Drawing.Point(112, 19);
-            this.maxHeight.Maximum = 256;
-            this.maxHeight.Minimum = 128;
-            this.maxHeight.Name = "maxHeight";
-            this.maxHeight.Size = new System.Drawing.Size(304, 45);
-            this.maxHeight.TabIndex = 1;
-            this.maxHeight.TickFrequency = 16;
-            this.maxHeight.Value = 128;
-            this.maxHeight.ValueChanged += new System.EventHandler(this.maxHeight_ValueChanged);
+            this.wHeight.AutoSize = true;
+            this.wHeight.Location = new System.Drawing.Point(470, 17);
+            this.wHeight.Name = "wHeight";
+            this.wHeight.Size = new System.Drawing.Size(24, 13);
+            this.wHeight.TabIndex = 4;
+            this.wHeight.Text = "xXx";
             // 
-            // label17
+            // trackBar2
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(8, 19);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(98, 13);
-            this.label17.TabIndex = 0;
-            this.label17.Text = "World Max Height :";
+            this.trackBar2.BackColor = System.Drawing.Color.White;
+            this.trackBar2.Location = new System.Drawing.Point(160, 66);
+            this.trackBar2.Maximum = 256;
+            this.trackBar2.Minimum = 1;
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(304, 45);
+            this.trackBar2.TabIndex = 3;
+            this.trackBar2.TickFrequency = 10;
+            this.trackBar2.Value = 64;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_ValueChanged);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.udOctMoist);
+            this.groupBox3.Controls.Add(this.label23);
+            this.groupBox3.Controls.Add(this.label24);
+            this.groupBox3.Controls.Add(this.udFreqMoist);
+            this.groupBox3.Controls.Add(this.udOctTemp);
+            this.groupBox3.Controls.Add(this.label21);
+            this.groupBox3.Controls.Add(this.label22);
+            this.groupBox3.Controls.Add(this.udFreqTemp);
+            this.groupBox3.Controls.Add(this.pictureBox2);
+            this.groupBox3.Controls.Add(this.pictureBox1);
+            this.groupBox3.Controls.Add(this.label20);
+            this.groupBox3.Controls.Add(this.label19);
+            this.groupBox3.Location = new System.Drawing.Point(6, 142);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(652, 102);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Climate parameters :";
+            // 
+            // udOctMoist
+            // 
+            this.udOctMoist.Location = new System.Drawing.Point(289, 68);
+            this.udOctMoist.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udOctMoist.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udOctMoist.Name = "udOctMoist";
+            this.udOctMoist.Size = new System.Drawing.Size(61, 20);
+            this.udOctMoist.TabIndex = 21;
+            this.udOctMoist.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udOctMoist.ValueChanged += new System.EventHandler(this.udOctMoist_ValueChanged);
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(253, 71);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(30, 13);
+            this.label23.TabIndex = 20;
+            this.label23.Text = "Oct :";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(133, 70);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(34, 13);
+            this.label24.TabIndex = 19;
+            this.label24.Text = "Freq :";
+            // 
+            // udFreqMoist
+            // 
+            this.udFreqMoist.DecimalPlaces = 2;
+            this.udFreqMoist.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udFreqMoist.Location = new System.Drawing.Point(173, 68);
+            this.udFreqMoist.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udFreqMoist.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udFreqMoist.Name = "udFreqMoist";
+            this.udFreqMoist.Size = new System.Drawing.Size(61, 20);
+            this.udFreqMoist.TabIndex = 18;
+            this.udFreqMoist.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udFreqMoist.ValueChanged += new System.EventHandler(this.udFreqMoist_ValueChanged);
+            // 
+            // udOctTemp
+            // 
+            this.udOctTemp.Location = new System.Drawing.Point(289, 26);
+            this.udOctTemp.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udOctTemp.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udOctTemp.Name = "udOctTemp";
+            this.udOctTemp.Size = new System.Drawing.Size(61, 20);
+            this.udOctTemp.TabIndex = 17;
+            this.udOctTemp.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udOctTemp.ValueChanged += new System.EventHandler(this.udOctTemp_ValueChanged);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(253, 29);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(30, 13);
+            this.label21.TabIndex = 16;
+            this.label21.Text = "Oct :";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(133, 28);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(34, 13);
+            this.label22.TabIndex = 15;
+            this.label22.Text = "Freq :";
+            // 
+            // udFreqTemp
+            // 
+            this.udFreqTemp.DecimalPlaces = 2;
+            this.udFreqTemp.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udFreqTemp.Location = new System.Drawing.Point(173, 26);
+            this.udFreqTemp.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            65536});
+            this.udFreqTemp.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udFreqTemp.Name = "udFreqTemp";
+            this.udFreqTemp.Size = new System.Drawing.Size(61, 20);
+            this.udFreqTemp.TabIndex = 14;
+            this.udFreqTemp.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udFreqTemp.ValueChanged += new System.EventHandler(this.udFreqTemp_ValueChanged);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::Utopia.Editor.Properties.Resources._11;
+            this.pictureBox2.Location = new System.Drawing.Point(6, 59);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(33, 34);
+            this.pictureBox2.TabIndex = 3;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::Utopia.Editor.Properties.Resources._36;
+            this.pictureBox1.Location = new System.Drawing.Point(6, 19);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(33, 34);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(45, 70);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(53, 13);
+            this.label20.TabIndex = 1;
+            this.label20.Text = "Moisture :";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(45, 29);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(73, 13);
+            this.label19.TabIndex = 0;
+            this.label19.Text = "Temperature :";
             // 
             // LandscapeParam
             // 
@@ -699,222 +916,6 @@
             this.pgBiomes.TabIndex = 0;
             this.pgBiomes.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgBiomes_PropertyValueChanged);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.udOctMoist);
-            this.groupBox3.Controls.Add(this.label23);
-            this.groupBox3.Controls.Add(this.label24);
-            this.groupBox3.Controls.Add(this.udFreqMoist);
-            this.groupBox3.Controls.Add(this.udOctTemp);
-            this.groupBox3.Controls.Add(this.label21);
-            this.groupBox3.Controls.Add(this.label22);
-            this.groupBox3.Controls.Add(this.udFreqTemp);
-            this.groupBox3.Controls.Add(this.pictureBox2);
-            this.groupBox3.Controls.Add(this.pictureBox1);
-            this.groupBox3.Controls.Add(this.label20);
-            this.groupBox3.Controls.Add(this.label19);
-            this.groupBox3.Location = new System.Drawing.Point(6, 142);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(652, 102);
-            this.groupBox3.TabIndex = 6;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Climate parameters :";
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox4.Controls.Add(this.label17);
-            this.groupBox4.Controls.Add(this.maxHeight);
-            this.groupBox4.Controls.Add(this.OceanHeight);
-            this.groupBox4.Controls.Add(this.label18);
-            this.groupBox4.Controls.Add(this.wHeight);
-            this.groupBox4.Controls.Add(this.trackBar2);
-            this.groupBox4.Location = new System.Drawing.Point(6, 6);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(652, 130);
-            this.groupBox4.TabIndex = 7;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "World parameters :";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(45, 29);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(73, 13);
-            this.label19.TabIndex = 0;
-            this.label19.Text = "Temperature :";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(45, 70);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(53, 13);
-            this.label20.TabIndex = 1;
-            this.label20.Text = "Moisture :";
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = global::Utopia.Editor.Properties.Resources._11;
-            this.pictureBox2.Location = new System.Drawing.Point(6, 59);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(33, 34);
-            this.pictureBox2.TabIndex = 3;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::Utopia.Editor.Properties.Resources._36;
-            this.pictureBox1.Location = new System.Drawing.Point(6, 19);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(33, 34);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
-            // udOctTemp
-            // 
-            this.udOctTemp.Location = new System.Drawing.Point(289, 26);
-            this.udOctTemp.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udOctTemp.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udOctTemp.Name = "udOctTemp";
-            this.udOctTemp.Size = new System.Drawing.Size(61, 20);
-            this.udOctTemp.TabIndex = 17;
-            this.udOctTemp.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udOctTemp.ValueChanged += new System.EventHandler(this.udOctTemp_ValueChanged);
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(253, 29);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(30, 13);
-            this.label21.TabIndex = 16;
-            this.label21.Text = "Oct :";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(133, 28);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(34, 13);
-            this.label22.TabIndex = 15;
-            this.label22.Text = "Freq :";
-            // 
-            // udFreqTemp
-            // 
-            this.udFreqTemp.DecimalPlaces = 2;
-            this.udFreqTemp.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udFreqTemp.Location = new System.Drawing.Point(173, 26);
-            this.udFreqTemp.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            65536});
-            this.udFreqTemp.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udFreqTemp.Name = "udFreqTemp";
-            this.udFreqTemp.Size = new System.Drawing.Size(61, 20);
-            this.udFreqTemp.TabIndex = 14;
-            this.udFreqTemp.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udFreqTemp.ValueChanged += new System.EventHandler(this.udFreqTemp_ValueChanged);
-            // 
-            // udOctMoist
-            // 
-            this.udOctMoist.Location = new System.Drawing.Point(289, 68);
-            this.udOctMoist.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udOctMoist.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udOctMoist.Name = "udOctMoist";
-            this.udOctMoist.Size = new System.Drawing.Size(61, 20);
-            this.udOctMoist.TabIndex = 21;
-            this.udOctMoist.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udOctMoist.ValueChanged += new System.EventHandler(this.udOctMoist_ValueChanged);
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(253, 71);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(30, 13);
-            this.label23.TabIndex = 20;
-            this.label23.Text = "Oct :";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(133, 70);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(34, 13);
-            this.label24.TabIndex = 19;
-            this.label24.Text = "Freq :";
-            // 
-            // udFreqMoist
-            // 
-            this.udFreqMoist.DecimalPlaces = 2;
-            this.udFreqMoist.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udFreqMoist.Location = new System.Drawing.Point(173, 68);
-            this.udFreqMoist.Maximum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udFreqMoist.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udFreqMoist.Name = "udFreqMoist";
-            this.udFreqMoist.Size = new System.Drawing.Size(61, 20);
-            this.udFreqMoist.TabIndex = 18;
-            this.udFreqMoist.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udFreqMoist.ValueChanged += new System.EventHandler(this.udFreqMoist_ValueChanged);
-            // 
             // rangeBarWorld
             // 
             this.rangeBarWorld.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -988,8 +989,18 @@
             this.Size = new System.Drawing.Size(672, 630);
             this.tabUtopiaProcessor.ResumeLayout(false);
             this.WorldParam.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxHeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udOctMoist)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqMoist)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udOctTemp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqTemp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.LandscapeParam.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -1014,16 +1025,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.contextMenuUtopia.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udOctTemp)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udFreqTemp)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udOctMoist)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udFreqMoist)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

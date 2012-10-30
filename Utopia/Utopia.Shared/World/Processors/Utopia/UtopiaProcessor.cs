@@ -23,6 +23,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Variables
         private WorldParameters _worldParameters;
         private EntityFactory _entityFactory;
+        private int _worldGeneratedHeight = 128;
         #endregion
 
         #region Public Properties
@@ -46,6 +47,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;
+
+            _worldGeneratedHeight = _worldParameters.Configuration.UtopiaProcessorParam.WorldGeneratedHeight;
         }
 
         public void Dispose()
@@ -234,9 +237,9 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Create value from Noise Fct sampling
             //noiseLandscape[x,0] = MainLandscape
             //noiseLandscape[x,1] = underground mask
-            double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X /4 , AbstractChunk.ChunkSize.Y /8 , AbstractChunk.ChunkSize.Z /4 ),
+            double[,] noiseLandscape = NoiseSampler.NoiseSampling(new Vector3I(AbstractChunk.ChunkSize.X / 4, _worldGeneratedHeight / 8, AbstractChunk.ChunkSize.Z / 4),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
-                                                            chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, AbstractChunk.ChunkSize.Y,
+                                                            chunkWorldRange.Position.Y / 2560.0, (chunkWorldRange.Position.Y / 2560.0) + 0.4, _worldGeneratedHeight,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
                                                             mainLandscape, 
                                                             underground);
@@ -257,7 +260,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             {
                 for (int Z = 0; Z < AbstractChunk.ChunkSize.Z; Z++)
                 {
-                    for (int Y = 0; Y < AbstractChunk.ChunkSize.Y; Y++)
+                    for (int Y = 0; Y < _worldGeneratedHeight; Y++)
                     {
                         double value = noiseLandscape[noiseValueIndex, 0];              //Get landScape value
                         double valueUnderground = noiseLandscape[noiseValueIndex, 1];   //Get underground value
@@ -280,7 +283,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             cube = RealmConfiguration.CubeId.Rock;
                         }
                         //Be sure that the last landscape row is composed of air
-                        if (Y == AbstractChunk.ChunkSize.Y - 1)
+                        if (Y == _worldGeneratedHeight - 1)
                         {
                             cube = RealmConfiguration.CubeId.Air;
                         }
@@ -346,7 +349,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     surfaceLayer = 0;
                     bool solidGroundHitted = false;
 
-                    for (int Y = AbstractChunk.ChunkSize.Y - 1; Y >= 0; Y--) //Y
+                    for (int Y = _worldGeneratedHeight - 1; Y >= 0; Y--) //Y
                     {
                         index = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y;
                         byte cubeId = ChunkCubes[index];

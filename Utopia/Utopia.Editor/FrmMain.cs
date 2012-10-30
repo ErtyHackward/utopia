@@ -337,7 +337,6 @@ namespace Utopia.Editor
             }
         }
 
-
         private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (tvMainCategories.SelectedNode.Name == "WorldProcessor Params")

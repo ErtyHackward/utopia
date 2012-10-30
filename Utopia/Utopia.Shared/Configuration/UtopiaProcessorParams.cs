@@ -60,7 +60,7 @@ namespace Utopia.Shared.Configuration
         public List<LandscapeRange> World { get; set; }
         public enuWorldType WorldType { get; set; }
 
-        public int WorldHeight { get; set; }
+        public int WorldGeneratedHeight { get; set; }
         public int WaterLevel  { get; set; }
 
         public double PlainCtrlFrequency { get; set; }
@@ -90,7 +90,7 @@ namespace Utopia.Shared.Configuration
             World = new List<LandscapeRange>();
 
             WorldType = enuWorldType.Normal;
-            WorldHeight = 128;
+            WorldGeneratedHeight = 128;
             WaterLevel = 64;
 
             PlainCtrlFrequency = 2.5;
@@ -266,7 +266,7 @@ namespace Utopia.Shared.Configuration
 
             writer.Write((int)WorldType);
 
-            writer.Write(WorldHeight);
+            writer.Write(WorldGeneratedHeight);
             writer.Write(WaterLevel);
 
             writer.Write(TempCtrlFrequency);
@@ -353,7 +353,7 @@ namespace Utopia.Shared.Configuration
             }
             WorldType = (enuWorldType)reader.ReadInt32();
 
-            WorldHeight = reader.ReadInt32();
+            WorldGeneratedHeight = reader.ReadInt32();
             WaterLevel = reader.ReadInt32();
 
             TempCtrlFrequency = reader.ReadDouble();

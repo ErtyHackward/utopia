@@ -25,6 +25,7 @@ namespace Utopia.Shared.Configuration
     {
         #region Private Variables
         private readonly EntityFactory _factory;
+        private int _worldHeight;
         /// <summary>
         /// Realm format version
         /// </summary>
@@ -41,6 +42,22 @@ namespace Utopia.Shared.Configuration
         /// Author name of the realm
         /// </summary>
         public string Author { get; set; }
+
+        /// <summary>
+        /// World Height
+        /// </summary>
+        public int WorldHeight
+        {
+            get { return _worldHeight; }
+            set
+            {
+                if (value >= 128 && value <= 256)
+                {
+                    if(WorldProcessor != WorldProcessors.Utopia || (UtopiaProcessorParam != null && UtopiaProcessorParam.WorldGeneratedHeight <= value))
+                    _worldHeight = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Datetime of the moment of creation
@@ -157,6 +174,7 @@ namespace Utopia.Shared.Configuration
             writer.Write(CreatedAt.ToBinary());
             writer.Write(UpdatedAt.ToBinary());
             writer.Write((byte)WorldProcessor);
+            writer.Write(WorldHeight);
 
             writer.Write(Entities.Count);
             foreach (IEntity entitySample in Entities)
@@ -190,6 +208,7 @@ namespace Utopia.Shared.Configuration
             CreatedAt = DateTime.FromBinary(reader.ReadInt64());
             UpdatedAt = DateTime.FromBinary(reader.ReadInt64());
             WorldProcessor = (WorldProcessors)reader.ReadByte();
+            WorldHeight = reader.ReadInt32();
 
             Entities.Clear();
             BluePrints.Clear();
@@ -324,6 +343,7 @@ namespace Utopia.Shared.Configuration
         private void CreateDefaultValues()
         {
             //These are mandatory configuration !!
+            _worldHeight = 128;
             CreateDefaultCubeProfiles();
             CreateDefaultEntities();
             CreateDefaultBiomes();

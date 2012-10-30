@@ -97,7 +97,7 @@ namespace Utopia.Editor
                 }
             }
 
-            maxHeight.Value = param.WorldHeight;
+            maxHeight.Value = param.WorldGeneratedHeight;
             trackBar2.Value = param.WaterLevel;
 
             udPlainFreq.Value = (decimal)param.PlainCtrlFrequency;
@@ -195,9 +195,14 @@ namespace Utopia.Editor
 
         private void maxHeight_ValueChanged(object sender, EventArgs e)
         {
+            maxHeight.Value = (int)Math.Round((maxHeight.Value / (double)16)) * 16;
+
             wHeight.Text = maxHeight.Value.ToString();
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.WorldHeight = maxHeight.Value;
+
+            if (maxHeight.Value > Configuration.WorldHeight) maxHeight.Value = Configuration.WorldHeight;
+
+            Configuration.UtopiaProcessorParam.WorldGeneratedHeight = maxHeight.Value;
         }
 
         private void trackBar2_ValueChanged(object sender, EventArgs e)
@@ -272,6 +277,5 @@ namespace Utopia.Editor
             if (Configuration == null) return;
             Configuration.UtopiaProcessorParam.MoistureCtrlOctave = (int)udOctMoist.Value;
         }
-
     }
 }

@@ -15,8 +15,14 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets byte amount needed to store chunk block data
         /// </summary>
-        public readonly static int ChunkBlocksByteLength = 16 * 128 * 16;
-        public readonly static Vector3I ChunkSize = new Vector3I(16, 128, 16);
+        public static int ChunkBlocksByteLength = 16 * 128 * 16;
+        public static Vector3I ChunkSize = new Vector3I(16, 128, 16);
+
+        public static void SetChunkHeight(int height)
+        {
+            ChunkBlocksByteLength = 16 * 16 * height;
+            ChunkSize = new Vector3I(16, height, 16);
+        }
 
         #endregion
         
