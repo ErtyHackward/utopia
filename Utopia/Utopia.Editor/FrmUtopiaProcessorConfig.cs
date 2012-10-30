@@ -111,6 +111,12 @@ namespace Utopia.Editor
             udContinentFreq.Value = (decimal)param.WorldCtrlFrequency;
             udContinentOct.Value = (decimal)param.WorldCtrlOctave;
 
+            udOctTemp.Value = (decimal)param.TempCtrlOctave;
+            udFreqTemp.Value = (decimal)param.TempCtrlFrequency;
+
+            udOctMoist.Value = (decimal)param.MoistureCtrlOctave;
+            udFreqMoist.Value = (decimal)param.MoistureCtrlFrequency;
+
             this.maxHeight_ValueChanged(this, null);
             this.trackBar2_ValueChanged(this, null);
         }
@@ -241,6 +247,30 @@ namespace Utopia.Editor
         {
             if (Configuration == null) return;
             Configuration.UtopiaProcessorParam.IslandCtrlSize = (double)udIslandSize.Value;
+        }
+
+        private void udFreqTemp_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.TempCtrlFrequency = (double)udFreqTemp.Value;
+        }
+
+        private void udOctTemp_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.TempCtrlOctave = (int)udOctTemp.Value;
+        }
+
+        private void udFreqMoist_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.MoistureCtrlFrequency = (double)udFreqMoist.Value;
+        }
+
+        private void udOctMoist_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.UtopiaProcessorParam.MoistureCtrlOctave = (int)udOctMoist.Value;
         }
 
     }

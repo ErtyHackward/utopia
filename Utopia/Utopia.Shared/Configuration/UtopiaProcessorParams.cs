@@ -61,8 +61,8 @@ namespace Utopia.Shared.Configuration
         public enuWorldType WorldType { get; set; }
 
         public int WorldHeight { get; set; }
-
         public int WaterLevel  { get; set; }
+
         public double PlainCtrlFrequency { get; set; }
         public int PlainCtrlOctave { get; set; }
         public double GroundCtrlFrequency { get; set; }
@@ -70,6 +70,12 @@ namespace Utopia.Shared.Configuration
         public double WorldCtrlFrequency  { get; set; }
         public int WorldCtrlOctave { get; set; }
         public double IslandCtrlSize { get; set; }
+
+        public double TempCtrlFrequency { get; set; }
+        public int TempCtrlOctave { get; set; }
+
+        public double MoistureCtrlFrequency { get; set; }
+        public int MoistureCtrlOctave { get; set; }
 
         #endregion
 
@@ -97,6 +103,12 @@ namespace Utopia.Shared.Configuration
             WorldCtrlOctave = 3;
 
             IslandCtrlSize = 0.7;
+
+            TempCtrlFrequency = 1;
+            TempCtrlOctave = 2;
+
+            MoistureCtrlFrequency = 1;
+            MoistureCtrlOctave = 2;
         }
 
         #region Public Methods
@@ -257,6 +269,12 @@ namespace Utopia.Shared.Configuration
             writer.Write(WorldHeight);
             writer.Write(WaterLevel);
 
+            writer.Write(TempCtrlFrequency);
+            writer.Write(TempCtrlOctave);
+
+            writer.Write(MoistureCtrlFrequency);
+            writer.Write(MoistureCtrlOctave);
+
             writer.Write(PlainCtrlFrequency);
             writer.Write(PlainCtrlOctave);
 
@@ -337,6 +355,12 @@ namespace Utopia.Shared.Configuration
 
             WorldHeight = reader.ReadInt32();
             WaterLevel = reader.ReadInt32();
+
+            TempCtrlFrequency = reader.ReadDouble();
+            TempCtrlOctave = reader.ReadInt32();
+
+            MoistureCtrlFrequency = reader.ReadDouble();
+            MoistureCtrlOctave = reader.ReadInt32();
 
             PlainCtrlFrequency = reader.ReadDouble();
             PlainCtrlOctave = reader.ReadInt32();
