@@ -26,33 +26,29 @@ namespace Realms.Client.Components
         {
 
             // steps
-            RegisterStepSound(RealmConfiguration.CubeId.Snow, @"Sounds\Footsteps\footsteps_snow01.adpcm");
+            RegisterStepSound(RealmConfiguration.CubeId.Snow, @"Sounds\Footsteps\footsteps_snow01.adpcm.wav");
             //RegisterStepSound(CubeId.Snow, "Sounds\\Footsteps\\footsteps_snow02.ogg");
 
-            RegisterStepSound(RealmConfiguration.CubeId.Grass, @"Sounds\Footsteps\footsteps_grass01.adpcm");
+            RegisterStepSound(RealmConfiguration.CubeId.Grass, @"Sounds\Footsteps\footsteps_grass01.adpcm.wav");
             //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass02.ogg");
             //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass03.ogg");
             //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass04.ogg");
 
-            RegisterStepSound(RealmConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand01.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand02.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand03.adpcm");
+            RegisterStepSound(RealmConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand01.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand02.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand03.adpcm.wav");
 
-            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt01.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt02.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt03.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt04.adpcm");
+            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt01.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt02.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt03.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt04.adpcm.wav");
 
-            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone01.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone02.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone03.adpcm");
-            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone04.adpcm");
+            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone01.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone02.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone03.adpcm.wav");
+            RegisterStepSound(RealmConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone04.adpcm.wav");
 
-            RegisterStepSound(RealmConfiguration.CubeId.StillWater, @"Sounds\Footsteps\footsteps_water01.adpcm");
-
-            // ambiance
-            RegisterCubeAmbientSound(RealmConfiguration.CubeId.StillWater, @"Sounds\Ambiance\water_stream.adpcm");
-            RegisterCubeAmbientSound(RealmConfiguration.CubeId.StillLava, @"Sounds\Ambiance\lava.adpcm");
+            RegisterStepSound(RealmConfiguration.CubeId.StillWater, @"Sounds\Footsteps\footsteps_water01.adpcm.wav");
 
             PreLoadSound(@"Sounds\Blocks\put.wav");
             PreLoadSound(@"Sounds\Blocks\take.wav");
