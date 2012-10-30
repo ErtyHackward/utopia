@@ -351,7 +351,7 @@ namespace Utopia.Components
             {
                 if (_currentlyPLayingAmbiantSound != null)
                 {
-                    _currentlyPLayingAmbiantSound.Stop();
+                    _currentlyPLayingAmbiantSound.Stop(1000);
                     _currentlyPLayingAmbiantSound = null;
                 }
             }
@@ -361,10 +361,10 @@ namespace Utopia.Components
                 {
                     if (_currentlyPLayingAmbiantSound != null)
                     {
-                        _currentlyPLayingAmbiantSound.Stop();
+                        _currentlyPLayingAmbiantSound.Stop(1000);
                         _currentlyPLayingAmbiantSound = null;
                     }
-                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(biome.AmbientSound[0].SoundAlias, true);
+                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(biome.AmbientSound[0].SoundAlias, true, 3000);
                 }
             }
 

@@ -10,13 +10,37 @@ namespace S33M3CoreComponents.Sound
 {
     public interface ISoundVoice : IDisposable
     {
-        SourceVoice Voice { get; }
         bool IsLooping { get; set; }
+        bool IsFadingMode { get; set; }
         ISoundDataSource PlayingDataSource { get; set; }
         Emitter Emitter { get; set; }
         Vector3 Position { get; set; }
         bool is3DSound { get; set; }
-        void Refresh3DParameters();
-        void Stop();
+        VoiceState State { get; }
+        void RefreshVoices();
+
+        //Voice supported operations
+
+        void SetVolume(float volume, int operationSet);
+
+        void PushDataSourceForPlaying();
+
+        /// <summary>
+        /// Start playing the sound.
+        /// <param name="fadeIn">fadeIn time in ms, 0 = directly started at full volume</param>
+        /// </summary>
+        void Start(uint fadeIn = 0);
+        /// <summary>
+        /// Start playing the sound with selected soundVolumne coef.
+        /// </summary>
+        /// <param name="fadeIn">fadeIn time in ms, 0 = directly started at full volume</param>
+        /// <param name="soundVolume"></param>
+        void Start(float soundVolume, uint fadeIn = 0);
+
+        /// <summary>
+        /// Stop the currently playing sound
+        /// </summary>
+        /// <param name="fadeOut">fadeOut time in ms, 0 = directly stopped</param>
+        void Stop(uint fadeOut = 0);
     }
 }
