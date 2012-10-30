@@ -120,8 +120,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             //mainLandscape = new Cache<INoise>(FonctionTesting(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
 
             underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
-            temperature = new Temperature(_worldParameters.Seed - 963).GetLandFormFct();
-            moisture = new Moisture(_worldParameters.Seed - 96).GetLandFormFct();
+            temperature = new Temperature(_worldParameters.Seed - 963, _worldParameters.Configuration.UtopiaProcessorParam.TempCtrlOctave, _worldParameters.Configuration.UtopiaProcessorParam.TempCtrlFrequency).GetLandFormFct();
+            moisture = new Moisture(_worldParameters.Seed - 96, _worldParameters.Configuration.UtopiaProcessorParam.MoistureCtrlOctave, _worldParameters.Configuration.UtopiaProcessorParam.MoistureCtrlFrequency).GetLandFormFct();
         }
 
         public INoise CreateLandFormFct(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
