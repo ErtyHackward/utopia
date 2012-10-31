@@ -11,6 +11,7 @@ using System.Drawing;
 using S33M3Resources.Structs;
 using SharpDX;
 using Color = SharpDX.Color;
+using Rectangle = SharpDX.Rectangle;
 
 namespace Utopia.Components
 {
@@ -25,7 +26,7 @@ namespace Utopia.Components
         private int _maxSlideId = 0;
         private D3DEngine _engine;
         private SpriteRenderer _spriteRenderer;
-        private System.Drawing.Rectangle _slideDimension;
+        private Rectangle _slideDimension;
         private ByteColor _color = Color.White;
         private DateTime _slideSwitch = DateTime.Now;
         #endregion
@@ -112,7 +113,7 @@ namespace Utopia.Components
 
         private void ResizeSlideDim(Viewport viewport)
         {
-            _slideDimension = new System.Drawing.Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
+            _slideDimension = new Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
         }
         #endregion
     }

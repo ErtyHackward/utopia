@@ -19,7 +19,7 @@ License along with this library
 #endregion
 
 using SharpDX;
-using Rectangle = System.Drawing.Rectangle;
+using Rectangle = SharpDX.Rectangle;
 using S33M3CoreComponents.Sprites;
 using System;
 using SharpDX.Direct3D11;
@@ -104,11 +104,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             Rectangle scissorRegion = new Rectangle(
                                                 Math.Max(clipX, (int)viewport.TopLeftX),
                                                 Math.Max(clipY, (int)viewport.TopLeftY),
-                                                Math.Min(clipRight, viewportRight) - clipX,
-                                                Math.Min(clipBottom, viewportBottom) - clipY
+                                                Math.Max(clipX, (int)viewport.TopLeftX) + (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.TopLeftX)),
+                                                Math.Max(clipY, (int)viewport.TopLeftY) + (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.TopLeftY))
                                             );
-            scissorRegion.Width += clipX - scissorRegion.X;
-            scissorRegion.Height += clipY - scissorRegion.Y;
+            //scissorRegion.Width += clipX - scissorRegion.X;
+            //scissorRegion.Height += clipY - scissorRegion.Y;
 
             // If the clipping region was entirely outside of the viewport (meaning
             // the calculated width and/or height are negative), use an empty scissor
@@ -116,7 +116,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             // negative coordinates.
             if ((scissorRegion.Width <= 0) || (scissorRegion.Height <= 0))
             {
-                scissorRegion = System.Drawing.Rectangle.Empty;
+                scissorRegion = Rectangle.Empty;
             }
 
             // All done, take over the new scissor rectangle

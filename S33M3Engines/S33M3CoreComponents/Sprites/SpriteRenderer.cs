@@ -8,7 +8,7 @@ using S33M3DXEngine.RenderStates;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs.Vertex;
-using Rectangle = System.Drawing.Rectangle;
+using Rectangle = SharpDX.Rectangle;
 using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sprites

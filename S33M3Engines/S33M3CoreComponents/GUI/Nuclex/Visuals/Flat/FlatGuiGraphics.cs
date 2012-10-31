@@ -29,7 +29,7 @@ using System.Xml;
 using System.Xml.Schema;
 
 using Texture2D = SharpDX.Direct3D11.Texture2D;
-using Rectangle = System.Drawing.Rectangle;
+using Rectangle = SharpDX.Rectangle;
 using RasterizerState = SharpDX.Direct3D11.RasterizerState;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3DXEngine;
@@ -162,7 +162,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
             /// <summary>Assigns the scissor rectangle to the graphics device</summary>
             /// <param name="clipRegion">Scissor rectangle that will be assigned</param>
-            public void Assign(ref System.Drawing.Rectangle clipRegion)
+            public void Assign(ref Rectangle clipRegion)
             {
                 this.flatGuiGraphics.FlushPendingData();
 
@@ -357,9 +357,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <returns>
         ///   The destination rectangle converted to absolute pixel coordinates
         /// </returns>
-        private static Rectangle calculateDestinationRectangle(
-          ref RectangleF bounds, ref UniRectangle destination
-        )
+        private static Rectangle calculateDestinationRectangle(ref RectangleF bounds, ref UniRectangle destination)
         {
             int x = (int)(bounds.Left + destination.Location.X.Offset);
             x += (int)(bounds.Width * destination.Location.X.Fraction);
@@ -373,7 +371,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             int height = (int)(destination.Size.Y.Offset);
             height += (int)(bounds.Height * destination.Size.Y.Fraction);
 
-            return new Rectangle(x, y, width, height);
+            return new Rectangle(x, y, x + width, y + height);
         }
 
         /// <summary>Looks up the frame with the specified name</summary>

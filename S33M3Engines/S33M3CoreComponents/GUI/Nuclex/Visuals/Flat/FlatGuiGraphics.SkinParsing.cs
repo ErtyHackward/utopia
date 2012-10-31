@@ -32,6 +32,7 @@ using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.GUI.Nuclex.Support;
 using System.Drawing;
 using Color = SharpDX.Color;
+using Rectangle = SharpDX.Rectangle;
 using S33M3Resources.Structs;
 using System.Drawing.Text;
 
@@ -141,10 +142,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                         Id = id,
                         Texture = bitmaps[source]
                     };
-                    region.SourceRegion.X = int.Parse(x);
-                    region.SourceRegion.Y = int.Parse(y);//FIXME SIMON rectangle.right was set to value y ?
-                    region.SourceRegion.Width = int.Parse(w);
-                    region.SourceRegion.Height = int.Parse(h);
+                    //region.SourceRegion.X = int.Parse(x);
+                    //region.SourceRegion.Y = int.Parse(y);
+                    //region.SourceRegion.Width = int.Parse(w);
+                    //region.SourceRegion.Height = int.Parse(h);
+
+                    System.Drawing.Rectangle test = new System.Drawing.Rectangle(int.Parse(x), int.Parse(y), int.Parse(w), int.Parse(h));
+
+                    region.SourceRegion = new Rectangle(int.Parse(x), int.Parse(y), int.Parse(x) + int.Parse(w), int.Parse(y) + int.Parse(h));
 
                     // Process each region's placement and set up the unified coordinates
                     calculateRegionPlacement(
