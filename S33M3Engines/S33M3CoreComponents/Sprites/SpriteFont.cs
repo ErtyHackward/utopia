@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using SharpDX.DXGI;
 using Rectangle = System.Drawing.Rectangle;
-using RectangleF = System.Drawing.RectangleF;
+using RectangleF = SharpDX.RectangleF;
 using Color = SharpDX.Color;
 using SharpDX.Direct3D;
 using S33M3CoreComponents.Config;
@@ -202,14 +202,16 @@ namespace S33M3CoreComponents.Sprites
                 }
 
                 // Fill out the structure describing the character position
-                CharDescriptors[allCharsString[i]].X = (float)(currentX);
-                CharDescriptors[allCharsString[i]].Y = (float)(currentY);
-                CharDescriptors[allCharsString[i]].Width = (float)(charWidth);
-                CharDescriptors[allCharsString[i]].Height = (float)(_charHeight);
+                //CharDescriptors[allCharsString[i]].X = (float)(currentX);
+                //CharDescriptors[allCharsString[i]].Y = (float)(currentY);
+                //CharDescriptors[allCharsString[i]].Width = (float)(charWidth);
+                //CharDescriptors[allCharsString[i]].Height = (float)(_charHeight);
+
+                CharDescriptors[allCharsString[i]] = new RectangleF(currentX, currentY, currentX + charWidth, currentY + _charHeight);
 
                 // Copy the character over 
                 int height = (int)(_charHeight + 1);
-                textGraphics.DrawImage(drawBitmap, currentX, currentY, new Rectangle(minX, 0, charWidth, height), GraphicsUnit.Pixel);
+                textGraphics.DrawImage(drawBitmap, currentX, currentY, new Rectangle(minX, 0, minX + charWidth, 0 + height), GraphicsUnit.Pixel);
 
                 currentX += charWidth + 1;
             }
@@ -222,7 +224,7 @@ namespace S33M3CoreComponents.Sprites
             _spaceWidth = sizeRect.Width;
 
             // Lock the bitmap for direct memory access
-            BitmapData bmData = textBitmap.LockBits(new Rectangle(0, 0, TexWidth, texHeight), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData bmData = textBitmap.LockBits(new Rectangle(0, 0, 0 + TexWidth, 0 + texHeight), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
             // Create a D3D texture, initalized with the bitmap data  
             Texture2DDescription texDesc = new Texture2DDescription();

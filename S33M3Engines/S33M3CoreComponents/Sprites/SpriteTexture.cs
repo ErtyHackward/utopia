@@ -9,7 +9,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
-using Rectangle = System.Drawing.Rectangle;
+using Rectangle = SharpDX.Rectangle;
 using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3_DXEngine.Main;
 
@@ -53,7 +53,7 @@ namespace S33M3CoreComponents.Sprites
         //Refresh Sprite Centering when the viewPort size change !
         private void D3dEngine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
         {
-            ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), Width, Height);
+            ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), (int)(viewport.Width / 2) - (Width / 2) + Width, (int)(viewport.Height / 2) - (Height / 2) + Height);
         }
 
         public SpriteTexture(Device device, string texturePath) : this(device, texturePath, Vector2I.Zero)
@@ -219,7 +219,7 @@ namespace S33M3CoreComponents.Sprites
             Width = texture.Description.Width;
             Height = texture.Description.Height;
 
-            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
+            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, screenPosition.X + Width, screenPosition.Y + Height);
         }
 
         public override void BeforeDispose()

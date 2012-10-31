@@ -22,7 +22,7 @@ using System;
 using SharpDX;
 using System.Collections.Generic;
 using SharpDX.Direct3D11;
-using Rectangle = System.Drawing.Rectangle;
+using Rectangle = SharpDX.Rectangle;
 using S33M3CoreComponents.Sprites;
 using S33M3Resources.Structs;
 
