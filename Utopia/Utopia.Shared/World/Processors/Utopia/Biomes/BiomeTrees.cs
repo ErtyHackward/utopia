@@ -7,6 +7,7 @@ using System.Text;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {

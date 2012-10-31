@@ -1,5 +1,6 @@
 ﻿using System;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Roleplay
 {

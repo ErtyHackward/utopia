@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {

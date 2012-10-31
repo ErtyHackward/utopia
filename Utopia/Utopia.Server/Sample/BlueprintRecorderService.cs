@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Server.Sample
 {

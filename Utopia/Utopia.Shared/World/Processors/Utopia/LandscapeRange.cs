@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {

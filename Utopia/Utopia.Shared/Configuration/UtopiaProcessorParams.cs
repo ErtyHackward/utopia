@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
