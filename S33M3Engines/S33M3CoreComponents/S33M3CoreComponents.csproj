@@ -75,9 +75,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Utopia\packages\SharpDX.DXGI.2.4.0\lib\net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.MediaFoundation">
-      <HintPath>..\..\Utopia\packages\SharpDX.MediaFoundation.2.4.0\lib\net40\SharpDX.MediaFoundation.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX.XAudio2, Version=2.4.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Utopia\packages\SharpDX.XAudio2.2.4.0\lib\net40\SharpDX.XAudio2.dll</HintPath>
