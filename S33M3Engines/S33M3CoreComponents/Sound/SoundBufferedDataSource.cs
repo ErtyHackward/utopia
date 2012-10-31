@@ -19,7 +19,6 @@ namespace S33M3CoreComponents.Sound
         public float SoundPower { get; set; }
 
         public WaveFormat WaveFormat { get; set; }
-        public uint[] DecodedPacketsInfo { get; set; }
         public AudioBuffer AudioBuffer { get; set; }
 
         public int GetSoundFormatCategory()
