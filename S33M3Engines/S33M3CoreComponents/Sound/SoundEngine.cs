@@ -152,7 +152,6 @@ namespace S33M3CoreComponents.Sound
                 {
                     //Load the sound and bufferize it
                     SoundStream soundstream = new SoundStream(File.OpenRead(FilePath));
-                    soundDataSource.DecodedPacketsInfo = soundstream.DecodedPacketsInfo;
                     soundDataSource.WaveFormat = soundstream.Format;
 
                     soundDataSource.AudioBuffer = new AudioBuffer()

@@ -229,6 +229,7 @@ namespace Utopia.Shared.Configuration
                 cp.Load(reader);
                 CubeProfiles[i] = cp;
             }
+
             FilledUpReservedCubeInArray();
 
             var countBiomes = reader.ReadInt32();

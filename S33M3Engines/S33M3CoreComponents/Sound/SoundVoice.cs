@@ -82,7 +82,7 @@ namespace S33M3CoreComponents.Sound
         //Enqueue the currently linked datasource buffer for playing
         public void PushDataSourceForPlaying()
         {
-            _voice.SubmitSourceBuffer(_playingDataSource.AudioBuffer, _playingDataSource.DecodedPacketsInfo);
+            _voice.SubmitSourceBuffer(_playingDataSource.AudioBuffer, null);
 
             if (is3DSound)
             {
