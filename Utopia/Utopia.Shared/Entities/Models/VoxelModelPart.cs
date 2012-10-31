@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {

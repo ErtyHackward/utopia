@@ -15,6 +15,7 @@ using Utopia.Shared.Interfaces;
 using System.IO;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {

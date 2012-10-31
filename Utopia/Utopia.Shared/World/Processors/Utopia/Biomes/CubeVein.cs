@@ -7,6 +7,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {

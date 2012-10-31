@@ -3,6 +3,7 @@ using System.IO;
 using S33M3Resources.Structs;
 using Utopia.Shared.Interfaces;
 using System.Collections.Generic;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Chunks
 {

@@ -205,7 +205,7 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
-    <Compile Include="Interfaces\IBinaryStorable.cs" />
+    <Compile Include="Tools\BinarySerializer\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
     <Compile Include="Interfaces\IGameStateToolManager.cs" />
@@ -290,6 +290,7 @@
     <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
+    <Compile Include="Tools\BinarySerializer\BinarySerialize.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
     <Compile Include="World\PlanGenerator\Corner.cs" />

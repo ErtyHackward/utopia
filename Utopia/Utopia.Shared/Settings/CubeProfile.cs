@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.IO;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Settings
 {

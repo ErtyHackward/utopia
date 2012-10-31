@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Utopia.Shared.Interfaces
+namespace Utopia.Shared.Tools.BinarySerializer
 {
     /// <summary>
     /// Provides possibility so store object in binary form.

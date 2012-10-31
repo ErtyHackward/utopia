@@ -3,6 +3,7 @@ using System.IO;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {

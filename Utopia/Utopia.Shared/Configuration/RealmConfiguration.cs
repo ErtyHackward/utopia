@@ -13,6 +13,7 @@ using System.Linq;
 using S33M3Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Configuration
 {
