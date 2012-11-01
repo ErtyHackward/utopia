@@ -186,7 +186,7 @@ namespace S33M3CoreComponents.Sound
             _soundDataSources.Remove(soundAlias);
         }
 
-        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
@@ -198,7 +198,7 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.PlayingDataSource = soundSource;
                 soundVoice.PushDataSourceForPlaying();
                 soundVoice.RefreshVoices();
-                soundVoice.Start(fadeIn);
+                soundVoice.Start(volume, fadeIn);
                 if (playLooped || fadeIn > 0)
                 {
                     _soundProcessingQueue.Add(soundVoice);
@@ -213,6 +213,16 @@ namespace S33M3CoreComponents.Sound
             return soundVoice;
         }
 
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0)
+        {
+            return StartPlay2D(soundSource, soundSource.SoundVolume, playLooped, fadeIn);
+        }
+
+        public ISoundVoice StartPlay2D(string soundAlias, float volume, bool playLooped = false, uint fadeIn = 0)
+        {
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), volume, playLooped, fadeIn);
+        }
+
         public ISoundVoice StartPlay2D(string FilePath, string soundAlias, bool playLooped = false, uint fadeIn = 0)
         {
             return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias), playLooped, fadeIn);
@@ -223,7 +233,7 @@ namespace S33M3CoreComponents.Sound
             return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), playLooped, fadeIn);
         }
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint fadeIn = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
@@ -239,7 +249,7 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.PlayingDataSource = soundSource;
                 soundVoice.PushDataSourceForPlaying();
                 soundVoice.RefreshVoices();
-                soundVoice.Start(fadeIn);
+                soundVoice.Start(volume, fadeIn);
                 if (playLooped || fadeIn > 0)
                 {
                     _soundProcessingQueue.Add(soundVoice);
@@ -252,6 +262,16 @@ namespace S33M3CoreComponents.Sound
             }
 
             return soundVoice;
+        }
+
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        {
+            return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, fadeIn);
+        }
+
+        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        {
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, volume, playLooped, fadeIn);
         }
 
         public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0)
@@ -418,5 +438,11 @@ namespace S33M3CoreComponents.Sound
         }
         
         #endregion
+
+
+
+
+
+
     }
 }
