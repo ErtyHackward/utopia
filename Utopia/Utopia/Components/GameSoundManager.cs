@@ -20,6 +20,8 @@ using SharpDX;
 using S33M3CoreComponents.Maths;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
+using Utopia.Worlds.GameClocks;
+using Utopia.Entities.Managers;
 
 namespace Utopia.Components
 {
@@ -37,6 +39,14 @@ namespace Utopia.Components
             public bool isLocalSound;
         }
 
+        public struct SoundMetaData
+        {
+            public string Alias;
+            public string Path;
+            public float Volume;
+            public float Power;
+        }
+
         #region Private Variables
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private IDynamicEntityManager _dynamicEntityManager;
@@ -44,6 +54,8 @@ namespace Utopia.Components
         private SingleArrayChunkContainer _singleArray;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private IWorldChunks _worldChunk;
+        private IClock _gameClockTime;
+        private PlayerEntityManager _playerEntityManager;
 
         private FastRandom _rnd;
 
@@ -61,7 +73,7 @@ namespace Utopia.Components
 
         private readonly List<KeyValuePair<int, string>> _ambientSounds = new List<KeyValuePair<int, string>>();
 
-        private readonly List<string> _preLoad = new List<string>();
+        private readonly List<SoundMetaData> _preLoad = new List<SoundMetaData>();
         #endregion
 
         #region Public Properties
@@ -82,17 +94,26 @@ namespace Utopia.Components
                                 IDynamicEntityManager dynamicEntityManager,
                                 IDynamicEntity player,
                                 IChunkEntityImpactManager chunkEntityImpactManager,
-                                IWorldChunks worldChunk)
+                                IWorldChunks worldChunk,
+                                IClock gameClockTime,
+                                PlayerEntityManager playerEntityManager)
         {
             _cameraManager = cameraManager;
             _soundEngine = soundEngine;
             _singleArray = singleArray;
             _worldChunk = worldChunk;
             _chunkEntityImpactManager = chunkEntityImpactManager;
+            _gameClockTime = gameClockTime;
+            _playerEntityManager = playerEntityManager;
 
             _dynamicEntityManager = dynamicEntityManager;
             _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = player, Position = player.Position, isLocalSound = true });
             _player = player;
+
+            //Register to Events
+            _playerEntityManager.OnLanding += playerEntityManager_OnLanding;
+
+            worldChunk.LoadComplete += worldChunk_LoadComplete;
 
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
@@ -105,6 +126,8 @@ namespace Utopia.Components
 
         public override void BeforeDispose()
         {
+            _playerEntityManager.OnLanding -= playerEntityManager_OnLanding;
+            _worldChunk.LoadComplete -= worldChunk_LoadComplete;
             _dynamicEntityManager.EntityAdded -= DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved -= DynamicEntityManagerEntityRemoved;
             _chunkEntityImpactManager.BlockReplaced -= _chunkEntityImpactManager_BlockReplaced;
@@ -130,11 +153,11 @@ namespace Utopia.Components
                 }
             }
 
-            foreach (var path in _preLoad)
+            foreach (var data in _preLoad)
             {
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(path, path);
-                dataSource.SoundVolume = 0.3f;
-                dataSource.SoundPower = 12.0f;
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias);
+                dataSource.SoundVolume = data.Volume;
+                dataSource.SoundPower = data.Power;
             }
 
             //Prepare Sound for biomes
@@ -182,9 +205,14 @@ namespace Utopia.Components
             _ambientSounds.Add(new KeyValuePair<int, string>(cubeId, sound));
         }
 
-        public void PreLoadSound(string path)
+        public void PreLoadSound(SoundMetaData metaData)
         {
-            _preLoad.Add(path);
+            _preLoad.Add(metaData);
+        }
+
+        public void PreLoadSound(string alias, string path, float volume, float power)
+        {
+            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power });
         }
 
         public override void Update(GameTime timeSpent)
@@ -338,38 +366,86 @@ namespace Utopia.Components
         {
             //Do nothing if player did not move ! => Check how to do it ...
 
-            //Get current player chunk
             //Get Player Cube Position
             Vector3I newWorldCubePosition = (Vector3I)_player.Position;
             if (newWorldCubePosition == _playerWorldCubePosition) return; //Player did not move
 
+            //Get current player chunk
             VisualChunk chunk = _worldChunk.GetChunk(ref newWorldCubePosition);
 
-            Biome biome = Utopia.Shared.Configuration.RealmConfiguration.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
+            //Get biome info from the "chunk" MasterBiome.
+            //Masterbiome being the biome associated to the chunk, based on average of all column's chunk biome.
+            Biome chunkBiome = Utopia.Shared.Configuration.RealmConfiguration.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
-            if (biome.AmbientSound.Count == 0)
+            ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(newWorldCubePosition.X - chunk.ChunkPositionBlockUnit.X, newWorldCubePosition.Z - chunk.ChunkPositionBlockUnit.Y);
+
+            //Player position VS Chunk Max Height.
+            int maxchunkheight = chunk.BlockData.ChunkMetaData.ChunkMaxHeightBuilt;
+
+            bool playerAboveMaxChunkheight = (columnInfo.MaxGroundHeight - newWorldCubePosition.Y < -15);
+            bool playerBelowMaxChunkheight = (columnInfo.MaxGroundHeight - newWorldCubePosition.Y > 15);
+            bool playerNearBottom = newWorldCubePosition.Y <= 30;
+
+            //The biome doesn't have associated sound with it, or below Up/down thresholds
+            if (chunkBiome.AmbientSound.Count == 0 || playerAboveMaxChunkheight || playerBelowMaxChunkheight || playerNearBottom)
             {
+                //Stop ambiant sound if still currently playing
                 if (_currentlyPLayingAmbiantSound != null)
                 {
+                    if (playerNearBottom && _currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias == "Cavern") return;
+
                     _currentlyPLayingAmbiantSound.Stop(1000);
                     _currentlyPLayingAmbiantSound = null;
+
+                    if (playerNearBottom)
+                    {
+                        //Play special "UnderGround" ambiant sound here.
+                        // ==> I'm "below Surface cube"
+                        _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D("Cavern", true, 3000);
+                    }
                 }
             }
             else
             {
-                if (_currentlyPLayingAmbiantSound == null || biome.AmbientSound[0].SoundAlias != _currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias)
+                //Select randomly a chunk ambiant sound to play.
+                int nextAmbientSoundId = _rnd.Next(0, chunkBiome.AmbientSound.Count);
+
+                if (_currentlyPLayingAmbiantSound == null || chunkBiome.AmbientSound[nextAmbientSoundId].SoundAlias != _currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias)
                 {
                     if (_currentlyPLayingAmbiantSound != null)
                     {
                         _currentlyPLayingAmbiantSound.Stop(1000);
                         _currentlyPLayingAmbiantSound = null;
                     }
-                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(biome.AmbientSound[0].SoundAlias, true, 3000);
+                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(chunkBiome.AmbientSound[nextAmbientSoundId].SoundAlias, true, 3000);
                 }
             }
 
             _playerWorldCubePosition = newWorldCubePosition;
 
+        }
+        #endregion
+
+        #region Sound on Events
+        void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube)
+        {
+            if (fallHeight > 3 && fallHeight <= 10)
+            {
+                SoundEngine.StartPlay2D("Hurt", 0.3f);
+            }
+            else
+            {
+                if (fallHeight > 10)
+                {
+                    SoundEngine.StartPlay2D("Hurt", 1.0f);
+                }
+            }
+        }
+
+        void worldChunk_LoadComplete(object sender, EventArgs e)
+        {
+            //Start playing main "Moods" music
+            SoundEngine.StartPlay2D("Peaceful", true, 5000);
         }
         #endregion
 

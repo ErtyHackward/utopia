@@ -83,7 +83,6 @@ namespace S33M3CoreComponents.Sound
         /// <returns>The soundDataSource object</returns>
         ISoundDataSource GetSoundSource(string soundAlias);
 
-
         /// <summary>
         /// Start playing a sound in 2D mode
         /// </summary>
@@ -92,6 +91,17 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
         ISoundVoice StartPlay2D(string FilePath, string soundAlias, bool playLooped = false, uint fadeIn = 0);
+
+        /// <summary>
+        /// Start playing a sound in 2D mode
+        /// </summary>
+        /// <param name="FilePath">Path to the sound, in case the sound datasource was not created, will only be used if the alias is unknown</param>
+        /// <param name="soundAlias">Sound Alias</param>
+        /// <param name="playLooped">Keep on playing sound when finished</param>
+        /// <returns>The voice currently playing the sound</returns>
+        ISoundVoice StartPlay2D(string soundAlias, float volume, bool playLooped = false, uint fadeIn = 0);
+
+
         /// <summary>
         /// Start playing a sound in 2D mode
         /// </summary>
@@ -106,6 +116,15 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
         ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0);
+
+        /// <summary>
+        /// Start playing a sound in 2D mode
+        /// </summary>
+        /// <param name="soundSource">The sound source to use for playing</param>
+        /// <param name="playLooped">Keep on playing sound when finished</param>
+        /// <returns>The voice currently playing the sound</returns>
+        ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0);
+
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
@@ -115,6 +134,17 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
         ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0);
+
+        /// <summary>
+        /// Start Playing a sound in 3D Mode
+        /// </summary>
+        /// <param name="FilePath">Path to the sound, in case the sound datasource was not created, will only be used if the alias is unknown</param>
+        /// <param name="soundAlia">Sound Alias</param>
+        /// <param name="position">Sound world position</param>
+        /// <param name="playLooped">Keep on playing sound when finished</param>
+        /// <returns>The voice currently playing the soun</returns>
+        ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint fadeIn = 0);
+
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
@@ -131,6 +161,15 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
         ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0);
+
+        /// <summary>
+        /// Start Playing a sound in 3D Mode
+        /// </summary>
+        /// <param name="soundSource">The sound source to use for playing</param>
+        /// <param name="position">Sound world position</param>
+        /// <param name="playLooped">Keep on playing sound when finished</param>
+        /// <returns>The voice currently playing the soun</returns>
+        ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint fadeIn = 0);
 
         /// <summary>
         /// Remove all buffered sound sources, will free up memory

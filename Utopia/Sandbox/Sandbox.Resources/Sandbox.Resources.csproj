@@ -286,6 +286,15 @@
     <None Include="Sounds\Blocks\put.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Sounds\Ambiance\cavern.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Events\hurt.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Events\waterdrop.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Sounds\Footsteps\footsteps_dirt01.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -412,6 +421,9 @@
     </None>
     <None Include="Sounds\Ambiance\Ocean.adpcm.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Sounds\Moods\peaceful.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="TexturesPacks\Main\AnimatedTextures\001_caustic.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

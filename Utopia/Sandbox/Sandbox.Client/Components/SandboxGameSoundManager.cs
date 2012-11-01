@@ -10,6 +10,8 @@ using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Sound;
 using SharpDX;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.GameClocks;
+using Utopia.Entities.Managers;
 
 namespace Sandbox.Client.Components
 {
@@ -21,8 +23,10 @@ namespace Sandbox.Client.Components
                                     IDynamicEntityManager dynamicEntityManager,
                                     IDynamicEntity player,
                                     IChunkEntityImpactManager chunkEntityImpactManager,
-                                    IWorldChunks worldChunk)
-            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager, worldChunk)
+                                    IWorldChunks worldChunk,
+                                    IClock gameClockTime,
+                                    PlayerEntityManager playerEntityManager)
+            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager, worldChunk, gameClockTime, playerEntityManager)
         {
 
             // steps
@@ -50,18 +54,22 @@ namespace Sandbox.Client.Components
 
             RegisterStepSound(RealmConfiguration.CubeId.StillWater, @"Sounds\Footsteps\footsteps_water01.adpcm.wav");
 
-            PreLoadSound(@"Sounds\Blocks\put.wav");
-            PreLoadSound(@"Sounds\Blocks\take.wav");
+            PreLoadSound("Put", @"Sounds\Blocks\put.wav", 0.3f, 12.0f);
+            PreLoadSound("Take", @"Sounds\Blocks\take.wav", 0.3f, 12.0f);
+            PreLoadSound("Hurt", @"Sounds\Events\hurt.wav", 1.0f, 16.0f);
+            PreLoadSound("WaterDrop", @"Sounds\Events\waterdrop.wav", 1.0f, 16.0f);
+            PreLoadSound("Peaceful", @"Sounds\Moods\peaceful.adpcm.wav", 0.3f, 16.0f);
+            PreLoadSound("Cavern", @"Sounds\Ambiance\cavern.adpcm.wav", 1.0f, 16.0f);
         }
 
         protected override void PlayBlockPut(Vector3I blockPos)
         {
-            SoundEngine.StartPlay3D(@"Sounds\Blocks\put.wav", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
+            SoundEngine.StartPlay3D("Put", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
 
         protected override void PlayBlockTake(Vector3I blockPos)
         {
-            SoundEngine.StartPlay3D(@"Sounds\Blocks\take.wav", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
+            SoundEngine.StartPlay3D("Take", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
 
     }
