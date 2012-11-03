@@ -44,11 +44,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
-        string DisplayName { get; }
-
-        /// <summary>
-        /// Gets a displayed entity name
-        /// </summary>
         string Name { get; set; }
 
         /// <summary>

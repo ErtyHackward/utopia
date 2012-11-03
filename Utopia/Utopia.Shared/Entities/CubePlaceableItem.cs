@@ -7,7 +7,6 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
-using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities
 {
@@ -34,6 +33,7 @@ namespace Utopia.Shared.Entities
         [Description("Allows to specify the possible face of the block where entity can be attached to")]
         public BlockFace MountPoint { get; set; }
         
+        // tool logic
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
             var impact = new ToolImpact { Success = false };
@@ -68,7 +68,7 @@ namespace Utopia.Shared.Entities
 
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
-                    //Create a new version of the item, and put it into the world
+                    // create a new version of the item, and put it into the world
                     var cubeEntity = (IItem)entityFactory.CreateFromBluePrint(BluePrintId);
 
                     var blockLinked = (IBlockLinkedEntity)cubeEntity;

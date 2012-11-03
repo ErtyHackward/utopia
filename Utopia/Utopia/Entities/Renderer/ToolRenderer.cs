@@ -232,7 +232,7 @@ namespace Utopia.Entities.Renderer
             }
             else if (_tool is IVoxelEntity) //A voxel Entity ?
             {
-                logger.Info("Voxel Entity tool equipped : {0}", _tool.DisplayName);
+                logger.Info("Voxel Entity tool equipped : {0}", _tool.Name);
 
                 var voxelEntity = _tool as IVoxelEntity;
                 _renderingType = ToolRenderingType.Voxel;

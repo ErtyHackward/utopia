@@ -22,11 +22,6 @@ namespace Utopia.Shared.Entities.Inventory
         private List<SlotContainer<T>> _joinedScope;
 
         /// <summary>
-        /// Gets maximum container capacity
-        /// </summary>
-        public int Capacity { get; set; }
-
-        /// <summary>
         /// Gets container grid size
         /// </summary>
         public Vector2I GridSize

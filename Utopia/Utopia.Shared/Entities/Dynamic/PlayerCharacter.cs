@@ -22,7 +22,7 @@ namespace Utopia.Shared.Entities.Dynamic
             get { return EntityClassId.PlayerCharacter; }
         }
 
-        public override string DisplayName
+        public override string Name
         {
             get { return CharacterName; }
         }
@@ -39,7 +39,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             MoveSpeed = DefaultMoveSpeed;               //Default player MoveSpeed
             RotationSpeed = 10f;          //Default Player Rotation Speed
-            DefaultSize = new SharpDX.Vector3(0.5f, 1.9f, 0.5f); //Default player size
+            DefaultSize = new Vector3(0.5f, 1.9f, 0.5f); //Default player size
             
             Type = EntityType.Dynamic;
             BodyRotation = Quaternion.Identity;

@@ -50,12 +50,6 @@ namespace Utopia.Shared.Entities
         public virtual Vector3D Position { get; set; }
         
         /// <summary>
-        /// Gets a displayed entity name
-        /// </summary>
-        [Category("Entity")]
-        public abstract string DisplayName { get; }
-
-        /// <summary>
         /// Is this entity a system Entity (Mandatory for the system to run)
         /// </summary>
         [Browsable(false)]
@@ -64,6 +58,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
+        [Category("Entity")]
         public virtual string Name
         {
             get { return _name; }

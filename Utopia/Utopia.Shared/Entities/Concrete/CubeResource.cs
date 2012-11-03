@@ -52,7 +52,7 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
         
-        public override string DisplayName
+        public override string Name
         {
             get { return RealmConfiguration.CubeProfiles[CubeId].Name; }
         }

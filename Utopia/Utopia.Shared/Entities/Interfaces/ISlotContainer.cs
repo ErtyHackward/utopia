@@ -26,11 +26,6 @@ namespace Utopia.Shared.Entities.Interfaces
         event EventHandler<EntityContainerEventArgs<T>> ItemExchanged;
 
         /// <summary>
-        /// Gets maximum container capacity
-        /// </summary>
-        int Capacity { get; }
-
-        /// <summary>
         /// Gets container grid size
         /// </summary>
         Vector2I GridSize { get; }
