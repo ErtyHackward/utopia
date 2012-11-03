@@ -91,7 +91,7 @@ namespace Utopia.Server.Sample
                 else
                 {
                     var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                    _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.DisplayName,
+                    _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.Name,
                                                                 _aliveNpc.Count));
                 }
             }

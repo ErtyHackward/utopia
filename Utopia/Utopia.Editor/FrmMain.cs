@@ -180,7 +180,7 @@ namespace Utopia.Editor
             for (var i = 0; i < _configuration.RealmEntities.Count; i++)
             {
                 var entity = _configuration.RealmEntities[i];
-                var item = new TreeNode(entity.DisplayName);
+                var item = new TreeNode(entity.Name);
                 item.Tag = entity;
 
                 if (entity is IVoxelEntity)

@@ -49,17 +49,9 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public string Description { get; set; }
 
-        /// <summary>
-        /// Gets a displayed entity name
-        /// </summary>
-        public override string DisplayName
-        {
-            get { return Name; }
-        }
-
         #endregion
 
-        public Item()
+        protected Item()
         {
             AllowedSlots = EquipmentSlotType.Hand;
             MaxStackSize = 1;

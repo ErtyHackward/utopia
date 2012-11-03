@@ -26,7 +26,7 @@ namespace Utopia.GUI.Inventory
                 if (value != null)
                 {
                     _cell.Slot = new ContainedSlot { Item = value };
-                    _nameLabel.Text = value.DisplayName;
+                    _nameLabel.Text = value.Name;
                     _descriptionLabel.Text = value.Description;
                 }
                 else

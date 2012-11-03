@@ -64,7 +64,7 @@ namespace Utopia.Server.Managers
                 // tell everybody that this player is gone
                 _server.AreaManager.RemoveEntity(e.Connection.ServerEntity);
 
-                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} has left the game.", e.Connection.ServerEntity.DynamicEntity.DisplayName), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} has left the game.", e.Connection.ServerEntity.DynamicEntity.Name), Operator = true });
 
                 e.Connection.ServerEntity.CurrentArea = null;
             }

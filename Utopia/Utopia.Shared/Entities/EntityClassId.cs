@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities
         public const ushort None = 0;
 
         // static
-        public const ushort Chest = 1000;
+        public const ushort Container = 1000;
         public const ushort Chair = 1001;
         public const ushort Door = 1002;
         public const ushort Bed = 1003;

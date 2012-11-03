@@ -121,6 +121,7 @@
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
     <Compile Include="Configuration\UtopiaProcessorParams.cs" />
+    <Compile Include="Entities\Concrete\Container.cs" />
     <Compile Include="Entities\Concrete\Collectible\Plant.cs" />
     <Compile Include="Entities\Concrete\Collectible\SideLightSource.cs" />
     <Compile Include="Entities\Dynamic\ICharacterEntity.cs" />

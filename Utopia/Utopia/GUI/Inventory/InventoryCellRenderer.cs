@@ -87,7 +87,7 @@ namespace Utopia.GUI.Inventory
                 }
                 else
                 {
-                    var displayName = control.Slot.Item.DisplayName;
+                    var displayName = control.Slot.Item.Name;
 
                     graphics.DrawString("button.normal", 0, ref controlBounds, displayName, false, -1, control.DrawGroupId);
                 }
