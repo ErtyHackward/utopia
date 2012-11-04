@@ -87,7 +87,7 @@ namespace Realms.Client.Components
             ContainedSlot outItem;
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = RealmConfiguration.CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.CubeId = RealmConfiguration.CubeId.Stone;//looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
@@ -101,7 +101,7 @@ namespace Realms.Client.Components
                 dEntity.Inventory.PutItem(item3);
             }
 
-            dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<SideLightSource>());
+            //dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<SideLightSource>());
 
             e.PlayerEntity = dEntity;
         }

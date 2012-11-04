@@ -29,7 +29,7 @@ namespace Realms.Client.Components.GUI
         }
 
         public PlayerInventory(D3DEngine engine, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
-            base(character, iconFactory, new Point(100,20), new Point(340,120), inputManager)
+            base(character, iconFactory, new Point(200,120), new Point(270,50), inputManager)
         {
             _commonResources = commonResources;
             _stInventoryWindow              = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window.png");
@@ -39,14 +39,14 @@ namespace Realms.Client.Components.GUI
             _stInventoryCloseButtonLabel    = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_label.png");
 
             CustomWindowImage = _stInventoryWindow;
-            Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(812, 526);
+            Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(674, 388);
 
             PrepareCells();
         }
 
         private void PrepareCells()
         {
-            var cellSize = new Vector2I(60,60);
+            var cellSize = new Vector2I(42,42);
 
             for (var x = 0; x < UiGrid.GetLength(0); x++)
             {
@@ -61,6 +61,12 @@ namespace Realms.Client.Components.GUI
                     cell.DrawIconsActiveCellId = 6;
                 }
             }
+
+            var slot = BuildBodyslot(Utopia.Shared.Entities.Inventory.EquipmentSlotType.Hand, 19, 142, 42);
+
+            slot.CustomBackground = _commonResources.StInventoryEquipmentSlot;
+            slot.CustomBackgroundHover = _commonResources.StInventoryEquipmentSlotHover;
+
         }
     }
 }

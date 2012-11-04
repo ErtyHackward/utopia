@@ -108,7 +108,12 @@ namespace Utopia.Entities.Renderer
 
         void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
         {
-            Tool = e.EquippedItem.Item as ITool;
+            if (e.EquippedItem != null)
+            {
+                Tool = e.EquippedItem.Item as ITool;
+            }
+            else
+                Tool = null;
         }
 
         #region Public Methods
