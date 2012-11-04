@@ -5,13 +5,11 @@ using System.IO;
 using System.IO.Compression;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using System.Linq;
 using S33M3Resources.Structs;
-using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Tools.BinarySerializer;
 

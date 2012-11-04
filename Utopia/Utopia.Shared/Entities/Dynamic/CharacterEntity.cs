@@ -11,7 +11,7 @@ namespace Utopia.Shared.Entities.Dynamic
         protected CharacterEntity()
         {
             Equipment = new CharacterEquipment(this);
-            Inventory = new SlotContainer<ContainedSlot>(this);
+            Inventory = new SlotContainer<ContainedSlot>(this, new S33M3Resources.Structs.Vector2I(9,8));
 
             // we need to have single id scope with two of these containers
             Equipment.JoinIdScope(Inventory);
