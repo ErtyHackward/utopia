@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities
 {
@@ -32,7 +33,7 @@ namespace Utopia.Shared.Entities
         
         [Description("Allows to specify the possible face of the block where entity can be attached to")]
         public BlockFace MountPoint { get; set; }
-        
+
         // tool logic
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
@@ -42,7 +43,7 @@ namespace Utopia.Shared.Entities
             {
                 if (owner.EntityState.IsBlockPicked)
                 {
-                    var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
+                    ILandscapeCursor cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
 
                     var moveVector = owner.EntityState.NewBlockPosition - owner.EntityState.PickedBlockPosition;
 
@@ -57,13 +58,13 @@ namespace Utopia.Shared.Entities
                         return impact;
 
                     // check if the place is free
-                    if (MountPoint.HasFlag(BlockFace.Top) && cursor.Up().IsSolid())
-                        return impact;
-                    
-                    if (MountPoint.HasFlag(BlockFace.Sides) && cursor.Offset(moveVector).IsSolid())
+                    if (MountPoint.HasFlag(BlockFace.Top) && cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
                         return impact;
 
-                    if (MountPoint.HasFlag(BlockFace.Bottom) && cursor.Down().IsSolid())
+                    if (MountPoint.HasFlag(BlockFace.Sides) && cursor.PeekProfile(moveVector).IsSolidToEntity)
+                        return impact;
+
+                    if (MountPoint.HasFlag(BlockFace.Bottom) && cursor.PeekProfile(Vector3I.Down).IsSolidToEntity) 
                         return impact;
 
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;

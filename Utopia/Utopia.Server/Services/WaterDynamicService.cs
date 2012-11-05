@@ -63,7 +63,7 @@ namespace Utopia.Server.Services
 
                     var currentValue = cursor.Read();
 
-                    if (currentValue != RealmConfiguration.CubeId.DynamicWater)
+                    if (currentValue != WorldConfiguration.CubeId.DynamicWater)
                     {
                         var prevNode = node.Previous;
                         _updateList.Remove(node);
@@ -81,24 +81,24 @@ namespace Utopia.Server.Services
                     BlockTag tag;
                     var value = cursor.PeekValue(new Vector3I(0, -1, 0), out tag);
 
-                    if (value == RealmConfiguration.CubeId.Air)
+                    if (value == WorldConfiguration.CubeId.Air)
                     {
 
-                        cursor.Write(RealmConfiguration.CubeId.Air);
+                        cursor.Write(WorldConfiguration.CubeId.Air);
                         cursor.Move(new Vector3I(0, -1, 0));
-                        cursor.Write(RealmConfiguration.CubeId.DynamicWater, currentTag);
+                        cursor.Write(WorldConfiguration.CubeId.DynamicWater, currentTag);
                         PropagateUpdate(cursor.GlobalPosition);
                         continue;
                     }
 
-                    if (value == RealmConfiguration.CubeId.StillWater)
+                    if (value == WorldConfiguration.CubeId.StillWater)
                     {
                         // disappear
-                        cursor.Write(RealmConfiguration.CubeId.Air);
+                        cursor.Write(WorldConfiguration.CubeId.Air);
                         continue;
                     }
 
-                    if (value == RealmConfiguration.CubeId.DynamicWater)
+                    if (value == WorldConfiguration.CubeId.DynamicWater)
                     {
                         var ltag = tag as LiquidTag;
                         // merge if possible
@@ -109,15 +109,15 @@ namespace Utopia.Server.Services
                             if (need >= currentTag.Pressure)
                             {
                                 need = currentTag.Pressure;
-                                cursor.Write(RealmConfiguration.CubeId.Air);
+                                cursor.Write(WorldConfiguration.CubeId.Air);
                             }
                             else
                             {
                                 currentTag.Pressure -= need;
-                                cursor.Write(RealmConfiguration.CubeId.DynamicWater, currentTag);
+                                cursor.Write(WorldConfiguration.CubeId.DynamicWater, currentTag);
                             }
                             ltag.Pressure += need;
-                            cursor.Move(new Vector3I(0, -1, 0)).Write(RealmConfiguration.CubeId.DynamicWater, ltag);
+                            cursor.Move(new Vector3I(0, -1, 0)).Write(WorldConfiguration.CubeId.DynamicWater, ltag);
                             PropagateUpdate(cursor.GlobalPosition);
                             continue;
                         }
@@ -164,7 +164,7 @@ namespace Utopia.Server.Services
 
                                     LiquidTag sideTag;
 
-                                    if (cursor.Read(out sideTag) != RealmConfiguration.CubeId.DynamicWater)
+                                    if (cursor.Read(out sideTag) != WorldConfiguration.CubeId.DynamicWater)
                                     {
                                         sideTag = new LiquidTag { Pressure = 0 };
                                     }
@@ -181,7 +181,7 @@ namespace Utopia.Server.Services
                                     sideTag.Pressure = (ushort)(sideTag.Pressure + wave);
                                     currentTag.Pressure = (ushort)(currentTag.Pressure - wave);
 
-                                    cursor.Write(RealmConfiguration.CubeId.DynamicWater, sideTag);
+                                    cursor.Write(WorldConfiguration.CubeId.DynamicWater, sideTag);
                                     PropagateUpdate(cursor.GlobalPosition);
                                     // move cursor back
                                     cursor.Move(Vector3I.Zero - vector3I);
@@ -189,7 +189,7 @@ namespace Utopia.Server.Services
 
                                 if (spreadList.Count > 0)
                                 {
-                                    cursor.Write(RealmConfiguration.CubeId.DynamicWater, currentTag);
+                                    cursor.Write(WorldConfiguration.CubeId.DynamicWater, currentTag);
                                 }
 
                                 if (spreadList.Count != 0)
@@ -231,10 +231,10 @@ namespace Utopia.Server.Services
             LiquidTag tag;
             var value = cursor.PeekValue(move, out tag);
 
-            if (value == RealmConfiguration.CubeId.Air)
+            if (value == WorldConfiguration.CubeId.Air)
                 return true;
 
-            if (value == RealmConfiguration.CubeId.DynamicWater)
+            if (value == WorldConfiguration.CubeId.DynamicWater)
             {
                 if (tag == null)
                     return false;
@@ -263,7 +263,7 @@ namespace Utopia.Server.Services
 
         bool TryFallTo(LinkedListNode<Vector3I> node, ILandscapeCursor cursor, Vector3I move)
         {
-            if (cursor.PeekValue(move) == RealmConfiguration.CubeId.Air)
+            if (cursor.PeekValue(move) == WorldConfiguration.CubeId.Air)
             {
                 var prevPosition = cursor.GlobalPosition;
 
@@ -292,7 +292,7 @@ namespace Utopia.Server.Services
                 {
 
                     // check if new water block was created
-                    if (e.Values[i] == RealmConfiguration.CubeId.DynamicWater)
+                    if (e.Values[i] == WorldConfiguration.CubeId.DynamicWater)
                     {
                         AddToUpdateList(e.Locations[i]);
                     }
@@ -307,7 +307,7 @@ namespace Utopia.Server.Services
             // check if we touch surrounding water block
             var cursor = _server.LandscapeManager.GetCursor(globalPos);
 
-            if (cursor.Read() == RealmConfiguration.CubeId.DynamicWater)
+            if (cursor.Read() == WorldConfiguration.CubeId.DynamicWater)
                 AddToUpdateList(globalPos);
 
             // up
@@ -330,7 +330,7 @@ namespace Utopia.Server.Services
 
         private void CheckDirection(ILandscapeCursor cursor, Vector3I move)
         {
-            if (cursor.PeekValue(move) == RealmConfiguration.CubeId.DynamicWater)
+            if (cursor.PeekValue(move) == WorldConfiguration.CubeId.DynamicWater)
                 AddToUpdateList(cursor.GlobalPosition + move);
         }
 

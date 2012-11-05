@@ -59,9 +59,9 @@ namespace Utopia.Shared.World.Processors
                             var index = x * AbstractChunk.ChunkSize.Y + y + z * AbstractChunk.ChunkSize.Y * AbstractChunk.ChunkSize.X;
 
                             if (y >= AbstractChunk.ChunkSize.Y / 2)
-                                chunkBytes[index] = RealmConfiguration.CubeId.Air;
+                                chunkBytes[index] = WorldConfiguration.CubeId.Air;
                             else
-                                chunkBytes[index] = RealmConfiguration.CubeId.Stone;
+                                chunkBytes[index] = WorldConfiguration.CubeId.Stone;
                         }
                     }
                 }

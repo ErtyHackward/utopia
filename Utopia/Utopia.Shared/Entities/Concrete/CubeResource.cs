@@ -22,7 +22,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         public EntityFactory entityFactory { get; set; }
 
-        public byte CubeId { get; set; }
+        public byte CubeId { get; private set; }
     
         public EquipmentSlotType AllowedSlots
         {
@@ -52,18 +52,12 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
         
-        public override string Name
-        {
-            get { return RealmConfiguration.CubeProfiles[CubeId].Name; }
-        }
-
         public string Description
         {
-            get { return RealmConfiguration.CubeProfiles[CubeId].Description; }
+            get { return "A world Cube"; }
         }
 
         public static event EventHandler<CubeChangedEventArgs> CubeChanged;
-
         public static void OnCubeChanged(CubeChangedEventArgs e)
         {
             var handler = CubeChanged;
@@ -80,6 +74,12 @@ namespace Utopia.Shared.Entities.Concrete
         {
             base.Save(writer);
             writer.Write(CubeId);
+        }
+
+        public void SetCube(byte cubeId, string cubeName)
+        {
+            CubeId = cubeId;
+            Name = cubeName;
         }
 
         public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
@@ -113,7 +113,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
                     var cube = cursor.Read();
-                    if (cube != RealmConfiguration.CubeId.Air)
+                    if (cube != WorldConfiguration.CubeId.Air)
                     {
                         var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
@@ -135,8 +135,8 @@ namespace Utopia.Shared.Entities.Concrete
                         chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                         //change the Block to AIR
-                        cursor.Write(RealmConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = RealmConfiguration.CubeId.Air });
+                        cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = WorldConfiguration.CubeId.Air });
                         
                         //Add the removed cube into the inventory
                         impact.Success = true;
@@ -148,7 +148,7 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     //Add new block
                     var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-                    if (cursor.Read() == RealmConfiguration.CubeId.Air)
+                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
                     {
                         cursor.Write(CubeId);
                         OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = CubeId });

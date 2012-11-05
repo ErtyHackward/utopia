@@ -15,10 +15,12 @@ namespace Realms.Server
     public class ServerGameplayProvider
     {
         private readonly Utopia.Server.Server _server;
+        private readonly WorldConfiguration _config;
 
-        public ServerGameplayProvider(Utopia.Server.Server server)
+        public ServerGameplayProvider(Utopia.Server.Server server, WorldConfiguration config)
         {
             _server = server;
+            _config = config;
         }
 
         public PlayerCharacter CreateNewPlayerCharacter(string name, uint entityId)
@@ -32,19 +34,20 @@ namespace Realms.Server
             //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = RealmConfiguration.CubeId.Sand;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.SetCube(WorldConfiguration.CubeId.Sand, _config.CubeProfiles[WorldConfiguration.CubeId.Sand].Name);
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Add Items in inventory, every cubes
-            foreach (var cubeId in RealmConfiguration.CubeId.All())
+            foreach (var cubeId in WorldConfiguration.CubeId.All())
             {
-                if (cubeId == RealmConfiguration.CubeId.Air)
+                if (cubeId == WorldConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.CubeId = cubeId;
+                item3.SetCube(cubeId, _config.CubeProfiles[cubeId].Name);
                 dEntity.Inventory.PutItem(item3);
+
             }
             //Add coins + Torch
             var torch = _server.EntityFactory.CreateEntity<SideLightSource>();

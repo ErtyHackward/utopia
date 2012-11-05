@@ -94,7 +94,7 @@ namespace S33M3DXEngine
         #endregion
 
         /// <summary>
-        /// Creating a new D3DEngine
+        /// Creating a new D3DEngine with an associated window for rendering
         /// </summary>
         /// <param name="startingSize">Windows starting size</param>
         /// <param name="windowCaption">Window Caption</param>
@@ -118,6 +118,32 @@ namespace S33M3DXEngine
 
             //Init State repo
             RenderStatesRepo.Initialize(this);
+        }
+
+        public D3DEngine()
+        {
+            if (!FULLDEBUGMODE)
+            {
+                Device = new Device(DriverType.Hardware, DeviceCreationFlags.None);
+                logger.Info("Device created in Release mode");
+            }
+            else
+            {
+                try
+                {
+                    Device = new Device(DriverType.Hardware, DeviceCreationFlags.Debug);
+                    logger.Info("Device et swapchain created in FULLDEBUGMODE mode");
+                }
+                catch (SharpDXException ex)
+                {
+                    logger.Warn("Error Creating SwapChain or Device in debug mode : {0}", ex.Message);
+                    Device = new Device(DriverType.Hardware, DeviceCreationFlags.None);
+                    logger.Info("Device et swapchain created in Release mode");
+                }
+            }
+
+            //Create the threaded contexts
+            ImmediateContext = Device.ImmediateContext;
         }
 
         //Remove default F10 (Open menu) Form key push !
