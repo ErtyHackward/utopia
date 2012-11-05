@@ -1,14 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace Utopia.Shared.Entities
+namespace Utopia.Shared.Tools
 {
     public class ModelSelector : UITypeEditor
     {
