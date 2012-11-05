@@ -133,6 +133,7 @@
     <Compile Include="Editor\Spawn.cs" />
     <Compile Include="Effects\SharedFrameCB.cs" />
     <Compile Include="Entities\EntityMovement\EntityRotations.cs" />
+    <Compile Include="Entities\FileModelStorage.cs" />
     <Compile Include="Entities\IconFactory.cs" />
     <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
