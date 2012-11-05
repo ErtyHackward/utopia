@@ -36,7 +36,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, RealmConfiguration.CubeProfiles[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {

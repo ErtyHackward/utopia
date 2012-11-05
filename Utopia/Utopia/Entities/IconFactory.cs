@@ -28,6 +28,7 @@ using Utopia.Shared.GameDXStates;
 using Resource = SharpDX.Direct3D11.Resource;
 using Utopia.Shared.Configuration;
 using System.Linq;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities
 {
@@ -42,6 +43,7 @@ namespace Utopia.Entities
         public const int IconSize = 64;
         private ShaderResourceView _iconsTextureArray;
         private SpriteTexture _iconTextureArray;
+        private VisualWorldParameters _visualWorldParameters;
 
         // holds cached textures of the voxel models
         private readonly Dictionary<string, SpriteTexture> _voxelIcons = new Dictionary<string, SpriteTexture>();
@@ -61,10 +63,11 @@ namespace Utopia.Entities
         #region public Variables/properties
         #endregion
 
-        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager)
+        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, VisualWorldParameters visualWorldParameters)
         {
             _d3DEngine = d3DEngine;
             _modelManager = modelManager;
+            _visualWorldParameters = visualWorldParameters;
         }
 
         public override void LoadContent(DeviceContext context)
@@ -453,12 +456,12 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
             //Create a texture for each cubes existing !
-            foreach (byte cubeId in RealmConfiguration.CubeId.All())
+            foreach (byte cubeId in WorldConfiguration.CubeId.All())
             {
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;
                 //Create the new Material MeshMapping
-                var profile = RealmConfiguration.CubeProfiles[cubeId];
+                var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeId];
                 
                 //Here the key parameter is the ID name given to the texture inside the file model.
                 //In our case the model loaded has these Materials/texture Ids :

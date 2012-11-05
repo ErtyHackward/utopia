@@ -24,14 +24,14 @@ namespace Utopia.Shared.Settings
         #endregion
 
         #region Public Methods
-        public void Save(BinaryWriter writer)
+        public virtual void Save(BinaryWriter writer)
         {
             writer.Write(SoundFilePath);
             writer.Write(SoundAlias);
             writer.Write(DefaultVolume);
         }
 
-        public void Load(BinaryReader reader)
+        public virtual void Load(BinaryReader reader)
         {
             SoundFilePath = reader.ReadString();
             SoundAlias = reader.ReadString();

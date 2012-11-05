@@ -2,6 +2,9 @@ using System;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
+using Utopia.Shared.Settings;
+using Utopia.Shared.World;
 
 namespace Utopia.Shared.Chunks
 {
@@ -14,6 +17,7 @@ namespace Utopia.Shared.Chunks
         private Vector3I _internalPosition;
         private IChunkLayout2D _currentChunk;
         private Vector3I _position;
+        private WorldParameters _wp;
 
         /// <summary>
         /// Occurs when someone tries to write using this cursor
@@ -85,9 +89,10 @@ namespace Utopia.Shared.Chunks
             _currentChunk.BlockData.SetBlock(_internalPosition, value, tag);
         }
 
-        protected LandscapeCursor(ILandscapeManager2D manager)
+        protected LandscapeCursor(ILandscapeManager2D manager, WorldParameters wp)
         {
             _manager = manager;
+            _wp = wp;
         }
         
         /// <summary>
@@ -95,8 +100,8 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="manager"></param>
         /// <param name="position"></param>
-        public LandscapeCursor(ILandscapeManager2D manager, Vector3I position)
-            : this(manager)
+        public LandscapeCursor(ILandscapeManager2D manager, Vector3I position, WorldParameters wp)
+            : this(manager, wp)
         {
             GlobalPosition = position;
         }
@@ -107,7 +112,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public ILandscapeCursor Clone()
         {
-            var cursor = new LandscapeCursor(_manager)
+            var cursor = new LandscapeCursor(_manager, _wp)
                              {
                                  _position = _position,
                                  _internalPosition = _internalPosition,
@@ -157,6 +162,13 @@ namespace Utopia.Shared.Chunks
             return _currentChunk.BlockData[peekPosition];
         }
 
+        /// <summary>
+        /// peek Block ID with Tag
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="moveVector"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public byte PeekValue<T>(Vector3I moveVector, out T tag) where T : BlockTag
         {
             var peekPosition = _internalPosition + moveVector;
@@ -197,6 +209,22 @@ namespace Utopia.Shared.Chunks
             _currentChunk.BlockData.GetBlockWithTag(peekPosition, out value, out tmpTag);
             tag = tmpTag as T;
             return value;
+        }
+
+
+        /// <summary>
+        /// Return peek cube profile
+        /// </summary>
+        /// <param name="moveVectorle"></param>
+        /// <returns></returns>
+        public CubeProfile PeekProfile(Vector3I moveVector)
+        {
+            return _wp.Configuration.CubeProfiles[PeekValue(moveVector)];
+        }
+
+        public CubeProfile PeekProfile()
+        {
+            return _wp.Configuration.CubeProfiles[Read()];
         }
 
         /// <summary>
@@ -251,5 +279,15 @@ namespace Utopia.Shared.Chunks
         {
             _currentChunk.Entities.Add(entity);
         }
+
+        /// <summary>
+        /// Returns whether this block is solid to entity
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSolid()
+        {
+            return _wp.Configuration.CubeProfiles[Read()].IsSolidToEntity;
+        }
+
     }
 }

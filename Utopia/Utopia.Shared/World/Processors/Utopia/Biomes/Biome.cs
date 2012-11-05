@@ -21,35 +21,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public partial class Biome : IBinaryStorable
     {
-        #region Static
-        public static byte GetBiome(double landFormType, double temperature, double moisture)
-        {
-            enuLandFormType landformtype = (enuLandFormType)landFormType;
-
-            for (byte biomeId = 0; biomeId <= RealmConfiguration.Biomes.Count - 1; biomeId++)
-            {
-                Biome biome = RealmConfiguration.Biomes[biomeId];
-                //Does this biome support this land form type ?
-                if (biome.LandFormFilters.Contains(landformtype))
-                {
-                    //Check the temp range
-                    if (temperature >= biome.TemperatureFilter.Min &&
-                        temperature <= biome.TemperatureFilter.Max)
-                    {
-                        if (moisture >= biome.MoistureFilter.Min &&
-                            moisture <= biome.MoistureFilter.Max)
-                        {
-                           return biomeId;
-                        }
-                    }
-                }
-            }
-
-            //By default return the first Biome from the list
-            return (byte)0;
-        }
-        #endregion
-
         #region Private Variables
         //Chunk Population elements
         private List<CubeVein> _cubeVeins = new List<CubeVein>();
@@ -68,7 +39,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private RangeD _temperatureFilter = new RangeD(0.0, 1.0);
         private RangeD _moistureFilter = new RangeD(0.0, 1.0);
         private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>() { enuLandFormType.Plain };
-
+        private WorldConfiguration _config;
         #endregion
 
         #region Public Properties
@@ -149,8 +120,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         #endregion
 
-        public Biome()
+        public Biome(WorldConfiguration config)
         {
+            _config = config;
         }
 
         #region Public Methods
@@ -163,9 +135,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-
-                    if (vein.CubeProfile.Id != RealmConfiguration.CubeId.DynamicLava &&
-                        vein.CubeProfile.Id != RealmConfiguration.CubeId.DynamicWater)
+                    if (vein.CubeId != WorldConfiguration.CubeId.DynamicLava &&
+                        vein.CubeId != WorldConfiguration.CubeId.DynamicWater)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
@@ -254,7 +225,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             cursor.SetInternalPosition(x, y, z);
             int nbrCubePlaced;
-            if (cursor.Read() == RealmConfiguration.CubeId.Stone)
+            if (cursor.Read() == WorldConfiguration.CubeId.Stone)
             {
                 cursor.Write(cubeId);
                 nbrCubePlaced = 1;
@@ -262,7 +233,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 {
                     int relativeMove = rnd.Next(1, 7);
                     cursor.Move(relativeMove);
-                    if (cursor.Read() == RealmConfiguration.CubeId.Stone)
+                    if (cursor.Read() == WorldConfiguration.CubeId.Stone)
                     {
                         cursor.Write(cubeId);
                         nbrCubePlaced++;
@@ -284,17 +255,17 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             cursor.SetInternalPosition(x, y, z);
 
             //Check if this source is candidate as valid source = Must be surrended by 5 solid blocks and ahave one side block going to Air
-            if (cursor.Read() != RealmConfiguration.CubeId.Air)
+            if (cursor.Read() != WorldConfiguration.CubeId.Air)
             {
                 //Looking Up for Air
-                if (RealmConfiguration.CubeProfiles[cursor.Peek(CursorRelativeMovement.Up)].IsBlockingWater == false || cursor.Peek(CursorRelativeMovement.Up) == RealmConfiguration.CubeId.Snow) return;
-                if (RealmConfiguration.CubeProfiles[cursor.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false) return;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.Up)].IsBlockingWater == false || cursor.Peek(CursorRelativeMovement.Up) == WorldConfiguration.CubeId.Snow) return;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false) return;
                 int cpt = 0;
                 //Counting the number of holes arround the source
-                if (RealmConfiguration.CubeProfiles[cursor.Peek(CursorRelativeMovement.East)].IsBlockingWater == false) cpt++;
-                if (RealmConfiguration.CubeProfiles[cursor.Peek(CursorRelativeMovement.West)].IsBlockingWater == false) cpt++;
-                if (RealmConfiguration.CubeProfiles[cursor.Peek(CursorRelativeMovement.North)].IsBlockingWater == false) cpt++;
-                if (RealmConfiguration.CubeProfiles[cursor.Peek(CursorRelativeMovement.South)].IsBlockingWater == false) cpt++;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.East)].IsBlockingWater == false) cpt++;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.West)].IsBlockingWater == false) cpt++;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.North)].IsBlockingWater == false) cpt++;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.South)].IsBlockingWater == false) cpt++;
 
                 //Only one face touching air ==> Createing the Liquid Source !
                 if (cpt != 1) return;
@@ -311,8 +282,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             //Can Fall, falling doesn't remove Power at propagation
             bool isFalling = false;
-            if (RealmConfiguration.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].CubeFamilly == Enums.enuCubeFamilly.Liquid) return;
-            while (RealmConfiguration.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == RealmConfiguration.CubeId.Snow)
+            if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].CubeFamilly == Enums.enuCubeFamilly.Liquid) return;
+            while (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
             {
                 liquidSource.Item1.Move(CursorRelativeMovement.Down);
                 liquidSource.Item1.Write(cubeId);
@@ -327,7 +298,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 int power = liquidSource.Item2 - 1;
                 if (power >= 0)
                 {
-                    if (RealmConfiguration.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.East)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == RealmConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.East)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.East);
                         liquidSource.Item1.Write(cubeId);
@@ -335,7 +306,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         liquidSource.Item1.Move(CursorRelativeMovement.West);
                     }
 
-                    if (RealmConfiguration.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.West)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == RealmConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.West)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.West);
                         liquidSource.Item1.Write(cubeId);
@@ -343,7 +314,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         liquidSource.Item1.Move(CursorRelativeMovement.East);
                     }
 
-                    if (RealmConfiguration.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.North)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == RealmConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.North)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.North);
                         liquidSource.Item1.Write(cubeId);
@@ -351,7 +322,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         liquidSource.Item1.Move(CursorRelativeMovement.South);
                     }
 
-                    if (RealmConfiguration.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.South)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == RealmConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.South)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.South);
                         liquidSource.Item1.Write(cubeId);
@@ -402,9 +373,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                             {
                                 if (l == layers - 1)
                                 {
-                                    if (cursor.Read() == RealmConfiguration.CubeId.Stone) cursor.Write(RealmConfiguration.CubeId.LightWhite);
+                                    if (cursor.Read() == WorldConfiguration.CubeId.Stone) cursor.Write(WorldConfiguration.CubeId.LightWhite);
                                 }
-                                else cursor.Write(RealmConfiguration.CubeId.Air);
+                                else cursor.Write(WorldConfiguration.CubeId.Air);
 
                             }
                         }
@@ -430,9 +401,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             Vector3I radiusRange = new Vector3I(treeTemplate.Radius - 1, 1, treeTemplate.Radius - 1);
 
-            if ((trunkRootCube == RealmConfiguration.CubeId.Grass || trunkRootCube == RealmConfiguration.CubeId.Dirt || trunkRootCube == RealmConfiguration.CubeId.Snow || trunkRootCube == RealmConfiguration.CubeId.Sand) &&
+            if ((trunkRootCube == WorldConfiguration.CubeId.Grass || trunkRootCube == WorldConfiguration.CubeId.Dirt || trunkRootCube == WorldConfiguration.CubeId.Snow || trunkRootCube == WorldConfiguration.CubeId.Sand) &&
                 cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
-                cursor.IsCubePresent(RealmConfiguration.CubeId.StillWater, radiusRange) == false)
+                cursor.IsCubePresent(WorldConfiguration.CubeId.StillWater, radiusRange) == false)
             {
                 //Generate the Trunk first
                 int trunkSize = rnd.Next(treeTemplate.TrunkSize.Min, treeTemplate.TrunkSize.Max + 1);
@@ -459,7 +430,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     foreach (int foliageMove in treeStructBlock)
                     {
                         cursor.Move(foliageMove);
-                        if (foliageMove >= 0 && cursor.Read() == RealmConfiguration.CubeId.Air)
+                        if (foliageMove >= 0 && cursor.Read() == WorldConfiguration.CubeId.Air)
                         {
                             cursor.Write(treeTemplate.FoliageCubeId);
                         }
@@ -469,7 +440,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     if (treeTemplate.TreeType == TreeTemplates.TreeType.Cactus)
                     {
                         Vector3I posi = cursor.InternalPosition;
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, RealmConfiguration.BluePrintId.CactusFlower , posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, WorldConfiguration.BluePrintId.CactusFlower, posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
                     }
 
                     //Remove Offset
@@ -519,10 +490,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             cursor.SetInternalPosition(x, y, z);
 
             //Check that the block above is "Air"
-            if (cursor.Peek(CursorRelativeMovement.Up) != RealmConfiguration.CubeId.Air) return;
+            if (cursor.Peek(CursorRelativeMovement.Up) != WorldConfiguration.CubeId.Air) return;
             //Check that the block below is "solid"
             byte blockBelow = cursor.Read();
-            CubeProfile blockBelowProfile = RealmConfiguration.CubeProfiles[blockBelow];
+            CubeProfile blockBelowProfile = _config.CubeProfiles[blockBelow];
             if (blockBelowProfile.IsSolidToEntity)
             {
                 //Cloning the Entity Blue Print !

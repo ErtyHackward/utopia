@@ -404,7 +404,7 @@ namespace Utopia.Worlds.Chunks
                 Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
                                                             MathHelper.Fastfloor(entityWorldPosition.Y),
                                                             MathHelper.Fastfloor(entityWorldPosition.Z));
-                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, RealmConfiguration.CubeId.Air), this);
+                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
             }
         }
 
@@ -472,7 +472,7 @@ namespace Utopia.Worlds.Chunks
                     Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
                                                                 MathHelper.Fastfloor(entityWorldPosition.Y),
                                                                 MathHelper.Fastfloor(entityWorldPosition.Z));
-                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, RealmConfiguration.CubeId.Air), this);
+                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
                 }
             }
         }

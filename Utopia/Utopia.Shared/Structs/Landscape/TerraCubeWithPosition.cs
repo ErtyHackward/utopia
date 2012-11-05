@@ -13,16 +13,16 @@ namespace Utopia.Shared.Structs
 
         public static TerraCubeWithPosition DefaultValue = default(TerraCubeWithPosition);
 
-        public TerraCubeWithPosition(Vector3I pos, TerraCube cube)
+        public TerraCubeWithPosition(Vector3I pos, TerraCube cube, WorldConfiguration configuration)
         {
-            CubeProfile = RealmConfiguration.CubeProfiles[cube.Id];
+            CubeProfile = configuration.CubeProfiles[cube.Id];
             Position = pos;
             Cube = cube;
         }
 
-        public TerraCubeWithPosition(Vector3I pos, byte cubeId)
+        public TerraCubeWithPosition(Vector3I pos, byte cubeId, WorldConfiguration configuration)
         {
-            CubeProfile = RealmConfiguration.CubeProfiles[cubeId];
+            CubeProfile = configuration.CubeProfiles[cubeId];
             Position = pos;
             Cube = new TerraCube(cubeId);
         }

@@ -26,6 +26,7 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Entities.Dynamic;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Renderer
 {
@@ -67,6 +68,7 @@ namespace Utopia.Entities.Renderer
         private HLSLVoxelModel _voxelModelEffect;
         private PlayerCharacter _player;
         private SingleArrayChunkContainer _chunkContainer;
+        private VisualWorldParameters _visualWorldParameters;
 
         private FTSValue<Color3> _lightColor = new FTSValue<Color3>();
 
@@ -93,7 +95,8 @@ namespace Utopia.Entities.Renderer
                             CameraManager<ICameraFocused> camManager,
                             IDynamicEntity dynamicEntity,
                             VoxelModelManager voxelModelManager, 
-                            PlayerEntityManager playerManager)
+                            PlayerEntityManager playerManager,
+                            VisualWorldParameters visualWorldParameters)
         {
             _d3dEngine = d3DEngine;
             _milkShapeMeshfactory = new MilkShape3DMeshFactory();
@@ -102,6 +105,7 @@ namespace Utopia.Entities.Renderer
             _voxelModelManager = voxelModelManager;
             _playerManager = playerManager;
             _isPlayerCharacterOwner = _dynamicEntity is PlayerCharacter;
+            _visualWorldParameters = visualWorldParameters;
 
             DrawOrders.UpdateIndex(0, 5000);
         }
@@ -263,7 +267,7 @@ namespace Utopia.Entities.Renderer
         private void PrepareCubeRendering(CubeResource cube)
         {
             //Get the cube profile.
-            var cubeProfile = RealmConfiguration.CubeProfiles[cube.CubeId];
+            var cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.CubeId];
 
             //Prapare to creation a new mesh with the correct texture mapping ID
             var materialChangeMapping = new Dictionary<int, int>();

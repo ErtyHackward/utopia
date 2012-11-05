@@ -58,6 +58,7 @@ namespace Utopia.Shared.Chunks
 
         private int _bigArraySize;
         private VisualWorldParameters _visualWorldParam;
+        private WorldConfiguration _config;
 
         /// <summary>
         /// Contains the array of visible cubes
@@ -84,6 +85,7 @@ namespace Utopia.Shared.Chunks
             MoveY = 1;
             //Initialize the Big Array
             Cubes = new TerraCube[_visualWorldParam.WorldVisibleSize.X * _visualWorldParam.WorldVisibleSize.Y * _visualWorldParam.WorldVisibleSize.Z];
+            _config = _visualWorldParam.WorldParameters.Configuration;
             _bigArraySize = Cubes.Length;
         }
 
@@ -395,7 +397,7 @@ namespace Utopia.Shared.Chunks
             {
                 cube = Cubes[cubeIndex];
                 // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == RealmConfiguration.CubeId.Air) cube = new TerraCube(CubeId.Error);
-                return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
+                return _config.CubeProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -411,7 +413,7 @@ namespace Utopia.Shared.Chunks
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
+                return _config.CubeProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -426,8 +428,8 @@ namespace Utopia.Shared.Chunks
 
             if (cubePosition.Y  < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
-                cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex]);
-                return RealmConfiguration.CubeProfiles[cubewithPosition.Cube.Id].IsPickable;
+                cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex], _config);
+                return _config.CubeProfiles[cubewithPosition.Cube.Id].IsPickable;
             }
 
             cubewithPosition = new TerraCubeWithPosition();
@@ -443,7 +445,7 @@ namespace Utopia.Shared.Chunks
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return RealmConfiguration.CubeProfiles[cube.Id].IsPickable;
+                return _config.CubeProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -459,7 +461,7 @@ namespace Utopia.Shared.Chunks
 
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
-                return RealmConfiguration.CubeProfiles[Cubes[cubeIndex].Id].IsPickable;
+                return _config.CubeProfiles[Cubes[cubeIndex].Id].IsPickable;
             }
 
             return false;
@@ -471,7 +473,7 @@ namespace Utopia.Shared.Chunks
             if (IndexSafe(MathHelper.Fastfloor(worldPosition.X), MathHelper.Fastfloor(worldPosition.Y), MathHelper.Fastfloor(worldPosition.Z), out index))
             {
                 TerraCube cube = Cubes[index];
-                return RealmConfiguration.CubeProfiles[cube.Id].IsSolidToEntity;
+                return _config.CubeProfiles[cube.Id].IsSolidToEntity;
             }
 
             return true;
@@ -497,7 +499,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            if (RealmConfiguration.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
+                            if (_config.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
                             {
                                 return true;
                             }
@@ -531,7 +533,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            profile = RealmConfiguration.CubeProfiles[Cubes[index].Id];
+                            profile = _config.CubeProfiles[Cubes[index].Id];
                             if (profile.IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
@@ -555,7 +557,7 @@ namespace Utopia.Shared.Chunks
                                     {
                                         //check the head when On a Offseted Block
                                         IndexSafe(x, MathHelper.Fastfloor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
-                                        profile = RealmConfiguration.CubeProfiles[Cubes[index].Id];
+                                        profile = _config.CubeProfiles[Cubes[index].Id];
                                         if (profile.IsSolidToEntity) return true;
                                     }
                                 }
@@ -577,7 +579,7 @@ namespace Utopia.Shared.Chunks
         {
             int index = 0;
             cubeWithPosition = new TerraCubeWithPosition();
-            cubeWithPosition.Cube = new TerraCube(RealmConfiguration.CubeId.Air);
+            cubeWithPosition.Cube = new TerraCube(WorldConfiguration.CubeId.Air);
 
             int X = MathHelper.Fastfloor(FromPosition.X);
             int Z = MathHelper.Fastfloor(FromPosition.Z);
@@ -585,11 +587,11 @@ namespace Utopia.Shared.Chunks
 
             if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
 
-            while (!RealmConfiguration.CubeProfiles[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
+            while (!_config.CubeProfiles[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
             {
                 if (IndexSafe(X, Y, Z, out index))
                 {
-                    if (RealmConfiguration.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
+                    if (_config.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
                     {
                         cubeWithPosition.Cube = Cubes[index];
                         break;
@@ -648,12 +650,12 @@ namespace Utopia.Shared.Chunks
 
             var cube = Cubes[cubeIndex];
 
-            var offset = RealmConfiguration.CubeProfiles[cube.Id].YBlockOffset;
+            var offset = _config.CubeProfiles[cube.Id].YBlockOffset;
 
             if (offset == 0f || offset > pos.Y % 1)
                 return cube;
 
-            cube.Id = RealmConfiguration.CubeId.Air;
+            cube.Id = WorldConfiguration.CubeId.Air;
             return cube;
         }
 
@@ -681,12 +683,12 @@ namespace Utopia.Shared.Chunks
 
             var cube = Cubes[cubeIndex];
 
-            var offset = RealmConfiguration.CubeProfiles[cube.Id].YBlockOffset;
+            var offset = _config.CubeProfiles[cube.Id].YBlockOffset;
 
             if (offset == 0f || offset > pos.Y % 1)
                 return cube;
 
-            cube.Id = RealmConfiguration.CubeId.Air;
+            cube.Id = WorldConfiguration.CubeId.Air;
             return cube;
         }
     }

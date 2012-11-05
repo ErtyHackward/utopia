@@ -13,24 +13,27 @@ using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using Utopia.Resources.VertexFormats;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.World;
 
 namespace Utopia.Worlds.Cubes
 {
     public class SolidCubeMeshFactory : ICubeMeshFactory
     {
         private SingleArrayChunkContainer _cubesHolder;
+        private VisualWorldParameters _wp;
 
-        public SolidCubeMeshFactory(SingleArrayChunkContainer cubesHolder)
+        public SolidCubeMeshFactory(SingleArrayChunkContainer cubesHolder, VisualWorldParameters wp)
         {
             _cubesHolder = cubesHolder;
+            _wp = wp;
         }
 
         //Default Face Generation Checks !
         public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
         {
             //By default I don't need to trace the cubeFace of my cube if the face NeightBor cube is blocking light ! (Not see-through)
-            CubeProfile cubeProfile = RealmConfiguration.CubeProfiles[cube.Id];
-            CubeProfile NeighborCubeProfile = RealmConfiguration.CubeProfiles[NeightBorFaceCube.Id];
+            CubeProfile cubeProfile = _wp.WorldParameters.Configuration.CubeProfiles[cube.Id];
+            CubeProfile NeighborCubeProfile = _wp.WorldParameters.Configuration.CubeProfiles[NeightBorFaceCube.Id];
             if ((NeighborCubeProfile.IsSeeThrough) || 
                 ((cubeProfile.SideOffsetMultiplier > 0 ^ NeighborCubeProfile.SideOffsetMultiplier > 0) && cube.Id != NeightBorFaceCube.Id)) return true;
             //Else draw the face
@@ -44,7 +47,7 @@ namespace Utopia.Worlds.Cubes
             int indiceCubeOffset = chunk.SolidCubeIndices.Count;
             ByteColor newColor = cube.EmissiveColor;
 
-            CubeProfile cubeProfile = RealmConfiguration.CubeProfiles[cube.Id];
+            CubeProfile cubeProfile = _wp.WorldParameters.Configuration.CubeProfiles[cube.Id];
             bool IsEmissiveColor = cubeProfile.IsEmissiveColorLightSource;
             //Les 4 vertex de ma face.... en fct de leur position dans le cube leur valeur en Z va changer ! (Face Top, Bottom, ...
             Vector4B topLeft;
@@ -110,7 +113,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -121,7 +124,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackTop_Cube, BackRightTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -132,7 +135,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackBottom_Cube, BackLeftBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -143,7 +146,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackBottom_Cube, BackRightBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Front, ref  newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Front, ref  newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -184,7 +187,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontLeftTop_Cube, FrontLeft_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -195,7 +198,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontRight_Cube, FrontRightTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -206,7 +209,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontLeft_Cube, FrontLeftBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -217,7 +220,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontRight_Cube, FrontRightBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -258,7 +261,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomLeft_Cube, BottomLeftTop_Cube, BottomTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -269,7 +272,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomRight_Cube, BottomBottom_Cube, BottomRightBottom_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -280,7 +283,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomBottom_Cube, BottomLeft_Cube, BottomLeftBottom_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -291,7 +294,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomTop_Cube, BottomRight_Cube, BottomRightTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -333,7 +336,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopBottom_Cube, TopLeft_Cube, TopLeftBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -344,7 +347,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopTop_Cube, TopLeft_Cube, TopLeftTop_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -355,7 +358,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopBottom_Cube, TopRight_Cube, TopRightBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -366,7 +369,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopTop_Cube, TopRight_Cube, TopRightTop_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -408,7 +411,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightRight_Cube, RightRightTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -419,7 +422,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightLeft_Cube, RightLeftTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -430,7 +433,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightRight_Cube, RightRightBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -441,7 +444,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightLeft_Cube, RightLeftBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -481,7 +484,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LefttRight_Cube, LeftRightTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -492,7 +495,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LeftLeft_Cube, LeftLeftTop_Cube);
                         vertexInfo.X = 1;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -503,7 +506,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LeftLeft_Cube, LeftLeftBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, RealmConfiguration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 
@@ -514,7 +517,7 @@ namespace Utopia.Worlds.Cubes
                         chunk.CubeVerticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LefttRight_Cube, LeftRightBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, RealmConfiguration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.CubeProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
                         generatedVertex++;
                     }
 

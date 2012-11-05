@@ -284,7 +284,7 @@ namespace Utopia.Shared.World.Processors
             int ZPointLerpedCount = AbstractChunk.ChunkSize.Z / ZSamplingCount;
             int YPointLerpedCount = AbstractChunk.ChunkSize.Y / YSamplingCount;  // TerraWorld.Worldsize.Y / YSamplingCount;
 
-            byte cube = RealmConfiguration.CubeId.Air;
+            byte cube = WorldConfiguration.CubeId.Air;
 
             //Cubic Lerping on the values returned !
             for (int SampledpointX = 0; SampledpointX < XSamplingCount; SampledpointX++)
@@ -323,15 +323,15 @@ namespace Utopia.Shared.World.Processors
 
                                     if (Noise3 > 0 || Y == 0)
                                     {
-                                        cube = RealmConfiguration.CubeId.Stone;
+                                        cube = WorldConfiguration.CubeId.Stone;
                                     }
 
-                                    if (Y == 64 && cube == RealmConfiguration.CubeId.Air)
+                                    if (Y == 64 && cube == WorldConfiguration.CubeId.Air)
                                     {
-                                        cube = RealmConfiguration.CubeId.StillWater;
+                                        cube = WorldConfiguration.CubeId.StillWater;
                                     }
 
-                                    if (cube != RealmConfiguration.CubeId.Air)
+                                    if (cube != WorldConfiguration.CubeId.Air)
                                     {
                                         if (Cubes != null)
                                         {
