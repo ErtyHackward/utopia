@@ -159,7 +159,7 @@ namespace Realms.Client.States
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
-
+            _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
             IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
@@ -222,7 +222,7 @@ namespace Realms.Client.States
             playerEntityManager.HasMouseFocus = true;
             cameraManager.SetCamerasPlugin(playerEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
-            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
+            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;

@@ -68,7 +68,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                                         ILightingManager lightManager,
                                         VisualWorldParameters visualWorldParameters)
         {
-
             _server = server;
             _lightManager = lightManager;
             _worldChunks = worldChunks;
@@ -323,11 +322,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         }
         #endregion
 
-
-        public void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager)
-        {
-            
-        }
     }
 
     public class LandscapeBlockReplacedEventArgs : EventArgs

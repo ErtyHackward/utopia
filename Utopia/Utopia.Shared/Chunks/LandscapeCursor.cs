@@ -4,6 +4,7 @@ using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Settings;
+using Utopia.Shared.World;
 
 namespace Utopia.Shared.Chunks
 {
@@ -16,7 +17,7 @@ namespace Utopia.Shared.Chunks
         private Vector3I _internalPosition;
         private IChunkLayout2D _currentChunk;
         private Vector3I _position;
-        private WorldConfiguration _config;
+        private WorldParameters _wp;
 
         /// <summary>
         /// Occurs when someone tries to write using this cursor
@@ -88,10 +89,10 @@ namespace Utopia.Shared.Chunks
             _currentChunk.BlockData.SetBlock(_internalPosition, value, tag);
         }
 
-        protected LandscapeCursor(ILandscapeManager2D manager, WorldConfiguration config)
+        protected LandscapeCursor(ILandscapeManager2D manager, WorldParameters wp)
         {
             _manager = manager;
-            _config = config;
+            _wp = wp;
         }
         
         /// <summary>
@@ -99,8 +100,8 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="manager"></param>
         /// <param name="position"></param>
-        public LandscapeCursor(ILandscapeManager2D manager, Vector3I position, WorldConfiguration config)
-            : this(manager, config)
+        public LandscapeCursor(ILandscapeManager2D manager, Vector3I position, WorldParameters wp)
+            : this(manager, wp)
         {
             GlobalPosition = position;
         }
@@ -111,7 +112,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public ILandscapeCursor Clone()
         {
-            var cursor = new LandscapeCursor(_manager, _config)
+            var cursor = new LandscapeCursor(_manager, _wp)
                              {
                                  _position = _position,
                                  _internalPosition = _internalPosition,
@@ -218,12 +219,12 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public CubeProfile PeekProfile(Vector3I moveVector)
         {
-            return _config.CubeProfiles[PeekValue(moveVector)];
+            return _wp.Configuration.CubeProfiles[PeekValue(moveVector)];
         }
 
         public CubeProfile PeekProfile()
         {
-            return _config.CubeProfiles[Read()];
+            return _wp.Configuration.CubeProfiles[Read()];
         }
 
         /// <summary>
@@ -285,7 +286,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public bool IsSolid()
         {
-            return _config.CubeProfiles[Read()].IsSolidToEntity;
+            return _wp.Configuration.CubeProfiles[Read()].IsSolidToEntity;
         }
 
     }
