@@ -58,7 +58,7 @@ namespace Sandbox.Client.Components
            
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
 
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam.Configuration);
+            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
