@@ -108,7 +108,8 @@ namespace Utopia.Server.Managers
         /// </summary>
         public int ChunksSaved { get; set; }
 
-        public ServerLandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, EntityFactory factory, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval, int chunksLimit)
+        public ServerLandscapeManager(Server server, IChunksStorage chunksStorage, WorldGenerator generator, EntityFactory factory, int chunkLiveTimeMinutes, int cleanUpInterval, int saveInterval, int chunksLimit, WorldConfiguration config)
+            : base(config)
         {
             ChunkLiveTimeMinutes = chunkLiveTimeMinutes;
             CleanUpInterval = cleanUpInterval;
@@ -523,7 +524,7 @@ namespace Utopia.Server.Managers
 
             for (y = 127; y >= 0; y--)
             {
-                if(chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != RealmConfiguration.CubeId.Air)
+                if(chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != WorldConfiguration.CubeId.Air)
                     break;
                 
             }

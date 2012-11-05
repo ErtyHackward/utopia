@@ -18,6 +18,9 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
+
+        public WorldConfiguration Config { get; set; }
+
         /// <summary>
         /// Gets landscape manager used to create new tools
         /// </summary>
@@ -87,7 +90,7 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.Plant:
                         entity = new Plant();
                         break;
-                    case EntityClassId.CubeResource: 
+                    case EntityClassId.CubeResource:
                         entity = new CubeResource();
                         break;
                     case EntityClassId.SideLightSource:
@@ -123,7 +126,7 @@ namespace Utopia.Shared.Entities
             }
 
             Entity entity = null;
-            if (RealmConfiguration.BluePrints.TryGetValue(bluePrintID, out entity) == false)
+            if (Config.BluePrints.TryGetValue(bluePrintID, out entity) == false)
             {
                 throw new ArgumentOutOfRangeException("bluePrintID");
             }

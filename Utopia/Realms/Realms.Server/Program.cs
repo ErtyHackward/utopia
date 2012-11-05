@@ -93,7 +93,8 @@ namespace Realms.Server
                 _iocContainer.Get<IUsersStorage>(),
                 _iocContainer.Get<IChunksStorage>(),
                 _iocContainer.Get<IEntityStorage>(),
-                serverFactory
+                serverFactory,
+                null
                 );
 
             serverFactory.LandscapeManager = _server.LandscapeManager;
@@ -110,7 +111,7 @@ namespace Realms.Server
             {
             }
             
-            _gameplay = new ServerGameplayProvider(_server);
+            _gameplay = new ServerGameplayProvider(_server, null);
 
             _server.Services.Add(new TestNpcService());
             _server.Services.Add(new BlueprintRecorderService());

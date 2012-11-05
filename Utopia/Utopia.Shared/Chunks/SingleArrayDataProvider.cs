@@ -103,7 +103,7 @@ namespace Utopia.Shared.Chunks
             //Must look from World Top to bottom to recompute the new High Block !
             int yPosi = AbstractChunk.ChunkSize.Y - 1;
             int index = ChunkCubes.Index(worldPosition.X, yPosi, worldPosition.Z);
-            while (ChunkCubes.Cubes[index].Id == RealmConfiguration.CubeId.Air && yPosi > 0)
+            while (ChunkCubes.Cubes[index].Id == WorldConfiguration.CubeId.Air && yPosi > 0)
             {
                 index = ChunkCubes.FastIndex(index, yPosi, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
                 yPosi--;

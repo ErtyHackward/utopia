@@ -13,19 +13,19 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Public Properties
-        [TypeConverter(typeof(CubeConverter))]
+        [TypeConverter(typeof(CubeConverter))] //Display Cube List
         [DisplayName("Entity")]
         public string EntityName
         {
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.Entities.First(x => x.BluePrintId == BluePrintId).Name;
+                return EditorConfigHelper.Config.Entities.First(x => x.BluePrintId == BluePrintId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                BluePrintId = RealmConfiguration.Entities.First(x => x.Name == value).BluePrintId;
+                BluePrintId = EditorConfigHelper.Config.Entities.First(x => x.Name == value).BluePrintId;
             }
         }
         #endregion
@@ -66,7 +66,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(RealmConfiguration.Entities.Select(x => x.Name).OrderBy(x => x).ToList());
+                return new StandardValuesCollection(EditorConfigHelper.Config.Entities.Select(x => x.Name).OrderBy(x => x).ToList());
             }
         }
     }

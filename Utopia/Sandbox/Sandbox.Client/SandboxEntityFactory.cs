@@ -1,4 +1,5 @@
-﻿using Utopia.Shared.Entities;
+﻿using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 
 namespace Sandbox.Client

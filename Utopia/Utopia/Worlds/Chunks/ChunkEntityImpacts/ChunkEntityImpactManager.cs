@@ -14,6 +14,7 @@ using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
 using System.Collections.Generic;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.World;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -27,6 +28,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private IChunkStorageManager _chunkStorageManager;
         private ILightingManager _lightManager;
         private List<TerraCubePositionTag> _onHoldNetworkMsg = new List<TerraCubePositionTag>(1000);
+        private VisualWorldParameters _visualWorldParameters;
         #endregion
 
         #region Public variables/properties
@@ -63,7 +65,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                                         SingleArrayChunkContainer cubesHolder,
                                         IWorldChunks worldChunks,
                                         IChunkStorageManager chunkStorageManager,
-                                        ILightingManager lightManager)
+                                        ILightingManager lightManager,
+                                        VisualWorldParameters visualWorldParameters)
         {
 
             _server = server;
@@ -72,6 +75,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _chunkStorageManager = chunkStorageManager;
             _server.MessageBlockChange += ServerConnection_MessageBlockChange;
             _cubesHolder = cubesHolder;
+            _visualWorldParameters = visualWorldParameters;
 
             _initialized = true;
         }
@@ -106,7 +110,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 BlockTag tag = e.Message.Tags != null ? e.Message.Tags[i] : null;
                 if (ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], true, tag) == false)
                 {
-                    _onHoldNetworkMsg.Add(new TerraCubePositionTag(e.Message.BlockPositions[i], e.Message.BlockValues[i], tag));
+                    _onHoldNetworkMsg.Add(new TerraCubePositionTag(e.Message.BlockPositions[i], e.Message.BlockValues[i], tag, _visualWorldParameters.WorldParameters.Configuration));
                 }
             }
 
@@ -140,7 +144,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             //Get Cube Profile
-            CubeProfile cubeProfile = RealmConfiguration.CubeProfiles[replacementCubeId];
+            CubeProfile cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[replacementCubeId];
 
             ////Check if the cube is not already the same ? ! ?
             TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
@@ -167,7 +171,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             //Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
-            TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId);
+            TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId, _visualWorldParameters.WorldParameters.Configuration);
             ThreadsManager.RunAsync(() => CheckImpact(cube, impactedChunk), ThreadsManager.ThreadTaskPriority.High);
 
             //Raise event for sound
@@ -211,8 +215,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             //Propagate the light, we add one cube around the previous Range !! <= !!
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
-            
-            CubeProfile profile = RealmConfiguration.CubeProfiles[cube.Cube.Id];
+
+            CubeProfile profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Cube.Id];
 
             //Find the chunks that have been impacted around the 8 surrounding chunks
             cubeChunk.State = ChunkState.OuterLightSourcesProcessed;
@@ -310,7 +314,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public ILandscapeCursor GetCursor(Vector3I blockPosition)
         {
-            return new SingleArrayLandscapeCursor(this, blockPosition);
+            return new SingleArrayLandscapeCursor(this, blockPosition, _visualWorldParameters.WorldParameters.Configuration);
         }
 
         public ILandscapeCursor GetCursor(Vector3D entityPosition)
@@ -320,6 +324,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         #endregion
 
 
+        public void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager)
+        {
+            
+        }
     }
 
     public class LandscapeBlockReplacedEventArgs : EventArgs
