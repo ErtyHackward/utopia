@@ -93,6 +93,9 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.SideLightSource:
                         entity = new SideLightSource();
                         break;
+                    case EntityClassId.Container:
+                        entity = new Container();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
                 }
