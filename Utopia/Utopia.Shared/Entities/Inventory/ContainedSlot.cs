@@ -1,5 +1,4 @@
 using System.IO;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Inventory

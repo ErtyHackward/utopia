@@ -172,14 +172,14 @@
             // officialSiteToolStripMenuItem
             // 
             this.officialSiteToolStripMenuItem.Name = "officialSiteToolStripMenuItem";
-            this.officialSiteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.officialSiteToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.officialSiteToolStripMenuItem.Text = "Official site";
             this.officialSiteToolStripMenuItem.Click += new System.EventHandler(this.officialSiteToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem1
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
             this.aboutToolStripMenuItem1.Text = "About...";
             this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.aboutToolStripMenuItem1_Click);
             // 
