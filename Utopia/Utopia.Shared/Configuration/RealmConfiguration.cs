@@ -126,10 +126,28 @@ namespace Utopia.Shared.Configuration
         }
 
         /// <summary>
-        /// Hold Params for Utopia processor
+        /// Holds parameters for Utopia processor
         /// </summary>
         [Browsable(false)]
         public UtopiaProcessorParams UtopiaProcessorParam { get; set; }
+
+        /// <summary>
+        /// Holds a server services list with parameters
+        /// The key is a type name
+        /// The value is a initializarion string
+        /// 
+        /// You can see strings here instead of Services itself because of need to link server library here
+        /// </summary>
+        [Browsable(false)]
+        public List<KeyValuePair<string,string>> Services { get; set; }
+
+        /// <summary>
+        /// Key is a Blueprint Id
+        /// Value is a count of items
+        /// </summary>
+        [Browsable(false)]
+        [Description("Defines the start set of stuff for the player")]
+        public List<KeyValuePair<int, int>> StartStuff { get; set; }
 
         #endregion
 
@@ -143,6 +161,9 @@ namespace Utopia.Shared.Configuration
             BluePrints = new Dictionary<ushort, Entity>();
             CubeProfiles = new CubeProfile[255];
             Biomes = new List<Biome>();
+            Services = new List<KeyValuePair<string, string>>();
+            StartStuff = new List<KeyValuePair<int, int>>();
+
             UtopiaProcessorParam = new UtopiaProcessorParams();
             WorldProcessor = WorldProcessors.Utopia;
 
@@ -176,22 +197,37 @@ namespace Utopia.Shared.Configuration
             writer.Write(WorldHeight);
 
             writer.Write(Entities.Count);
-            foreach (IEntity entitySample in Entities)
+            foreach (var entitySample in Entities)
             {
                 entitySample.Save(writer);
             }
 
             writer.Write(CubeProfiles.Where(x => x != null && x.Name != "System Reserved").Count());
-            foreach (CubeProfile cubeProfile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
+            foreach (var cubeProfile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
             {
                 cubeProfile.Save(writer);
             }
 
             writer.Write(Biomes.Count);
-            foreach (Biome biome in Biomes)
+            foreach (var biome in Biomes)
             {
                 biome.Save(writer);
             }
+
+            writer.Write(Services.Count);
+            foreach (var pair in Services)
+            {
+                writer.Write(pair.Key);
+                writer.Write(pair.Value);
+            }
+
+            writer.Write(StartStuff.Count);
+            foreach (var pair in StartStuff)
+            {
+                writer.Write(pair.Key);
+                writer.Write(pair.Value);
+            }
+            
 
             UtopiaProcessorParam.Save(writer);
         }
@@ -214,7 +250,7 @@ namespace Utopia.Shared.Configuration
             int countEntity = reader.ReadInt32();
             for (var i = 0; i < countEntity; i++)
             {
-                Entity entity = _factory.CreateFromBytes(reader);
+                var entity = _factory.CreateFromBytes(reader);
                 Entities.Add(entity);
                 BluePrints.Add(entity.BluePrintId, entity);
             }
@@ -223,19 +259,36 @@ namespace Utopia.Shared.Configuration
             var countCubes = reader.ReadInt32();
             for (var i = 0; i < countCubes; i++)
             {
-                CubeProfile cp = new CubeProfile();
+                var cp = new CubeProfile();
                 cp.Load(reader);
                 CubeProfiles[i] = cp;
             }
 
             FilledUpReservedCubeInArray();
 
+            Biomes.Clear();
             var countBiomes = reader.ReadInt32();
             for (var i = 0; i < countBiomes; i++)
             {
-                Biome biome = new Biome();
+                var biome = new Biome();
                 biome.Load(reader);
                 Biomes.Add(biome);
+            }
+
+            Services.Clear();
+            var servicesCount = reader.ReadInt32();
+            for (int i = 0; i < servicesCount; i++)
+            {
+                var pair = new KeyValuePair<string, string>(reader.ReadString(), reader.ReadString());
+                Services.Add(pair);
+            }
+
+            StartStuff.Clear();
+            var startStuffCount = reader.ReadInt32();
+            for (int i = 0; i < startStuffCount; i++)
+            {
+                var pair = new KeyValuePair<int, int>(reader.ReadInt32(), reader.ReadInt32());
+                StartStuff.Add(pair);
             }
 
             UtopiaProcessorParam.Load(reader);

@@ -31,8 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 1, 1);
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("WorldProcessor Params");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -172,14 +172,14 @@
             // officialSiteToolStripMenuItem
             // 
             this.officialSiteToolStripMenuItem.Name = "officialSiteToolStripMenuItem";
-            this.officialSiteToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.officialSiteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.officialSiteToolStripMenuItem.Text = "Official site";
             this.officialSiteToolStripMenuItem.Click += new System.EventHandler(this.officialSiteToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem1
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
+            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem1.Text = "About...";
             this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.aboutToolStripMenuItem1_Click);
             // 
@@ -213,10 +213,13 @@
             treeNode2.SelectedImageIndex = 2;
             treeNode2.Text = "Entities";
             treeNode3.ContextMenuStrip = this.contextMenuCategories;
-            treeNode3.ImageIndex = 0;
+            treeNode3.ImageIndex = 4;
             treeNode3.Name = "Cubes";
+            treeNode3.SelectedImageIndex = 4;
             treeNode3.Text = "Cubes";
+            treeNode4.ImageIndex = 5;
             treeNode4.Name = "WorldProcessor Params";
+            treeNode4.SelectedImageIndex = 5;
             treeNode4.Text = "WorldProcessor Params";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
@@ -235,6 +238,10 @@
             this.imageList1.Images.SetKeyName(0, "question.png");
             this.imageList1.Images.SetKeyName(1, "general.png");
             this.imageList1.Images.SetKeyName(2, "entities.png");
+            this.imageList1.Images.SetKeyName(3, "start.png");
+            this.imageList1.Images.SetKeyName(4, "cube.png");
+            this.imageList1.Images.SetKeyName(5, "world.png");
+            this.imageList1.Images.SetKeyName(6, "wrench.png");
             // 
             // label1
             // 
