@@ -372,7 +372,7 @@ namespace Utopia.Shared.Chunks
         {
             //Must look from World Top to bottom to recompute the new High Block !
             int yPosi = AbstractChunk.ChunkSize.Y - 1;
-            while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == RealmConfiguration.CubeId.Air && yPosi > 0)
+            while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
             {
                 yPosi--;
             }

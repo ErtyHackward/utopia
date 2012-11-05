@@ -28,12 +28,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == SurfaceCube).Name;
+                return _config.CubeProfiles.First(x => x.Id == SurfaceCube).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                SurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+                SurfaceCube = _config.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
 
@@ -44,12 +44,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == UnderSurfaceCube).Name;
+                return _config.CubeProfiles.First(x => x.Id == UnderSurfaceCube).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                UnderSurfaceCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+                UnderSurfaceCube = _config.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
 
@@ -60,15 +60,21 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == GroundCube).Name;
+                return _config.CubeProfiles.First(x => x.Id == GroundCube).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                GroundCube = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+                GroundCube = _config.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
         #endregion
+
+        //Should only be used by Editor
+        public Biome()
+        {
+            _config = EditorConfigHelper.Config;
+        }
 
         #region Public Methods
         public void Save(BinaryWriter writer)
@@ -195,7 +201,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
+                return new StandardValuesCollection(EditorConfigHelper.Config.CubeProfiles.Where(x => x != null).Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
             }
         }
     }

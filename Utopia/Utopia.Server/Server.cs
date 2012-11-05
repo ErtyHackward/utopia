@@ -7,6 +7,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 using S33M3CoreComponents.Config;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Server
 {
@@ -15,6 +16,9 @@ namespace Utopia.Server
     /// </summary>
     public class Server : IDisposable
     {
+
+        private WorldConfiguration _config;
+
         /// <summary>
         /// Modify this constant to actual value
         /// </summary>
@@ -107,7 +111,8 @@ namespace Utopia.Server
             IUsersStorage usersStorage,
             IChunksStorage chunksStorage,
             IEntityStorage entityStorage,
-            EntityFactory entityFactory
+            EntityFactory entityFactory,
+            WorldConfiguration config
             )
         {
             // dependency injection
@@ -115,6 +120,7 @@ namespace Utopia.Server
             UsersStorage = usersStorage;
             EntityStorage = entityStorage;
             EntityFactory = entityFactory;
+            _config = config;
 
             if (SettingsManager.Settings == null)
                 SettingsManager.Load();
@@ -128,7 +134,7 @@ namespace Utopia.Server
 
             Scheduler = new ScheduleManager(Clock);
 
-            LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, EntityFactory, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval, settings.ChunksCountLimit);
+            LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, EntityFactory, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval, settings.ChunksCountLimit, _config);
             
             AreaManager = new AreaManager(this);
 

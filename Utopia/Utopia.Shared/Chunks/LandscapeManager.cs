@@ -2,6 +2,7 @@ using System;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Chunks
 {
@@ -11,6 +12,9 @@ namespace Utopia.Shared.Chunks
     /// <typeparam name="T"></typeparam>
     public abstract class LandscapeManager<T> : ILandscapeManager2D where T : AbstractChunk, IChunkLayout2D
     {
+
+        private WorldConfiguration _config;
+
         /// <summary>
         /// Gets chunk from chunk global position
         /// </summary>
@@ -31,8 +35,10 @@ namespace Utopia.Shared.Chunks
                                       (int)Math.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
         }
 
-
-
+        public LandscapeManager(WorldConfiguration config)
+        {
+            _config = config;
+        }
 
         /// <summary>
         /// Gets the chunk at position specified
@@ -58,7 +64,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public ILandscapeCursor GetCursor(Vector3I blockPosition)
         {
-            return new LandscapeCursor(this, blockPosition);
+            return new LandscapeCursor(this, blockPosition, _config);
         }
 
         public ILandscapeCursor GetCursor(Vector3D entityPosition)

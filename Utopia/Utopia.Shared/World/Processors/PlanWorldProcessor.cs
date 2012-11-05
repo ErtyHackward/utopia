@@ -80,16 +80,16 @@ namespace Utopia.Shared.World.Processors
                 {
                     var pointData = GetPointData(new Point(pos.X * AbstractChunk.ChunkSize.X + x, pos.Y * AbstractChunk.ChunkSize.Z + z));
 
-                    var topGroundBlock = RealmConfiguration.CubeId.Grass;
-                    var undegroundBlock = RealmConfiguration.CubeId.Dirt;
+                    var topGroundBlock = WorldConfiguration.CubeId.Grass;
+                    var undegroundBlock = WorldConfiguration.CubeId.Dirt;
 
                     if (pointData.IsRiver)
-                        topGroundBlock = RealmConfiguration.CubeId.StillWater;
+                        topGroundBlock = WorldConfiguration.CubeId.StillWater;
 
                     if (Biome.IsDesert(pointData.Biome))
                     {
-                        topGroundBlock = RealmConfiguration.CubeId.Sand;
-                        undegroundBlock = RealmConfiguration.CubeId.Sand;
+                        topGroundBlock = WorldConfiguration.CubeId.Sand;
+                        undegroundBlock = WorldConfiguration.CubeId.Sand;
                     }
 
                     bool trees = Biome.IsForest(pointData.Biome);
@@ -104,7 +104,7 @@ namespace Utopia.Shared.World.Processors
                         }
                         else if (y <= 64)
                         {
-                            chunk.BlockData[new Vector3I(x, y, z)] = RealmConfiguration.CubeId.StillWater;
+                            chunk.BlockData[new Vector3I(x, y, z)] = WorldConfiguration.CubeId.StillWater;
                         }
 
                         if (y == pointData.Elevation)
@@ -113,7 +113,7 @@ namespace Utopia.Shared.World.Processors
                             {
                                 chunk.BlockData[new Vector3I(x, y, z)] = topGroundBlock;
 
-                                if (topGroundBlock == RealmConfiguration.CubeId.Grass)
+                                if (topGroundBlock == WorldConfiguration.CubeId.Grass)
                                 {
                                     if (trees && r.NextDouble() < 0.005d)
                                     {
@@ -186,7 +186,7 @@ namespace Utopia.Shared.World.Processors
                                         }
                                     }
                                 }
-                                if (topGroundBlock == RealmConfiguration.CubeId.Sand)
+                                if (topGroundBlock == WorldConfiguration.CubeId.Sand)
                                 {
                                     double result = r.NextDouble();
                                     if (result <= 0.001)
@@ -202,7 +202,7 @@ namespace Utopia.Shared.World.Processors
 
                                 break;
                             }
-                            chunk.BlockData[new Vector3I(x, y, z)] = RealmConfiguration.CubeId.Sand;
+                            chunk.BlockData[new Vector3I(x, y, z)] = WorldConfiguration.CubeId.Sand;
                         }
                     }
                 }
@@ -217,7 +217,7 @@ namespace Utopia.Shared.World.Processors
 
             for (int i = 0; i < 7; i++)
             {
-                TryAddBlock(chunk, vector3i, RealmConfiguration.CubeId.Trunk);
+                TryAddBlock(chunk, vector3i, WorldConfiguration.CubeId.Trunk);
                 vector3i.Y++;
             }
 
@@ -229,7 +229,7 @@ namespace Utopia.Shared.World.Processors
                 {
                     for (int z = -radius; z <= radius; z++)
                     {
-                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), RealmConfiguration.CubeId.Foliage);
+                        TryAddBlock(chunk, new Vector3I(vector3i.X + x, vector3i.Y, vector3i.Z + z), WorldConfiguration.CubeId.Foliage);
                     }
                 }
 

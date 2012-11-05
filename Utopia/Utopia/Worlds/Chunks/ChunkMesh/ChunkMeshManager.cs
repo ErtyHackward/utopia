@@ -134,10 +134,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         currentCube = _cubesHolder.Cubes[cubeIndex];
 
                         // ? Am I an Air Cube ? ==> Default Value, not needed to render !
-                        if (currentCube.Id == RealmConfiguration.CubeId.Air) continue;
+                        if (currentCube.Id == WorldConfiguration.CubeId.Air) continue;
 
                         //The Cube profile contain the value that are fixed for a block type.
-                        cubeProfile = RealmConfiguration.CubeProfiles[currentCube.Id];
+                        cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[currentCube.Id];
 
                         cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
                         cubePosiInChunk = new Vector4B(x, y, z);
@@ -193,10 +193,10 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         }
                         else
                         {
-                            neightborCube = new TerraCube(RealmConfiguration.CubeId.Air);
+                            neightborCube = new TerraCube(WorldConfiguration.CubeId.Air);
                         }
 
-                        neightborCubeProfile = RealmConfiguration.CubeProfiles[neightborCube.Id];
+                        neightborCubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[neightborCube.Id];
 
                         //Check if a tag is present and ICubeYOffsetModifier is implementad by the tag;
                         float cubeYOffset = (float)cubeProfile.YBlockOffset;    //Natural YOffset of the Cube

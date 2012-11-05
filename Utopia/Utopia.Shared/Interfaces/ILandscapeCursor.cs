@@ -2,6 +2,7 @@ using System;
 using Utopia.Shared.Chunks;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Interfaces
 {
@@ -61,6 +62,21 @@ namespace Utopia.Shared.Interfaces
         /// <param name="tag"> </param>
         /// <returns></returns>
         byte PeekValue<T>(Vector3I moveVector, out T tag) where T: BlockTag;
+
+
+        /// <summary>
+        /// Return Cube profile
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <returns></returns>
+        CubeProfile PeekProfile();
+
+        /// <summary>
+        /// Return Cube profile
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <returns></returns>
+        CubeProfile PeekProfile(Vector3I moveVector);
 
         /// <summary>
         /// Moves current cursor and returns itself (Fluent interface)

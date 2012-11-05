@@ -28,6 +28,7 @@ namespace Utopia.Entities
             public IndexBuffer<ushort> Ib;
         }
 
+        private WorldConfiguration _config;
         private readonly D3DEngine _d3DEngine;
         private HLSLCubeTool _cubeEffect;
         private IMeshFactory _milkShapeMeshfactory;
@@ -45,9 +46,10 @@ namespace Utopia.Entities
             get { return _cubeEffect; }
         }
 
-        public TerraCubes(D3DEngine d3DEngine)
+        public TerraCubes(D3DEngine d3DEngine, WorldConfiguration config)
         {
             _d3DEngine = d3DEngine;
+            _config = config;
         }
 
         public override void Initialize()
@@ -65,12 +67,12 @@ namespace Utopia.Entities
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
             
-            foreach (var cubeId in RealmConfiguration.CubeId.All())
+            foreach (var cubeId in WorldConfiguration.CubeId.All())
             {
                 CubePack pack;
 
                 //Get the cube profile.
-                var cubeProfile = RealmConfiguration.CubeProfiles[cubeId];
+                var cubeProfile = _config.CubeProfiles[cubeId];
 
                 //Prapare to creation of a new mesh with the correct texture mapping ID
                 var materialChangeMapping = new Dictionary<int, int>();

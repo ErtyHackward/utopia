@@ -122,7 +122,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         //Create SunLight LightSources from AIR blocs
-                        cubeprofile = RealmConfiguration.CubeProfiles[_cubesHolder.Cubes[index].Id];
+                        cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id];
                         if ((!blockLight && cubeprofile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
                         if (!blockLight)
                         {
@@ -148,9 +148,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                         if (cubeprofile.IsEmissiveColorLightSource)
                         {
-                            _cubesHolder.Cubes[index].EmissiveColor.R = RealmConfiguration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.R;
-                            _cubesHolder.Cubes[index].EmissiveColor.G = RealmConfiguration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.G;
-                            _cubesHolder.Cubes[index].EmissiveColor.B = RealmConfiguration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.B;
+                            _cubesHolder.Cubes[index].EmissiveColor.R = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.R;
+                            _cubesHolder.Cubes[index].EmissiveColor.G = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.G;
+                            _cubesHolder.Cubes[index].EmissiveColor.B = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.B;
                         }
                         else
                         {
@@ -224,7 +224,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             int index = _cubesHolder.Index(ref cubePosition);
             TerraCube cube = _cubesHolder.Cubes[index];
 
-            cubeprofile = RealmConfiguration.CubeProfiles[cube.Id];
+            cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
             if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) return;
             PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
 
@@ -253,7 +253,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         cube = _cubesHolder.Cubes[index];
-                        cubeprofile = RealmConfiguration.CubeProfiles[cube.Id];
+                        cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
 
                         if (cube.IsSunLightSource || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
@@ -292,7 +292,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                 //End propagation ?
                 cube = _cubesHolder.Cubes[index];
-                cubeprofile = RealmConfiguration.CubeProfiles[cube.Id];
+                cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
                 if (cubeprofile.IsBlockingLight) return;      // Do nothing if my block don't let the light pass !
                 switch (lightComp)
                 {
