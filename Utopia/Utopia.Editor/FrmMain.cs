@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -13,12 +14,11 @@ namespace Utopia.Editor
 {
     public partial class FrmMain : Form
     {
-        #region Private Variables
         private string _filePath;
         private int _entitiesOffset;
         private WorldConfiguration _configuration;
         private FrmUtopiaProcessorConfig _utopiaConfig;
-        #endregion
+        private Dictionary<string, Image> _icons;
 
         #region Public Properties
         public WorldConfiguration Configuration
@@ -35,7 +35,10 @@ namespace Utopia.Editor
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
 
-                    _utopiaConfig.LoadConfigParam(_configuration.ProcessorParam);                    
+                    _utopiaConfig.LoadConfigParam(_configuration.ProcessorParam);  
+                  
+                    // generate icons for the configuration
+                    _icons = Program.IconManager.GenerateIcons(_configuration);
                 }
                 else
                 {

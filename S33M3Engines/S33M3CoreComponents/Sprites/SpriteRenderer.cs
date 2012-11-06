@@ -1,4 +1,5 @@
-﻿using S33M3CoreComponents.Sprites;
+﻿using System.IO;
+using S33M3CoreComponents.Sprites;
 using SharpDX;
 using S33M3CoreComponents.Sprites.Interfaces;
 using S33M3DXEngine;
@@ -23,6 +24,7 @@ namespace S33M3CoreComponents.Sprites
 
         #region Private variables
         private D3DEngine _d3DEngine;
+        private readonly string _shaderFilePath;
         private SamplerState _spriteSamplerWrap, _spriteSamplerClamp;
         private HLSLSprites2 _effect;
         private int _rasterStateWithoutScissorId, _blendStateId, _depthStateWithDepthId, _depthStateWithoutDepthId, _rasterStateWithScissorId;
@@ -55,10 +57,19 @@ namespace S33M3CoreComponents.Sprites
         #endregion
 
         public SpriteRenderer(D3DEngine d3DEngine)
+            : this(d3DEngine, @"Effects\Sprites\Sprites2.hlsl")
+        {
+
+        }
+
+        public SpriteRenderer(D3DEngine d3DEngine, string shaderFilePath)
         {
             _d3DEngine = d3DEngine;
+            _shaderFilePath = shaderFilePath;
             Initialize();
         }
+
+
 
         #region Public methods
 
@@ -371,7 +382,7 @@ namespace S33M3CoreComponents.Sprites
             });
 
             //Create the effect and set the default texture sampler
-            _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device));
+            _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device, _shaderFilePath));
 
             //Buffer creation
             _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Dynamic, 20));
