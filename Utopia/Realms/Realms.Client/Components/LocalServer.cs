@@ -14,6 +14,7 @@ using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors.Utopia;
@@ -94,17 +95,16 @@ namespace Realms.Client.Components
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
-            foreach (var cubeId in WorldConfiguration.CubeId.All())
+            foreach (CubeProfile profile in _worldParam.Configuration.GettAllCubesProfiles())
             {
-                if (cubeId == WorldConfiguration.CubeId.Air)
+                if (profile.Id == WorldConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.SetCube(cubeId, _worldParam.Configuration.CubeProfiles[cubeId].Name);
+                item3.SetCube(profile.Id, profile.Name);
                 dEntity.Inventory.PutItem(item3);
             }
 
-            //dEntity.Inventory.PutItem(_server.EntityFactory.CreateEntity<SideLightSource>());
 
             e.PlayerEntity = dEntity;
         }

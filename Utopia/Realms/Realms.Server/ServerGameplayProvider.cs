@@ -6,6 +6,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Settings;
 
 namespace Realms.Server
 {
@@ -39,16 +40,16 @@ namespace Realms.Server
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Add Items in inventory, every cubes
-            foreach (var cubeId in WorldConfiguration.CubeId.All())
+            foreach (CubeProfile profile in _config.GettAllCubesProfiles())
             {
-                if (cubeId == WorldConfiguration.CubeId.Air)
+                if (profile.Id == WorldConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.SetCube(cubeId, _config.CubeProfiles[cubeId].Name);
+                item3.SetCube(profile.Id, profile.Name);
                 dEntity.Inventory.PutItem(item3);
-
             }
+
             //Add coins + Torch
             var torch = _server.EntityFactory.CreateEntity<SideLightSource>();
             dEntity.Inventory.PutItem(torch);

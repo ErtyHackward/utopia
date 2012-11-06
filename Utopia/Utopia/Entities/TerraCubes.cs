@@ -66,22 +66,19 @@ namespace Utopia.Entities
             // todo: load textures only once in whole project
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
-            
-            foreach (var cubeId in WorldConfiguration.CubeId.All())
+
+            foreach (var cube in _config.GettAllCubesProfiles())
             {
                 CubePack pack;
 
-                //Get the cube profile.
-                var cubeProfile = _config.CubeProfiles[cubeId];
-
                 //Prapare to creation of a new mesh with the correct texture mapping ID
                 var materialChangeMapping = new Dictionary<int, int>();
-                materialChangeMapping[0] = cubeProfile.Tex_Back;    //Change the Back Texture Id
-                materialChangeMapping[1] = cubeProfile.Tex_Front;   //Change the Front Texture Id
-                materialChangeMapping[2] = cubeProfile.Tex_Bottom;  //Change the Bottom Texture Id
-                materialChangeMapping[3] = cubeProfile.Tex_Top;     //Change the Top Texture Id
-                materialChangeMapping[4] = cubeProfile.Tex_Left;    //Change the Left Texture Id
-                materialChangeMapping[5] = cubeProfile.Tex_Right;   //Change the Right Texture Id
+                materialChangeMapping[0] = cube.Tex_Back;    //Change the Back Texture Id
+                materialChangeMapping[1] = cube.Tex_Front;   //Change the Front Texture Id
+                materialChangeMapping[2] = cube.Tex_Bottom;  //Change the Bottom Texture Id
+                materialChangeMapping[3] = cube.Tex_Top;     //Change the Top Texture Id
+                materialChangeMapping[4] = cube.Tex_Left;    //Change the Left Texture Id
+                materialChangeMapping[5] = cube.Tex_Right;   //Change the Right Texture Id
 
                 pack.Mesh = _cubeMeshBluePrint.Clone(materialChangeMapping);
                 
@@ -91,7 +88,7 @@ namespace Utopia.Entities
                 pack.Vb.SetData(_d3DEngine.ImmediateContext, pack.Mesh.Vertices);
                 pack.Ib.SetData(_d3DEngine.ImmediateContext, pack.Mesh.Indices);
 
-                _cache.Add(cubeId, pack);
+                _cache.Add(cube.Id, pack);
             }
             
             _cubeEffect = ToDispose(new HLSLCubeTool(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));

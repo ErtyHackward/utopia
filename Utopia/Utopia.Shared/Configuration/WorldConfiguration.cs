@@ -309,6 +309,14 @@ namespace Utopia.Shared.Configuration
 
             return instance;
         }
+
+        public IEnumerable<CubeProfile> GettAllCubesProfiles()
+        {
+            foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
+            {
+                yield return profile;
+            }
+        }
         #endregion
 
         #region Private Methods
@@ -890,27 +898,6 @@ namespace Utopia.Shared.Configuration
             public const byte Cactus = 19;
             public const byte CactusTop = 20;
             public const byte Error = 255;
-
-            public static IEnumerable<byte> All()
-            {
-                //foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
-                //{
-                //    yield return profile.I
-                //}
-                yield return Air;
-                yield return Stone;
-                yield return Dirt;
-                yield return Grass;
-                yield return StillWater;
-                yield return DynamicWater;
-                yield return LightWhite;
-                yield return Rock;
-                yield return Sand;
-                yield return Gravel;
-                yield return GoldOre;
-                yield return CoalOre;
-                yield return MoonStone;
-            }
         }
 
         public static class BluePrintId
