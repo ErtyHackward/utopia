@@ -205,10 +205,10 @@ namespace Utopia.Editor
 
             //Clear all the Biomes node items
             _utopiaConfig.tvBiomeList.Nodes.Clear();
-            
-            for (var i = 0; i < _configuration.Biomes.Count; i++)
+
+            for (var i = 0; i < _configuration.UtopiaProcessorParam.Biomes.Count; i++)
             {
-                var biome = _configuration.Biomes[i];
+                var biome = _configuration.UtopiaProcessorParam.Biomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
                 _utopiaConfig.tvBiomeList.Nodes.Add(item);
