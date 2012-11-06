@@ -335,7 +335,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     double moisture = biomeMap[noise2DIndex, 2];
                     byte biomeId = _biomeHelper.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
-                    currentBiome = _config.Biomes[biomeId];
+                    currentBiome = _config.UtopiaProcessorParam.Biomes[biomeId];
 
                     //Get Temperature and Moisture
                     columnInfo = new ChunkColumnInfo()
@@ -448,7 +448,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory)
         {
             //Get Chunk Master Biome
-            var masterBiome = _config.Biomes[chunkMetaData.ChunkMasterBiomeType];
+            var masterBiome = _config.UtopiaProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
 
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);

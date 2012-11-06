@@ -26,9 +26,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             enuLandFormType landformtype = (enuLandFormType)landFormType;
 
-            for (byte biomeId = 0; biomeId <= _config.Biomes.Count - 1; biomeId++)
+            for (byte biomeId = 0; biomeId <= _config.UtopiaProcessorParam.Biomes.Count - 1; biomeId++)
             {
-                Biome biome = _config.Biomes[biomeId];
+                Biome biome = _config.UtopiaProcessorParam.Biomes[biomeId];
                 //Does this biome support this land form type ?
                 if (biome.LandFormFilters.Contains(landformtype))
                 {

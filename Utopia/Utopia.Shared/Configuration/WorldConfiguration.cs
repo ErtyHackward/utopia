@@ -99,12 +99,6 @@ namespace Utopia.Shared.Configuration
         public CubeProfile[] CubeProfiles { get; set; }
 
         /// <summary>
-        /// Holds Biomes Profiles configuration
-        /// </summary>
-        [Browsable(false)]
-        public List<Biome> Biomes { get; set; }
-
-        /// <summary>
         /// Holds parameters for Utopia processor
         /// </summary>
         [Browsable(false)]
@@ -141,11 +135,10 @@ namespace Utopia.Shared.Configuration
             Entities = new List<IEntity>();
             BluePrints = new Dictionary<ushort, Entity>();
             CubeProfiles = new CubeProfile[255];
-            Biomes = new List<Biome>();
             Services = new List<KeyValuePair<string, string>>();
             StartStuff = new List<KeyValuePair<int, int>>();
 
-            UtopiaProcessorParam = new UtopiaProcessorParams();
+            UtopiaProcessorParam = new UtopiaProcessorParams(this);
             WorldProcessor = WorldProcessors.Utopia;
 
             if (withDefaultValueCreation)
@@ -189,12 +182,6 @@ namespace Utopia.Shared.Configuration
                 cubeProfile.Save(writer);
             }
 
-            writer.Write(Biomes.Count);
-            foreach (var biome in Biomes)
-            {
-                biome.Save(writer);
-            }
-
             writer.Write(Services.Count);
             foreach (var pair in Services)
             {
@@ -208,7 +195,6 @@ namespace Utopia.Shared.Configuration
                 writer.Write(pair.Key);
                 writer.Write(pair.Value);
             }
-            
 
             UtopiaProcessorParam.Save(writer);
         }
@@ -246,15 +232,6 @@ namespace Utopia.Shared.Configuration
             }
 
             FilledUpReservedCubeInArray();
-
-            Biomes.Clear();
-            var countBiomes = reader.ReadInt32();
-            for (var i = 0; i < countBiomes; i++)
-            {
-                var biome = new Biome(this);
-                biome.Load(reader);
-                Biomes.Add(biome);
-            }
 
             Services.Clear();
             var servicesCount = reader.ReadInt32();
@@ -342,31 +319,7 @@ namespace Utopia.Shared.Configuration
             return instance;
         }
 
-        public Biome CreateNewBiome()
-        {
-            Biome newBiome = new Biome(this)
-            {
-                Name = "Default",
-                SurfaceCube = WorldConfiguration.CubeId.Grass,
-                UnderSurfaceCube = WorldConfiguration.CubeId.Dirt,
-                GroundCube = WorldConfiguration.CubeId.Stone,
-                CubeVeins = new List<CubeVein>()
-                {
-                    new CubeVein(){ Name = "Sand Vein", CubeId = WorldConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "Rock Vein",CubeId = WorldConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
-                    new CubeVein(){ Name = "Dirt Vein",CubeId = WorldConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
-                    new CubeVein(){ Name = "Gravel Vein",CubeId = WorldConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "GoldOre Vein",CubeId = WorldConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
-                    new CubeVein(){ Name = "CoalOre Vein",CubeId = WorldConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
-                    new CubeVein(){ Name = "MoonStone Vein",CubeId = WorldConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = WorldConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = WorldConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
-                }
-            };
 
-            Biomes.Add(newBiome);
-            return newBiome;
-        }
 
         #endregion
 
@@ -378,7 +331,6 @@ namespace Utopia.Shared.Configuration
             _worldHeight = 128;
             CreateDefaultCubeProfiles();
             CreateDefaultEntities();
-            CreateDefaultBiomes();
             CreateDefaultUtopiaProcessorParam();
         }
 
@@ -921,31 +873,6 @@ namespace Utopia.Shared.Configuration
            cactusFlower.ModelName = "Flower4";
            cactusFlower.isSystemEntity = true;      // Cannot de removed, mandatory Entity
            cactusFlower.MaxStackSize = 99;
-        }
-
-        //Definition of default biomes
-        private void CreateDefaultBiomes()
-        {
-            //Desert Biome Definition
-            Biomes.Add(new Biome(this)
-            {
-                Name = "Default",
-                SurfaceCube = WorldConfiguration.CubeId.Grass,
-                UnderSurfaceCube = WorldConfiguration.CubeId.Dirt,
-                GroundCube = WorldConfiguration.CubeId.Stone,
-                CubeVeins = new List<CubeVein>()
-                {
-                    new CubeVein(){ Name = "Sand Vein", CubeId = WorldConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "Rock Vein",CubeId = WorldConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
-                    new CubeVein(){ Name = "Dirt Vein",CubeId = WorldConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
-                    new CubeVein(){ Name = "Gravel Vein",CubeId = WorldConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "GoldOre Vein",CubeId = WorldConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
-                    new CubeVein(){ Name = "CoalOre Vein",CubeId = WorldConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
-                    new CubeVein(){ Name = "MoonStone Vein",CubeId = WorldConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = WorldConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = WorldConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
-                }
-            });
         }
 
         //Definition of all default Utopia processor params
