@@ -38,16 +38,15 @@ namespace Utopia.Entities
     /// </summary>
     public class IconFactory : GameComponent
     {
-
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region private variables
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly D3DEngine _d3DEngine;
         private readonly VoxelModelManager _modelManager;
         public const int IconSize = 64;
         private ShaderResourceView _iconsTextureArray;
         private SpriteTexture _iconTextureArray;
-        private WorldConfiguration _configuration;
+        private VisualWorldParameters _visualWorldParameters;
 
         // holds cached textures of the voxel models
         private readonly Dictionary<string, SpriteTexture> _voxelIcons = new Dictionary<string, SpriteTexture>();
@@ -64,17 +63,20 @@ namespace Utopia.Entities
 
         #endregion
 
+        #region Public Properties
         public WorldConfiguration Configuration
         {
-            get { return _configuration; }
-            set { _configuration = value; }
+            get { return _visualWorldParameters.WorldParameters.Configuration; }
+            set { _visualWorldParameters.WorldParameters.Configuration = value; }
         }
 
-        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, WorldConfiguration configuration)
+        #endregion
+
+        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, VisualWorldParameters visualWorldParameters)
         {
             _d3DEngine = d3DEngine;
             _modelManager = modelManager;
-            _configuration = configuration;
+            _visualWorldParameters = visualWorldParameters;
         }
 
         public override void LoadContent(DeviceContext context)
@@ -103,7 +105,7 @@ namespace Utopia.Entities
             _overlayEffect = ToDispose(new HLSLColorOverlay(_d3DEngine.Device, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\ColorOverlay.hlsl")));
 
 
-            if (_configuration != null)
+            if (_visualWorldParameters.WorldParameters != null)
             {
                 List<Texture2D> icons;
                 ShaderResourceView cubeTextureView;
@@ -479,9 +481,8 @@ namespace Utopia.Entities
             foreach (CubeProfile profile in _visualWorldParameters.WorldParameters.Configuration.GettAllCubesProfiles())
             {
                 //Don't create "Air" cube
-                if (profile.Id == 0) continue;
+                if (profile.Id == WorldConfiguration.CubeId.Air) continue;
                 //Create the new Material MeshMapping
-                var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeId];
                 
                 //Here the key parameter is the ID name given to the texture inside the file model.
                 //In our case the model loaded has these Materials/texture Ids :

@@ -32,6 +32,11 @@ namespace Utopia.Shared.World
         public int WorldVisibleSizeXYZ;
         public Vector2I WorldChunkStartUpPosition;
 
+        public VisualWorldParameters()
+        {
+            WorldParameters = new WorldParameters();
+        }
+
         public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player, Vector2I visibleChunkInWorld)
         {
             VisibleChunkInWorld = visibleChunkInWorld;

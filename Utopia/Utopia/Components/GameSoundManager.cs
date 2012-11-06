@@ -62,8 +62,6 @@ namespace Utopia.Components
 
         private FastRandom _rnd;
 
-        private Vector3I _lastPosition;
-        private Range3I _lastRange;
         private Vector3 _listenerPosition;
         private IDynamicEntity _player;
 

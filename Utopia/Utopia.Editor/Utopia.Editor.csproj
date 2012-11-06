@@ -83,6 +83,7 @@
     <Compile Include="frmProcessorChoose.Designer.cs">
       <DependentUpon>frmProcessorChoose.cs</DependentUpon>
     </Compile>
+    <Compile Include="IconManager.cs" />
     <Compile Include="ModelsRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
