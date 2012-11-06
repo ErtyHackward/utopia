@@ -34,8 +34,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Small,
                 Radius = 3,
                 TrunkSize = new RangeB(5,6),
-                TrunkCubeId = WorldConfiguration.CubeId.Trunk,
-                FoliageCubeId = WorldConfiguration.CubeId.Foliage
+                TrunkCubeId = UtopiaProcessorParams.CubeId.Trunk,
+                FoliageCubeId = UtopiaProcessorParams.CubeId.Foliage
             };
             smallTreeTemplate.FoliageStructure = new List<List<int>>();
             smallTreeTemplate.FoliageStructure.Add (new List<int>() 
@@ -53,8 +53,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Medium,
                 Radius = 4,
                 TrunkSize = new RangeB(5,7),
-                TrunkCubeId = WorldConfiguration.CubeId.Trunk,
-                FoliageCubeId = WorldConfiguration.CubeId.Foliage
+                TrunkCubeId = UtopiaProcessorParams.CubeId.Trunk,
+                FoliageCubeId = UtopiaProcessorParams.CubeId.Foliage
             };
             mediumTreeTemplate.FoliageStructure = new List<List<int>>();
             mediumTreeTemplate.FoliageStructure.Add(new List<int>() 
@@ -72,8 +72,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Big,
                 Radius = 5,
                 TrunkSize = new RangeB(9, 13),
-                TrunkCubeId = WorldConfiguration.CubeId.Trunk,
-                FoliageCubeId = WorldConfiguration.CubeId.Foliage
+                TrunkCubeId = UtopiaProcessorParams.CubeId.Trunk,
+                FoliageCubeId = UtopiaProcessorParams.CubeId.Foliage
             };
             bigTreeTemplate.FoliageStructure = new List<List<int>>();
             bigTreeTemplate.FoliageStructure.Add(new List<int>() 
@@ -119,8 +119,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 TreeType = TreeType.Cactus,
                 Radius = 2,
                 TrunkSize = new RangeB(1, 3),
-                TrunkCubeId = WorldConfiguration.CubeId.Cactus,
-                FoliageCubeId = WorldConfiguration.CubeId.CactusTop
+                TrunkCubeId = UtopiaProcessorParams.CubeId.Cactus,
+                FoliageCubeId = UtopiaProcessorParams.CubeId.CactusTop
             };
             cactusTemplate.FoliageStructure = new List<List<int>>();
             cactusTemplate.FoliageStructure.Add(new List<int>() { 5 });

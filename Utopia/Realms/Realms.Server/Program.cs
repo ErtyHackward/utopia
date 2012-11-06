@@ -51,8 +51,8 @@ namespace Realms.Server
             //_iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             //_iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
 
-            _iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
-            _iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
+            //_iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
+            //_iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
             
             _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
 
@@ -101,11 +101,11 @@ namespace Realms.Server
 
             try
             {
-                if (_iocContainer.Get<IWorldProcessor>() is PlanWorldProcessor)
-                {
-                    var processor = _iocContainer.Get<IWorldProcessor>() as PlanWorldProcessor;
-                    _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
-                }
+                //if (_iocContainer.Get<IWorldProcessor>() is PlanWorldProcessor)
+                //{
+                //    var processor = _iocContainer.Get<IWorldProcessor>() as PlanWorldProcessor;
+                //    _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
+                //}
             }
             catch (Exception)
             {

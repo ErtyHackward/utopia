@@ -21,6 +21,8 @@ namespace Utopia.Shared.Settings
         public string SoundAlias { get; set; }
         [Description("Sound volume Coef. (1.0 = original file sound volume)"), Category("General")]
         public float DefaultVolume { get; set; }
+        [Description("The distance the sound is propagating (in meter), used only in 3D sound"), Category("General")]
+        public float Power { get; set; }
         #endregion
 
         #region Public Methods
@@ -29,6 +31,7 @@ namespace Utopia.Shared.Settings
             writer.Write(SoundFilePath);
             writer.Write(SoundAlias);
             writer.Write(DefaultVolume);
+            writer.Write(Power);
         }
 
         public virtual void Load(BinaryReader reader)
@@ -36,12 +39,14 @@ namespace Utopia.Shared.Settings
             SoundFilePath = reader.ReadString();
             SoundAlias = reader.ReadString();
             DefaultVolume = reader.ReadSingle();
+            //Power = reader.ReadSingle();
         }
         #endregion
 
         public SoundSource()
         {
             DefaultVolume = 1.0f;
+            Power = 16.0f;
         }
 
         #region Private Methods

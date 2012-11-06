@@ -28,7 +28,7 @@ namespace Utopia.Shared.Structs.Landscape
             EmissiveColor.R = 0;
             EmissiveColor.G = 0;
             EmissiveColor.B = 0;
-            if (Id == WorldConfiguration.CubeId.Air)
+            if (Id == 0)
             {
                 EmissiveColor.A = 255;
                 IsSunLightSource = true;

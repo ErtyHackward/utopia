@@ -224,20 +224,20 @@ namespace Utopia.Shared.Configuration
             Biome newBiome = new Biome(Config)
             {
                 Name = "Default",
-                SurfaceCube = WorldConfiguration.CubeId.Grass,
-                UnderSurfaceCube = WorldConfiguration.CubeId.Dirt,
-                GroundCube = WorldConfiguration.CubeId.Stone,
+                SurfaceCube = UtopiaProcessorParams.CubeId.Grass,
+                UnderSurfaceCube = UtopiaProcessorParams.CubeId.Dirt,
+                GroundCube = UtopiaProcessorParams.CubeId.Stone,
                 CubeVeins = new List<CubeVein>()
                 {
-                    new CubeVein(){ Name = "Sand Vein", CubeId = WorldConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "Rock Vein",CubeId = WorldConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
-                    new CubeVein(){ Name = "Dirt Vein",CubeId = WorldConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
-                    new CubeVein(){ Name = "Gravel Vein",CubeId = WorldConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "GoldOre Vein",CubeId = WorldConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
-                    new CubeVein(){ Name = "CoalOre Vein",CubeId = WorldConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
-                    new CubeVein(){ Name = "MoonStone Vein",CubeId = WorldConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = WorldConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = WorldConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                    new CubeVein(){ Name = "Sand Vein", CubeId = UtopiaProcessorParams.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "Rock Vein",CubeId = UtopiaProcessorParams.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
+                    new CubeVein(){ Name = "Dirt Vein",CubeId = UtopiaProcessorParams.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
+                    new CubeVein(){ Name = "Gravel Vein",CubeId = UtopiaProcessorParams.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "GoldOre Vein",CubeId = UtopiaProcessorParams.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
+                    new CubeVein(){ Name = "CoalOre Vein",CubeId = UtopiaProcessorParams.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
+                    new CubeVein(){ Name = "MoonStone Vein",CubeId = UtopiaProcessorParams.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
+                    new CubeVein(){ Name = "DynamicWater",CubeId = UtopiaProcessorParams.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = UtopiaProcessorParams.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
                 }
             };
 
@@ -433,6 +433,39 @@ namespace Utopia.Shared.Configuration
             WorldCtrlOctave = reader.ReadInt32();
 
             IslandCtrlSize = reader.ReadDouble();
+        }
+
+
+        //Helper inner class, to quickly get the corresponding static cube ID (These cannot be modified by users), they are "system" blocks
+        public static class CubeId
+        {
+            public const byte Air = 0;
+            public const byte Stone = 1;
+            public const byte Dirt = 2;
+            public const byte Grass = 3;
+            public const byte StillWater = 4;
+            public const byte DynamicWater = 5;
+            public const byte LightWhite = 6;
+            public const byte Rock = 7;
+            public const byte Sand = 8;
+            public const byte Gravel = 9;
+            public const byte Trunk = 10;
+            public const byte GoldOre = 11;
+            public const byte CoalOre = 12;
+            public const byte MoonStone = 13;
+            public const byte Foliage = 14;
+            public const byte Snow = 15;
+            public const byte Ice = 16;
+            public const byte StillLava = 17;
+            public const byte DynamicLava = 18;
+            public const byte Cactus = 19;
+            public const byte CactusTop = 20;
+            public const byte Error = 255;
+        }
+
+        public static class BluePrintId
+        {
+            public const byte CactusFlower = 1;
         }
     }
 }

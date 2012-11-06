@@ -274,37 +274,37 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                         value *= valueUnderground;
 
-                        cube = WorldConfiguration.CubeId.Air;
+                        cube = UtopiaProcessorParams.CubeId.Air;
                         if (value > 0.5)
                         {
-                            cube = WorldConfiguration.CubeId.Stone;
+                            cube = UtopiaProcessorParams.CubeId.Stone;
                         }
 
                         //BedRock
                         if (Y == 0)
                         {
-                            cube = WorldConfiguration.CubeId.Rock;
+                            cube = UtopiaProcessorParams.CubeId.Rock;
                         }
                         //Be sure that the last landscape row is composed of air
                         if (Y == _worldGeneratedHeight - 1)
                         {
-                            cube = WorldConfiguration.CubeId.Air;
+                            cube = UtopiaProcessorParams.CubeId.Air;
                         }
 
                         //Create Bottom Lava lake
-                        if (Y <= 3 && cube == WorldConfiguration.CubeId.Air)
+                        if (Y <= 3 && cube == UtopiaProcessorParams.CubeId.Air)
                         {
-                            cube = WorldConfiguration.CubeId.StillLava;
+                            cube = UtopiaProcessorParams.CubeId.StillLava;
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if (Y == _config.ProcessorParam.WaterLevel && cube == WorldConfiguration.CubeId.Air && valueUnderground == 1)
+                        if (Y == _config.ProcessorParam.WaterLevel && cube == UtopiaProcessorParams.CubeId.Air && valueUnderground == 1)
                         {
-                            cube = WorldConfiguration.CubeId.StillWater;
+                            cube = UtopiaProcessorParams.CubeId.StillWater;
                         }                       
 
                         //Save block if changed
-                        if(cube != WorldConfiguration.CubeId.Air)
+                        if (cube != UtopiaProcessorParams.CubeId.Air)
                         {
                             ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y] = cube;
                         }
@@ -358,9 +358,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                         byte cubeId = ChunkCubes[index];
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == WorldConfiguration.CubeId.Air && Y > (_config.ProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
+                        if (surfaceLayer > 0 && cubeId == UtopiaProcessorParams.CubeId.Air && Y > (_config.ProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
 
-                        if (cubeId == WorldConfiguration.CubeId.Stone)
+                        if (cubeId == UtopiaProcessorParams.CubeId.Stone)
                         {
                             if (solidGroundHitted == false)
                             {
@@ -395,7 +395,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                     {
                                         //Get cube index above this one
                                         //Place a snow block on it
-                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = WorldConfiguration.CubeId.Snow;
+                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = UtopiaProcessorParams.CubeId.Snow;
                                         mustPlacedSnow = false;
                                     }
 
@@ -411,13 +411,13 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else //This block is not Stone (Air, Water, or BedRock)
                         {
-                            if (cubeId == WorldConfiguration.CubeId.StillWater)
+                            if (cubeId == UtopiaProcessorParams.CubeId.StillWater)
                             {
                                 if (mustPlacedSnow)
                                 {
                                     //Get cube index above this one
                                     //Place a snow block on it
-                                    ChunkCubes[index] = WorldConfiguration.CubeId.Ice;
+                                    ChunkCubes[index] = UtopiaProcessorParams.CubeId.Ice;
                                 }
 
                                 inWaterMaxLevel = Y;
@@ -425,9 +425,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                             }
                             else
                             {
-                                if (inWaterMaxLevel > 0 && cubeId == WorldConfiguration.CubeId.Air)
+                                if (inWaterMaxLevel > 0 && cubeId == UtopiaProcessorParams.CubeId.Air)
                                 {
-                                    ChunkCubes[index] = WorldConfiguration.CubeId.StillWater;
+                                    ChunkCubes[index] = UtopiaProcessorParams.CubeId.StillWater;
                                 }
                             }
                         }

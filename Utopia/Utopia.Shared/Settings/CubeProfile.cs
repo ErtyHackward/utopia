@@ -73,7 +73,6 @@ namespace Utopia.Shared.Settings
             set { _biomeColorArrayTexture = value; }
         }
 
-
         //Texture id foreach face
         public byte[] Textures = new byte[6];
         [Description("Front texture Id"), Category("Textures")]
@@ -89,6 +88,9 @@ namespace Utopia.Shared.Settings
         [Description("Bottom texture Id"), Category("Textures")]
         public byte Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
 
+        private List<SoundSource> _walkingOverSound = new List<SoundSource>();
+        [Description("Sound played when entity walk over a this cube"), Category("Sound")]
+        public List<SoundSource> WalkingOverSound { get { return _walkingOverSound; } set { _walkingOverSound = value; } }
 
         /// <summary>
         /// Saves current object state to binary form
@@ -123,6 +125,7 @@ namespace Utopia.Shared.Settings
             writer.Write(Textures[4]);
             writer.Write(Textures[5]);
 
+            BinarySerialize.SerializeArray(WalkingOverSound, writer);
         }
 
         /// <summary>
@@ -158,6 +161,8 @@ namespace Utopia.Shared.Settings
             Textures[3] = reader.ReadByte();
             Textures[4] = reader.ReadByte();
             Textures[5] = reader.ReadByte();
+
+            //BinarySerialize.DeserializeArray(reader, out _walkingOverSound);
         }
     }
 }

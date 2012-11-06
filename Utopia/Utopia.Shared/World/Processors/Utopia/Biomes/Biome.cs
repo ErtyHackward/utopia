@@ -135,8 +135,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-                    if (vein.CubeId != WorldConfiguration.CubeId.DynamicLava &&
-                        vein.CubeId != WorldConfiguration.CubeId.DynamicWater)
+                    if (vein.CubeId != UtopiaProcessorParams.CubeId.DynamicLava &&
+                        vein.CubeId != UtopiaProcessorParams.CubeId.DynamicWater)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
@@ -225,7 +225,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             cursor.SetInternalPosition(x, y, z);
             int nbrCubePlaced;
-            if (cursor.Read() == WorldConfiguration.CubeId.Stone)
+            if (cursor.Read() == UtopiaProcessorParams.CubeId.Stone)
             {
                 cursor.Write(cubeId);
                 nbrCubePlaced = 1;
@@ -233,7 +233,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 {
                     int relativeMove = rnd.Next(1, 7);
                     cursor.Move(relativeMove);
-                    if (cursor.Read() == WorldConfiguration.CubeId.Stone)
+                    if (cursor.Read() == UtopiaProcessorParams.CubeId.Stone)
                     {
                         cursor.Write(cubeId);
                         nbrCubePlaced++;
@@ -255,10 +255,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             cursor.SetInternalPosition(x, y, z);
 
             //Check if this source is candidate as valid source = Must be surrended by 5 solid blocks and ahave one side block going to Air
-            if (cursor.Read() != WorldConfiguration.CubeId.Air)
+            if (cursor.Read() != UtopiaProcessorParams.CubeId.Air)
             {
                 //Looking Up for Air
-                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.Up)].IsBlockingWater == false || cursor.Peek(CursorRelativeMovement.Up) == WorldConfiguration.CubeId.Snow) return;
+                if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.Up)].IsBlockingWater == false || cursor.Peek(CursorRelativeMovement.Up) == UtopiaProcessorParams.CubeId.Snow) return;
                 if (_config.CubeProfiles[cursor.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false) return;
                 int cpt = 0;
                 //Counting the number of holes arround the source
@@ -283,7 +283,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //Can Fall, falling doesn't remove Power at propagation
             bool isFalling = false;
             if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].CubeFamilly == Enums.enuCubeFamilly.Liquid) return;
-            while (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
+            while (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.Down)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == UtopiaProcessorParams.CubeId.Snow)
             {
                 liquidSource.Item1.Move(CursorRelativeMovement.Down);
                 liquidSource.Item1.Write(cubeId);
@@ -298,7 +298,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 int power = liquidSource.Item2 - 1;
                 if (power >= 0)
                 {
-                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.East)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.East)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == UtopiaProcessorParams.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.East);
                         liquidSource.Item1.Write(cubeId);
@@ -306,7 +306,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         liquidSource.Item1.Move(CursorRelativeMovement.West);
                     }
 
-                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.West)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.West)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == UtopiaProcessorParams.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.West);
                         liquidSource.Item1.Write(cubeId);
@@ -314,7 +314,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         liquidSource.Item1.Move(CursorRelativeMovement.East);
                     }
 
-                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.North)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.North)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == UtopiaProcessorParams.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.North);
                         liquidSource.Item1.Write(cubeId);
@@ -322,7 +322,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         liquidSource.Item1.Move(CursorRelativeMovement.South);
                     }
 
-                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.South)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == WorldConfiguration.CubeId.Snow)
+                    if (_config.CubeProfiles[liquidSource.Item1.Peek(CursorRelativeMovement.South)].IsBlockingWater == false || liquidSource.Item1.Peek(CursorRelativeMovement.Down) == UtopiaProcessorParams.CubeId.Snow)
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.South);
                         liquidSource.Item1.Write(cubeId);
@@ -373,9 +373,9 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                             {
                                 if (l == layers - 1)
                                 {
-                                    if (cursor.Read() == WorldConfiguration.CubeId.Stone) cursor.Write(WorldConfiguration.CubeId.LightWhite);
+                                    if (cursor.Read() == UtopiaProcessorParams.CubeId.Stone) cursor.Write(UtopiaProcessorParams.CubeId.LightWhite);
                                 }
-                                else cursor.Write(WorldConfiguration.CubeId.Air);
+                                else cursor.Write(UtopiaProcessorParams.CubeId.Air);
 
                             }
                         }
@@ -404,7 +404,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             if ((profile.IsSolidToEntity && !profile.IsSeeThrough) &&
                 cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
-                cursor.IsCubePresent(WorldConfiguration.CubeId.StillWater, radiusRange) == false)
+                cursor.IsCubePresent(UtopiaProcessorParams.CubeId.StillWater, radiusRange) == false)
             {
                 //Generate the Trunk first
                 int trunkSize = rnd.Next(treeTemplate.TrunkSize.Min, treeTemplate.TrunkSize.Max + 1);
@@ -431,7 +431,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     foreach (int foliageMove in treeStructBlock)
                     {
                         cursor.Move(foliageMove);
-                        if (foliageMove >= 0 && cursor.Read() == WorldConfiguration.CubeId.Air)
+                        if (foliageMove >= 0 && cursor.Read() == UtopiaProcessorParams.CubeId.Air)
                         {
                             cursor.Write(treeTemplate.FoliageCubeId);
                         }
@@ -441,7 +441,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     if (treeTemplate.TreeType == TreeTemplates.TreeType.Cactus)
                     {
                         Vector3I posi = cursor.InternalPosition;
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, WorldConfiguration.BluePrintId.CactusFlower, posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
+                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, UtopiaProcessorParams.BluePrintId.CactusFlower, posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
                     }
 
                     //Remove Offset
@@ -491,7 +491,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             cursor.SetInternalPosition(x, y, z);
 
             //Check that the block above is "Air"
-            if (cursor.Peek(CursorRelativeMovement.Up) != WorldConfiguration.CubeId.Air) return;
+            if (cursor.Peek(CursorRelativeMovement.Up) != UtopiaProcessorParams.CubeId.Air) return;
             //Check that the block below is "solid"
             byte blockBelow = cursor.Read();
             CubeProfile blockBelowProfile = _config.CubeProfiles[blockBelow];

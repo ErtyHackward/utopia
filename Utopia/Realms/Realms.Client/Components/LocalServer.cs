@@ -18,6 +18,7 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors.Utopia;
+using System.Linq;
 
 namespace Realms.Client.Components
 {
@@ -90,8 +91,11 @@ namespace Realms.Client.Components
             dEntity.CharacterName = "Local player";
             ContainedSlot outItem;
 
+            //Get first Cube Solid from list
+            byte equipedCubeId = _worldParam.Configuration.CubeProfiles.Where(x => x.IsSolidToEntity).First().Id;
+
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(adder.CubeId, _worldParam.Configuration.CubeProfiles[WorldConfiguration.CubeId.Stone].Name);
+            adder.SetCube(equipedCubeId, _worldParam.Configuration.CubeProfiles[equipedCubeId].Name);
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
