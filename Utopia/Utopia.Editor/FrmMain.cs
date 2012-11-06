@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -13,12 +14,11 @@ namespace Utopia.Editor
 {
     public partial class FrmMain : Form
     {
-        #region Private Variables
         private string _filePath;
         private int _entitiesOffset;
         private WorldConfiguration _configuration;
         private UserControl _processorControl;
-        #endregion
+        private Dictionary<string, Image> _icons;
 
         #region Public Properties
         public WorldConfiguration Configuration
@@ -42,12 +42,15 @@ namespace Utopia.Editor
                         case WorldConfiguration.WorldProcessors.Flat:
                             break;
                         case WorldConfiguration.WorldProcessors.Utopia:
-                                if (_processorControl != null) _processorControl.Dispose();
-                                AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as WorldConfiguration<UtopiaProcessorParams>));
+                            if (_processorControl != null) _processorControl.Dispose();
+                            AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as WorldConfiguration<UtopiaProcessorParams>));
                             break;
                         case WorldConfiguration.WorldProcessors.Plan:
                             break;
                     }
+
+                    // generate icons for the configuration
+                    _icons = Program.IconManager.GenerateIcons(_configuration);
                 }
                 else
                 {
@@ -81,6 +84,7 @@ namespace Utopia.Editor
                     "Unable to find models images. Use 'export all' feature of the model editor to create them. And restart the program",
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+
         }
 
         #region Public Methods
@@ -89,7 +93,7 @@ namespace Utopia.Editor
         #region Private Methods
 
         #region Menu related
-        
+
         //Events from FILE ===========================
 
         //New
@@ -169,7 +173,7 @@ namespace Utopia.Editor
         }
         // ===========================================
 
-        
+
         #endregion
 
         private void AttachProcessorFrame(UserControl control)
@@ -375,6 +379,7 @@ namespace Utopia.Editor
 
         }
 
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -382,7 +387,5 @@ namespace Utopia.Editor
         #endregion
 
         #endregion
-
-
     }
 }

@@ -46,9 +46,8 @@ namespace Utopia.Editor
             var voxelMeshFactory = new VoxelMeshFactory(_engine);
             _modelManager = new VoxelModelManager(modelsStorage, null, voxelMeshFactory);
             _modelManager.Initialize();
-            _iconFactory = new IconFactory(_engine, _modelManager, null);
-            _iconFactory.LoadContent(_engine.ImmediateContext);
 
+            _iconFactory = new IconFactory(_engine, _modelManager, new Shared.World.VisualWorldParameters());
         }
 
         public Dictionary<string, Image> GenerateIcons(WorldConfiguration configuration)
@@ -56,6 +55,8 @@ namespace Utopia.Editor
             var result = new Dictionary<string, Image>();
 
             _iconFactory.Configuration = configuration;
+            _iconFactory.LoadContent(_engine.ImmediateContext);
+
             
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {

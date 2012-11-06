@@ -46,7 +46,7 @@ namespace Utopia.Shared.Settings
             }
             catch (Exception x)
             {
-                logger.Error("Unable to enumerate texture/effect packs");
+                logger.Error("Unable to enumerate texture/effect packs {0}", x);
             }
         }
 
