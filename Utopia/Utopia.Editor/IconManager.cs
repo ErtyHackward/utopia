@@ -23,6 +23,12 @@ namespace Utopia.Editor
         private IconFactory _iconFactory;
         private VoxelModelManager _modelManager;
 
+        public VoxelModelManager ModelManager
+        {
+            get { return _modelManager; }
+            set { _modelManager = value; }
+        }
+
         public DrawingSize IconSize { get; set; }
 
         public IconManager()
@@ -57,7 +63,7 @@ namespace Utopia.Editor
             _iconFactory.Configuration = configuration;
             _iconFactory.LoadContent(_engine.ImmediateContext);
 
-            
+            //Create Items icons
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
                 using (var dxIcon = _iconFactory.CreateVoxelIcon(visualVoxelModel, IconSize))
@@ -66,7 +72,23 @@ namespace Utopia.Editor
                     Resource.ToStream(_engine.ImmediateContext, dxIcon, ImageFileFormat.Png, memStr);
                     memStr.Position = 0;
                     result.Add(visualVoxelModel.VoxelModel.Name, new Bitmap(memStr));
+                    memStr.Dispose();
                 }
+            }
+
+            //Create Blocks icons
+            int i = 0;
+            List<Texture2D> cubeIcons = _iconFactory.Get3DBlockIcons(_engine.ImmediateContext, IconSize);
+            foreach (var cubeprofiles in configuration.GettAllCubesProfiles())
+            {
+                if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
+                var memStr = new MemoryStream();
+                Resource.ToStream(_engine.ImmediateContext, cubeIcons[i], ImageFileFormat.Png, memStr);
+                memStr.Position = 0;
+                result.Add("CubeResource_" + cubeprofiles.Name, new Bitmap(memStr));
+                memStr.Dispose();
+
+                i++;
             }
 
             return result;

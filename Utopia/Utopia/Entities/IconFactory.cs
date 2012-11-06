@@ -104,7 +104,6 @@ namespace Utopia.Entities
             _voxelEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, Path.Combine(ClientSettings.EffectPack, @"Entities\VoxelModel.hlsl"), VertexVoxel.VertexDeclaration));
             _overlayEffect = ToDispose(new HLSLColorOverlay(_d3DEngine.Device, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\ColorOverlay.hlsl")));
 
-
             if (_visualWorldParameters.WorldParameters != null)
             {
                 List<Texture2D> icons;
@@ -113,15 +112,15 @@ namespace Utopia.Entities
                                                       Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
                                                       FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
                                                       out cubeTextureView);
-                icons = Create3DBlockIcons(context, cubeTextureView);
+                icons = Create3DBlockIcons(context, cubeTextureView, IconSize);
 
                 _nbrCubeIcon = icons.Count;
-                Texture2D[] spriteTextures;
-                ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device,
-                                                      Path.Combine(ClientSettings.TexturePack, @"Sprites\"), @"*.png",
-                                                      FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures,
-                                                      1);
-                icons.AddRange(spriteTextures);
+                //Texture2D[] spriteTextures;
+                //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device,
+                //                                      Path.Combine(ClientSettings.TexturePack, @"Sprites\"), @"*.png",
+                //                                      FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures,
+                //                                      1);
+                //icons.AddRange(spriteTextures);
                 CreateTextureArray(context, icons);
 
                 //Array created i can dispose the various icons
@@ -130,7 +129,7 @@ namespace Utopia.Entities
                     icon.Dispose();
                 }
                 cubeTextureView.Dispose();
-                foreach (var tex in spriteTextures) tex.Dispose();
+                //foreach (var tex in spriteTextures) tex.Dispose();
 
 
                 CreateVoxelIcons(context);
@@ -405,7 +404,20 @@ namespace Utopia.Entities
             return texture.CloneTexture(ResourceUsage.Default);
         }
 
-        private List<Texture2D> Create3DBlockIcons(DeviceContext context, ShaderResourceView cubesTexture)
+        public List<Texture2D> Get3DBlockIcons(DeviceContext context, DrawingSize iconSize)
+        {
+            ShaderResourceView cubeTextureView;
+            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
+                                                    Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
+                                                    FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
+                                                    out cubeTextureView);
+            var result = Create3DBlockIcons(context, cubeTextureView, iconSize.Width);
+            cubeTextureView.Dispose();
+
+            return result;
+        }
+
+        private List<Texture2D> Create3DBlockIcons(DeviceContext context, ShaderResourceView cubesTexture, int iconSize)
         {
             List<Texture2D> createdIconsTexture = new List<Texture2D>();
 
@@ -414,7 +426,7 @@ namespace Utopia.Entities
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
             Mesh meshBluePrint;
 
-            int textureSize = IconSize;
+            int textureSize = iconSize;
             
             meshfactory.LoadMesh(ClientSettings.PathRoot + @"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.

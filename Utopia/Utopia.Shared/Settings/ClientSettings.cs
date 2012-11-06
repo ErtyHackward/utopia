@@ -26,7 +26,7 @@ namespace Utopia.Shared.Settings
 
         public static string EffectPack
         {
-            get { return _effectPack ?? @"EffectsPacks\" + Current.Settings.EngineParameters.EffectPack + @"\"; }
+            get { return _effectPack ?? @"EffectsPacks\" + Current.Settings.EngineParameters.EffectPack + @"\";}
             set { _effectPack = value; }
         }
 
@@ -41,6 +41,7 @@ namespace Utopia.Shared.Settings
             //List of textures Packs
             try
             {
+                PathRoot = "";
                 DynamicLists.Add("CLIST_TexturePacks", new List<object>(GetAllTexturePacks()));
                 DynamicLists.Add("CLIST_EffectPacks", new List<object>(GetAllEffectPacks()));
             }

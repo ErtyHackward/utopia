@@ -9,6 +9,9 @@ using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
 using System.Linq;
+using Utopia.Entities.Voxel;
+using Utopia.Entities;
+using Utopia.Editor.Properties;
 
 namespace Utopia.Editor
 {
@@ -16,6 +19,7 @@ namespace Utopia.Editor
     {
         private string _filePath;
         private int _entitiesOffset;
+        private int _cubeOffset;
         private WorldConfiguration _configuration;
         private UserControl _processorControl;
         private Dictionary<string, Image> _icons;
@@ -51,6 +55,8 @@ namespace Utopia.Editor
 
                     // generate icons for the configuration
                     _icons = Program.IconManager.GenerateIcons(_configuration);
+
+                    UpdateImageList();
                 }
                 else
                 {
@@ -63,6 +69,26 @@ namespace Utopia.Editor
                 UpdateList();
             }
         }
+
+        private void UpdateImageList()
+        {
+            //Removes all image above _entitiesOffset
+            while (imageList1.Images.Count > _entitiesOffset) imageList1.Images.RemoveAt(imageList1.Images.Count - 1);
+
+            //Create Items icons
+            foreach (var visualVoxelModel in Program.IconManager.ModelManager.Enumerate())
+            {
+                imageList1.Images.Add(_icons[visualVoxelModel.VoxelModel.Name]);
+            }
+
+            _cubeOffset = imageList1.Images.Count;
+            //Create blocks icons
+            foreach (var cubeprofiles in _configuration.GettAllCubesProfiles())
+            {
+                if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
+                imageList1.Images.Add(_icons["CubeResource_" + cubeprofiles.Name]);
+            }
+        }
         #endregion
 
         public FrmMain()
@@ -71,20 +97,7 @@ namespace Utopia.Editor
 
             _entitiesOffset = imageList1.Images.Count;
 
-            foreach (var file in Program.ModelsRepository.ModelsFiles)
-            {
-                imageList1.Images.Add(Image.FromFile(file));
-            }
-
             tvMainCategories.ImageList = imageList1;
-
-            if (Program.ModelsRepository.ModelsFiles.Count == 0)
-            {
-                MessageBox.Show(
-                    "Unable to find models images. Use 'export all' feature of the model editor to create them. And restart the program",
-                    "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
         }
 
         #region Public Methods
@@ -221,11 +234,25 @@ namespace Utopia.Editor
             //Clear all the Cube node items
             TreeNode cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
+            int iconcubeImageId = _cubeOffset;
             for (var i = 0; i < _configuration.CubeProfiles.Where(x => x != null).Count(); i++)
             {
                 var cubeProfile = _configuration.CubeProfiles[i];
                 if (cubeProfile.Name == "System Reserved") continue;
                 var item = new TreeNode(cubeProfile.Name);
+
+                if (_icons.ContainsKey("CubeResource_" + cubeProfile.Name))
+                {
+                    item.ImageIndex = iconcubeImageId;
+                    iconcubeImageId++;
+                }
+                else
+                {
+                    item.ImageIndex = -1;
+                }
+
+                item.SelectedImageIndex = item.ImageIndex;
+                
                 item.Tag = cubeProfile;
                 cubesRootNode.Nodes.Add(item);
             }
