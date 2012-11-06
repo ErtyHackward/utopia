@@ -58,6 +58,7 @@ namespace Utopia.Components
         private IClock _gameClockTime;
         private PlayerEntityManager _playerEntityManager;
         private VisualWorldParameters _visualWorldParameters;
+        private UtopiaProcessorParams _biomesParams;
 
         private FastRandom _rnd;
 
@@ -109,6 +110,10 @@ namespace Utopia.Components
             _gameClockTime = gameClockTime;
             _playerEntityManager = playerEntityManager;
             _visualWorldParameters = visualWorldParameters;
+            if (visualWorldParameters.WorldParameters.Configuration is WorldConfiguration<UtopiaProcessorParams>)
+            {
+                _biomesParams = ((WorldConfiguration<UtopiaProcessorParams>)visualWorldParameters.WorldParameters.Configuration).ProcessorParam;
+            }
 
             _dynamicEntityManager = dynamicEntityManager;
             _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = player, Position = player.Position, isLocalSound = true });
@@ -165,12 +170,15 @@ namespace Utopia.Components
             }
 
             //Prepare Sound for biomes
-            foreach (var biome in _visualWorldParameters.WorldParameters.Configuration.ProcessorParam.Biomes)
+            if (_biomesParams != null)
             {
-                foreach (var biomeSound in biome.AmbientSound)
+                foreach (var biome in _biomesParams.Biomes)
                 {
-                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias);
-                    dataSource.SoundVolume = biomeSound.DefaultVolume;
+                    foreach (var biomeSound in biome.AmbientSound)
+                    {
+                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias);
+                        dataSource.SoundVolume = biomeSound.DefaultVolume;
+                    }
                 }
             }
 
@@ -226,7 +234,10 @@ namespace Utopia.Components
             _soundEngine.SetListenerPosition(_listenerPosition, _cameraManager.ActiveCamera.LookAt.Value);
             //Update All sounds currently playing following new player position (For 3D Sounds)
             _soundEngine.Update3DSounds();
-            AmbiantSoundProcessing();
+            if (_biomesParams != null)
+            {
+                AmbiantSoundProcessing();
+            }
             WalkingSoundProcessing();
         }
 
@@ -379,7 +390,7 @@ namespace Utopia.Components
 
             //Get biome info from the "chunk" MasterBiome.
             //Masterbiome being the biome associated to the chunk, based on average of all column's chunk biome.
-            Biome chunkBiome = _visualWorldParameters.WorldParameters.Configuration.ProcessorParam.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
+            Biome chunkBiome = _biomesParams.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
             ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(newWorldCubePosition.X - chunk.ChunkPositionBlockUnit.X, newWorldCubePosition.Z - chunk.ChunkPositionBlockUnit.Y);
 

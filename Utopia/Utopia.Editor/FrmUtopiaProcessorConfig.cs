@@ -16,7 +16,7 @@ namespace Utopia.Editor
     {
         public TreeView tvBiomesList { get { return this.tvBiomeList; } }
         public PropertyGrid gpBiome { get { return this.gpBiome; } }
-        public WorldConfiguration Configuration { get; set; }
+        public WorldConfiguration<UtopiaProcessorParams> Configuration { get; set; }
 
         public FrmUtopiaProcessorConfig()
         {
@@ -39,83 +39,96 @@ namespace Utopia.Editor
             RefreshValueWorldTypeValue();
         }
 
-        public FrmUtopiaProcessorConfig(UtopiaProcessorParams param)
-            :base()
+        public FrmUtopiaProcessorConfig(WorldConfiguration<UtopiaProcessorParams> param)
+            :this()
         {
+            Configuration = param;
             LoadConfigParam(param);
         }
 
-        public void LoadConfigParam(UtopiaProcessorParams param)
+        //Clear all the Biomes node items
+
+        private void LoadConfigParam(WorldConfiguration<UtopiaProcessorParams> param)
         {
+            tvBiomeList.Nodes.Clear();
+
+            for (var i = 0; i < Configuration.ProcessorParam.Biomes.Count; i++)
+            {
+                var biome = Configuration.ProcessorParam.Biomes[i];
+                var item = new TreeNode(biome.Name);
+                item.Tag = biome;
+                tvBiomeList.Nodes.Add(item);
+            }
+
             rangeBarBasicPlain.Ranges.Clear();
-            foreach (var item in param.BasicPlain)
+            foreach (var item in param.ProcessorParam.BasicPlain)
             {
                 rangeBarBasicPlain.Ranges.Add(item);
             }
 
             rangeBarBasicMidLand.Ranges.Clear();
-            foreach (var item in param.BasicMidland)
+            foreach (var item in param.ProcessorParam.BasicMidland)
             {
                 rangeBarBasicMidLand.Ranges.Add(item);
             }
 
             rangeBarBasicMontain.Ranges.Clear();
-            foreach (var item in param.BasicMontain)
+            foreach (var item in param.ProcessorParam.BasicMontain)
             {
                 rangeBarBasicMontain.Ranges.Add(item);
             }
 
             rangeBarBasicOcean.Ranges.Clear();
-            foreach (var item in param.BasicOcean)
+            foreach (var item in param.ProcessorParam.BasicOcean)
             {
                 rangeBarBasicOcean.Ranges.Add(item);
             }
 
             rangeBarGround.Ranges.Clear();
-            foreach (var item in param.Ground)
+            foreach (var item in param.ProcessorParam.Ground)
             {
                 rangeBarGround.Ranges.Add(item);
             }
 
             rangeBarOcean.Ranges.Clear();
-            foreach (var item in param.Ocean)
+            foreach (var item in param.ProcessorParam.Ocean)
             {
                 rangeBarOcean.Ranges.Add(item);
             }
 
             rangeBarWorld.Ranges.Clear();
-            foreach (var item in param.World)
+            foreach (var item in param.ProcessorParam.World)
             {
                 rangeBarWorld.Ranges.Add(item);
             }
 
             foreach (string value in worldType.Items)
             {
-                if (value == param.WorldType.ToString())
+                if (value == param.ProcessorParam.WorldType.ToString())
                 {
                     worldType.SelectedItem = value;
                 }
             }
 
-            maxHeight.Value = param.WorldGeneratedHeight;
-            trackBar2.Value = param.WaterLevel;
+            maxHeight.Value = param.ProcessorParam.WorldGeneratedHeight;
+            trackBar2.Value = param.ProcessorParam.WaterLevel;
 
-            udPlainFreq.Value = (decimal)param.PlainCtrlFrequency;
-            udPlainOct.Value = (decimal)param.PlainCtrlOctave;
+            udPlainFreq.Value = (decimal)param.ProcessorParam.PlainCtrlFrequency;
+            udPlainOct.Value = (decimal)param.ProcessorParam.PlainCtrlOctave;
 
-            udGroundFeq.Value = (decimal)param.GroundCtrlFrequency;
-            udGroundOct.Value = (decimal)param.GroundCtrlOctave;
+            udGroundFeq.Value = (decimal)param.ProcessorParam.GroundCtrlFrequency;
+            udGroundOct.Value = (decimal)param.ProcessorParam.GroundCtrlOctave;
 
-            udIslandSize.Value = (decimal)param.IslandCtrlSize;
+            udIslandSize.Value = (decimal)param.ProcessorParam.IslandCtrlSize;
 
-            udContinentFreq.Value = (decimal)param.WorldCtrlFrequency;
-            udContinentOct.Value = (decimal)param.WorldCtrlOctave;
+            udContinentFreq.Value = (decimal)param.ProcessorParam.WorldCtrlFrequency;
+            udContinentOct.Value = (decimal)param.ProcessorParam.WorldCtrlOctave;
 
-            udOctTemp.Value = (decimal)param.TempCtrlOctave;
-            udFreqTemp.Value = (decimal)param.TempCtrlFrequency;
+            udOctTemp.Value = (decimal)param.ProcessorParam.TempCtrlOctave;
+            udFreqTemp.Value = (decimal)param.ProcessorParam.TempCtrlFrequency;
 
-            udOctMoist.Value = (decimal)param.MoistureCtrlOctave;
-            udFreqMoist.Value = (decimal)param.MoistureCtrlFrequency;
+            udOctMoist.Value = (decimal)param.ProcessorParam.MoistureCtrlOctave;
+            udFreqMoist.Value = (decimal)param.ProcessorParam.MoistureCtrlFrequency;
 
             this.maxHeight_ValueChanged(this, null);
             this.trackBar2_ValueChanged(this, null);

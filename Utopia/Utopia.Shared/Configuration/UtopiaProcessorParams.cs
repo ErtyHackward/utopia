@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using S33M3Resources.Structs;
@@ -16,7 +17,7 @@ namespace Utopia.Shared.Configuration
     /// <summary>
     /// Class that will hold the various parameters needed for landscape generation by the processor Utopia
     /// </summary>
-    public class UtopiaProcessorParams : IBinaryStorable
+    public class UtopiaProcessorParams : IBinaryStorable, IProcessorParams
     {
         public static class DefaultConfig
         {
@@ -49,8 +50,7 @@ namespace Utopia.Shared.Configuration
         }
 
         #region Private Variables
-        private WorldConfiguration _config;
-
+        public WorldConfiguration Config { get; set; }
         #endregion
 
         #region Public Properties
@@ -58,7 +58,6 @@ namespace Utopia.Shared.Configuration
         /// Holds Biomes Profiles configuration
         /// </summary>
         public List<Biome> Biomes { get; set; }
-
 
         public List<LandscapeRange> BasicPlain { get; set; }
         public List<LandscapeRange> BasicMidland { get; set; }
@@ -88,10 +87,8 @@ namespace Utopia.Shared.Configuration
 
         #endregion
 
-        public UtopiaProcessorParams(WorldConfiguration config)
+        public UtopiaProcessorParams()
         {
-            _config = config;
-
             BasicPlain = new List<LandscapeRange>();
             BasicMidland = new List<LandscapeRange>();
             BasicMontain = new List<LandscapeRange>();
@@ -224,7 +221,7 @@ namespace Utopia.Shared.Configuration
 
         public Biome CreateNewBiome()
         {
-            Biome newBiome = new Biome(_config)
+            Biome newBiome = new Biome(Config)
             {
                 Name = "Default",
                 SurfaceCube = WorldConfiguration.CubeId.Grass,
@@ -267,9 +264,10 @@ namespace Utopia.Shared.Configuration
             Ocean.Clear();
             World.Clear();
         }
+
         #endregion
 
-        public void Save(System.IO.BinaryWriter writer)
+        public void Save(BinaryWriter writer)
         {
             writer.Write(Biomes.Count);
             foreach (var biome in Biomes)
@@ -342,7 +340,7 @@ namespace Utopia.Shared.Configuration
             writer.Write(IslandCtrlSize);
         }
 
-        public void Load(System.IO.BinaryReader reader)
+        public void Load(BinaryReader reader)
         {
             ClearAllCollections();
             LandscapeRange landscapeRange;
@@ -351,7 +349,7 @@ namespace Utopia.Shared.Configuration
             count = reader.ReadInt32();
             for (var i = 0; i < count; i++)
             {
-                var biome = new Biome(_config);
+                var biome = new Biome(Config);
                 biome.Load(reader);
                 Biomes.Add(biome);
             }
