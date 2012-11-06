@@ -40,7 +40,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newRealmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newFromDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openRealmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,7 +100,6 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newRealmToolStripMenuItem,
-            this.newFromDefaultToolStripMenuItem,
             this.openRealmToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
@@ -114,21 +112,14 @@
             // newRealmToolStripMenuItem
             // 
             this.newRealmToolStripMenuItem.Name = "newRealmToolStripMenuItem";
-            this.newRealmToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.newRealmToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newRealmToolStripMenuItem.Text = "New...";
             this.newRealmToolStripMenuItem.Click += new System.EventHandler(this.newRealmToolStripMenuItem_Click);
-            // 
-            // newFromDefaultToolStripMenuItem
-            // 
-            this.newFromDefaultToolStripMenuItem.Name = "newFromDefaultToolStripMenuItem";
-            this.newFromDefaultToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.newFromDefaultToolStripMenuItem.Text = "New from Default";
-            this.newFromDefaultToolStripMenuItem.Click += new System.EventHandler(this.newFromDefaultToolStripMenuItem_Click);
             // 
             // openRealmToolStripMenuItem
             // 
             this.openRealmToolStripMenuItem.Name = "openRealmToolStripMenuItem";
-            this.openRealmToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.openRealmToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openRealmToolStripMenuItem.Text = "Open realm...";
             this.openRealmToolStripMenuItem.Click += new System.EventHandler(this.openRealmToolStripMenuItem_Click);
             // 
@@ -136,7 +127,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -144,19 +135,19 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveAsToolStripMenuItem.Text = "Save as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -319,7 +310,6 @@
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ToolStripMenuItem newFromDefaultToolStripMenuItem;
     }
 }
 

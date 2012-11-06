@@ -115,12 +115,6 @@ namespace Utopia.Editor
             //Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
-        //New From Default : Will load a pre-existing configuration file as startUp configuration
-        private void newFromDefaultToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
-        }
-
         //Open
         private void openRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {

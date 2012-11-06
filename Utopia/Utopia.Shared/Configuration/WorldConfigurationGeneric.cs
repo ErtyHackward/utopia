@@ -47,6 +47,11 @@ namespace Utopia.Shared.Configuration
         }
         #endregion
 
+        public WorldConfiguration()
+            :this(null, false, false)
+        {
+        }
+
         public WorldConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false, bool withHelperAssignation = false)
             : base(factory, withDefaultValueCreation, withHelperAssignation)
         {
