@@ -43,7 +43,7 @@ namespace Utopia.Entities
         public const int IconSize = 64;
         private ShaderResourceView _iconsTextureArray;
         private SpriteTexture _iconTextureArray;
-        private VisualWorldParameters _visualWorldParameters;
+        private WorldConfiguration _configuration;
 
         // holds cached textures of the voxel models
         private readonly Dictionary<string, SpriteTexture> _voxelIcons = new Dictionary<string, SpriteTexture>();
@@ -63,11 +63,11 @@ namespace Utopia.Entities
         #region public Variables/properties
         #endregion
 
-        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, VisualWorldParameters visualWorldParameters)
+        public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, WorldConfiguration configuration)
         {
             _d3DEngine = d3DEngine;
             _modelManager = modelManager;
-            _visualWorldParameters = visualWorldParameters;
+            _configuration = configuration;
         }
 
         public override void LoadContent(DeviceContext context)
@@ -394,7 +394,7 @@ namespace Utopia.Entities
 
             int textureSize = IconSize;
             
-            meshfactory.LoadMesh(@"\Meshes\block.txt", out meshBluePrint, 0);
+            meshfactory.LoadMesh(ClientSettings.PathRoot + @"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.
             VertexBuffer<VertexMesh> vb = new VertexBuffer<VertexMesh>(_d3DEngine.Device,
                                                                        meshBluePrint.Vertices.Length,
@@ -461,7 +461,7 @@ namespace Utopia.Entities
                 //Don't create "Air" cube
                 if (cubeId == 0) continue;
                 //Create the new Material MeshMapping
-                var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeId];
+                var profile = _configuration.CubeProfiles[cubeId];
                 
                 //Here the key parameter is the ID name given to the texture inside the file model.
                 //In our case the model loaded has these Materials/texture Ids :

@@ -11,16 +11,26 @@ namespace Utopia.Shared.Settings
 {
     public class ClientSettings
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static XmlSettingsManager<ClientConfig> Current;
+
+        private static string _texturePack;
+        private static string _effectPack;
+
         public static string TexturePack
         {
-            get { return @"TexturesPacks\" + Current.Settings.GraphicalParameters.TexturePack + @"\";}
+            get { return _texturePack ?? @"TexturesPacks\" + Current.Settings.GraphicalParameters.TexturePack + @"\";}
+            set { _texturePack = value; }
         }
 
         public static string EffectPack
         {
-            get { return @"EffectsPacks\" + Current.Settings.EngineParameters.EffectPack + @"\"; }
+            get { return _effectPack ?? @"EffectsPacks\" + Current.Settings.EngineParameters.EffectPack + @"\"; }
+            set { _effectPack = value; }
         }
+
+        public static string PathRoot { get; set; }
 
         public static Dictionary<string, List<object>> DynamicLists = new Dictionary<string,List<object>>();
 
@@ -29,9 +39,18 @@ namespace Utopia.Shared.Settings
             //Create the Dynamic list of values
 
             //List of textures Packs
-            DynamicLists.Add("CLIST_TexturePacks", new List<object>(GetAllTexturePacks()));
-            DynamicLists.Add("CLIST_EffectPacks", new List<object>(GetAllEffectPacks()));
+            try
+            {
+                DynamicLists.Add("CLIST_TexturePacks", new List<object>(GetAllTexturePacks()));
+                DynamicLists.Add("CLIST_EffectPacks", new List<object>(GetAllEffectPacks()));
+            }
+            catch (Exception x)
+            {
+                logger.Error("Unable to enumerate texture/effect packs");
+            }
         }
+
+        
 
         private static IEnumerable<string> GetAllTexturePacks()
         {
