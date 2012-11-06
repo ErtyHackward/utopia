@@ -456,12 +456,11 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
             //Create a texture for each cubes existing !
-            foreach (byte cubeId in WorldConfiguration.CubeId.All())
+            foreach (CubeProfile profile in _visualWorldParameters.WorldParameters.Configuration.GettAllCubesProfiles())
             {
                 //Don't create "Air" cube
-                if (cubeId == 0) continue;
+                if (profile.Id == 0) continue;
                 //Create the new Material MeshMapping
-                var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeId];
                 
                 //Here the key parameter is the ID name given to the texture inside the file model.
                 //In our case the model loaded has these Materials/texture Ids :

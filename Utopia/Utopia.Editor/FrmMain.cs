@@ -81,7 +81,6 @@ namespace Utopia.Editor
                     "Unable to find models images. Use 'export all' feature of the model editor to create them. And restart the program",
                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
         }
 
         #region Public Methods
@@ -112,7 +111,6 @@ namespace Utopia.Editor
             processorChoose.Dispose();
 
             Configuration = newConfiguration;
-            //Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
         //Open

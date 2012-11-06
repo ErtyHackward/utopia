@@ -398,10 +398,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             cursor.SetInternalPosition(x, y, z);
             //No other tree around me ?
             byte trunkRootCube = cursor.Read();
+            CubeProfile profile = _config.CubeProfiles[trunkRootCube];
 
             Vector3I radiusRange = new Vector3I(treeTemplate.Radius - 1, 1, treeTemplate.Radius - 1);
 
-            if ((trunkRootCube == WorldConfiguration.CubeId.Grass || trunkRootCube == WorldConfiguration.CubeId.Dirt || trunkRootCube == WorldConfiguration.CubeId.Snow || trunkRootCube == WorldConfiguration.CubeId.Sand) &&
+            if ((profile.IsSolidToEntity && !profile.IsSeeThrough) &&
                 cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
                 cursor.IsCubePresent(WorldConfiguration.CubeId.StillWater, radiusRange) == false)
             {
