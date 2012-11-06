@@ -48,7 +48,7 @@ namespace Utopia.Shared.Tools.BinarySerializer
             returnedArray = new List<T>(arraySize);
             for (int i = 0; i < arraySize; i++)
             {
-                returnedArray[i] = new T();
+                returnedArray.Add(new T());
                 returnedArray[i].Load(reader);
             }
         }
