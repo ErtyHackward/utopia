@@ -35,7 +35,7 @@ namespace Utopia.Editor
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
 
-                    _utopiaConfig.LoadConfigParam(_configuration.UtopiaProcessorParam);                    
+                    _utopiaConfig.LoadConfigParam(_configuration.ProcessorParam);                    
                 }
                 else
                 {
@@ -206,9 +206,9 @@ namespace Utopia.Editor
             //Clear all the Biomes node items
             _utopiaConfig.tvBiomeList.Nodes.Clear();
 
-            for (var i = 0; i < _configuration.UtopiaProcessorParam.Biomes.Count; i++)
+            for (var i = 0; i < _configuration.ProcessorParam.Biomes.Count; i++)
             {
-                var biome = _configuration.UtopiaProcessorParam.Biomes[i];
+                var biome = _configuration.ProcessorParam.Biomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
                 _utopiaConfig.tvBiomeList.Nodes.Add(item);
@@ -341,11 +341,8 @@ namespace Utopia.Editor
             if (tvMainCategories.SelectedNode.Name == "WorldProcessor Params")
             {
                 //Display Utopia World Processor
-                if (_configuration.WorldProcessor == WorldProcessors.Utopia)
-                {
-                    pgDetails.Visible = false;
-                    _utopiaConfig.Visible = true;
-                }
+                pgDetails.Visible = false;
+                _utopiaConfig.Visible = true;
             }
             else
             {
@@ -360,9 +357,10 @@ namespace Utopia.Editor
                 {
                     pgDetails.Enabled = true;
                 }
-                if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true; 
+                if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true;
                 pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
             }
+
         }
 
 
