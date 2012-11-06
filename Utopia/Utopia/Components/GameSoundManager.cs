@@ -165,7 +165,7 @@ namespace Utopia.Components
             }
 
             //Prepare Sound for biomes
-            foreach (var biome in _visualWorldParameters.WorldParameters.Configuration.UtopiaProcessorParam.Biomes)
+            foreach (var biome in _visualWorldParameters.WorldParameters.Configuration.ProcessorParam.Biomes)
             {
                 foreach (var biomeSound in biome.AmbientSound)
                 {
@@ -379,7 +379,7 @@ namespace Utopia.Components
 
             //Get biome info from the "chunk" MasterBiome.
             //Masterbiome being the biome associated to the chunk, based on average of all column's chunk biome.
-            Biome chunkBiome = _visualWorldParameters.WorldParameters.Configuration.UtopiaProcessorParam.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
+            Biome chunkBiome = _visualWorldParameters.WorldParameters.Configuration.ProcessorParam.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
             ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(newWorldCubePosition.X - chunk.ChunkPositionBlockUnit.X, newWorldCubePosition.Z - chunk.ChunkPositionBlockUnit.Y);
 
