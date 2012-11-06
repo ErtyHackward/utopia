@@ -20,7 +20,7 @@ namespace Utopia.Shared.Configuration
     /// Holds possible entities types, their names, world generator settings, defines everything
     /// Allows to save and load the realm configuration
     /// </summary>
-    public class WorldConfiguration : IBinaryStorable
+    public class WorldConfiguration//<T> : IBinaryStorable where T : IBinaryStorable, new()
     {
         #region Private Variables
         private readonly EntityFactory _factory;
@@ -52,7 +52,7 @@ namespace Utopia.Shared.Configuration
             {
                 if (value >= 128 && value <= 256)
                 {
-                    if(WorldProcessor != WorldProcessors.Utopia || (UtopiaProcessorParam != null && UtopiaProcessorParam.WorldGeneratedHeight <= value))
+                    if(ProcessorParam != null && ProcessorParam.WorldGeneratedHeight <= value)
                     _worldHeight = value;
                 }
             }
@@ -77,11 +77,6 @@ namespace Utopia.Shared.Configuration
         public Md5Hash IntegrityHash { get; set; }
 
         /// <summary>
-        /// Defines realm world processor
-        /// </summary>
-        public WorldProcessors WorldProcessor { get; set; }
-
-        /// <summary>
         /// Holds examples of entities of all types in the realm
         /// </summary>
         [Browsable(false)]
@@ -102,7 +97,7 @@ namespace Utopia.Shared.Configuration
         /// Holds parameters for Utopia processor
         /// </summary>
         [Browsable(false)]
-        public UtopiaProcessorParams UtopiaProcessorParam { get; set; }
+        public UtopiaProcessorParams ProcessorParam { get; set; }
 
         /// <summary>
         /// Holds a server services list with parameters
@@ -138,8 +133,7 @@ namespace Utopia.Shared.Configuration
             Services = new List<KeyValuePair<string, string>>();
             StartStuff = new List<KeyValuePair<int, int>>();
 
-            UtopiaProcessorParam = new UtopiaProcessorParams(this);
-            WorldProcessor = WorldProcessors.Utopia;
+            ProcessorParam = new UtopiaProcessorParams(this);
 
             if (withDefaultValueCreation)
             {
@@ -167,7 +161,7 @@ namespace Utopia.Shared.Configuration
             writer.Write(Author ?? string.Empty);
             writer.Write(CreatedAt.ToBinary());
             writer.Write(UpdatedAt.ToBinary());
-            writer.Write((byte)WorldProcessor);
+            
             writer.Write(WorldHeight);
 
             writer.Write(Entities.Count);
@@ -196,7 +190,7 @@ namespace Utopia.Shared.Configuration
                 writer.Write(pair.Value);
             }
 
-            UtopiaProcessorParam.Save(writer);
+            ProcessorParam.Save(writer);
         }
 
         public void Load(BinaryReader reader)
@@ -209,7 +203,7 @@ namespace Utopia.Shared.Configuration
             Author = reader.ReadString();
             CreatedAt = DateTime.FromBinary(reader.ReadInt64());
             UpdatedAt = DateTime.FromBinary(reader.ReadInt64());
-            WorldProcessor = (WorldProcessors)reader.ReadByte();
+            
             WorldHeight = reader.ReadInt32();
 
             Entities.Clear();
@@ -249,7 +243,7 @@ namespace Utopia.Shared.Configuration
                 StartStuff.Add(pair);
             }
 
-            UtopiaProcessorParam.Load(reader);
+            ProcessorParam.Load(reader);
         }
 
         public static WorldConfiguration LoadFromFile(string path, EntityFactory factory = null, bool withHelperAssignation = false)
@@ -878,7 +872,7 @@ namespace Utopia.Shared.Configuration
         //Definition of all default Utopia processor params
         private void CreateDefaultUtopiaProcessorParam()
         {
-            UtopiaProcessorParam.CreateDefaultConfiguration();
+            ProcessorParam.CreateDefaultConfiguration();
         }
 
         #endregion
@@ -938,15 +932,5 @@ namespace Utopia.Shared.Configuration
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Defines world processor possible types
-    /// </summary>
-    public enum WorldProcessors : byte
-    {
-        Flat,
-        Utopia,
-        Plan
     }
 }
