@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools.BinarySerializer;
@@ -45,7 +46,15 @@ namespace Utopia.Shared.World
         {
             WorldName = reader.ReadString();
             SeedName = reader.ReadString();
-            Configuration = new WorldConfiguration();
+
+            //Buffer the position
+            long pos = reader.BaseStream.Position;
+            //Read the Configuration Type
+            string processorType = "Utopia.Shared.Configuration." + ((WorldConfiguration.WorldProcessors)reader.ReadByte()).ToString() + "ProcessorParams, Utopia.Shared";
+            Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
+            Configuration = (WorldConfiguration)Activator.CreateInstance(type);
+            reader.BaseStream.Position = pos;
+
             Configuration.Load(reader);
         }
     }

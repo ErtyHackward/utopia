@@ -244,10 +244,7 @@ namespace Utopia.Shared.Configuration
             }
 
             Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-
             WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, false, withHelperAssignation);
-
-            configuration.WorldProcessor = WorldProcessors.Utopia;
 
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
