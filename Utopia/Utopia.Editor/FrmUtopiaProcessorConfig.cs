@@ -129,7 +129,7 @@ namespace Utopia.Editor
         //Add new
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Biome biome = Configuration.UtopiaProcessorParam.CreateNewBiome();
+            Biome biome = Configuration.ProcessorParam.CreateNewBiome();
 
             var item = new TreeNode(biome.Name);
             item.Tag = biome;
@@ -146,7 +146,7 @@ namespace Utopia.Editor
             if (selectedNode != null && tvBiomeList.Nodes.Count > 1)
             {
                 Biome biome = (Biome)selectedNode.Tag;
-                Configuration.UtopiaProcessorParam.Biomes.Remove(biome);
+                Configuration.ProcessorParam.Biomes.Remove(biome);
                 tvBiomeList.Nodes.Remove(selectedNode);
             }
         }
@@ -164,9 +164,9 @@ namespace Utopia.Editor
             //Clear all the Biomes node items
             tvBiomeList.Nodes.Clear();
 
-            for (var i = 0; i < Configuration.UtopiaProcessorParam.Biomes.Count; i++)
+            for (var i = 0; i < Configuration.ProcessorParam.Biomes.Count; i++)
             {
-                var biome = Configuration.UtopiaProcessorParam.Biomes[i];
+                var biome = Configuration.ProcessorParam.Biomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
                 tvBiomeList.Nodes.Add(item);
@@ -190,7 +190,7 @@ namespace Utopia.Editor
         private void RefreshValueWorldTypeValue()
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.WorldType = (enuWorldType)Enum.Parse(typeof(enuWorldType), worldType.SelectedItem.ToString());
+            Configuration.ProcessorParam.WorldType = (enuWorldType)Enum.Parse(typeof(enuWorldType), worldType.SelectedItem.ToString());
         }
 
         private void maxHeight_ValueChanged(object sender, EventArgs e)
@@ -202,80 +202,80 @@ namespace Utopia.Editor
 
             if (maxHeight.Value > Configuration.WorldHeight) maxHeight.Value = Configuration.WorldHeight;
 
-            Configuration.UtopiaProcessorParam.WorldGeneratedHeight = maxHeight.Value;
+            Configuration.ProcessorParam.WorldGeneratedHeight = maxHeight.Value;
         }
 
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
             OceanHeight.Text = trackBar2.Value.ToString();
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.WaterLevel = trackBar2.Value;
+            Configuration.ProcessorParam.WaterLevel = trackBar2.Value;
         }
 
         private void udPlainFreq_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.PlainCtrlFrequency = (double)udPlainFreq.Value;
+            Configuration.ProcessorParam.PlainCtrlFrequency = (double)udPlainFreq.Value;
         }
 
         private void udPlainOct_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.PlainCtrlOctave = (int)udPlainOct.Value;
+            Configuration.ProcessorParam.PlainCtrlOctave = (int)udPlainOct.Value;
         }
 
         private void udGroundFeq_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.GroundCtrlFrequency = (double)udGroundFeq.Value;
+            Configuration.ProcessorParam.GroundCtrlFrequency = (double)udGroundFeq.Value;
         }
 
         private void udGroundOct_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.GroundCtrlOctave = (int)udGroundOct.Value;
+            Configuration.ProcessorParam.GroundCtrlOctave = (int)udGroundOct.Value;
         }
 
         private void udContinentFreq_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.WorldCtrlFrequency = (double)udContinentFreq.Value;
+            Configuration.ProcessorParam.WorldCtrlFrequency = (double)udContinentFreq.Value;
         }
 
         private void udContinentOct_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.WorldCtrlOctave = (int)udContinentOct.Value;
+            Configuration.ProcessorParam.WorldCtrlOctave = (int)udContinentOct.Value;
         }
 
         private void udIslandSize_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.IslandCtrlSize = (double)udIslandSize.Value;
+            Configuration.ProcessorParam.IslandCtrlSize = (double)udIslandSize.Value;
         }
 
         private void udFreqTemp_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.TempCtrlFrequency = (double)udFreqTemp.Value;
+            Configuration.ProcessorParam.TempCtrlFrequency = (double)udFreqTemp.Value;
         }
 
         private void udOctTemp_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.TempCtrlOctave = (int)udOctTemp.Value;
+            Configuration.ProcessorParam.TempCtrlOctave = (int)udOctTemp.Value;
         }
 
         private void udFreqMoist_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.MoistureCtrlFrequency = (double)udFreqMoist.Value;
+            Configuration.ProcessorParam.MoistureCtrlFrequency = (double)udFreqMoist.Value;
         }
 
         private void udOctMoist_ValueChanged(object sender, EventArgs e)
         {
             if (Configuration == null) return;
-            Configuration.UtopiaProcessorParam.MoistureCtrlOctave = (int)udOctMoist.Value;
+            Configuration.ProcessorParam.MoistureCtrlOctave = (int)udOctMoist.Value;
         }
     }
 }
