@@ -12,7 +12,7 @@ namespace Utopia.Shared.Tools
         /// <summary>
         /// Realm configuration that contains all possible entities
         /// </summary>
-        public RealmConfiguration Realm { get; set; }
+        public WorldConfiguration Realm { get; set; }
 
         /// <summary>
         /// Gets or sets current editor content
