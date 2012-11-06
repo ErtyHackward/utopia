@@ -16,12 +16,12 @@ namespace Utopia.Editor
         #region Private Variables
         private string _filePath;
         private int _entitiesOffset;
-        private RealmConfiguration _configuration;
+        private WorldConfiguration _configuration;
         private FrmUtopiaProcessorConfig _utopiaConfig;
         #endregion
 
         #region Public Properties
-        public RealmConfiguration Configuration
+        public WorldConfiguration Configuration
         {
             get { return _configuration; }
             set
@@ -94,13 +94,13 @@ namespace Utopia.Editor
         //New
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration = new RealmConfiguration(withDefaultValueCreation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
+            Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
         //New From Default : Will load a pre-existing configuration file as startUp configuration
         private void newFromDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration = new RealmConfiguration(withDefaultValueCreation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
+            Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
         //Open
@@ -110,7 +110,7 @@ namespace Utopia.Editor
             {
                 try
                 {
-                    Configuration = RealmConfiguration.LoadFromFile(openFileDialog1.FileName);
+                    Configuration = WorldConfiguration.LoadFromFile(openFileDialog1.FileName, withHelperAssignation: true);
                     _filePath = openFileDialog1.FileName;
                 }
                 catch (Exception x)
@@ -176,9 +176,9 @@ namespace Utopia.Editor
             entitiesRootNode.Nodes.Clear();
 
             //Add new Entities nodes
-            for (var i = 0; i < _configuration.RealmEntities.Count; i++)
+            for (var i = 0; i < _configuration.Entities.Count; i++)
             {
-                var entity = _configuration.RealmEntities[i];
+                var entity = _configuration.Entities[i];
                 var item = new TreeNode(entity.Name);
                 item.Tag = entity;
 
@@ -194,9 +194,9 @@ namespace Utopia.Editor
             //Clear all the Cube node items
             TreeNode cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
-            for (var i = 0; i < _configuration.RealmCubeProfiles.Where(x => x != null).Count(); i++)
+            for (var i = 0; i < _configuration.CubeProfiles.Where(x => x != null).Count(); i++)
             {
-                var cubeProfile = _configuration.RealmCubeProfiles[i];
+                var cubeProfile = _configuration.CubeProfiles[i];
                 if (cubeProfile.Name == "System Reserved") continue;
                 var item = new TreeNode(cubeProfile.Name);
                 item.Tag = cubeProfile;
@@ -205,10 +205,10 @@ namespace Utopia.Editor
 
             //Clear all the Biomes node items
             _utopiaConfig.tvBiomeList.Nodes.Clear();
-            
-            for (var i = 0; i < _configuration.RealmBiomes.Count; i++)
+
+            for (var i = 0; i < _configuration.UtopiaProcessorParam.Biomes.Count; i++)
             {
-                var biome = _configuration.RealmBiomes[i];
+                var biome = _configuration.UtopiaProcessorParam.Biomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
                 _utopiaConfig.tvBiomeList.Nodes.Add(item);

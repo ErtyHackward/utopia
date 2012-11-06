@@ -21,15 +21,16 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return RealmConfiguration.CubeProfiles.First(x => x.Id == CubeId).Name;
+                return EditorConfigHelper.Config.CubeProfiles.First(x => x.Id == CubeId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                CubeId = RealmConfiguration.CubeProfiles.First(x => x.Name == value).Id;
+                CubeId = EditorConfigHelper.Config.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
         #endregion
+
 
         #region Public Methods
         public void Save(System.IO.BinaryWriter writer)
@@ -58,7 +59,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #region Private Methods
         #endregion
 
-
         internal class CubeConverter : StringConverter
         {
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
@@ -76,7 +76,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(RealmConfiguration.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
+                return new StandardValuesCollection(EditorConfigHelper.Config.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
             }
         }
 

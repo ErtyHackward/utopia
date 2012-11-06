@@ -228,6 +228,36 @@ namespace S33M3Resources.Structs
             get { return new Vector3I(0, 0, 0); }
         }
 
+        public static Vector3I Up
+        {
+            get { return new Vector3I(0, 1, 0); }
+        }
+
+        public static Vector3I Down
+        {
+            get { return new Vector3I(0, -1, 0); }
+        }
+
+        public static Vector3I Left
+        {
+            get { return new Vector3I(-1, 0, 0); }
+        }
+
+        public static Vector3I Right
+        {
+            get { return new Vector3I(1, 0, 0); }
+        }
+
+        public static Vector3I Front
+        {
+            get { return new Vector3I(0, 0, -1); }
+        }
+
+        public static Vector3I Back
+        {
+            get { return new Vector3I(0, 0, 1); }
+        }
+
         public bool IsZero()
         {
             return X == 0 && Y == 0 && Z == 0;

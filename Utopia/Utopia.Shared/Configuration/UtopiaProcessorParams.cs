@@ -4,9 +4,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using S33M3Resources.Structs;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools.BinarySerializer;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
 namespace Utopia.Shared.Configuration
@@ -47,11 +49,17 @@ namespace Utopia.Shared.Configuration
         }
 
         #region Private Variables
-
+        private WorldConfiguration _config;
 
         #endregion
 
         #region Public Properties
+        /// <summary>
+        /// Holds Biomes Profiles configuration
+        /// </summary>
+        public List<Biome> Biomes { get; set; }
+
+
         public List<LandscapeRange> BasicPlain { get; set; }
         public List<LandscapeRange> BasicMidland { get; set; }
         public List<LandscapeRange> BasicMontain { get; set; }
@@ -80,8 +88,10 @@ namespace Utopia.Shared.Configuration
 
         #endregion
 
-        public UtopiaProcessorParams()
+        public UtopiaProcessorParams(WorldConfiguration config)
         {
+            _config = config;
+
             BasicPlain = new List<LandscapeRange>();
             BasicMidland = new List<LandscapeRange>();
             BasicMontain = new List<LandscapeRange>();
@@ -89,6 +99,8 @@ namespace Utopia.Shared.Configuration
             Ground = new List<LandscapeRange>();
             Ocean = new List<LandscapeRange>();
             World = new List<LandscapeRange>();
+
+            Biomes = new List<Biome>();
 
             WorldType = enuWorldType.Normal;
             WorldGeneratedHeight = 128;
@@ -116,6 +128,9 @@ namespace Utopia.Shared.Configuration
         public void CreateDefaultConfiguration()
         {
             ClearAllCollections();
+
+            CreateDefaultBiomes();
+
             //Create BasicPlain
             BasicPlain.Add(new LandscapeRange()
             {
@@ -206,11 +221,63 @@ namespace Utopia.Shared.Configuration
                 Size = 0.9
             });
         }
+
+        public Biome CreateNewBiome()
+        {
+            Biome newBiome = new Biome(_config)
+            {
+                Name = "Default",
+                SurfaceCube = WorldConfiguration.CubeId.Grass,
+                UnderSurfaceCube = WorldConfiguration.CubeId.Dirt,
+                GroundCube = WorldConfiguration.CubeId.Stone,
+                CubeVeins = new List<CubeVein>()
+                {
+                    new CubeVein(){ Name = "Sand Vein", CubeId = WorldConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "Rock Vein",CubeId = WorldConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
+                    new CubeVein(){ Name = "Dirt Vein",CubeId = WorldConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
+                    new CubeVein(){ Name = "Gravel Vein",CubeId = WorldConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "GoldOre Vein",CubeId = WorldConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
+                    new CubeVein(){ Name = "CoalOre Vein",CubeId = WorldConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
+                    new CubeVein(){ Name = "MoonStone Vein",CubeId = WorldConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
+                    new CubeVein(){ Name = "DynamicWater",CubeId = WorldConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = WorldConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                }
+            };
+
+            Biomes.Add(newBiome);
+            return newBiome;
+        }
         #endregion
 
         #region Private Methods
+        //Definition of default biomes
+        private void CreateDefaultBiomes()
+        {
+            //Desert Biome Definition
+            Biomes.Add(new Biome(_config)
+            {
+                Name = "Default",
+                SurfaceCube = WorldConfiguration.CubeId.Grass,
+                UnderSurfaceCube = WorldConfiguration.CubeId.Dirt,
+                GroundCube = WorldConfiguration.CubeId.Stone,
+                CubeVeins = new List<CubeVein>()
+                {
+                    new CubeVein(){ Name = "Sand Vein", CubeId = WorldConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "Rock Vein",CubeId = WorldConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
+                    new CubeVein(){ Name = "Dirt Vein",CubeId = WorldConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
+                    new CubeVein(){ Name = "Gravel Vein",CubeId = WorldConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "GoldOre Vein",CubeId = WorldConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
+                    new CubeVein(){ Name = "CoalOre Vein",CubeId = WorldConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
+                    new CubeVein(){ Name = "MoonStone Vein",CubeId = WorldConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
+                    new CubeVein(){ Name = "DynamicWater",CubeId = WorldConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = WorldConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                }
+            });
+        }
+
         private void ClearAllCollections()
         {
+            Biomes.Clear();
             BasicPlain.Clear();
             BasicMidland.Clear();
             BasicMontain.Clear();
@@ -223,6 +290,12 @@ namespace Utopia.Shared.Configuration
 
         public void Save(System.IO.BinaryWriter writer)
         {
+            writer.Write(Biomes.Count);
+            foreach (var biome in Biomes)
+            {
+                biome.Save(writer);
+            }
+
             writer.Write(BasicPlain.Count);
             for (int i = 0; i < BasicPlain.Count; i++)
             {
@@ -293,6 +366,14 @@ namespace Utopia.Shared.Configuration
             ClearAllCollections();
             LandscapeRange landscapeRange;
             int count;
+
+            count = reader.ReadInt32();
+            for (var i = 0; i < count; i++)
+            {
+                var biome = new Biome(_config);
+                biome.Load(reader);
+                Biomes.Add(biome);
+            }
 
             count = reader.ReadInt32();
             for (int i = 0; i < count; i++)

@@ -18,17 +18,17 @@ namespace Utopia.Shared.Structs.Landscape
 
         public static TerraCubePositionTag DefaultValue = default(TerraCubePositionTag);
 
-        public TerraCubePositionTag(Vector3I pos, TerraCube cube, BlockTag tag)
+        public TerraCubePositionTag(Vector3I pos, TerraCube cube, BlockTag tag, WorldConfiguration config)
         {
-            CubeProfile = RealmConfiguration.CubeProfiles[cube.Id];
+            CubeProfile = config.CubeProfiles[cube.Id];
             Position = pos;
             Cube = cube;
             Tag = tag;
         }
 
-        public TerraCubePositionTag(Vector3I pos, byte cubeId, BlockTag tag)
+        public TerraCubePositionTag(Vector3I pos, byte cubeId, BlockTag tag, WorldConfiguration config)
         {
-            CubeProfile = RealmConfiguration.CubeProfiles[cubeId];
+            CubeProfile = config.CubeProfiles[cubeId];
             Position = pos;
             Cube = new TerraCube(cubeId);
             Tag = tag;

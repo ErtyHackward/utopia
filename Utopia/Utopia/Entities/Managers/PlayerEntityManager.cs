@@ -22,6 +22,8 @@ using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
+using Utopia.Shared.Configuration;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Managers
 {
@@ -67,6 +69,8 @@ namespace Utopia.Entities.Managers
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
+
+        private VisualWorldParameters _visualWorldParameters;
 
         //Event related variables
         private double _fallMaxHeight;
@@ -176,7 +180,8 @@ namespace Utopia.Entities.Managers
                                    SingleArrayChunkContainer cubesHolder,
                                    PlayerCharacter player,
                                    IPickingRenderer pickingRenderer,
-                                   VoxelModelManager voxelModelManager
+                                   VoxelModelManager voxelModelManager,
+                                   VisualWorldParameters visualWorldParameters
             )
         {
             _d3DEngine = engine;
@@ -185,7 +190,8 @@ namespace Utopia.Entities.Managers
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
             _pickingRenderer = pickingRenderer;
-            
+            _visualWorldParameters = visualWorldParameters;
+
             Player = player;
 
             this.ShowDebugInfo = true;

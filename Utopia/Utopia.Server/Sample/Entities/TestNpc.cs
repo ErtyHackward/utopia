@@ -117,7 +117,7 @@ namespace Utopia.Server.Entities
 
             #region Falling
             var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            if (State == TestNpcState.Staying && !current.Down().IsSolid())
+            if (State == TestNpcState.Staying && !current.PeekProfile(Vector3I.Down).IsSolidToEntity)
             {
                 var pos = DynamicEntity.Position;
                 pos.Y = Math.Round(DynamicEntity.Position.Y);

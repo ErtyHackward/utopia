@@ -22,6 +22,7 @@ using Utopia.Worlds.Chunks;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Worlds.GameClocks;
 using Utopia.Entities.Managers;
+using Utopia.Shared.World;
 
 namespace Utopia.Components
 {
@@ -56,6 +57,7 @@ namespace Utopia.Components
         private IWorldChunks _worldChunk;
         private IClock _gameClockTime;
         private PlayerEntityManager _playerEntityManager;
+        private VisualWorldParameters _visualWorldParameters;
 
         private FastRandom _rnd;
 
@@ -96,7 +98,8 @@ namespace Utopia.Components
                                 IChunkEntityImpactManager chunkEntityImpactManager,
                                 IWorldChunks worldChunk,
                                 IClock gameClockTime,
-                                PlayerEntityManager playerEntityManager)
+                                PlayerEntityManager playerEntityManager,
+                                VisualWorldParameters visualWorldParameters)
         {
             _cameraManager = cameraManager;
             _soundEngine = soundEngine;
@@ -105,6 +108,7 @@ namespace Utopia.Components
             _chunkEntityImpactManager = chunkEntityImpactManager;
             _gameClockTime = gameClockTime;
             _playerEntityManager = playerEntityManager;
+            _visualWorldParameters = visualWorldParameters;
 
             _dynamicEntityManager = dynamicEntityManager;
             _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = player, Position = player.Position, isLocalSound = true });
@@ -161,7 +165,7 @@ namespace Utopia.Components
             }
 
             //Prepare Sound for biomes
-            foreach (var biome in Utopia.Shared.Configuration.RealmConfiguration.Biomes)
+            foreach (var biome in _visualWorldParameters.WorldParameters.Configuration.UtopiaProcessorParam.Biomes)
             {
                 foreach (var biomeSound in biome.AmbientSound)
                 {
@@ -237,14 +241,14 @@ namespace Utopia.Components
         //Handle Cube removed / added sound
         private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            if (e.NewBlockType == RealmConfiguration.CubeId.Air && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
+            if (e.NewBlockType == WorldConfiguration.CubeId.Air && e.PreviousBlock == WorldConfiguration.CubeId.DynamicWater)
                 return;
-            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.Air)
+            if (e.NewBlockType == WorldConfiguration.CubeId.DynamicWater && e.PreviousBlock == WorldConfiguration.CubeId.Air)
                 return;
-            if (e.NewBlockType == RealmConfiguration.CubeId.DynamicWater && e.PreviousBlock == RealmConfiguration.CubeId.DynamicWater)
+            if (e.NewBlockType == WorldConfiguration.CubeId.DynamicWater && e.PreviousBlock == WorldConfiguration.CubeId.DynamicWater)
                 return;
 
-            if (e.NewBlockType == RealmConfiguration.CubeId.Air)
+            if (e.NewBlockType == WorldConfiguration.CubeId.Air)
                 PlayBlockTake(e.Position);
             else
                 PlayBlockPut(e.Position);
@@ -282,7 +286,7 @@ namespace Utopia.Components
                 TerraCube cubeUnderFeet = _singleArray.GetCube(underTheFeets);
 
                 // no need to play step if the entity is in air or not in walking displacement mode
-                if (cubeUnderFeet.Id == RealmConfiguration.CubeId.Air ||
+                if (cubeUnderFeet.Id == WorldConfiguration.CubeId.Air ||
                     _stepsTracker[i].Entity.DisplacementMode != Shared.Entities.EntityDisplacementModes.Walking)
                 {
                     var item = new DynamicEntitySoundTrack { Entity = _stepsTracker[i].Entity, Position = entity.Position, isLocalSound = _stepsTracker[i].isLocalSound }; //Save the position of the entity
@@ -302,17 +306,17 @@ namespace Utopia.Components
                 // do we need to play the step sound?
                 //Trigger only if the difference between previous memorize position and current is > 1.5 meters
                 //Or if the previous position was in the air
-                if (distance >= 1.5f || prevCube.Id == RealmConfiguration.CubeId.Air)
+                if (distance >= 1.5f || prevCube.Id == WorldConfiguration.CubeId.Air)
                 {
                     byte soundIndex = 0;
                     TerraCube currentCube = _singleArray.GetCube(entity.Position);
 
                     //If walking on the ground, but with Feets and legs inside water block
-                    if (currentCube.Id == RealmConfiguration.CubeId.StillWater && cubeUnderFeet.Id != RealmConfiguration.CubeId.StillWater)
+                    if (currentCube.Id == WorldConfiguration.CubeId.StillWater && cubeUnderFeet.Id != WorldConfiguration.CubeId.StillWater)
                     {
                         //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
                         TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.DefaultSize.Y, 0));
-                        if (headCube.Id == RealmConfiguration.CubeId.Air)
+                        if (headCube.Id == WorldConfiguration.CubeId.Air)
                         {
                             soundIndex = PlayWalkingSound(currentCube.Id, entityTrack);
                         }
@@ -320,7 +324,7 @@ namespace Utopia.Components
                     else
                     {
                         //Play a foot step sound only if the block under feet is solid to entity. (No water, no air, ...)
-                        if (RealmConfiguration.CubeProfiles[cubeUnderFeet.Id].IsSolidToEntity)
+                        if (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeUnderFeet.Id].IsSolidToEntity)
                         {
                             soundIndex = PlayWalkingSound(cubeUnderFeet.Id, entityTrack);
                         }
@@ -375,7 +379,7 @@ namespace Utopia.Components
 
             //Get biome info from the "chunk" MasterBiome.
             //Masterbiome being the biome associated to the chunk, based on average of all column's chunk biome.
-            Biome chunkBiome = Utopia.Shared.Configuration.RealmConfiguration.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
+            Biome chunkBiome = _visualWorldParameters.WorldParameters.Configuration.UtopiaProcessorParam.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
             ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(newWorldCubePosition.X - chunk.ChunkPositionBlockUnit.X, newWorldCubePosition.Z - chunk.ChunkPositionBlockUnit.Y);
 

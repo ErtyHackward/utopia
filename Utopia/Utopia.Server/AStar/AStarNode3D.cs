@@ -49,28 +49,28 @@ namespace Utopia.Server.AStar
             var cursor = Cursor.Clone().Move(move);
 
             // do we have a blocking cube in front of our face?
-            if (cursor.Up().IsSolid())
+            if (cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
                 return;
 
-            if (!cursor.IsSolid())
+            if (!cursor.PeekProfile().IsSolidToEntity)
             {
                 // simple move?
-                if (cursor.Down().IsSolid())
+                if (cursor.PeekProfile(Vector3I.Down).IsSolidToEntity)
                 {
                     CreateNode(aSuccessors, cursor, 1);
                     return;
                 }
 
                 // or jump down?
-                if (cursor.Offset(new Vector3I(0, -2, 0)).IsSolid())
+                if (cursor.PeekProfile(new Vector3I(0, -2, 0)).IsSolidToEntity)
                 {
-                    CreateNode(aSuccessors, cursor.Down().Move(), 2);
+                    CreateNode(aSuccessors, cursor.Move(Vector3I.Down), 2);
                 }
             }
-            else if (!cursor.Offset(new Vector3I(0, 2, 0)).IsSolid())
+            else if (!cursor.PeekProfile(new Vector3I(0, 2, 0)).IsSolidToEntity)
             {
                 // jump up!
-                CreateNode(aSuccessors, cursor.Up().Move(), 3);
+                CreateNode(aSuccessors, cursor.Move(Vector3I.Up), 3);
             }
         }
 

@@ -29,6 +29,7 @@ namespace Realms.Client.Components
         private Server _server;
         private EntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
+        private WorldParameters _worldParam;
 
         public LocalServer(RuntimeVariables vars)
         {
@@ -40,7 +41,9 @@ namespace Realms.Client.Components
             if (_server != null)
                 throw new InvalidOperationException("Already initialized");
 
+            _worldParam = worldParam;
             _serverFactory = new EntityFactory(null);
+            _serverFactory.Config = _worldParam.Configuration;
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
             _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory, worldParam);
@@ -64,7 +67,7 @@ namespace Realms.Client.Components
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
 
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
+            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
@@ -87,17 +90,17 @@ namespace Realms.Client.Components
             ContainedSlot outItem;
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = RealmConfiguration.CubeId.Stone;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.SetCube(adder.CubeId, _worldParam.Configuration.CubeProfiles[WorldConfiguration.CubeId.Stone].Name);
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
-            foreach (var cubeId in RealmConfiguration.CubeId.All())
+            foreach (var cubeId in WorldConfiguration.CubeId.All())
             {
-                if (cubeId == RealmConfiguration.CubeId.Air)
+                if (cubeId == WorldConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.CubeId = cubeId;
+                item3.SetCube(cubeId, _worldParam.Configuration.CubeProfiles[cubeId].Name);
                 dEntity.Inventory.PutItem(item3);
             }
 

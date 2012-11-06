@@ -110,8 +110,8 @@ namespace Utopia.Server.Sample
             if (e.Command is ComeHereCommand)
             {
                 var blockPos = _server.LandscapeManager.GetCursor(e.Connection.ServerEntity.DynamicEntity.Position);
-                
-                if (!blockPos.IsSolid() && blockPos.Down().IsSolid())
+
+                if (!blockPos.PeekProfile().IsSolidToEntity && blockPos.PeekProfile(Vector3I.Down).IsSolidToEntity)
                 {
                     foreach (var serverZombie in _aliveNpc)
                     {

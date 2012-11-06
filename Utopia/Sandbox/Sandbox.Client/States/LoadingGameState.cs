@@ -228,7 +228,7 @@ namespace Sandbox.Client.States
             playerEntityManager.HasMouseFocus = true;
             cameraManager.SetCamerasPlugin(playerEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
-            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager);
+            chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;
