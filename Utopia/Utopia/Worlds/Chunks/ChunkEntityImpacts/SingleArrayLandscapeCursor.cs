@@ -3,6 +3,8 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -10,6 +12,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
     {
         private readonly IChunkEntityImpactManager _landscapeManager;
         private Vector3I _globalPosition;
+        private WorldConfiguration _config;
         private int _bigArrayIndex;
 
         /// <summary>
@@ -17,11 +20,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// </summary>
         public event EventHandler<LandscapeCursorBeforeWriteEventArgs> BeforeWrite;
 
-        public SingleArrayLandscapeCursor(IChunkEntityImpactManager landscapeManager, Vector3I blockPosition)
+        public SingleArrayLandscapeCursor(IChunkEntityImpactManager landscapeManager, Vector3I blockPosition, WorldConfiguration config)
         {
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
             _landscapeManager = landscapeManager;
             GlobalPosition = blockPosition;
+            _config = config;
             if (!landscapeManager.CubesHolder.IndexSafe(blockPosition.X, blockPosition.Y, blockPosition.Z, out _bigArrayIndex))
                 throw new IndexOutOfRangeException();
         }
@@ -69,7 +73,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public ILandscapeCursor Clone()
         {
-            return new SingleArrayLandscapeCursor(_landscapeManager, _globalPosition);
+            return new SingleArrayLandscapeCursor(_landscapeManager, _globalPosition, _config);
         }
         
         /// <summary>
@@ -97,6 +101,16 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Vector3I peekPosition = _globalPosition + moveVector;
             var peekIndex = _landscapeManager.CubesHolder.Index(ref peekPosition);
             return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
+        }
+
+        public CubeProfile PeekProfile(Vector3I moveVector)
+        {
+            return _config.CubeProfiles[PeekValue(moveVector)];
+        }
+
+        public CubeProfile PeekProfile()
+        {
+            return _config.CubeProfiles[Read()];
         }
 
         public byte PeekValue<T>(Vector3I moveVector, out T tag) where T : BlockTag
@@ -140,5 +154,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             var chunk = _landscapeManager.GetChunk(GlobalPosition);
             chunk.Entities.Add(entity);
         }
+
     }
 }

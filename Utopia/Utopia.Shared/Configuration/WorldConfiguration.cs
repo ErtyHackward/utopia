@@ -20,7 +20,7 @@ namespace Utopia.Shared.Configuration
     /// Holds possible entities types, their names, world generator settings, defines everything
     /// Allows to save and load the realm configuration
     /// </summary>
-    public class RealmConfiguration : IBinaryStorable
+    public class WorldConfiguration : IBinaryStorable
     {
         #region Private Variables
         private readonly EntityFactory _factory;
@@ -85,45 +85,18 @@ namespace Utopia.Shared.Configuration
         /// Holds examples of entities of all types in the realm
         /// </summary>
         [Browsable(false)]
-        public static List<IEntity> Entities { get; set; }
-
-        [Browsable(false)]
-        public List<IEntity> RealmEntities
-        {
-            get { return RealmConfiguration.Entities; }
-            set { RealmConfiguration.Entities = value; }
-        }
+        public List<IEntity> Entities { get; set; }
 
         /// <summary>
         /// Keep a list of the entities lookable by ConcreteId
         /// </summary>
         [Browsable(false)]
-        public static Dictionary<ushort, Entity> BluePrints { get; set; }
+        public Dictionary<ushort, Entity> BluePrints { get; set; }
         /// <summary>
         /// Holds Cube Profiles configuration
         /// </summary>
         [Browsable(false)]
-        public static CubeProfile[] CubeProfiles { get; set; }
-
-        [Browsable(false)]
-        public CubeProfile[] RealmCubeProfiles
-        {
-            get { return RealmConfiguration.CubeProfiles; }
-            set { RealmConfiguration.CubeProfiles = value; }
-        }
-
-        /// <summary>
-        /// Holds Biomes Profiles configuration
-        /// </summary>
-        [Browsable(false)]
-        public static List<Biome> Biomes { get; set; }
-
-        [Browsable(false)]
-        public List<Biome> RealmBiomes
-        {
-            get { return RealmConfiguration.Biomes; }
-            set { RealmConfiguration.Biomes = value; }
-        }
+        public CubeProfile[] CubeProfiles { get; set; }
 
         /// <summary>
         /// Holds parameters for Utopia processor
@@ -151,20 +124,21 @@ namespace Utopia.Shared.Configuration
 
         #endregion
 
-        public RealmConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false)
+        public WorldConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false, bool withHelperAssignation = false)
         {
-            if (factory == null)
-                factory = new EntityFactory(null);
+            if (factory == null) factory = new EntityFactory(null);
+            if (withHelperAssignation) EditorConfigHelper.Config = this;
+            
+            factory.Config = this; //Inject itself into the factory
 
             _factory = factory;
             Entities = new List<IEntity>();
             BluePrints = new Dictionary<ushort, Entity>();
             CubeProfiles = new CubeProfile[255];
-            Biomes = new List<Biome>();
             Services = new List<KeyValuePair<string, string>>();
             StartStuff = new List<KeyValuePair<int, int>>();
 
-            UtopiaProcessorParam = new UtopiaProcessorParams();
+            UtopiaProcessorParam = new UtopiaProcessorParams(this);
             WorldProcessor = WorldProcessors.Utopia;
 
             if (withDefaultValueCreation)
@@ -208,12 +182,6 @@ namespace Utopia.Shared.Configuration
                 cubeProfile.Save(writer);
             }
 
-            writer.Write(Biomes.Count);
-            foreach (var biome in Biomes)
-            {
-                biome.Save(writer);
-            }
-
             writer.Write(Services.Count);
             foreach (var pair in Services)
             {
@@ -227,7 +195,6 @@ namespace Utopia.Shared.Configuration
                 writer.Write(pair.Key);
                 writer.Write(pair.Value);
             }
-            
 
             UtopiaProcessorParam.Save(writer);
         }
@@ -266,15 +233,6 @@ namespace Utopia.Shared.Configuration
 
             FilledUpReservedCubeInArray();
 
-            Biomes.Clear();
-            var countBiomes = reader.ReadInt32();
-            for (var i = 0; i < countBiomes; i++)
-            {
-                var biome = new Biome();
-                biome.Load(reader);
-                Biomes.Add(biome);
-            }
-
             Services.Clear();
             var servicesCount = reader.ReadInt32();
             for (int i = 0; i < servicesCount; i++)
@@ -292,13 +250,11 @@ namespace Utopia.Shared.Configuration
             }
 
             UtopiaProcessorParam.Load(reader);
-
-            RealmCubeProfiles = CubeProfiles;
         }
 
-        public static RealmConfiguration LoadFromFile(string path, EntityFactory factory = null)
+        public static WorldConfiguration LoadFromFile(string path, EntityFactory factory = null, bool withHelperAssignation = false)
         {
-            var configuration = new RealmConfiguration(factory ?? new EntityFactory(null));
+            WorldConfiguration configuration = new WorldConfiguration(factory, withHelperAssignation: withHelperAssignation);
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
                 var reader = new BinaryReader(fs);
@@ -352,42 +308,18 @@ namespace Utopia.Shared.Configuration
 
             //Generate a new Entity ID, it will represent this Blue print, and must be unique
             ushort newId;
-            if (RealmEntities.Count == 0) newId = 1;
-            else newId = (ushort)(RealmEntities.Select(x => x.BluePrintId).Max(y => y) + 1);
+            if (Entities.Count == 0) newId = 0;
+            else newId = (ushort)(Entities.Select(x => x.BluePrintId).Max(y => y) + 1);
 
             instance.BluePrintId = newId;
             instance.isSystemEntity = false;
 
-            RealmEntities.Add(instance);
+            Entities.Add(instance);
 
             return instance;
         }
 
-        public Biome CreateNewBiome()
-        {
-            Biome newBiome = new Biome()
-            {
-                Name = "Default",
-                SurfaceCube = RealmConfiguration.CubeId.Grass,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-                GroundCube = RealmConfiguration.CubeId.Stone,
-                CubeVeins = new List<CubeVein>()
-                {
-                    new CubeVein(){ Name = "Sand Vein", CubeId = RealmConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "Rock Vein",CubeId = RealmConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
-                    new CubeVein(){ Name = "Dirt Vein",CubeId = RealmConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
-                    new CubeVein(){ Name = "Gravel Vein",CubeId = RealmConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "GoldOre Vein",CubeId = RealmConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
-                    new CubeVein(){ Name = "CoalOre Vein",CubeId = RealmConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
-                    new CubeVein(){ Name = "MoonStone Vein",CubeId = RealmConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = RealmConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = RealmConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
-                }
-            };
 
-            Biomes.Add(newBiome);
-            return newBiome;
-        }
 
         #endregion
 
@@ -399,7 +331,6 @@ namespace Utopia.Shared.Configuration
             _worldHeight = 128;
             CreateDefaultCubeProfiles();
             CreateDefaultEntities();
-            CreateDefaultBiomes();
             CreateDefaultUtopiaProcessorParam();
         }
 
@@ -944,31 +875,6 @@ namespace Utopia.Shared.Configuration
            cactusFlower.MaxStackSize = 99;
         }
 
-        //Definition of default biomes
-        private void CreateDefaultBiomes()
-        {
-            //Desert Biome Definition
-            Biomes.Add(new Biome()
-            {
-                Name = "Default",
-                SurfaceCube = RealmConfiguration.CubeId.Grass,
-                UnderSurfaceCube = RealmConfiguration.CubeId.Dirt,
-                GroundCube = RealmConfiguration.CubeId.Stone,
-                CubeVeins = new List<CubeVein>()
-                {
-                    new CubeVein(){ Name = "Sand Vein", CubeId = RealmConfiguration.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "Rock Vein",CubeId = RealmConfiguration.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
-                    new CubeVein(){ Name = "Dirt Vein",CubeId = RealmConfiguration.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
-                    new CubeVein(){ Name = "Gravel Vein",CubeId = RealmConfiguration.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "GoldOre Vein",CubeId = RealmConfiguration.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
-                    new CubeVein(){ Name = "CoalOre Vein",CubeId = RealmConfiguration.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
-                    new CubeVein(){ Name = "MoonStone Vein",CubeId = RealmConfiguration.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = RealmConfiguration.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = RealmConfiguration.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
-                }
-            });
-        }
-
         //Definition of all default Utopia processor params
         private void CreateDefaultUtopiaProcessorParam()
         {
@@ -1006,10 +912,23 @@ namespace Utopia.Shared.Configuration
 
             public static IEnumerable<byte> All()
             {
-                foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
-                {
-                    yield return profile.Id;
-                }
+                //foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
+                //{
+                //    yield return profile.I
+                //}
+                yield return Air;
+                yield return Stone;
+                yield return Dirt;
+                yield return Grass;
+                yield return StillWater;
+                yield return DynamicWater;
+                yield return LightWhite;
+                yield return Rock;
+                yield return Sand;
+                yield return Gravel;
+                yield return GoldOre;
+                yield return CoalOre;
+                yield return MoonStone;
             }
         }
 

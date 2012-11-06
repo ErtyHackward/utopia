@@ -164,22 +164,22 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
         }
 
-        private RealmConfiguration GetConfigurationObject()
+        private WorldConfiguration GetConfigurationObject()
         {
-            RealmConfiguration config = null;
+            WorldConfiguration config = null;
             if (_configurationsFiles.SelectedItem.ToString().StartsWith("Default "))
             {
                 //Create new default RealmConfiguration
                 var path = Directory.GetFiles("Config", _configurationsFiles.SelectedItem.ToString().Replace("Default ", "") + ".realm")[0];
 
-                config = RealmConfiguration.LoadFromFile(path);
+                config = WorldConfiguration.LoadFromFile(path);
             }
             else
             {
                 var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia", _configurationsFiles.SelectedItem.ToString() + ".realm");
                 if (File.Exists(path))
                 {
-                    config = RealmConfiguration.LoadFromFile(path);
+                    config = WorldConfiguration.LoadFromFile(path);
                 }
                 else
                 {

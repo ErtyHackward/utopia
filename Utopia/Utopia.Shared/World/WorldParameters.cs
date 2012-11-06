@@ -15,7 +15,7 @@ namespace Utopia.Shared.World
         /// </summary>
         public string WorldName { get; set; }
         public string SeedName { get; set; }
-        public RealmConfiguration Configuration { get; set; }
+        public WorldConfiguration Configuration { get; set; }
 
         /// <summary>
         /// Base seed to use in random initializers
@@ -45,7 +45,7 @@ namespace Utopia.Shared.World
         {
             WorldName = reader.ReadString();
             SeedName = reader.ReadString();
-            Configuration = new RealmConfiguration();
+            Configuration = new WorldConfiguration();
             Configuration.Load(reader);
         }
     }

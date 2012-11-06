@@ -98,7 +98,7 @@ namespace Utopia.Shared.Settings
                         //    configuration.Load(new BinaryReader(ms));
                         //}
                         //Load configuration File from file (not from DB)
-                        RealmConfiguration configuration = RealmConfiguration.LoadFromFile(Path.GetDirectoryName(DBPath) + @"\" + Path.GetFileNameWithoutExtension(DBPath) + ".realm");
+                        WorldConfiguration configuration = WorldConfiguration.LoadFromFile(Path.GetDirectoryName(DBPath) + @"\" + Path.GetFileNameWithoutExtension(DBPath) + ".realm");
 
                         worldParameters = new WorldParameters()
                                               {

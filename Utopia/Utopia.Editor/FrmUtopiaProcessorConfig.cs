@@ -16,7 +16,7 @@ namespace Utopia.Editor
     {
         public TreeView tvBiomesList { get { return this.tvBiomeList; } }
         public PropertyGrid gpBiome { get { return this.gpBiome; } }
-        public RealmConfiguration Configuration { get; set; }
+        public WorldConfiguration Configuration { get; set; }
 
         public FrmUtopiaProcessorConfig()
         {
@@ -129,7 +129,7 @@ namespace Utopia.Editor
         //Add new
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Biome biome = Configuration.CreateNewBiome();
+            Biome biome = Configuration.UtopiaProcessorParam.CreateNewBiome();
 
             var item = new TreeNode(biome.Name);
             item.Tag = biome;
@@ -146,7 +146,7 @@ namespace Utopia.Editor
             if (selectedNode != null && tvBiomeList.Nodes.Count > 1)
             {
                 Biome biome = (Biome)selectedNode.Tag;
-                Configuration.RealmBiomes.Remove(biome);
+                Configuration.UtopiaProcessorParam.Biomes.Remove(biome);
                 tvBiomeList.Nodes.Remove(selectedNode);
             }
         }
@@ -164,9 +164,9 @@ namespace Utopia.Editor
             //Clear all the Biomes node items
             tvBiomeList.Nodes.Clear();
 
-            for (var i = 0; i < Configuration.RealmBiomes.Count; i++)
+            for (var i = 0; i < Configuration.UtopiaProcessorParam.Biomes.Count; i++)
             {
-                var biome = Configuration.RealmBiomes[i];
+                var biome = Configuration.UtopiaProcessorParam.Biomes[i];
                 var item = new TreeNode(biome.Name);
                 item.Tag = biome;
                 tvBiomeList.Nodes.Add(item);

@@ -24,6 +24,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         private WorldParameters _worldParameters;
         private EntityFactory _entityFactory;
         private int _worldGeneratedHeight = 128;
+        private WorldConfiguration _config;
+        private BiomeHelper _biomeHelper;
         #endregion
 
         #region Public Properties
@@ -47,7 +49,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;
-
+            _config = worldParameters.Configuration;
+            _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _worldParameters.Configuration.UtopiaProcessorParam.WorldGeneratedHeight;
         }
 
@@ -271,37 +274,37 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                         value *= valueUnderground;
 
-                        cube = RealmConfiguration.CubeId.Air;
+                        cube = WorldConfiguration.CubeId.Air;
                         if (value > 0.5)
                         {
-                            cube = RealmConfiguration.CubeId.Stone;
+                            cube = WorldConfiguration.CubeId.Stone;
                         }
 
                         //BedRock
                         if (Y == 0)
                         {
-                            cube = RealmConfiguration.CubeId.Rock;
+                            cube = WorldConfiguration.CubeId.Rock;
                         }
                         //Be sure that the last landscape row is composed of air
                         if (Y == _worldGeneratedHeight - 1)
                         {
-                            cube = RealmConfiguration.CubeId.Air;
+                            cube = WorldConfiguration.CubeId.Air;
                         }
 
                         //Create Bottom Lava lake
-                        if (Y <= 3 && cube == RealmConfiguration.CubeId.Air)
+                        if (Y <= 3 && cube == WorldConfiguration.CubeId.Air)
                         {
-                            cube = RealmConfiguration.CubeId.StillLava;
+                            cube = WorldConfiguration.CubeId.StillLava;
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if (Y == _worldParameters.Configuration.UtopiaProcessorParam.WaterLevel && cube == RealmConfiguration.CubeId.Air && valueUnderground == 1)
+                        if (Y == _worldParameters.Configuration.UtopiaProcessorParam.WaterLevel && cube == WorldConfiguration.CubeId.Air && valueUnderground == 1)
                         {
-                            cube = RealmConfiguration.CubeId.StillWater;
+                            cube = WorldConfiguration.CubeId.StillWater;
                         }                       
 
                         //Save block if changed
-                        if(cube != RealmConfiguration.CubeId.Air)
+                        if(cube != WorldConfiguration.CubeId.Air)
                         {
                             ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Y] = cube;
                         }
@@ -330,9 +333,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                     bool mustPlacedSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
                     double moisture = biomeMap[noise2DIndex, 2];
-                    byte biomeId = Biome.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
+                    byte biomeId = _biomeHelper.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
-                    currentBiome = RealmConfiguration.Biomes[biomeId];
+                    currentBiome = _config.UtopiaProcessorParam.Biomes[biomeId];
 
                     //Get Temperature and Moisture
                     columnInfo = new ChunkColumnInfo()
@@ -355,9 +358,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                         byte cubeId = ChunkCubes[index];
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == RealmConfiguration.CubeId.Air && Y > (_worldParameters.Configuration.UtopiaProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
+                        if (surfaceLayer > 0 && cubeId == WorldConfiguration.CubeId.Air && Y > (_worldParameters.Configuration.UtopiaProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
 
-                        if (cubeId == RealmConfiguration.CubeId.Stone)
+                        if (cubeId == WorldConfiguration.CubeId.Stone)
                         {
                             if (solidGroundHitted == false)
                             {
@@ -392,7 +395,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                     {
                                         //Get cube index above this one
                                         //Place a snow block on it
-                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = RealmConfiguration.CubeId.Snow;
+                                        ChunkCubes[((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + (Y + 1)] = WorldConfiguration.CubeId.Snow;
                                         mustPlacedSnow = false;
                                     }
 
@@ -408,13 +411,13 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else //This block is not Stone (Air, Water, or BedRock)
                         {
-                            if (cubeId == RealmConfiguration.CubeId.StillWater)
+                            if (cubeId == WorldConfiguration.CubeId.StillWater)
                             {
                                 if (mustPlacedSnow)
                                 {
                                     //Get cube index above this one
                                     //Place a snow block on it
-                                    ChunkCubes[index] = RealmConfiguration.CubeId.Ice;
+                                    ChunkCubes[index] = WorldConfiguration.CubeId.Ice;
                                 }
 
                                 inWaterMaxLevel = Y;
@@ -422,9 +425,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                             }
                             else
                             {
-                                if (inWaterMaxLevel > 0 && cubeId == RealmConfiguration.CubeId.Air)
+                                if (inWaterMaxLevel > 0 && cubeId == WorldConfiguration.CubeId.Air)
                                 {
-                                    ChunkCubes[index] = RealmConfiguration.CubeId.StillWater;
+                                    ChunkCubes[index] = WorldConfiguration.CubeId.StillWater;
                                 }
                             }
                         }
@@ -445,7 +448,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory)
         {
             //Get Chunk Master Biome
-            var masterBiome = RealmConfiguration.Biomes[chunkMetaData.ChunkMasterBiomeType];
+            var masterBiome = _config.UtopiaProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
 
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);

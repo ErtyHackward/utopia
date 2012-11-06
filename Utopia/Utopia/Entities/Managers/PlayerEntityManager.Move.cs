@@ -217,7 +217,7 @@ namespace Utopia.Entities.Managers
                         handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
                     }
 #if DEBUG
-                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, RealmConfiguration.CubeProfiles[_groundCube.Cube.Id].Name);
+                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_groundCube.Cube.Id].Name);
 #endif
                     _fallMaxHeight = int.MinValue;
                 }
@@ -236,8 +236,8 @@ namespace Utopia.Entities.Managers
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
                 TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Fastfloor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
 
-                if (RealmConfiguration.CubeProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
-                   (RealmConfiguration.CubeProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || RealmConfiguration.CubeProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
+                if (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
+                   (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
                 {
                     if (DisplacementMode == EntityDisplacementModes.Walking)
                     {
@@ -250,14 +250,14 @@ namespace Utopia.Entities.Managers
                 }
 
                 //Eyes under water (Used to change view Color)
-                if (_headCube.Id == RealmConfiguration.CubeId.StillWater || _headCube.Id == RealmConfiguration.CubeId.DynamicWater)
+                if (_headCube.Id == WorldConfiguration.CubeId.StillWater || _headCube.Id == WorldConfiguration.CubeId.DynamicWater)
                 {
                     int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
-                    if (_cubesHolder.Cubes[AboveHead].Id == RealmConfiguration.CubeId.Air)
+                    if (_cubesHolder.Cubes[AboveHead].Id == WorldConfiguration.CubeId.Air)
                     {
                         //Check the offset of the water
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
-                        if (Offset >= 1 - RealmConfiguration.CubeProfiles[_headCube.Id].YBlockOffset)
+                        if (Offset >= 1 - _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_headCube.Id].YBlockOffset)
                         {
                             IsHeadInsideWater = false;
                             return;

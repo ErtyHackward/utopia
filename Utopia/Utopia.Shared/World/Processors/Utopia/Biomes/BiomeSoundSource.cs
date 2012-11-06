@@ -28,14 +28,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Public Methods
-        public void Save(BinaryWriter writer)
+        public override void Save(BinaryWriter writer)
         {
             writer.Write((int)TimeOfDay);
 
             base.Save(writer);
         }
 
-        public void Load(BinaryReader reader)
+        public override void Load(BinaryReader reader)
         {
             TimeOfDay = (TimeOfDaySound)reader.ReadInt32();
 

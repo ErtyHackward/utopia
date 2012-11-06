@@ -27,6 +27,7 @@ namespace Sandbox.Client.Components
         private Server _server;
         private SandboxEntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
+        private WorldParameters _worldParam;
 
         public LocalServer(RuntimeVariables vars)
         {
@@ -38,10 +39,13 @@ namespace Sandbox.Client.Components
             if (_server != null)
                 throw new InvalidOperationException("Already initialized");
 
-            _serverFactory = new SandboxEntityFactory(null);
-            var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
+            _worldParam = worldParam;
 
-            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory, worldParam);
+            _serverFactory = new SandboxEntityFactory(null);
+            _serverFactory.Config = _worldParam.Configuration;
+            var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", _worldParam.WorldName, "ServerWorld.db");
+
+            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory, _worldParam);
             _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
 
             var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
@@ -51,18 +55,10 @@ namespace Sandbox.Client.Components
             //Utopia New Landscape Test
             var utopiaProcessor = new UtopiaProcessor(worldParam, _serverFactory);
             var worldGenerator = new WorldGenerator(worldParam, utopiaProcessor);
-
-            //Old s33m3 landscape
-            //IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
-            //IWorldProcessor processor2 = new LandscapeLayersProcessor(worldParam, _serverFactory);
-            //var worldGenerator = new WorldGenerator(worldParam, processor1, processor2);
-
-            //Vlad Generator
-            //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
-            //var worldGenerator = new WorldGenerator(wp, planProcessor);
+           
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
 
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory);
+            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
@@ -84,17 +80,18 @@ namespace Sandbox.Client.Components
             ContainedSlot outItem;
 
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.CubeId = RealmConfiguration.CubeId.DynamicWater;//looting a terraincube will create a new blockadder instance or add to the stack
+            adder.SetCube(WorldConfiguration.CubeId.DynamicWater, _worldParam.Configuration.CubeProfiles[WorldConfiguration.CubeId.DynamicWater].Name); //looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
-            foreach (var cubeId in RealmConfiguration.CubeId.All())
+            //Put each cube in the inventory
+            foreach (var cubeId in WorldConfiguration.CubeId.All())
             {
-                if (cubeId == RealmConfiguration.CubeId.Air)
+                if (cubeId == WorldConfiguration.CubeId.Air)
                     continue;
 
                 var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.CubeId = cubeId;
+                item3.SetCube(cubeId, _worldParam.Configuration.CubeProfiles[cubeId].Name);
                 dEntity.Inventory.PutItem(item3);
             }
 
