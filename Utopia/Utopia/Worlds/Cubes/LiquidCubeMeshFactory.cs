@@ -86,7 +86,7 @@ namespace Utopia.Worlds.Cubes
             else
             {
                 //Add a naturel Offset to StillWater when touching water at the surface !
-                if (topCube.Id == WorldConfiguration.CubeId.Air && cube.Id == WorldConfiguration.CubeId.StillWater)
+                if (topCube.Id == WorldConfiguration.CubeId.Air && cubeProfile.CubeFamilly == enuCubeFamilly.Liquid)
                 {
                     yBlockOffset = 0.1f;
                 }

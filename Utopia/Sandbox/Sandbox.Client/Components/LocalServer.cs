@@ -15,6 +15,7 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
+using System.Linq;
 using Utopia.Shared.World.Processors.Utopia;
 
 namespace Sandbox.Client.Components
@@ -80,8 +81,10 @@ namespace Sandbox.Client.Components
             dEntity.CharacterName = "Local player";
             ContainedSlot outItem;
 
+            byte equipedCubeId = _worldParam.Configuration.CubeProfiles.Where(x => x.IsSolidToEntity).First().Id;
+
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(WorldConfiguration.CubeId.DynamicWater, _worldParam.Configuration.CubeProfiles[WorldConfiguration.CubeId.DynamicWater].Name); //looting a terraincube will create a new blockadder instance or add to the stack
+            adder.SetCube(equipedCubeId, _worldParam.Configuration.CubeProfiles[equipedCubeId].Name); //looting a terraincube will create a new blockadder instance or add to the stack
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 

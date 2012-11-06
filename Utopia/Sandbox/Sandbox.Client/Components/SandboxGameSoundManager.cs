@@ -13,6 +13,7 @@ using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Entities.Managers;
 using Utopia.Shared.World;
+using System.Linq;
 
 namespace Sandbox.Client.Components
 {
@@ -31,30 +32,42 @@ namespace Sandbox.Client.Components
             : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager, worldChunk, gameClockTime, playerEntityManager, visualWorldParameters)
         {
 
-            // steps
-            RegisterStepSound(WorldConfiguration.CubeId.Snow, @"Sounds\Footsteps\footsteps_snow01.adpcm.wav");
-            //RegisterStepSound(CubeId.Snow, "Sounds\\Footsteps\\footsteps_snow02.ogg");
+            //Buffer cube walking sound
+            foreach (var cube in visualWorldParameters.WorldParameters.Configuration.CubeProfiles.Where(x => x.WalkingOverSound.Count > 0))
+            {
+                foreach (var walkingSound in cube.WalkingOverSound)
+                {
+                    RegisterStepSound(cube.Id, new SoundMetaData()
+                    {
+                        Path = walkingSound.SoundFilePath,
+                        Alias = walkingSound.SoundAlias,
+                        Volume = walkingSound.DefaultVolume,
+                        Power = walkingSound.Power
+                    }
+                        );
+                }
+            }
 
-            RegisterStepSound(WorldConfiguration.CubeId.Grass, @"Sounds\Footsteps\footsteps_grass01.adpcm.wav");
-            //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass02.ogg");
-            //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass03.ogg");
-            //RegisterStepSound(CubeId.Grass, "Sounds\\Footsteps\\footsteps_grass04.ogg");
+            //// steps
+            //RegisterStepSound(WorldConfiguration.CubeId.Snow, @"Sounds\Footsteps\footsteps_snow01.adpcm.wav");
 
-            RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand01.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand02.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand03.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Grass, @"Sounds\Footsteps\footsteps_grass01.adpcm.wav");
 
-            RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt01.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt02.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt03.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt04.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand01.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand02.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand03.adpcm.wav");
 
-            RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone01.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone02.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone03.adpcm.wav");
-            RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone04.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt01.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt02.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt03.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt04.adpcm.wav");
 
-            RegisterStepSound(WorldConfiguration.CubeId.StillWater, @"Sounds\Footsteps\footsteps_water01.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone01.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone02.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone03.adpcm.wav");
+            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone04.adpcm.wav");
+
+            //RegisterStepSound(WorldConfiguration.CubeId.StillWater, @"Sounds\Footsteps\footsteps_water01.adpcm.wav");
 
             PreLoadSound("Put", @"Sounds\Blocks\put.wav", 0.3f, 12.0f);
             PreLoadSound("Take", @"Sounds\Blocks\take.wav", 0.3f, 12.0f);

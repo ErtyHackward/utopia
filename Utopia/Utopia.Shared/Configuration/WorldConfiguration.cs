@@ -873,36 +873,10 @@ namespace Utopia.Shared.Configuration
         #endregion
 
         #region Inner Classes
-        //Helper inner class, to quickly get the corresponding static cube ID (These cannot be modified by users), they are "system" blocks
+
         public static class CubeId
         {
             public const byte Air = 0;
-            public const byte Stone = 1;
-            public const byte Dirt = 2;
-            public const byte Grass = 3;
-            public const byte StillWater = 4;
-            public const byte DynamicWater = 5;
-            public const byte LightWhite = 6;
-            public const byte Rock = 7;
-            public const byte Sand = 8;
-            public const byte Gravel = 9;
-            public const byte Trunk = 10;
-            public const byte GoldOre = 11;
-            public const byte CoalOre = 12;
-            public const byte MoonStone = 13;
-            public const byte Foliage = 14;
-            public const byte Snow = 15;
-            public const byte Ice = 16;
-            public const byte StillLava = 17;
-            public const byte DynamicLava = 18;
-            public const byte Cactus = 19;
-            public const byte CactusTop = 20;
-            public const byte Error = 255;
-        }
-
-        public static class BluePrintId
-        {
-            public const byte CactusFlower = 1;
         }
 
         /// <summary>

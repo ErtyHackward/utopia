@@ -250,7 +250,8 @@ namespace Utopia.Entities.Managers
                 }
 
                 //Eyes under water (Used to change view Color)
-                if (_headCube.Id == WorldConfiguration.CubeId.StillWater || _headCube.Id == WorldConfiguration.CubeId.DynamicWater)
+                CubeProfile headCubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_headCube.Id];
+                if (headCubeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
                 {
                     int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
                     if (_cubesHolder.Cubes[AboveHead].Id == WorldConfiguration.CubeId.Air)

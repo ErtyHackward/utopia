@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Settings;
+using System.Linq;
 
 namespace Realms.Server
 {
@@ -34,8 +35,9 @@ namespace Realms.Server
             ContainedSlot outItem;
             //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
 
+            byte equipedCubeId = _config.CubeProfiles.Where(x => x.IsSolidToEntity).First().Id;
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(WorldConfiguration.CubeId.Sand, _config.CubeProfiles[WorldConfiguration.CubeId.Sand].Name);
+            adder.SetCube(equipedCubeId, _config.CubeProfiles[equipedCubeId].Name);
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 

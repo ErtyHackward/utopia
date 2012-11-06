@@ -98,6 +98,8 @@ namespace Utopia.Server
         /// </summary>
         public EntityFactory EntityFactory { get; private set; }
 
+        public WorldParameters WorldParameters { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -118,6 +120,7 @@ namespace Utopia.Server
             UsersStorage = usersStorage;
             EntityStorage = entityStorage;
             EntityFactory = entityFactory;
+            WorldParameters = wp;
 
             if (SettingsManager.Settings == null)
                 SettingsManager.Load();
