@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using S33M3Resources.Effects.Basics;
 using S33M3Resources.Effects.Sprites;
 using SharpDX;
@@ -37,7 +38,10 @@ namespace Utopia.Entities
     /// </summary>
     public class IconFactory : GameComponent
     {
+
+
         #region private variables
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly D3DEngine _d3DEngine;
         private readonly VoxelModelManager _modelManager;
         public const int IconSize = 64;
@@ -60,8 +64,11 @@ namespace Utopia.Entities
 
         #endregion
 
-        #region public Variables/properties
-        #endregion
+        public WorldConfiguration Configuration
+        {
+            get { return _configuration; }
+            set { _configuration = value; }
+        }
 
         public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, WorldConfiguration configuration)
         {
@@ -90,35 +97,48 @@ namespace Utopia.Entities
             _iBuffer.SetData(context, indices); //Send the vertices inside the IBuffer
 
             //Create the various Effect for rendering the icons
-            _blurHorisontalEffect = ToDispose(new HLSLBlur(_d3DEngine.Device, HLSLBlur.BlurPass.Horizontal));
-            _blurVerticalEffect = ToDispose(new HLSLBlur(_d3DEngine.Device, HLSLBlur.BlurPass.Vertical));
-            _voxelEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
-            _overlayEffect = ToDispose(new HLSLColorOverlay(_d3DEngine.Device));
+            _blurHorisontalEffect = ToDispose(new HLSLBlur(_d3DEngine.Device, HLSLBlur.BlurPass.Horizontal, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\Blur.hlsl")));
+            _blurVerticalEffect = ToDispose(new HLSLBlur(_d3DEngine.Device, HLSLBlur.BlurPass.Vertical, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\Blur.hlsl")));
+            _voxelEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, Path.Combine(ClientSettings.EffectPack, @"Entities\VoxelModel.hlsl"), VertexVoxel.VertexDeclaration));
+            _overlayEffect = ToDispose(new HLSLColorOverlay(_d3DEngine.Device, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\ColorOverlay.hlsl")));
 
 
-            List<Texture2D> icons;
-            ShaderResourceView cubeTextureView;
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out cubeTextureView);
-            icons = Create3DBlockIcons(context, cubeTextureView);
-            
-            _nbrCubeIcon = icons.Count;
-            Texture2D[] spriteTextures;
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures, 1);
-            icons.AddRange(spriteTextures);
-            CreateTextureArray(context, icons);
-
-            //Array created i can dispose the various icons
-            foreach (var icon in icons)
+            if (_configuration != null)
             {
-                icon.Dispose();
+                List<Texture2D> icons;
+                ShaderResourceView cubeTextureView;
+                ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
+                                                      Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
+                                                      FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
+                                                      out cubeTextureView);
+                icons = Create3DBlockIcons(context, cubeTextureView);
+
+                _nbrCubeIcon = icons.Count;
+                Texture2D[] spriteTextures;
+                ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device,
+                                                      Path.Combine(ClientSettings.TexturePack, @"Sprites\"), @"*.png",
+                                                      FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures,
+                                                      1);
+                icons.AddRange(spriteTextures);
+                CreateTextureArray(context, icons);
+
+                //Array created i can dispose the various icons
+                foreach (var icon in icons)
+                {
+                    icon.Dispose();
+                }
+                cubeTextureView.Dispose();
+                foreach (var tex in spriteTextures) tex.Dispose();
+
+
+                CreateVoxelIcons(context);
             }
-            cubeTextureView.Dispose();
-            foreach (var tex in spriteTextures) tex.Dispose();
-
-
-            CreateVoxelIcons(context);
+            else
+            {
+                logger.Warn("Could not create voxel models and blocks icons, no configuration is set");
+            }
         }
-
+        
         public override void BeforeDispose()
         {
             if (_iconsTextureArray != null) _iconsTextureArray.Dispose();
@@ -313,7 +333,7 @@ namespace Utopia.Entities
                                 MinimumLod = 0
                             }));
 
-            SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine);
+            SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\Sprites2.hlsl"));
             texture.Begin();
 
             var voxelIconSpriteTexture = new SpriteTexture(tex2D);
@@ -387,7 +407,7 @@ namespace Utopia.Entities
         {
             List<Texture2D> createdIconsTexture = new List<Texture2D>();
 
-            SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine);
+            SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\Sprites2.hlsl"));
             //Get the "Block" mesh that will be used to draw the various blocks.
             IMeshFactory meshfactory = new MilkShape3DMeshFactory();
             Mesh meshBluePrint;

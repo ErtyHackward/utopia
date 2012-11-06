@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SharpDX.Direct3D11;
+using Utopia.Editor.Properties;
 using Utopia.Entities;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
@@ -20,6 +21,8 @@ namespace Utopia.Editor
 
         public static Dictionary<string, Image> ModelIcons { get; set; }
 
+        public static IconManager IconManager { get; private set; }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -28,6 +31,25 @@ namespace Utopia.Editor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            IconManager = new IconManager();
+
+            if (string.IsNullOrEmpty(Settings.Default.UtopiaFolder))
+            {
+                // we need to have a path to utopia game folder
+                var openFileDialog = new OpenFileDialog();
+
+                openFileDialog.Filter = "Realms.exe main file|Realms.exe";
+                openFileDialog.Title = "Editor needs utopia files...";
+
+                if (openFileDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                Settings.Default.UtopiaFolder = Path.GetDirectoryName(openFileDialog.FileName);
+                Settings.Default.Save();
+            }
+
+            IconManager.Initialize(Settings.Default.UtopiaFolder);
 
             ModelIcons = new Dictionary<string, Image>();
 
