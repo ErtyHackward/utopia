@@ -38,17 +38,18 @@ namespace Utopia.Entities.Voxel
         public VoxelModelManager(IVoxelModelStorage storage, ServerComponent server, VoxelMeshFactory voxelMeshFactory)
         {
             if (storage == null) throw new ArgumentNullException("storage");
-            if (server == null) throw new ArgumentNullException("server");
             _storage = storage;
             _server = server;
             _voxelMeshFactory = voxelMeshFactory;
 
-            _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
+            if (_server != null)
+                _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
         }
 
         public override void BeforeDispose()
         {
-            _server.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
+            if (_server != null)
+                _server.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
         }
 
         void ServerConnectionMessageVoxelModelData(object sender, ProtocolMessageEventArgs<VoxelModelDataMessage> e)
@@ -79,7 +80,7 @@ namespace Utopia.Entities.Voxel
             }
 
             // don't request the model before we are initialized or already requested
-            if (requested && _initialized)
+            if (requested && _initialized && _server != null)
                 _server.ServerConnection.SendAsync(new GetVoxelModelsMessage { Names = new [] { name } });
         }
 
