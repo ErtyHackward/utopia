@@ -39,7 +39,7 @@ namespace Utopia.Shared.Settings
             SoundFilePath = reader.ReadString();
             SoundAlias = reader.ReadString();
             DefaultVolume = reader.ReadSingle();
-            //Power = reader.ReadSingle();
+            Power = reader.ReadSingle();
         }
         #endregion
 

@@ -162,7 +162,7 @@ namespace Utopia.Shared.Settings
             Textures[4] = reader.ReadByte();
             Textures[5] = reader.ReadByte();
 
-            //BinarySerialize.DeserializeArray(reader, out _walkingOverSound);
+            BinarySerialize.DeserializeArray(reader, out _walkingOverSound);
         }
     }
 }
