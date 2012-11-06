@@ -24,7 +24,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private WorldParameters _worldParameters;
         private EntityFactory _entityFactory;
         private int _worldGeneratedHeight = 128;
-        private WorldConfiguration _config;
+        private WorldConfiguration<UtopiaProcessorParams> _config;
         private BiomeHelper _biomeHelper;
         #endregion
 
@@ -49,9 +49,9 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;
-            _config = worldParameters.Configuration;
+            _config = (WorldConfiguration<UtopiaProcessorParams>)worldParameters.Configuration;
             _biomeHelper = new BiomeHelper(_config);
-            _worldGeneratedHeight = _worldParameters.Configuration.ProcessorParam.WorldGeneratedHeight;
+            _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
         }
 
         public void Dispose()
@@ -106,15 +106,15 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
 
             INoise terrainDelimiter;
-            switch (_worldParameters.Configuration.ProcessorParam.WorldType)
+            switch (_config.ProcessorParam.WorldType)
             {
                 case enuWorldType.Island:
-                    terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233, _worldParameters.Configuration.ProcessorParam.IslandCtrlSize).GetLandFormFct());
+                    terrainDelimiter = new Cache<INoise>(new IslandCtrl(_worldParameters.Seed + 1233, _config.ProcessorParam.IslandCtrlSize).GetLandFormFct());
                     break;
                 case enuWorldType.Normal:
                 default:
-                    terrainDelimiter = new Cache<INoise>(new WorldCtrl(_worldParameters.Seed + 1698, _worldParameters.Configuration.ProcessorParam.WorldCtrlOctave,
-                                                                                                     _worldParameters.Configuration.ProcessorParam.WorldCtrlFrequency).GetLandFormFct());
+                    terrainDelimiter = new Cache<INoise>(new WorldCtrl(_worldParameters.Seed + 1698, _config.ProcessorParam.WorldCtrlOctave,
+                                                                                                     _config.ProcessorParam.WorldCtrlFrequency).GetLandFormFct());
                     break;
             }
 
@@ -126,8 +126,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             //mainLandscape = new Cache<INoise>(FonctionTesting(new Gradient(0, 0, 0.45, 0), terrainDelimiter, out landScapeType));
 
             underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
-            temperature = new Temperature(_worldParameters.Seed - 963, _worldParameters.Configuration.ProcessorParam.TempCtrlOctave, _worldParameters.Configuration.ProcessorParam.TempCtrlFrequency).GetLandFormFct();
-            moisture = new Moisture(_worldParameters.Seed - 96, _worldParameters.Configuration.ProcessorParam.MoistureCtrlOctave, _worldParameters.Configuration.ProcessorParam.MoistureCtrlFrequency).GetLandFormFct();
+            temperature = new Temperature(_worldParameters.Seed - 963, _config.ProcessorParam.TempCtrlOctave, _config.ProcessorParam.TempCtrlFrequency).GetLandFormFct();
+            moisture = new Moisture(_worldParameters.Seed - 96, _config.ProcessorParam.MoistureCtrlOctave, _config.ProcessorParam.MoistureCtrlFrequency).GetLandFormFct();
         }
 
         public INoise CreateLandFormFct(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
@@ -144,17 +144,17 @@ namespace Utopia.Shared.World.Processors.Utopia
             INoise plainFct = new Plain(_worldParameters.Seed, ground_gradient).GetLandFormFct();
             INoise flatFct = new Flat(_worldParameters.Seed + 96, ground_gradient).GetLandFormFct();
             //Controler to manage Plains form transitions
-            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96, _worldParameters.Configuration.ProcessorParam.PlainCtrlOctave,
-                                                                          _worldParameters.Configuration.ProcessorParam.PlainCtrlFrequency).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
+            INoise plainsCtrl = new PlainCtrl(_worldParameters.Seed + 96, _config.ProcessorParam.PlainCtrlOctave,
+                                                                          _config.ProcessorParam.PlainCtrlFrequency).GetLandFormFct();         //Noise That will merge hillFct, plainFct and flatFct together
 
             //Oceans forms
             INoise oceanBaseFct = new Ocean(_worldParameters.Seed + 10051956, ground_gradient).GetLandFormFct();
 
             //Surface main controler
-            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123, _worldParameters.Configuration.ProcessorParam.GroundCtrlOctave,
-                                                                              _worldParameters.Configuration.ProcessorParam.GroundCtrlFrequency).GetLandFormFct();
+            INoise surfaceCtrl = new SurfaceCtrl(_worldParameters.Seed + 123, _config.ProcessorParam.GroundCtrlOctave,
+                                                                              _config.ProcessorParam.GroundCtrlFrequency).GetLandFormFct();
 
-            var param = _worldParameters.Configuration.ProcessorParam;
+            var param = _config.ProcessorParam;
 
             //=====================================================================================================
             //Plains Noise selecting based on plainsCtrl controler
@@ -298,7 +298,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         
                         //Place "StillWater" block at SeaLevel
-                        if (Y == _worldParameters.Configuration.ProcessorParam.WaterLevel && cube == WorldConfiguration.CubeId.Air && valueUnderground == 1)
+                        if (Y == _config.ProcessorParam.WaterLevel && cube == WorldConfiguration.CubeId.Air && valueUnderground == 1)
                         {
                             cube = WorldConfiguration.CubeId.StillWater;
                         }                       
@@ -358,7 +358,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         byte cubeId = ChunkCubes[index];
 
                         //Restart Surface layer if needed
-                        if (surfaceLayer > 0 && cubeId == WorldConfiguration.CubeId.Air && Y > (_worldParameters.Configuration.ProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
+                        if (surfaceLayer > 0 && cubeId == WorldConfiguration.CubeId.Air && Y > (_config.ProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
 
                         if (cubeId == WorldConfiguration.CubeId.Stone)
                         {
@@ -375,7 +375,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             cubeId = currentBiome.GroundCube;
 
                             //Under water soil
-                            if (Y < _worldParameters.Configuration.ProcessorParam.WaterLevel && inWaterMaxLevel != 0)
+                            if (Y < _config.ProcessorParam.WaterLevel && inWaterMaxLevel != 0)
                             {
                                 if (cubeId == currentBiome.GroundCube)
                                 {

@@ -20,11 +20,10 @@ namespace Utopia.Shared.Configuration
     /// Holds possible entities types, their names, world generator settings, defines everything
     /// Allows to save and load the realm configuration
     /// </summary>
-    public class WorldConfiguration//<T> : IBinaryStorable where T : IBinaryStorable, new()
+    public class WorldConfiguration
     {
         #region Private Variables
         private readonly EntityFactory _factory;
-        private int _worldHeight;
         /// <summary>
         /// Realm format version
         /// </summary>
@@ -43,20 +42,15 @@ namespace Utopia.Shared.Configuration
         public string Author { get; set; }
 
         /// <summary>
+        /// Get, set the world processor attached
+        /// </summary>
+        [Browsable(false)]
+        public WorldProcessors WorldProcessor { get; set; }
+
+        /// <summary>
         /// World Height
         /// </summary>
-        public int WorldHeight
-        {
-            get { return _worldHeight; }
-            set
-            {
-                if (value >= 128 && value <= 256)
-                {
-                    if(ProcessorParam != null && ProcessorParam.WorldGeneratedHeight <= value)
-                    _worldHeight = value;
-                }
-            }
-        }
+        public virtual int WorldHeight { get; set; }        
 
         /// <summary>
         /// Datetime of the moment of creation
@@ -94,12 +88,6 @@ namespace Utopia.Shared.Configuration
         public CubeProfile[] CubeProfiles { get; set; }
 
         /// <summary>
-        /// Holds parameters for Utopia processor
-        /// </summary>
-        [Browsable(false)]
-        public UtopiaProcessorParams ProcessorParam { get; set; }
-
-        /// <summary>
         /// Holds a server services list with parameters
         /// The key is a type name
         /// The value is a initializarion string
@@ -133,7 +121,6 @@ namespace Utopia.Shared.Configuration
             Services = new List<KeyValuePair<string, string>>();
             StartStuff = new List<KeyValuePair<int, int>>();
 
-            ProcessorParam = new UtopiaProcessorParams(this);
 
             if (withDefaultValueCreation)
             {
@@ -153,8 +140,10 @@ namespace Utopia.Shared.Configuration
             }
         }
 
-        public void Save(BinaryWriter writer)
+        public virtual void Save(BinaryWriter writer)
         {
+            writer.Write((byte)WorldProcessor);
+
             writer.Write(RealmFormat);
 
             writer.Write(ConfigurationName ?? string.Empty);
@@ -189,12 +178,12 @@ namespace Utopia.Shared.Configuration
                 writer.Write(pair.Key);
                 writer.Write(pair.Value);
             }
-
-            ProcessorParam.Save(writer);
         }
 
-        public void Load(BinaryReader reader)
+        public virtual void Load(BinaryReader reader)
         {
+            WorldProcessor = (WorldProcessors)reader.ReadByte();
+
             var currentFormat = reader.ReadInt32();
             if (currentFormat != RealmFormat)
                 throw new InvalidDataException("Unsupported realm config format, expected " + RealmFormat + " current " + currentFormat);
@@ -242,13 +231,24 @@ namespace Utopia.Shared.Configuration
                 var pair = new KeyValuePair<int, int>(reader.ReadInt32(), reader.ReadInt32());
                 StartStuff.Add(pair);
             }
-
-            ProcessorParam.Load(reader);
         }
 
         public static WorldConfiguration LoadFromFile(string path, EntityFactory factory = null, bool withHelperAssignation = false)
         {
-            WorldConfiguration configuration = new WorldConfiguration(factory, withHelperAssignation: withHelperAssignation);
+            string processorType;
+            //Read the Generic type of the saved file.
+            using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
+            {
+                var reader = new BinaryReader(fs);
+                processorType = "Utopia.Shared.Configuration." + ((WorldProcessors)reader.ReadByte()).ToString() + "ProcessorParams, Utopia.Shared";
+            }
+
+            Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
+
+            WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, false, withHelperAssignation);
+
+            configuration.WorldProcessor = WorldProcessors.Utopia;
+
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
                 var reader = new BinaryReader(fs);
@@ -312,9 +312,6 @@ namespace Utopia.Shared.Configuration
 
             return instance;
         }
-
-
-
         #endregion
 
         #region Private Methods
@@ -322,10 +319,9 @@ namespace Utopia.Shared.Configuration
         private void CreateDefaultValues()
         {
             //These are mandatory configuration !!
-            _worldHeight = 128;
+            WorldHeight = 128;
             CreateDefaultCubeProfiles();
             CreateDefaultEntities();
-            CreateDefaultUtopiaProcessorParam();
         }
 
         //Definition of default cube profile
@@ -869,12 +865,6 @@ namespace Utopia.Shared.Configuration
            cactusFlower.MaxStackSize = 99;
         }
 
-        //Definition of all default Utopia processor params
-        private void CreateDefaultUtopiaProcessorParam()
-        {
-            ProcessorParam.CreateDefaultConfiguration();
-        }
-
         #endregion
 
         #region Inner Classes
@@ -931,6 +921,15 @@ namespace Utopia.Shared.Configuration
             public const byte CactusFlower = 1;
         }
 
+        /// <summary>
+        /// Defines world processor possible types
+        /// </summary>
+        public enum WorldProcessors : byte
+        {
+            Flat,
+            Utopia,
+            Plan
+        }
         #endregion
     }
 }

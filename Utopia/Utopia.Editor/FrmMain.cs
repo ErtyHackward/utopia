@@ -17,7 +17,7 @@ namespace Utopia.Editor
         private string _filePath;
         private int _entitiesOffset;
         private WorldConfiguration _configuration;
-        private FrmUtopiaProcessorConfig _utopiaConfig;
+        private UserControl _processorControl;
         #endregion
 
         #region Public Properties
@@ -30,12 +30,24 @@ namespace Utopia.Editor
 
                 if (_configuration != null)
                 {
-                    Text = _configuration.ConfigurationName + " - Utopia realm editor";
+                    Text = _configuration.ConfigurationName + " with processor : " + _configuration.WorldProcessor + " - realm editor";
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
 
-                    _utopiaConfig.LoadConfigParam(_configuration.ProcessorParam);                    
+                    //Create NEW processor control windows following the WorldConfiguration processor type
+
+                    switch (_configuration.WorldProcessor)
+                    {
+                        case WorldConfiguration.WorldProcessors.Flat:
+                            break;
+                        case WorldConfiguration.WorldProcessors.Utopia:
+                                if (_processorControl != null) _processorControl.Dispose();
+                                AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as WorldConfiguration<UtopiaProcessorParams>));
+                            break;
+                        case WorldConfiguration.WorldProcessors.Plan:
+                            break;
+                    }
                 }
                 else
                 {
@@ -45,8 +57,6 @@ namespace Utopia.Editor
                     tvMainCategories.Enabled = false;
                 }
 
-                _utopiaConfig.Configuration = _configuration;
-
                 UpdateList();
             }
         }
@@ -55,14 +65,6 @@ namespace Utopia.Editor
         public FrmMain()
         {
             InitializeComponent();
-
-            _utopiaConfig = new FrmUtopiaProcessorConfig();
-            _utopiaConfig.Visible = false;
-
-            splitContainer1.Panel2.Controls.Add(_utopiaConfig);
-
-            _utopiaConfig.Dock = DockStyle.Fill;
-
 
             _entitiesOffset = imageList1.Images.Count;
 
@@ -94,13 +96,29 @@ namespace Utopia.Editor
         //New
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
+            frmProcessorChoose processorChoose = new frmProcessorChoose();
+            processorChoose.ShowDialog(this);
+
+            string processorType = "Utopia.Shared.Configuration." + processorChoose.SelectedProcessor.ToString() + "ProcessorParams, Utopia.Shared";
+
+            //Create new instance of Worldconfiguration dynamicaly, following Processor type !            
+            Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
+            WorldConfiguration newConfiguration = (WorldConfiguration)Activator.CreateInstance(type, null, true, false);
+
+            newConfiguration.ConfigurationName = "noname";
+            newConfiguration.CreatedAt = DateTime.Now;
+            newConfiguration.WorldProcessor = processorChoose.SelectedProcessor;
+
+            processorChoose.Dispose();
+
+            Configuration = newConfiguration;
+            //Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
         //New From Default : Will load a pre-existing configuration file as startUp configuration
         private void newFromDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
+            //Configuration = new WorldConfiguration(withDefaultValueCreation: true, withHelperAssignation: true) { ConfigurationName = "noname", CreatedAt = DateTime.Now };
         }
 
         //Open
@@ -162,6 +180,19 @@ namespace Utopia.Editor
         
         #endregion
 
+        private void AttachProcessorFrame(UserControl control)
+        {
+            if (_processorControl != null)
+            {
+                splitContainer1.Panel2.Controls.Remove(_processorControl);
+                _processorControl.Dispose();
+            }
+            _processorControl = control;
+            _processorControl.Visible = false;
+            splitContainer1.Panel2.Controls.Add(control);
+            _processorControl.Dock = DockStyle.Fill;
+        }
+
         //Create the various SubNode (Items, Cubes, ...) in the TreeView
         private void UpdateList()
         {
@@ -201,17 +232,6 @@ namespace Utopia.Editor
                 var item = new TreeNode(cubeProfile.Name);
                 item.Tag = cubeProfile;
                 cubesRootNode.Nodes.Add(item);
-            }
-
-            //Clear all the Biomes node items
-            _utopiaConfig.tvBiomeList.Nodes.Clear();
-
-            for (var i = 0; i < _configuration.ProcessorParam.Biomes.Count; i++)
-            {
-                var biome = _configuration.ProcessorParam.Biomes[i];
-                var item = new TreeNode(biome.Name);
-                item.Tag = biome;
-                _utopiaConfig.tvBiomeList.Nodes.Add(item);
             }
 
             RefreshEntitiesIcons();
@@ -342,11 +362,11 @@ namespace Utopia.Editor
             {
                 //Display Utopia World Processor
                 pgDetails.Visible = false;
-                _utopiaConfig.Visible = true;
+                _processorControl.Visible = true;
             }
             else
             {
-                _utopiaConfig.Visible = false;
+                _processorControl.Visible = false;
                 pgDetails.Visible = true;
                 if (tvMainCategories.SelectedNode.Tag is CubeProfile)
                 {
@@ -362,7 +382,6 @@ namespace Utopia.Editor
             }
 
         }
-
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
