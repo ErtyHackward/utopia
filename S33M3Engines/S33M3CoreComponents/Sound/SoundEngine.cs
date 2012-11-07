@@ -41,6 +41,8 @@ namespace S33M3CoreComponents.Sound
         private ManualResetEvent _syncro;
         private Thread _thread;
 
+        //Will hold custom Channel Mapping arrays
+        private Dictionary<Vector2I, float[]> _customChannelMapping = new Dictionary<Vector2I, float[]>();
         #endregion
 
         #region Public Properties
@@ -74,7 +76,6 @@ namespace S33M3CoreComponents.Sound
             }
         }
         public List<string> SoundDevices { get { return _soundDevices; } }
-       
         #endregion
 
         public SoundEngine(int maxVoicesNbr = 8)
@@ -95,6 +96,37 @@ namespace S33M3CoreComponents.Sound
         }
 
         #region Public Methods
+
+        public bool AddCustomChannelMapping(int inputChannelNbr, int outputChannelNbr, float[] mapping)
+        {
+            Vector2I channelConfig = new Vector2I(inputChannelNbr, outputChannelNbr);
+            if (_customChannelMapping.ContainsKey(channelConfig) == false)
+            {
+                _customChannelMapping.Add(channelConfig, mapping);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool RemoveCustomChannelMapping(int inputChannelNbr, int outputChannelNbr)
+        {
+            Vector2I channelConfig = new Vector2I(inputChannelNbr, outputChannelNbr);
+            if (_customChannelMapping.ContainsKey(channelConfig))
+            {
+                _customChannelMapping.Remove(channelConfig);
+                return true;
+            }
+            return false;
+        }
+
+        public bool GetCustomChannelMapping(int inputChannelNbr, int outputChannelNbr, out float[] mapping)
+        {
+            return _customChannelMapping.TryGetValue(new Vector2I(inputChannelNbr, outputChannelNbr), out mapping);
+        }
+
         public void SetListenerPosition(Vector3 pos, Vector3 lookDir, Vector3 velPerSecond, Vector3 upVector)
         {
             _listener.OrientFront = lookDir;
