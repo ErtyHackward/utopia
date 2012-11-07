@@ -160,6 +160,9 @@ namespace S33M3CoreComponents.Sound
                         AudioBytes = (int)soundstream.Length,
                         Flags = BufferFlags.EndOfStream
                     };
+
+                    soundstream.Close();
+                    soundstream.Dispose();
                 }
 
                 //Add DataSound into collection
