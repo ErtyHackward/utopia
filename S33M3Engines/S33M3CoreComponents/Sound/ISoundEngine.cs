@@ -33,6 +33,11 @@ namespace S33M3CoreComponents.Sound
         Listener Listener { get; }
 
         /// <summary>
+        /// Queuing voice that needs to be look at (For looping, or fading reasons)
+        /// </summary>
+        void LookAtSound(ISoundVoice voice);
+
+        /// <summary>
         /// Acces to the Detail of the hardware device being played against
         /// </summary>
         DeviceDetails DeviceDetail { get; }

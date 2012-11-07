@@ -48,33 +48,13 @@ namespace Sandbox.Client.Components
                 }
             }
 
-            //// steps
-            //RegisterStepSound(WorldConfiguration.CubeId.Snow, @"Sounds\Footsteps\footsteps_snow01.adpcm.wav");
-
-            //RegisterStepSound(WorldConfiguration.CubeId.Grass, @"Sounds\Footsteps\footsteps_grass01.adpcm.wav");
-
-            //RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand01.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand02.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Sand, @"Sounds\Footsteps\footsteps_sand03.adpcm.wav");
-
-            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt01.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt02.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt03.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Dirt, @"Sounds\Footsteps\footsteps_dirt04.adpcm.wav");
-
-            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone01.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone02.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone03.adpcm.wav");
-            //RegisterStepSound(WorldConfiguration.CubeId.Stone, @"Sounds\Footsteps\footsteps_stone04.adpcm.wav");
-
-            //RegisterStepSound(WorldConfiguration.CubeId.StillWater, @"Sounds\Footsteps\footsteps_water01.adpcm.wav");
 
             PreLoadSound("Put", @"Sounds\Blocks\put.wav", 0.3f, 12.0f);
             PreLoadSound("Take", @"Sounds\Blocks\take.wav", 0.3f, 12.0f);
             PreLoadSound("Hurt", @"Sounds\Events\hurt.wav", 1.0f, 16.0f);
             PreLoadSound("WaterDrop", @"Sounds\Events\waterdrop.wav", 1.0f, 16.0f);
             PreLoadSound("Peaceful", @"Sounds\Moods\peaceful.adpcm.wav", 0.3f, 16.0f);
-            PreLoadSound("Cavern", @"Sounds\Ambiance\cavern.adpcm.wav", 1.0f, 16.0f);
+            PreLoadSound("Fear", @"Sounds\Moods\fear.adpcm.wav", 0.2f, 16.0f);
         }
 
         protected override void PlayBlockPut(Vector3I blockPos)
