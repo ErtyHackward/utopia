@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using S33M3DXEngine;
+using S33M3DXEngine.Textures;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Entities;
@@ -22,6 +23,7 @@ namespace Utopia.Editor
         private D3DEngine _engine;
         private IconFactory _iconFactory;
         private VoxelModelManager _modelManager;
+        private ShaderResourceView _cubeTextureView;
 
         public VoxelModelManager ModelManager
         {
@@ -54,6 +56,12 @@ namespace Utopia.Editor
             _modelManager.Initialize();
 
             _iconFactory = new IconFactory(_engine, _modelManager, new Shared.World.VisualWorldParameters());
+
+            
+            ArrayTexture.CreateTexture2DFromFiles(_engine.Device, _engine.ImmediateContext,
+                                                    Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
+                                                    FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
+                                                    out _cubeTextureView);
         }
 
         public Dictionary<string, Image> GenerateIcons(WorldConfiguration configuration)
@@ -78,7 +86,7 @@ namespace Utopia.Editor
 
             //Create Blocks icons
             int i = 0;
-            List<Texture2D> cubeIcons = _iconFactory.Get3DBlockIcons(_engine.ImmediateContext, IconSize);
+            List<Texture2D> cubeIcons = _iconFactory.Get3DBlockIcons(_engine.ImmediateContext, IconSize, _cubeTextureView);
             foreach (var cubeprofiles in configuration.GettAllCubesProfiles())
             {
                 if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
@@ -96,6 +104,7 @@ namespace Utopia.Editor
 
         public void Dispose()
         {
+            _cubeTextureView.Dispose();
             _modelManager.Dispose();
             _iconFactory.Dispose();
         }

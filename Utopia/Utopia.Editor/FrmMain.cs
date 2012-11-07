@@ -79,6 +79,7 @@ namespace Utopia.Editor
             foreach (var visualVoxelModel in Program.IconManager.ModelManager.Enumerate())
             {
                 imageList1.Images.Add(_icons[visualVoxelModel.VoxelModel.Name]);
+                _icons[visualVoxelModel.VoxelModel.Name].Tag = imageList1.Images.Count - 1; //Add Image Index in imageList
             }
 
             _cubeOffset = imageList1.Images.Count;
@@ -87,7 +88,10 @@ namespace Utopia.Editor
             {
                 if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
                 imageList1.Images.Add(_icons["CubeResource_" + cubeprofiles.Name]);
+                _icons["CubeResource_" + cubeprofiles.Name].Tag = imageList1.Images.Count - 1;
             }
+
+            tvMainCategories.Refresh();
         }
         #endregion
 
@@ -207,6 +211,7 @@ namespace Utopia.Editor
         {
             if (_configuration == null)
                 return;
+            Image result;
 
             //Bind Configuration object to General root Node
             tvMainCategories.Nodes["General"].Tag = _configuration;
@@ -225,7 +230,9 @@ namespace Utopia.Editor
                 if (entity is IVoxelEntity)
                 {
                     var voxelEntity = entity as IVoxelEntity;
-                    item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + i;
+
+                    item.ImageIndex = _icons.TryGetValue(voxelEntity.ModelName, out result) ? (int)result.Tag : -1;
+
                     item.SelectedImageIndex = item.ImageIndex;
                 }
                 entitiesRootNode.Nodes.Add(item);
@@ -241,23 +248,13 @@ namespace Utopia.Editor
                 if (cubeProfile.Name == "System Reserved") continue;
                 var item = new TreeNode(cubeProfile.Name);
 
-                if (_icons.ContainsKey("CubeResource_" + cubeProfile.Name))
-                {
-                    item.ImageIndex = iconcubeImageId;
-                    iconcubeImageId++;
-                }
-                else
-                {
-                    item.ImageIndex = -1;
-                }
+                item.ImageIndex = _icons.TryGetValue("CubeResource_" + cubeProfile.Name, out result) ? (int)result.Tag : -1;
 
                 item.SelectedImageIndex = item.ImageIndex;
                 
                 item.Tag = cubeProfile;
                 cubesRootNode.Nodes.Add(item);
             }
-
-            RefreshEntitiesIcons();
         }
 
         private void Save(string filePath)
@@ -297,31 +294,6 @@ namespace Utopia.Editor
             }
 
             return null;
-        }
-
-        private void RefreshEntitiesIcons()
-        {
-            TreeNode entitiesNode = null;
-            //Get Entities tree node
-            foreach (TreeNode node in tvMainCategories.Nodes)
-            {
-                entitiesNode = node;
-                if (node.Text == "Entities") break;
-            }
-
-            foreach (TreeNode entityNode in entitiesNode.Nodes)
-            {
-                //Get the underlying entity
-                var entity = entityNode.Tag;
-
-                //Check if this entity can have a Voxel body
-                var voxelEntity = entity as IVoxelEntity;
-
-                //Look at currently existing Voxel Models following Entity Name
-                entityNode.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
-                entityNode.SelectedImageIndex = entityNode.ImageIndex;
-            }
-
         }
 
         #region GUI events Handling
