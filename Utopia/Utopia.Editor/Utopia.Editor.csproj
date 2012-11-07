@@ -139,6 +139,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3CoreComponents\S33M3CoreComponents.csproj">
+      <Project>{d0c4db7f-547e-4a40-a5ca-41391a310938}</Project>
+      <Name>S33M3CoreComponents</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\S33M3Engines\S33M3DXEngine\S33M3DXEngine.csproj">
       <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
       <Name>S33M3DXEngine</Name>

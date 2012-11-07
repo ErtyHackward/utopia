@@ -404,17 +404,9 @@ namespace Utopia.Entities
             return texture.CloneTexture(ResourceUsage.Default);
         }
 
-        public List<Texture2D> Get3DBlockIcons(DeviceContext context, DrawingSize iconSize)
+        public List<Texture2D> Get3DBlockIcons(DeviceContext context, DrawingSize iconSize, ShaderResourceView cubeTextureView)
         {
-            ShaderResourceView cubeTextureView;
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
-                                                    Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
-                                                    FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
-                                                    out cubeTextureView);
-            var result = Create3DBlockIcons(context, cubeTextureView, iconSize.Width);
-            cubeTextureView.Dispose();
-
-            return result;
+            return Create3DBlockIcons(context, cubeTextureView, iconSize.Width);
         }
 
         private List<Texture2D> Create3DBlockIcons(DeviceContext context, ShaderResourceView cubesTexture, int iconSize)
