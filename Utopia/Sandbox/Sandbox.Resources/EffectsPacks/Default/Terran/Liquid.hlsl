@@ -176,19 +176,15 @@ PS_OUT PS(PS_IN input)
 		{
 			//Sample BackGround Sky
 			backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+			color.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
 		}else{
 			if(FogType == 1.0)
 			{
 				backBufferColor.xyz = SunColor / 1.5;
 				backBufferColor.w = color.a;
+				color.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
 			}
 		}
-
-		if(FogType != 2.0)
-		{
-			color.rgb = (color.rgb * fogvalue) + (backBufferColor.rgb * (1 - fogvalue));
-		}
-
 	}
 
 	output.Color = color;
