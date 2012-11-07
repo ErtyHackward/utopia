@@ -17,6 +17,7 @@ namespace S33M3CoreComponents.Sound
 
         #region Private Variables
         private SourceVoice _voice;
+        private float[] _defaultChannelMapping;
         private WaveFormat _linkedWaveFormat;
         private ISoundDataSource _playingDataSource;
         private Action<IntPtr> _callback;
@@ -90,10 +91,8 @@ namespace S33M3CoreComponents.Sound
             }
             else
             {
-                //In 2D case reset the output sound value (in case it was used by a 3D sound previously)
-                float[] coef = new float[_soundEngine.DeviceDetail.OutputFormat.Channels];
-                for (int i = 0; i < coef.Length; i++) coef[i] = 1.0f;
-                _voice.SetOutputMatrix(_playingDataSource.WaveFormat.Channels, _soundEngine.DeviceDetail.OutputFormat.Channels, coef);
+                //Reset Default Channel Mapping
+                _voice.SetOutputMatrix(_playingDataSource.WaveFormat.Channels, _soundEngine.DeviceDetail.OutputFormat.Channels, _defaultChannelMapping);
             }
         }
 
@@ -204,7 +203,23 @@ namespace S33M3CoreComponents.Sound
             if (_voice == null)
             {
                 _linkedWaveFormat = format;
+                //Voice Creation
                 _voice = new SourceVoice(_soundEngine.Xaudio2, _linkedWaveFormat, true);
+
+                //Do we have a special channel sound Mapping for this channel/speaker configuration ?
+                float[] customMapping;
+                if (_soundEngine.GetCustomChannelMapping(_voice.VoiceDetails.InputChannelCount, _soundEngine.DeviceDetail.OutputFormat.Channels, out customMapping))
+                {
+                    _defaultChannelMapping = customMapping;
+                    _voice.SetOutputMatrix(_voice.VoiceDetails.InputChannelCount, _soundEngine.DeviceDetail.OutputFormat.Channels, _defaultChannelMapping);
+                }
+                else
+                {
+                    //Get default channel mapping
+                    _defaultChannelMapping = new float[_voice.VoiceDetails.InputChannelCount * _soundEngine.DeviceDetail.OutputFormat.Channels];
+                    _voice.GetOutputMatrix(null, _voice.VoiceDetails.InputChannelCount, _soundEngine.DeviceDetail.OutputFormat.Channels, _defaultChannelMapping);
+                }
+                
                 _voice.BufferEnd += _callback;
             }
             else

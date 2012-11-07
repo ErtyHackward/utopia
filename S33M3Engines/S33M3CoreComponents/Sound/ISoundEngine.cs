@@ -48,6 +48,32 @@ namespace S33M3CoreComponents.Sound
         XAudio2 Xaudio2 { get; }
 
         /// <summary>
+        /// Return custom channel mapping if existing
+        /// </summary>
+        /// <param name="inputChannelNbr">Qt of input sound channels</param>
+        /// <param name="outputChannelNbr">Qt of speakers</param>
+        /// <param name="mapping">The mapping factors</param>
+        /// <returns>true/false following the succes of the retrieval</returns>
+        bool GetCustomChannelMapping(int inputChannelNbr, int outputChannelNbr, out float[] mapping);
+
+        /// <summary>
+        /// Remove a specific mapping
+        /// </summary>
+        /// <param name="inputChannelNbr">Qt of input sound channels</param>
+        /// <param name="outputChannelNbr">Qt of speakers</param>
+        /// <returns>true/false following the succes of the operation</returns>
+        bool RemoveCustomChannelMapping(int inputChannelNbr, int outputChannelNbr);
+
+        /// <summary>
+        /// Add a new channel mapping template
+        /// </summary>
+        /// <param name="inputChannelNbr">Qt of input sound channels</param>
+        /// <param name="outputChannelNbr">Qt of speakers</param>
+        /// <param name="mapping">The mapping configuration</param>
+        /// <returns>true/false following the succes of the operation</returns>
+        bool AddCustomChannelMapping(int inputChannelNbr, int outputChannelNbr, float[] mapping);
+
+        /// <summary>
         /// Set the Listener Position for 3D mode playing
         /// </summary>
         /// <param name="pos">The current position of the Listener</param>
