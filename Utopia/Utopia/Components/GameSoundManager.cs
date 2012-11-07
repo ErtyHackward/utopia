@@ -209,10 +209,14 @@ namespace Utopia.Components
             _soundEngine.SetListenerPosition(_listenerPosition, _cameraManager.ActiveCamera.LookAt.Value);
             //Update All sounds currently playing following new player position (For 3D Sounds)
             _soundEngine.Update3DSounds();
+
+            //Activate Ambiant sounds following player positions, biomes, times, ...
             if (_biomesParams != null)
             {
                 AmbiantSoundProcessing();
             }
+
+            //Walking step sound processing
             WalkingSoundProcessing();
         }
 
@@ -271,8 +275,9 @@ namespace Utopia.Components
 
                 Vector3D underTheFeets = entity.Position;
                 underTheFeets.Y -= 0.01f;
-
-                CubeProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_singleArray.GetCube(underTheFeets).Id]; 
+                byte cube = _singleArray.GetCube(underTheFeets).Id;
+                if (cube > 254) return;
+                CubeProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube]; 
 
                 // no need to play step if the entity is in air or not in walking displacement mode
                 if (cubeUnderFeet.Id == WorldConfiguration.CubeId.Air ||
@@ -356,6 +361,7 @@ namespace Utopia.Components
         #region Ambiant Sound Processing
         private Vector3I _playerWorldCubePosition;
         private ISoundVoice _currentlyPLayingAmbiantSound;
+        private ISoundVoice _currentlyPlayingMoodSound;
         private void AmbiantSoundProcessing()
         {
             //Do nothing if player did not move ! => Check how to do it ...
@@ -386,17 +392,23 @@ namespace Utopia.Components
                 //Stop ambiant sound if still currently playing
                 if (_currentlyPLayingAmbiantSound != null)
                 {
-                    if (playerNearBottom && _currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias == "Cavern") return;
+                    if (playerNearBottom && _currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias == "Fear") return; //Don't stop cavern songs of at bottom
 
+                    if (_currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias == "Fear" && _currentlyPlayingMoodSound == null)
+                    {
+                        _currentlyPlayingMoodSound = SoundEngine.StartPlay2D("Peaceful", true, 5000);
+                    }
                     _currentlyPLayingAmbiantSound.Stop(1000);
                     _currentlyPLayingAmbiantSound = null;
+                }
 
-                    if (playerNearBottom)
-                    {
-                        //Play special "UnderGround" ambiant sound here.
-                        // ==> I'm "below Surface cube"
-                        _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D("Cavern", true, 3000);
-                    }
+                if (playerNearBottom && _currentlyPLayingAmbiantSound == null)
+                {
+                    //Play special "UnderGround" ambiant sound here.
+                    // ==> I'm "below Surface cube"
+                    _currentlyPlayingMoodSound.Stop(3000);
+                    _currentlyPlayingMoodSound = null;
+                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D("Fear", true, 3000);
                 }
             }
             else
@@ -439,7 +451,7 @@ namespace Utopia.Components
         void worldChunk_LoadComplete(object sender, EventArgs e)
         {
             //Start playing main "Moods" music
-            SoundEngine.StartPlay2D("Peaceful", true, 5000);
+            _currentlyPlayingMoodSound = SoundEngine.StartPlay2D("Peaceful", true, 5000);
         }
         #endregion
 

@@ -289,7 +289,7 @@
     <None Include="Sounds\Blocks\put.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Sounds\Ambiance\cavern.adpcm.wav">
+    <None Include="Sounds\Moods\fear.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Sounds\Events\hurt.wav">

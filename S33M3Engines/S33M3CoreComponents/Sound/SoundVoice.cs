@@ -129,6 +129,8 @@ namespace S33M3CoreComponents.Sound
                 _fadingStepThreeshold = 1.0f / fadeOut * -1;
                 _fadingVolumeCoef = 1.0f;
                 _fadingTimer.Restart();
+
+                _soundEngine.LookAtSound(this);
             }
             else
             {

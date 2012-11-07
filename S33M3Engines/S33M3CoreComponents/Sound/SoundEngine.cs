@@ -40,6 +40,7 @@ namespace S33M3CoreComponents.Sound
         //sound Threading Loop
         private ManualResetEvent _syncro;
         private Thread _thread;
+        private bool _stopThreading;
 
         //Will hold custom Channel Mapping arrays
         private Dictionary<Vector2I, float[]> _customChannelMapping = new Dictionary<Vector2I, float[]>();
@@ -88,8 +89,9 @@ namespace S33M3CoreComponents.Sound
             Initialize(SoundDeviceName, maxVoicesNbr);
         }
 
-        public override void AfterDispose()
+        public override void BeforeDispose()
         {
+            _stopThreading = true;
             _syncro.Set();
             while (_thread.IsAlive) { }
             _syncro.Dispose();
@@ -236,8 +238,7 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.Start(volume, fadeIn);
                 if (playLooped || fadeIn > 0)
                 {
-                    _soundProcessingQueue.Add(soundVoice);
-                    _syncro.Set();
+                    LookAtSound(soundVoice);
                 }
             }
             else
@@ -246,6 +247,12 @@ namespace S33M3CoreComponents.Sound
             }
 
             return soundVoice;
+        }
+
+        public void LookAtSound(ISoundVoice voice)
+        {
+            _soundProcessingQueue.Add(voice);
+            _syncro.Set();
         }
 
         public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0)
@@ -287,8 +294,7 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.Start(volume, fadeIn);
                 if (playLooped || fadeIn > 0)
                 {
-                    _soundProcessingQueue.Add(soundVoice);
-                    _syncro.Set();
+                    LookAtSound(soundVoice);
                 }
             }
             else
@@ -371,6 +377,7 @@ namespace S33M3CoreComponents.Sound
             //Start Sound voice processing thread
             _syncro = new ManualResetEvent(false);
             _thread = new Thread(DataSoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
+            _stopThreading = false;
             _thread.Start();
 
             GeneralSoundVolume = 1.0f;
@@ -422,7 +429,7 @@ namespace S33M3CoreComponents.Sound
         //Function that is running its own thread responsible to do background stuff concerning sound
         private void DataSoundPocessingAsync()
         {
-            while (!IsDisposed)
+            while (!IsDisposed && !_stopThreading)
             {
                 LoopingSoundRefresh();
                 //Reset only if no more fading sound in processing Voice List
