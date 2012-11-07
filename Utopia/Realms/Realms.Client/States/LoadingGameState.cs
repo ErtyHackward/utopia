@@ -203,6 +203,16 @@ namespace Realms.Client.States
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
+            var fadeComponent = _ioc.Get<FadeComponent>();
+            fadeComponent.Visible = false;
+
+            StaggingBackBuffer skyBackBuffer = null;
+            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == "SkyFog")
+            {
+                skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
+                skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
+            }
+
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
@@ -247,9 +257,12 @@ namespace Realms.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
             AddComponent(soundManager);
+            if (skyBackBuffer != null) AddComponent(skyBackBuffer);
             AddComponent(staggingBackBuffer);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
+
+            AddComponent(fadeComponent);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           
