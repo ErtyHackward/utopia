@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
@@ -98,12 +99,12 @@ namespace Utopia.Shared.Configuration
         public List<KeyValuePair<string,string>> Services { get; set; }
 
         /// <summary>
-        /// Key is a Blueprint Id
-        /// Value is a count of items
+        /// Key is a set Id
+        /// Value is a container
         /// </summary>
         [Browsable(false)]
-        [Description("Defines the start set of stuff for the player")]
-        public List<KeyValuePair<int, int>> StartStuff { get; set; }
+        [Description("Defines the sets used to fill containers")]
+        public Dictionary<string, SlotContainer<BlueprintSlot>> ContainerSets { get; set; }
 
         #endregion
 
@@ -119,7 +120,7 @@ namespace Utopia.Shared.Configuration
             BluePrints = new Dictionary<ushort, Entity>();
             CubeProfiles = new CubeProfile[255];
             Services = new List<KeyValuePair<string, string>>();
-            StartStuff = new List<KeyValuePair<int, int>>();
+            ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
 
 
             if (withDefaultValueCreation)
@@ -172,11 +173,11 @@ namespace Utopia.Shared.Configuration
                 writer.Write(pair.Value);
             }
 
-            writer.Write(StartStuff.Count);
-            foreach (var pair in StartStuff)
+            writer.Write(ContainerSets.Count);
+            foreach (var pair in ContainerSets)
             {
                 writer.Write(pair.Key);
-                writer.Write(pair.Value);
+                pair.Value.Save(writer);
             }
         }
 
@@ -224,12 +225,15 @@ namespace Utopia.Shared.Configuration
                 Services.Add(pair);
             }
 
-            StartStuff.Clear();
-            var startStuffCount = reader.ReadInt32();
-            for (int i = 0; i < startStuffCount; i++)
+            ContainerSets.Clear();
+            var setsCount = reader.ReadInt32();
+            for (int i = 0; i < setsCount; i++)
             {
-                var pair = new KeyValuePair<int, int>(reader.ReadInt32(), reader.ReadInt32());
-                StartStuff.Add(pair);
+                var name = reader.ReadString();
+                var slotContainer = new SlotContainer<BlueprintSlot>();
+                slotContainer.Load(reader, null);
+
+                ContainerSets.Add(name, slotContainer);
             }
         }
 

@@ -90,7 +90,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Creates new instance of container with GridSize of 8x5 items
         /// </summary>
-        public SlotContainer(IEntity parentEntity)
+        public SlotContainer(IEntity parentEntity = null)
             : this(parentEntity, new Vector2I(6, 5))
         {
             

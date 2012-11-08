@@ -33,6 +33,7 @@
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,14 +113,14 @@
             // newRealmToolStripMenuItem
             // 
             this.newRealmToolStripMenuItem.Name = "newRealmToolStripMenuItem";
-            this.newRealmToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.newRealmToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newRealmToolStripMenuItem.Text = "New...";
             this.newRealmToolStripMenuItem.Click += new System.EventHandler(this.newRealmToolStripMenuItem_Click);
             // 
             // openRealmToolStripMenuItem
             // 
             this.openRealmToolStripMenuItem.Name = "openRealmToolStripMenuItem";
-            this.openRealmToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.openRealmToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openRealmToolStripMenuItem.Text = "Open realm...";
             this.openRealmToolStripMenuItem.Click += new System.EventHandler(this.openRealmToolStripMenuItem_Click);
             // 
@@ -127,7 +128,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -135,19 +136,19 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveAsToolStripMenuItem.Text = "Save as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(142, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -212,11 +213,16 @@
             treeNode4.Name = "WorldProcessor Params";
             treeNode4.SelectedImageIndex = 5;
             treeNode4.Text = "WorldProcessor Params";
+            treeNode5.ImageIndex = 7;
+            treeNode5.Name = "Container sets";
+            treeNode5.SelectedImageIndex = 7;
+            treeNode5.Text = "Container sets";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode5});
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
             this.tvMainCategories.TabIndex = 5;
@@ -233,6 +239,7 @@
             this.imageList1.Images.SetKeyName(4, "cube.png");
             this.imageList1.Images.SetKeyName(5, "world.png");
             this.imageList1.Images.SetKeyName(6, "wrench.png");
+            this.imageList1.Images.SetKeyName(7, "chest.png");
             // 
             // label1
             // 
