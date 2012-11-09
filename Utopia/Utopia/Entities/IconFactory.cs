@@ -115,6 +115,7 @@ namespace Utopia.Entities
                 icons = Create3DBlockIcons(context, cubeTextureView, IconSize);
 
                 _nbrCubeIcon = icons.Count;
+                if (_nbrCubeIcon == 0) return;
                 //Texture2D[] spriteTextures;
                 //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device,
                 //                                      Path.Combine(ClientSettings.TexturePack, @"Sprites\"), @"*.png",

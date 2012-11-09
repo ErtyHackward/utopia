@@ -50,7 +50,6 @@ namespace Utopia.Shared.Settings
                 logger.Error("Unable to enumerate texture/effect packs {0}", x);
             }
         }
-
         
 
         private static IEnumerable<string> GetAllTexturePacks()

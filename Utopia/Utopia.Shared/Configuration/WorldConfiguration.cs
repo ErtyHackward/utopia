@@ -21,10 +21,9 @@ namespace Utopia.Shared.Configuration
     /// Holds possible entities types, their names, world generator settings, defines everything
     /// Allows to save and load the realm configuration
     /// </summary>
-    public class WorldConfiguration
+    public abstract class WorldConfiguration
     {
         #region Private Variables
-        private readonly EntityFactory _factory;
         /// <summary>
         /// Realm format version
         /// </summary>
@@ -32,6 +31,8 @@ namespace Utopia.Shared.Configuration
         #endregion
 
         #region Public Properties
+        public readonly EntityFactory Factory;
+
         /// <summary>
         /// General realm display name
         /// </summary>
@@ -108,25 +109,17 @@ namespace Utopia.Shared.Configuration
 
         #endregion
 
-        public WorldConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false, bool withHelperAssignation = false)
+        public WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
         {
             if (factory == null) factory = new EntityFactory(null);
             if (withHelperAssignation) EditorConfigHelper.Config = this;
             
             factory.Config = this; //Inject itself into the factory
 
-            _factory = factory;
-            Entities = new List<IEntity>();
-            BluePrints = new Dictionary<ushort, Entity>();
-            CubeProfiles = new CubeProfile[255];
-            Services = new List<KeyValuePair<string, string>>();
-            ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
+            Factory = factory;
+            WorldHeight = 128;
 
-
-            if (withDefaultValueCreation)
-            {
-                CreateDefaultValues();
-            }
+            InitCollections();
         }
 
         #region Public Methods
@@ -183,6 +176,8 @@ namespace Utopia.Shared.Configuration
 
         public virtual void Load(BinaryReader reader)
         {
+            InitCollections();
+
             WorldProcessor = (WorldProcessors)reader.ReadByte();
 
             var currentFormat = reader.ReadInt32();
@@ -201,7 +196,7 @@ namespace Utopia.Shared.Configuration
             int countEntity = reader.ReadInt32();
             for (var i = 0; i < countEntity; i++)
             {
-                var entity = _factory.CreateFromBytes(reader);
+                var entity = Factory.CreateFromBytes(reader);
                 Entities.Add(entity);
                 BluePrints.Add(entity.BluePrintId, entity);
             }
@@ -248,7 +243,7 @@ namespace Utopia.Shared.Configuration
             }
 
             Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-            WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, false, withHelperAssignation);
+            WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, withHelperAssignation);
 
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
@@ -300,17 +295,7 @@ namespace Utopia.Shared.Configuration
         {
             //Create a new EntityClass object
             IEntity instance = (IEntity)Activator.CreateInstance(entityClassType);
-
-            //Generate a new Entity ID, it will represent this Blue print, and must be unique
-            ushort newId;
-            if (Entities.Count == 0) newId = 0;
-            else newId = (ushort)(Entities.Select(x => x.BluePrintId).Max(y => y) + 1);
-
-            instance.BluePrintId = newId;
-            instance.isSystemEntity = false;
-
-            Entities.Add(instance);
-
+            AddNewEntity(instance);
             return instance;
         }
 
@@ -321,537 +306,48 @@ namespace Utopia.Shared.Configuration
                 yield return profile;
             }
         }
+
+        public void InjectMandatoryObjects()
+        {
+            CreateDefaultValues();
+        }
         #endregion
 
         #region Private Methods
 
+        private void InitCollections()
+        {
+            Entities = new List<IEntity>();
+            BluePrints = new Dictionary<ushort, Entity>();
+            CubeProfiles = new CubeProfile[255];
+            Services = new List<KeyValuePair<string, string>>();
+            ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
+        }
+
         private void CreateDefaultValues()
         {
             //These are mandatory configuration !!
-            WorldHeight = 128;
             CreateDefaultCubeProfiles();
             CreateDefaultEntities();
         }
 
-        //Definition of default cube profile
-        private void CreateDefaultCubeProfiles()
+        protected void AddNewEntity(IEntity entityInstance)
         {
-            int id = 0;
-            //Air Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Air",
-                Description = "A cube",
-                Id = 0,
-                Tex_Top = 255,
-                Tex_Bottom = 255,
-                Tex_Back = 255,
-                Tex_Front = 255,
-                Tex_Left = 255,
-                Tex_Right = 255,
-                IsSeeThrough = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true
-            });
+            //Generate a new Entity ID, it will represent this Blue print, and must be unique
+            ushort newId;
+            if (Entities.Count == 0) newId = 0;
+            else newId = (ushort)(Entities.Select(x => x.BluePrintId).Max(y => y) + 1);
 
-            id++;
+            entityInstance.BluePrintId = newId;
+            entityInstance.isSystemEntity = false;
 
-            //Stone Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Stone",
-                Description = "A cube",
-                Id = 1,
-                Tex_Top = 1,
-                Tex_Bottom = 1,
-                Tex_Back = 1,
-                Tex_Front = 1,
-                Tex_Left = 1,
-                Tex_Right = 1,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true
-            });
+            Entities.Add(entityInstance);
+        }
 
-            id++;
-
-            //Dirt Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Dirt",
-                Description = "A cube",
-                Id = 2,
-                Tex_Top = 2,
-                Tex_Bottom = 2,
-                Tex_Back = 2,
-                Tex_Front = 2,
-                Tex_Left = 2,
-                Tex_Right = 2,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true
-            });
-
-            id++;
-
-            //Grass Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Grass",
-                Description = "A cube",
-                Id = 3,
-                Tex_Top = 0,
-                Tex_Bottom = 2,
-                Tex_Back = 3,
-                Tex_Front = 3,
-                Tex_Left = 3,
-                Tex_Right = 3,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-                BiomeColorArrayTexture = 0
-            });
-
-            id++;
-
-            //StillWater Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "StillWater",
-                Description = "A cube",
-                Id = 4,
-                Tex_Top = 5,
-                Tex_Bottom = 5,
-                Tex_Back = 5,
-                Tex_Front = 5,
-                Tex_Left = 5,
-                Tex_Right = 5,
-                LightAbsorbed = 20,
-                IsSeeThrough = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Liquid,
-                Friction = 0.3f,
-                IsSystemCube = true,
-                BiomeColorArrayTexture = 2
-            });
-
-            id++;
-
-            //DynamicWater Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "DynamicWater",
-                Description = "A cube",
-                Id = 5,
-                Tex_Top = 5,
-                Tex_Bottom = 5,
-                Tex_Back = 5,
-                Tex_Front = 5,
-                Tex_Left = 5,
-                Tex_Right = 5,
-                LightAbsorbed = 20,
-                IsSeeThrough = true,
-                IsBlockingWater = true,
-                IsTaggable = true,
-                CubeFamilly = Enums.enuCubeFamilly.Liquid,
-                Friction = 0.3f,
-                IsSystemCube = true,
-                BiomeColorArrayTexture = 2
-            });
-
-            id++;
-
-            //LightWhite Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "LightWhite",
-                Description = "A cube",
-                Id = 6,
-                Tex_Top = 1,
-                Tex_Bottom = 1,
-                Tex_Back = 1,
-                Tex_Front = 1,
-                Tex_Left = 1,
-                Tex_Right = 1,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-                IsEmissiveColorLightSource = true,
-                EmissiveColorA = 255,
-                EmissiveColorR = 255,
-                EmissiveColorG = 255,
-                EmissiveColorB = 255
-            });
-
-            id++;
-
-            //Rock Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Rock",
-                Description = "A cube",
-                Id = 7,
-                Tex_Top = 6,
-                Tex_Bottom = 6,
-                Tex_Back = 6,
-                Tex_Front = 6,
-                Tex_Left = 6,
-                Tex_Right = 6,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-                SlidingValue = 0.05f
-            });
-
-            id++;
-
-            //Sand Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Sand",
-                Description = "A cube",
-                Id = 8,
-                Tex_Top = 7,
-                Tex_Bottom = 7,
-                Tex_Back = 7,
-                Tex_Front = 7,
-                Tex_Left = 7,
-                Tex_Right = 7,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.3f,
-                IsSystemCube = true,
-            });
-
-            id++;
-
-            //Gravel Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Gravel",
-                Description = "A cube",
-                Id = 9,
-                Tex_Top = 8,
-                Tex_Bottom = 8,
-                Tex_Back = 8,
-                Tex_Front = 8,
-                Tex_Left = 8,
-                Tex_Right = 8,
-                LightAbsorbed = 255,                                
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-            });
-
-            id++;
-
-            //Trunk Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Trunk",
-                Description = "A cube",
-                Id = 10,
-                Tex_Top = 10,
-                Tex_Bottom = 10,
-                Tex_Back = 9,
-                Tex_Front = 9,
-                Tex_Left = 9,
-                Tex_Right = 9,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-            });
-
-            id++;
-
-            //GoldOre Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "GoldOre",
-                Description = "A cube",
-                Id = 11,
-                Tex_Top = 11,
-                Tex_Bottom = 11,
-                Tex_Back = 11,
-                Tex_Front = 11,
-                Tex_Left = 11,
-                Tex_Right = 11,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-            });
-
-            id++;
-
-            //CoalOre Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "CoalOre",
-                Description = "A cube",
-                Id = 12,
-                Tex_Top = 12,
-                Tex_Bottom = 12,
-                Tex_Back = 12,
-                Tex_Front = 12,
-                Tex_Left = 12,
-                Tex_Right = 12,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-            });
-
-            id++;
-
-            //MoonStone Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "MoonStone",
-                Description = "A cube",
-                Id = 13,
-                Tex_Top = 13,
-                Tex_Bottom = 13,
-                Tex_Back = 13,
-                Tex_Front = 13,
-                Tex_Left = 13,
-                Tex_Right = 13,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-                IsEmissiveColorLightSource = true,
-                EmissiveColorA = 255,
-                EmissiveColorR = 86,
-                EmissiveColorG = 143,
-                EmissiveColorB = 255
-            });
-
-            id++;
-
-            //Foliage Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Foliage",
-                Description = "A cube",
-                Id = 14,
-                Tex_Top = 15,
-                Tex_Bottom = 15,
-                Tex_Back = 15,
-                Tex_Front = 15,
-                Tex_Left = 15,
-                Tex_Right = 15,
-                LightAbsorbed = 255,
-                IsSeeThrough = true,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                IsSystemCube = true,
-                BiomeColorArrayTexture = 1
-            });
-
-            id++;
-
-            //Snow Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Snow",
-                Description = "A cube",
-                Id = 15,
-                Tex_Top = 17,
-                Tex_Bottom = 17,
-                Tex_Back = 17,
-                Tex_Front = 17,
-                Tex_Left = 17,
-                Tex_Right = 17,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                YBlockOffset = 0.9,
-                Friction = 0.35f,
-                IsSystemCube = true
-            });
-
-            id++;
-
-            //Ice Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Ice",
-                Description = "A cube",
-                Id = 16,
-                Tex_Top = 18,
-                Tex_Bottom = 18,
-                Tex_Back = 18,
-                Tex_Front = 18,
-                Tex_Left = 18,
-                Tex_Right = 18,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
-                IsSystemCube = true
-            });
-
-            id++;
-
-            //StillLava Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "StillLava",
-                Description = "A cube",
-                Id = 17,
-                Tex_Top = 19,
-                Tex_Bottom = 19,
-                Tex_Back = 19,
-                Tex_Front = 19,
-                Tex_Left = 19,
-                Tex_Right = 19,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
-                IsSystemCube = true,
-                IsEmissiveColorLightSource = true,
-                EmissiveColorA = 255,
-                EmissiveColorR = 255,
-                EmissiveColorG = 161,
-                EmissiveColorB = 38
-            });
-
-            id++;
-
-            //DynamicLava Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "DynamicLava",
-                Description = "A cube",
-                Id = 18,
-                Tex_Top = 19,
-                Tex_Bottom = 19,
-                Tex_Back = 19,
-                Tex_Front = 19,
-                Tex_Left = 19,
-                Tex_Right = 19,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
-                IsSystemCube = true,
-                IsEmissiveColorLightSource = true,
-                EmissiveColorA = 255,
-                EmissiveColorR = 255,
-                EmissiveColorG = 161,
-                EmissiveColorB = 38,
-                IsTaggable = true
-            });
-
-            id++;
-
-            //Cactus Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "Cactus",
-                Description = "A cube",
-                Id = 19,
-                Tex_Top = 22,
-                Tex_Bottom = 22,
-                Tex_Back = 20,
-                Tex_Front = 20,
-                Tex_Left = 20,
-                Tex_Right = 20,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
-                IsSystemCube = true,
-                SideOffsetMultiplier = 1
-            });
-
-            id++;
-
-            //CactusTop Block
-            CubeProfiles[id] = (new CubeProfile()
-            {
-                Name = "CactusTop",
-                Description = "A cube",
-                Id = 20,
-                Tex_Top = 21,
-                Tex_Bottom = 22,
-                Tex_Back = 20,
-                Tex_Front = 20,
-                Tex_Left = 20,
-                Tex_Right = 20,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
-                IsSystemCube = true,
-                SideOffsetMultiplier = 1
-            });
-
-            id++;
-
+        //Definition of default cube profile
+        protected virtual void CreateDefaultCubeProfiles()
+        {
             FilledUpReservedCubeInArray();
-
         }
 
         private void FilledUpReservedCubeInArray()
@@ -863,15 +359,8 @@ namespace Utopia.Shared.Configuration
             }
         }
 
-        private void CreateDefaultEntities()
+        protected virtual void CreateDefaultEntities()
         {
-           //Cactus Entity blue print
-           Plant cactusFlower = (Plant)CreateNewEntity(typeof(Plant));
-           cactusFlower.Name = "Cactus Flower";
-           cactusFlower.MountPoint = BlockFace.Top;
-           cactusFlower.ModelName = "Flower4";
-           cactusFlower.isSystemEntity = true;      // Cannot de removed, mandatory Entity
-           cactusFlower.MaxStackSize = 99;
         }
 
         #endregion
@@ -889,8 +378,8 @@ namespace Utopia.Shared.Configuration
         public enum WorldProcessors : byte
         {
             Flat,
-            Utopia,
-            Plan
+            Utopia
+            //Plan
         }
         #endregion
     }
