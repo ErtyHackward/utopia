@@ -87,16 +87,16 @@
     <Compile Include="ModelsRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UtopiaProcessor\FrmUtopiaProcessorConfig.cs">
+    <Compile Include="Processors\UtopiaProcessor\FrmUtopiaProcessorConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UtopiaProcessor\FrmUtopiaProcessorConfig.Designer.cs">
+    <Compile Include="Processors\UtopiaProcessor\FrmUtopiaProcessorConfig.Designer.cs">
       <DependentUpon>FrmUtopiaProcessorConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="UtopiaProcessor\RangeBar.cs">
+    <Compile Include="Processors\UtopiaProcessor\RangeBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UtopiaProcessor\RangeBar.Designer.cs">
+    <Compile Include="Processors\UtopiaProcessor\RangeBar.Designer.cs">
       <DependentUpon>RangeBar.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="FrmEntityChoose.resx">
@@ -121,10 +121,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UtopiaProcessor\FrmUtopiaProcessorConfig.resx">
+    <EmbeddedResource Include="Processors\UtopiaProcessor\FrmUtopiaProcessorConfig.resx">
       <DependentUpon>FrmUtopiaProcessorConfig.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UtopiaProcessor\RangeBar.resx">
+    <EmbeddedResource Include="Processors\UtopiaProcessor\RangeBar.resx">
       <DependentUpon>RangeBar.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
@@ -161,6 +161,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Processors\Flat\" />
+    <Folder Include="Processors\Plan\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

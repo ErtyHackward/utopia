@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Configuration
@@ -48,28 +49,60 @@ namespace Utopia.Shared.Configuration
         #endregion
 
         public WorldConfiguration()
-            :this(null, false, false)
+            :this(null, false)
         {
         }
 
-        public WorldConfiguration(EntityFactory factory = null, bool withDefaultValueCreation = false, bool withHelperAssignation = false)
-            : base(factory, withDefaultValueCreation, withHelperAssignation)
+        public WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
+            : base(factory, withHelperAssignation)
         {
             ProcessorParam = new T();
             ProcessorParam.Config = this;
-
-            if (withDefaultValueCreation) CreateDefaultUtopiaProcessorParam();
         }
 
         #region Public Methods
+        protected override void CreateDefaultCubeProfiles()
+        {
+            int id = 0;
+            //Air Block
+            CubeProfiles[id] = (new CubeProfile()
+            {
+                Name = "Air",
+                Description = "A cube",
+                Id = 0,
+                Tex_Top = 255,
+                Tex_Bottom = 255,
+                Tex_Back = 255,
+                Tex_Front = 255,
+                Tex_Left = 255,
+                Tex_Right = 255,
+                IsSeeThrough = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                IsSystemCube = true
+            });
+
+            foreach (var processorInjectedCube in ProcessorParam.InjectDefaultCubeProfiles())
+            {
+                id++;
+                CubeProfiles[id] = processorInjectedCube;
+            }
+
+            base.CreateDefaultCubeProfiles();
+        }
+
+        protected override void CreateDefaultEntities()
+        {
+            foreach (var processorInjectedEntities in ProcessorParam.InjectDefaultEntities())
+            {
+                AddNewEntity(processorInjectedEntities);
+            }
+
+            base.CreateDefaultEntities();
+        }
         #endregion
 
         #region Private Methods
-        //Definition of all default Utopia processor params
-        private void CreateDefaultUtopiaProcessorParam()
-        {
-            ProcessorParam.CreateDefaultConfiguration();
-        }
         #endregion
 
         public override void Load(BinaryReader reader)

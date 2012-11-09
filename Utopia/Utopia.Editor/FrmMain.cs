@@ -49,8 +49,6 @@ namespace Utopia.Editor
                             if (_processorControl != null) _processorControl.Dispose();
                             AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as WorldConfiguration<UtopiaProcessorParams>));
                             break;
-                        case WorldConfiguration.WorldProcessors.Plan:
-                            break;
                     }
 
                     // generate icons for the configuration
@@ -123,8 +121,9 @@ namespace Utopia.Editor
 
             //Create new instance of Worldconfiguration dynamicaly, following Processor type !            
             Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-            WorldConfiguration newConfiguration = (WorldConfiguration)Activator.CreateInstance(type, null, true, false);
+            WorldConfiguration newConfiguration = (WorldConfiguration)Activator.CreateInstance(type, null, false);
 
+            newConfiguration.InjectMandatoryObjects();
             newConfiguration.ConfigurationName = "noname";
             newConfiguration.CreatedAt = DateTime.Now;
             newConfiguration.WorldProcessor = processorChoose.SelectedProcessor;
@@ -355,13 +354,16 @@ namespace Utopia.Editor
         {
             if (tvMainCategories.SelectedNode.Name == "WorldProcessor Params")
             {
-                //Display Utopia World Processor
-                pgDetails.Visible = false;
-                _processorControl.Visible = true;
+                if (_processorControl != null)
+                {
+                    //Display Utopia World Processor
+                    pgDetails.Visible = false;
+                    _processorControl.Visible = true;
+                }
             }
             else
             {
-                _processorControl.Visible = false;
+                if (_processorControl != null) _processorControl.Visible = false;
                 pgDetails.Visible = true;
                 if (tvMainCategories.SelectedNode.Tag is CubeProfile)
                 {
