@@ -10,7 +10,7 @@ namespace Utopia.Shared.Tools
 {
     public class ModelSelector : UITypeEditor
     {
-        public static List<string> Models = new List<string>();
+        public static Dictionary<string, Image> Models = new Dictionary<string, Image>();
 
         private IWindowsFormsEditorService _service;
         private ListView _list;
@@ -36,13 +36,10 @@ namespace Utopia.Shared.Tools
 
             foreach (var model in Models)
             {
-                imgList.Images.Add(Image.FromFile(model));
-
+                imgList.Images.Add(model.Value);
                 var item = new ListViewItem();
-
-                item.Text = Path.GetFileNameWithoutExtension(model);
+                item.Text = model.Key;
                 item.ImageIndex = imgList.Images.Count - 1;
-
                 _list.Items.Add(item);
             }
         }
@@ -56,15 +53,12 @@ namespace Utopia.Shared.Tools
             }
         }
 
+        //The returned Value of the Entity, in our case its the entitty name stored inside the object Tag.
         public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            if (_list == null)
-                Initialize();
-
+            if (_list == null) Initialize();
             _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
-
             _service.DropDownControl(_list);
-            
             return _list.Tag;
         }
 

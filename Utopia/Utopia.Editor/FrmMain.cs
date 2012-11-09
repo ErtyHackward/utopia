@@ -12,6 +12,7 @@ using System.Linq;
 using Utopia.Entities.Voxel;
 using Utopia.Entities;
 using Utopia.Editor.Properties;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Editor
 {
@@ -73,11 +74,15 @@ namespace Utopia.Editor
             //Removes all image above _entitiesOffset
             while (imageList1.Images.Count > _entitiesOffset) imageList1.Images.RemoveAt(imageList1.Images.Count - 1);
 
+            ModelSelector.Models.Clear();
+
             //Create Items icons
             foreach (var visualVoxelModel in Program.IconManager.ModelManager.Enumerate())
             {
                 imageList1.Images.Add(_icons[visualVoxelModel.VoxelModel.Name]);
                 _icons[visualVoxelModel.VoxelModel.Name].Tag = imageList1.Images.Count - 1; //Add Image Index in imageList
+
+                ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
             }
 
             _cubeOffset = imageList1.Images.Count;
@@ -340,7 +345,7 @@ namespace Utopia.Editor
                 var voxelEntity = entity as IVoxelEntity;
 
                 //Look at currently existing Voxel Models following Entity Name
-                item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : _entitiesOffset + Program.ModelsRepository.ModelsFiles.FindIndex(i => Path.GetFileNameWithoutExtension(i) == voxelEntity.ModelName);
+                item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : (int)_icons[voxelEntity.ModelName].Tag;
                 item.SelectedImageIndex = item.ImageIndex;
             }
 

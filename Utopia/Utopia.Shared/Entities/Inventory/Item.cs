@@ -18,7 +18,6 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets or sets current voxel model name
         /// </summary>
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
-        //[TypeConverter(typeof(ExpandableObjectConverter))]
         public string ModelName { get; set; }
 
         /// <summary>
