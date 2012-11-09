@@ -295,19 +295,6 @@
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
     <Compile Include="Tools\BinarySerializer\BinarySerialize.cs" />
-    <Compile Include="Tools\ContainerEditor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Tools\ContainerEditor.Designer.cs">
-      <DependentUpon>ContainerEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\EntitiesListEditor.cs" />
-    <Compile Include="Tools\EntityListForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Tools\EntityListForm.Designer.cs">
-      <DependentUpon>EntityListForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\ModelSelector.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
@@ -421,14 +408,6 @@
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tools\ContainerEditor.resx">
-      <DependentUpon>ContainerEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tools\EntityListForm.resx">
-      <DependentUpon>EntityListForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

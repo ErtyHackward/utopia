@@ -17,8 +17,6 @@ namespace Utopia.Editor
 {
     static class Program
     {
-        public static ModelsRepository ModelsRepository { get; set; }
-
         public static Dictionary<string, Image> ModelIcons { get; set; }
 
         public static IconManager IconManager { get; private set; }
@@ -52,11 +50,6 @@ namespace Utopia.Editor
             IconManager.Initialize(Settings.Default.UtopiaFolder);
 
             ModelIcons = new Dictionary<string, Image>();
-
-            ModelsRepository = new ModelsRepository();
-            ModelsRepository.Load();
-
-            ModelSelector.Models = ModelsRepository.ModelsFiles;
 
             Application.Run(new FrmMain());
         }
