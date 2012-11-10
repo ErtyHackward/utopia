@@ -17,6 +17,8 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using System.Linq;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.Interfaces;
+using Utopia.Shared.World.Processors;
 
 namespace Sandbox.Client.Components
 {
@@ -54,9 +56,20 @@ namespace Sandbox.Client.Components
             settings.Load();
             settings.Save();
 
-            //Utopia New Landscape Test
-            var utopiaProcessor = new UtopiaProcessor(worldParam, _serverFactory);
-            var worldGenerator = new WorldGenerator(worldParam, utopiaProcessor);
+            IWorldProcessor processor = null;
+            switch (worldParam.Configuration.WorldProcessor)
+            {
+                case WorldConfiguration.WorldProcessors.Flat:
+                    processor = new FlatWorldProcessor();
+                    break;
+                case WorldConfiguration.WorldProcessors.Utopia:
+                    processor = new UtopiaProcessor(worldParam, _serverFactory);
+                    break;
+                default:
+                    break;
+            }
+
+            var worldGenerator = new WorldGenerator(worldParam, processor);
            
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
 
@@ -67,7 +80,7 @@ namespace Sandbox.Client.Components
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-            _server.Services.Add(new WaterDynamicService());
+            //_server.Services.Add(new WaterDynamicService());
         }
 
 

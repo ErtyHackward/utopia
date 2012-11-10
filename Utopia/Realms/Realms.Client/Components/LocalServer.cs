@@ -19,6 +19,8 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors.Utopia;
 using System.Linq;
+using Utopia.Shared.Interfaces;
+using Utopia.Shared.World.Processors;
 
 namespace Realms.Client.Components
 {
@@ -56,8 +58,21 @@ namespace Realms.Client.Components
             settings.Save();
 
             //Utopia New Landscape Test
-            var utopiaProcessor = new UtopiaProcessor(worldParam, _serverFactory);
-            var worldGenerator = new WorldGenerator(worldParam, utopiaProcessor);
+
+            IWorldProcessor processor = null;
+            switch (worldParam.Configuration.WorldProcessor)
+            {
+                case WorldConfiguration.WorldProcessors.Flat:
+                    processor = new FlatWorldProcessor();
+                    break;
+                case WorldConfiguration.WorldProcessors.Utopia:
+                    processor = new UtopiaProcessor(worldParam, _serverFactory);
+                    break;
+                default:
+                    break;
+            }
+
+            var worldGenerator = new WorldGenerator(worldParam, processor);
 
             //Old s33m3 landscape
             //IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
@@ -76,7 +91,7 @@ namespace Realms.Client.Components
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-            _server.Services.Add(new WaterDynamicService());
+            //_server.Services.Add(new WaterDynamicService());
             _server.Services.Add(new TestNpcService());
         }
 

@@ -44,6 +44,8 @@ namespace Utopia.Server.Services
             _server.LandscapeManager.BlockChanged += LandscapeManagerBlockChanged;
             _updateTimer = new Timer(o => Update(), null, 0, 500);
 
+            //If no water block define, stop the Water services !
+
             //Get Id of FIRST Liquid and Still cube from collection
             _stillWater = _server.WorldParameters.Configuration.CubeProfiles.Where(x => x.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && x.IsTaggable == false).First().Id;
             //Get Id of FIRST Liquid and Dynamic cube from collection

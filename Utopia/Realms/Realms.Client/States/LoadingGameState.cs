@@ -47,6 +47,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.World.Processors;
 
 namespace Realms.Client.States
 {
@@ -160,7 +161,20 @@ namespace Realms.Client.States
 
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
             _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
-            IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+
+            IWorldProcessor processor = null;
+            switch (clientSideworldParam.Configuration.WorldProcessor)
+            {
+                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Flat:
+                    processor = new FlatWorldProcessor();
+                    break;
+                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
+                    processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+                    break;
+                default:
+                    break;
+            }
+
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 

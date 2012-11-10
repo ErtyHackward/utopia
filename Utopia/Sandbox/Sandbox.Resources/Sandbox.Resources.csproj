@@ -83,6 +83,9 @@
     <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Config\FlatWorld.realm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Config\Island.realm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
