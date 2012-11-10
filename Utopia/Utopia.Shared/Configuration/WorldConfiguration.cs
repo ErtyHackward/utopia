@@ -207,7 +207,7 @@ namespace Utopia.Shared.Configuration
             {
                 var cp = new CubeProfile();
                 cp.Load(reader);
-                CubeProfiles[i] = cp;
+                CubeProfiles[cp.Id] = cp;
             }
 
             FilledUpReservedCubeInArray();
@@ -353,7 +353,7 @@ namespace Utopia.Shared.Configuration
         private void FilledUpReservedCubeInArray()
         {
             //Field up to 100 included for Reserved Cube ID
-            for (byte currentCubeId = (byte)(CubeProfiles.Where(x => x != null).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
+            for (byte currentCubeId = (byte)(CubeProfiles.Where(x => x != null && x.Id < 100).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
             {
                 CubeProfiles[currentCubeId] = new CubeProfile() { Name = "System Reserved", Id = currentCubeId };
             }

@@ -57,11 +57,10 @@ namespace Utopia.Shared.World.Processors
                         for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
                         {
                             var index = x * AbstractChunk.ChunkSize.Y + y + z * AbstractChunk.ChunkSize.Y * AbstractChunk.ChunkSize.X;
-
                             if (y >= AbstractChunk.ChunkSize.Y / 2)
-                                chunkBytes[index] = 0;
+                                chunkBytes[index] = 0; //Air
                             else
-                                chunkBytes[index] = 1;
+                                chunkBytes[index] = FlatProcessorParams.CubeId.Ground; //First "Custom block"
                         }
                     }
                 }

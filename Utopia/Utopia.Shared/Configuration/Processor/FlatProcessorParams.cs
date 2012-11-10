@@ -20,7 +20,26 @@ namespace Utopia.Shared.Configuration
         #region Public Methods
         public IEnumerable<CubeProfile> InjectDefaultCubeProfiles()
         {
-            yield break;
+            //Stone Block
+            yield return (new CubeProfile()
+            {
+                Name = "Ground",
+                Description = "A ground cube",
+                Id = 1,
+                Tex_Top = 1,
+                Tex_Bottom = 1,
+                Tex_Back = 1,
+                Tex_Front = 1,
+                Tex_Left = 1,
+                Tex_Right = 1,
+                LightAbsorbed = 255,
+                IsPickable = true,
+                IsSolidToEntity = true,
+                IsBlockingWater = true,
+                CubeFamilly = Enums.enuCubeFamilly.Solid,
+                Friction = 0.25f,
+                IsSystemCube = true
+            });
         }
 
         public IEnumerable<IEntity> InjectDefaultEntities()
@@ -39,5 +58,11 @@ namespace Utopia.Shared.Configuration
 
         #region Private Methods
         #endregion
+
+        public static class CubeId
+        {
+            public const byte Air = 0;
+            public const byte Ground = 1;
+        }
     }
 }

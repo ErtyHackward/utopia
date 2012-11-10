@@ -273,6 +273,8 @@ namespace Utopia.Entities
             Matrix.PerspectiveFovLH((float)Math.PI / 3.6f, aspectRatio, 0.5f, 100f, out projection);
             Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
 
+            _voxelIcons.Clear();
+
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
                 texture.Begin();
