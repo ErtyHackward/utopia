@@ -55,6 +55,7 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.containerEditor = new Utopia.Shared.Tools.ContainerEditor();
             this.contextMenuCategories.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -68,12 +69,12 @@
             this.contextMenuCategories.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToolStripMenuItem});
             this.contextMenuCategories.Name = "contextMenuStrip1";
-            this.contextMenuCategories.Size = new System.Drawing.Size(153, 48);
+            this.contextMenuCategories.Size = new System.Drawing.Size(106, 26);
             // 
             // addToolStripMenuItem
             // 
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
             this.addToolStripMenuItem.Text = "Add...";
             this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
@@ -269,10 +270,25 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgDetails);
+            this.splitContainer1.Panel2.Controls.Add(this.containerEditor);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(3);
             this.splitContainer1.Size = new System.Drawing.Size(859, 646);
             this.splitContainer1.SplitterDistance = 188;
             this.splitContainer1.TabIndex = 8;
+            // 
+            // containerEditor
+            // 
+            this.containerEditor.Content = null;
+            this.containerEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.containerEditor.Icons = null;
+            this.containerEditor.Location = new System.Drawing.Point(3, 3);
+            this.containerEditor.Name = "containerEditor";
+            this.containerEditor.Configuration = null;
+            this.containerEditor.Size = new System.Drawing.Size(661, 640);
+            this.containerEditor.TabIndex = 1;
+            this.containerEditor.Text = "containerEditor1";
+            this.containerEditor.Visible = false;
+            this.containerEditor.ItemNeeded += new System.EventHandler<Utopia.Shared.Tools.ItemNeededEventArgs>(this.ContainerEditorItemNeeded);
             // 
             // FrmMain
             // 
@@ -318,6 +334,7 @@
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private Shared.Tools.ContainerEditor containerEditor;
     }
 }
 

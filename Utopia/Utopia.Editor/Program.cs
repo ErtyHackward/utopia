@@ -2,16 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using SharpDX.Direct3D11;
 using Utopia.Editor.Properties;
-using Utopia.Entities;
-using Utopia.Entities.Voxel;
-using Utopia.Shared.Entities;
-using Utopia.Shared.GameDXStates;
-using Utopia.Shared.Settings;
-using Utopia.Shared.Tools;
 
 namespace Utopia.Editor
 {
