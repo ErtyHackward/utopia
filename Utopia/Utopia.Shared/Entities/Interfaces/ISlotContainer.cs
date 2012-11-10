@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Utopia.Shared.Structs;
+using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Interfaces
@@ -8,7 +8,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Describes a container for entities
     /// </summary>
-    public interface ISlotContainer<T> : IEnumerable<T>
+    public interface ISlotContainer<T> : IEnumerable<T> where T : ContainedSlot
     {
         /// <summary>
         /// Occurs when the item was taken from the container
@@ -77,6 +77,18 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <returns></returns>
         bool PutItemExchange(IItem item, Vector2I position, int itemsCount, out T slotTaken);
 
+        /// <summary>
+        /// Updates specified slot, should be used in scripts and editor
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        void WriteSlot(T slot);
+
+        /// <summary>
+        /// Removes all entities from position specified
+        /// </summary>
+        /// <param name="pos"></param>
+        void ClearSlot(Vector2I pos);
     }
 
     public class EntityContainerEventArgs<T> : EventArgs

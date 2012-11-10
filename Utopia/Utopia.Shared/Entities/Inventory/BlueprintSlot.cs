@@ -29,5 +29,12 @@ namespace Utopia.Shared.Entities.Inventory
             ItemsCount = reader.ReadInt32();
             BlueprintId = reader.ReadUInt16();
         }
+
+        public override object Clone()
+        {
+            var bpSlot = new BlueprintSlot { BlueprintId = BlueprintId, GridPosition = GridPosition, ItemsCount = ItemsCount };
+
+            return bpSlot;
+        }
     }
 }

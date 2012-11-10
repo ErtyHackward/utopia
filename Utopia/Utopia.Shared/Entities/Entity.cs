@@ -130,7 +130,10 @@ namespace Utopia.Shared.Entities
             return MemberwiseClone();
         }
 
-
+        public override string ToString()
+        {
+            return _name;
+        }
 
     }
 }

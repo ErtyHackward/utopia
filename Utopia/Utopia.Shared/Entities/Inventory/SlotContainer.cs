@@ -363,6 +363,43 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
+        /// Updates specified slot, should be used in scripts and editor
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void WriteSlot(T slot)
+        {
+            if (slot == null) throw new ArgumentNullException("slot");
+
+            var pos = slot.GridPosition;
+            ValidatePosition(pos);
+
+            if (_items[pos.X, pos.Y] == null)
+                _slotsCount++;
+
+            _items[pos.X, pos.Y] = slot;
+        }
+
+        /// <summary>
+        /// Removes all entities from position specified
+        /// </summary>
+        /// <param name="pos"></param>
+        public void ClearSlot(Vector2I pos)
+        {
+            ValidatePosition(pos);
+
+            if (_items[pos.X, pos.Y] == null)
+                return;
+
+            _items[pos.X, pos.Y] = null;
+            _slotsCount--;
+
+            if (_slotsCount == 0)
+                _maxId = 0;
+
+        }
+
+        /// <summary>
         /// Puts the item to already occupied slot (Items should have different type)
         /// </summary>
         /// <param name="itemsCount"></param>

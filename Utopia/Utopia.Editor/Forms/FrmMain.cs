@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using Utopia.Editor.Forms;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Tools;
@@ -50,6 +52,9 @@ namespace Utopia.Editor
 
                     // generate icons for the configuration
                     _icons = Program.IconManager.GenerateIcons(_configuration);
+
+                    containerEditor.Configuration = _configuration;
+                    containerEditor.Icons = _icons;
 
                     UpdateImageList();
                 }
@@ -99,8 +104,10 @@ namespace Utopia.Editor
             InitializeComponent();
 
             _entitiesOffset = imageList1.Images.Count;
-
+            
             tvMainCategories.ImageList = imageList1;
+
+            
         }
 
         #region Public Methods
@@ -258,7 +265,7 @@ namespace Utopia.Editor
 
             foreach (var containerSet in _configuration.ContainerSets)
             {
-                AddSubNode(setsRootNode, containerSet.Key, containerSet);
+                AddSubNode(setsRootNode, containerSet.Key, containerSet.Value);
             }
 
             #endregion
@@ -395,28 +402,49 @@ namespace Utopia.Editor
             {
                 if (_processorControl != null)
                 {
-                    //Display Utopia World Processor
-                    pgDetails.Visible = false;
-                    _processorControl.Visible = true;
+                    ShowMainControl(_processorControl);
                 }
             }
             else
             {
-                if (_processorControl != null) _processorControl.Visible = false;
-                pgDetails.Visible = true;
-                if (tvMainCategories.SelectedNode.Tag is CubeProfile)
+                var selectedObject = tvMainCategories.SelectedNode.Tag;
+
+                if (selectedObject is SlotContainer<BlueprintSlot>)
                 {
-                    if (((CubeProfile)tvMainCategories.SelectedNode.Tag).IsSystemCube == true) pgDetails.Enabled = false;
-                    else pgDetails.Enabled = true;
+                    var content = selectedObject as SlotContainer<BlueprintSlot>;
+
+                    ShowMainControl(containerEditor);
+
+                    containerEditor.Content = content;
                 }
                 else
                 {
-                    pgDetails.Enabled = true;
+                    // show property grid of this object
+                    ShowMainControl(pgDetails);
+                    pgDetails.Visible = true;
+                    if (selectedObject is CubeProfile)
+                    {
+                        pgDetails.Enabled = !((CubeProfile) tvMainCategories.SelectedNode.Tag).IsSystemCube;
+                    }
+                    else
+                    {
+                        pgDetails.Enabled = true;
+                    }
+                    if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true;
+                    pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
                 }
-                if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true;
-                pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
             }
 
+        }
+
+        private void ShowMainControl(Control control)
+        {
+            pgDetails.Hide();
+            if (_processorControl != null)
+                _processorControl.Hide();
+            containerEditor.Hide();
+
+            control.Show();
         }
 
         private string GetFreeName<TValue>(string nameBase, IDictionary<string, TValue> dictionary)
@@ -438,6 +466,20 @@ namespace Utopia.Editor
             Application.Exit();
         }
         #endregion
+
+        private void ContainerEditorItemNeeded(object sender, ItemNeededEventArgs e)
+        {
+            using (var frmAdd = new FrmItemAdd())
+            {
+                frmAdd.Configuration = Configuration;
+
+                if (frmAdd.ShowDialog() == DialogResult.OK)
+                {
+                    e.BlueprintId = frmAdd.SelectedId;
+                    e.Count = frmAdd.ItemsCount;
+                }
+            }
+        }
 
         #endregion
     }
