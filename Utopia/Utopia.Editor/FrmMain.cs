@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
 using System.Linq;
-using Utopia.Entities.Voxel;
-using Utopia.Entities;
-using Utopia.Editor.Properties;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Editor
@@ -120,7 +116,9 @@ namespace Utopia.Editor
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmProcessorChoose processorChoose = new frmProcessorChoose();
-            processorChoose.ShowDialog(this);
+
+            if (processorChoose.ShowDialog(this) == System.Windows.Forms.DialogResult.Cancel)
+                return;
 
             string processorType = "Utopia.Shared.Configuration." + processorChoose.SelectedProcessor.ToString() + "ProcessorParams, Utopia.Shared";
 
@@ -215,50 +213,80 @@ namespace Utopia.Editor
         {
             if (_configuration == null)
                 return;
-            Image result;
+
+            tvMainCategories.BeginUpdate();
 
             //Bind Configuration object to General root Node
             tvMainCategories.Nodes["General"].Tag = _configuration;
 
             //Get Entities Root node collection
-            TreeNode entitiesRootNode = tvMainCategories.Nodes["Entities"];
+            var entitiesRootNode = tvMainCategories.Nodes["Entities"];
             entitiesRootNode.Nodes.Clear();
 
             //Add new Entities nodes
             for (var i = 0; i < _configuration.Entities.Count; i++)
             {
                 var entity = _configuration.Entities[i];
-                var item = new TreeNode(entity.Name);
-                item.Tag = entity;
 
+                string iconName = null;
+                
                 if (entity is IVoxelEntity)
                 {
                     var voxelEntity = entity as IVoxelEntity;
-
-                    item.ImageIndex = _icons.TryGetValue(voxelEntity.ModelName, out result) ? (int)result.Tag : -1;
-
-                    item.SelectedImageIndex = item.ImageIndex;
+                    iconName = voxelEntity.ModelName;
                 }
-                entitiesRootNode.Nodes.Add(item);
+
+                AddSubNode(entitiesRootNode, entity.Name, entity, iconName);
             }
 
+
             //Clear all the Cube node items
-            TreeNode cubesRootNode = tvMainCategories.Nodes["Cubes"];
+            var cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
-            int iconcubeImageId = _cubeOffset;
             for (var i = 0; i < _configuration.CubeProfiles.Where(x => x != null).Count(); i++)
             {
                 var cubeProfile = _configuration.CubeProfiles[i];
                 if (cubeProfile.Name == "System Reserved") continue;
-                var item = new TreeNode(cubeProfile.Name);
 
-                item.ImageIndex = _icons.TryGetValue("CubeResource_" + cubeProfile.Name, out result) ? (int)result.Tag : -1;
-
-                item.SelectedImageIndex = item.ImageIndex;
-                
-                item.Tag = cubeProfile;
-                cubesRootNode.Nodes.Add(item);
+                AddSubNode(cubesRootNode, cubeProfile.Name, cubeProfile, "CubeResource_" + cubeProfile.Name);
             }
+
+            #region Sets
+
+            var setsRootNode = tvMainCategories.Nodes["Container sets"];
+            setsRootNode.Nodes.Clear();
+
+            foreach (var containerSet in _configuration.ContainerSets)
+            {
+                AddSubNode(setsRootNode, containerSet.Key, containerSet);
+            }
+
+            #endregion
+
+            tvMainCategories.EndUpdate();
+        }
+
+        private void AddSubNode(TreeNode parentNode, string label, object tag, string iconName = null)
+        {
+            var imgIndex = -1;
+
+            if (!string.IsNullOrEmpty(iconName))
+            {
+                Image img;
+                if (_icons.TryGetValue(iconName, out img))
+                {
+                    imgIndex = (int)img.Tag;
+                }
+            }
+
+            var item = new TreeNode(label)
+            {
+                Tag = tag,
+                SelectedImageIndex = imgIndex,
+                ImageIndex = imgIndex
+            };
+
+            parentNode.Nodes.Add(item);
         }
 
         private void Save(string filePath)
@@ -320,6 +348,12 @@ namespace Utopia.Editor
                     var cubeInstance = Configuration.CreateNewCube();
                     UpdateList();
                     tvMainCategories.SelectedNode = FindByTag(cubeInstance);
+                    break;
+                case "Container sets":
+                    var newValue = new Shared.Entities.Inventory.SlotContainer<Shared.Entities.Inventory.BlueprintSlot>();
+                    _configuration.ContainerSets.Add(GetFreeName("Set", _configuration.ContainerSets), newValue);
+                    UpdateList();
+                    tvMainCategories.SelectedNode = FindByTag(newValue);
                     break;
 
                 default:
@@ -385,6 +419,19 @@ namespace Utopia.Editor
 
         }
 
+        private string GetFreeName<TValue>(string nameBase, IDictionary<string, TValue> dictionary)
+        {
+            var index = 0;
+            var name = nameBase;
+
+            while (dictionary.ContainsKey(name))
+            {
+                index++;
+                name = nameBase + index;
+            }
+
+            return name;
+        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {

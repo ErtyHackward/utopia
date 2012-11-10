@@ -42,8 +42,8 @@ namespace Utopia.Shared.Settings
             try
             {
                 PathRoot = "";
-                DynamicLists.Add("CLIST_TexturePacks", new List<object>(GetAllTexturePacks()));
-                DynamicLists.Add("CLIST_EffectPacks", new List<object>(GetAllEffectPacks()));
+                DynamicLists.Add("CLIST_TexturePacks", new List<object>(GetSubFoldersAt(Application.StartupPath + @"\TexturesPacks\")));
+                DynamicLists.Add("CLIST_EffectPacks", new List<object>(GetSubFoldersAt(Application.StartupPath + @"\EffectsPacks\")));
             }
             catch (Exception x)
             {
@@ -51,22 +51,14 @@ namespace Utopia.Shared.Settings
             }
         }
         
-
-        private static IEnumerable<string> GetAllTexturePacks()
+        private static IEnumerable<string> GetSubFoldersAt(string lootAt)
         {
-            foreach (var path in Directory.GetDirectories(Application.StartupPath + @"\TexturesPacks\"))
+            if (Directory.Exists(lootAt))
             {
-                DirectoryInfo di = new DirectoryInfo(path);
-                yield return di.Name;
-            }
-        }
-
-        private static IEnumerable<string> GetAllEffectPacks()
-        {
-            foreach (var path in Directory.GetDirectories(Application.StartupPath + @"\EffectsPacks\"))
-            {
-                DirectoryInfo di = new DirectoryInfo(path);
-                yield return di.Name;
+                foreach (var path in Directory.GetDirectories(lootAt))
+                {
+                    yield return new DirectoryInfo(path).Name;
+                }
             }
         }
     }

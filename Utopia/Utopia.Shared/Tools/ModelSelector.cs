@@ -8,6 +8,9 @@ using System.Windows.Forms.Design;
 
 namespace Utopia.Shared.Tools
 {
+    /// <summary>
+    /// PropertyGrid editor component to show all possible models to use
+    /// </summary>
     public class ModelSelector : UITypeEditor
     {
         public static Dictionary<string, Image> Models = new Dictionary<string, Image>();
@@ -23,6 +26,7 @@ namespace Utopia.Shared.Tools
             }
 
             _list = new ListView();
+            _list.MultiSelect = false;
             _list.View = View.LargeIcon;
             _list.Click += _list_Click;
 
@@ -58,6 +62,27 @@ namespace Utopia.Shared.Tools
         {
             if (_list == null) Initialize();
             _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
+
+            if (value != null)
+            {
+                var currentItem = _list.FindItemWithText((string)value);
+
+                if (currentItem != null)
+                {
+                    currentItem.Selected = true;
+                    _list.Tag = value;
+                }
+            }
+            else
+            {
+                // clear selection;
+                if (_list.SelectedItems.Count > 0)
+                {
+                    _list.SelectedItems[0].Selected = false;
+                }
+            }
+
+
             _service.DropDownControl(_list);
             return _list.Tag;
         }
