@@ -68,12 +68,12 @@
             this.contextMenuCategories.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToolStripMenuItem});
             this.contextMenuCategories.Name = "contextMenuStrip1";
-            this.contextMenuCategories.Size = new System.Drawing.Size(106, 26);
+            this.contextMenuCategories.Size = new System.Drawing.Size(153, 48);
             // 
             // addToolStripMenuItem
             // 
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addToolStripMenuItem.Text = "Add...";
             this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
@@ -213,6 +213,7 @@
             treeNode4.Name = "WorldProcessor Params";
             treeNode4.SelectedImageIndex = 5;
             treeNode4.Text = "WorldProcessor Params";
+            treeNode5.ContextMenuStrip = this.contextMenuCategories;
             treeNode5.ImageIndex = 7;
             treeNode5.Name = "Container sets";
             treeNode5.SelectedImageIndex = 7;
