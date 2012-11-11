@@ -38,10 +38,12 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             try
             {
                 //Try to delete the Server directory
-                Directory.Delete(info.WorldServerRootPath.FullName, true);
+                if (Directory.Exists(info.WorldServerRootPath.FullName))
+                    Directory.Delete(info.WorldServerRootPath.FullName, true);
 
                 //Try to delete the Client directory
-                Directory.Delete(info.WorldClientRootPath.FullName, true);
+                if (Directory.Exists(info.WorldClientRootPath.FullName))
+                    Directory.Delete(info.WorldClientRootPath.FullName, true);
 
                 //Recreate the list of all existing Worlds, as one as been deleted
                 LocalWorlds.LocalWorldsParams = LocalWorlds.GetAllSinglePlayerWorldsParams(_vars.ApplicationDataPath);

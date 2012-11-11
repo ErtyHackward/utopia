@@ -104,27 +104,14 @@ namespace Realms.Client.Components
             dEntity.DisplacementMode = EntityDisplacementModes.Walking;
             dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             dEntity.CharacterName = "Local player";
-            ContainedSlot outItem;
 
-            //Get first Cube Solid from list
-            byte equipedCubeId = _worldParam.Configuration.CubeProfiles.Where(x => x.IsSolidToEntity).First().Id;
-
-            var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(equipedCubeId, _worldParam.Configuration.CubeProfiles[equipedCubeId].Name);
-
-            dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
-
-            foreach (CubeProfile profile in _worldParam.Configuration.GettAllCubesProfiles())
+            // give start items to the player
+            var startSetName = _worldParam.Configuration.StartSet;
+            if (!string.IsNullOrEmpty(startSetName))
             {
-                if (profile.Id == WorldConfiguration.CubeId.Air)
-                    continue;
-
-                var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.SetCube(profile.Id, profile.Name);
-                dEntity.Inventory.PutItem(item3);
+                _worldParam.Configuration.FillContainer(startSetName, dEntity.Inventory);
             }
-
-
+            
             e.PlayerEntity = dEntity;
         }
 

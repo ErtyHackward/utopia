@@ -67,7 +67,7 @@ namespace Utopia.Entities
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
 
-            foreach (var cube in _config.GettAllCubesProfiles())
+            foreach (var cube in _config.GetAllCubesProfiles())
             {
                 CubePack pack;
 

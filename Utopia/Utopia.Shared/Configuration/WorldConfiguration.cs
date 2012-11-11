@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
@@ -66,12 +67,6 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [Browsable(false)]
         public Md5Hash IntegrityHash { get; set; }
-
-        /// <summary>
-        /// Holds examples of entities of all types in the realm
-        /// </summary>
-        [Browsable(false)]
-        public List<IEntity> Entities { get; set; }
 
         /// <summary>
         /// Keep a list of the entities lookable by ConcreteId
@@ -151,10 +146,10 @@ namespace Utopia.Shared.Configuration
 
             writer.Write(StartSet ?? string.Empty);
 
-            writer.Write(Entities.Count);
-            foreach (var entitySample in Entities)
+            writer.Write(BluePrints.Count);
+            foreach (var pair in BluePrints)
             {
-                entitySample.Save(writer);
+                pair.Value.Save(writer);
             }
 
             writer.Write(CubeProfiles.Where(x => x != null && x.Name != "System Reserved").Count());
@@ -197,13 +192,11 @@ namespace Utopia.Shared.Configuration
 
             StartSet = reader.ReadString();
 
-            Entities.Clear();
             BluePrints.Clear();
             int countEntity = reader.ReadInt32();
             for (var i = 0; i < countEntity; i++)
             {
                 var entity = Factory.CreateFromBytes(reader);
-                Entities.Add(entity);
                 BluePrints.Add(entity.BluePrintId, entity);
             }
 
@@ -305,7 +298,7 @@ namespace Utopia.Shared.Configuration
             return instance;
         }
 
-        public IEnumerable<CubeProfile> GettAllCubesProfiles()
+        public IEnumerable<CubeProfile> GetAllCubesProfiles()
         {
             foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
             {
@@ -317,13 +310,60 @@ namespace Utopia.Shared.Configuration
         {
             CreateDefaultValues();
         }
+
+        /// <summary>
+        /// Initializes specifed container with a set
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="container"></param>
+        public void FillContainer(string setName, SlotContainer<ContainedSlot> container)
+        {
+            SlotContainer<BlueprintSlot> set;
+            if (ContainerSets.TryGetValue(setName, out set))
+            {
+                if (container.GridSize.X < set.GridSize.X || container.GridSize.Y < set.GridSize.Y)
+                    throw new InvalidOperationException("Destination container is smaller than the set");
+
+                container.Clear();
+
+                foreach (var blueprintSlot in set)
+                {
+                    IItem item = null;
+                    if (blueprintSlot.BlueprintId < 256)
+                    {
+                        var res = new CubeResource();
+                        var profile = CubeProfiles[blueprintSlot.BlueprintId];
+                        res.SetCube((byte)blueprintSlot.BlueprintId, profile.Name);
+
+                        item = res;
+                    }
+                    else
+                    {
+                        item = CreateEntity<Item>(blueprintSlot.BlueprintId);
+                    }
+
+                    container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
+                }
+            }
+        }
+
+        public T CreateEntity<T>(ushort blueprintId) where T : class, IEntity
+        {
+            Entity entity;
+            if (BluePrints.TryGetValue(blueprintId, out entity))
+            {
+                return (T)entity.Clone();
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region Private Methods
 
         private void InitCollections()
         {
-            Entities = new List<IEntity>();
             BluePrints = new Dictionary<ushort, Entity>();
             CubeProfiles = new CubeProfile[255];
             Services = new List<KeyValuePair<string, string>>();
@@ -341,16 +381,16 @@ namespace Utopia.Shared.Configuration
         {
             //Generate a new Blueprint ID, it will represent this Blue print, and must be unique
             ushort newId;
-            if (Entities.Count == 0) 
+            if (BluePrints.Count == 0) 
                 // 1-255 cube resource values (0 - air)
                 newId = 256;
-            else 
-                newId = (ushort)(Entities.Select(x => x.BluePrintId).Max() + 1);
+            else
+                newId = (ushort)(BluePrints.Values.Select(x => x.BluePrintId).Max() + 1);
 
             entityInstance.BluePrintId = newId;
             entityInstance.isSystemEntity = false;
 
-            Entities.Add(entityInstance);
+            BluePrints.Add(newId, (Entity)entityInstance);
         }
 
         //Definition of default cube profile

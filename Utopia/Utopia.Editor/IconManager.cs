@@ -87,7 +87,7 @@ namespace Utopia.Editor
             //Create Blocks icons
             int i = 0;
             List<Texture2D> cubeIcons = _iconFactory.Get3DBlockIcons(_engine.ImmediateContext, IconSize, _cubeTextureView);
-            foreach (var cubeprofiles in configuration.GettAllCubesProfiles())
+            foreach (var cubeprofiles in configuration.GetAllCubesProfiles())
             {
                 if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
                 var memStr = new MemoryStream();

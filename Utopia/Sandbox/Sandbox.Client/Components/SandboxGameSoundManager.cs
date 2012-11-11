@@ -33,7 +33,7 @@ namespace Sandbox.Client.Components
         {
 
             //Buffer cube walking sound
-            foreach (var cube in visualWorldParameters.WorldParameters.Configuration.GettAllCubesProfiles().Where(x => x.WalkingOverSound.Count > 0))
+            foreach (var cube in visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles().Where(x => x.WalkingOverSound.Count > 0))
             {
                 foreach (var walkingSound in cube.WalkingOverSound)
                 {

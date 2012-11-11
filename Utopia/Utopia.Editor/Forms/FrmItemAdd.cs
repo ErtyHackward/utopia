@@ -19,7 +19,7 @@ namespace Utopia.Editor.Forms
                 cbEntityType.Items.Clear();
 
                 // add cubes
-                foreach (var profile in _configuration.GettAllCubesProfiles())
+                foreach (var profile in _configuration.GetAllCubesProfiles())
                 {
                     cbEntityType.Items.Add(profile);
                 }
