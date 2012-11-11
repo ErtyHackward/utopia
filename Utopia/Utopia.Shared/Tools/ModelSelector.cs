@@ -56,6 +56,27 @@ namespace Utopia.Shared.Tools
             }
         }
 
+        public override bool GetPaintValueSupported(System.ComponentModel.ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        public override void PaintValue(PaintValueEventArgs e)
+        {
+            if (e.Value == null)
+                return;
+
+            var value = (string)e.Value;
+
+            Image img;
+            if (Models.TryGetValue(value, out img))
+            {
+                e.Graphics.DrawImage(img, e.Bounds);
+            }
+
+            base.PaintValue(e);
+        }
+
         //The returned Value of the Entity, in our case its the entitty name stored inside the object Tag.
         public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
         {

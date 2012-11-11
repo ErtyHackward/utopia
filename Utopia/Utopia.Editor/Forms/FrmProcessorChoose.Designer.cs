@@ -1,6 +1,6 @@
-﻿namespace Utopia.Editor
+﻿namespace Utopia.Editor.Forms
 {
-    partial class frmProcessorChoose
+    partial class FrmProcessorChoose
     {
         /// <summary>
         /// Required designer variable.
@@ -74,7 +74,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmProcessorChoose";
+            this.Name = "FrmProcessorChoose";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Choose world processor type";
             this.ResumeLayout(false);

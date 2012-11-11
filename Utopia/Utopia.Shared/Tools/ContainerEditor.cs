@@ -153,32 +153,47 @@ namespace Utopia.Shared.Tools
                 {
                     var position = new Point(blueprintSlot.GridPosition.X * _cellSize.Width, blueprintSlot.GridPosition.Y * _cellSize.Height);
                     position.Offset(_gridOffset);
-                    Entity blueprintEntity;
-                    if (Configuration.BluePrints.TryGetValue(blueprintSlot.BlueprintId, out blueprintEntity))
-                    {
-                        var item = blueprintEntity as IVoxelEntity;
-                        Image icon;
-                        if (item == null || !Icons.TryGetValue(item.ModelName, out icon))
-                        {
-                            e.Graphics.DrawString("No icon", Font, SystemBrushes.ControlText, position);
-                            continue;
-                        }
 
+                    Image icon = null;
+
+                    if (blueprintSlot.BlueprintId < 256)
+                    {
+                        var profile = Configuration.CubeProfiles[blueprintSlot.BlueprintId];
+                        if (profile != null)
+                            Icons.TryGetValue("CubeResource_" + profile.Name, out icon);
+                    }
+                    else
+                    {
+                        Entity blueprintEntity;
+                        if (Configuration.BluePrints.TryGetValue(blueprintSlot.BlueprintId, out blueprintEntity))
+                        {
+                            var item = blueprintEntity as IVoxelEntity;
+                            if (item != null)
+                                Icons.TryGetValue(item.ModelName, out icon);
+                        }
+                    }
+
+
+                    if (icon == null)
+                    {
+                        e.Graphics.DrawString("No icon", Font, SystemBrushes.ControlText, position);
+                    }
+                    else
+                    {
                         var drect = new Rectangle(position, _cellSize);
 
                         e.Graphics.DrawImage(icon, drect);
 
                         // draw count
-
-                        var cntRect = drect;
                         var cntSize = e.Graphics.MeasureString(blueprintSlot.ItemsCount.ToString(), Font);
 
-                        drect.X += drect.Width - (int)cntSize.Width;
-                        drect.Y += drect.Height - (int)cntSize.Height;
-                        drect.Size = cntSize.ToSize() + new Size(1,1);
+                        drect.X += drect.Width - (int) cntSize.Width;
+                        drect.Y += drect.Height - (int) cntSize.Height;
+                        drect.Size = cntSize.ToSize() + new Size(1, 1);
                         drect.Offset(-1, -1);
                         e.Graphics.FillRectangle(SystemBrushes.Control, drect);
-                        e.Graphics.DrawString(blueprintSlot.ItemsCount.ToString(), Font, SystemBrushes.ControlText, drect);
+                        e.Graphics.DrawString(blueprintSlot.ItemsCount.ToString(), Font, SystemBrushes.ControlText,
+                                              drect);
                     }
                 }
             }

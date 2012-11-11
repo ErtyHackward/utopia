@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Structs.Landscape;
-using Utopia.Shared.Structs;
 using Utopia.Shared.Enums;
-using SharpDX;
 using S33M3Resources.Structs;
 using System.ComponentModel;
 using System.IO;
-using Utopia.Shared.Entities;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Settings
 {
     [Serializable]
-    public partial class CubeProfile : IBinaryStorable
+    public class CubeProfile : IBinaryStorable
     {
         [Browsable(false)]
         public bool IsSystemCube { get; set; }
@@ -163,6 +156,11 @@ namespace Utopia.Shared.Settings
             Textures[5] = reader.ReadByte();
 
             BinarySerialize.DeserializeArray(reader, out _walkingOverSound);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

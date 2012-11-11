@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Utopia.Shared.Configuration;
 
-namespace Utopia.Editor
+namespace Utopia.Editor.Forms
 {
-    public partial class frmProcessorChoose : Form
+    public partial class FrmProcessorChoose : Form
     {
         public WorldConfiguration.WorldProcessors SelectedProcessor
         {
             get { return (WorldConfiguration.WorldProcessors)comboBox1.SelectedItem; }
         }
 
-        public frmProcessorChoose()
+        public FrmProcessorChoose()
         {
             InitializeComponent();
 

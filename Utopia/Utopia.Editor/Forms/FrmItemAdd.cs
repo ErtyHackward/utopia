@@ -1,6 +1,8 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Editor.Forms
 {
@@ -16,6 +18,13 @@ namespace Utopia.Editor.Forms
 
                 cbEntityType.Items.Clear();
 
+                // add cubes
+                foreach (var profile in _configuration.GettAllCubesProfiles())
+                {
+                    cbEntityType.Items.Add(profile);
+                }
+
+                // add entities
                 foreach (var pair in _configuration.BluePrints)
                 {
                     if (pair.Value is IItem)
@@ -28,7 +37,24 @@ namespace Utopia.Editor.Forms
 
         public ushort SelectedId
         {
-            get { return ((IItem)cbEntityType.SelectedItem).BluePrintId; }
+            get 
+            {
+                var obj = cbEntityType.SelectedItem;
+
+                if (obj is CubeProfile)
+                {
+                    var profile = (CubeProfile)obj;
+                    return profile.Id;
+                }
+
+                if (obj is IItem)
+                {
+                    var item = (IItem)obj;
+                    return item.BluePrintId;
+                }
+
+                throw new ApplicationException("Value is not supported");
+            }
         }
 
         public int ItemsCount
@@ -42,7 +68,7 @@ namespace Utopia.Editor.Forms
             InitializeComponent();
         }
 
-        private void ButtonAddClick(object sender, System.EventArgs e)
+        private void ButtonAddClick(object sender, EventArgs e)
         {
             if (cbEntityType.SelectedIndex == -1)
             {

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using Utopia.Editor.Forms;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -12,7 +11,7 @@ using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Tools;
 
-namespace Utopia.Editor
+namespace Utopia.Editor.Forms
 {
     public partial class FrmMain : Form
     {
@@ -55,6 +54,7 @@ namespace Utopia.Editor
 
                     containerEditor.Configuration = _configuration;
                     containerEditor.Icons = _icons;
+                    ContainerSetSelector.Configuration = _configuration;
 
                     UpdateImageList();
                 }
@@ -122,7 +122,7 @@ namespace Utopia.Editor
         //New
         private void newRealmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmProcessorChoose processorChoose = new frmProcessorChoose();
+            FrmProcessorChoose processorChoose = new FrmProcessorChoose();
 
             if (processorChoose.ShowDialog(this) == System.Windows.Forms.DialogResult.Cancel)
                 return;

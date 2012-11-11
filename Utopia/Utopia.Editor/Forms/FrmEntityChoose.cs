@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Utopia.Shared.Entities.Interfaces;
 
-namespace Utopia.Editor
+namespace Utopia.Editor.Forms
 {
     public partial class FrmEntityChoose : Form
     {
