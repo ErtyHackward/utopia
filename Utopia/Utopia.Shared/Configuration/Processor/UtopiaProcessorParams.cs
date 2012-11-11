@@ -944,7 +944,7 @@ namespace Utopia.Shared.Configuration
 
         public static class BluePrintId
         {
-            public const byte CactusFlower = 1;
+            public const ushort CactusFlower = 256;
         }
     }
 }

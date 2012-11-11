@@ -485,7 +485,7 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
             //Create a texture for each cubes existing !
-            foreach (CubeProfile profile in _visualWorldParameters.WorldParameters.Configuration.GettAllCubesProfiles())
+            foreach (CubeProfile profile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
                 //Don't create "Air" cube
                 if (profile.Id == WorldConfiguration.CubeId.Air) continue;

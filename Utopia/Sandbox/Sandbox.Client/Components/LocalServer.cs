@@ -102,7 +102,7 @@ namespace Sandbox.Client.Components
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Put each cube in the inventory
-            foreach (CubeProfile profile in _worldParam.Configuration.GettAllCubesProfiles())
+            foreach (CubeProfile profile in _worldParam.Configuration.GetAllCubesProfiles())
             {
                 if (profile.Id == WorldConfiguration.CubeId.Air)
                     continue;

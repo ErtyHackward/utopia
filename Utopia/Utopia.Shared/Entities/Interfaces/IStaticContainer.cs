@@ -23,5 +23,10 @@
         /// <param name="staticId"></param>
         /// <returns></returns>
         IStaticEntity GetStaticEntity(uint staticId);
+
+        /// <summary>
+        /// Deletes all items from the container
+        /// </summary>
+        void Clear();
     }
 }

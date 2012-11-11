@@ -42,7 +42,7 @@ namespace Realms.Server
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Add Items in inventory, every cubes
-            foreach (CubeProfile profile in _config.GettAllCubesProfiles())
+            foreach (CubeProfile profile in _config.GetAllCubesProfiles())
             {
                 if (profile.Id == WorldConfiguration.CubeId.Air)
                     continue;

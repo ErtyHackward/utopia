@@ -57,6 +57,9 @@ namespace Utopia.Editor.Forms
                     ContainerSetSelector.Configuration = _configuration;
 
                     UpdateImageList();
+
+                    
+
                 }
                 else
                 {
@@ -88,7 +91,7 @@ namespace Utopia.Editor.Forms
 
             _cubeOffset = imageList1.Images.Count;
             //Create blocks icons
-            foreach (var cubeprofiles in _configuration.GettAllCubesProfiles())
+            foreach (var cubeprofiles in _configuration.GetAllCubesProfiles())
             {
                 if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
                 imageList1.Images.Add(_icons["CubeResource_" + cubeprofiles.Name]);
@@ -231,9 +234,10 @@ namespace Utopia.Editor.Forms
             entitiesRootNode.Nodes.Clear();
 
             //Add new Entities nodes
-            for (var i = 0; i < _configuration.Entities.Count; i++)
+
+            foreach (var pair in _configuration.BluePrints)
             {
-                var entity = _configuration.Entities[i];
+                var entity = pair.Value;
 
                 string iconName = null;
                 

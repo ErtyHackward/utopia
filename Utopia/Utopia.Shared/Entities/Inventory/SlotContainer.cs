@@ -135,6 +135,22 @@ namespace Utopia.Shared.Entities.Inventory
             }
         }
 
+        /// <summary>
+        /// Deletes all items from the container
+        /// </summary>
+        public void Clear()
+        {
+            _slotsCount = 0;
+            _maxId = 0;
+            for (int x = 0; x < _gridSize.X; x++)
+            {
+                for (int y = 0; y < _gridSize.Y; y++)
+                {
+                    _items[x, y] = null;
+                }
+            }
+        }
+
 // ReSharper disable UnusedParameter.Local
         private void ValidatePosition(Vector2I position)
 // ReSharper restore UnusedParameter.Local

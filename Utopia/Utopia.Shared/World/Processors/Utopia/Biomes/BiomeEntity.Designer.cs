@@ -20,12 +20,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return EditorConfigHelper.Config.Entities.First(x => x.BluePrintId == BluePrintId).Name;
+                return EditorConfigHelper.Config.BluePrints[BluePrintId].Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                BluePrintId = EditorConfigHelper.Config.Entities.First(x => x.Name == value).BluePrintId;
+                BluePrintId = EditorConfigHelper.Config.BluePrints.Values.First(x => x.Name == value).BluePrintId;
             }
         }
         #endregion
@@ -66,7 +66,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(EditorConfigHelper.Config.Entities.Select(x => x.Name).OrderBy(x => x).ToList());
+                return new StandardValuesCollection(EditorConfigHelper.Config.BluePrints.Values.Select(x => x.Name).OrderBy(x => x).ToList());
             }
         }
     }
