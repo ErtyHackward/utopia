@@ -301,6 +301,7 @@
     <Compile Include="Tools\ContainerEditor.designer.cs">
       <DependentUpon>ContainerEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\ContainerSetSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />

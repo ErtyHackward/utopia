@@ -1,4 +1,4 @@
-﻿namespace Utopia.Editor
+﻿namespace Utopia.Editor.Forms
 {
     partial class FrmEntityChoose
     {

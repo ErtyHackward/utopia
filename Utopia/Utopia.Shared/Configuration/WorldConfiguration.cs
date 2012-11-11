@@ -8,11 +8,8 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
-using Utopia.Shared.World.Processors.Utopia.Biomes;
+using Utopia.Shared.Tools;
 using System.Linq;
-using S33M3Resources.Structs;
-using Utopia.Shared.Entities.Concrete.Collectible;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Configuration
 {
@@ -23,12 +20,10 @@ namespace Utopia.Shared.Configuration
     /// </summary>
     public abstract class WorldConfiguration
     {
-        #region Private Variables
         /// <summary>
         /// Realm format version
         /// </summary>
         private const int RealmFormat = 1;
-        #endregion
 
         #region Public Properties
         public readonly EntityFactory Factory;
@@ -107,6 +102,13 @@ namespace Utopia.Shared.Configuration
         [Description("Defines the sets used to fill containers")]
         public Dictionary<string, SlotContainer<BlueprintSlot>> ContainerSets { get; set; }
 
+        /// <summary>
+        /// Gets or sets player start inventory set name
+        /// </summary>
+        [Description("Defines the start inventory set of the player")]
+        [TypeConverter(typeof(ContainerSetSelector))]
+        public string StartSet { get; set; }
+
         #endregion
 
         public WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
@@ -146,6 +148,8 @@ namespace Utopia.Shared.Configuration
             writer.Write(UpdatedAt.ToBinary());
             
             writer.Write(WorldHeight);
+
+            writer.Write(StartSet ?? string.Empty);
 
             writer.Write(Entities.Count);
             foreach (var entitySample in Entities)
@@ -190,6 +194,8 @@ namespace Utopia.Shared.Configuration
             UpdatedAt = DateTime.FromBinary(reader.ReadInt64());
             
             WorldHeight = reader.ReadInt32();
+
+            StartSet = reader.ReadString();
 
             Entities.Clear();
             BluePrints.Clear();
@@ -333,10 +339,13 @@ namespace Utopia.Shared.Configuration
 
         protected void AddNewEntity(IEntity entityInstance)
         {
-            //Generate a new Entity ID, it will represent this Blue print, and must be unique
+            //Generate a new Blueprint ID, it will represent this Blue print, and must be unique
             ushort newId;
-            if (Entities.Count == 0) newId = 0;
-            else newId = (ushort)(Entities.Select(x => x.BluePrintId).Max(y => y) + 1);
+            if (Entities.Count == 0) 
+                // 1-255 cube resource values (0 - air)
+                newId = 256;
+            else 
+                newId = (ushort)(Entities.Select(x => x.BluePrintId).Max() + 1);
 
             entityInstance.BluePrintId = newId;
             entityInstance.isSystemEntity = false;
@@ -355,7 +364,7 @@ namespace Utopia.Shared.Configuration
             //Field up to 100 included for Reserved Cube ID
             for (byte currentCubeId = (byte)(CubeProfiles.Where(x => x != null && x.Id < 100).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
             {
-                CubeProfiles[currentCubeId] = new CubeProfile() { Name = "System Reserved", Id = currentCubeId };
+                CubeProfiles[currentCubeId] = new CubeProfile { Name = "System Reserved", Id = currentCubeId };
             }
         }
 

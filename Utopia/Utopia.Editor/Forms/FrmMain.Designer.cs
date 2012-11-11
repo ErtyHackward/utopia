@@ -1,4 +1,4 @@
-﻿namespace Utopia.Editor
+﻿namespace Utopia.Editor.Forms
 {
     partial class FrmMain
     {
@@ -278,12 +278,12 @@
             // 
             // containerEditor
             // 
+            this.containerEditor.Configuration = null;
             this.containerEditor.Content = null;
             this.containerEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.containerEditor.Icons = null;
             this.containerEditor.Location = new System.Drawing.Point(3, 3);
             this.containerEditor.Name = "containerEditor";
-            this.containerEditor.Configuration = null;
             this.containerEditor.Size = new System.Drawing.Size(661, 640);
             this.containerEditor.TabIndex = 1;
             this.containerEditor.Text = "containerEditor1";

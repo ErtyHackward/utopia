@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms.VisualStyles;
+using Utopia.Editor.Forms;
 using Utopia.Shared.World.Processors.Utopia;
 
 namespace Utopia.Editor
