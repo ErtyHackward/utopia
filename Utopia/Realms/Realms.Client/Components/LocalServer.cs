@@ -10,7 +10,6 @@ using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
-using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;

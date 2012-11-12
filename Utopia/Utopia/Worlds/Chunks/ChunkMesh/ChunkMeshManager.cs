@@ -71,8 +71,6 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             GenerateCubesFace(CubeFaces.Right, chunk);
 
             chunk.OnChunkMeshUpdated();
-
-            //GenerateStaticEntitiesMesh(chunk);
         }
 
         private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)

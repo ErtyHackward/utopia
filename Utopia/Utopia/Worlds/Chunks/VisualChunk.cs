@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using SharpDX;
@@ -31,6 +30,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Resources.VertexFormats;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -425,10 +425,13 @@ namespace Utopia.Worlds.Chunks
 
                 //By default the entity is 1/16 if its world size.
 
-                Matrix rotation;
+                Matrix rotation = Matrix.Identity;
                 if (voxelEntity is Plant)
                 {
-                    Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
+                    if ((voxelEntity as Plant).RndRotationAroundY)
+                    {
+                        Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
+                    }
                 }
                 else if (voxelEntity is IItem)
                 {
@@ -437,8 +440,10 @@ namespace Utopia.Worlds.Chunks
                 }
                 else
                 {
-                    rotation = Matrix.Identity;
+                    //rotation = Matrix.Identity;
                 }
+
+                Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
 
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
 

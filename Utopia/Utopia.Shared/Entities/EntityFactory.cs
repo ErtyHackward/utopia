@@ -4,7 +4,6 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
-using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Tags;
@@ -96,6 +95,9 @@ namespace Utopia.Shared.Entities
                         break;
                     case EntityClassId.SideLightSource:
                         entity = new SideLightSource();
+                        break;
+                    case EntityClassId.OrientedCubePlaceableItem:
+                        entity = new OrientedCubePlaceableItem();
                         break;
                     case EntityClassId.Container:
                         entity = new Container();

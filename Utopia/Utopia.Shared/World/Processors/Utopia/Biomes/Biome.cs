@@ -9,7 +9,6 @@ using S33M3CoreComponents.Maths;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete.Collectible;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using System.IO;
