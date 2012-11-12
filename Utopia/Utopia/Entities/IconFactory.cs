@@ -104,7 +104,7 @@ namespace Utopia.Entities
             _voxelEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, Path.Combine(ClientSettings.EffectPack, @"Entities\VoxelModel.hlsl"), VertexVoxel.VertexDeclaration));
             _overlayEffect = ToDispose(new HLSLColorOverlay(_d3DEngine.Device, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\ColorOverlay.hlsl")));
 
-            if (_visualWorldParameters.WorldParameters != null)
+            if (_visualWorldParameters.WorldParameters != null && _visualWorldParameters.WorldParameters.Configuration != null)
             {
                 List<Texture2D> icons;
                 ShaderResourceView cubeTextureView;
