@@ -86,6 +86,7 @@ namespace Realms.Client.Components
 
             _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
+
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
@@ -94,8 +95,6 @@ namespace Realms.Client.Components
             //_server.Services.Add(new WaterDynamicService());
             _server.Services.Add(new TestNpcService());
         }
-
-
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
         {
@@ -109,7 +108,7 @@ namespace Realms.Client.Components
             var startSetName = _worldParam.Configuration.StartSet;
             if (!string.IsNullOrEmpty(startSetName))
             {
-                _worldParam.Configuration.FillContainer(startSetName, dEntity.Inventory);
+                _serverFactory.FillContainer(startSetName, dEntity.Inventory);
             }
             
             e.PlayerEntity = dEntity;

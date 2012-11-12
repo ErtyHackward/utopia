@@ -10,6 +10,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Tags;
 using System.Collections.Generic;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities
 {
@@ -157,7 +158,7 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
-        /// Creates and loads entity from binary form
+        /// Creates and loads blueprint entity from binary form
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
@@ -194,6 +195,42 @@ namespace Utopia.Shared.Entities
             tag.Load(reader);
 
             return tag;
+        }
+
+        /// <summary>
+        /// Initializes specifed container with a set
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="container"></param>
+        public void FillContainer(string setName, SlotContainer<ContainedSlot> container)
+        {
+            SlotContainer<BlueprintSlot> set;
+            if (Config.ContainerSets.TryGetValue(setName, out set))
+            {
+                if (container.GridSize.X < set.GridSize.X || container.GridSize.Y < set.GridSize.Y)
+                    throw new InvalidOperationException("Destination container is smaller than the set");
+
+                container.Clear();
+
+                foreach (var blueprintSlot in set)
+                {
+                    IItem item = null;
+                    if (blueprintSlot.BlueprintId < 256)
+                    {
+                        var res = CreateEntity<CubeResource>();
+                        //var res = new CubeResource();
+                        var profile = Config.CubeProfiles[blueprintSlot.BlueprintId];
+                        res.SetCube((byte)blueprintSlot.BlueprintId, profile.Name);
+                        item = res;
+                    }
+                    else
+                    {
+                        item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
+                    }
+
+                    container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
+                }
+            }
         }
 
     }
