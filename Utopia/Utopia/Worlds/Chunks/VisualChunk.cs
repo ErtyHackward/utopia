@@ -443,8 +443,6 @@ namespace Utopia.Worlds.Chunks
                     //rotation = Matrix.Identity;
                 }
 
-                Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
-
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
 
                 visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position).EmissiveColor;
