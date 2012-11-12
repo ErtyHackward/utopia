@@ -30,7 +30,7 @@ namespace Utopia.Shared.Entities
 
         [Browsable(false)]
         public Vector3I LinkedCube { get; set; }
-        
+
         [Description("Allows to specify the possible face of the block where entity can be attached to")]
         public BlockFace MountPoint { get; set; }
 

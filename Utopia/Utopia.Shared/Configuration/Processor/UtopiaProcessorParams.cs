@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using S33M3Resources.Structs;
-using Utopia.Shared.Entities.Concrete.Collectible;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
@@ -615,8 +615,6 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = true,
                 SideOffsetMultiplier = 1
             });
-
-
         }
 
         public IEnumerable<IEntity> InjectDefaultEntities()
@@ -624,11 +622,11 @@ namespace Utopia.Shared.Configuration
             Plant cactusFlower = Config.Factory.CreateEntity<Plant>();
             cactusFlower.Name = "Cactus Flower";
             cactusFlower.MountPoint = BlockFace.Top;
+            cactusFlower.RndRotationAroundY = true;
             cactusFlower.ModelName = "Flower4";
             cactusFlower.isSystemEntity = true;      // Cannot de removed, mandatory Entity
             cactusFlower.MaxStackSize = 99;
             yield return cactusFlower;
-
         }
         #endregion
 

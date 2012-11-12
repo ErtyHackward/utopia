@@ -8,6 +8,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
+using System.Linq;
 
 namespace Utopia.Network
 {
@@ -145,7 +146,13 @@ namespace Utopia.Network
                 case EntityType.Static:
                     var cpos = e.Message.Link.ChunkPosition;
                     var chunk = _chunkManager.GetChunk(cpos.X * AbstractChunk.ChunkSize.X, cpos.Y * AbstractChunk.ChunkSize.Z);
-                    chunk.Entities.Add((IStaticEntity)e.Message.Entity, e.Message.ParentEntityId);
+
+                    //Add entity only if not currently existing at the same world position !
+                    if (chunk.Entities.Entities.Values.Count(x => x.BluePrintId == e.Message.Entity.BluePrintId && x.Position == e.Message.Entity.Position) == 0)
+                    {
+                        chunk.Entities.Add((IStaticEntity)e.Message.Entity, e.Message.ParentEntityId);
+                    }
+
                     break;
                 case EntityType.Dynamic:
                     _dynamicEntityManager.AddEntity((IDynamicEntity) e.Message.Entity);

@@ -311,53 +311,6 @@ namespace Utopia.Shared.Configuration
             CreateDefaultValues();
         }
 
-        /// <summary>
-        /// Initializes specifed container with a set
-        /// </summary>
-        /// <param name="setName"></param>
-        /// <param name="container"></param>
-        public void FillContainer(string setName, SlotContainer<ContainedSlot> container)
-        {
-            SlotContainer<BlueprintSlot> set;
-            if (ContainerSets.TryGetValue(setName, out set))
-            {
-                if (container.GridSize.X < set.GridSize.X || container.GridSize.Y < set.GridSize.Y)
-                    throw new InvalidOperationException("Destination container is smaller than the set");
-
-                container.Clear();
-
-                foreach (var blueprintSlot in set)
-                {
-                    IItem item = null;
-                    if (blueprintSlot.BlueprintId < 256)
-                    {
-                        var res = new CubeResource();
-                        var profile = CubeProfiles[blueprintSlot.BlueprintId];
-                        res.SetCube((byte)blueprintSlot.BlueprintId, profile.Name);
-
-                        item = res;
-                    }
-                    else
-                    {
-                        item = CreateEntity<Item>(blueprintSlot.BlueprintId);
-                    }
-
-                    container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
-                }
-            }
-        }
-
-        public T CreateEntity<T>(ushort blueprintId) where T : class, IEntity
-        {
-            Entity entity;
-            if (BluePrints.TryGetValue(blueprintId, out entity))
-            {
-                return (T)entity.Clone();
-            }
-
-            return null;
-        }
-
         #endregion
 
         #region Private Methods
