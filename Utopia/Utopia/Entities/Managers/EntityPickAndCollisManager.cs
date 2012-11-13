@@ -190,12 +190,13 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        bool OnEntityTop = false;
+
         private void boundingBoxCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
             {
                 Vector3D newPositionWithColliding = previousPosition;
-                bool onEntity = false;
 
                 newPositionWithColliding.Y = newPosition2Evaluate.Y;
                 boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
@@ -203,7 +204,9 @@ namespace Utopia.Entities.Managers
                 {
                     //Cannot go below, warp to the entity surface, and flag as "potentially" on ground
                     newPositionWithColliding.Y = entityTesting.WorldBBox.Maximum.Y; //previousPosition.Y;
-                    onEntity = true;
+                    newPositionWithColliding.Y += 0.001;
+                    previousPosition.Y = newPositionWithColliding.Y;
+                    OnEntityTop = true;
                 }
 
                 newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -211,7 +214,7 @@ namespace Utopia.Entities.Managers
                 if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
                 {
                     newPositionWithColliding.X = previousPosition.X;
-                    onEntity = false;
+                    OnEntityTop = false;
                 }
 
                 newPositionWithColliding.Z = newPosition2Evaluate.Z;
@@ -219,14 +222,17 @@ namespace Utopia.Entities.Managers
                 if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
                 {
                     newPositionWithColliding.Z = previousPosition.Z;
-                    onEntity = false;
+                    OnEntityTop = false;
                 }
 
                 //Set the NEW player position after collision tests
                 newPosition2Evaluate = newPositionWithColliding;
 
                 // ? I'm on "TOP" of an object ???
-                if(onEntity) physicSimu.OnGround = true;
+                if (OnEntityTop)
+                {
+                    physicSimu.OnGround = true;
+                }
 
                 if (entityTesting.Entity is IDynamicEntity)
                 {
@@ -242,6 +248,23 @@ namespace Utopia.Entities.Managers
                     );
                 }
 
+            }
+            else
+            {
+                //No collision with Y, is the block below me solid to entity ?
+                if (OnEntityTop) //I was on ground previously, I'm still on ground ?
+                {
+                    boundingBox2Evaluate.Minimum.Y -= 0.01f; //Check entity below me
+                    if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                    {
+                        physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                        OnEntityTop = true;
+                    }
+                    else
+                    {
+                        OnEntityTop = false;
+                    }
+                }
             }
         }
         

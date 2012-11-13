@@ -412,6 +412,7 @@ namespace Utopia.Worlds.Chunks
             return false;
         }
 
+        bool _isOnGround;
         /// <summary>
         /// Validate player move against surrounding landscape, if move not possible, it will be "rollbacked"
         /// It's used by the physic engine
@@ -424,7 +425,12 @@ namespace Utopia.Worlds.Chunks
             Vector3D newPositionWithColliding = previousPosition;
             TerraCubeWithPosition _collidingCube;
 
-            if (Vector3D.Distance(previousPosition, newPosition2Evaluate) < 0.0001) return;
+            if (Vector3D.Distance(previousPosition, newPosition2Evaluate) < 0.01)
+            {
+                if (_isOnGround) _physicSimu.OnGround = true;
+                return;
+            }
+
             //Create a Bounding box with my new suggested position, taking only the X that has been changed !
             //X Testing =====================================================
             newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -443,15 +449,6 @@ namespace Utopia.Worlds.Chunks
                         _playerManager.OffsetBlockHitted = offsetValue;
                     }
                 }
-
-                //if (previousPosition.X < newPosition2Evaluate.X)
-                //{
-                //    newPositionWithColliding.X = ((int)newPosition2Evaluate.X) + 1 - localEntityBoundingBox.Maximum.X - 0.01;
-                //}
-                //else
-                //{
-                //    newPositionWithColliding.X = ((int)newPosition2Evaluate.X) + localEntityBoundingBox.Maximum.X;
-                //}
             }
 
             //Z Testing =========================================================
@@ -471,15 +468,6 @@ namespace Utopia.Worlds.Chunks
                         _playerManager.OffsetBlockHitted = offsetValue;
                     }
                 }
-
-                //if (previousPosition.Z < newPosition2Evaluate.Z)
-                //{
-                //    newPositionWithColliding.Z = ((int)newPosition2Evaluate.Z) + 1 - localEntityBoundingBox.Maximum.Z - 0.01;
-                //}
-                //else
-                //{
-                //    newPositionWithColliding.Z = ((int)newPosition2Evaluate.Z) + localEntityBoundingBox.Maximum.Z;
-                //}
             }
 
             //Y Testing ======================================================
@@ -512,11 +500,29 @@ namespace Utopia.Worlds.Chunks
 
                     _playerManager.OffsetBlockHitted = 0;
                     _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                    _isOnGround = true;
                 }
 
                 newPositionWithColliding.Y = previousPosition.Y;
-
             }
+            else
+            {
+                //No collision with Y, is the block below me solid to entity ?
+                if (_isOnGround) //I was on ground previously, I'm still on ground ?
+                {
+                    _boundingBox2Evaluate.Minimum.Y -= 0.01f;
+                    if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+                    {
+                        _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                        _isOnGround = true;
+                    }
+                    else
+                    {
+                        _isOnGround = false;
+                    }
+                }
+            }
+
 
             //Check to see if new destination is not blocking me
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
@@ -527,6 +533,11 @@ namespace Utopia.Worlds.Chunks
             }
 
             newPosition2Evaluate = newPositionWithColliding;
+
+            if (_isOnGround == false)
+            {
+                Console.WriteLine("");
+            }
         }
 
         //Return true if the position is not solid to player
