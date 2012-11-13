@@ -79,14 +79,15 @@ namespace Utopia.Entities.Managers
             _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
             PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;
 
+
             _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
             _worldPosition = newWorldPosition;
 
             //After physic simulation, I'm still in the air ?
-            if (_worldPosition.Y > _groundBelowEntity)
-            {
-                _physicSimu.OnGround = false;
-            }
+            //if (_worldPosition.Y > _groundBelowEntity)
+            //{
+            //    _physicSimu.OnGround = false;
+            //}
         }
         #endregion
 
