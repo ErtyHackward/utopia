@@ -13,7 +13,20 @@ namespace Utopia.Shared.Entities.Concrete
 {
     public class OrientedCubePlaceableItem : CubePlaceableItem
     {
+        public enum OrientatedItem : byte
+        {
+            North,
+            South,
+            East,
+            West
+        }
+
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        [Browsable(false)]
+        public OrientatedItem Orientation { get; set; }
 
         public override ushort ClassId
         {
@@ -32,54 +45,72 @@ namespace Utopia.Shared.Entities.Concrete
         protected override bool SetNewItemPlace(CubePlaceableItem cubeEntity, IDynamicEntity owner, Vector3I vector)
         {
             var playerRotation = MQuaternion.GetLookAtFromQuaternion(owner.HeadRotation);
-
+            OrientedCubePlaceableItem entity = (OrientedCubePlaceableItem)cubeEntity;
             // locate the entity
             if (vector.Y == 1) // = Put on TOP 
             {
                 cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
                                                    owner.EntityState.PickedBlockPosition.Y + 1f,
                                                    owner.EntityState.PickedBlockPosition.Z + 0.5f);
-                double entityRotation;
-
-                if (Math.Abs(playerRotation.Z) >= Math.Abs(playerRotation.X))
-                {
-                    if (playerRotation.Z < 0) entityRotation = MathHelper.Pi; //  result = "North";
-                    else entityRotation = 0;
-                }
-                else
-                {
-                    if (playerRotation.X < 0) entityRotation = MathHelper.PiOver2;
-                    else entityRotation = -MathHelper.PiOver2;
-                }
-
-                cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
+                
             }
             else if (vector.Y == -1) //PUT on cube Bottom = (Ceiling)
             {
                 cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
                                    owner.EntityState.PickedBlockPosition.Y - 1f,
                                    owner.EntityState.PickedBlockPosition.Z + 0.5f);
-                double entityRotation;
-
-                if (Math.Abs(playerRotation.Z) >= Math.Abs(playerRotation.X))
-                {
-                    if (playerRotation.Z < 0) entityRotation = MathHelper.Pi; //  result = "North";
-                    else entityRotation = 0;
-                }
-                else
-                {
-                    if (playerRotation.X < 0) entityRotation = MathHelper.PiOver2;
-                    else entityRotation = -MathHelper.PiOver2;
-                }
-
-                cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
             }
-            else //Put on a side
+            else //Put on a side not possible for OrientedCubePlaceabltItems
             {
                 return false;
             }
 
+            double entityRotation;
+            if (Math.Abs(playerRotation.Z) >= Math.Abs(playerRotation.X))
+            {
+                if (playerRotation.Z < 0)
+                {
+                    entityRotation = MathHelper.Pi;
+                    entity.Orientation = OrientatedItem.North;
+                }
+                else
+                {
+                    entityRotation = 0;
+                    entity.Orientation = OrientatedItem.South;
+                }
+            }
+            else
+            {
+                if (playerRotation.X < 0)
+                {
+                    entityRotation = MathHelper.PiOver2;
+                    entity.Orientation = OrientatedItem.West;
+                }
+                else
+                {
+                    entityRotation = -MathHelper.PiOver2;
+                    entity.Orientation = OrientatedItem.East;
+                }
+            }
+
+            cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
+
             return true;
+        }
+
+
+        public override void Load(BinaryReader reader, EntityFactory factory)
+        {
+            // first we need to load base information
+            base.Load(reader, factory);
+            Orientation = (OrientatedItem)reader.ReadByte();
+        }
+
+        public override void Save(BinaryWriter writer)
+        {
+            // first we need to save base information
+            base.Save(writer);
+            writer.Write((byte)Orientation);
         }
 
     }
