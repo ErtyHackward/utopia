@@ -12,6 +12,7 @@ using Utopia.Shared.Entities.Interfaces;
 using System.Linq;
 using System.Collections.Generic;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
@@ -55,22 +56,14 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         #region Public methods
-        //Create the LightSources for a specific range
         public void CreateChunkLightSources(VisualChunk chunk)
         {
-            //1) Request Server the chunk
-            //2) If chunk is a "pure" chunk on the server, then generate it localy.
-            //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
             CreateLightSources(chunk);
             chunk.State = ChunkState.LightsSourceCreated;
         }
 
-        //Create the LightSources for a specific range
         public void PropagateInnerChunkLightSources(VisualChunk chunk)
         {
-            //1) Request Server the chunk
-            //2) If chunk is a "pure" chunk on the server, then generate it localy.
-            //2b) If chunk is not pure, we will have received the data inside a "GeneratedChunk" that we will copy inside the big buffe array.
             PropagatesLightSources(chunk);
             chunk.IsOutsideLightSourcePropagated = false;
             chunk.State = ChunkState.InnerLightsSourcePropagated;
@@ -357,8 +350,15 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             {
                 foreach (var voxelEntity in pair.Value)
                 {
-                    //Find the Cube where the entity is placed, and assign its color to the entity
-                    voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(voxelEntity.Entity.Position.X), MathHelper.Fastfloor(voxelEntity.Entity.Position.Y), MathHelper.Fastfloor(voxelEntity.Entity.Position.Z))].EmissiveColor;
+                    if (voxelEntity.Entity is CubePlaceableItem)
+                    {
+                        voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(((CubePlaceableItem)voxelEntity.Entity).LocationCube)].EmissiveColor;
+                    }
+                    else
+                    {
+                        //Find the Cube where the entity is placed, and assign its color to the entity
+                        voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(voxelEntity.Entity.Position.X), MathHelper.Fastfloor(voxelEntity.Entity.Position.Y), MathHelper.Fastfloor(voxelEntity.Entity.Position.Z))].EmissiveColor;
+                    }
                 }
             }
         }

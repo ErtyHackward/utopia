@@ -21,9 +21,9 @@ namespace S33M3Resources.Structs
 
         public Vector3I(double x, double y, double z)
         {            
-            X = Fastfloor(x);
-            Y = Fastfloor(y);
-            Z = Fastfloor(z);
+            X = (int)x;
+            Y = (int)y;
+            Z = (int)z;
         }
 
         /// <summary>
