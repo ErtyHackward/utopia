@@ -145,14 +145,16 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return this;
         }
 
+
         /// <summary>
         /// Adds static entity to the world
         /// </summary>
         /// <param name="entity"></param>
-        public void AddEntity(IStaticEntity entity)
+        /// <param name="sourceDynamicId">Parent entity that issues adding</param>
+        public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
         {
             var chunk = _landscapeManager.GetChunk(GlobalPosition);
-            chunk.Entities.Add(entity);
+            chunk.Entities.Add(entity, sourceDynamicId);
         }
 
     }

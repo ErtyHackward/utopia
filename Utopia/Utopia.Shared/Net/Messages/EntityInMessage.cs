@@ -15,7 +15,7 @@ namespace Utopia.Shared.Net.Messages
     public struct EntityInMessage : IBinaryMessage
     {
         private IEntity _entity;
-        private uint _parentEntityId;
+        private uint _sourceEntityId;
 
         /// <summary>
         /// Gets message id
@@ -34,10 +34,10 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Entity id that throws an item (optional, default 0)
         /// </summary>
-        public uint ParentEntityId
+        public uint SourceEntityId
         {
-            get { return _parentEntityId; }
-            set { _parentEntityId = value; }
+            get { return _sourceEntityId; }
+            set { _sourceEntityId = value; }
         }
 
         private EntityLink _link;
@@ -54,7 +54,7 @@ namespace Utopia.Shared.Net.Messages
         {
             EntityInMessage msg;
 
-            msg._parentEntityId = reader.ReadUInt32();
+            msg._sourceEntityId = reader.ReadUInt32();
             msg._link = reader.ReadEntityLink();
             msg._entity = factory.CreateFromBytes(reader);
 
@@ -65,7 +65,7 @@ namespace Utopia.Shared.Net.Messages
         {
             if(msg.Entity == null)
                 throw new NullReferenceException("Entity object is null");
-            writer.Write(msg._parentEntityId);
+            writer.Write(msg._sourceEntityId);
             writer.Write(msg._link);
             msg.Entity.Save(writer);
 
