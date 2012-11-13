@@ -84,36 +84,6 @@ namespace Utopia.Entities.Managers
             isDirty = false;
         }
 
-        private void CollectsurroundingStaticEntities()
-        {
-            if (_worldChunks.SortedChunks == null) return;
-
-            VisualChunk chunk;
-            //Check inside the visible chunks (Not visible culled) the statics entities
-            //Chunk are sorted around player, the 9 first are the chunk around the players.
-            for (int i = 0; i < 9; i++)
-            {
-                chunk = _worldChunks.SortedChunks[i];
-                //Limit to projected 
-                if (chunk == null)
-                {
-                    Debug.WriteLine("CollectsurroundingStaticEntities bug, fix me please");
-                    continue;
-                }
-                foreach (var pair in chunk.VisualVoxelEntities)
-                {
-                    foreach (var entity in pair.Value)
-                    {
-                        //Add entity only if at <= 10 block distance !
-                        if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
-                        {
-                            _entitiesNearPlayer.Add(entity);
-                        }
-                    }
-                }
-            }
-        }
-
         private void CollectsurroundingDynamicPlayerEntities()
         {
             //Clear the list
@@ -134,6 +104,30 @@ namespace Utopia.Entities.Managers
                 else
                 {
                     throw new Exception("Entity type not handled");
+                }
+            }
+        }
+
+        private void CollectsurroundingStaticEntities()
+        {
+            if (_worldChunks.SortedChunks == null) return;
+
+            VisualChunk chunk;
+            //Check inside the visible chunks (Not visible culled) the statics entities
+            //Chunk are sorted around player, the 9 first are the chunk around the players.
+            for (int i = 0; i < 9; i++)
+            {
+                chunk = _worldChunks.SortedChunks[i];
+                foreach (var pair in chunk.VisualVoxelEntities)
+                {
+                    foreach (var entity in pair.Value)
+                    {
+                        //Add entity only if at <= 10 block distance !
+                        if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
+                        {
+                            _entitiesNearPlayer.Add(entity);
+                        }
+                    }
                 }
             }
         }
@@ -175,78 +169,82 @@ namespace Utopia.Entities.Managers
             _timer_OnTimerRaised();
         }
 
-        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        //Entity vs Player Collision detection
+        //Use by physic engine
+        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox entityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (isDirty) _timer_OnTimerRaised();
 
             VisualEntity entityTesting;
             BoundingBox _boundingBox2Evaluate;
-            //If new Position "inside" entity, then go back to previous Position !
+            
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
                 entityTesting = _entitiesNearPlayer[i];
                 if (entityTesting.Entity.IsPlayerCollidable)
                 {
-
-                    _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), localEntityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
-                    if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
-                    {
-                        ////Player was moving ?
-                        //if (MVector3.DistanceSquared(newPosition2Evaluate, previousPosition) > 0.0001)
-                        //{
-                            Vector3D newPositionWithColliding = previousPosition;
-
-                            newPositionWithColliding.X = newPosition2Evaluate.X;
-                            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
-                            {
-                                newPositionWithColliding.X = previousPosition.X;
-                            }
-
-                            newPositionWithColliding.Y = newPosition2Evaluate.Y;
-                            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
-                            {
-                                newPositionWithColliding.Y = previousPosition.Y;
-                            }
-
-                            newPositionWithColliding.Z = newPosition2Evaluate.Z;
-                            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref _boundingBox2Evaluate) == ContainmentType.Intersects)
-                            {
-                                newPositionWithColliding.Z = previousPosition.Z;
-                            }
-
-                            newPosition2Evaluate = newPositionWithColliding;
-
-                            if (entityTesting.Entity is IDynamicEntity)
-                            {
-                                //Send an impulse message to the Entity, following my "LookAtVector" !
-                                float impulsePower = 1;
-                                if (_input.ActionsManager.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
-
-                                _server.ServerConnection.SendAsync(new EntityImpulseMessage
-                                    {
-                                        DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
-                                        Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.HeadRotation) * impulsePower
-                                    }
-                                );
-                            }
-                        //}
-                        //else
-                        //{
-                        //    var dynEntity = entityTesting.Entity as IDynamicEntity;
-                        //    if (dynEntity != null)
-                        //    {
-                        //        Vector3D lookAt = MQuaternion.GetLookAtFromQuaternion_V3D(dynEntity.HeadRotation);
-                        //        newPosition2Evaluate += lookAt * 0.1;
-                        //    }
-                        //}
-                    }
+                    //Compute the New world located player bounding box, that will be use for collision detection
+                    _boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), entityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+                    boundingBoxCheck(physicSimu, entityTesting, ref entityBoundingBox, ref _boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                 }
             }
-
         }
+
+        private void boundingBoxCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        {
+            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+            {
+                Vector3D newPositionWithColliding = previousPosition;
+                bool onEntity = false;
+
+                newPositionWithColliding.Y = newPosition2Evaluate.Y;
+                boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                {
+                    //Cannot go below, warp to the entity surface, and flag as "potentially" on ground
+                    newPositionWithColliding.Y = entityTesting.WorldBBox.Maximum.Y; //previousPosition.Y;
+                    onEntity = true;
+                }
+
+                newPositionWithColliding.X = newPosition2Evaluate.X;
+                boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                {
+                    newPositionWithColliding.X = previousPosition.X;
+                    onEntity = false;
+                }
+
+                newPositionWithColliding.Z = newPosition2Evaluate.Z;
+                boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                {
+                    newPositionWithColliding.Z = previousPosition.Z;
+                    onEntity = false;
+                }
+
+                //Set the NEW player position after collision tests
+                newPosition2Evaluate = newPositionWithColliding;
+
+                // ? I'm on "TOP" of an object ???
+                if(onEntity) physicSimu.OnGround = true;
+
+                if (entityTesting.Entity is IDynamicEntity)
+                {
+                    //Send an impulse message to the Entity, following my "LookAtVector" !
+                    float impulsePower = 1;
+                    if (_input.ActionsManager.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
+
+                    _server.ServerConnection.SendAsync(new EntityImpulseMessage
+                    {
+                        DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
+                        Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.HeadRotation) * impulsePower
+                    }
+                    );
+                }
+
+            }
+        }
+        
         #endregion
 
     }
