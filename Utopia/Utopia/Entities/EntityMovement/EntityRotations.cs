@@ -91,7 +91,6 @@ namespace Utopia.Entities.EntityMovement
                 _eyeOrientation = rotationValue;
                 _bodyOrientation = rotationValue;
                 _accumPitchDegrees = (float)MathHelper.ToDegrees(Math.Asin(rotationMatrix.M23));
-
             }
             else
             {
@@ -113,6 +112,7 @@ namespace Utopia.Entities.EntityMovement
 
             // Extract the pitch angle from the view matrix.
             _accumPitchDegrees = (float)MathHelper.ToDegrees(Math.Asin(viewMatrix.M23));
+
             //Set Rotation for both Eye View and Body rotation
             Quaternion.RotationMatrix(ref viewMatrix, out _eyeOrientation);
             _bodyOrientation = _eyeOrientation;

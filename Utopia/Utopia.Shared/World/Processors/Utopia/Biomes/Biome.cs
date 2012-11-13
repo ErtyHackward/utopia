@@ -505,6 +505,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     ((IBlockLinkedEntity)entity).LinkedCube = linkedCubePosition;
                 }
 
+                if (entity is CubePlaceableItem)
+                {
+                    Vector3I LocationCube = new Vector3I(chunkWorldPosition.X + x, y + 1, chunkWorldPosition.Z + z);
+                    ((CubePlaceableItem)entity).LocationCube = LocationCube;
+                }
+
                 double XOffset = 0.5;
                 double ZOffset = 0.5;
                 if (isBlockCentered == false)

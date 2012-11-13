@@ -46,7 +46,7 @@ namespace Utopia.Shared.Entities
         public BlockFace MountPoint { get; set; }
 
         // tool logic
-        public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
+        public virtual IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
         {
             var impact = new ToolImpact { Success = false };
 
@@ -69,16 +69,19 @@ namespace Utopia.Shared.Entities
                         return impact;
 
                     // check if the place is free
-                    if (MountPoint.HasFlag(BlockFace.Top) && cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
+                    if (MountPoint.HasFlag(BlockFace.Top) && moveVector.Y == 1 && cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
                         return impact;
 
-                    if (MountPoint.HasFlag(BlockFace.Sides) && cursor.PeekProfile(moveVector).IsSolidToEntity)
+                    if (MountPoint.HasFlag(BlockFace.Sides) && (moveVector.Y == 0) && cursor.PeekProfile(moveVector).IsSolidToEntity)
                         return impact;
 
-                    if (MountPoint.HasFlag(BlockFace.Bottom) && cursor.PeekProfile(Vector3I.Down).IsSolidToEntity) 
+                    if (MountPoint.HasFlag(BlockFace.Bottom) && moveVector.Y == -1 && cursor.PeekProfile(Vector3I.Down).IsSolidToEntity) 
                         return impact;
 
-                    cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
+                    // create a new version of the item, and put it into the world
+                    var cubeEntity = (CubePlaceableItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                    cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
+                    cubeEntity.LocationCube = owner.EntityState.NewBlockPosition;
 
                     //Get the chunk where the entity will be added and check if another entity is not linked to this block already
                     var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
@@ -91,41 +94,9 @@ namespace Utopia.Shared.Entities
                         }
                     }
 
-                    // create a new version of the item, and put it into the world
-                    var cubeEntity = (CubePlaceableItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                    cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
-                    cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
-                    cubeEntity.LocationCube = owner.EntityState.NewBlockPosition;
-
-                    // locate the entity
-                    if (moveVector.Y == 1)
-                    {
-                        cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                                           owner.EntityState.PickedBlockPosition.Y + 1f,
-                                                           owner.EntityState.PickedBlockPosition.Z + 0.5f);
-                    }
-                    else if (moveVector.Y == -1)
-                    {
-                        cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                                           owner.EntityState.PickedBlockPosition.Y,
-                                                           owner.EntityState.PickedBlockPosition.Z + 0.5f);
-                    }
-                    else
-                    {
-                        var newBlockPos = owner.EntityState.NewBlockPosition;
-
-                        cubeEntity.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)moveVector.X / 2, 0.5f, 0.5f - (float)moveVector.Z / 2));
-                        cubeEntity.Position += new Vector3D(moveVector.X == -1 ? -0.01 : 0, 0, moveVector.Z == -1 ? -0.01 : 0);
-                        
-                        var slope = 0d;
-
-                        if (moveVector.X == -1) slope = -Math.PI / 2;
-                        if (moveVector.X == 1) slope = Math.PI / 2; // ok
-                        if (moveVector.Z == -1) slope = Math.PI; // ok
-                        if (moveVector.Z == 1) slope = 0 ;
-
-                        cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
-                    }
+                    if (!SetNewItemPlace(cubeEntity, owner, moveVector)) return impact;
 
                     cursor.AddEntity(cubeEntity, owner.DynamicId);
                     
@@ -133,6 +104,41 @@ namespace Utopia.Shared.Entities
                 }
             }
             return impact;
+        }
+
+        protected virtual bool SetNewItemPlace(CubePlaceableItem cubeEntity, IDynamicEntity owner, Vector3I vector)
+        {
+            // locate the entity
+            if (vector.Y == 1) // = Put on TOP 
+            {
+                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                                                   owner.EntityState.PickedBlockPosition.Y + 1f,
+                                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
+            }
+            else if (vector.Y == -1) //PUT on cube Bottom = (Ceiling)
+            {
+                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                                                   owner.EntityState.PickedBlockPosition.Y,
+                                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
+            }
+            else //Put on a side
+            {
+                var newBlockPos = owner.EntityState.NewBlockPosition;
+
+                cubeEntity.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)vector.X / 2, 0.5f, 0.5f - (float)vector.Z / 2));
+                cubeEntity.Position += new Vector3D(vector.X == -1 ? -0.01 : 0, 0, vector.Z == -1 ? -0.01 : 0);
+
+                var slope = 0d;
+
+                if (vector.X == -1) slope = -Math.PI / 2;
+                if (vector.X == 1) slope = Math.PI / 2; // ok
+                if (vector.Z == -1) slope = Math.PI; // ok
+                if (vector.Z == 1) slope = 0;
+
+                cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
+            }
+
+            return true;
         }
 
         public void Rollback(IToolImpact impact)

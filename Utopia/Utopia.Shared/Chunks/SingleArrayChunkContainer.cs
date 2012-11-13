@@ -122,6 +122,24 @@ namespace Utopia.Shared.Chunks
         /// <param name="Y">world Y position</param>
         /// <param name="Z">world Z position</param>
         /// <returns></returns>
+        public int Index(Vector3I cubePosition)
+        {
+            int x, z;
+            x = cubePosition.X % _visualWorldParam.WorldVisibleSize.X;
+            if (x < 0) x += _visualWorldParam.WorldVisibleSize.X;
+            z = cubePosition.Z % _visualWorldParam.WorldVisibleSize.Z;
+            if (z < 0) z += _visualWorldParam.WorldVisibleSize.Z;
+
+            return x * MoveX + z * MoveZ + cubePosition.Y;
+        }
+
+        /// <summary>
+        /// Get the Array Index of a cube
+        /// </summary>
+        /// <param name="X">world X position</param>
+        /// <param name="Y">world Y position</param>
+        /// <param name="Z">world Z position</param>
+        /// <returns></returns>
         public bool Index(ref Vector3I cubePosition, bool isSafe, out int index)
         {
             if (isSafe)
