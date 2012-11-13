@@ -59,12 +59,12 @@ namespace Utopia.Server.Structs
 
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.ParentDynamicEntityId, EntityType = EntityType.Static, Link = e.Entity.GetLink() });
+            Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = EntityType.Static, Link = e.Entity.GetLink() });
         }
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, ParentEntityId = e.ParentDynamicEntityId, Link = e.Entity.GetLink() });
+            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, SourceEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)

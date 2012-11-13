@@ -146,11 +146,11 @@ namespace Utopia.Network
                 case EntityType.Static:
                     var cpos = e.Message.Link.ChunkPosition;
                     var chunk = _chunkManager.GetChunk(cpos.X * AbstractChunk.ChunkSize.X, cpos.Y * AbstractChunk.ChunkSize.Z);
-
-                    //Add entity only if not currently existing at the same world position !
-                    if (chunk.Entities.Entities.Values.Count(x => x.BluePrintId == e.Message.Entity.BluePrintId && x.Position == e.Message.Entity.Position) == 0)
+                    
+                    // skip the message if the source is our entity (because we already have added the entity)
+                    if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
                     {
-                        chunk.Entities.Add((IStaticEntity)e.Message.Entity, e.Message.ParentEntityId);
+                        chunk.Entities.Add((IStaticEntity)e.Message.Entity, e.Message.SourceEntityId);
                     }
 
                     break;

@@ -89,7 +89,8 @@ namespace Utopia.Shared.Interfaces
         /// Adds static entity to the world
         /// </summary>
         /// <param name="entity"></param>
-        void AddEntity(IStaticEntity entity);
+        /// <param name="sourceDynamicId">Parent entity that issues adding</param>
+        void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs

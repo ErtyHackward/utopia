@@ -57,7 +57,12 @@ namespace Utopia.Shared.Entities.Concrete
             get { return "A world Cube"; }
         }
 
+        /// <summary>
+        /// Special static event to handle all world cubes changes
+        /// Occurs when someone add or remove block at the world
+        /// </summary>
         public static event EventHandler<CubeChangedEventArgs> CubeChanged;
+
         public static void OnCubeChanged(CubeChangedEventArgs e)
         {
             var handler = CubeChanged;

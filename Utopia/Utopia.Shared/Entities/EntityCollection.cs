@@ -106,7 +106,7 @@ namespace Utopia.Shared.Entities
                 {
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = 0, AtChunkCreationTime = atChunkCreationTime });
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = 0, AtChunkCreationTime = atChunkCreationTime });
                 }
                 _initialisation = false;
             }
@@ -130,8 +130,8 @@ namespace Utopia.Shared.Entities
         /// Adds entity to collection (with locking). Assign new unique id for the entity
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="parentDynamicId"></param>
-        public void Add(IStaticEntity entity, uint parentDynamicId = 0, bool atChunkCreationTime = false)
+        /// <param name="sourceDynamicId"></param>
+        public void Add(IStaticEntity entity, uint sourceDynamicId = 0, bool atChunkCreationTime = false)
         {
             lock (_syncRoot)
             {
@@ -140,7 +140,7 @@ namespace Utopia.Shared.Entities
                 _entities.Add(entity.StaticId, entity);
             }
             IsDirty = true;
-            OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId, AtChunkCreationTime = atChunkCreationTime });
+            OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = sourceDynamicId, AtChunkCreationTime = atChunkCreationTime });
             OnCollectionDirty();
         }
 
@@ -157,10 +157,10 @@ namespace Utopia.Shared.Entities
         /// Tries to add entity into collection. Assign new unique id for the entity
         /// </summary>
         /// <param name="entity">Entity object to add</param>
-        /// <param name="parentDynamicId"></param>
+        /// <param name="sourceDynamicId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryAdd(IStaticEntity entity, uint parentDynamicId = 0, int timeout = 0, bool atChunkCreationTime = false)
+        public bool TryAdd(IStaticEntity entity, uint sourceDynamicId = 0, int timeout = 0, bool atChunkCreationTime = false)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
@@ -174,7 +174,7 @@ namespace Utopia.Shared.Entities
                 finally
                 {
                     Monitor.Exit(_syncRoot);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, ParentDynamicEntityId = parentDynamicId, AtChunkCreationTime = atChunkCreationTime });
+                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = sourceDynamicId, AtChunkCreationTime = atChunkCreationTime });
                     OnCollectionDirty();
                 }
                 return true;
@@ -186,8 +186,8 @@ namespace Utopia.Shared.Entities
         /// Removes entity from collection (with locking)
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="parentId"></param>
-        public void Remove(IStaticEntity entity, uint parentId = 0)
+        /// <param name="sourceId"></param>
+        public void Remove(IStaticEntity entity, uint sourceId = 0)
         {
             bool removed;
             lock (_syncRoot)
@@ -199,7 +199,7 @@ namespace Utopia.Shared.Entities
                 entity.Container = this;
                 OnEntityRemoved(new EntityCollectionEventArgs {
                     Entity = entity, 
-                    ParentDynamicEntityId = parentId
+                    SourceDynamicEntityId = sourceId
                 });
                 OnCollectionDirty();
             }
@@ -209,10 +209,10 @@ namespace Utopia.Shared.Entities
         /// Tries to remove entity from collection
         /// </summary>
         /// <param name="entity">Entity object to remove</param>
-        /// <param name="parentId"></param>
+        /// <param name="sourceId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryRemove(IStaticEntity entity, uint parentId, int timeout = 0)
+        public bool TryRemove(IStaticEntity entity, uint sourceId, int timeout = 0)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
@@ -230,7 +230,7 @@ namespace Utopia.Shared.Entities
                         entity.Container = null;
                         OnEntityRemoved(new EntityCollectionEventArgs {
                             Entity = entity, 
-                            ParentDynamicEntityId = parentId
+                            SourceDynamicEntityId = sourceId
                         });
                         OnCollectionDirty();
                     }
@@ -244,9 +244,9 @@ namespace Utopia.Shared.Entities
         /// Removes entity by ID
         /// </summary>
         /// <param name="staticEntityId"></param>
-        /// <param name="parentDynamicEntityId"></param>
+        /// <param name="sourceDynamicEntityId"></param>
         /// <param name="entity"></param>
-        public void RemoveById(uint staticEntityId, uint parentDynamicEntityId, out IStaticEntity entity)
+        public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId, out IStaticEntity entity)
         {
             lock (_syncRoot)
             {
@@ -256,7 +256,7 @@ namespace Utopia.Shared.Entities
                     _entities.Remove(staticEntityId);
                     OnEntityRemoved(new EntityCollectionEventArgs { 
                         Entity = entity, 
-                        ParentDynamicEntityId = parentDynamicEntityId 
+                        SourceDynamicEntityId = sourceDynamicEntityId 
                     });
                     entity.Container = null; //Remove from its container after event raise !
                     OnCollectionDirty();
@@ -268,9 +268,9 @@ namespace Utopia.Shared.Entities
         /// Removes entity by ID
         /// </summary>
         /// <param name="staticEntityId"></param>
-        /// <param name="parentDynamicEntityId"></param>
+        /// <param name="sourceDynamicEntityId"></param>
         /// <param name="entity"></param>
-        public void RemoveById(uint staticEntityId, uint parentDynamicEntityId = 0)
+        public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId = 0)
         {
             lock (_syncRoot)
             {
@@ -283,7 +283,7 @@ namespace Utopia.Shared.Entities
                     OnEntityRemoved(new EntityCollectionEventArgs
                     {
                         Entity = entity,
-                        ParentDynamicEntityId = parentDynamicEntityId
+                        SourceDynamicEntityId = sourceDynamicEntityId
                     });
                     OnCollectionDirty();
                 }
