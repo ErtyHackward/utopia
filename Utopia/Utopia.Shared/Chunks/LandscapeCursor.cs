@@ -5,6 +5,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Shared.Chunks
 {
@@ -46,7 +47,7 @@ namespace Utopia.Shared.Chunks
                 if (_internalPosition.Z < 0)
                     _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
 
-                _currentChunk = _manager.GetChunk(new Vector2I((int)Math.Floor((double)_position.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)_position.Z / AbstractChunk.ChunkSize.Z)));
+                _currentChunk = _manager.GetChunk(_position);
             }
         }
 
@@ -278,7 +279,20 @@ namespace Utopia.Shared.Chunks
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
         {
-            _currentChunk.Entities.Add(entity, sourceDynamicId);
+            Vector3I entityBlockPosition;
+            //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.
+            if (entity is IBlockLinkedEntity)
+            {
+                entityBlockPosition = ((IBlockLinkedEntity)entity).LinkedCube;
+            }
+            else
+            {
+                entityBlockPosition = (Vector3I)entity.Position;
+            }
+
+            var entityChunk = _manager.GetChunk(entityBlockPosition);
+
+            entityChunk.Entities.Add(entity, sourceDynamicId);
         }
 
         /// <summary>

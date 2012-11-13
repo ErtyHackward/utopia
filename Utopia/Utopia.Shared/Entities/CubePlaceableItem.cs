@@ -8,11 +8,13 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
+using System.Linq;
 
 namespace Utopia.Shared.Entities
 {
     /// <summary>
     /// Base class for items that can be placed into a world cube
+    /// A Cube placeable Item will be by default a centered cube position, and can only be placed in a cube where no other CubePlaceableItem is present.
     /// </summary>
     public abstract class CubePlaceableItem : Item, ITool, IWorldIntercatingEntity, IBlockLinkedEntity
     {
@@ -28,6 +30,15 @@ namespace Utopia.Shared.Entities
         [Browsable(false)]
         public EntityFactory entityFactory { get; set; }
 
+        /// <summary>
+        /// The cube where the entity root belongs to.
+        /// </summary>
+        [Browsable(false)]
+        public Vector3I LocationCube { get; set; }
+
+        /// <summary>
+        /// The cube at wich the Entity is linked, if this cube is removed, the entity will also be removed
+        /// </summary>
         [Browsable(false)]
         public Vector3I LinkedCube { get; set; }
 
@@ -44,7 +55,7 @@ namespace Utopia.Shared.Entities
                 if (owner.EntityState.IsBlockPicked)
                 {
                     ILandscapeCursor cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
-
+                    
                     var moveVector = owner.EntityState.NewBlockPosition - owner.EntityState.PickedBlockPosition;
 
                     // check if entity can be put there
@@ -69,11 +80,22 @@ namespace Utopia.Shared.Entities
 
                     cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
-                    // create a new version of the item, and put it into the world
-                    var cubeEntity = (IItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                    //Get the chunk where the entity will be added and check if another entity is not linked to this block already
+                    var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                    foreach (CubePlaceableItem entity in workingchunk.Entities.Entities.Values.Where(x => x is CubePlaceableItem && ((IBlockLinkedEntity)x).LinkedCube == owner.EntityState.PickedBlockPosition))
+                    {
+                        if (entity.LocationCube == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)
+                        {
+                            //CubePlaced Entity already present at this location
+                            return impact;
+                        }
+                    }
 
-                    var blockLinked = (IBlockLinkedEntity)cubeEntity;
-                    blockLinked.LinkedCube = owner.EntityState.PickedBlockPosition;
+                    // create a new version of the item, and put it into the world
+                    var cubeEntity = (CubePlaceableItem)entityFactory.CreateFromBluePrint(BluePrintId);
+
+                    cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
+                    cubeEntity.LocationCube = owner.EntityState.NewBlockPosition;
 
                     // locate the entity
                     if (moveVector.Y == 1)
@@ -122,6 +144,7 @@ namespace Utopia.Shared.Entities
         {
             // first we need to load base information
             base.Load(reader, factory);
+            LocationCube = reader.ReadVector3I();
             LinkedCube = reader.ReadVector3I();
             MountPoint = (BlockFace)reader.ReadByte();
         }
@@ -130,6 +153,7 @@ namespace Utopia.Shared.Entities
         {
             // first we need to save base information
             base.Save(writer);
+            writer.Write(LocationCube);
             writer.Write(LinkedCube);
             writer.Write((byte)MountPoint);
         }

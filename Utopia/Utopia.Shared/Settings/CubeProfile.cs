@@ -118,7 +118,7 @@ namespace Utopia.Shared.Settings
             writer.Write(Textures[4]);
             writer.Write(Textures[5]);
 
-            BinarySerialize.SerializeArray(WalkingOverSound, writer);
+            writer.SerializeArray(WalkingOverSound);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Utopia.Shared.Settings
             Textures[4] = reader.ReadByte();
             Textures[5] = reader.ReadByte();
 
-            BinarySerialize.DeserializeArray(reader, out _walkingOverSound);
+            reader.DeserializeArray(out _walkingOverSound);
         }
 
         public override string ToString()
