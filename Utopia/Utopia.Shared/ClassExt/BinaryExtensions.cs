@@ -3,6 +3,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using Utopia.Shared.Tools.BinarySerializer;
+using System.Collections.Generic;
 
 namespace System.IO
 {
@@ -200,6 +201,50 @@ namespace System.IO
         public static EntityLink ReadEntityLink(this BinaryReader reader)
         {
             return new EntityLink(reader);
+        }
+
+        public static void SerializeArray<T>(this BinaryWriter writer, T[] arrayValues) where T : IBinaryStorable
+        {
+            int arraySize = arrayValues.Length;
+            writer.Write(arraySize); //Write down the Array size
+
+            for (int i = 0; i < arraySize; i++)
+            {
+                arrayValues[i].Save(writer);
+            }
+        }
+
+        public static void SerializeArray<T>(this BinaryWriter writer, IList<T> arrayValues) where T : IBinaryStorable
+        {
+            int arraySize = arrayValues.Count;
+            writer.Write(arraySize); //Write down the Array size
+
+            for (int i = 0; i < arraySize; i++)
+            {
+                arrayValues[i].Save(writer);
+            }
+        }
+
+        public static void DeserializeArray<T>(this BinaryReader reader, out T[] returnedArray) where T : IBinaryStorable, new()
+        {
+            int arraySize = reader.ReadInt32();
+            returnedArray = new T[arraySize];
+            for (int i = 0; i < arraySize; i++)
+            {
+                returnedArray[i] = new T();
+                returnedArray[i].Load(reader);
+            }
+        }
+
+        public static void DeserializeArray<T>(this BinaryReader reader, out List<T> returnedArray) where T : IBinaryStorable, new()
+        {
+            int arraySize = reader.ReadInt32();
+            returnedArray = new List<T>(arraySize);
+            for (int i = 0; i < arraySize; i++)
+            {
+                returnedArray.Add(new T());
+                returnedArray[i].Load(reader);
+            }
         }
     }
 }

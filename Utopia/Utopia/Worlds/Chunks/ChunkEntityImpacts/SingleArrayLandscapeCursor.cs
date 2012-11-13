@@ -153,7 +153,18 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
         {
-            var chunk = _landscapeManager.GetChunk(GlobalPosition);
+            Vector3I entityBlockPosition;
+            //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.
+            if (entity is IBlockLinkedEntity)
+            {
+                entityBlockPosition = ((IBlockLinkedEntity)entity).LinkedCube;
+            }
+            else
+            {
+                entityBlockPosition = (Vector3I)entity.Position;
+            }
+
+            var chunk = _landscapeManager.GetChunk(entityBlockPosition);
             chunk.Entities.Add(entity, sourceDynamicId);
         }
 
