@@ -28,6 +28,11 @@ namespace Utopia.Shared.Entities.Concrete
         [Browsable(false)]
         public OrientatedItem Orientation { get; set; }
 
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        public bool IsOrientedSlope { get; set; }
+
         public override ushort ClassId
         {
             get { return EntityClassId.OrientedCubePlaceableItem; }
@@ -104,6 +109,7 @@ namespace Utopia.Shared.Entities.Concrete
             // first we need to load base information
             base.Load(reader, factory);
             Orientation = (OrientatedItem)reader.ReadByte();
+            IsOrientedSlope = reader.ReadBoolean();
         }
 
         public override void Save(BinaryWriter writer)
@@ -111,6 +117,7 @@ namespace Utopia.Shared.Entities.Concrete
             // first we need to save base information
             base.Save(writer);
             writer.Write((byte)Orientation);
+            writer.Write(IsOrientedSlope);
         }
 
     }

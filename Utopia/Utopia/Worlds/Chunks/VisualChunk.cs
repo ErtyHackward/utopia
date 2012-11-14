@@ -424,7 +424,6 @@ namespace Utopia.Worlds.Chunks
                 var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
 
                 //By default the entity is 1/16 if its world size.
-
                 Matrix rotation = Matrix.Identity;
                 if (voxelEntity is Plant)
                 {
