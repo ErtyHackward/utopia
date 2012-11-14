@@ -35,6 +35,8 @@ namespace S33M3CoreComponents.Physics.Verlet
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
+        public bool PreventXaxisCollisionCheck { get; set; }
+        public bool PreventZaxisCollisionCheck { get; set; }
 
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
@@ -68,12 +70,17 @@ namespace S33M3CoreComponents.Physics.Verlet
             if (X) _prevPosition.X = _curPosition.X;
             if (Y) _prevPosition.Y = _curPosition.Y;
             if (Z) _prevPosition.Z = _curPosition.Z;
+
+            _impulses.Clear();
         }
 
         public void Simulate(ref GameTime dt, out Vector3D newPosition)
         {
             if (_isRunning)
             {
+                PreventXaxisCollisionCheck = false;
+                PreventZaxisCollisionCheck = false;
+
                 AccumulateForce(ref dt);                                //Add the force currently applied
                 Verlet(ref dt, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
                 SatisfyConstraints(ref newPosition, ref _prevPosition); //Validate the new location based in constraint (Collision, ...)
@@ -91,8 +98,10 @@ namespace S33M3CoreComponents.Physics.Verlet
             _forcesAccum.Z = 0;
 
             //Vertical velocity if not on ground, to make the entity fall !
-            if (_subjectToGravity && !_onGround) 
+            if (_subjectToGravity && !_onGround)
+            {
                 _forcesAccum.Y += -((SimulatorCst.Gravity));
+            }
 
             OnGround = false;
 

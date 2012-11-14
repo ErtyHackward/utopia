@@ -6,11 +6,21 @@ using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Entities
 {
     public abstract class VisualEntity
     {
+        public enum EntityCollisionType
+        {
+            BoundingBox,
+            SlopeNorth,
+            SlopeSouth,
+            SlopeWest,
+            SlopeEast,
+            Model
+        }
 
         /// <summary>
         /// The BBox surrounding the Entity, it will be used for collision detections mainly !
@@ -19,10 +29,37 @@ namespace Utopia.Entities
         public BoundingBox LocalBBox = new BoundingBox();
         public ByteColor BlockLight;
         public IEntity Entity;
+        public EntityCollisionType CollisionType;
 
         public VisualEntity(Vector3 entitySize, IEntity entity)
         {
+            CollisionType = EntityCollisionType.BoundingBox;
+
             Entity = entity;
+
+            if (Entity is OrientedCubePlaceableItem)
+            {
+                OrientedCubePlaceableItem orientedEntity = (OrientedCubePlaceableItem)Entity;
+                if (orientedEntity.IsOrientedSlope)
+                {
+                    switch (orientedEntity.Orientation)
+                    {
+                        case OrientedCubePlaceableItem.OrientatedItem.North:
+                            CollisionType = EntityCollisionType.SlopeNorth;
+                            break;
+                        case OrientedCubePlaceableItem.OrientatedItem.South:
+                            CollisionType = EntityCollisionType.SlopeSouth;
+                            break;
+                        case OrientedCubePlaceableItem.OrientatedItem.East:
+                            CollisionType = EntityCollisionType.SlopeEast;
+                            break;
+                        case OrientedCubePlaceableItem.OrientatedItem.West:
+                            CollisionType = EntityCollisionType.SlopeWest;
+                            break;
+                    }
+                }
+            }
+
             //If not size was specified and the entity is a voxel entity
             if (entitySize == Vector3.Zero && entity is IVoxelEntity)
             {

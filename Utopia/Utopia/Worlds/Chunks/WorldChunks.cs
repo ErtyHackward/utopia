@@ -431,55 +431,18 @@ namespace Utopia.Worlds.Chunks
                 return;
             }
 
-            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
-            //X Testing =====================================================
-            newPositionWithColliding.X = newPosition2Evaluate.X;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new X position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-            {
-                newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
-                {
-                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
-                    if (offsetValue <= 0.5)
-                    {
-                        _playerManager.OffsetBlockHitted = offsetValue;
-                    }
-                }
-            }
-
-            //Z Testing =========================================================
-            newPositionWithColliding.Z = newPosition2Evaluate.Z;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new Z position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-            {
-                newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
-                {
-                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
-                    if (offsetValue <= 0.5)
-                    {
-                        _playerManager.OffsetBlockHitted = offsetValue;
-                    }
-                }
-            }
-
             //Y Testing ======================================================
             newPositionWithColliding.Y = newPosition2Evaluate.Y;
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new Y position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            if (!_physicSimu.PreventZaxisCollisionCheck && !_physicSimu.PreventXaxisCollisionCheck && _cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
+
                 //If was Jummping "before" entering inside the cube
-                if (previousPosition.Y >= newPositionWithColliding.Y)
+               if (previousPosition.Y >= newPositionWithColliding.Y)
                 {
+
                     //If the movement between 2 Y is too large, use the GroundBelowEntity value
                     if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
                     {
@@ -494,7 +457,7 @@ namespace Utopia.Worlds.Chunks
                         }
                         else
                         {
-                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y);
+                            previousPosition.Y = Math.Round(previousPosition.Y);
                         }
                     }
 
@@ -522,11 +485,53 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
             }
+           
 
+            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
+            //X Testing =====================================================
+            newPositionWithColliding.X = newPosition2Evaluate.X;
+            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new X position, make me placed "inside" a block, then invalid the new position
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube) && !_physicSimu.PreventXaxisCollisionCheck)
+            {
+                newPositionWithColliding.X = previousPosition.X;
+                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                {
+                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
+                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
+                    if (offsetValue <= 0.5)
+                    {
+                        _playerManager.OffsetBlockHitted = offsetValue;
+                    }
+                }
+            }
+
+            //Z Testing =========================================================
+            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new Z position, make me placed "inside" a block, then invalid the new position
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube) && !_physicSimu.PreventZaxisCollisionCheck)
+            {
+                newPositionWithColliding.Z = previousPosition.Z;
+                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                {
+                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
+                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
+                    if (offsetValue <= 0.5)
+                    {
+                        _playerManager.OffsetBlockHitted = offsetValue;
+                    }
+                }
+            }
+
+
+            
 
             //Check to see if new destination is not blocking me
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            if (!_physicSimu.PreventZaxisCollisionCheck && !_physicSimu.PreventXaxisCollisionCheck && _cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
                 newPositionWithColliding = previousPosition;
                 newPositionWithColliding.Y += 0.1;
@@ -534,10 +539,6 @@ namespace Utopia.Worlds.Chunks
 
             newPosition2Evaluate = newPositionWithColliding;
 
-            if (_isOnGround == false)
-            {
-                Console.WriteLine("");
-            }
         }
 
         //Return true if the position is not solid to player
