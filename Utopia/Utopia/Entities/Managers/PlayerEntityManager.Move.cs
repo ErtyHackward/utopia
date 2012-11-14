@@ -177,6 +177,7 @@ namespace Utopia.Entities.Managers
         private void WalkingFirstPersonNotOnGround(ref GameTime timeSpent)
         {
             float moveModifier = 1;
+            float jumpPower;
 
             _physicSimu.Freeze(true, false, true); //Trick to easy ground deplacement, it will nullify all accumulated forced being applied on the entity (Except the Y ones)
 
@@ -187,6 +188,12 @@ namespace Utopia.Entities.Managers
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
             {
                 moveModifier = 2;
+            }
+
+            //Jumping
+            if (_physicSimu.AllowJumping && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+            {
+                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
             }
 
             _physicSimu.PrevPosition -= _entityRotations.EntityMoveVector * _moveDelta * moveModifier;
