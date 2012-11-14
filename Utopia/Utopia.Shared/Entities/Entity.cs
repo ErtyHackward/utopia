@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.IO;
 using SharpDX;
@@ -72,6 +73,12 @@ namespace Utopia.Shared.Entities
         public ushort BluePrintId { get; set; }
 
         /// <summary>
+        /// Indicates that the entity must be locked to be used
+        /// </summary>
+        [Browsable(false)]
+        public virtual bool RequiresLock { get { return false; } }
+
+        /// <summary>
         /// Loads current entity from a binaryReader
         /// </summary>
         /// <param name="reader"></param>
@@ -92,7 +99,6 @@ namespace Utopia.Shared.Entities
             IsPlayerCollidable = reader.ReadBoolean();
 
             isSystemEntity = reader.ReadBoolean();
-
         }
 
         /// <summary>
@@ -111,13 +117,16 @@ namespace Utopia.Shared.Entities
 
             writer.Write(IsPickable);
             writer.Write(IsPlayerCollidable);
-
+            
             writer.Write(isSystemEntity);
         }
 
+        /// <summary>
+        /// Returns link to the entity
+        /// </summary>
+        /// <returns></returns>
         public abstract EntityLink GetLink();
-
-
+        
         /// <summary>
         /// Creates a new object that is a copy of the current instance.
         /// </summary>

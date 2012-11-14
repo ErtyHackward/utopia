@@ -79,12 +79,7 @@ namespace Utopia.Network
 
         public void Dispose()
         {
-            if (_playerEntity != null)
-            {
-                _playerEntity.PositionChanged -= PlayerEntityPositionChanged;
-                _playerEntity.ViewChanged -= PlayerEntityViewChanged;
-                _playerEntity.Use -= PlayerEntityUse;
-            }
+            PlayerEntity = null;  
 
             _server.MessageEntityIn -= ConnectionMessageEntityIn;
             _server.MessageEntityOut -= ConnectionMessageEntityOut;
@@ -162,14 +157,14 @@ namespace Utopia.Network
 
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
-            _server.ServerConnection.SendAsync(new EntityUseMessage 
-            { 
+            _server.ServerConnection.SendAsync(new EntityUseMessage
+            {
                 IsEntityPicked = e.IsEntityPicked,
                 IsBlockPicked = e.IsBlockPicked,
                 DynamicEntityId = _playerEntity.DynamicId,
-                NewBlockPosition = e.NewBlockPosition, 
-                PickedBlockPosition = e.PickedBlockPosition, 
-                PickedEntityId = e.PickedEntityLink, 
+                NewBlockPosition = e.NewBlockPosition,
+                PickedBlockPosition = e.PickedBlockPosition,
+                PickedEntityId = e.PickedEntityLink,
                 ToolId = e.Tool == null ? 0 : e.Tool.StaticId,
                 UseMode = e.UseMode
             });
@@ -177,9 +172,9 @@ namespace Utopia.Network
 
         private void PlayerEntityViewChanged(object sender, EntityViewEventArgs e)
         {
-            _server.ServerConnection.SendAsync(new EntityHeadDirectionMessage 
-            { 
-                Rotation = e.Entity.HeadRotation, 
+            _server.ServerConnection.SendAsync(new EntityHeadDirectionMessage
+            {
+                Rotation = e.Entity.HeadRotation,
                 EntityId = e.Entity.DynamicId
             });
         }

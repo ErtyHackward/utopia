@@ -9,6 +9,11 @@ namespace Utopia.Shared.Entities.Concrete
     {
         readonly SlotContainer<ContainedSlot> _content;
 
+        public override bool RequiresLock
+        {
+            get{ return true; }
+        }
+
         public override ushort ClassId
         {
             get { return EntityClassId.Container; }
