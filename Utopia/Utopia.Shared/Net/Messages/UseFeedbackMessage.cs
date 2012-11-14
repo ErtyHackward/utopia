@@ -29,6 +29,9 @@ namespace Utopia.Shared.Net.Messages
             set { _entityImpactBytes = value; }
         }
 
+        /// <summary>
+        /// Gets a message identification number
+        /// </summary>
         public byte MessageId
         {
             get { return (byte)MessageTypes.UseFeedback; }

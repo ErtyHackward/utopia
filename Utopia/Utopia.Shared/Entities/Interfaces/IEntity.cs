@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using SharpDX;
 using Utopia.Shared.Structs;
@@ -55,6 +56,12 @@ namespace Utopia.Shared.Entities.Interfaces
         /// This entity is mandatory for the system to run properly
         /// </summary>
         bool isSystemEntity { get; set; }
+
+        /// <summary>
+        /// Indicates that the entity must be locked to be used
+        /// </summary>
+        [Browsable(false)]
+        bool RequiresLock { get; }
 
         /// <summary>
         /// Returns link to the entity

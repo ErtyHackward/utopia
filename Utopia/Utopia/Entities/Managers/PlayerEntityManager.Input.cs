@@ -1,33 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using Utopia.Shared.Entities;
 using SharpDX;
-using S33M3CoreComponents.Maths;
 
 namespace Utopia.Entities.Managers
 {
     //Handle all Input related stuff for player
     public partial class PlayerEntityManager
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
-        #endregion
-
-        #region Public Methods
-        #endregion
-
         #region Private Methods
         /// <summary>
         /// Handle Player Actions - Movement and rotation input are not handled here
         /// </summary>
         private void inputHandler()
         {
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Mode, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
             {
                 if (Player.DisplacementMode == EntityDisplacementModes.Flying)
                 {
@@ -74,8 +61,13 @@ namespace Utopia.Entities.Managers
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {
-                //TODO implement use 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
-                //like opening a chest or a door  
+                // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
+                // like opening a chest or a door  
+
+                if (Player.EntityState.IsEntityPicked)
+                {
+                    Player.EntityUse();
+                }
             }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
