@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Entities.Inventory;
+﻿using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Concrete
 {
     /// <summary>
     /// Represents a container block entity
     /// </summary>
-    public class Container : CubePlaceableItem
+    public class Container : OrientedCubePlaceableItem
     {
         readonly SlotContainer<ContainedSlot> _content;
 
