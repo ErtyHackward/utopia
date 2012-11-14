@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
@@ -69,7 +70,7 @@ namespace Utopia.Editor.Forms
                     tvMainCategories.Enabled = false;
                 }
 
-                UpdateList();
+                UpdateTree();
             }
         }
 
@@ -219,7 +220,7 @@ namespace Utopia.Editor.Forms
         }
 
         //Create the various SubNode (Items, Cubes, ...) in the TreeView
-        private void UpdateList()
+        private void UpdateTree()
         {
             if (_configuration == null)
                 return;
@@ -247,7 +248,9 @@ namespace Utopia.Editor.Forms
                     iconName = voxelEntity.ModelName;
                 }
 
-                AddSubNode(entitiesRootNode, entity.Name, entity, iconName);
+                var node = AddSubNode(entitiesRootNode, entity.Name, entity, iconName);
+
+                node.ContextMenuStrip = contextMenuEntity;
             }
 
 
@@ -277,7 +280,7 @@ namespace Utopia.Editor.Forms
             tvMainCategories.EndUpdate();
         }
 
-        private void AddSubNode(TreeNode parentNode, string label, object tag, string iconName = null)
+        private TreeNode AddSubNode(TreeNode parentNode, string label, object tag, string iconName = null)
         {
             var imgIndex = -1;
 
@@ -298,6 +301,8 @@ namespace Utopia.Editor.Forms
             };
 
             parentNode.Nodes.Add(item);
+
+            return item;
         }
 
         private void Save(string filePath)
@@ -351,25 +356,32 @@ namespace Utopia.Editor.Forms
                     if (form.ShowDialog() == DialogResult.OK)
                     {
                         var entityInstance = Configuration.CreateNewEntity(form.SelectedType);
-                        UpdateList();
+                        UpdateTree();
                         tvMainCategories.SelectedNode = FindByTag(entityInstance);
                     }
                     break;
                 case "Cubes":
                     var cubeInstance = Configuration.CreateNewCube();
-                    UpdateList();
+                    UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(cubeInstance);
                     break;
                 case "Container sets":
-                    var newValue = new Shared.Entities.Inventory.SlotContainer<Shared.Entities.Inventory.BlueprintSlot>();
+                    var newValue = new SlotContainer<BlueprintSlot>();
                     _configuration.ContainerSets.Add(GetFreeName("Set", _configuration.ContainerSets), newValue);
-                    UpdateList();
+                    UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(newValue);
                     break;
 
                 default:
                     break;
             }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var entity = (Entity)tvMainCategories.SelectedNode.Tag;
+            _configuration.BluePrints.Remove(entity.BluePrintId);
+            tvMainCategories.SelectedNode.Remove();
         }
 
         /// <summary>
@@ -396,7 +408,7 @@ namespace Utopia.Editor.Forms
 
             if (e.ChangedItem.Label == "Name")
             {
-                UpdateList();
+                UpdateTree();
             }
         }
 
@@ -486,5 +498,8 @@ namespace Utopia.Editor.Forms
         }
 
         #endregion
+
+
+
     }
 }
