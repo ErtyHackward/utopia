@@ -232,8 +232,8 @@ namespace Utopia.Entities.Managers
 
             //Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
-            _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;
-            _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity;
+            _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity; //Check against entities first
+            _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;         //Landscape cheking after
 
             _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
             _entityRotations.EntityRotationSpeed = Player.RotationSpeed;

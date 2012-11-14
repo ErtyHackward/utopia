@@ -181,86 +181,136 @@ namespace Utopia.Entities.Managers
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
                 entityTesting = _entitiesNearPlayer[i];
+
                 if (entityTesting.Entity.IsPlayerCollidable)
                 {
                     //Compute the New world located player bounding box, that will be use for collision detection
                     _boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), entityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
-                    boundingBoxCheck(physicSimu, entityTesting, ref entityBoundingBox, ref _boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
+                    CollisionCheck(physicSimu, entityTesting, ref entityBoundingBox, ref _boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                 }
             }
         }
 
         bool OnEntityTop = false;
 
-        private void boundingBoxCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        private void CollisionCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
             {
-                Vector3D newPositionWithColliding = previousPosition;
-
-                newPositionWithColliding.Y = newPosition2Evaluate.Y;
-                boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
+                switch (entityTesting.CollisionType)
                 {
-                    //If falling
-                    if (newPositionWithColliding.Y <= previousPosition.Y)
-                    {
-                        newPositionWithColliding.Y = entityTesting.WorldBBox.Maximum.Y; //previousPosition.Y;
-                    }
-                    else
-                    {
-                        newPositionWithColliding.Y = previousPosition.Y;
-                    }
-                    previousPosition.Y = newPositionWithColliding.Y;
-                    OnEntityTop = true;
+                    case VisualEntity.EntityCollisionType.BoundingBox:
+                        BoundingBoxCollision(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
+                        break;
+                    case VisualEntity.EntityCollisionType.SlopeEast:
+                    case VisualEntity.EntityCollisionType.SlopeWest:
+                    case VisualEntity.EntityCollisionType.SlopeNorth:
+                    case VisualEntity.EntityCollisionType.SlopeSouth:
+                        SlopeCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, entityTesting.CollisionType);
+                        break;
+                    case VisualEntity.EntityCollisionType.Model:
+                        break;
+                    default:
+                        break;
                 }
+            }
+        }
 
-                newPositionWithColliding.X = newPosition2Evaluate.X;
-                boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
+
+        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, VisualEntity.EntityCollisionType slopeType)
+        {
+            Vector3 entityPosition = newPosition2Evaluate.AsVector3();
+
+            //If the Center of entity is colliding with Slope, not the bounding box
+            if (entityTesting.WorldBBox.Contains(ref entityPosition, 0.05f))
+            {
+                if (slopeType == VisualEntity.EntityCollisionType.SlopeNorth || slopeType == VisualEntity.EntityCollisionType.SlopeSouth)
                 {
-                    newPositionWithColliding.X = previousPosition.X;
-                    OnEntityTop = false;
-                }
+                    //Slope on Z axis (Don't take into account the X values)
+                    //Take the Entity Lenght (based on BB)
+                    float L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
+                    float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
 
-                newPositionWithColliding.Z = newPosition2Evaluate.Z;
-                boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
-                {
-                    newPositionWithColliding.Z = previousPosition.Z;
-                    OnEntityTop = false;
-                }
+                    float posi = entityPosition.Z - entityTesting.WorldBBox.Minimum.Z;
+                    posi = posi / L;
 
-                //Set the NEW player position after collision tests
-                newPosition2Evaluate = newPositionWithColliding;
+                    float Y = posi * H;
+                    Y = Math.Min(Math.Max(Y, 0), 1);
 
-                // ? I'm on "TOP" of an object ???
-                if (OnEntityTop)
-                {
+                    physicSimu.Freeze(false, false, false);
+
+                    newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
+                    previousPosition.Y = newPosition2Evaluate.Y;
+
+                    physicSimu.PreventZaxisCollisionCheck = true;
                     physicSimu.OnGround = true;
                 }
+            }
+            else
+            {
+                physicSimu.OnGround = true;
+            }
+        }
 
-                if (entityTesting.Entity is IDynamicEntity)
+        private void BoundingBoxCollision(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        {
+            Vector3D newPositionWithColliding = previousPosition;
+
+            newPositionWithColliding.Y = newPosition2Evaluate.Y;
+            boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
+            {
+                //If falling
+                if (newPositionWithColliding.Y <= previousPosition.Y)
                 {
-                    //Send an impulse message to the Entity, following my "LookAtVector" !
-                    float impulsePower = 1;
-                    if (_input.ActionsManager.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
-
-                    _server.ServerConnection.SendAsync(new EntityImpulseMessage
-                    {
-                        DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
-                        Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.HeadRotation) * impulsePower
-                    }
-                    );
+                    newPositionWithColliding.Y = entityTesting.WorldBBox.Maximum.Y; //previousPosition.Y;
                 }
-
+                else
+                {
+                    newPositionWithColliding.Y = previousPosition.Y;
+                }
+                previousPosition.Y = newPositionWithColliding.Y;
+                OnEntityTop = true;
             }
 
-            //if (physicSimu.OnGround == false)
-            //{
-            //    Console.WriteLine();
-            //}
+            newPositionWithColliding.X = newPosition2Evaluate.X;
+            boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
+            {
+                newPositionWithColliding.X = previousPosition.X;
+                OnEntityTop = false;
+            }
 
+            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+            boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
+            {
+                newPositionWithColliding.Z = previousPosition.Z;
+                OnEntityTop = false;
+            }
+
+            //Set the NEW player position after collision tests
+            newPosition2Evaluate = newPositionWithColliding;
+
+            // ? I'm on "TOP" of an object ???
+            if (OnEntityTop)
+            {
+                physicSimu.OnGround = true;
+            }
+
+            if (entityTesting.Entity is IDynamicEntity)
+            {
+                //Send an impulse message to the Entity, following my "LookAtVector" !
+                float impulsePower = 1;
+                if (_input.ActionsManager.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
+
+                _server.ServerConnection.SendAsync(new EntityImpulseMessage
+                {
+                    DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
+                    Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.HeadRotation) * impulsePower
+                }
+                );
+            }
         }
         
         #endregion

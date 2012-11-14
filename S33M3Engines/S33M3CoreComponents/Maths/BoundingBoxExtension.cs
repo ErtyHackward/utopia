@@ -28,5 +28,17 @@ namespace S33M3CoreComponents.Maths
 
             return true;
         }
+
+        public static bool Contains(this BoundingBox box, ref Vector3 point, float tolerance)
+        {
+            if (box.Minimum.X - tolerance <= point.X && box.Maximum.X + tolerance >= point.X &&
+                box.Minimum.Y - tolerance <= point.Y && box.Maximum.Y + tolerance >= point.Y &&
+                box.Minimum.Z - tolerance <= point.Z && box.Maximum.Z + tolerance >= point.Z)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
