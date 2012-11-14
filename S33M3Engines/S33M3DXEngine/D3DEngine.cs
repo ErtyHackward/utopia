@@ -210,6 +210,8 @@ namespace S33M3DXEngine
             _renderForm.LostFocus += GameWindow_LostFocus;
             _renderForm.GotFocus += GameWindow_GotFocus;
 
+            
+
             _renderForm.Show();
             _renderForm.Focus();
             _renderForm.TopMost = true;

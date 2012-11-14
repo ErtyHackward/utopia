@@ -220,99 +220,54 @@ namespace Utopia.Entities.Managers
         private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, VisualEntity.EntityCollisionType slopeType)
         {
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
+            float posi = 0.0f;
 
-            //If the Center of entity is colliding with Slope, not the bounding box
-            if (entityTesting.WorldBBox.Contains(ref entityPosition) == ContainmentType.Contains)
+            float L = 0.0f;
+            float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
+
+            switch (slopeType)
             {
-                if (slopeType == VisualEntity.EntityCollisionType.SlopeNorth || slopeType == VisualEntity.EntityCollisionType.SlopeSouth)
+                case VisualEntity.EntityCollisionType.SlopeNorth:
+                    L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
+                    posi = (entityPosition.Z + entityBoundingBox.Maximum.Z) - entityTesting.WorldBBox.Minimum.Z;
+                    break;
+                case VisualEntity.EntityCollisionType.SlopeSouth:
+                    L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
+                    posi = entityTesting.WorldBBox.Maximum.Z - (entityPosition.Z + entityBoundingBox.Minimum.Z);
+                    break;
+                case VisualEntity.EntityCollisionType.SlopeWest:
+                    L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
+                    posi = entityTesting.WorldBBox.Maximum.X - (entityPosition.X + entityBoundingBox.Minimum.X);
+                    break;
+                case VisualEntity.EntityCollisionType.SlopeEast:
+                    L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
+                    posi = (entityPosition.X + entityBoundingBox.Maximum.X) - entityTesting.WorldBBox.Minimum.X;
+                    break;
+            }
+
+            posi = posi / L;
+            float Y = posi * H;
+            Y = Math.Min(Math.Max(Y, 0), 1);
+
+            //Apply only if new Y is >= Current Y
+            if (entityTesting.WorldBBox.Minimum.Y + Y > newPosition2Evaluate.Y)
+            {
+                if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
                 {
-                    //Slope on Z axis (Don't take into account the X values)
-                    //Take the Entity Lenght (based on BB)
-                    float L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
-                    float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
+                    newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
+                    previousPosition.Y = newPosition2Evaluate.Y;
 
-                    float posi;
-                    if (slopeType == VisualEntity.EntityCollisionType.SlopeNorth)
-                    {
-                        posi = entityPosition.Z - entityTesting.WorldBBox.Minimum.Z;
-                    }
-                    else
-                    {
-                        posi = entityTesting.WorldBBox.Maximum.Z - entityPosition.Z;
-                    }
-                    posi = posi / L;
-
-                    float Y = posi * H;
-                    Y = Math.Min(Math.Max(Y, 0), 1);
-
-                    //Apply only if new Y is >= Current Y
-                    if (entityTesting.WorldBBox.Minimum.Y + Y > newPosition2Evaluate.Y)
-                    {
-                        if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
-                        {
-                            newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
-                            previousPosition.Y = newPosition2Evaluate.Y;
-
-                            physicSimu.PreventZaxisCollisionCheck = true;
-                            physicSimu.OnGround = true;
-                            physicSimu.AllowJumping = true;
-                        }
-                        else
-                        {
-                            newPosition2Evaluate = previousPosition;
-                        }
-                    }
-                    else
-                    {
-                        physicSimu.PreventZaxisCollisionCheck = true;
-                        physicSimu.AllowJumping = true;
-                    }
+                    physicSimu.OnGround = true;
+                    physicSimu.AllowJumping = true;
                 }
                 else
                 {
-                    //Slope on Z axis (Don't take into account the X values)
-                    //Take the Entity Lenght (based on BB)
-                    float L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
-                    float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
-
-                    float posi;
-                    if (slopeType == VisualEntity.EntityCollisionType.SlopeEast)
-                    {
-                        posi = entityPosition.X - entityTesting.WorldBBox.Minimum.X;
-                    }
-                    else
-                    {
-                        posi = entityTesting.WorldBBox.Maximum.X - entityPosition.X;
-                    }
-                    posi = posi / L;
-
-                    float Y = posi * H;
-                    Y = Math.Min(Math.Max(Y, 0), 1);
-
-                    //Apply only if new Y is >= Current Y
-                    if (entityTesting.WorldBBox.Minimum.Y + Y > newPosition2Evaluate.Y)
-                    {
-                        if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
-                        {
-                            newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
-                            previousPosition.Y = newPosition2Evaluate.Y;
-
-                            physicSimu.PreventXaxisCollisionCheck = true;
-                            physicSimu.OnGround = true;
-                            physicSimu.AllowJumping = true;
-                        }
-                        else
-                        {
-                            newPosition2Evaluate = previousPosition;
-                        }
-                    }
-                    else
-                    {
-                        physicSimu.PreventXaxisCollisionCheck = true;
-                        physicSimu.AllowJumping = true;
-                    }
-
+                    newPosition2Evaluate = previousPosition;
                 }
+            }
+            else
+            {
+                physicSimu.AllowJumping = true;
             }
 
         }
