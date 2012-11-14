@@ -237,19 +237,26 @@ namespace Utopia.Entities.Managers
                     float Y = posi * H;
                     Y = Math.Min(Math.Max(Y, 0), 1);
 
-                    physicSimu.Freeze(false, false, false);
+                    //Apply only if new Y is >= Current Y
+                    if (entityTesting.WorldBBox.Minimum.Y + Y > newPosition2Evaluate.Y)
+                    {
+                        if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
+                        {
+                            newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
+                            previousPosition.Y = newPosition2Evaluate.Y;
 
-                    newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
-                    previousPosition.Y = newPosition2Evaluate.Y;
-
-                    physicSimu.PreventZaxisCollisionCheck = true;
-                    physicSimu.OnGround = true;
+                            physicSimu.PreventZaxisCollisionCheck = true;
+                            physicSimu.OnGround = true;
+                            physicSimu.AllowJumping = true;
+                        }
+                    }
+                    else
+                    {
+                         physicSimu.AllowJumping = true;
+                    }
                 }
             }
-            else
-            {
-                physicSimu.OnGround = true;
-            }
+
         }
 
         private void BoundingBoxCollision(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)

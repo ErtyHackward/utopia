@@ -35,6 +35,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
+        public bool AllowJumping { get; set; }
         public bool PreventXaxisCollisionCheck { get; set; }
         public bool PreventZaxisCollisionCheck { get; set; }
 
@@ -80,6 +81,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             {
                 PreventXaxisCollisionCheck = false;
                 PreventZaxisCollisionCheck = false;
+                AllowJumping = false;
 
                 AccumulateForce(ref dt);                                //Add the force currently applied
                 Verlet(ref dt, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
