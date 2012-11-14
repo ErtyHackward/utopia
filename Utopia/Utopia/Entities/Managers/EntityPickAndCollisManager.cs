@@ -231,7 +231,15 @@ namespace Utopia.Entities.Managers
                     float L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
 
-                    float posi = entityPosition.Z - entityTesting.WorldBBox.Minimum.Z;
+                    float posi;
+                    if (slopeType == VisualEntity.EntityCollisionType.SlopeNorth)
+                    {
+                        posi = entityPosition.Z - entityTesting.WorldBBox.Minimum.Z;
+                    }
+                    else
+                    {
+                        posi = entityTesting.WorldBBox.Maximum.Z - entityPosition.Z;
+                    }
                     posi = posi / L;
 
                     float Y = posi * H;
@@ -249,11 +257,59 @@ namespace Utopia.Entities.Managers
                             physicSimu.OnGround = true;
                             physicSimu.AllowJumping = true;
                         }
+                        else
+                        {
+                            newPosition2Evaluate = previousPosition;
+                        }
                     }
                     else
                     {
-                         physicSimu.AllowJumping = true;
+                        physicSimu.AllowJumping = true;
                     }
+                }
+                else
+                {
+                    //Slope on Z axis (Don't take into account the X values)
+                    //Take the Entity Lenght (based on BB)
+                    float L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
+                    float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
+
+                    float posi;
+                    if (slopeType == VisualEntity.EntityCollisionType.SlopeEast)
+                    {
+                        posi = entityPosition.X - entityTesting.WorldBBox.Minimum.X;
+                    }
+                    else
+                    {
+                        posi = entityTesting.WorldBBox.Maximum.X - entityPosition.X;
+                    }
+                    posi = posi / L;
+
+                    float Y = posi * H;
+                    Y = Math.Min(Math.Max(Y, 0), 1);
+
+                    //Apply only if new Y is >= Current Y
+                    if (entityTesting.WorldBBox.Minimum.Y + Y > newPosition2Evaluate.Y)
+                    {
+                        if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
+                        {
+                            newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
+                            previousPosition.Y = newPosition2Evaluate.Y;
+
+                            physicSimu.PreventXaxisCollisionCheck = true;
+                            physicSimu.OnGround = true;
+                            physicSimu.AllowJumping = true;
+                        }
+                        else
+                        {
+                            newPosition2Evaluate = previousPosition;
+                        }
+                    }
+                    else
+                    {
+                        physicSimu.AllowJumping = true;
+                    }
+
                 }
             }
 
