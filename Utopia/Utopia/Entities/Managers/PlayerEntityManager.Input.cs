@@ -61,7 +61,7 @@ namespace Utopia.Entities.Managers
                     BoundingBox playerPotentialNewBlock;
                     ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
 
-                    if (!MBoundingBox.Intersects(ref VisualVoxelEntity.WorldBBox, ref playerPotentialNewBlock))
+                    if(! VisualVoxelEntity.WorldBBox.Intersects(ref playerPotentialNewBlock))
                     {
                         //sends the client server event that does tool.use on server
                         Player.RightToolUse(ToolUseMode.RightMouse);

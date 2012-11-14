@@ -194,24 +194,30 @@ namespace Utopia.Entities.Managers
 
         private void boundingBoxCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
-            if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+            if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
             {
                 Vector3D newPositionWithColliding = previousPosition;
 
                 newPositionWithColliding.Y = newPosition2Evaluate.Y;
                 boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
                 {
-                    //Cannot go below, warp to the entity surface, and flag as "potentially" on ground
-                    newPositionWithColliding.Y = entityTesting.WorldBBox.Maximum.Y; //previousPosition.Y;
-                    newPositionWithColliding.Y += 0.001;
+                    //If falling
+                    if (newPositionWithColliding.Y <= previousPosition.Y)
+                    {
+                        newPositionWithColliding.Y = entityTesting.WorldBBox.Maximum.Y; //previousPosition.Y;
+                    }
+                    else
+                    {
+                        newPositionWithColliding.Y = previousPosition.Y;
+                    }
                     previousPosition.Y = newPositionWithColliding.Y;
                     OnEntityTop = true;
                 }
 
                 newPositionWithColliding.X = newPosition2Evaluate.X;
                 boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
                 {
                     newPositionWithColliding.X = previousPosition.X;
                     OnEntityTop = false;
@@ -219,7 +225,7 @@ namespace Utopia.Entities.Managers
 
                 newPositionWithColliding.Z = newPosition2Evaluate.Z;
                 boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), entityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-                if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
+                if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
                 {
                     newPositionWithColliding.Z = previousPosition.Z;
                     OnEntityTop = false;
@@ -249,23 +255,12 @@ namespace Utopia.Entities.Managers
                 }
 
             }
-            else
-            {
-                //No collision with Y, is the block below me solid to entity ?
-                if (OnEntityTop) //I was on ground previously, I'm still on ground ?
-                {
-                    boundingBox2Evaluate.Minimum.Y -= 0.01f; //Check entity below me
-                    if (Collision.BoxContainsBox(ref entityTesting.WorldBBox, ref boundingBox2Evaluate) == ContainmentType.Intersects)
-                    {
-                        physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
-                        OnEntityTop = true;
-                    }
-                    else
-                    {
-                        OnEntityTop = false;
-                    }
-                }
-            }
+
+            //if (physicSimu.OnGround == false)
+            //{
+            //    Console.WriteLine();
+            //}
+
         }
         
         #endregion
