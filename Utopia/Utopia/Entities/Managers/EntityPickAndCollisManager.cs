@@ -222,7 +222,7 @@ namespace Utopia.Entities.Managers
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
 
             //If the Center of entity is colliding with Slope, not the bounding box
-            if (entityTesting.WorldBBox.Contains(ref entityPosition, 0.05f))
+            if (entityTesting.WorldBBox.Contains(ref entityPosition) == ContainmentType.Contains)
             {
                 if (slopeType == VisualEntity.EntityCollisionType.SlopeNorth || slopeType == VisualEntity.EntityCollisionType.SlopeSouth)
                 {
@@ -264,6 +264,7 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
+                        physicSimu.PreventZaxisCollisionCheck = true;
                         physicSimu.AllowJumping = true;
                     }
                 }
@@ -307,6 +308,7 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
+                        physicSimu.PreventXaxisCollisionCheck = true;
                         physicSimu.AllowJumping = true;
                     }
 

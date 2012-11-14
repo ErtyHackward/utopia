@@ -440,32 +440,33 @@ namespace Utopia.Worlds.Chunks
             {
 
                 //If was Jummping "before" entering inside the cube
-               if (previousPosition.Y >= newPositionWithColliding.Y)
-                {
+               //if (previousPosition.Y >= newPositionWithColliding.Y)
+               // {
 
-                    //If the movement between 2 Y is too large, use the GroundBelowEntity value
-                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
-                    {
-                        previousPosition.Y = _playerManager.GroundBelowEntity;
-                    }
-                    else
-                    {
-                        //Raise Up until the Ground, next the previous position
-                        if (_collidingCube.CubeProfile.YBlockOffset > 0)
-                        {
-                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.CubeProfile.YBlockOffset;
-                        }
-                        else
-                        {
-                            previousPosition.Y = Math.Round(previousPosition.Y);
-                        }
-                    }
+               //     //If the movement between 2 Y is too large, use the GroundBelowEntity value
+               //     if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
+               //     {
+               //         previousPosition.Y = _playerManager.GroundBelowEntity;
+               //     }
+               //     else
+               //     {
+               //         //Raise Up until the Ground, next the previous position
+               //         if (_collidingCube.CubeProfile.YBlockOffset > 0)
+               //         {
+               //             previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.CubeProfile.YBlockOffset;
+               //         }
+               //         else
+               //         {
+               //             previousPosition.Y = Math.Round(previousPosition.Y);
+               //         }
+               //     }
 
-                    _playerManager.OffsetBlockHitted = 0;
-                    _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
-                    _isOnGround = true;
-                }
+               //     _playerManager.OffsetBlockHitted = 0;
 
+               // }
+
+               _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+               _isOnGround = true;
                 newPositionWithColliding.Y = previousPosition.Y;
             }
             else
@@ -526,19 +527,21 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-
-            
-
             //Check to see if new destination is not blocking me
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (!_physicSimu.PreventZaxisCollisionCheck && !_physicSimu.PreventXaxisCollisionCheck && _cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
-                newPositionWithColliding = previousPosition;
-                newPositionWithColliding.Y += 0.1;
+                if (newPositionWithColliding == previousPosition)
+                {
+                    newPositionWithColliding.Y += 0.1;
+                }
+                else
+                {
+                    newPositionWithColliding = previousPosition;
+                }
             }
 
             newPosition2Evaluate = newPositionWithColliding;
-
         }
 
         //Return true if the position is not solid to player
