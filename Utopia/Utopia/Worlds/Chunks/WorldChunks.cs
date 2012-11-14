@@ -36,14 +36,14 @@ namespace Utopia.Worlds.Chunks
 {
     public enum ChunkState
     {
-        Empty                            = 0,
-        LandscapeCreated                 = 1,
-        LightsSourceCreated              = 2,
-        InnerLightsSourcePropagated      = 3,
-        OuterLightSourcesProcessed       = 4,
-        MeshesChanged                    = 5,
-        DisplayInSyncWithMeshes          = 6,
-        UserChanged                      = 7
+        Empty = 0,
+        LandscapeCreated = 1,
+        LightsSourceCreated = 2,
+        InnerLightsSourcePropagated = 3,
+        OuterLightSourcesProcessed = 4,
+        MeshesChanged = 5,
+        DisplayInSyncWithMeshes = 6,
+        UserChanged = 7
     }
 
     public enum ChunksThreadSyncMode
@@ -140,12 +140,12 @@ namespace Utopia.Worlds.Chunks
         }
         public bool IsInitialLoadCompleted { get; set; }
 
-        public WorldChunks(D3DEngine d3dEngine, 
+        public WorldChunks(D3DEngine d3dEngine,
                            CameraManager<ICameraFocused> camManager,
                            VisualWorldParameters visualWorldParameters,
                            WorldFocusManager worldFocusManager,
-                           GameStatesManager gameStates, 
-                           IClock gameClock, 
+                           GameStatesManager gameStates,
+                           IClock gameClock,
                            SingleArrayChunkContainer cubesHolder,
                            ILandscapeManager landscapeManager,
                            IChunkMeshManager chunkMeshManager,
@@ -431,42 +431,78 @@ namespace Utopia.Worlds.Chunks
                 return;
             }
 
+            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
+            //X Testing =====================================================
+            newPositionWithColliding.X = newPosition2Evaluate.X;
+            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new X position, make me placed "inside" a block, then invalid the new position
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            {
+                newPositionWithColliding.X = previousPosition.X;
+                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                {
+                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
+                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
+                    if (offsetValue <= 0.5)
+                    {
+                        _playerManager.OffsetBlockHitted = offsetValue;
+                    }
+                }
+            }
+
+            //Z Testing =========================================================
+            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new Z position, make me placed "inside" a block, then invalid the new position
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            {
+                newPositionWithColliding.Z = previousPosition.Z;
+                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                {
+                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
+                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
+                    if (offsetValue <= 0.5)
+                    {
+                        _playerManager.OffsetBlockHitted = offsetValue;
+                    }
+                }
+            }
+
             //Y Testing ======================================================
             newPositionWithColliding.Y = newPosition2Evaluate.Y;
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new Y position, make me placed "inside" a block, then invalid the new position
-            if (!_physicSimu.PreventZaxisCollisionCheck && !_physicSimu.PreventXaxisCollisionCheck && _cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
-
                 //If was Jummping "before" entering inside the cube
-               //if (previousPosition.Y >= newPositionWithColliding.Y)
-               // {
+                if (previousPosition.Y >= newPositionWithColliding.Y)
+                {
+                    //If the movement between 2 Y is too large, use the GroundBelowEntity value
+                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
+                    {
+                        previousPosition.Y = _playerManager.GroundBelowEntity;
+                    }
+                    else
+                    {
+                        //Raise Up until the Ground, next the previous position
+                        if (_collidingCube.CubeProfile.YBlockOffset > 0)
+                        {
+                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.CubeProfile.YBlockOffset;
+                        }
+                        else
+                        {
+                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y);
+                        }
+                    }
 
-               //     //If the movement between 2 Y is too large, use the GroundBelowEntity value
-               //     if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
-               //     {
-               //         previousPosition.Y = _playerManager.GroundBelowEntity;
-               //     }
-               //     else
-               //     {
-               //         //Raise Up until the Ground, next the previous position
-               //         if (_collidingCube.CubeProfile.YBlockOffset > 0)
-               //         {
-               //             previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.CubeProfile.YBlockOffset;
-               //         }
-               //         else
-               //         {
-               //             previousPosition.Y = Math.Round(previousPosition.Y);
-               //         }
-               //     }
+                    _playerManager.OffsetBlockHitted = 0;
+                    _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                    _isOnGround = true;
+                }
 
-               //     _playerManager.OffsetBlockHitted = 0;
-
-               // }
-
-               _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
-               _isOnGround = true;
                 newPositionWithColliding.Y = previousPosition.Y;
             }
             else
@@ -486,68 +522,28 @@ namespace Utopia.Worlds.Chunks
                     }
                 }
             }
-           
 
-            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
-            //X Testing =====================================================
-            newPositionWithColliding.X = newPosition2Evaluate.X;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new X position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube) && !_physicSimu.PreventXaxisCollisionCheck)
-            {
-                newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
-                {
-                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
-                    if (offsetValue <= 0.5)
-                    {
-                        _playerManager.OffsetBlockHitted = offsetValue;
-                    }
-                }
-            }
-
-            //Z Testing =========================================================
-            newPositionWithColliding.Z = newPosition2Evaluate.Z;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new Z position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube) && !_physicSimu.PreventZaxisCollisionCheck)
-            {
-                newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
-                {
-                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
-                    if (offsetValue <= 0.5)
-                    {
-                        _playerManager.OffsetBlockHitted = offsetValue;
-                    }
-                }
-            }
 
             //Check to see if new destination is not blocking me
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (!_physicSimu.PreventZaxisCollisionCheck && !_physicSimu.PreventXaxisCollisionCheck && _cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
+            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
-                if (newPositionWithColliding == previousPosition)
-                {
-                    newPositionWithColliding.Y += 0.1;
-                }
-                else
-                {
-                    newPositionWithColliding = previousPosition;
-                }
+                newPositionWithColliding = previousPosition;
+                newPositionWithColliding.Y += 0.1;
             }
 
             newPosition2Evaluate = newPositionWithColliding;
+
+            if (_isOnGround == false)
+            {
+                Console.WriteLine("");
+            }
         }
 
         //Return true if the position is not solid to player
         public bool ValidatePosition(ref Vector3D newPosition2Evaluate)
         {
-           return _cubesHolder.IsSolidToPlayer(ref newPosition2Evaluate) == false;
+            return _cubesHolder.IsSolidToPlayer(ref newPosition2Evaluate) == false;
         }
         #endregion
 
@@ -700,7 +696,7 @@ namespace Utopia.Worlds.Chunks
                 //From World Coord to Cube Array Coord
                 int arrayX = MathHelper.Mod((int)_playerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
                 int arrayZ = MathHelper.Mod((int)_playerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
-                var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX,arrayZ));
+                var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX, arrayZ));
 
                 int BprimitiveCount = 0;
                 int VprimitiveCount = 0;
@@ -721,7 +717,7 @@ namespace Utopia.Worlds.Chunks
 
                 var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount);
 
-                var line1 = string.Format("Static entity draw calls {2}: {0}, time {1}", _staticEntityDrawCalls, _staticEntityDrawTime, DrawStaticInstanced ? "[INSTANCED]": "");
+                var line1 = string.Format("Static entity draw calls {2}: {0}, time {1}", _staticEntityDrawCalls, _staticEntityDrawTime, DrawStaticInstanced ? "[INSTANCED]" : "");
                 var line2 = string.Format("MetaData : Temperature {0:0.00}, Moisture {1:0.00}, ColumnMaxHeight : {2}, ChunkID : {3}", columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, columnInfo.MaxHeight, c.ChunkID);
 
                 return string.Join("\r\n", line0, line1, line2);

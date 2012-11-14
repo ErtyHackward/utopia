@@ -36,8 +36,6 @@ namespace S33M3CoreComponents.Physics.Verlet
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
         public bool AllowJumping { get; set; }
-        public bool PreventXaxisCollisionCheck { get; set; }
-        public bool PreventZaxisCollisionCheck { get; set; }
 
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
@@ -79,8 +77,6 @@ namespace S33M3CoreComponents.Physics.Verlet
         {
             if (_isRunning)
             {
-                PreventXaxisCollisionCheck = false;
-                PreventZaxisCollisionCheck = false;
                 AllowJumping = false;
 
                 AccumulateForce(ref dt);                                //Add the force currently applied
