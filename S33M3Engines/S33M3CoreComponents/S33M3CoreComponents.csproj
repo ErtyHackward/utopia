@@ -212,10 +212,7 @@
     <Compile Include="Inputs\MouseHandler\MouseState.cs" />
     <Compile Include="Maths\FastRandom.cs" />
     <Compile Include="Maths\MathHelper.cs" />
-    <Compile Include="Maths\MBoundingBox.cs" />
-    <Compile Include="Maths\MBoundingSphere.cs" />
-    <Compile Include="Maths\MCollision.cs" />
-    <Compile Include="Maths\MMatrix.cs" />
+    <Compile Include="Maths\BoundingBoxExtension.cs" />
     <Compile Include="Maths\MQuaternion.cs" />
     <Compile Include="Maths\MVector3.cs" />
     <Compile Include="Maths\SimpleBoundingFrustum.cs" />
