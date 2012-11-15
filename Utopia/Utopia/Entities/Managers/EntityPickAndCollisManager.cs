@@ -16,6 +16,7 @@ using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Maths;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Entities.Managers
 {
@@ -197,18 +198,21 @@ namespace Utopia.Entities.Managers
         {
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
             {
-                switch (entityTesting.CollisionType)
+                if (entityTesting.Entity is OrientedCubePlaceableItem)
                 {
-                    case VisualEntity.EntityCollisionType.BoundingBox:
-                        BoundingBoxCollision(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
+                    OrientedCubePlaceableItem entity = (OrientedCubePlaceableItem)entityTesting.Entity;
+                    if (entity.IsOrientedSlope)
+                    {
+                        SlopeCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, entity.Orientation);
+                        return;
+                    }
+                }
+
+                switch (entityTesting.Entity.CollisionType)
+                {
+                    case Utopia.Shared.Entities.Entity.EntityCollisionType.BoundingBox:
                         break;
-                    case VisualEntity.EntityCollisionType.SlopeEast:
-                    case VisualEntity.EntityCollisionType.SlopeWest:
-                    case VisualEntity.EntityCollisionType.SlopeNorth:
-                    case VisualEntity.EntityCollisionType.SlopeSouth:
-                        SlopeCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, entityTesting.CollisionType);
-                        break;
-                    case VisualEntity.EntityCollisionType.Model:
+                    case Utopia.Shared.Entities.Entity.EntityCollisionType.Model:
                         break;
                     default:
                         break;
@@ -216,8 +220,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-
-        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, VisualEntity.EntityCollisionType slopeType)
+        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
         {
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
             float posi = 0.0f;
@@ -225,23 +228,25 @@ namespace Utopia.Entities.Managers
             float L = 0.0f;
             float H = entityTesting.WorldBBox.Maximum.Y - entityTesting.WorldBBox.Minimum.Y;
 
-            switch (slopeType)
+            switch (slopeOrientation)
             {
-                case VisualEntity.EntityCollisionType.SlopeNorth:
+                case OrientedCubePlaceableItem.OrientedItem.North:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     posi = (entityPosition.Z + entityBoundingBox.Maximum.Z) - entityTesting.WorldBBox.Minimum.Z;
                     break;
-                case VisualEntity.EntityCollisionType.SlopeSouth:
+                case OrientedCubePlaceableItem.OrientedItem.South:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     posi = entityTesting.WorldBBox.Maximum.Z - (entityPosition.Z + entityBoundingBox.Minimum.Z);
                     break;
-                case VisualEntity.EntityCollisionType.SlopeWest:
+                case OrientedCubePlaceableItem.OrientedItem.East:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
                     posi = entityTesting.WorldBBox.Maximum.X - (entityPosition.X + entityBoundingBox.Minimum.X);
                     break;
-                case VisualEntity.EntityCollisionType.SlopeEast:
+                case OrientedCubePlaceableItem.OrientedItem.West:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
                     posi = (entityPosition.X + entityBoundingBox.Maximum.X) - entityTesting.WorldBBox.Minimum.X;
+                    break;
+                default:
                     break;
             }
 

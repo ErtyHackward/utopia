@@ -7,13 +7,14 @@ using System.Text;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class OrientedCubePlaceableItem : CubePlaceableItem
+    public class OrientedCubePlaceableItem : CubePlaceableItem, IOrientedItem
     {
-        public enum OrientatedItem : byte
+        public enum OrientedItem : byte
         {
             North,
             South,
@@ -26,7 +27,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// Gets landscape manager, this field is injected
         /// </summary>
         [Browsable(false)]
-        public OrientatedItem Orientation { get; set; }
+        public OrientedItem Orientation { get; set; }
 
         /// <summary>
         /// Gets landscape manager, this field is injected
@@ -76,12 +77,12 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.Z < 0)
                 {
                     entityRotation = MathHelper.Pi;
-                    entity.Orientation = OrientatedItem.North;
+                    entity.Orientation = OrientedItem.North;
                 }
                 else
                 {
                     entityRotation = 0;
-                    entity.Orientation = OrientatedItem.South;
+                    entity.Orientation = OrientedItem.South;
                 }
             }
             else
@@ -89,12 +90,12 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.X < 0)
                 {
                     entityRotation = MathHelper.PiOver2;
-                    entity.Orientation = OrientatedItem.West;
+                    entity.Orientation = OrientedItem.West;
                 }
                 else
                 {
                     entityRotation = -MathHelper.PiOver2;
-                    entity.Orientation = OrientatedItem.East;
+                    entity.Orientation = OrientedItem.East;
                 }
             }
 
@@ -109,7 +110,7 @@ namespace Utopia.Shared.Entities.Concrete
         {
             // first we need to load base information
             base.Load(reader, factory);
-            Orientation = (OrientatedItem)reader.ReadByte();
+            Orientation = (OrientedItem)reader.ReadByte();
             IsOrientedSlope = reader.ReadBoolean();
         }
 

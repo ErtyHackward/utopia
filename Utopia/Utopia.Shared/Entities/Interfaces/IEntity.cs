@@ -23,6 +23,11 @@ namespace Utopia.Shared.Entities.Interfaces
         bool IsPlayerCollidable { get; }
 
         /// <summary>
+        /// Entity Collision Type
+        /// </summary>
+        public Entity.EntityCollisionType CollisionType { get; set; }
+
+        /// <summary>
         /// Gets entity class id
         /// </summary>
         ushort ClassId { get; }

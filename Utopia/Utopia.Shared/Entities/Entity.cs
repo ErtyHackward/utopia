@@ -13,6 +13,12 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public abstract class Entity : IEntity
     {
+        public enum EntityCollisionType : byte
+        {
+            BoundingBox,
+            Model
+        }
+
         private string _name = "No name";
         /// <summary>
         /// Pickable entity Property
@@ -25,6 +31,12 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [Category("Entity")]
         public bool IsPlayerCollidable { get; set; }
+
+        /// <summary>
+        /// Gets or sets voxel model instance
+        /// </summary>
+        [Browsable(true)]
+        public EntityCollisionType CollisionType { get; set; }
 
         /// <summary>
         /// Gets entity class id
@@ -99,6 +111,9 @@ namespace Utopia.Shared.Entities
             IsPlayerCollidable = reader.ReadBoolean();
 
             isSystemEntity = reader.ReadBoolean();
+
+            CollisionType = (EntityCollisionType)reader.ReadByte();
+
         }
 
         /// <summary>
@@ -119,6 +134,8 @@ namespace Utopia.Shared.Entities
             writer.Write(IsPlayerCollidable);
             
             writer.Write(isSystemEntity);
+
+            writer.Write((byte)CollisionType);
         }
 
         /// <summary>

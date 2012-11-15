@@ -12,16 +12,6 @@ namespace Utopia.Entities
 {
     public abstract class VisualEntity
     {
-        public enum EntityCollisionType
-        {
-            BoundingBox,
-            SlopeNorth,
-            SlopeSouth,
-            SlopeWest,
-            SlopeEast,
-            Model
-        }
-
         /// <summary>
         /// The BBox surrounding the Entity, it will be used for collision detections mainly !
         /// </summary>
@@ -29,70 +19,13 @@ namespace Utopia.Entities
         public BoundingBox LocalBBox = new BoundingBox();
         public ByteColor BlockLight;
         public IEntity Entity;
-        public EntityCollisionType CollisionType;
 
         public VisualEntity(Vector3 entitySize, IEntity entity)
         {
-            CollisionType = EntityCollisionType.BoundingBox;
-
             Entity = entity;
-            Matrix rotation = Matrix.Identity;
-          
-            if (Entity is OrientedCubePlaceableItem)
-            {
-                OrientedCubePlaceableItem orientedEntity = (OrientedCubePlaceableItem)Entity;
-                if (orientedEntity.IsOrientedSlope)
-                {
-                    switch (orientedEntity.Orientation)
-                    {
-                        case OrientedCubePlaceableItem.OrientatedItem.North:
-                            CollisionType = EntityCollisionType.SlopeNorth;
-                            break;
-                        case OrientedCubePlaceableItem.OrientatedItem.South:
-                            CollisionType = EntityCollisionType.SlopeSouth;
-                            break;
-                        case OrientedCubePlaceableItem.OrientatedItem.East:
-                            CollisionType = EntityCollisionType.SlopeEast;
-                            break;
-                        case OrientedCubePlaceableItem.OrientatedItem.West:
-                            CollisionType = EntityCollisionType.SlopeWest;
-                            break;
-                    }
-                }
-            }
+            Matrix rotation = Matrix.Identity;         
 
-            //If not size was specified and the entity is a voxel entity
-            //if (entitySize == Vector3.Zero && entity is IVoxelEntity)
-            //{
-            //    BoundingBox voxelModelBB = ((IVoxelEntity)entity).ModelInstance.VoxelModel.States[0].BoundingBox;
-
-            //    if (voxelModelBB != null)
-            //    {
-            //        LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
-                    
-            //        //Add instance rotation, if existing
-            //        if (entity is IStaticEntity)
-            //        {
-            //            LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity).Rotation));
-            //        }
-
-            //        ComputeWorldBoundingBox(entity.Position, out WorldBBox);
-            //    }
-            //}
-            //else
-            //{
-            //    if (entitySize != Vector3.Zero)
-            //    {
-            //        CreateLocalBoundingBox(entitySize);
-            //        //Add instance rotation, if existing
-            //        if (entity is IStaticEntity)
-            //        {
-            //            LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity).Rotation));
-            //        }
-            //        ComputeWorldBoundingBox(entity.Position, out WorldBBox);
-            //    }
-            //}
-
+            //If a default size has been given, then use it to compute the Entity bounding Box around it
             if (entitySize != Vector3.Zero)
             {
                 CreateLocalBoundingBox(entitySize);
