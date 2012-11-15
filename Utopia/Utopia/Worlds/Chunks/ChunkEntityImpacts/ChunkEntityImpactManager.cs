@@ -297,18 +297,17 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
                 impactedChunks.Add(NeightBorChunk);
             }
-
         }
-
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)
         {
+            //From Chunk Position to Cube Position
             return _worldChunks.GetChunk(chunkPosition.X * AbstractChunk.ChunkSize.X, chunkPosition.Y * AbstractChunk.ChunkSize.Z);
         }
 
-        public IChunkLayout2D GetChunk(Vector3I chunkPosition)
+        public IChunkLayout2D GetChunk(Vector3I blockPosition)
         {
-            return _worldChunks.GetChunk(ref chunkPosition);
+            return _worldChunks.GetChunk(ref blockPosition);
         }
 
         public ILandscapeCursor GetCursor(Vector3I blockPosition)
