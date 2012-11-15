@@ -93,7 +93,7 @@ namespace Utopia.Entities
             //    }
             //}
 
-            if (entitySize != Vector3.Zero && entity is IVoxelEntity == false)
+            if (entitySize != Vector3.Zero)
             {
                 CreateLocalBoundingBox(entitySize);
                 //Add instance rotation, if existing

@@ -54,21 +54,23 @@ namespace Utopia.Entities.Voxel
             else
             {
                 _visualVoxelModel = model;
-                BoundingBox voxelModelBB = _visualVoxelModel.VoxelModel.States[0].BoundingBox;
-
-                if (voxelModelBB != null)
+                if (wrapped.DefaultSize == Vector3.Zero) //No size define
                 {
-                    LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
+                    BoundingBox voxelModelBB = _visualVoxelModel.VoxelModel.States[0].BoundingBox;
 
-                    //Add instance rotation, if existing
-                    if (Entity is IStaticEntity)
+                    if (voxelModelBB != null)
                     {
-                        LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)Entity).Rotation));
+                        LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
+
+                        //Add instance rotation, if existing
+                        if (Entity is IStaticEntity)
+                        {
+                            LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)Entity).Rotation));
+                        }
+
+                        ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
                     }
-
-                    ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
                 }
-
             }
         }
 
