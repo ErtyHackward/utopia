@@ -22,6 +22,30 @@ namespace Utopia.Network
         private readonly IWorldChunks _chunkManager;
         private IDynamicEntity _playerEntity;
 
+        private Entity _lockedEntity;
+
+        /// <summary>
+        /// Occurs when server locks the entity requested
+        /// </summary>
+        public event EventHandler EntityLocked;
+
+        private void OnEntityLocked()
+        {
+            var handler = EntityLocked;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Occurs when lock operation was failed
+        /// </summary>
+        public event EventHandler EntityLockFailed;
+
+        private void OnEntityLockFailed()
+        {
+            var handler = EntityLockFailed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         /// <summary>
         /// Gets or sets main player entity. All its events will be translated to the server
         /// </summary>
@@ -66,6 +90,7 @@ namespace Utopia.Network
             _server.MessageEntityOut += ConnectionMessageEntityOut;
             _server.MessagePosition += ConnectionMessagePosition;
             _server.MessageDirection += ConnectionMessageDirection;
+            _server.MessageEntityLockResult += ServerMessageEntityLockResult;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _dynamicEntityManager = dynamicEntityManager;
@@ -77,14 +102,57 @@ namespace Utopia.Network
             PlayerEntity = playerEntity;
         }
 
+        void ServerMessageEntityLockResult(object sender, ProtocolMessageEventArgs<EntityLockResultMessage> e)
+        {
+            if (e.Message.LockResult == LockResult.SuccessLocked)
+            {
+                OnEntityLocked();
+            }
+            else
+            {
+                _lockedEntity = null;
+                OnEntityLockFailed();
+            }
+        }
+
+        /// <summary>
+        /// Sends request to the server to obtain container lock, when received LockResult event will fire
+        /// </summary>
+        /// <param name="entity"></param>
+        public void RequestLock(Entity entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+            if (_lockedEntity != null)
+                throw new InvalidOperationException("Some entity was already locked or requested to be locked. Unable to lock more than one entity at once");
+            _lockedEntity = entity;
+            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
+        }
+
+        /// <summary>
+        /// Releases last locked container
+        /// </summary>
+        public void ReleaseLock()
+        {
+            if (_lockedEntity == null)
+                throw new InvalidOperationException("Unable to release the lock because no entity was locked");
+            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
+        }
+
         public void Dispose()
         {
+            if (_lockedEntity != null)
+            {
+                ReleaseLock();
+            }
+
             PlayerEntity = null;  
 
             _server.MessageEntityIn -= ConnectionMessageEntityIn;
             _server.MessageEntityOut -= ConnectionMessageEntityOut;
             _server.MessagePosition -= ConnectionMessagePosition;
             _server.MessageDirection -= ConnectionMessageDirection;
+            _server.MessageEntityLockResult -= ServerMessageEntityLockResult;
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
