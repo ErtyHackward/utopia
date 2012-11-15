@@ -12,8 +12,13 @@ namespace Utopia.Shared.Entities.Inventory
     /// </summary>
     public abstract class Item : StaticEntity, IItem, IVoxelEntity
     {
-        #region Properties
+        public enum ItemCollisionType : byte
+        {
+            BoundingBox,
+            Model
+        }
 
+        #region Properties
         /// <summary>
         /// Gets or sets current voxel model name
         /// </summary>
@@ -25,6 +30,12 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         [Browsable(false)]
         public VoxelModelInstance ModelInstance { get; set; }
+
+        /// <summary>
+        /// Gets or sets voxel model instance
+        /// </summary>
+        [Browsable(true)]
+        public ItemCollisionType CollisionType { get; set; }
         
         /// <summary>
         /// Gets stack string. Entities with the same stack string will be possible to put together in a single slot
@@ -55,6 +66,7 @@ namespace Utopia.Shared.Entities.Inventory
         {
             AllowedSlots = EquipmentSlotType.Hand;
             MaxStackSize = 1;
+            CollisionType = ItemCollisionType.BoundingBox;
         }
 
         // we need to override save and load!
@@ -67,6 +79,7 @@ namespace Utopia.Shared.Entities.Inventory
             ModelName = reader.ReadString();
             Description = reader.ReadString();
             MaxStackSize = reader.ReadInt32();
+            CollisionType = (ItemCollisionType)reader.ReadByte();
         }
 
         public override void Save(BinaryWriter writer)
@@ -78,6 +91,7 @@ namespace Utopia.Shared.Entities.Inventory
             writer.Write(ModelName ?? string.Empty);
             writer.Write(Description ?? string.Empty);
             writer.Write(MaxStackSize);
+            writer.Write((byte)CollisionType);
         }      
     }
 }
