@@ -85,6 +85,7 @@ namespace Utopia.Shared.Entities.Models
             }
         }
         
+        //Update internal BoundingBox
         public void UpdateBoundingBox()
         {
             if (PartsStates.Count == 0) 

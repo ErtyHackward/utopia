@@ -533,11 +533,6 @@ namespace Utopia.Worlds.Chunks
             }
 
             newPosition2Evaluate = newPositionWithColliding;
-
-            if (_isOnGround == false)
-            {
-                Console.WriteLine("");
-            }
         }
 
         //Return true if the position is not solid to player
