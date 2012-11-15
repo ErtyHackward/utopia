@@ -175,12 +175,12 @@ namespace Utopia.Entities.Managers
 
         //Entity vs Player Collision detection
         //Use by physic engine
-        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox entityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox playerBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (isDirty) _timer_OnTimerRaised();
 
             VisualEntity entityTesting;
-            BoundingBox _boundingBox2Evaluate;
+            BoundingBox _playerBoundingBox2Evaluate;
             
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
@@ -189,8 +189,8 @@ namespace Utopia.Entities.Managers
                 if (entityTesting.Entity.IsPlayerCollidable)
                 {
                     //Compute the New world located player bounding box, that will be use for collision detection
-                    _boundingBox2Evaluate = new BoundingBox(entityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), entityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
-                    CollisionCheck(physicSimu, entityTesting, ref entityBoundingBox, ref _boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
+                    _playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), playerBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+                    CollisionCheck(physicSimu, entityTesting, ref playerBoundingBox, ref _playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                 }
             }
         }
@@ -225,11 +225,45 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        {
+            Vector3D newPositionWithColliding = previousPosition;
+
+            newPositionWithColliding.Y = newPosition2Evaluate.Y;
+            playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            {
+                newPositionWithColliding.Y = previousPosition.Y;
+                OnEntityTop = false;
+            }
+
+            newPositionWithColliding.X = newPosition2Evaluate.X;
+            playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            {
+                newPositionWithColliding.X = previousPosition.X;
+                OnEntityTop = false;
+            }
+
+
+            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+            playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            {
+                newPositionWithColliding.Z = previousPosition.Z;
+                OnEntityTop = false;
+            }
+
+            //Set the NEW player position after collision tests
+            newPosition2Evaluate = newPositionWithColliding;
+
+        }
+
+        private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
         {
             VisualVoxelEntity voxelBody = entityTesting as VisualVoxelEntity;
-            if (voxelBody == null) return;
-
+            if (voxelBody == null) return false;
+           
             int index;
             bool collisionDetected = false;
             //Check Against all existing "Sub-Cube" model
@@ -242,31 +276,20 @@ namespace Utopia.Entities.Managers
             {
                 VoxelModelPart part = voxelBody.VisualVoxelModel.VoxelModel.Parts[partId];
                 VoxelModelPartState partState = ActiveModelState.PartsStates[partId]; //
-                
+
                 //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
-                VoxelFrame Activeframe =  part.Frames[partState.ActiveFrame]; //one active at a time
+                VoxelFrame Activeframe = part.Frames[partState.ActiveFrame]; //one active at a time
 
-                boundingBox2Evaluate.Maximum *= 16;
-                boundingBox2Evaluate.Minimum *= 16;
+                Matrix result = partState.GetTransformation() * voxelBody.VoxelEntity.ModelInstance.World;
+                result.Invert();
 
-                Matrix invertTransformation = partState.GetTransformation();
-                invertTransformation.Invert();
+                //Rotation ... ??
 
-                BoundingBox entityLocalBB = entityBoundingBox.Transform(invertTransformation);
-
-                //Vector3 test = new Vector3(10, 2, 25);
-
-                //Matrix TRan = partState.GetTransformation();
-
-                //Matrix invert2 = TRan;
-                //invert2.Invert();
-
-                //Vector3 ModelVector = Vector3.TransformCoordinate(test, invert2);
-                //Vector3 Back = Vector3.TransformCoordinate(ModelVector, TRan);
+                BoundingBox entityLocalBB = playerBoundingBox2Evaluate.Transform(result);
 
 
                 //Check each frame Body part
-                
+
                 byte[] data = Activeframe.BlockData.BlockBytes;
                 index = 0;
                 //Get all sub block not empty
@@ -299,12 +322,9 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (collisionDetected)
-            {
-                //RollBack Position of the player !
-                newPosition2Evaluate = previousPosition;
-            }
+            return collisionDetected;
         }
+
 
         private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
         {
