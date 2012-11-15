@@ -98,6 +98,7 @@ namespace Utopia.Shared.Entities.Concrete
                 }
             }
 
+            //Specific Item Rotation for this instance
             cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
 
             return true;

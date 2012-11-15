@@ -70,7 +70,7 @@ namespace Utopia.Entities.Renderer
             }
             else
             {
-                _pickedCube.Update(ref  _pickedEntity.WorldBBox);
+                _pickedCube.Update(ref _pickedEntity.WorldBBox);
             }
 
         }

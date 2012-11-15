@@ -36,7 +36,8 @@ namespace Utopia.Entities
             CollisionType = EntityCollisionType.BoundingBox;
 
             Entity = entity;
-
+            Matrix rotation = Matrix.Identity;
+          
             if (Entity is OrientedCubePlaceableItem)
             {
                 OrientedCubePlaceableItem orientedEntity = (OrientedCubePlaceableItem)Entity;
@@ -61,22 +62,46 @@ namespace Utopia.Entities
             }
 
             //If not size was specified and the entity is a voxel entity
-            if (entitySize == Vector3.Zero && entity is IVoxelEntity)
+            //if (entitySize == Vector3.Zero && entity is IVoxelEntity)
+            //{
+            //    BoundingBox voxelModelBB = ((IVoxelEntity)entity).ModelInstance.VoxelModel.States[0].BoundingBox;
+
+            //    if (voxelModelBB != null)
+            //    {
+            //        LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
+                    
+            //        //Add instance rotation, if existing
+            //        if (entity is IStaticEntity)
+            //        {
+            //            LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity).Rotation));
+            //        }
+
+            //        ComputeWorldBoundingBox(entity.Position, out WorldBBox);
+            //    }
+            //}
+            //else
+            //{
+            //    if (entitySize != Vector3.Zero)
+            //    {
+            //        CreateLocalBoundingBox(entitySize);
+            //        //Add instance rotation, if existing
+            //        if (entity is IStaticEntity)
+            //        {
+            //            LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity).Rotation));
+            //        }
+            //        ComputeWorldBoundingBox(entity.Position, out WorldBBox);
+            //    }
+            //}
+
+            if (entitySize != Vector3.Zero && entity is IVoxelEntity == false)
             {
-                BoundingBox voxelModelBB = ((IVoxelEntity)entity).ModelInstance.VoxelModel.States[0].BoundingBox;
-                if (voxelModelBB != null)
+                CreateLocalBoundingBox(entitySize);
+                //Add instance rotation, if existing
+                if (entity is IStaticEntity)
                 {
-                    LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
-                    ComputeWorldBoundingBox(entity.Position, out WorldBBox);
+                    LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity).Rotation));
                 }
-            }
-            else
-            {
-                if (entitySize != Vector3.Zero)
-                {
-                    CreateLocalBoundingBox(entitySize);
-                    ComputeWorldBoundingBox(entity.Position, out WorldBBox);
-                }
+                ComputeWorldBoundingBox(entity.Position, out WorldBBox);
             }
         }
 
