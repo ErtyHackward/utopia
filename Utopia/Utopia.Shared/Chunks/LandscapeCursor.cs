@@ -45,6 +45,7 @@ namespace Utopia.Shared.Chunks
                 if (_internalPosition.Z < 0)
                     _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
 
+                //Transform the Cube position into Chunk Position
                 _currentChunk = _manager.GetChunk(new Vector2I((int)Math.Floor((double)_position.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)_position.Z / AbstractChunk.ChunkSize.Z)));
             }
         }
