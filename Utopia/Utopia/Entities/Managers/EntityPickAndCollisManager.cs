@@ -16,7 +16,10 @@ using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Maths;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;
+using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Entities.Voxel;
+using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Entities.Managers
 {
@@ -211,12 +214,95 @@ namespace Utopia.Entities.Managers
                 switch (entityTesting.Entity.CollisionType)
                 {
                     case Utopia.Shared.Entities.Entity.EntityCollisionType.BoundingBox:
+                        BoundingBoxCollision(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                         break;
                     case Utopia.Shared.Entities.Entity.EntityCollisionType.Model:
+                        ModelCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                         break;
                     default:
                         break;
                 }
+            }
+        }
+
+        private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        {
+            VisualVoxelEntity voxelBody = entityTesting as VisualVoxelEntity;
+            if (voxelBody == null) return;
+
+            int index;
+            bool collisionDetected = false;
+            //Check Against all existing "Sub-Cube" model
+
+            //Get current Active state = A model can have multiple "State" (Like open, close, mid open, ...)
+            VoxelModelState ActiveModelState = voxelBody.VisualVoxelModel.VoxelModel.States[0];
+
+            //For each Part in the model (A model can be composed of several parts)
+            for (int partId = 0; partId < voxelBody.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
+            {
+                VoxelModelPart part = voxelBody.VisualVoxelModel.VoxelModel.Parts[partId];
+                VoxelModelPartState partState = ActiveModelState.PartsStates[partId]; //
+                
+                //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
+                VoxelFrame Activeframe =  part.Frames[partState.ActiveFrame]; //one active at a time
+
+                boundingBox2Evaluate.Maximum *= 16;
+                boundingBox2Evaluate.Minimum *= 16;
+
+                Matrix invertTransformation = partState.GetTransformation();
+                invertTransformation.Invert();
+
+                BoundingBox entityLocalBB = entityBoundingBox.Transform(invertTransformation);
+
+                //Vector3 test = new Vector3(10, 2, 25);
+
+                //Matrix TRan = partState.GetTransformation();
+
+                //Matrix invert2 = TRan;
+                //invert2.Invert();
+
+                //Vector3 ModelVector = Vector3.TransformCoordinate(test, invert2);
+                //Vector3 Back = Vector3.TransformCoordinate(ModelVector, TRan);
+
+
+                //Check each frame Body part
+                
+                byte[] data = Activeframe.BlockData.BlockBytes;
+                index = 0;
+                //Get all sub block not empty
+                for (int z = 0; z < Activeframe.BlockData.ChunkSize.Z && !collisionDetected; z++)
+                {
+                    for (int x = 0; x < Activeframe.BlockData.ChunkSize.X && !collisionDetected; x++)
+                    {
+                        for (int y = 0; y < Activeframe.BlockData.ChunkSize.Y && !collisionDetected; y++)
+                        {
+                            //Get cube
+                            if (data[index] > 0)
+                            {
+                                //Collision checking against this point.
+
+                                if (entityLocalBB.Minimum.X > x + 1 || x > entityLocalBB.Maximum.X)
+                                    continue; //No collision
+
+                                if (entityLocalBB.Minimum.Y > y + 1 || y > entityLocalBB.Maximum.Y)
+                                    continue; //No collision
+
+                                if (entityLocalBB.Minimum.Z > z + 1 || z > entityLocalBB.Maximum.Z)
+                                    continue; //No collision
+
+                                //Collision HERE !!!
+                                collisionDetected = true;
+                            }
+                            index++;
+                        }
+                    }
+                }
+            }
+
+            if (collisionDetected)
+            {
+                //RollBack Position of the player !
+                newPosition2Evaluate = previousPosition;
             }
         }
 
