@@ -25,7 +25,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Entity Collision Type
         /// </summary>
-        public Entity.EntityCollisionType CollisionType { get; set; }
+        Entity.EntityCollisionType CollisionType { get; set; }
 
         /// <summary>
         /// Gets entity class id

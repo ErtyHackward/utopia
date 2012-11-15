@@ -126,6 +126,7 @@
     <Compile Include="Configuration\Processor\UtopiaProcessorParams.cs" />
     <Compile Include="Configuration\WorldConfigurationGeneric.cs" />
     <Compile Include="Entities\Concrete\Container.cs" />
+    <Compile Include="Entities\Concrete\Interface\IOrientedItem.cs" />
     <Compile Include="Entities\Concrete\OrientedCubePlaceableItem.cs" />
     <Compile Include="Entities\Concrete\Plant.cs" />
     <Compile Include="Entities\Concrete\SideLightSource.cs" />
@@ -422,9 +423,7 @@
       <DependentUpon>ContainerEditor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Entities\Concrete\Interface\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
