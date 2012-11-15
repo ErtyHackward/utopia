@@ -2,10 +2,8 @@ using System;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
-using Utopia.Shared.Configuration;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World;
-using S33M3CoreComponents.Maths;
 
 namespace Utopia.Shared.Chunks
 {
@@ -18,7 +16,7 @@ namespace Utopia.Shared.Chunks
         private Vector3I _internalPosition;
         private IChunkLayout2D _currentChunk;
         private Vector3I _position;
-        private WorldParameters _wp;
+        private readonly WorldParameters _wp;
 
         /// <summary>
         /// Occurs when someone tries to write using this cursor
@@ -68,7 +66,7 @@ namespace Utopia.Shared.Chunks
             return _currentChunk.BlockData.GetTag(_internalPosition);
         }
 
-        public byte Read<T>( out T tag) where T : BlockTag
+        public byte Read<T>(out T tag) where T : BlockTag
         {
             BlockTag tmptag;
             byte value;
@@ -95,12 +93,13 @@ namespace Utopia.Shared.Chunks
             _manager = manager;
             _wp = wp;
         }
-        
+
         /// <summary>
         /// Creates new instance of landscape cursor 
         /// </summary>
         /// <param name="manager"></param>
         /// <param name="position"></param>
+        /// <param name="wp"> </param>
         public LandscapeCursor(ILandscapeManager2D manager, Vector3I position, WorldParameters wp)
             : this(manager, wp)
         {
@@ -216,7 +215,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Return peek cube profile
         /// </summary>
-        /// <param name="moveVectorle"></param>
+        /// <param name="moveVector"></param>
         /// <returns></returns>
         public CubeProfile PeekProfile(Vector3I moveVector)
         {
