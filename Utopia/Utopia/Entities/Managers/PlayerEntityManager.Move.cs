@@ -22,6 +22,7 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Public Properties
+        public double YForceApplying { get; set; }
         #endregion
 
         #region Public Methods
@@ -118,9 +119,9 @@ namespace Utopia.Entities.Managers
 
             //Jump Key inside water
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
+                _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
 
-            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 20 });            
+            _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 20 });            
         }
 
         private void FreeFirstPersonMove()
@@ -152,14 +153,20 @@ namespace Utopia.Entities.Managers
                 {
                     //Force of 8 for 0.5 offset
                     //Force of 2 for 0.1 offset
-                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
+                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
                     OffsetBlockHitted = 0;
+                }
+
+                if (YForceApplying > 0)
+                {
+                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, (float)YForceApplying, 0) });
+                    YForceApplying = 0.0;
                 }
 
                 //Jumping
                 if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition || _physicSimu.AllowJumping) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                 {
-                    _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
                 }
 
                 if (_entityRotations.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
@@ -171,7 +178,7 @@ namespace Utopia.Entities.Managers
                 moveModifier = 1.5f;
             }
 
-            _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * 1.2f * moveModifier });
+            _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * 1.2f * moveModifier });
         }
 
         private void WalkingFirstPersonNotOnGround(ref GameTime timeSpent)
@@ -180,6 +187,7 @@ namespace Utopia.Entities.Managers
             float jumpPower;
 
             _physicSimu.Freeze(true, false, true); //Trick to easy ground deplacement, it will nullify all accumulated forced being applied on the entity (Except the Y ones)
+            YForceApplying = 0.0;
 
             //Move 2 time slower if not touching ground
             if (!_physicSimu.OnGround) _moveDelta /= 2f;
@@ -193,7 +201,7 @@ namespace Utopia.Entities.Managers
             //Jumping
             if (_physicSimu.AllowJumping && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
             {
-                _physicSimu.Impulses.Add(new Impulse(ref timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+                _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
             }
 
             _physicSimu.PrevPosition -= _entityRotations.EntityMoveVector * _moveDelta * moveModifier;

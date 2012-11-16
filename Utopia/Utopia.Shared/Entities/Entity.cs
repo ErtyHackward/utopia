@@ -39,6 +39,12 @@ namespace Utopia.Shared.Entities
         public EntityCollisionType CollisionType { get; set; }
 
         /// <summary>
+        /// Gets or sets voxel model instance
+        /// </summary>
+        [Browsable(true)]
+        public double YForceOnSideHit { get; set; }
+
+        /// <summary>
         /// Gets entity class id
         /// </summary>
         [Category("Entity")]
@@ -114,6 +120,7 @@ namespace Utopia.Shared.Entities
 
             CollisionType = (EntityCollisionType)reader.ReadByte();
 
+            YForceOnSideHit = reader.ReadDouble();
         }
 
         /// <summary>
@@ -136,6 +143,8 @@ namespace Utopia.Shared.Entities
             writer.Write(isSystemEntity);
 
             writer.Write((byte)CollisionType);
+
+            writer.Write(YForceOnSideHit);
         }
 
         /// <summary>
