@@ -236,7 +236,7 @@ namespace Utopia.Entities.Managers
             if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
                 newPositionWithColliding.Y = previousPosition.Y;
-                OnEntityTop = false;
+                OnEntityTop = true;
             }
 
             newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -259,6 +259,10 @@ namespace Utopia.Entities.Managers
             //Set the NEW player position after collision tests
             newPosition2Evaluate = newPositionWithColliding;
 
+            if (OnEntityTop)
+            {
+                physicSimu.OnGround = true;
+            }
         }
 
         private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
@@ -339,7 +343,33 @@ namespace Utopia.Entities.Managers
         }
 
 
-        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
+        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
+        {
+
+            if (IsSlopeCollisionDetection(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, slopeOrientation))
+            {
+                Vector3D newPositionWithColliding = previousPosition;
+
+                newPositionWithColliding.X = newPosition2Evaluate.X;
+                playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                if (entityTesting.WorldBBox.Intersects(ref playerBoundingBox2Evaluate))
+                {
+                    newPositionWithColliding.X = previousPosition.X;
+                }
+
+                newPositionWithColliding.Z = newPosition2Evaluate.Z;
+                playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+                if (entityTesting.WorldBBox.Intersects(ref playerBoundingBox2Evaluate))
+                {
+                    newPositionWithColliding.Z = previousPosition.Z;
+                }
+
+                newPosition2Evaluate = newPositionWithColliding;
+            }
+
+        }
+
+        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
         {
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
             float posi = 0.0f;
@@ -351,19 +381,19 @@ namespace Utopia.Entities.Managers
             {
                 case OrientedCubePlaceableItem.OrientedItem.North:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
-                    posi = (entityPosition.Z + entityBoundingBox.Maximum.Z) - entityTesting.WorldBBox.Minimum.Z;
+                    posi = (entityPosition.Z + playerBoundingBox.Maximum.Z) - entityTesting.WorldBBox.Minimum.Z;
                     break;
                 case OrientedCubePlaceableItem.OrientedItem.South:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
-                    posi = entityTesting.WorldBBox.Maximum.Z - (entityPosition.Z + entityBoundingBox.Minimum.Z);
+                    posi = entityTesting.WorldBBox.Maximum.Z - (entityPosition.Z + playerBoundingBox.Minimum.Z);
                     break;
                 case OrientedCubePlaceableItem.OrientedItem.East:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
-                    posi = entityTesting.WorldBBox.Maximum.X - (entityPosition.X + entityBoundingBox.Minimum.X);
+                    posi = entityTesting.WorldBBox.Maximum.X - (entityPosition.X + playerBoundingBox.Minimum.X);
                     break;
                 case OrientedCubePlaceableItem.OrientedItem.West:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
-                    posi = (entityPosition.X + entityBoundingBox.Maximum.X) - entityTesting.WorldBBox.Minimum.X;
+                    posi = (entityPosition.X + playerBoundingBox.Maximum.X) - entityTesting.WorldBBox.Minimum.X;
                     break;
                 default:
                     break;
@@ -383,15 +413,20 @@ namespace Utopia.Entities.Managers
 
                     physicSimu.OnGround = true;
                     physicSimu.AllowJumping = true;
+
+                    return false;
                 }
                 else
                 {
-                    newPosition2Evaluate = previousPosition;
+                    //Colliding with a slope High slide face
+                    //newPosition2Evaluate = previousPosition;
+                    return true;
                 }
             }
             else
             {
                 physicSimu.AllowJumping = true;
+                return false;
             }
 
         }
