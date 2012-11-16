@@ -261,10 +261,10 @@ namespace Utopia.Entities.Managers
 
         private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
         {
-            var voxelBody = entityTesting as VisualVoxelEntity;
-            if (voxelBody == null) return false;
+            var visualVoxelEntity = entityTesting as VisualVoxelEntity;
+            if (visualVoxelEntity == null) return false;
 
-            var instance = voxelBody.VoxelEntity.ModelInstance;
+            var instance = visualVoxelEntity.VoxelEntity.ModelInstance;
 
             int index;
             bool collisionDetected = false;
@@ -274,9 +274,9 @@ namespace Utopia.Entities.Managers
             var activeModelState = instance.State;
             
             //For each Part in the model (A model can be composed of several parts)
-            for (int partId = 0; partId < voxelBody.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
+            for (int partId = 0; partId < visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
             {
-                VoxelModelPart part = voxelBody.VisualVoxelModel.VoxelModel.Parts[partId];
+                VoxelModelPart part = visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts[partId];
                 VoxelModelPartState partState = activeModelState.PartsStates[partId];
                
                 // it is possible that there is no frame, so no need to check anything
@@ -289,19 +289,18 @@ namespace Utopia.Entities.Managers
                 var rotation = instance.Rotation;
                 rotation.Invert();
 
-                Matrix result = partState.GetTransformation() * Matrix.RotationQuaternion(rotation) * voxelBody.VoxelEntity.ModelInstance.World;
+                Matrix result = partState.GetTransformation() * Matrix.RotationQuaternion(rotation) * visualVoxelEntity.VoxelEntity.ModelInstance.World;
                 result.Invert();
 
                 BoundingBox entityLocalBB = playerBoundingBox2Evaluate.Transform(result);
 
                 // if we don't intersect part BB then there is no reason to check each block BB
-                if (!voxelBody.VisualVoxelModel.VisualVoxelParts[partId].BoundingBoxes[partState.ActiveFrame].Intersects(ref entityLocalBB))
+                if (!visualVoxelEntity.VisualVoxelModel.VisualVoxelParts[partId].BoundingBoxes[partState.ActiveFrame].Intersects(ref entityLocalBB))
                     continue;
 
                 //Check each frame Body part
-
                 byte[] data = activeframe.BlockData.BlockBytes;
-                index = 0;
+                index = -1;
                 //Get all sub block not empty
                 for (int z = 0; z < activeframe.BlockData.ChunkSize.Z && !collisionDetected; z++)
                 {
@@ -309,6 +308,8 @@ namespace Utopia.Entities.Managers
                     {
                         for (int y = 0; y < activeframe.BlockData.ChunkSize.Y && !collisionDetected; y++)
                         {
+                            index++;
+
                             //Get cube
                             if (data[index] > 0)
                             {
@@ -326,7 +327,6 @@ namespace Utopia.Entities.Managers
                                 //Collision HERE !!!
                                 collisionDetected = true;
                             }
-                            index++;
                         }
                     }
                 }
