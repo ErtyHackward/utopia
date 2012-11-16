@@ -1,12 +1,13 @@
-﻿using System;
+﻿using S33M3Resources.Structs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Utopia.Shared.Entities.Concrete.Interface
 {
-    public interface IOrientedItem
+    public interface IBlockLocationRoot
     {
-        OrientedItem Orientation { get; set; }
+        Vector3I BlockLocationRoot { get; set; }
     }
 }

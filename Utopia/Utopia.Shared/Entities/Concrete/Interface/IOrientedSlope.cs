@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Utopia.Shared.Entities.Concrete.Interface
 {
-    public interface IOrientedItem
+    public interface IOrientedSlope : IOrientedItem
     {
-        OrientedItem Orientation { get; set; }
+        bool IsOrientedSlope { get; set; }
     }
 }

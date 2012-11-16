@@ -96,8 +96,11 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.SideLightSource:
                         entity = new SideLightSource();
                         break;
-                    case EntityClassId.OrientedCubePlaceableItem:
-                        entity = new OrientedCubePlaceableItem();
+                    case EntityClassId.OrientedBlockLinkedItem:
+                        entity = new OrientedBlockLinkedItem();
+                        break;
+                    case EntityClassId.OrientedBlockItem:
+                        entity = new OrientedBlockItem();
                         break;
                     case EntityClassId.Container:
                         entity = new Container();

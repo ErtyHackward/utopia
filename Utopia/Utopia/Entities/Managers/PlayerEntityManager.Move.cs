@@ -228,14 +228,17 @@ namespace Utopia.Entities.Managers
             {
                 if (_physicSimu.OnGround == true && _fallMaxHeight != int.MinValue)
                 {
-                    var handler = OnLanding;
-                    if (handler != null)
+                    if (_fallMaxHeight - _worldPosition.Y >= 0.01)
                     {
-                        handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
-                    }
+                        var handler = OnLanding;
+                        if (handler != null)
+                        {
+                            handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
+                        }
 #if DEBUG
-                    logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_groundCube.Cube.Id].Name);
+                        logger.Debug("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_groundCube.Cube.Id].Name);
 #endif
+                    }
                     _fallMaxHeight = int.MinValue;
                 }
             }

@@ -258,8 +258,8 @@ namespace Utopia.Entities.Managers
             //For each existing model
             foreach (var modelAndInstances in _models)
             {
-                //For each instance of the model
-                foreach (var pairs in modelAndInstances.Value.Instances)
+                //For each instance of the model that have received a body
+                foreach (var pairs in modelAndInstances.Value.Instances.Where(x => x.Value != null))
                 {
                     var entityToRender = _dynamicEntitiesDico[pairs.Key];
 
