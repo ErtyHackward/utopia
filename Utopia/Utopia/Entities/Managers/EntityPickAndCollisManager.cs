@@ -261,43 +261,54 @@ namespace Utopia.Entities.Managers
 
         private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
         {
-            VisualVoxelEntity voxelBody = entityTesting as VisualVoxelEntity;
+            var voxelBody = entityTesting as VisualVoxelEntity;
             if (voxelBody == null) return false;
-           
+
+            var instance = voxelBody.VoxelEntity.ModelInstance;
+
             int index;
             bool collisionDetected = false;
             //Check Against all existing "Sub-Cube" model
 
             //Get current Active state = A model can have multiple "State" (Like open, close, mid open, ...)
-            VoxelModelState ActiveModelState = voxelBody.VisualVoxelModel.VoxelModel.States[0];
-
+            var activeModelState = instance.State;
+            
             //For each Part in the model (A model can be composed of several parts)
             for (int partId = 0; partId < voxelBody.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
             {
                 VoxelModelPart part = voxelBody.VisualVoxelModel.VoxelModel.Parts[partId];
-                VoxelModelPartState partState = ActiveModelState.PartsStates[partId]; //
+                VoxelModelPartState partState = activeModelState.PartsStates[partId]; 
 
+                // it is possible that there is no frame, so no need to check anything
+                if (partState.ActiveFrame == byte.MaxValue)
+                    continue;
+                
                 //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
-                VoxelFrame Activeframe = part.Frames[partState.ActiveFrame]; //one active at a time
+                var activeframe = part.Frames[partState.ActiveFrame]; //one active at a time
 
-                Matrix result = partState.GetTransformation() * voxelBody.VoxelEntity.ModelInstance.World;
+                var rotation = instance.Rotation;
+                rotation.Invert();
+
+                Matrix result = partState.GetTransformation() * Matrix.RotationQuaternion(rotation) * voxelBody.VoxelEntity.ModelInstance.World;
                 result.Invert();
-
-                //Rotation ... ??
+                
 
                 BoundingBox entityLocalBB = playerBoundingBox2Evaluate.Transform(result);
 
+                // if we don't intersect part BB then there is no reason to check each block BB
+                if (!partState.BoundingBox.Intersects(ref entityLocalBB))
+                    continue;
 
                 //Check each frame Body part
 
-                byte[] data = Activeframe.BlockData.BlockBytes;
+                byte[] data = activeframe.BlockData.BlockBytes;
                 index = 0;
                 //Get all sub block not empty
-                for (int z = 0; z < Activeframe.BlockData.ChunkSize.Z && !collisionDetected; z++)
+                for (int z = 0; z < activeframe.BlockData.ChunkSize.Z && !collisionDetected; z++)
                 {
-                    for (int x = 0; x < Activeframe.BlockData.ChunkSize.X && !collisionDetected; x++)
+                    for (int x = 0; x < activeframe.BlockData.ChunkSize.X && !collisionDetected; x++)
                     {
-                        for (int y = 0; y < Activeframe.BlockData.ChunkSize.Y && !collisionDetected; y++)
+                        for (int y = 0; y < activeframe.BlockData.ChunkSize.Y && !collisionDetected; y++)
                         {
                             //Get cube
                             if (data[index] > 0)
