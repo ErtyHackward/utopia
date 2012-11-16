@@ -21,6 +21,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Models;
 using S33M3CoreComponents.Physics;
+using Utopia.Shared.Entities.Concrete.Interface;
 
 namespace Utopia.Entities.Managers
 {
@@ -207,9 +208,9 @@ namespace Utopia.Entities.Managers
         {
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
             {
-                if (entityTesting.Entity is OrientedCubePlaceableItem)
+                if (entityTesting.Entity is IOrientedSlope)
                 {
-                    OrientedCubePlaceableItem entity = (OrientedCubePlaceableItem)entityTesting.Entity;
+                    IOrientedSlope entity = (IOrientedSlope)entityTesting.Entity;
                     if (entity.IsOrientedSlope)
                     {
                         SlopeCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, entity.Orientation);
@@ -351,7 +352,7 @@ namespace Utopia.Entities.Managers
         }
 
 
-        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
+        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedItem slopeOrientation)
         {
 
             if (IsSlopeCollisionDetection(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, slopeOrientation))
@@ -377,7 +378,7 @@ namespace Utopia.Entities.Managers
 
         }
 
-        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedCubePlaceableItem.OrientedItem slopeOrientation)
+        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedItem slopeOrientation)
         {
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
             float posi = 0.0f;
@@ -387,19 +388,19 @@ namespace Utopia.Entities.Managers
 
             switch (slopeOrientation)
             {
-                case OrientedCubePlaceableItem.OrientedItem.North:
+                case OrientedItem.North:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     posi = (entityPosition.Z + playerBoundingBox.Maximum.Z) - entityTesting.WorldBBox.Minimum.Z;
                     break;
-                case OrientedCubePlaceableItem.OrientedItem.South:
+                case OrientedItem.South:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     posi = entityTesting.WorldBBox.Maximum.Z - (entityPosition.Z + playerBoundingBox.Minimum.Z);
                     break;
-                case OrientedCubePlaceableItem.OrientedItem.East:
+                case OrientedItem.East:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
                     posi = entityTesting.WorldBBox.Maximum.X - (entityPosition.X + playerBoundingBox.Minimum.X);
                     break;
-                case OrientedCubePlaceableItem.OrientedItem.West:
+                case OrientedItem.West:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
                     posi = (entityPosition.X + playerBoundingBox.Maximum.X) - entityTesting.WorldBBox.Minimum.X;
                     break;

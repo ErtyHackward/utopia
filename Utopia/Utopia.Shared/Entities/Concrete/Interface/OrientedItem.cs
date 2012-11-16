@@ -5,8 +5,11 @@ using System.Text;
 
 namespace Utopia.Shared.Entities.Concrete.Interface
 {
-    public interface IOrientedItem
+    public enum OrientedItem : byte
     {
-        OrientedItem Orientation { get; set; }
+        North,
+        South,
+        East,
+        West
     }
 }

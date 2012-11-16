@@ -4,7 +4,7 @@ using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class SideLightSource : CubePlaceableItem, ILightEmitterEntity
+    public class SideLightSource : BlockLinkedItem, ILightEmitterEntity
     {
         private ByteColor _emittedLightColor = new ByteColor(255, 190, 94); //Fixed light color ?
 

@@ -5,7 +5,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Represents a container block entity
     /// </summary>
-    public class Container : OrientedCubePlaceableItem
+    public class Container : OrientedBlockLinkedItem
     {
         readonly SlotContainer<ContainedSlot> _content;
 

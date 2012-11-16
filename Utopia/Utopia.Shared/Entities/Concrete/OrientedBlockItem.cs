@@ -1,28 +1,28 @@
-﻿using System;
+﻿using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using S33M3CoreComponents.Maths;
-using S33M3Resources.Structs;
-using SharpDX;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class OrientedCubePlaceableItem : CubePlaceableItem, IOrientedItem
+    public class OrientedBlockItem : BlockItem, IOrientedItem, IOrientedSlope
     {
-        public enum OrientedItem : byte
+        #region Private Variables
+        #endregion
+
+        #region Public Properties
+        public override ushort ClassId
         {
-            North,
-            South,
-            East,
-            West
+            get { return EntityClassId.OrientedBlockItem; }
         }
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
@@ -33,44 +33,27 @@ namespace Utopia.Shared.Entities.Concrete
         /// Gets landscape manager, this field is injected
         /// </summary>
         public bool IsOrientedSlope { get; set; }
+        #endregion
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.OrientedCubePlaceableItem; }
-        }
-
-        public OrientedCubePlaceableItem()
+        public OrientedBlockItem()
         {
             Type = EntityType.Static;
             Name = "Oriented Entity";
-            MountPoint = BlockFace.Top;
-            IsPlayerCollidable = false;
+            IsPlayerCollidable = true;
             IsPickable = true;
         }
 
-        protected override bool SetNewItemPlace(CubePlaceableItem cubeEntity, IDynamicEntity owner, Vector3I vector)
+        #region Public Methods
+        protected override bool SetNewItemPlace(BlockItem cubeEntity, IDynamicEntity owner)
         {
-            var playerRotation = MQuaternion.GetLookAtFromQuaternion(owner.HeadRotation);
-            OrientedCubePlaceableItem entity = (OrientedCubePlaceableItem)cubeEntity;
-            // locate the entity
-            if (vector.Y == 1) // = Put on TOP 
-            {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                                   owner.EntityState.PickedBlockPosition.Y + 1f,
-                                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
-                
-            }
-            else if (vector.Y == -1) //PUT on cube Bottom = (Ceiling)
-            {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                   owner.EntityState.PickedBlockPosition.Y - 1f,
-                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
-            }
-            else //Put on a side not possible for OrientedCubePlaceabltItems
-            {
-                return false;
-            }
+            var playerRotation = owner.HeadRotation.GetLookAtVector();
+            OrientedBlockItem entity = (OrientedBlockItem)cubeEntity;
+            // locate the entity, set translation in World space
+            cubeEntity.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
+                                               owner.EntityState.NewBlockPosition.Y,
+                                               owner.EntityState.NewBlockPosition.Z + 0.5f);
 
+            //Set Orientation
             double entityRotation;
             if (Math.Abs(playerRotation.Z) >= Math.Abs(playerRotation.X))
             {
@@ -105,7 +88,6 @@ namespace Utopia.Shared.Entities.Concrete
             return true;
         }
 
-
         public override void Load(BinaryReader reader, EntityFactory factory)
         {
             // first we need to load base information
@@ -121,6 +103,11 @@ namespace Utopia.Shared.Entities.Concrete
             writer.Write((byte)Orientation);
             writer.Write(IsOrientedSlope);
         }
+        #endregion
+
+        #region Private Methods
+        #endregion
+
 
     }
 }

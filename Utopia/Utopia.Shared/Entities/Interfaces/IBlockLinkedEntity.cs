@@ -1,5 +1,6 @@
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Concrete.Interface;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -14,5 +15,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets or sets allowed faces where the entity can be mount on
         /// </summary>
         BlockFace MountPoint { get; }
+
     }
 }

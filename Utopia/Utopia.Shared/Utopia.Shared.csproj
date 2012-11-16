@@ -125,9 +125,14 @@
     <Compile Include="Configuration\IProcessorParams.cs" />
     <Compile Include="Configuration\Processor\UtopiaProcessorParams.cs" />
     <Compile Include="Configuration\WorldConfigurationGeneric.cs" />
+    <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\Container.cs" />
+    <Compile Include="Entities\Concrete\Interface\IBlockLocationRoot.cs" />
     <Compile Include="Entities\Concrete\Interface\IOrientedItem.cs" />
-    <Compile Include="Entities\Concrete\OrientedCubePlaceableItem.cs" />
+    <Compile Include="Entities\Concrete\Interface\IOrientedSlope.cs" />
+    <Compile Include="Entities\Concrete\Interface\OrientedItem.cs" />
+    <Compile Include="Entities\Concrete\OrientedBlockItem.cs" />
+    <Compile Include="Entities\Concrete\OrientedBlockLinkedItem.cs" />
     <Compile Include="Entities\Concrete\Plant.cs" />
     <Compile Include="Entities\Concrete\SideLightSource.cs" />
     <Compile Include="Entities\Dynamic\ICharacterEntity.cs" />
@@ -139,7 +144,7 @@
     <Compile Include="Entities\Concrete\CubeResource.cs" />
     <Compile Include="Entities\Concrete\NoEntity.cs" />
     <Compile Include="Entities\Concrete\Zombie.cs" />
-    <Compile Include="Entities\CubePlaceableItem.cs" />
+    <Compile Include="Entities\BlockLinkedItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityEffect.cs" />

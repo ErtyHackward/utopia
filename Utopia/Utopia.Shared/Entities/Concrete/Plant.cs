@@ -7,7 +7,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Represents a top block linked item that can be picked and non-player collidable
     /// </summary>
-    public class Plant : CubePlaceableItem
+    public class Plant : BlockLinkedItem
     {
         [Description("Create a randome Rotation around the Y axis of the item")]
         public bool RndRotationAroundY { get; set; }

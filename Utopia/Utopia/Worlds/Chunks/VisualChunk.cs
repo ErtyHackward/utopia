@@ -444,9 +444,9 @@ namespace Utopia.Worlds.Chunks
 
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
 
-                if (visualVoxelEntity.Entity is CubePlaceableItem)
+                if (visualVoxelEntity.Entity is BlockLinkedItem)
                 {
-                    visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(((CubePlaceableItem)visualVoxelEntity.Entity).LocationCube).EmissiveColor;
+                    visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(((BlockLinkedItem)visualVoxelEntity.Entity).BlockLocationRoot).EmissiveColor;
                 }
                 else
                 {
