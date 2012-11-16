@@ -277,8 +277,8 @@ namespace Utopia.Entities.Managers
             for (int partId = 0; partId < voxelBody.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
             {
                 VoxelModelPart part = voxelBody.VisualVoxelModel.VoxelModel.Parts[partId];
-                VoxelModelPartState partState = activeModelState.PartsStates[partId]; 
-
+                VoxelModelPartState partState = activeModelState.PartsStates[partId];
+               
                 // it is possible that there is no frame, so no need to check anything
                 if (partState.ActiveFrame == byte.MaxValue)
                     continue;
@@ -291,12 +291,11 @@ namespace Utopia.Entities.Managers
 
                 Matrix result = partState.GetTransformation() * Matrix.RotationQuaternion(rotation) * voxelBody.VoxelEntity.ModelInstance.World;
                 result.Invert();
-                
 
                 BoundingBox entityLocalBB = playerBoundingBox2Evaluate.Transform(result);
 
                 // if we don't intersect part BB then there is no reason to check each block BB
-                if (!partState.BoundingBox.Intersects(ref entityLocalBB))
+                if (!voxelBody.VisualVoxelModel.VisualVoxelParts[partId].BoundingBoxes[partState.ActiveFrame].Intersects(ref entityLocalBB))
                     continue;
 
                 //Check each frame Body part
