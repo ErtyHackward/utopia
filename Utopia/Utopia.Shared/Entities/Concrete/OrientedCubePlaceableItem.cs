@@ -90,12 +90,12 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.X < 0)
                 {
                     entityRotation = MathHelper.PiOver2;
-                    entity.Orientation = OrientedItem.West;
+                    entity.Orientation = OrientedItem.East;
                 }
                 else
                 {
                     entityRotation = -MathHelper.PiOver2;
-                    entity.Orientation = OrientedItem.East;
+                    entity.Orientation = OrientedItem.West;
                 }
             }
 
