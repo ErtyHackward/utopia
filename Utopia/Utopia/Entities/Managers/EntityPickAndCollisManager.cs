@@ -219,15 +219,7 @@ namespace Utopia.Entities.Managers
                         BoundingBoxCollision(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                         break;
                     case Utopia.Shared.Entities.Entity.EntityCollisionType.Model:
-
-                        debugWatch.Restart();
                         ModelCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
-                        if (debugWatch.ElapsedTicks > 0)
-                        {
-                            logger.Debug("Time Collision check tick : {0}, {1}", debugWatch.ElapsedTicks / (double)Stopwatch.Frequency * 1000, debugWatch.ElapsedMilliseconds);
-                        }
-                        debugWatch.Stop();
-
                         break;
                     default:
                         break;
