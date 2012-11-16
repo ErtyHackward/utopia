@@ -29,6 +29,8 @@ namespace Utopia.Entities.Managers
     /// </summary>
     public class EntityPickAndCollisManager : IEntityPickingManager, IDisposable
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region private variables
         private IDynamicEntityManager _dynamicEntityManager;
         //private TimerManager.GameTimer _timer;
@@ -196,7 +198,7 @@ namespace Utopia.Entities.Managers
         }
 
         bool OnEntityTop = false;
-
+        Stopwatch debugWatch = new Stopwatch();
         private void CollisionCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
@@ -217,7 +219,15 @@ namespace Utopia.Entities.Managers
                         BoundingBoxCollision(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
                         break;
                     case Utopia.Shared.Entities.Entity.EntityCollisionType.Model:
+
+                        debugWatch.Restart();
                         ModelCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition);
+                        if (debugWatch.ElapsedTicks > 0)
+                        {
+                            logger.Debug("Time Collision check tick : {0}, {1}", debugWatch.ElapsedTicks / (double)Stopwatch.Frequency * 1000, debugWatch.ElapsedMilliseconds);
+                        }
+                        debugWatch.Stop();
+
                         break;
                     default:
                         break;
@@ -276,37 +286,38 @@ namespace Utopia.Entities.Managers
             //For each Part in the model (A model can be composed of several parts)
             for (int partId = 0; partId < visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
             {
-                VoxelModelPart part = visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts[partId];
                 VoxelModelPartState partState = activeModelState.PartsStates[partId];
-               
+
                 // it is possible that there is no frame, so no need to check anything
                 if (partState.ActiveFrame == byte.MaxValue)
                     continue;
-                
+
+                VoxelModelPart part = visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts[partId];
+                BoundingBox frameBoundingBox = visualVoxelEntity.VisualVoxelModel.VisualVoxelParts[partId].BoundingBoxes[partState.ActiveFrame];
+               
                 //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
                 var activeframe = part.Frames[partState.ActiveFrame]; //one active at a time
 
-                var rotation = instance.Rotation;
-                rotation.Invert();
+                Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(Quaternion.Invert(instance.Rotation)) * visualVoxelEntity.VoxelEntity.ModelInstance.World;
+                invertedEntityWorldMatrix.Invert();
 
-                Matrix result = partState.GetTransformation() * Matrix.RotationQuaternion(rotation) * visualVoxelEntity.VoxelEntity.ModelInstance.World;
-                result.Invert();
-
-                BoundingBox entityLocalBB = playerBoundingBox2Evaluate.Transform(result);
+                BoundingBox PlayerBBInEntitySpace = playerBoundingBox2Evaluate.Transform(invertedEntityWorldMatrix);
 
                 // if we don't intersect part BB then there is no reason to check each block BB
-                if (!visualVoxelEntity.VisualVoxelModel.VisualVoxelParts[partId].BoundingBoxes[partState.ActiveFrame].Intersects(ref entityLocalBB))
+                if (!frameBoundingBox.Intersects(ref PlayerBBInEntitySpace))
                     continue;
 
                 //Check each frame Body part
+                Vector3I chunkSize = activeframe.BlockData.ChunkSize;
                 byte[] data = activeframe.BlockData.BlockBytes;
+
                 index = -1;
                 //Get all sub block not empty
-                for (int z = 0; z < activeframe.BlockData.ChunkSize.Z && !collisionDetected; z++)
+                for (int z = 0; z < chunkSize.Z && !collisionDetected; z++)
                 {
-                    for (int x = 0; x < activeframe.BlockData.ChunkSize.X && !collisionDetected; x++)
+                    for (int x = 0; x < chunkSize.X && !collisionDetected; x++)
                     {
-                        for (int y = 0; y < activeframe.BlockData.ChunkSize.Y && !collisionDetected; y++)
+                        for (int y = 0; y < chunkSize.Y && !collisionDetected; y++)
                         {
                             index++;
 
@@ -315,13 +326,13 @@ namespace Utopia.Entities.Managers
                             {
                                 //Collision checking against this point.
 
-                                if (entityLocalBB.Minimum.X > x + 1 || x > entityLocalBB.Maximum.X)
+                                if (PlayerBBInEntitySpace.Minimum.X > x + 1 || x > PlayerBBInEntitySpace.Maximum.X)
                                     continue; //No collision
 
-                                if (entityLocalBB.Minimum.Y > y + 1 || y > entityLocalBB.Maximum.Y)
+                                if (PlayerBBInEntitySpace.Minimum.Y > y + 1 || y > PlayerBBInEntitySpace.Maximum.Y)
                                     continue; //No collision
 
-                                if (entityLocalBB.Minimum.Z > z + 1 || z > entityLocalBB.Maximum.Z)
+                                if (PlayerBBInEntitySpace.Minimum.Z > z + 1 || z > PlayerBBInEntitySpace.Maximum.Z)
                                     continue; //No collision
 
                                 //Collision HERE !!!
