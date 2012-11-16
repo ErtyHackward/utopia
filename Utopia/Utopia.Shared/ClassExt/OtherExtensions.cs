@@ -46,6 +46,17 @@ namespace S33M3Resources.Structs
         }
 
         /// <summary>
+        /// Returns the volume of the bounding box
+        /// </summary>
+        /// <param name="box"></param>
+        /// <returns></returns>
+        public static float GetVolume(this BoundingBox box)
+        {
+            var size = box.GetSize();
+            return size.X * size.Y * size.Z;
+        }
+
+        /// <summary>
         /// Transforms all corners of the bounding box and produces a new box containing all corners
         /// </summary>
         /// <param name="box"></param>

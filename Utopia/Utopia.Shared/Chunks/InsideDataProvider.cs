@@ -244,6 +244,30 @@ namespace Utopia.Shared.Chunks
             return _tags;
         }
 
+        public IEnumerable<KeyValuePair<Vector3I, byte>> AllBlocks(bool includeEmpty = false)
+        {
+            for (int x = 0; x < _chunkSize.X; x++)
+            {
+                for (int y = 0; y < _chunkSize.Y; y++)
+                {
+                    for (int z = 0; z < _chunkSize.Z; z++)
+                    {
+                        Vector3I vec;
+                        vec.X = x;
+                        vec.Y = y;
+                        vec.Z = z;
+
+                        var value = GetBlock(vec);
+
+                        if (value == 0 && !includeEmpty)
+                            continue;
+                        
+                        yield return new KeyValuePair<Vector3I, byte>(vec, value);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>
@@ -373,14 +397,14 @@ namespace Utopia.Shared.Chunks
         private void RefreshMetaData(ref Vector3I inChunkPosition)
         {
             //Must look from World Top to bottom to recompute the new High Block !
-            int yPosi = AbstractChunk.ChunkSize.Y - 1;
+            int yPosi = _chunkSize.Y - 1;
             while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
             {
                 yPosi--;
             }
 
             //Compute 2D index of ColumnInfo and update ColumnInfo
-            int index2D = inChunkPosition.X * AbstractChunk.ChunkSize.Z + inChunkPosition.Z;
+            int index2D = inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z;
             ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
             ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
         }
