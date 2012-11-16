@@ -20,6 +20,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Models;
+using S33M3CoreComponents.Physics;
 
 namespace Utopia.Entities.Managers
 {
@@ -40,6 +41,7 @@ namespace Utopia.Entities.Managers
         private ServerComponent _server;
         private InputsManager _input;
         private IWorldChunks _worldChunks;
+        private PlayerEntityManager _playerManager;
         #endregion
 
         #region public variables
@@ -68,12 +70,14 @@ namespace Utopia.Entities.Managers
 
         public EntityPickAndCollisManager(TimerManager timerManager,
                                           ServerComponent server,
-                                          InputsManager input)                                     
+                                          InputsManager input,
+                                          PlayerEntityManager playerManager)                                     
         {
             //_timer = timerManager.AddTimer(1, 100);         //10 times/s
             //_timer.OnTimerRaised += _timer_OnTimerRaised;
             _input = input;
             _server = server;
+            _playerManager = playerManager;
         }
 
         public void Dispose()
@@ -232,20 +236,13 @@ namespace Utopia.Entities.Managers
             Vector3D newPositionWithColliding = previousPosition;
             OnEntityTop = false;
 
-            newPositionWithColliding.Y = newPosition2Evaluate.Y;
-            playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
-            {
-                newPositionWithColliding.Y = previousPosition.Y;
-                OnEntityTop = true;
-            }
-
             newPositionWithColliding.X = newPosition2Evaluate.X;
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
                 newPositionWithColliding.X = previousPosition.X;
                 OnEntityTop = false;
+                _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
             }
 
 
@@ -255,6 +252,15 @@ namespace Utopia.Entities.Managers
             {
                 newPositionWithColliding.Z = previousPosition.Z;
                 OnEntityTop = false;
+                _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
+            }
+
+            newPositionWithColliding.Y = newPosition2Evaluate.Y;
+            playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            {
+                newPositionWithColliding.Y = previousPosition.Y;
+                OnEntityTop = true;
             }
 
             //Set the NEW player position after collision tests
@@ -263,6 +269,7 @@ namespace Utopia.Entities.Managers
             if (OnEntityTop)
             {
                 physicSimu.OnGround = true;
+                physicSimu.AllowJumping = true;
             }
         }
 

@@ -19,16 +19,28 @@ namespace S33M3CoreComponents.Physics
             get { return _amountOfTime > 0; }
         }
 
-        public Impulse(ref GameTime timeStep)
+        public Impulse(GameTime timeStep)
         {
             _timeStep = timeStep;
+        }
+
+        public Impulse()
+            :this(null)
+        {
         }
 
         public Vector3 ForceApplied
         {
             get
             {
-                return _amountOfTime != 0.00001 ? _forceApplied / (_timeStep.ElapsedGameTimeInS_LD) : _forceApplied;
+                if (_timeStep != null)
+                {
+                    return _amountOfTime != 0.00001 ? _forceApplied / (_timeStep.ElapsedGameTimeInS_LD) : _forceApplied;
+                }
+                else
+                {
+                    return _amountOfTime != 0.00001 ? _forceApplied / 0.025f : _forceApplied;
+                }
             }
             set { _forceApplied = value; }
         }

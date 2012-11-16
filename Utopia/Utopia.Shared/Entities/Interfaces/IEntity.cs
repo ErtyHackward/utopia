@@ -28,6 +28,11 @@ namespace Utopia.Shared.Entities.Interfaces
         Entity.EntityCollisionType CollisionType { get; set; }
 
         /// <summary>
+        /// Y Force that will be given to anyone that is colliding with this entity, only working in "Model" collision mode
+        /// </summary>
+        double YForceOnSideHit { get; set; }
+
+        /// <summary>
         /// Gets entity class id
         /// </summary>
         ushort ClassId { get; }
