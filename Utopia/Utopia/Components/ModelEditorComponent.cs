@@ -138,6 +138,8 @@ namespace Utopia.Components
         private Vector3I? _selectionEnd;
         private bool _toolMountPointSelection;
 
+        private List<BoundingBox> _frameShapeBBoxes;
+
         #endregion
 
         #region Properties
@@ -1898,6 +1900,12 @@ namespace Utopia.Components
             if (_visualVoxelModel != null && _selectedPartIndex != -1 && _selectedFrameIndex != -1)
             {
                 _visualVoxelModel.RebuildFrame(_selectedPartIndex, _selectedFrameIndex);
+
+                //var sw = Stopwatch.StartNew();
+                //_frameShapeBBoxes = VoxelMeshFactory.GenerateShapeBBoxes(_visualVoxelModel.VoxelModel.Parts[_selectedPartIndex].Frames[_selectedFrameIndex].BlockData);
+                //sw.Stop();
+
+                //logger.Debug("Shape bb generation time {0} ms", sw.ElapsedMilliseconds);
             }
         }
 
@@ -2370,6 +2378,15 @@ namespace Utopia.Components
                                 new Color4(1, 0, 0, 1f));
                         DrawBox(new BoundingBox(new Vector3(0.01f) + mirrorCube, new Vector3(0.99f) + mirrorCube),
                                 new Color4(1, 0, 0, 1f));
+                    }
+                }
+
+                // draw shape bboxes
+                if (_frameShapeBBoxes != null)
+                {
+                    foreach (var frameShapeBBox in _frameShapeBBoxes)
+                    {
+                        DrawBox(frameShapeBBox, new Color4(1, 1, 1, 0.5f));
                     }
                 }
 

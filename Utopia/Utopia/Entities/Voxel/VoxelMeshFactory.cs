@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using SharpDX;
 using SharpDX.Direct3D;
-using SharpDX.Direct3D11;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Structs;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
@@ -26,6 +26,217 @@ namespace Utopia.Entities.Voxel
         public VoxelMeshFactory(D3DEngine d3DEngine)
         {
             _d3DEngine = d3DEngine;
+        }
+
+        /// <summary>
+        /// Calculates frame bounding boxes for the shape collision test
+        /// </summary>
+        /// <param name="blockData"></param>
+        /// <returns></returns>
+        public static List<BoundingBox> GenerateShapeBBoxes(InsideDataProvider blockData)
+        {
+            // first of all create bb for each non-empty block
+            var list = blockData.AllBlocks().Select(pair => new BoundingBox(pair.Key, pair.Key + Vector3.One)).ToList();
+
+            // enlarge each block as possible
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var box = list[i];
+
+                while (TryEnlargeBBox(ref box, blockData)) { }
+
+                list[i] = box;
+            }
+
+            // sort boxes by their volume desc
+            list.Sort((b1, b2) => b2.GetVolume().CompareTo(b1.GetVolume()));
+
+            // remove boxes that completely includes other and duplicates
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                var box = list[i];
+
+                bool remove = false;
+
+                for (int j = 0; j < list.Count; j++)
+                {
+                    if (i != j && (box == list[j] || list[j].Contains(ref box) == ContainmentType.Contains))
+                    {
+                        remove = true;
+                        break;
+                    }
+                }
+
+                if (remove)
+                    list.RemoveAt(i);
+            }
+
+            return list;
+        }
+
+        private static bool TryEnlargeBBox(ref BoundingBox box, InsideDataProvider blockData)
+        {
+            // try to enlarge each side
+
+            var size = box.GetSize();
+            bool canEnlarge = true;
+            bool enlarged = false;
+
+            #region top
+
+            if (box.Maximum.Y < blockData.ChunkSize.Y)
+            {
+                for (int x = 0; canEnlarge && x < size.X; x++)
+                {
+                    for (int z = 0; z < size.Z; z++)
+                    {
+                        if (blockData.GetBlock(x + (int)box.Minimum.X, (int)box.Maximum.Y, z + (int)box.Minimum.Z) == 0)
+                        {
+                            canEnlarge = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (canEnlarge)
+                {
+                    box.Maximum.Y++;
+                    enlarged = true;
+                    size = box.GetSize();
+                }
+            }
+
+            #endregion
+
+            #region bottom
+            canEnlarge = true;
+            if (box.Minimum.Y > 0)
+            {
+                for (int x = 0; canEnlarge && x < size.X; x++)
+                {
+                    for (int z = 0; z < size.Z; z++)
+                    {
+                        if (blockData.GetBlock(x + (int)box.Minimum.X, (int)box.Minimum.Y - 1, z + (int)box.Minimum.Z) == 0)
+                        {
+                            canEnlarge = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (canEnlarge)
+                {
+                    box.Minimum.Y--;
+                    enlarged = true;
+                    size = box.GetSize();
+                }
+            }
+
+            #endregion
+
+            #region left
+            canEnlarge = true;
+            if (box.Minimum.X > 0)
+            {
+                for (int y = 0; canEnlarge && y < size.Y; y++)
+                {
+                    for (int z = 0; z < size.Z; z++)
+                    {
+                        if (blockData.GetBlock((int)box.Minimum.X - 1, y + (int)box.Minimum.Y, z + (int)box.Minimum.Z) == 0)
+                        {
+                            canEnlarge = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (canEnlarge)
+                {
+                    box.Minimum.X--;
+                    enlarged = true;
+                    size = box.GetSize();
+                }
+            }
+            
+            #endregion
+
+            #region right
+            canEnlarge = true;
+            if (box.Maximum.X < blockData.ChunkSize.X)
+            {
+                for (int y = 0; canEnlarge && y < size.Y; y++)
+                {
+                    for (int z = 0; z < size.Z; z++)
+                    {
+                        if (blockData.GetBlock((int)box.Maximum.X, y + (int)box.Minimum.Y, z + (int)box.Minimum.Z) == 0)
+                        {
+                            canEnlarge = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (canEnlarge)
+                {
+                    box.Maximum.X++;
+                    enlarged = true;
+                    size = box.GetSize();
+                }
+            }
+            #endregion
+
+            #region front
+            canEnlarge = true;
+            if (box.Maximum.Z < blockData.ChunkSize.Z)
+            {
+                for (int y = 0; canEnlarge && y < size.Y; y++)
+                {
+                    for (int x = 0; x < size.X; x++)
+                    {
+                        if (blockData.GetBlock(x + (int)box.Minimum.X, y + (int)box.Minimum.Y, (int)box.Maximum.Z) == 0)
+                        {
+                            canEnlarge = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (canEnlarge)
+                {
+                    box.Maximum.Z++;
+                    enlarged = true;
+                    size = box.GetSize();
+                }
+            }
+            #endregion 
+
+            #region back
+            canEnlarge = true;
+            if (box.Minimum.Z > 0)
+            {
+                for (int y = 0; canEnlarge && y < size.Y; y++)
+                {
+                    for (int x = 0; x < size.X; x++)
+                    {
+                        if (blockData.GetBlock(x + (int)box.Minimum.X, y + (int)box.Minimum.Y, (int)box.Minimum.Z - 1) == 0)
+                        {
+                            canEnlarge = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (canEnlarge)
+                {
+                    box.Minimum.Z--;
+                    enlarged = true;
+                    size = box.GetSize();
+                }
+            }
+            #endregion
+
+            return enlarged;
         }
 
         public void GenerateVoxelFaces(InsideDataProvider blockData, out List<VertexVoxelInstanced> vertices, out List<ushort> indices)
