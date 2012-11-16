@@ -230,6 +230,7 @@ namespace Utopia.Entities.Managers
         private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             Vector3D newPositionWithColliding = previousPosition;
+            OnEntityTop = false;
 
             newPositionWithColliding.Y = newPosition2Evaluate.Y;
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
