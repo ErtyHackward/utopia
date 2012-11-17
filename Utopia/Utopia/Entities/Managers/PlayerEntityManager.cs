@@ -5,6 +5,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
@@ -71,6 +72,7 @@ namespace Utopia.Entities.Managers
         private bool _stopMovedAction = false;
 
         private VisualWorldParameters _visualWorldParameters;
+        private readonly ILandscapeManager2D _landscapeManager;
 
         //Event related variables
         private double _fallMaxHeight;
@@ -181,7 +183,8 @@ namespace Utopia.Entities.Managers
                                    PlayerCharacter player,
                                    IPickingRenderer pickingRenderer,
                                    VoxelModelManager voxelModelManager,
-                                   VisualWorldParameters visualWorldParameters
+                                   VisualWorldParameters visualWorldParameters,
+                                   ILandscapeManager2D landscapeManager
             )
         {
             _d3DEngine = engine;
@@ -191,6 +194,7 @@ namespace Utopia.Entities.Managers
             _cubesHolder = cubesHolder;
             _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
+            _landscapeManager = landscapeManager;
 
             Player = player;
 

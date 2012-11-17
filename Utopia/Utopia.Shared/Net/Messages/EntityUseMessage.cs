@@ -14,7 +14,7 @@ namespace Utopia.Shared.Net.Messages
         private Vector3I _pickedBlockPosition;
         private Vector3I _newBlockPosition;
         private Vector3D _pickedEntityPosition;
-        private EntityLink _pickedEntityId;
+        private EntityLink _pickedEntityLink;
         private uint _toolId;
         private uint _entityId;
         private bool _isBlockPicked;
@@ -63,12 +63,12 @@ namespace Utopia.Shared.Net.Messages
         }
 
         /// <summary>
-        /// Picked entity id (optional)
+        /// Picked entity link (optional)
         /// </summary>
-        public EntityLink PickedEntityId
+        public EntityLink PickedEntityLink
         {
-            get { return _pickedEntityId; }
-            set { _pickedEntityId = value; }
+            get { return _pickedEntityLink; }
+            set { _pickedEntityLink = value; }
         }
 
         
@@ -124,7 +124,7 @@ namespace Utopia.Shared.Net.Messages
             msg._toolId = reader.ReadUInt32();
             msg._isBlockPicked = reader.ReadBoolean();
             msg._isEntityPicked = reader.ReadBoolean();
-            msg._pickedEntityId = reader.ReadEntityLink();
+            msg._pickedEntityLink = reader.ReadEntityLink();
             msg._token = reader.ReadInt32();
             msg._useMode = (ToolUseMode)reader.ReadByte();
 
@@ -146,7 +146,7 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_toolId);
             writer.Write(_isBlockPicked);
             writer.Write(_isEntityPicked);
-            writer.Write(_pickedEntityId);
+            writer.Write(_pickedEntityLink);
             writer.Write(_token);
             writer.Write((byte)_useMode);
         }

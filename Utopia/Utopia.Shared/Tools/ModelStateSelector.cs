@@ -1,18 +1,15 @@
-﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Linq;
-using System.Text;
-using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Tools
 {
     /// <summary>
-    /// Extends property grid to allow to select a set for a container
+    /// Allows to convinient choose of the state of the model
     /// </summary>
-    public class ContainerSetSelector : StringConverter
+    public class ModelStateSelector : StringConverter
     {
-        public static WorldConfiguration Configuration { get; set; }
+        public static string[] PossibleValues;
 
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
         {
@@ -26,7 +23,7 @@ namespace Utopia.Shared.Tools
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(Configuration.ContainerSets.Keys.ToArray());
+            return new StandardValuesCollection(PossibleValues);
         }
 
     }

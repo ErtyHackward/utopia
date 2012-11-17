@@ -131,7 +131,7 @@ namespace Utopia.Server.Structs
                 IsEntityPicked = entityUseMessage.IsEntityPicked,
                 NewBlockPosition = entityUseMessage.NewBlockPosition,
                 PickedBlockPosition = entityUseMessage.PickedBlockPosition,
-                PickedEntityLink = entityUseMessage.PickedEntityId,
+                PickedEntityLink = entityUseMessage.PickedEntityLink,
             };
             DynamicEntity.EntityState = state;
         }

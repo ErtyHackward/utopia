@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -106,27 +105,7 @@ namespace Utopia.Server.Managers
             }
         }
 
-        public IStaticEntity ResolveStatic(EntityLink link)
-        {
-            if (link.IsDynamic)
-            {
-                throw new InvalidOperationException();
-            }
 
-            var chunk = _server.LandscapeManager.GetChunk(link.ChunkPosition);
-
-            var collection = (IStaticContainer)chunk.Entities;
-            IStaticEntity sEntity = null;
-
-            for (int i = 0; i < link.Tail.Length; i++)
-            {
-                sEntity = collection.GetStaticEntity(link.Tail[i]);
-                if (sEntity is IStaticContainer)
-                    collection = sEntity as IStaticContainer;
-            }
-
-            return sEntity;
-        }
 
         private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
         {
@@ -140,7 +119,7 @@ namespace Utopia.Server.Managers
                 {
                     #region Lock static entity
 
-                    var staticEntity = ResolveStatic(e.Message.EntityLink);
+                    var staticEntity = e.Message.EntityLink.ResolveStatic(_server.LandscapeManager);
 
                     if (staticEntity == null)
                     {
@@ -228,7 +207,7 @@ namespace Utopia.Server.Managers
 
                 if (!e.Message.EntityLink.IsDynamic)
                 {
-                    var staticEntity = ResolveStatic(e.Message.EntityLink);
+                    var staticEntity = e.Message.EntityLink.ResolveStatic(_server.LandscapeManager);
                     
                     if (staticEntity == null)
                         return;

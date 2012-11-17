@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using SharpDX;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Tools.BinarySerializer;
 
@@ -17,6 +16,8 @@ namespace Utopia.Shared.Entities.Models
         // cached intermediate state of the model
         private VoxelModelState _internalState;
 
+        private VoxelModelState _currentState;
+
         // storable fields
         private int _animationIndex;
         private int _animationStepIndexFrom;
@@ -27,6 +28,7 @@ namespace Utopia.Shared.Entities.Models
         private Quaternion _rotation;
         private Quaternion _headRotation;
         private bool _stopping;
+        private string _switchStateTarget;
         
         #region Properties
 
@@ -150,7 +152,7 @@ namespace Utopia.Shared.Entities.Models
             VoxelModel = model;
 
             // init the cached state, cached state should have the same structure as parent model states
-            _internalState = new VoxelModelState(model.States[0]);
+            SetState(model.GetMainState());
         }
 
         /// <summary>
@@ -158,7 +160,7 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public void UpdateStates()
         {
-            SetState(new VoxelModelState(VoxelModel.States[0]));
+            SetState(VoxelModel.GetMainState());
         }
 
         /// <summary>
@@ -167,9 +169,59 @@ namespace Utopia.Shared.Entities.Models
         /// <param name="state"></param>
         public void SetState(VoxelModelState state)
         {
+            _currentState = state;
+
+            // create a copy because we can to change its values
+            // inside the instance
             _internalState = new VoxelModelState(state);
         }
 
+        /// <summary>
+        /// Changes current instance active state instantly
+        /// </summary>
+        /// <param name="stateName"></param>
+        public void SetState(string stateName)
+        {
+            SetState(VoxelModel.States.GetByName(stateName));
+        }
+
+        /// <summary>
+        /// Changes current instance state using animation if possible
+        /// </summary>
+        /// <param name="newStateName"></param>
+        public void SwitchState(string newStateName)
+        {            
+            byte indexEnd = 0;
+
+            for (byte i = 0; i < VoxelModel.States.Count; i++)
+            {
+                var state = VoxelModel.States[i];
+
+                if (state.Name == newStateName)
+                    indexEnd = i;
+            }
+
+            string animName = string.Empty;
+
+            foreach (var anim in VoxelModel.Animations)
+            {
+                if (anim.Steps[anim.Steps.Count-1].StateIndex == indexEnd)
+                {
+                    animName = anim.Name;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(animName))
+            {
+                _switchStateTarget = newStateName;
+                Play(animName);
+            }
+            else
+            {
+                SetState(newStateName);
+            }
+        }
+        
         /// <summary>
         /// Returns world matrix to draw the tool
         /// </summary>
@@ -260,9 +312,12 @@ namespace Utopia.Shared.Entities.Models
             if (_elapsed > duration)
             {
                 _elapsed -= duration;
-                
+
                 if (_animationStepIndexTo == -1)
+                {
                     AnimationIndex = -1;
+                    OnStop();
+                }
                 else
                 {
                     _animationStepIndexFrom = _animationStepIndexTo;
@@ -281,7 +336,16 @@ namespace Utopia.Shared.Entities.Models
                             if (_repeat)
                                 _animationStepIndexTo = 0;
                             else
-                                _animationStepIndexTo = -1;
+                            {
+                                if (!string.IsNullOrEmpty(_switchStateTarget))
+                                {
+                                    AnimationIndex = -1;
+                                    OnStop();
+                                }
+                                else 
+                                    // return to the main state
+                                    _animationStepIndexTo = -1;
+                            }
                         }
                     }
                 }
@@ -290,7 +354,7 @@ namespace Utopia.Shared.Entities.Models
             if (Playing)
             {
                 // take previous state
-                var state0 = _animationStepIndexFrom == -1 ? VoxelModel.States[0] : VoxelModel.States[animation.Steps[_animationStepIndexFrom].StateIndex];
+                var state0 = _animationStepIndexFrom == -1 ? _currentState : VoxelModel.States[animation.Steps[_animationStepIndexFrom].StateIndex];
 
                 VoxelModelState state1;
                 if (_animationStepIndexTo == -1)
@@ -317,8 +381,17 @@ namespace Utopia.Shared.Entities.Models
             }
         }
 
+        private void OnStop()
+        {
+            if (!string.IsNullOrEmpty(_switchStateTarget))
+            {
+                SetState(_switchStateTarget);
+                _switchStateTarget = string.Empty;
+            }
+        }
+
         /// <summary>
-        /// Stops current animation
+        /// Stops current animation smoothly
         /// </summary>
         public void Stop()
         {

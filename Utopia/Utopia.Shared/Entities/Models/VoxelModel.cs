@@ -1,7 +1,9 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using Utopia.Shared.Interfaces;
+using System.Linq;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Tools.BinarySerializer;
 
@@ -197,11 +199,12 @@ namespace Utopia.Shared.Entities.Models
 
             foreach (var voxelModelAnimation in Animations)
             {
-                for (int i = 0; i < voxelModelAnimation.Steps.Count; i++)
+                for (var i = 0; i < voxelModelAnimation.Steps.Count; i++)
                 {
                     var animationStep = voxelModelAnimation.Steps[i];
                     if (animationStep.StateIndex > selectedStateIndex)
                         animationStep.StateIndex--;
+                    voxelModelAnimation.Steps[i] = animationStep;
                 }
             }
         }
@@ -262,6 +265,37 @@ namespace Utopia.Shared.Entities.Models
                 mainIndex = 0;
 
             return States[mainIndex];
+        }
+    }
+
+    public static class VoxelExtensions
+    {
+        public static VoxelModelState GetByName(this List<VoxelModelState> list, string name)
+        {
+            return list.First(s => s.Name == name);
+        }
+
+        /// <summary>
+        /// Returns animation to perform state switch
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="stateIndexFrom"></param>
+        /// <param name="stateIndexTo"></param>
+        /// <returns></returns>
+        public static VoxelModelAnimation GetStateSwitch(this List<VoxelModelAnimation> list, byte stateIndexFrom, byte stateIndexTo)
+        {
+            if (stateIndexFrom == stateIndexTo)
+                throw new ArgumentException("State index could not be the same");
+
+            foreach (var anim in list)
+            {
+                if (anim.Steps[0].StateIndex == stateIndexFrom && anim.Steps[anim.Steps.Count-1].StateIndex == stateIndexTo)
+                {
+                    return anim;
+                }
+            }
+
+            return null;
         }
     }
 }

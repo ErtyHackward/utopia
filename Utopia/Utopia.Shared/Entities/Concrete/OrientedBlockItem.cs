@@ -2,39 +2,31 @@
 using S33M3Resources.Structs;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class OrientedBlockItem : BlockItem, IOrientedItem, IOrientedSlope
+    public class OrientedBlockItem : BlockItem, IOrientedSlope
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
         public override ushort ClassId
         {
             get { return EntityClassId.OrientedBlockItem; }
         }
 
         /// <summary>
-        /// Gets landscape manager, this field is injected
+        /// Gets or sets item orientation
         /// </summary>
         [Browsable(false)]
         public OrientedItem Orientation { get; set; }
-
+        
         /// <summary>
-        /// Gets landscape manager, this field is injected
+        /// Gets or sets value indicating if entity can climb on this entity by the angle of 45 degree
         /// </summary>
         public bool IsOrientedSlope { get; set; }
-        #endregion
-
+        
         public OrientedBlockItem()
         {
             Type = EntityType.Static;
@@ -103,9 +95,6 @@ namespace Utopia.Shared.Entities.Concrete
             writer.Write((byte)Orientation);
             writer.Write(IsOrientedSlope);
         }
-        #endregion
-
-        #region Private Methods
         #endregion
 
 

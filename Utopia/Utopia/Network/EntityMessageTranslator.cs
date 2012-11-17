@@ -232,7 +232,7 @@ namespace Utopia.Network
                 DynamicEntityId = _playerEntity.DynamicId,
                 NewBlockPosition = e.NewBlockPosition,
                 PickedBlockPosition = e.PickedBlockPosition,
-                PickedEntityId = e.PickedEntityLink,
+                PickedEntityLink = e.PickedEntityLink,
                 ToolId = e.Tool == null ? 0 : e.Tool.StaticId,
                 UseMode = e.UseMode
             });

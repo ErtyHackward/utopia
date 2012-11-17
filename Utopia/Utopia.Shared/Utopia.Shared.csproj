@@ -127,6 +127,7 @@
     <Compile Include="Configuration\WorldConfigurationGeneric.cs" />
     <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\Container.cs" />
+    <Compile Include="Entities\Concrete\Door.cs" />
     <Compile Include="Entities\Concrete\Interface\IBlockLocationRoot.cs" />
     <Compile Include="Entities\Concrete\Interface\IOrientedItem.cs" />
     <Compile Include="Entities\Concrete\Interface\IOrientedSlope.cs" />
@@ -310,6 +311,7 @@
     </Compile>
     <Compile Include="Tools\ContainerSetSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
+    <Compile Include="Tools\ModelStateSelector.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
     <Compile Include="World\PlanGenerator\Corner.cs" />
