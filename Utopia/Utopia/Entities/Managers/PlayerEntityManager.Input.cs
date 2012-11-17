@@ -67,16 +67,47 @@ namespace Utopia.Entities.Managers
 
                 if (Player.EntityState.IsEntityPicked)
                 {
-                    Player.EntityUse();
-
                     var link = Player.EntityState.PickedEntityLink;
 
-                    if (!link.IsDynamic)
+                    IEntity entity = null;
+
+                    if (link.IsDynamic)
                     {
-                        var entity = link.ResolveStatic(_landscapeManager) as IUsableEntity;
-                        if (entity != null)
+                        //TODO: resolve dynamic entity
+                    }
+                    else
+                    {
+                        entity = link.ResolveStatic(_landscapeManager);
+                    }
+
+                    if (entity == null)
+                        return;
+                    
+                    // check if the entity need to be locked
+
+                    if (entity.RequiresLock)
+                    {
+                        if (_lockedEntity != null)
                         {
-                            entity.Use();
+                            logger.Warn("Unable to lock two items at once");
+                            return;
+                        }
+
+                        _lockedEntity = entity;
+                        _entityMessageTranslator.RequestLock(_lockedEntity);
+                    }
+                    else
+                    {
+                        // send use message to the server
+                        Player.EntityUse();
+                        
+                        if (!link.IsDynamic)
+                        {
+                            if (entity is IUsableEntity)
+                            {
+                                var usableEntity = entity as IUsableEntity;
+                                usableEntity.Use();
+                            }
                         }
                     }
                 }

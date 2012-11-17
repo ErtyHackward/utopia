@@ -2,9 +2,11 @@
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Voxel;
+using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
@@ -37,6 +39,8 @@ namespace Utopia.Entities.Managers
     public partial class PlayerEntityManager : GameComponent, ICameraPlugin, IVisualVoxelEntityContainer, IDebugInfo
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private IEntity _lockedEntity;
 
         #region Private variables
         //Engine System variables
@@ -73,6 +77,7 @@ namespace Utopia.Entities.Managers
 
         private VisualWorldParameters _visualWorldParameters;
         private readonly ILandscapeManager2D _landscapeManager;
+        private EntityMessageTranslator _entityMessageTranslator;
 
         //Event related variables
         private double _fallMaxHeight;
@@ -166,6 +171,25 @@ namespace Utopia.Entities.Managers
             }
         }
 
+
+        //[Inject]
+        public EntityMessageTranslator EntityMessageTranslator
+        {
+            get { return _entityMessageTranslator; }
+            set {
+                if (_entityMessageTranslator != null)
+                    throw new InvalidOperationException("Already initialized");
+
+                _entityMessageTranslator = value;
+
+                if (_entityMessageTranslator != null)
+                {
+                    _entityMessageTranslator.EntityLocked += EntityMessageTranslatorEntityLocked;
+                    _entityMessageTranslator.EntityLockFailed += EntityMessageTranslatorEntityLockFailed;
+                }
+            }
+        }
+
         #endregion
 
         #region Events
@@ -198,13 +222,40 @@ namespace Utopia.Entities.Managers
 
             Player = player;
 
-            this.ShowDebugInfo = true;
+            ShowDebugInfo = true;
 
             //Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
             VisualVoxelEntity = new VisualVoxelEntity(player, voxelModelManager);
-            
+
+
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
+        }
+
+        void EntityMessageTranslatorEntityLockFailed(object sender, EventArgs e)
+        {
+            //TODO: inform that player can't use the item he want
+            _lockedEntity = null;
+        }
+
+        void EntityMessageTranslatorEntityLocked(object sender, EventArgs e)
+        {
+            // we have the lock, if we can use, we will use
+
+            if (_lockedEntity is IStaticContainer)
+            {
+
+            }
+            else if (_lockedEntity is IUsableEntity)
+            {
+                var usable = _lockedEntity as IUsableEntity;
+                // send use message to the server
+                Player.EntityUse();
+
+                usable.Use();
+            }
+
+
         }
 
         public override void BeforeDispose()

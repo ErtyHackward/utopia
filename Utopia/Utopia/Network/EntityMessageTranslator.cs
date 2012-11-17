@@ -22,7 +22,7 @@ namespace Utopia.Network
         private readonly IWorldChunks _chunkManager;
         private IDynamicEntity _playerEntity;
 
-        private Entity _lockedEntity;
+        private IEntity _lockedEntity;
 
         /// <summary>
         /// Occurs when server locks the entity requested
@@ -119,7 +119,7 @@ namespace Utopia.Network
         /// Sends request to the server to obtain container lock, when received LockResult event will fire
         /// </summary>
         /// <param name="entity"></param>
-        public void RequestLock(Entity entity)
+        public void RequestLock(IEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");
