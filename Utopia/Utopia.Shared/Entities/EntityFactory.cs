@@ -105,6 +105,9 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.Container:
                         entity = new Container();
                         break;
+                    case EntityClassId.Door:
+                        entity = new Door();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
                 }

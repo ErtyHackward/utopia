@@ -387,7 +387,7 @@ namespace Utopia.Editor.Forms
         /// <summary>
         /// Event raised when a property change in the Details property grid.
         /// </summary>
-        private void pgDetails_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void pgDetails_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             //Update ListBox Icon when the modelName is changing
             if (e.ChangedItem.Label == "ModelName")
@@ -404,6 +404,20 @@ namespace Utopia.Editor.Forms
                 //Look at currently existing Voxel Models following Entity Name
                 item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : (int)_icons[voxelEntity.ModelName].Tag;
                 item.SelectedImageIndex = item.ImageIndex;
+
+                ModelStateSelector.PossibleValues = null;
+
+                if (voxelEntity.ModelName != null)
+                {
+
+                    var model = Program.IconManager.ModelManager.GetModel(voxelEntity.ModelName);
+
+                    if (model != null)
+                    {
+                        ModelStateSelector.PossibleValues =
+                            model.VoxelModel.States.Select(s => s.Name).ToArray();
+                    }
+                }
             }
 
             if (e.ChangedItem.Label == "Name")
@@ -448,6 +462,25 @@ namespace Utopia.Editor.Forms
                     }
                     if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true;
                     pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
+
+                    if (selectedObject is IVoxelEntity)
+                    {
+                        var voxelEntity = selectedObject as IVoxelEntity;
+
+                        ModelStateSelector.PossibleValues = null;
+
+                        if (voxelEntity.ModelName != null)
+                        {
+
+                            var model = Program.IconManager.ModelManager.GetModel(voxelEntity.ModelName);
+
+                            if (model != null)
+                            {
+                                ModelStateSelector.PossibleValues =
+                                    model.VoxelModel.States.Select(s => s.Name).ToArray();
+                            }
+                        }
+                    }
                 }
             }
 

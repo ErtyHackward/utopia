@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -214,6 +215,29 @@ namespace Utopia.Shared.Structs
                 return false;
 
             return (EntityLink)obj == this;
+        }
+
+        public IStaticEntity ResolveStatic(ILandscapeManager2D landscapeManager)
+        {
+            if (IsDynamic)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var chunk = landscapeManager.GetChunk(ChunkPosition);
+
+            var collection = (IStaticContainer)chunk.Entities;
+            IStaticEntity sEntity = null;
+
+            for (int i = 0; i < Tail.Length; i++)
+            {
+                sEntity = collection.GetStaticEntity(Tail[i]);
+                if (sEntity is IStaticContainer)
+                    collection = sEntity as IStaticContainer;
+            }
+
+            return sEntity;
+        
         }
     }
 }

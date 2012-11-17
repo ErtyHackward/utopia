@@ -2,6 +2,7 @@
 using Utopia.Action;
 using Utopia.Shared.Entities;
 using SharpDX;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Entities.Managers
 {
@@ -67,6 +68,17 @@ namespace Utopia.Entities.Managers
                 if (Player.EntityState.IsEntityPicked)
                 {
                     Player.EntityUse();
+
+                    var link = Player.EntityState.PickedEntityLink;
+
+                    if (!link.IsDynamic)
+                    {
+                        var entity = link.ResolveStatic(_landscapeManager) as IUsableEntity;
+                        if (entity != null)
+                        {
+                            entity.Use();
+                        }
+                    }
                 }
             }
 

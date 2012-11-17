@@ -12,6 +12,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// </summary>
     public abstract class Item : StaticEntity, IItem, IVoxelEntity
     {
+        private VoxelModelInstance _modelInstance;
 
         #region Properties
         /// <summary>
@@ -19,13 +20,20 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
         public string ModelName { get; set; }
-
+        
         /// <summary>
         /// Gets or sets voxel model instance
         /// </summary>
         [Browsable(false)]
-        public VoxelModelInstance ModelInstance { get; set; }
-        
+        public VoxelModelInstance ModelInstance
+        {
+            get { return _modelInstance; }
+            set { 
+                _modelInstance = value;
+                OnInstanceChanged();
+            }
+        }
+
         /// <summary>
         /// Gets stack string. Entities with the same stack string will be possible to put together in a single slot
         /// </summary>
@@ -50,6 +58,12 @@ namespace Utopia.Shared.Entities.Inventory
         public string Description { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// Executed when the model instance is changed
+        /// Allows to initialize the instance
+        /// </summary>
+        protected virtual void OnInstanceChanged() { }
 
         protected Item()
         {

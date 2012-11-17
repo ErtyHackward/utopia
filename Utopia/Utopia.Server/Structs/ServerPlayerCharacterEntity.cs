@@ -158,22 +158,46 @@ namespace Utopia.Server.Structs
         {
             // update entity state
             base.Use(entityUseMessage);
-
-            // find tool
+            
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
-            var tool = playerCharacter.FindToolById(entityUseMessage.ToolId);
-
-            if (tool != null)
+            // detect use type, if 0 then it is entity use, otherwise it is tool use
+            if (entityUseMessage.ToolId != 0)
             {
-                var toolImpact = tool.Use(playerCharacter, entityUseMessage.UseMode, true);
+                // find tool
+                var tool = playerCharacter.FindToolById(entityUseMessage.ToolId);
 
-                // returning tool feedback
-                Connection.SendAsync(new UseFeedbackMessage { Token = entityUseMessage.Token, EntityImpactBytes = toolImpact.Serialize() });
+                if (tool != null)
+                {
+                    var toolImpact = tool.Use(playerCharacter, entityUseMessage.UseMode, true);
+
+                    // returning tool feedback
+                    Connection.SendAsync(new UseFeedbackMessage
+                                             {
+                                                 Token = entityUseMessage.Token,
+                                                 EntityImpactBytes = toolImpact.Serialize()
+                                             });
+                }
+                else
+                {
+                    Connection.SendAsync(new ChatMessage
+                                             {
+                                                 DisplayName = "toolsystem",
+                                                 Message = "Invalid toolid provided. Can not use the tool"
+                                             });
+                }
             }
             else
             {
-                Connection.SendAsync(new ChatMessage { DisplayName = "toolsystem", Message = "Invalid toolid provided. Can not use the tool" });
+
+                var link = entityUseMessage.PickedEntityLink;
+                var entity = link.ResolveStatic(_server.LandscapeManager); 
+
+                if (entity is IUsableEntity)
+                {
+                    var usableEntity = (IUsableEntity)entity;
+                    usableEntity.Use();
+                }
             }
         }
 
