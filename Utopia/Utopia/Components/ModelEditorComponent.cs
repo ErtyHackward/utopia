@@ -2115,6 +2115,10 @@ namespace Utopia.Components
             _directionVertexBuffer.SetToDevice(_d3DEngine.ImmediateContext, 0);
 
             _d3DEngine.ImmediateContext.Draw(6, 0); 
+
+            var box = new BoundingBox(new Vector3(-0.5f, 0, -0.5f), new Vector3(0.5f, 1, 0.5f));
+            box = box.Transform(Matrix.Scaling(16));
+            DrawBox(box, new Color4(1, 1, 1, 1));
         }
 
         private void DrawModelView(DeviceContext context)
