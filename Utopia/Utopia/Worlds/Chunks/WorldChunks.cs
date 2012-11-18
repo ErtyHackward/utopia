@@ -425,11 +425,11 @@ namespace Utopia.Worlds.Chunks
             Vector3D newPositionWithColliding = previousPosition;
             TerraCubeWithPosition _collidingCube;
 
-            if (Vector3D.Distance(previousPosition, newPosition2Evaluate) < 0.01)
-            {
-                if (_isOnGround) _physicSimu.OnGround = true;
-                return;
-            }
+            //if (Vector3D.Distance(previousPosition, newPosition2Evaluate) < 0.01)
+            //{
+            //    if (_isOnGround) _physicSimu.OnGround = true;
+            //    return;
+            //}
 
             //Create a Bounding box with my new suggested position, taking only the X that has been changed !
             //X Testing =====================================================
@@ -439,6 +439,8 @@ namespace Utopia.Worlds.Chunks
             //If my new X position, make me placed "inside" a block, then invalid the new position
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
+                //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
+
                 newPositionWithColliding.X = previousPosition.X;
                 if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
@@ -458,6 +460,8 @@ namespace Utopia.Worlds.Chunks
             //If my new Z position, make me placed "inside" a block, then invalid the new position
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
+                //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
+
                 newPositionWithColliding.Z = previousPosition.Z;
                 if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
@@ -468,6 +472,7 @@ namespace Utopia.Worlds.Chunks
                         _playerManager.OffsetBlockHitted = offsetValue;
                     }
                 }
+
             }
 
             //Y Testing ======================================================
@@ -503,6 +508,8 @@ namespace Utopia.Worlds.Chunks
                     _isOnGround = true;
                 }
 
+                //logger.Debug("ModelCollisionDetection Y detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Y, previousPosition.Y);
+
                 newPositionWithColliding.Y = previousPosition.Y;
             }
             else
@@ -528,12 +535,14 @@ namespace Utopia.Worlds.Chunks
             _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
             {
+                //logger.Debug("STUCK tested {0}, assigned {1}, last Good position tested : {2}", newPositionWithColliding, previousPosition, memo);
                 newPositionWithColliding = previousPosition;
                 newPositionWithColliding.Y += 0.1;
             }
 
             newPosition2Evaluate = newPositionWithColliding;
         }
+
 
         //Return true if the position is not solid to player
         public bool ValidatePosition(ref Vector3D newPosition2Evaluate)
