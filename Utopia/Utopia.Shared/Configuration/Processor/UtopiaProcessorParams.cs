@@ -587,8 +587,8 @@ namespace Utopia.Shared.Configuration
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
+                Friction = 0.25f,
+                SlidingValue = 0.0f,
                 IsSystemCube = true,
                 SideOffsetMultiplier = 1
             });
@@ -610,8 +610,8 @@ namespace Utopia.Shared.Configuration
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.15f,
-                SlidingValue = 0.05f,
+                Friction = 0.25f,
+                SlidingValue = 0.0f,
                 IsSystemCube = true,
                 SideOffsetMultiplier = 1
             });
