@@ -130,12 +130,12 @@ namespace Sandbox.Client.States
         }
         
 
-        void InventorySwitchInventory(object sender, System.EventArgs e)
+        void InventorySwitchInventory(object sender, InventorySwitchEventArgs e)
         {
             var inventory = _ioc.Get<InventoryComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Color = new SharpDX.Color4(0, 0, 0, 0.85f);
-            if (inventory.IsActive)
+            if (e.Closing)
             {
                 fadeComponent.Visible = false;
                 inventory.HideInventory();

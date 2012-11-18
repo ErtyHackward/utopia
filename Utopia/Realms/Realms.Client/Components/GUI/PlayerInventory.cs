@@ -41,12 +41,16 @@ namespace Realms.Client.Components.GUI
             CustomWindowImage = _stInventoryWindow;
             Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(674, 388);
 
+            CellsCreated();
             PrepareCells();
         }
 
-        private void PrepareCells()
+        protected override void CellsCreated()
         {
-            var cellSize = new Vector2I(42,42);
+            if (_commonResources == null)
+                return;
+
+            var cellSize = new Vector2I(42, 42);
 
             for (var x = 0; x < UiGrid.GetLength(0); x++)
             {
@@ -61,7 +65,11 @@ namespace Realms.Client.Components.GUI
                     cell.DrawIconsActiveCellId = 6;
                 }
             }
+        }
 
+        private void PrepareCells()
+        {
+            
             var slot = BuildBodyslot(Utopia.Shared.Entities.Inventory.EquipmentSlotType.Hand, 19, 142, 42);
 
             slot.CustomBackground = _commonResources.StInventoryEquipmentSlot;

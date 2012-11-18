@@ -2,6 +2,7 @@
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -18,7 +19,30 @@ namespace Utopia.Network
         private ContainedSlot _tempSlot;
         private bool _pendingOperation;
         private ISlotContainer<ContainedSlot> _sourceContainer;
-        
+        private IEntity _lockedEntity;
+
+        /// <summary>
+        /// Occurs when server locks the entity requested
+        /// </summary>
+        public event EventHandler EntityLocked;
+
+        private void OnEntityLocked()
+        {
+            var handler = EntityLocked;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Occurs when lock operation was failed
+        /// </summary>
+        public event EventHandler EntityLockFailed;
+
+        private void OnEntityLockFailed()
+        {
+            var handler = EntityLockFailed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public bool Enabled { get; set; }
 
         private ISlotContainer<ContainedSlot> _container;
@@ -61,7 +85,7 @@ namespace Utopia.Network
         {
             if (server == null) throw new ArgumentNullException("server");
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
-
+            
             _playerEntity = playerEntity;
             
             _playerEntity.Inventory.ItemPut += InventoryItemPut;
@@ -73,9 +97,34 @@ namespace Utopia.Network
             _playerEntity.Equipment.ItemExchanged += InventoryItemExchanged;
 
             _server = server;
-
+            _server.MessageEntityLockResult += ServerMessageEntityLockResult;
 
             Enabled = true;
+        }
+
+        /// <summary>
+        /// Sends request to the server to obtain container lock, when received LockResult event will fire
+        /// </summary>
+        /// <param name="entity"></param>
+        public void RequestLock(IEntity entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+            if (_lockedEntity != null)
+                throw new InvalidOperationException("Some entity was already locked or requested to be locked. Unable to lock more than one entity at once");
+            _lockedEntity = entity;
+            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
+        }
+
+        /// <summary>
+        /// Releases last locked container
+        /// </summary>
+        public void ReleaseLock()
+        {
+            if (_lockedEntity == null)
+                throw new InvalidOperationException("Unable to release the lock because no entity was locked");
+            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
+            _lockedEntity = null;
         }
 
         /// <summary>
@@ -83,6 +132,11 @@ namespace Utopia.Network
         /// </summary>
         public void Dispose()
         {
+            if (_lockedEntity != null)
+            {
+                ReleaseLock();
+            }
+
             _playerEntity.Inventory.ItemPut -= InventoryItemPut;
             _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
             _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
@@ -90,6 +144,21 @@ namespace Utopia.Network
             _playerEntity.Equipment.ItemPut -= InventoryItemPut;
             _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
             _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
+
+            _server.MessageEntityLockResult -= ServerMessageEntityLockResult;
+        }
+
+        void ServerMessageEntityLockResult(object sender, ProtocolMessageEventArgs<EntityLockResultMessage> e)
+        {
+            if (e.Message.LockResult == LockResult.SuccessLocked)
+            {
+                OnEntityLocked();
+            }
+            else
+            {
+                _lockedEntity = null;
+                OnEntityLockFailed();
+            }
         }
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -207,6 +276,25 @@ namespace Utopia.Network
             {
                 _tempSlot.ItemsCount -= e.Slot.ItemsCount;
             }
+        }
+
+        /// <summary>
+        /// Takes currently locked item from the world
+        /// </summary>
+        public void TakeFromWorld()
+        {
+            if (_pendingOperation)
+                throw new InvalidOperationException("Unable to take another item, release first previous taken item");
+
+            if (_lockedEntity == null)
+                throw new InvalidOperationException("Lock world item before trying to take it");
+
+            if (!(_lockedEntity is IItem))
+                throw new InvalidOperationException("Locked entity should implement IItem interface");
+
+            _pendingOperation = true;
+            _sourceContainer = null;
+            _tempSlot = new ContainedSlot { Item = (IItem)_lockedEntity, ItemsCount = 1 };
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
@@ -8,7 +7,6 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
-using System.Linq;
 
 namespace Utopia.Network
 {
@@ -17,34 +15,12 @@ namespace Utopia.Network
     /// </summary>
     public class EntityMessageTranslator : IDisposable
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly ServerComponent _server;
         private readonly IDynamicEntityManager _dynamicEntityManager;
         private readonly IWorldChunks _chunkManager;
         private IDynamicEntity _playerEntity;
-
-        private IEntity _lockedEntity;
-
-        /// <summary>
-        /// Occurs when server locks the entity requested
-        /// </summary>
-        public event EventHandler EntityLocked;
-
-        private void OnEntityLocked()
-        {
-            var handler = EntityLocked;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Occurs when lock operation was failed
-        /// </summary>
-        public event EventHandler EntityLockFailed;
-
-        private void OnEntityLockFailed()
-        {
-            var handler = EntityLockFailed;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
 
         /// <summary>
         /// Gets or sets main player entity. All its events will be translated to the server
@@ -90,7 +66,7 @@ namespace Utopia.Network
             _server.MessageEntityOut += ConnectionMessageEntityOut;
             _server.MessagePosition += ConnectionMessagePosition;
             _server.MessageDirection += ConnectionMessageDirection;
-            _server.MessageEntityLockResult += ServerMessageEntityLockResult;
+            
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             _dynamicEntityManager = dynamicEntityManager;
@@ -102,57 +78,14 @@ namespace Utopia.Network
             PlayerEntity = playerEntity;
         }
 
-        void ServerMessageEntityLockResult(object sender, ProtocolMessageEventArgs<EntityLockResultMessage> e)
-        {
-            if (e.Message.LockResult == LockResult.SuccessLocked)
-            {
-                OnEntityLocked();
-            }
-            else
-            {
-                _lockedEntity = null;
-                OnEntityLockFailed();
-            }
-        }
-
-        /// <summary>
-        /// Sends request to the server to obtain container lock, when received LockResult event will fire
-        /// </summary>
-        /// <param name="entity"></param>
-        public void RequestLock(IEntity entity)
-        {
-            if (entity == null)
-                throw new ArgumentNullException("entity");
-            if (_lockedEntity != null)
-                throw new InvalidOperationException("Some entity was already locked or requested to be locked. Unable to lock more than one entity at once");
-            _lockedEntity = entity;
-            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
-        }
-
-        /// <summary>
-        /// Releases last locked container
-        /// </summary>
-        public void ReleaseLock()
-        {
-            if (_lockedEntity == null)
-                throw new InvalidOperationException("Unable to release the lock because no entity was locked");
-            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
-        }
-
         public void Dispose()
         {
-            if (_lockedEntity != null)
-            {
-                ReleaseLock();
-            }
-
             PlayerEntity = null;  
 
             _server.MessageEntityIn -= ConnectionMessageEntityIn;
             _server.MessageEntityOut -= ConnectionMessageEntityOut;
             _server.MessagePosition -= ConnectionMessagePosition;
             _server.MessageDirection -= ConnectionMessageDirection;
-            _server.MessageEntityLockResult -= ServerMessageEntityLockResult;
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
@@ -162,7 +95,7 @@ namespace Utopia.Network
                 entity.HeadRotation = e.Message.Rotation;
             else
             {
-                Debug.WriteLine("Unable to update direction of an entity");
+                logger.Error("Unable to update direction of an entity");
             }
         }
 
@@ -173,7 +106,7 @@ namespace Utopia.Network
                 entity.Position = e.Message.Position;
             else
             {
-                Debug.WriteLine("Unable to update position of an entity");
+                logger.Error("Unable to update direction of an entity");
             }
         }
 
@@ -192,8 +125,6 @@ namespace Utopia.Network
                     break;
                 case EntityType.Dynamic:
                     _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
-                    break;
-                default:
                     break;
             }
         }

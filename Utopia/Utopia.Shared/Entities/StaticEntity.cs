@@ -27,11 +27,19 @@ namespace Utopia.Shared.Entities
         [Browsable(false)]
         public Quaternion Rotation { get; set; }
 
+        private IStaticContainer _container;
+
         /// <summary>
         /// Gets or sets current parent container
         /// </summary>
         [Browsable(false)]
-        public IStaticContainer Container { get; set; }
+        public IStaticContainer Container
+        {
+            get { return _container; }
+            set { 
+                _container = value; 
+            }
+        }
 
         protected StaticEntity()
         {

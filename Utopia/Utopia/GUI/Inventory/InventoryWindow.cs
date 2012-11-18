@@ -16,7 +16,7 @@ namespace Utopia.GUI.Inventory
     public class InventoryWindow : WindowControl
     {
         protected readonly InputsManager _inputManager;
-        private readonly SlotContainer<ContainedSlot> _container;
+        private SlotContainer<ContainedSlot> _content;
         /// <summary>
         /// Array of inventory cells controls
         /// </summary>
@@ -55,27 +55,34 @@ namespace Utopia.GUI.Inventory
 
 
         /// <summary>
-        /// Gets container wrapped
+        /// Gets or changes container wrapped
         /// </summary>
-        public SlotContainer<ContainedSlot> Container
+        public SlotContainer<ContainedSlot> Content
         {
-            get { return _container; }
+            get { return _content; }
+            set { 
+                _content = value;
+                BuildGrid(GridOffset);
+            }
         }
 
         protected InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition, Point gridOffset, InputsManager inputManager)
         {
             _inputManager = inputManager;
             GridOffset = gridOffset;
-            _container = container;
+            _content = container;
             _iconFactory = iconFactory;
             _windowStartPosition = windowStartPosition;
 
-            var width = _container.GridSize.X * CellSize + GridOffset.X + 4;     
-            var height = _container.GridSize.Y * CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
+            if (container != null)
+            {
+                var width = _content.GridSize.X*CellSize + GridOffset.X + 4;
+                var height = _content.GridSize.Y*CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
 
-            Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
+                Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
 
-            BuildGrid(GridOffset);  
+                BuildGrid(GridOffset);
+            }
         }
 
         public InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition, InputsManager inputManager)
@@ -83,18 +90,38 @@ namespace Utopia.GUI.Inventory
         {
        
         }
-        
+
+        protected virtual void CellsCreated()
+        {
+
+        }
+
         public void BuildGrid(Point offset)
         {
-            var container = _container;
-
+            if (UiGrid != null)
+            {
+                for (int x = 0; x < _content.GridSize.X; x++)
+                {
+                    for (int y = 0; y < _content.GridSize.Y; y++)
+                    {
+                        var cell = UiGrid[x, y];
+                        cell.MouseDown -= ControlMouseDown;
+                        cell.MouseEnter -= ControlMouseEnter;
+                        cell.MouseLeave -= ControlMouseLeave;
+                        Children.Remove(cell);
+                    }
+                }
+            }
+            
+            var container = _content;
+            
             UiGrid = new InventoryCell[container.GridSize.X, container.GridSize.Y];
             
             for (var x = 0; x < container.GridSize.X; x++)
             {
                 for (var y = 0; y < container.GridSize.Y; y++)
                 {
-                    var control = new InventoryCell(_container, _iconFactory, new Vector2I(x, y), _inputManager)
+                    var control = new InventoryCell(_content, _iconFactory, new Vector2I(x, y), _inputManager)
                                       {
                                           Bounds = new UniRectangle(offset.X + x * CellSize, offset.Y + y * CellSize, CellSize, CellSize),
                                           Name = "Cell" + x + "," + y,
@@ -108,6 +135,8 @@ namespace Utopia.GUI.Inventory
                     UiGrid[x, y] = control;
                 }
             }
+
+            CellsCreated();
         }
 
         void ControlMouseLeave(object sender, EventArgs e)
@@ -135,7 +164,7 @@ namespace Utopia.GUI.Inventory
                 );
 
             // tell everyone that user click some slot
-            OnSlotClicked(new InventoryWindowEventArgs { SlotPosition = control.InventoryPosition, MouseState = state, Container = _container, Offset = offset });
+            OnSlotClicked(new InventoryWindowEventArgs { SlotPosition = control.InventoryPosition, MouseState = state, Container = _content, Offset = offset });
         }
     }
 

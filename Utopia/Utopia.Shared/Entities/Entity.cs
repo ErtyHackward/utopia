@@ -160,7 +160,7 @@ namespace Utopia.Shared.Entities
         /// A new object that is a copy of this instance.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public object Clone()
+        public virtual object Clone()
         {
             return MemberwiseClone();
         }

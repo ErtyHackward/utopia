@@ -197,8 +197,10 @@ namespace Realms.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
+            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var inventory = _ioc.Get<InventoryComponent>();
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
+            inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
 
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
@@ -206,9 +208,7 @@ namespace Realms.Client.States
             var clouds = _ioc.Get<IDrawableComponent>("Clouds");
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
-
-
-            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
+            
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
             var singleArrayChunkContainer = _ioc.Get<SingleArrayChunkContainer>();

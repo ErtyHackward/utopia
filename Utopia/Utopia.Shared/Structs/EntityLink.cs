@@ -32,6 +32,11 @@ namespace Utopia.Shared.Structs
         {
             get { return _isDynamic; }
         }
+
+        public bool IsStatic
+        {
+            get { return !_isDynamic; }
+        }
         
         /// <summary>
         /// Gets world chunk position
