@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Utopia.Server.Events;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
@@ -46,6 +45,7 @@ namespace Utopia.Server.Structs
             area.EntityEquipment += AreaEntityEquipment;
             area.StaticEntityAdded += AreaStaticEntityAdded;
             area.StaticEntityRemoved += AreaStaticEntityRemoved;
+            area.EntityLockChanged += AreaEntityLockChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -55,9 +55,34 @@ namespace Utopia.Server.Structs
                     Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
-
         }
 
+        public override void RemoveArea(MapArea area)
+        {
+            area.EntityView -= AreaEntityView;
+            area.EntityMoved -= AreaEntityMoved;
+            area.EntityUse -= AreaEntityUse;
+            area.BlocksChanged -= AreaBlocksChanged;
+            area.EntityEquipment -= AreaEntityEquipment;
+            area.StaticEntityAdded -= AreaStaticEntityAdded;
+            area.StaticEntityRemoved -= AreaStaticEntityRemoved;
+            area.EntityLockChanged -= AreaEntityLockChanged;
+
+            foreach (var serverEntity in area.Enumerate())
+            {
+                if (serverEntity != DynamicEntity)
+                {
+                    //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
+                    Connection.SendAsync(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = serverEntity.DynamicEntity.GetLink() });
+                }
+            }
+        }
+
+        void AreaEntityLockChanged(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<EntityLockMessage> e)
+        {
+            Connection.SendAsync(e.Message);
+        }
+        
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
             Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = EntityType.Static, Link = e.Entity.GetLink() });
@@ -91,26 +116,6 @@ namespace Utopia.Server.Structs
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
                 Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
-            }
-        }
-
-        public override void RemoveArea(MapArea area)
-        {
-            area.EntityView -= AreaEntityView;
-            area.EntityMoved -= AreaEntityMoved;
-            area.EntityUse -= AreaEntityUse;
-            area.BlocksChanged -= AreaBlocksChanged;
-            area.EntityEquipment -= AreaEntityEquipment;
-            area.StaticEntityAdded -= AreaStaticEntityAdded;
-            area.StaticEntityRemoved -= AreaStaticEntityRemoved;
-
-            foreach (var serverEntity in area.Enumerate())
-            {
-                if (serverEntity != DynamicEntity)
-                {
-                    //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = serverEntity.DynamicEntity.GetLink()});
-                }
             }
         }
 
@@ -317,12 +322,11 @@ namespace Utopia.Server.Structs
             #endregion
 
             // detect the container
-            SlotContainer<ContainedSlot> container = null;
 
             var position = itemTransferMessage.DestinationContainerSlot;
             var destLink = itemTransferMessage.DestinationContainerEntityLink;
 
-            container = FindContainer(destLink, position, out position);
+            var container = FindContainer(destLink, position, out position);
 
             if (container == null)
                 return false;

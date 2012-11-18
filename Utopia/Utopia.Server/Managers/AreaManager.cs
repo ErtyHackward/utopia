@@ -95,7 +95,16 @@ namespace Utopia.Server.Managers
             _server = server;
             _server.LandscapeManager.ChunkLoaded += LandscapeManagerChunkLoaded;
             _server.LandscapeManager.ChunkUnloaded += LandscapeManagerChunkUnloaded;
+            _server.EntityManager.EntityLockChanged += EntityManagerEntityLockChanged;
             _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
+        }
+
+        void EntityManagerEntityLockChanged(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<Shared.Net.Messages.EntityLockMessage> e)
+        {
+            if (e.Message.EntityLink.IsStatic)
+            {
+                GetArea(new Vector3D(e.Message.EntityLink.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, e.Message.EntityLink.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnEntityLockChanged(e);
+            }
         }
 
         void LandscapeManagerChunkLoaded(object sender, LandscapeManagerChunkEventArgs e)
@@ -178,8 +187,7 @@ namespace Utopia.Server.Managers
         private MapArea GetArea(Vector3D position)
         {
             var pos = new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
-
-            MapArea area;            
+            MapArea area;
             if (_areas.ContainsKey(pos))
             {
                 area = _areas[pos];
@@ -207,8 +215,6 @@ namespace Utopia.Server.Managers
             Interlocked.Increment(ref entityAreaChangesCount);
 #endif
             // we need to tell entity which areas are far away and not need to listen anymore
-
-            // erty: I'm not happy with next code, if you know how make it better, you are welcome!
 
             double tooFarAway = MapArea.AreaSize.X * MapArea.AreaSize.X + MapArea.AreaSize.Y * MapArea.AreaSize.Y;
 

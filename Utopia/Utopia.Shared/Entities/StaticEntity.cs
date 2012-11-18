@@ -46,6 +46,17 @@ namespace Utopia.Shared.Entities
             Rotation = Quaternion.Identity;
         }
 
+        protected void NotifyParentContainerChange()
+        {
+            var container = Container;
+
+            if (container is EntityCollection)
+            {
+                var collection = container as EntityCollection;
+                collection.SetDirty();
+            }
+        }
+
         /// <summary>
         /// Returns link to the entity
         /// </summary>

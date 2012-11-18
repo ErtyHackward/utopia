@@ -1,5 +1,7 @@
-﻿using Utopia.Shared.Entities.Interfaces;
+﻿using System.ComponentModel;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -10,9 +12,48 @@ namespace Utopia.Shared.Entities.Concrete
     {
         SlotContainer<ContainedSlot> _content;
 
+        [Category("Container")]
+        [Description("Model state if the container is opened")]
+        [TypeConverter(typeof(ModelStateSelector))]
+        public string OpenedState { get; set; }
+
+        [Category("Container")]
+        [Description("Model state if the container is closed")]
+        [TypeConverter(typeof(ModelStateSelector))]
+        public string ClosedState { get; set; }
+
         public override bool RequiresLock
         {
             get{ return true; }
+        }
+
+        /// <summary>
+        /// Gets or sets value indicating the entity is locked
+        /// This is runtime parameter that is not stored
+        /// </summary>
+        public override bool Locked
+        {
+            get
+            {
+                return base.Locked;
+            }
+            set
+            {
+                base.Locked = value;
+                if (ModelInstance != null)
+                {
+                    if (base.Locked)
+                    {
+                        if (!string.IsNullOrEmpty(OpenedState))
+                            ModelInstance.SwitchState(OpenedState);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(ClosedState))
+                            ModelInstance.SwitchState(ClosedState);
+                    }
+                }
+            }
         }
 
         public override ushort ClassId
@@ -46,15 +87,28 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
 
+        protected override void OnInstanceChanged()
+        {
+            if (ModelInstance != null)
+            {
+                if (base.Locked)
+                {
+                    if (!string.IsNullOrEmpty(OpenedState))
+                        ModelInstance.SetState(OpenedState);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(ClosedState))
+                        ModelInstance.SetState(ClosedState);
+                }
+            }
+
+            base.OnInstanceChanged();
+        }
+
         void ContentItemsChanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
-            var container = Container;
-            
-            if (container is EntityCollection)
-            {
-                var collection = container as EntityCollection;
-                collection.SetDirty();
-            }
+            NotifyParentContainerChange();
         }
 
         public Container()
@@ -67,6 +121,9 @@ namespace Utopia.Shared.Entities.Concrete
         {
             base.Save(writer);
 
+            writer.Write(OpenedState ?? string.Empty);
+            writer.Write(ClosedState ?? string.Empty);
+
             _content.Save(writer);
         }
 
@@ -74,6 +131,9 @@ namespace Utopia.Shared.Entities.Concrete
         {
             base.Load(reader, factory);
 
+            OpenedState = reader.ReadString();
+            ClosedState = reader.ReadString();
+            
             _content.Load(reader, factory);
         }
 

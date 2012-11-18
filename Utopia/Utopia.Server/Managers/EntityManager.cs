@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -11,6 +12,22 @@ namespace Utopia.Server.Managers
         private readonly Server _server;
         private readonly Dictionary<uint, uint> _lockedDynamicEntities = new Dictionary<uint, uint>();
         private readonly Dictionary<EntityLink, uint> _lockedStaticEntities = new Dictionary<EntityLink, uint>();
+
+        /// <summary>
+        /// Occurs on success lock/unlock of an entity
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityLockMessage>> EntityLockChanged;
+
+        public void OnEntityLockChanged(ProtocolMessageEventArgs<EntityLockMessage> e)
+        {
+            if (e.Message.EntityLink.IsDynamic)
+            {
+                _server.ConnectionManager.Broadcast(e.Message);
+            }
+
+            var handler = EntityLockChanged;
+            if (handler != null) handler(this, e);
+        }
 
         public EntityManager(Server server)
         {
@@ -105,17 +122,15 @@ namespace Utopia.Server.Managers
             }
         }
 
-
-
         private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
         {
             var connection = (ClientConnection) sender;
-            
+            bool success = false;
+
             if (e.Message.Lock)
             {
                 // locking
-
-                if (!e.Message.EntityLink.IsDynamic)
+                if (e.Message.EntityLink.IsStatic)
                 {
                     #region Lock static entity
 
@@ -144,15 +159,15 @@ namespace Utopia.Server.Managers
                         }
 
                         _lockedStaticEntities.Add(e.Message.EntityLink, connection.ServerEntity.DynamicEntity.DynamicId);
-
-                        connection.ServerEntity.LockedEntity = staticEntity;
-                        connection.SendAsync(new EntityLockResultMessage
-                        {
-                            EntityLink = e.Message.EntityLink,
-                            LockResult = LockResult.SuccessLocked
-                        });
-                        
                     }
+                    
+                    connection.ServerEntity.LockedEntity = staticEntity;
+                    connection.SendAsync(new EntityLockResultMessage
+                    {
+                        EntityLink = e.Message.EntityLink,
+                        LockResult = LockResult.SuccessLocked
+                    });
+                    success = true;
                     #endregion
                 }
                 else
@@ -186,6 +201,8 @@ namespace Utopia.Server.Managers
                                                          EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.SuccessLocked
                                                      });
+                            
+                            success = true;
                         }
                         else
                         {
@@ -203,10 +220,10 @@ namespace Utopia.Server.Managers
             }
             else
             {
-                // unlocking
-
-                if (!e.Message.EntityLink.IsDynamic)
+                // unlocking    
+                if (e.Message.EntityLink.IsStatic)
                 {
+                    #region unlock static
                     var staticEntity = e.Message.EntityLink.ResolveStatic(_server.LandscapeManager);
                     
                     if (staticEntity == null)
@@ -220,14 +237,16 @@ namespace Utopia.Server.Managers
                             if (lockOwner == connection.ServerEntity.DynamicEntity.DynamicId)
                             {
                                 _lockedStaticEntities.Remove(e.Message.EntityLink);
+                                connection.ServerEntity.LockedEntity = null;
+                                success = true;
                             }
                         }
                     }
-
-                    connection.ServerEntity.LockedEntity = null;
+                    #endregion
                 }
                 else
                 {
+                    #region unlock dynamic
                     lock (_lockedDynamicEntities)
                     {
                         uint lockOwner;
@@ -237,12 +256,17 @@ namespace Utopia.Server.Managers
                             {
                                 _lockedDynamicEntities.Remove(e.Message.EntityLink.DynamicEntityId);
                                 connection.ServerEntity.LockedEntity = null;
+                                success = true;
                             }
                         }
                     }
+                    #endregion
                 }
             }
 
+            // retranslate success locks
+            if (success)
+                OnEntityLockChanged(e);
         }
     }
 }

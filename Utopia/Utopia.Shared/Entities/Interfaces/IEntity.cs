@@ -74,6 +74,13 @@ namespace Utopia.Shared.Entities.Interfaces
         bool RequiresLock { get; }
 
         /// <summary>
+        /// Gets or sets value indicating the entity is locked
+        /// This is runtime parameter that is not stored
+        /// </summary>
+        [Browsable(false)]
+        bool Locked { get; set; }
+
+        /// <summary>
         /// Returns link to the entity
         /// </summary>
         /// <returns></returns>

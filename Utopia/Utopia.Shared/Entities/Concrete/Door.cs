@@ -69,6 +69,7 @@ namespace Utopia.Shared.Entities.Concrete
                 if (!string.IsNullOrEmpty(newState))
                     ModelInstance.SwitchState(newState);
             }
+            NotifyParentContainerChange();
         }
     }
 }

@@ -97,6 +97,13 @@ namespace Utopia.Shared.Entities
         public virtual bool RequiresLock { get { return false; } }
 
         /// <summary>
+        /// Gets or sets value indicating the entity is locked
+        /// This is runtime parameter that is not stored
+        /// </summary>
+        [Browsable(false)]
+        public virtual bool Locked { get; set; }
+
+        /// <summary>
         /// Loads current entity from a binaryReader
         /// </summary>
         /// <param name="reader"></param>

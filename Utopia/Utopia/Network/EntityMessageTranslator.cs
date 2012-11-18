@@ -1,12 +1,11 @@
 ﻿using System;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using Utopia.Worlds.Chunks;
 
 namespace Utopia.Network
 {
@@ -19,7 +18,7 @@ namespace Utopia.Network
 
         private readonly ServerComponent _server;
         private readonly IDynamicEntityManager _dynamicEntityManager;
-        private readonly IWorldChunks _chunkManager;
+        private readonly ILandscapeManager2D _landscapeManager;
         private IDynamicEntity _playerEntity;
 
         /// <summary>
@@ -56,8 +55,8 @@ namespace Utopia.Network
         /// <param name="server"></param>
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
-        /// <param name="chunkManager"></param>
-        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IWorldChunks chunkManager)
+        /// <param name="landscapeManager"> </param>
+        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, ILandscapeManager2D landscapeManager)
         {
             _server = server;
 
@@ -66,16 +65,31 @@ namespace Utopia.Network
             _server.MessageEntityOut += ConnectionMessageEntityOut;
             _server.MessagePosition += ConnectionMessagePosition;
             _server.MessageDirection += ConnectionMessageDirection;
-            
+            _server.MessageEntityLock += ServerMessageEntityLock;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
-            _dynamicEntityManager = dynamicEntityManager;
-
-            if (chunkManager == null) throw new ArgumentNullException("chunkManager");
-            _chunkManager = chunkManager;
-
+            if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
+
+            _dynamicEntityManager = dynamicEntityManager;
+            _landscapeManager = landscapeManager;
             PlayerEntity = playerEntity;
+        }
+
+        void ServerMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
+        {
+            var link = e.Message.EntityLink;
+
+            if (link.IsStatic)
+            {
+                var entity = e.Message.EntityLink.ResolveStatic(_landscapeManager);
+                entity.Locked = e.Message.Lock;
+            }
+            else
+            {
+                var entity = _dynamicEntityManager.GetEntityById(link.DynamicEntityId);
+                entity.Locked = e.Message.Lock;
+            }
         }
 
         public void Dispose()
@@ -86,6 +100,7 @@ namespace Utopia.Network
             _server.MessageEntityOut -= ConnectionMessageEntityOut;
             _server.MessagePosition -= ConnectionMessagePosition;
             _server.MessageDirection -= ConnectionMessageDirection;
+            _server.MessageEntityLock -= ServerMessageEntityLock;
         }
 
         void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
@@ -120,7 +135,7 @@ namespace Utopia.Network
                     break;
                 case EntityType.Static:
                     var cpos = e.Message.Link.ChunkPosition;
-                    var chunk = _chunkManager.GetChunk(cpos.X * AbstractChunk.ChunkSize.X, cpos.Y * AbstractChunk.ChunkSize.Z);
+                    var chunk = _landscapeManager.GetChunk(cpos);
                     chunk.Entities.RemoveById(e.Message.EntityId);
                     break;
                 case EntityType.Dynamic:
@@ -139,7 +154,7 @@ namespace Utopia.Network
                     break;
                 case EntityType.Static:
                     var cpos = e.Message.Link.ChunkPosition;
-                    var chunk = _chunkManager.GetChunk(cpos.X * AbstractChunk.ChunkSize.X, cpos.Y * AbstractChunk.ChunkSize.Z);
+                    var chunk = _landscapeManager.GetChunk(cpos);
                     
                     // skip the message if the source is our entity (because we already have added the entity)
                     if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
