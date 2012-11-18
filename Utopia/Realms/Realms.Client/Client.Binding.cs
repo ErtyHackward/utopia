@@ -181,8 +181,9 @@ namespace Realms.Client
             //Game Componenents =========================================
             _iocContainer.Bind<ServerComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IClock>().To<WorldClock>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PlayerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ContainerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<Hud>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");

@@ -94,7 +94,7 @@ namespace Utopia.Entities.Managers
                         }
 
                         _lockedEntity = entity;
-                        _entityMessageTranslator.RequestLock(_lockedEntity);
+                        _itemMessageTranslator.RequestLock(_lockedEntity);
                     }
                     else
                     {

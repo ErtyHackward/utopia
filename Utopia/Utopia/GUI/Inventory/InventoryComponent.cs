@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Ninject;
+using S33M3DXEngine;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Network;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using S33M3DXEngine.Main;
@@ -22,6 +26,7 @@ namespace Utopia.GUI.Inventory
     /// </summary>
     public class InventoryComponent : GameComponent
     {
+        private readonly D3DEngine _engine;
         private readonly InputsManager _inputManager;
         private readonly GuiManager _guiManager;
         
@@ -30,6 +35,7 @@ namespace Utopia.GUI.Inventory
         private readonly Hud _hud;
         private readonly ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
+        private InventoryWindow _containerInventoryWindow;
 
         private InventoryCell _dragControl;
         private Point _dragOffset;
@@ -65,20 +71,46 @@ namespace Utopia.GUI.Inventory
                 }
             }
         }
+        
+        /// <summary>
+        /// Gets or sets optional container inventory window that will popup on container operations
+        /// </summary>
+        public InventoryWindow ContainerInventoryWindow
+        {
+            get { return _containerInventoryWindow; }
+            set 
+            {
+                if (_containerInventoryWindow == value)
+                    return;
+
+                if (_containerInventoryWindow != null)
+                {
+                    UnregisterInventoryWindow(_containerInventoryWindow);
+                }
+
+                _containerInventoryWindow = value;
+
+                if (_containerInventoryWindow != null)
+                {
+                    RegisterInventoryWindow(_containerInventoryWindow);
+                }
+            }
+        }
 
         /// <summary>
         /// Occurs when user is requesting inventory or want to close it
         /// </summary>
-        public event EventHandler SwitchInventory;
+        public event EventHandler<InventorySwitchEventArgs> SwitchInventory;
 
-        private void OnSwitchInventory()
+        private void OnSwitchInventory(bool closed)
         {
             var handler = SwitchInventory;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (handler != null) handler(this, new InventorySwitchEventArgs { Closing = closed });
         }
 
 
         public InventoryComponent(
+            D3DEngine engine,
             InputsManager inputManager, 
             GuiManager guiManager, 
             IconFactory iconFactory,
@@ -88,6 +120,7 @@ namespace Utopia.GUI.Inventory
 
             IsDefferedLoadContent = true;
 
+            _engine = engine;
             _inputManager = inputManager;
             _guiManager = guiManager;
             _iconFactory = iconFactory;
@@ -341,23 +374,79 @@ namespace Utopia.GUI.Inventory
             
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory) && _playerInventoryWindow != null)
             {
-                OnSwitchInventory();
+                if (IsActive) 
+                    HideInventory();
+                else
+                    ShowInventory();
             }
         }
 
-        public void ShowInventory()
+        /// <summary>
+        /// Shows player inventory window and optinally container window
+        /// </summary>
+        /// <param name="otherParty"></param>
+        public void ShowInventory(Container otherParty = null)
         {
+            var windows = new List<InventoryWindow>();
+
+
             //_guiManager.Screen.Desktop.Children.Add(_infoWindow);
-            _guiManager.Screen.Desktop.Children.Add(_playerInventoryWindow);
+            var desktop = _guiManager.Screen.Desktop;
+
+            windows.Add(_playerInventoryWindow);
+
+            if (otherParty != null)
+            {
+                if (_containerInventoryWindow == null)
+                    throw new InvalidOperationException("Unable to open container inventory because no inventory windows is associated");
+
+                _containerInventoryWindow.Content = otherParty.Content;
+                windows.Add(_containerInventoryWindow);
+            }
+            
+            // show windows
+            foreach (var inventoryWindow in windows)
+            {
+                desktop.Children.Add(inventoryWindow);
+            }
+            
+            // locate windows on the screen
+            var horisontalFreeSpace = Math.Max((int)_engine.ViewPort.Width - windows.Sum(w => (int)w.Bounds.Size.X.Offset), 0);
+            var horisontalSpace = horisontalFreeSpace / (1 + windows.Count);
+            
+            int horisontalCurrentPos = horisontalSpace;
+            for (int i = 0; i < windows.Count; i++)
+            {
+                var inventoryWindow = windows[i];
+
+                var verticalSpace = Math.Max((int)_engine.ViewPort.Height - inventoryWindow.Bounds.Size.Y.Offset, 0) / 2;
+
+                inventoryWindow.Bounds.Location.X = horisontalCurrentPos;
+                inventoryWindow.Bounds.Location.Y = verticalSpace;
+
+                horisontalCurrentPos += horisontalSpace + (int)inventoryWindow.Bounds.Size.X.Offset;
+            }
+
+
             _itemMessageTranslator.Enabled = true;
             _inputManager.ActionsManager.IsMouseExclusiveMode = true;
             _guiManager.ForceExclusiveMode = true;
             _inputManager.MouseManager.MouseCapture = false;
             IsActive = true;
+
+            OnSwitchInventory(false);
         }
 
         public void HideInventory()
         {
+            if (_containerInventoryWindow != null)
+            {
+                if (_guiManager.Screen.Desktop.Children.Contains(_containerInventoryWindow))
+                {
+                    _guiManager.Screen.Desktop.Children.Remove(_containerInventoryWindow);
+                }
+            }
+
             //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
             _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
             _itemMessageTranslator.Enabled = false;
@@ -367,7 +456,17 @@ namespace Utopia.GUI.Inventory
             _guiManager.ForceExclusiveMode = false;
             _inputManager.MouseManager.MouseCapture = true;
             IsActive = false;
+
+            OnSwitchInventory(true);
         }
 
+    }
+
+    public class InventorySwitchEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Indicates that inventory want to be closed :)
+        /// </summary>
+        public bool Closing { get; set; }
     }
 }

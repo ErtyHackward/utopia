@@ -2,9 +2,11 @@
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Voxel;
+using Utopia.GUI.Inventory;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
@@ -43,30 +45,30 @@ namespace Utopia.Entities.Managers
         private IEntity _lockedEntity;
 
         #region Private variables
-        //Engine System variables
+        // Engine System variables
         private D3DEngine _d3DEngine;
         private CameraManager<ICameraFocused> _cameraManager;
         private WorldFocusManager _worldFocusManager;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
 
-        //Block Picking variables
+        // Block Picking variables
         public TerraCubeWithPosition PickedCube;
         public TerraCubeWithPosition NewCube;
 
-        //Head UnderWater test
+        // Head UnderWater test
         private int _headCubeIndex;
         private TerraCube _headCube;
 
-        //Player Visual characteristics (Not insde the PlayerCharacter object)
+        // Player Visual characteristics (Not insde the PlayerCharacter object)
         private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
 
         private Vector3D _worldPosition;         //World Position
-        //private Vector3D _lookAt;
+        // private Vector3D _lookAt;
         private Vector3 _entityEyeOffset;        //Offset of the camera Placement inside the entity, from entity center point.
 
-        //Mouvement handling variables
+        // Mouvement handling variables
         private VerletSimulator _physicSimu;
         private float _gravityInfluence;
         private double _groundBelowEntity;
@@ -77,16 +79,18 @@ namespace Utopia.Entities.Managers
 
         private VisualWorldParameters _visualWorldParameters;
         private readonly ILandscapeManager2D _landscapeManager;
-        private EntityMessageTranslator _entityMessageTranslator;
+        private ItemMessageTranslator _itemMessageTranslator;
 
-        //Event related variables
+        // Event related variables
         private double _fallMaxHeight;
 
         private TerraCubeWithPosition _groundCube;
         private CubeProfile _groundCubeProgile;
 
-        //Will be used to compute entity rotation movements
+        // Will be used to compute entity rotation movements
         private EntityRotations _entityRotations;
+        private InventoryComponent _inventoryComponent;
+
         #endregion
 
         #region Public variables/properties
@@ -100,7 +104,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public VisualVoxelEntity VisualVoxelEntity { get; set; }
 
-        //Implement the interface Needed when a Camera is "plugged" inside this entity
+        // Implement the interface Needed when a Camera is "plugged" inside this entity
         public virtual Vector3D CameraWorldPosition { get { return _worldPosition + _entityEyeOffset; } }
 
         public virtual Quaternion CameraOrientation { get { return _entityRotations.EyeOrientation; } }
@@ -172,21 +176,31 @@ namespace Utopia.Entities.Managers
         }
 
 
-        //[Inject]
-        public EntityMessageTranslator EntityMessageTranslator
+        [Inject]
+        public ItemMessageTranslator EntityMessageTranslator
         {
-            get { return _entityMessageTranslator; }
+            get { return _itemMessageTranslator; }
             set {
-                if (_entityMessageTranslator != null)
+                if (_itemMessageTranslator != null)
                     throw new InvalidOperationException("Already initialized");
 
-                _entityMessageTranslator = value;
+                _itemMessageTranslator = value;
 
-                if (_entityMessageTranslator != null)
+                if (_itemMessageTranslator != null)
                 {
-                    _entityMessageTranslator.EntityLocked += EntityMessageTranslatorEntityLocked;
-                    _entityMessageTranslator.EntityLockFailed += EntityMessageTranslatorEntityLockFailed;
+                    _itemMessageTranslator.EntityLocked += EntityMessageTranslatorEntityLocked;
+                    _itemMessageTranslator.EntityLockFailed += EntityMessageTranslatorEntityLockFailed;
                 }
+            }
+        }
+
+        [Inject]
+        public InventoryComponent InventoryComponent
+        {
+            get { return _inventoryComponent; }
+            set { 
+                _inventoryComponent = value;
+                _inventoryComponent.SwitchInventory += InventoryComponentSwitchInventory;
             }
         }
 
@@ -224,12 +238,22 @@ namespace Utopia.Entities.Managers
 
             ShowDebugInfo = true;
 
-            //Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
+            // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
             VisualVoxelEntity = new VisualVoxelEntity(player, voxelModelManager);
 
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
+        }
+        
+        void InventoryComponentSwitchInventory(object sender, InventorySwitchEventArgs e)
+        {
+            if (e.Closing && _lockedEntity != null && _lockedEntity is Container)
+            {
+                _itemMessageTranslator.ReleaseLock();
+                _lockedEntity = null;
+                _itemMessageTranslator.Container = null;
+            }
         }
 
         void EntityMessageTranslatorEntityLockFailed(object sender, EventArgs e)
@@ -241,10 +265,13 @@ namespace Utopia.Entities.Managers
         void EntityMessageTranslatorEntityLocked(object sender, EventArgs e)
         {
             // we have the lock, if we can use, we will use
+            // if we can't we still use, no one can stop us!!!
 
-            if (_lockedEntity is IStaticContainer)
+            if (_lockedEntity is Container)
             {
-
+                var container = _lockedEntity as Container;
+                _itemMessageTranslator.Container = container.Content;
+                _inventoryComponent.ShowInventory(container);
             }
             else if (_lockedEntity is IUsableEntity)
             {
@@ -260,10 +287,10 @@ namespace Utopia.Entities.Managers
 
         public override void BeforeDispose()
         {
-            //Clean Up event Delegates
+            // Clean Up event Delegates
             if (OnLanding != null)
             {
-                //Remove all Events associated to this Event (That haven't been unsubscribed !)
+                // Remove all Events associated to this Event (That haven't been unsubscribed !)
                 foreach (var d in OnLanding.GetInvocationList())
                 {
                     OnLanding -= (LandingGround)d;
@@ -275,17 +302,17 @@ namespace Utopia.Entities.Managers
         #region Public Methods
         public override void Initialize()
         {
-            //Compute the Eye position into the entity
+            // Compute the Eye position into the entity
             _entityEyeOffset = new Vector3(0, Player.DefaultSize.Y / 100 * 80, 0);
 
-            //Set Position
-            //Set the entity world position following the position received from server
+            // Set Position
+            // Set the entity world position following the position received from server
             _worldPosition = Player.Position;
 
-            //Compute the initial Player world bounding box
+            // Compute the initial Player world bounding box
             VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
 
-            //Init Velret physic simulator
+            // Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
             _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity; //Check against entities first
             _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;         //Landscape cheking after
@@ -294,7 +321,7 @@ namespace Utopia.Entities.Managers
             _entityRotations.EntityRotationSpeed = Player.RotationSpeed;
             _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition + _entityEyeOffset);
 
-            //Set displacement mode
+            // Set displacement mode
             DisplacementMode = Player.DisplacementMode;
         }
 
@@ -316,17 +343,17 @@ namespace Utopia.Entities.Managers
         {
             if (_landscapeInitiazed == false) return;
 
-            //Input handling
+            // Input handling
             inputHandler();
 
-            //Picking
+            // Picking
             GetSelectedEntity();
 
-            //Refresh player Movement + rotation
+            // Refresh player Movement + rotation
             UpdateEntityMovementAndRotation(ref timeSpend);   
             CheckAfterNewPosition();
 
-            //Refresh the player Bounding box
+            // Refresh the player Bounding box
             VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
             
 
@@ -340,7 +367,7 @@ namespace Utopia.Entities.Managers
 
         #endregion
 
-        //Debug Info interface
+        // Debug Info interface
         public bool ShowDebugInfo { get; set; }
         
         public string GetDebugInfo()

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Utopia.Server.Events;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -234,17 +235,9 @@ namespace Utopia.Server.Structs
             SlotContainer<ContainedSlot> container = null;
 
             var position = itemTransferMessage.SourceContainerSlot;
+            var srcLink = itemTransferMessage.SourceContainerEntityLink;
 
-            if (itemTransferMessage.SourceContainerEntityLink.IsPointsTo(playerCharacter))
-            {
-                if (itemTransferMessage.SourceContainerSlot.X == -1)
-                {
-                    container = playerCharacter.Equipment;
-                    position.X = 0;
-                }
-                else
-                    container = playerCharacter.Inventory;
-            }
+            container = FindContainer(srcLink, position, out position);
             
             if (container == null)
                 return false;
@@ -327,19 +320,9 @@ namespace Utopia.Server.Structs
             SlotContainer<ContainedSlot> container = null;
 
             var position = itemTransferMessage.DestinationContainerSlot;
+            var destLink = itemTransferMessage.DestinationContainerEntityLink;
 
-            if (itemTransferMessage.DestinationContainerEntityLink.IsPointsTo(playerCharacter))
-            {
-                if (position.X == -1)
-                {
-                    container = playerCharacter.Equipment;
-                    position.X = 0;
-                }
-                else
-                {
-                    container = playerCharacter.Inventory;
-                }
-            }
+            container = FindContainer(destLink, position, out position);
 
             if (container == null)
                 return false;
@@ -356,7 +339,7 @@ namespace Utopia.Server.Structs
         /// <returns></returns>
         public SlotContainer<ContainedSlot> FindContainer(EntityLink link, Vector2I position, out Vector2I newPosition)
         {
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
+            var playerCharacter = (PlayerCharacter) DynamicEntity;
 
             newPosition = position;
 
@@ -368,6 +351,11 @@ namespace Utopia.Server.Structs
                     return playerCharacter.Equipment;
                 }
                 return playerCharacter.Inventory;
+            } 
+            if (link.IsStatic)
+            {
+                var entity = link.ResolveStatic(_server.LandscapeManager);
+                return (entity as Container).Content;
             }
             return null;
         }

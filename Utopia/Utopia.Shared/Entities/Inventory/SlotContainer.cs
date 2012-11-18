@@ -322,6 +322,7 @@ namespace Utopia.Shared.Entities.Inventory
                 ValidateId(item);
                 _items[position.X, position.Y] = addSlot;
                 _slotsCount++;
+                item.Container = this;
             }
 
             OnItemPut(new EntityContainerEventArgs<T> { Slot = new T{ Item = item, GridPosition = position, ItemsCount = itemsCount } });

@@ -94,6 +94,7 @@
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
     <Compile Include="Components\GUI\BlackBgComponent.cs" />
+    <Compile Include="Components\GUI\ContainerInventory.cs" />
     <Compile Include="Components\GUI\InGameMenuComponent.cs" />
     <Compile Include="Components\GUI\CreditsComponent.cs" />
     <Compile Include="Components\GUI\LoadingComponent.cs" />

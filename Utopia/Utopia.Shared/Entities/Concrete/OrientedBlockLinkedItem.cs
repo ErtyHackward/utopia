@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -43,7 +40,7 @@ namespace Utopia.Shared.Entities.Concrete
         protected override bool SetNewItemPlace(BlockLinkedItem cubeEntity, IDynamicEntity owner, Vector3I vector)
         {
             var playerRotation = owner.HeadRotation.GetLookAtVector();
-            OrientedBlockLinkedItem entity = (OrientedBlockLinkedItem)cubeEntity;
+            var entity = (OrientedBlockLinkedItem)cubeEntity;
             // locate the entity
             if (vector.Y == 1) // = Put on TOP 
             {
@@ -52,13 +49,13 @@ namespace Utopia.Shared.Entities.Concrete
                                                    owner.EntityState.PickedBlockPosition.Z + 0.5f);
                 
             }
-            else if (vector.Y == -1) //PUT on cube Bottom = (Ceiling)
+            else if (vector.Y == -1) // PUT on cube Bottom = (Ceiling)
             {
                 cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
-                                   owner.EntityState.PickedBlockPosition.Y - 1f,
-                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                                                   owner.EntityState.PickedBlockPosition.Y - 1f,
+                                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
             }
-            else //Put on a side not possible for OrientedCubePlaceabltItems
+            else // Put on a side not possible for OrientedCubePlaceabltItems
             {
                 return false;
             }
@@ -91,7 +88,7 @@ namespace Utopia.Shared.Entities.Concrete
                 }
             }
 
-            //Specific Item Rotation for this instance
+            // Specific Item Rotation for this instance
             cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
 
             return true;

@@ -7,7 +7,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     public class Container : OrientedBlockLinkedItem
     {
-        readonly SlotContainer<ContainedSlot> _content;
+        SlotContainer<ContainedSlot> _content;
 
         public override bool RequiresLock
         {
@@ -41,5 +41,15 @@ namespace Utopia.Shared.Entities.Concrete
             _content.Load(reader, factory);
         }
 
+        public override object Clone()
+        {
+            var obj = base.Clone();
+
+            var cont = obj as Container;
+
+            cont._content = new SlotContainer<ContainedSlot>(cont);
+
+            return obj;
+        }
     }
 }
