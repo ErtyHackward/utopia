@@ -29,8 +29,7 @@ namespace Utopia.Shared.Entities
             var handler = CollectionDirty;
             if (handler != null) handler(this, EventArgs.Empty);
         }
-
-
+        
         /// <summary>
         /// Occurs when new static entity was added
         /// </summary>
@@ -89,6 +88,15 @@ namespace Utopia.Shared.Entities
         public EntityCollection(AbstractChunk chunk)
         {
             Chunk = chunk;
+        }
+
+        /// <summary>
+        /// Informs collection that it was changed
+        /// Should be used when the inside entity parameters changed
+        /// </summary>
+        public void SetDirty()
+        {
+            OnCollectionDirty();
         }
 
         /// <summary>

@@ -157,6 +157,13 @@ namespace Utopia.Shared.Chunks
             }
         }
 
+        protected override void EntitiesCollectionDirty(object sender, EventArgs e)
+        {
+            base.EntitiesCollectionDirty(sender, e);
+
+            OnBlockDataChanged();
+        }
+
         private void OnBlockDataChanged()
         {
             if (InstantCompress)
