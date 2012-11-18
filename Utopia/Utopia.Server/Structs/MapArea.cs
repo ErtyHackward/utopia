@@ -8,6 +8,8 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
@@ -183,6 +185,14 @@ namespace Utopia.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<ProtocolMessageEventArgs<EntityLockMessage>> EntityLockChanged;
+
+        public void OnEntityLockChanged(ProtocolMessageEventArgs<EntityLockMessage> e)
+        {
+            var handler = EntityLockChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         /// <summary>
@@ -205,6 +215,11 @@ namespace Utopia.Server.Structs
 
             Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, topLeftPoint.X + AreaSize.X,
                                       topLeftPoint.Y + AreaSize.Y);
+        }
+
+        public void EntityLock(EntityLockMessage msg)
+        {
+            OnEntityLockChanged(new ProtocolMessageEventArgs<EntityLockMessage> { Message = msg });
         }
 
         public void AddEntity(ServerDynamicEntity entity)
@@ -299,8 +314,6 @@ namespace Utopia.Server.Structs
         {
             return _entities.ContainsKey((int)entityId);
         }
-
-
     }
 
     public class ServerDynamicEntityEventArgs : EventArgs

@@ -112,6 +112,10 @@ namespace Utopia.Network
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityImpulseMessage>> MessageEntityImpulse;
         /// <summary>
+        /// Occurs when EntityLockMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityLockMessage>> MessageEntityLock;
+        /// <summary>
         /// Occurs when EntityLockResultMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityLockResultMessage>> MessageEntityLockResult;
@@ -310,6 +314,11 @@ namespace Utopia.Network
             if (MessageEntityImpulse != null) MessageEntityImpulse(this, new ProtocolMessageEventArgs<EntityImpulseMessage> { Message = ea });
         }
 
+        protected void OnMessageEntityLockResult(EntityLockMessage ea)
+        {
+            if (MessageEntityLock != null) MessageEntityLock(this, new ProtocolMessageEventArgs<EntityLockMessage> { Message = ea });
+        }
+
         protected void OnMessageEntityLockResult(EntityLockResultMessage ea)
         {
             if (MessageEntityLockResult != null) MessageEntityLockResult(this, new ProtocolMessageEventArgs<EntityLockResultMessage> { Message = ea });
@@ -399,6 +408,9 @@ namespace Utopia.Network
                     break;
                 case MessageTypes.EntityImpulse:
                     OnMessageEntityImpulse((EntityImpulseMessage)msg);
+                    break;
+                case MessageTypes.EntityLock:
+                    OnMessageEntityLockResult((EntityLockMessage)msg);
                     break;
                 case MessageTypes.EntityLockResult:
                     OnMessageEntityLockResult((EntityLockResultMessage)msg);

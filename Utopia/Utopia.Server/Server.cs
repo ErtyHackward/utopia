@@ -135,7 +135,9 @@ namespace Utopia.Server
             Scheduler = new ScheduleManager(Clock);
 
             LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, EntityFactory, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval, settings.ChunksCountLimit, wp);
-            
+
+            EntityManager = new EntityManager(this);
+
             AreaManager = new AreaManager(this);
 
             DynamicIdHelper.SetMaxExistsId(EntityStorage.GetMaximumId());
@@ -148,7 +150,7 @@ namespace Utopia.Server
 
             ChatManager = new ChatManager(this);
 
-            EntityManager = new EntityManager(this);
+            
             
             LoginManager = new LoginManager(this, EntityFactory);
         }
