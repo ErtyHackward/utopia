@@ -1,4 +1,5 @@
-﻿using Utopia.Shared.Entities.Inventory;
+﻿using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -19,12 +20,47 @@ namespace Utopia.Shared.Entities.Concrete
             get { return EntityClassId.Container; }
         }
 
-        public SlotContainer<ContainedSlot> Content { get { return _content; } }
+        public SlotContainer<ContainedSlot> Content 
+        { 
+            get { return _content; }
+            set {
+
+                if (_content == value)
+                    return;
+
+                if (_content != null)
+                {
+                    _content.ItemTaken -= ContentItemsChanged;
+                    _content.ItemPut -= ContentItemsChanged;
+                    _content.ItemExchanged -= ContentItemsChanged;
+                }
+                
+                _content = value;
+
+                if (_content != null)
+                {
+                    _content.ItemTaken += ContentItemsChanged;
+                    _content.ItemPut += ContentItemsChanged;
+                    _content.ItemExchanged += ContentItemsChanged;
+                }
+            }
+        }
+
+        void ContentItemsChanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            var container = Container;
+            
+            if (container is EntityCollection)
+            {
+                var collection = container as EntityCollection;
+                collection.SetDirty();
+            }
+        }
 
         public Container()
         {
-            _content = new SlotContainer<ContainedSlot>(this);
-            MountPoint = Interfaces.BlockFace.Top;
+            Content = new SlotContainer<ContainedSlot>(this);
+            MountPoint = BlockFace.Top;
         }
 
         public override void Save(System.IO.BinaryWriter writer)
@@ -47,7 +83,8 @@ namespace Utopia.Shared.Entities.Concrete
 
             var cont = obj as Container;
 
-            cont._content = new SlotContainer<ContainedSlot>(cont);
+            if (cont != null) 
+                cont.Content = new SlotContainer<ContainedSlot>(cont);
 
             return obj;
         }
