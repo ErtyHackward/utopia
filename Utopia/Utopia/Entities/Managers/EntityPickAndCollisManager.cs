@@ -241,9 +241,12 @@ namespace Utopia.Entities.Managers
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
+                //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
+
                 newPositionWithColliding.X = previousPosition.X;
                 OnEntityTop = false;
                 _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
+
             }
 
 
@@ -251,6 +254,8 @@ namespace Utopia.Entities.Managers
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
+                //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
+
                 newPositionWithColliding.Z = previousPosition.Z;
                 OnEntityTop = false;
                 _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
@@ -260,6 +265,8 @@ namespace Utopia.Entities.Managers
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
+                //logger.Debug("ModelCollisionDetection Y detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Y, previousPosition.Y);
+
                 newPositionWithColliding.Y = previousPosition.Y;
                 OnEntityTop = true;
             }
