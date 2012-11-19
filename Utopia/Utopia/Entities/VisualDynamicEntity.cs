@@ -166,10 +166,6 @@ namespace Utopia.Entities
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
             Vector3D.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
-            //Refresh the VisualEntity World matrix based on the latest interpolated values
-            VisualVoxelEntity.World = Matrix.Translation(WorldPosition.ValueInterp.AsVector3()); 
-            //===================================================================================================================================
-
             if (ModelInstance != null)
             {
                 ModelInstance.HeadRotation = LookAtDirection.ValueInterp;

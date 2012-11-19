@@ -410,20 +410,28 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        /// <summary>
+        /// New Static Entity added to the chunk
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Entities_EntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
         {
             IVoxelEntity voxelEntity = e.Entity as IVoxelEntity;
 
-            if (voxelEntity == null) return; //My entity is not a Voxel Entity => Not possible to render it so !!!
+            if (voxelEntity == null) return; //My static entity is not a Voxel Entity => Not possible to render it so !!!
 
             //Create the Voxel Model Instance for the Item
             VisualVoxelModel model= null;
-            if (!string.IsNullOrEmpty(voxelEntity.ModelName))
-                model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+            if (!string.IsNullOrEmpty(voxelEntity.ModelName))  model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+
             if (model != null && voxelEntity.ModelInstance == null) //The model blueprint is existing, and I need to create an instance of it !
             {
                 voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
                 var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+
+                //Get default world translation
+                Matrix instanceTranslation = Matrix.Translation(voxelEntity.Position.AsVector3());
 
                 //Apply special rotation to the creation instance
                 Matrix instanceRotation = Matrix.Identity;
@@ -442,7 +450,7 @@ namespace Utopia.Worlds.Chunks
 
                 //Create the World transformation matrix for the instance.
                 //We take the Model instance world matrix where we add a Rotation and scaling proper to the instance
-                visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceRotation * instanceScaling * visualVoxelEntity.World;
+                visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceRotation * instanceScaling * instanceTranslation;
 
                 if (visualVoxelEntity.Entity is BlockLinkedItem)
                 {

@@ -14,7 +14,6 @@ namespace Utopia.Entities.Voxel
         private readonly IVoxelEntity _voxelEntity;
         private readonly VoxelModelManager _manager;
         private VisualVoxelModel _visualVoxelModel;
-        public Matrix World;
 
         /// <summary>
         /// Gets wrapped VoxelEntity
@@ -41,7 +40,6 @@ namespace Utopia.Entities.Voxel
             _manager = manager;
 
             //Create the world position of the Voxel Entity, based on its initial position
-            World = Matrix.Translation(wrapped.Position.AsVector3());
 
             if (wrapped.ModelInstance == null)
                 return;

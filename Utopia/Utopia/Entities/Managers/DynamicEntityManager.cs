@@ -159,10 +159,10 @@ namespace Utopia.Entities.Managers
                 //Check if the model receive is already existing. (By model name)
                 if (modelAndInstances.Key == e.Model.Name)
                 {
-                    var model = _voxelModelManager.GetModel(e.Model.Name);
+                    var model = _voxelModelManager.GetModel(e.Model.Name); //I'm SURE the model exist ! (It's the reason of this)
                     modelAndInstances.Value.VisualModel = model;
                     model.BuildMesh();
-                    var keys = modelAndInstances.Value.Instances.Select(p => p.Key).ToList();
+                    var keys = modelAndInstances.Value.Instances.Select(p => p.Key).ToList(); //Get all model instances where the instances where missing
 
                     foreach (var id in keys)
                     {
@@ -255,7 +255,6 @@ namespace Utopia.Entities.Managers
             _voxelModelEffect.Apply(context);
 
 
-
             //For each existing model
             foreach (var modelAndInstances in _models)
             {
@@ -263,17 +262,17 @@ namespace Utopia.Entities.Managers
                 foreach (var pairs in modelAndInstances.Value.Instances.Where(x => x.Value != null))
                 {
                     var entityToRender = _dynamicEntitiesDico[pairs.Key];
-
+                    var modelInstance = pairs.Value;
                     //Draw only the entities that are in Client view range
                     //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
                     if(MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
                     {
-                        pairs.Value.World = Matrix.Scaling(1f / 16) * entityToRender.VisualVoxelEntity.World;
-                        pairs.Value.LightColor = entityToRender.ModelLight.ValueInterp;
+                        modelInstance.World = Matrix.Scaling(1f / 16) *  Matrix.Translation(entityToRender.WorldPosition.ValueInterp.AsVector3());
+                        modelInstance.LightColor = entityToRender.ModelLight.ValueInterp;
                     }
                     else
                     {
-                        pairs.Value.World = Matrix.Zero;
+                        modelInstance.World = Matrix.Zero;
                     }
                 }
 
@@ -294,6 +293,7 @@ namespace Utopia.Entities.Managers
                 var charEntity = pair.Value.DynamicEntity as CharacterEntity;
                 if (charEntity != null)
                 {
+                    //Take the Tool entity equiped in character Right hand
                     var voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
                     if (voxelItem != null && !string.IsNullOrEmpty(voxelItem.ModelName))
                     {
@@ -302,9 +302,7 @@ namespace Utopia.Entities.Managers
                         if (!_toolsModels.TryGetValue(voxelItem.ModelName, out mPair))
                         {
                             var model = _voxelModelManager.GetModel(voxelItem.ModelName, false);
-                            mPair = new KeyValuePair<VisualVoxelModel, VoxelModelInstance>(model,
-                                                                                           model.VoxelModel.
-                                                                                               CreateInstance());
+                            mPair = new KeyValuePair<VisualVoxelModel, VoxelModelInstance>(model, model.VoxelModel.CreateInstance());
                             mPair.Value.SetState(model.VoxelModel.GetMainState());
                             _toolsModels.Add(voxelItem.ModelName, mPair);
                         }
