@@ -19,6 +19,7 @@ namespace Utopia.Entities
         public BoundingBox LocalBBox = new BoundingBox();
         public ByteColor BlockLight;
         public IEntity Entity;
+        public bool SkipOneCollisionTest;
 
         public VisualEntity(Vector3 entitySize, IEntity entity)
         {
