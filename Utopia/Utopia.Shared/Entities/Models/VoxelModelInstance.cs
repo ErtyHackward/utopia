@@ -13,6 +13,7 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModelInstance : IBinaryStorable
     {
+        #region Private Variables
         // cached intermediate state of the model
         private VoxelModelState _internalState;
 
@@ -29,9 +30,9 @@ namespace Utopia.Shared.Entities.Models
         private Quaternion _headRotation;
         private bool _stopping;
         private string _switchStateTarget;
-        
-        #region Properties
+        #endregion
 
+        #region Public Properties
         /// <summary>
         /// Instance light color
         /// </summary>
@@ -54,7 +55,7 @@ namespace Utopia.Shared.Entities.Models
         {
             get { return VoxelModel == null ? _modelHash : VoxelModel.Hash; }
         }
-        
+
         /// <summary>
         /// Gets or sets model instance rotation
         /// </summary>
@@ -81,7 +82,7 @@ namespace Utopia.Shared.Entities.Models
             get { return _animationIndex; }
             set { _animationIndex = value; }
         }
-        
+
         /// <summary>
         /// Current animation step
         /// </summary>
@@ -90,7 +91,7 @@ namespace Utopia.Shared.Entities.Models
             get { return _animationStepIndexTo; }
             set { _animationStepIndexTo = value; }
         }
-        
+
         /// <summary>
         /// Time passed from start of current animation step
         /// </summary>
@@ -99,7 +100,7 @@ namespace Utopia.Shared.Entities.Models
             get { return _elapsed; }
             set { _elapsed = value; }
         }
-        
+
         /// <summary>
         /// Indicates if current animation should start again after the end
         /// </summary>
@@ -128,33 +129,19 @@ namespace Utopia.Shared.Entities.Models
             }
         }
         #endregion
-        
+
         public VoxelModelInstance(VoxelModel model = null)
         {
             _rotation = Quaternion.Identity;
             _headRotation = Quaternion.Identity;
+            World = Matrix.Identity;
+
             _animationIndex = -1;
             LightColor = new Color3(1, 1, 1);
-            World = Matrix.Identity;
             SetParentModel(model);
         }
 
-        /// <summary>
-        /// This method should be used only on deserialization step to restore parent model relationship
-        /// </summary>
-        /// <param name="model"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public void SetParentModel(VoxelModel model)
-        {
-            if (model == null)
-                throw new ArgumentNullException("model");
-
-            VoxelModel = model;
-
-            // init the cached state, cached state should have the same structure as parent model states
-            SetState(model.GetMainState());
-        }
-
+        #region Public Methods
         /// <summary>
         /// Call this method when the parent model has changed parts count (Editor use case)
         /// </summary>
@@ -190,7 +177,7 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         /// <param name="newStateName"></param>
         public void SwitchState(string newStateName)
-        {            
+        {
             byte indexEnd = 0;
 
             for (byte i = 0; i < VoxelModel.States.Count; i++)
@@ -205,7 +192,7 @@ namespace Utopia.Shared.Entities.Models
 
             foreach (var anim in VoxelModel.Animations)
             {
-                if (anim.Steps[anim.Steps.Count-1].StateIndex == indexEnd)
+                if (anim.Steps[anim.Steps.Count - 1].StateIndex == indexEnd)
                 {
                     animName = anim.Name;
                 }
@@ -221,7 +208,7 @@ namespace Utopia.Shared.Entities.Models
                 SetState(newStateName);
             }
         }
-        
+
         /// <summary>
         /// Returns world matrix to draw the tool
         /// </summary>
@@ -342,7 +329,7 @@ namespace Utopia.Shared.Entities.Models
                                     AnimationIndex = -1;
                                     OnStop();
                                 }
-                                else 
+                                else
                                     // return to the main state
                                     _animationStepIndexTo = -1;
                             }
@@ -380,16 +367,6 @@ namespace Utopia.Shared.Entities.Models
                 }
             }
         }
-
-        private void OnStop()
-        {
-            if (!string.IsNullOrEmpty(_switchStateTarget))
-            {
-                SetState(_switchStateTarget);
-                _switchStateTarget = string.Empty;
-            }
-        }
-
         /// <summary>
         /// Stops current animation smoothly
         /// </summary>
@@ -414,7 +391,7 @@ namespace Utopia.Shared.Entities.Models
             writer.Write(_elapsed);
             writer.Write((byte)_animationIndex);
             writer.Write((byte)_animationStepIndexFrom);
-            writer.Write((byte)_animationStepIndexTo);   
+            writer.Write((byte)_animationStepIndexTo);
         }
 
         /// <summary>
@@ -431,6 +408,36 @@ namespace Utopia.Shared.Entities.Models
             _animationStepIndexFrom = reader.ReadByte();
             _animationStepIndexTo = reader.ReadByte();
         }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// This method should be used only on deserialization step to restore parent model relationship
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        private void SetParentModel(VoxelModel model)
+        {
+            if (model == null)
+                throw new ArgumentNullException("model");
+
+            VoxelModel = model;
+
+            // init the cached state, cached state should have the same structure as parent model states
+            SetState(model.GetMainState());
+        }
+
+        private void OnStop()
+        {
+            if (!string.IsNullOrEmpty(_switchStateTarget))
+            {
+                SetState(_switchStateTarget);
+                _switchStateTarget = string.Empty;
+            }
+        }
+        #endregion
+
+        
     }
 }
 
