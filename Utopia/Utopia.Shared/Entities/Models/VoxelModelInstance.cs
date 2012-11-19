@@ -225,7 +225,7 @@ namespace Utopia.Shared.Entities.Models
             // palmTransform value is stored only in the first state (wich is returned by GetArm())
             // so we can't use current state palmTrasform value
 
-            return arm.PalmTransform.Value * State.PartsStates[armIndex].GetTransformation() * Matrix.RotationQuaternion(Quaternion.Invert(Rotation)) * World;
+            return arm.PalmTransform.Value * State.PartsStates[armIndex].GetTransformation() * Matrix.RotationQuaternion(Rotation) * World;
         }
 
         /// <summary>

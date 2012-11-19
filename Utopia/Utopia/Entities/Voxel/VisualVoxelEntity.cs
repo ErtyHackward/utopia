@@ -54,7 +54,8 @@ namespace Utopia.Entities.Voxel
                 _visualVoxelModel = model;
                 if (wrapped.DefaultSize == Vector3.Zero) //No size define, use the default one
                 {
-                    BoundingBox voxelModelBB = _visualVoxelModel.VoxelModel.States[0].BoundingBox;
+
+                    BoundingBox voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
 
                     if (voxelModelBB != null)
                     {
