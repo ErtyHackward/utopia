@@ -438,7 +438,7 @@ namespace Utopia.Worlds.Chunks
                 }
 
                 //Apply special scaling to created entity (By default all blue print are 16 times too big.
-                Matrix instanceScaling = new Matrix(1.0f / 16.0f);
+                Matrix instanceScaling = Matrix.Scaling(1.0f / 16.0f);
 
                 //Create the World transformation matrix for the instance.
                 //We take the Model instance world matrix where we add a Rotation and scaling proper to the instance
