@@ -225,9 +225,13 @@ namespace Utopia.Entities.Voxel
             // 4. apply the translation again.
 
             result = partTransform *
+                     Matrix.RotationQuaternion(instance.Rotation) *
                      Matrix.Translation(-move) *
+                     Matrix.RotationQuaternion(Quaternion.Invert(instance.Rotation)) *
                      Matrix.RotationQuaternion(instance.HeadRotation) *
                      Matrix.Translation(move);
+
+            
         }
 
         private void DrawGroup(byte activeFrame, int partIndex, IList<VoxelModelInstance> instances)
