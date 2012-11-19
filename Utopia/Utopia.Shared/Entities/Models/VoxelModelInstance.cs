@@ -39,7 +39,7 @@ namespace Utopia.Shared.Entities.Models
         public Color3 LightColor { get; set; }
 
         /// <summary>
-        /// Instance world position
+        /// Instance world position (with scaling incorporated)
         /// </summary>
         public Matrix World { get; set; }
 

@@ -195,16 +195,12 @@ namespace Utopia.Entities.Voxel
                 if (_model.Parts[i].IsHead)
                 {
                     var bb = _visualParts[i].BoundingBoxes[voxelModelPartState.ActiveFrame];
-                    
                     RotateHead(voxelModelPartState, instance, bb, out effect.CBPerPart.Values.Transform);
-
                     effect.CBPerPart.Values.Transform = Matrix.Transpose(effect.CBPerPart.Values.Transform);
                 }
                 else
                 {
-                    var rotation = instance.Rotation;
-                    rotation.Invert();
-                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation));
+                    effect.CBPerPart.Values.Transform = Matrix.Transpose(voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation));
                 }
 
                 effect.CBPerPart.IsDirty = true;
@@ -218,29 +214,19 @@ namespace Utopia.Entities.Voxel
         {
             var move = (bb.Maximum - bb.Minimum) / 2;
 
-            var instanceRotation = instance.Rotation;
-            instanceRotation.Invert();
-            
-            var rotation = instance.HeadRotation;
-            rotation.Invert();
-
             var partTransform = partState.GetTransformation();
             
             // get the point of the head center
-            move = Vector3.TransformCoordinate(move, partTransform * Matrix.RotationQuaternion(instanceRotation));
+            move = Vector3.TransformCoordinate(move, partTransform);
             
             // 1. apply model part transform
-            // 2. then rotate head as any other part
-            // 3. move to the head center
-            // 4. decrease model rotation to rotate head to Identity state
-            // 5. rotate head with head rotation
-            // 6. return to the 0,0,0 point
+            // 2. move to the head center
+            // 3. rotate the head
+            // 4. apply the translation again.
 
-            result = partTransform * 
-                     Matrix.RotationQuaternion(instanceRotation) * 
-                     Matrix.Translation(-move) * 
-                     Matrix.RotationQuaternion(instance.Rotation) * 
-                     Matrix.RotationQuaternion(rotation) * 
+            result = partTransform *
+                     Matrix.Translation(-move) *
+                     Matrix.RotationQuaternion(instance.HeadRotation) *
                      Matrix.Translation(move);
         }
 
@@ -263,14 +249,11 @@ namespace Utopia.Entities.Voxel
                 if (_model.Parts[partIndex].IsHead)
                 {
                     var bb = _visualParts[partIndex].BoundingBoxes[activeFrame];
-                    
                     RotateHead(voxelModelPartState, instance, bb, out instanceData[instanceIndex].Transform);
                 }
                 else
                 {
-                    var rotation = instance.Rotation;
-                    rotation.Invert();
-                    instanceData[instanceIndex].Transform = voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(rotation);
+                    instanceData[instanceIndex].Transform = voxelModelPartState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation);
                 }
 
                 instanceData[instanceIndex].Transform = Matrix.Transpose(instanceData[instanceIndex].Transform * instance.World);
