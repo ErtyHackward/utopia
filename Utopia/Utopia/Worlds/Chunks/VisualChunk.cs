@@ -31,6 +31,8 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Resources.VertexFormats;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Concrete.Interface;
+using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -418,31 +420,29 @@ namespace Utopia.Worlds.Chunks
             VisualVoxelModel model= null;
             if (!string.IsNullOrEmpty(voxelEntity.ModelName))
                 model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
-            if (model != null && voxelEntity.ModelInstance == null)
+            if (model != null && voxelEntity.ModelInstance == null) //The model blueprint is existing, and I need to create an instance of it !
             {
-                voxelEntity.ModelInstance = new Shared.Entities.Models.VoxelModelInstance(model.VoxelModel);
+                voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
                 var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
 
-                //By default the entity is 1/16 if its world size.
-                Matrix rotation = Matrix.Identity;
-                if (voxelEntity is Plant)
+                //Apply special rotation to the creation instance
+                Matrix instanceRotation = Matrix.Identity;
+                if (voxelEntity is IRndYRotation && ((IRndYRotation)voxelEntity).RndRotationAroundY)
                 {
-                    if ((voxelEntity as Plant).RndRotationAroundY)
-                    {
-                        Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out rotation);
-                    }
+                    Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out instanceRotation);
                 }
                 else if (voxelEntity is IItem)
                 {
                     var item = voxelEntity as IItem;
-                    rotation = Matrix.RotationQuaternion(item.Rotation);
-                }
-                else
-                {
-                    //rotation = Matrix.Identity;
+                    instanceRotation = Matrix.RotationQuaternion(item.Rotation);
                 }
 
-                visualVoxelEntity.VoxelEntity.ModelInstance.World = rotation * Matrix.Scaling(1f / 16) * visualVoxelEntity.World;
+                //Apply special scaling to created entity (By default all blue print are 16 times too big.
+                Matrix instanceScaling = new Matrix(1.0f / 16.0f);
+
+                //Create the World transformation matrix for the instance.
+                //We take the Model instance world matrix where we add a Rotation and scaling proper to the instance
+                visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceRotation * instanceScaling * visualVoxelEntity.World;
 
                 if (visualVoxelEntity.Entity is BlockLinkedItem)
                 {

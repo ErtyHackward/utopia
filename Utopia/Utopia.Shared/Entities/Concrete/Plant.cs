@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.IO;
+using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
@@ -7,7 +8,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Represents a top block linked item that can be picked and non-player collidable
     /// </summary>
-    public class Plant : BlockLinkedItem
+    public class Plant : BlockLinkedItem, IRndYRotation
     {
         [Description("Create a randome Rotation around the Y axis of the item")]
         public bool RndRotationAroundY { get; set; }
