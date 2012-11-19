@@ -61,12 +61,14 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            //Do interpolation on static entities from chunk (Case of when the entity does have an animation
+            //Do interpolation on static entities from chunk (Case of when the entity does have an animation)
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 var chunk = SortedChunks[chunkIndice];
                 if (chunk.isFrustumCulled == false && chunk.isExistingMesh4Drawing)
                 {
+                    if (chunk.DistanceFromPlayer > StaticEntityViewRange) continue;
+
                     foreach (var pair in chunk.VisualVoxelEntities)
                     {
                         foreach (var staticEntity in pair.Value)
