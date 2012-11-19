@@ -131,6 +131,7 @@
     <Compile Include="Entities\Concrete\Interface\IBlockLocationRoot.cs" />
     <Compile Include="Entities\Concrete\Interface\IOrientedItem.cs" />
     <Compile Include="Entities\Concrete\Interface\IOrientedSlope.cs" />
+    <Compile Include="Entities\Concrete\Interface\IRndYRotation.cs" />
     <Compile Include="Entities\Concrete\Interface\OrientedItem.cs" />
     <Compile Include="Entities\Concrete\OrientedBlockItem.cs" />
     <Compile Include="Entities\Concrete\OrientedBlockLinkedItem.cs" />
