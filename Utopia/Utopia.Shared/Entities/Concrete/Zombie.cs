@@ -17,7 +17,7 @@ namespace Utopia.Shared.Entities.Concrete
         public Zombie()
         {
             Type = EntityType.Dynamic;
-            ModelName = "Rabbit";
+            ModelName = "Girl";
         }
 
     }

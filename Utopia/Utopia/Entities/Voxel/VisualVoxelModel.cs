@@ -229,6 +229,9 @@ namespace Utopia.Entities.Voxel
 
         private void DrawGroup(byte activeFrame, int partIndex, IList<VoxelModelInstance> instances)
         {
+            if (activeFrame == byte.MaxValue)
+                return;
+
             // create instance data block that will be passed to the shader
             //var instanceData = instances.Select(ins => new VoxelInstanceData { Transform = ins.World, LightColor = ins.LightColor }).ToArray();
             VoxelInstanceData[] instanceData = new VoxelInstanceData[instances.Count];
