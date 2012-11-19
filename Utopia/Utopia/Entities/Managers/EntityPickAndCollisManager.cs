@@ -287,6 +287,13 @@ namespace Utopia.Entities.Managers
                 physicSimu.OnGround = true;
                 physicSimu.AllowJumping = true;
             }
+
+            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            {
+                //I'm "Blocked" by this entity !
+                //Testing, inject Force to unblock myself !
+                physicSimu.Impulses.Add(new Impulse(){ ForceApplied = new Vector3(5,2,5) });
+            }
         }
 
         private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
