@@ -215,14 +215,9 @@ namespace Utopia.Entities.Voxel
             var move = (bb.Maximum - bb.Minimum) / 2;
 
             var partTransform = partState.GetTransformation();
-            
+
             // get the point of the head center
-            move = Vector3.TransformCoordinate(move, partTransform);
-            
-            // 1. apply model part transform
-            // 2. move to the head center
-            // 3. rotate the head
-            // 4. apply the translation again.
+            move = Vector3.TransformCoordinate(move, partTransform * Matrix.RotationQuaternion(instance.Rotation));
 
             result = partTransform *
                      Matrix.RotationQuaternion(instance.Rotation) *
@@ -230,8 +225,6 @@ namespace Utopia.Entities.Voxel
                      Matrix.RotationQuaternion(Quaternion.Invert(instance.Rotation)) *
                      Matrix.RotationQuaternion(instance.HeadRotation) *
                      Matrix.Translation(move);
-
-            
         }
 
         private void DrawGroup(byte activeFrame, int partIndex, IList<VoxelModelInstance> instances)
