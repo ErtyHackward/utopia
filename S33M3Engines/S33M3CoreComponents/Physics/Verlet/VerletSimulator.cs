@@ -39,6 +39,7 @@ namespace S33M3CoreComponents.Physics.Verlet
 
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
+        public float AirFriction { get; set; }
 
         public Vector3D CurPosition { get { return _curPosition; } set { _curPosition = value; } }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
@@ -70,7 +71,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             if (Y) _prevPosition.Y = _curPosition.Y;
             if (Z) _prevPosition.Z = _curPosition.Z;
 
-            _impulses.Clear();
+            //_impulses.Clear();
         }
 
         public void Simulate(ref GameTime dt, out Vector3D newPosition)
@@ -118,12 +119,16 @@ namespace S33M3CoreComponents.Physics.Verlet
 
         private void Verlet(ref GameTime dt, out Vector3D newPosition)
         {
-            if (Friction > 0)
+            if (Friction > 0.0f)
             {
-                Vector3D currentlyAppliedForce = (_curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD)) - _curPosition;
                 //Create a viscosity force against what's in place !
-
                 _curPosition += (_prevPosition - _curPosition) * Friction;
+            }
+
+            if (AirFriction > 0.0f)
+            {
+                Vector3D SideForces = new Vector3D(_prevPosition.X - _curPosition.X, 0, _prevPosition.Z - _curPosition.Z);
+                _curPosition += SideForces * AirFriction;
             }
 
             newPosition = _curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD);

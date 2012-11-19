@@ -41,6 +41,7 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Walking:
                     if (_physicSimu.OnGround)
                     {
+                        _physicSimu.AirFriction = 0.0f;
                         if (_stopMovedAction == false)
                         {
                             _physicSimu.Friction = _groundCubeProgile.Friction; //0.25f;
@@ -53,7 +54,8 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-                        _physicSimu.Friction = 0f;
+                        _physicSimu.Friction = 0.0f;
+                        _physicSimu.AirFriction = 0.08f;
                     }
                     PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
                     break;
