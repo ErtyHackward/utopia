@@ -434,15 +434,15 @@ namespace Utopia.Worlds.Chunks
                 Matrix instanceTranslation = Matrix.Translation(voxelEntity.Position.AsVector3());
 
                 //Apply special rotation to the creation instance
-                Matrix instanceRotation = Matrix.Identity;
+                Quaternion instanceRotation = Quaternion.Identity;
                 if (voxelEntity is IRndYRotation && ((IRndYRotation)voxelEntity).RndRotationAroundY)
                 {
-                    Matrix.RotationY((float)(_rnd.NextDouble() * MathHelper.TwoPi), out instanceRotation);
+                    instanceRotation = Quaternion.RotationAxis(Vector3.UnitY, (float)(_rnd.NextDouble() * MathHelper.TwoPi));
                 }
                 else if (voxelEntity is IItem)
                 {
                     var item = voxelEntity as IItem;
-                    instanceRotation = Matrix.RotationQuaternion(item.Rotation);
+                    instanceRotation = item.Rotation;                
                 }
 
                 //Apply special scaling to created entity (By default all blue print are 16 times too big.
@@ -450,7 +450,8 @@ namespace Utopia.Worlds.Chunks
 
                 //Create the World transformation matrix for the instance.
                 //We take the Model instance world matrix where we add a Rotation and scaling proper to the instance
-                visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceRotation * instanceScaling * instanceTranslation;
+                visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceScaling * instanceTranslation;
+                visualVoxelEntity.VoxelEntity.ModelInstance.Rotation = instanceRotation;
 
                 if (visualVoxelEntity.Entity is BlockLinkedItem)
                 {

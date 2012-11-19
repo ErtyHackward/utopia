@@ -310,7 +310,7 @@ namespace Utopia.Entities.Managers
                 //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
                 var activeframe = part.Frames[partState.ActiveFrame]; //one active at a time
 
-                Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(Quaternion.Invert(instance.Rotation)) * visualVoxelEntity.VoxelEntity.ModelInstance.World;
+                Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation) * instance.World;
                 invertedEntityWorldMatrix.Invert();
 
                 BoundingBox PlayerBBInEntitySpace = playerBoundingBox2Evaluate.Transform(invertedEntityWorldMatrix);

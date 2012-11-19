@@ -168,8 +168,8 @@ namespace Utopia.Entities
 
             if (ModelInstance != null)
             {
-                ModelInstance.HeadRotation = LookAtDirection.ValueInterp;
-                ModelInstance.Rotation = DynamicEntity.BodyRotation;
+                ModelInstance.HeadRotation = Quaternion.Invert(LookAtDirection.ValueInterp);
+                ModelInstance.Rotation = Quaternion.Invert(DynamicEntity.BodyRotation);
                 ModelInstance.Interpolation(timePassed);
             }
         }
