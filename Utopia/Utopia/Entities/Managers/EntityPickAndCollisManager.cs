@@ -242,6 +242,12 @@ namespace Utopia.Entities.Managers
 
         private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
+            if (entityTesting.SkipOneCollisionTest)
+            {
+                entityTesting.SkipOneCollisionTest = false;
+                return;
+            }
+
             Vector3D newPositionWithColliding = previousPosition;
             OnEntityTop = false;
 
@@ -256,7 +262,6 @@ namespace Utopia.Entities.Managers
                 _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
 
             }
-
 
             newPositionWithColliding.Z = newPosition2Evaluate.Z;
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
@@ -292,7 +297,8 @@ namespace Utopia.Entities.Managers
             {
                 //I'm "Blocked" by this entity !
                 //Testing, inject Force to unblock myself !
-                physicSimu.Impulses.Add(new Impulse(){ ForceApplied = new Vector3(5,2,5) });
+                physicSimu.Impulses.Add(new Impulse(){ ForceApplied = new Vector3(30,20,30) });
+                entityTesting.SkipOneCollisionTest = true;
             }
         }
 
