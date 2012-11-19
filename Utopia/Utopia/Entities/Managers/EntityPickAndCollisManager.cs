@@ -158,6 +158,14 @@ namespace Utopia.Entities.Managers
                 entity = _entitiesNearPlayer[i];
                 if (entity.Entity.IsPickable)
                 {
+                    if (entity.Entity is IUsableEntity) // ==> Find better interface, for all state swtiching static entities
+                    {
+                        BoundingBox localStaticEntityBB = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
+                        localStaticEntityBB.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
+                        //Recompute the World bounding box of the entity based on a new Entity BoundingBox
+                        entity.SetEntityVoxelBB(localStaticEntityBB); //Will automaticaly apply a 1/16 scaling on the boundingbox
+                    }
+
                     Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out currentDistance);
                     if (currentDistance > 0)
                     {
