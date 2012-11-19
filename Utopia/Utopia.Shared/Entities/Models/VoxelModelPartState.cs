@@ -50,7 +50,7 @@ namespace Utopia.Shared.Entities.Models
         }
         
         /// <summary>
-        /// Frame rotation offset
+        /// Frame rotation offset, Its the location from where the rotation is applied
         /// </summary>
         public Vector3 RotationOffset
         {
