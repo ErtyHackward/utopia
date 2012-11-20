@@ -149,7 +149,6 @@
     <Compile Include="Entities\BlockLinkedItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntity.cs" />
-    <Compile Include="Entities\Dynamic\DynamicEntityEffect.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityState.cs" />
     <Compile Include="Entities\Dynamic\PlayerCharacter.cs" />
     <Compile Include="Entities\Dynamic\SpecialCharacterEntity.cs" />

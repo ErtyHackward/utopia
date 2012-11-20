@@ -85,7 +85,6 @@ namespace S33M3DXEngine.Main
         private float _interpolation_ld;
         private long _nextGameUpdateTime = Stopwatch.GetTimestamp();
 
-        protected bool _isFormClosed = false;
         private int _debugDisplay = 0;
         private bool _debugActif = false;
         private readonly GameComponentCollection _gameComponents;
@@ -154,9 +153,6 @@ namespace S33M3DXEngine.Main
             ResetTimers();
 
             FixedTimeStepLoop();
-            //FixedTimeStepLoopWithPrediction();
-
-            this.Exit(false);
         }
 
         private void FixedTimeStepLoop()
@@ -164,8 +160,11 @@ namespace S33M3DXEngine.Main
             //The Pump !
             RenderLoop.Run(Engine.GameWindow, () =>
             {
-                if (_isFormClosed) return;
-
+                if (Engine.IsShuttingDownRequested)
+                {
+                    Engine.ShuttingDownProcess();
+                    if (Engine.IsShuttingDownSafe) CloseWinform();
+                }
 #if DEBUG
                 //In case, if too much time has passed, Skip the update for this time period
                 //(Help in case of a break point placed in inline working)
@@ -176,7 +175,7 @@ namespace S33M3DXEngine.Main
                 }
 #endif
                 _updateWithoutrenderingCount = 0;
-                while (Stopwatch.GetTimestamp() > _nextGameUpdateTime && _updateWithoutrenderingCount < _maxRenderFrameSkip && _isFormClosed == false)
+                while (Stopwatch.GetTimestamp() > _nextGameUpdateTime && _updateWithoutrenderingCount < _maxRenderFrameSkip)
                 {
                     if (_updateWithoutrenderingCount == 1 && ComponentsPerfMonitor.Updatable)
                     {
@@ -205,42 +204,6 @@ namespace S33M3DXEngine.Main
             });
         }
 
-        private void FixedTimeStepLoopWithPrediction()
-        {
-            //Wait for a VSync signal
-            Present();
-
-            long num = 0;
-            long last_swap = Stopwatch.GetTimestamp();
-            long start = Stopwatch.GetTimestamp();
-            long next_swap_time = start;
-            long swap_time;
-
-            //The Pump !
-            RenderLoop.Run(Engine.GameWindow, () =>
-            {
-                if (_isFormClosed) return;
-
-                while (num * _gameTime.GameUpdateDelta < (next_swap_time - start) && _isFormClosed == false)
-                {
-                    Update(_gameTime);
-                    num += 1;
-                }
-
-                _interpolation_hd = (next_swap_time - start) / _gameTime.GameUpdateDelta - (num - 1);
-                _interpolation_ld = (float)_interpolation_hd;
-                Interpolation(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
-                Draw();
-
-                swap_time = Stopwatch.GetTimestamp() - last_swap;
-                if (swap_time < _gameTime.GameUpdateDelta / 2) swap_time = _gameTime.GameUpdateDelta;
-                last_swap = Stopwatch.GetTimestamp();
-                next_swap_time = Stopwatch.GetTimestamp() + swap_time;
-
-            });
-
-        }
-
         private void ResetTimers()
         {
             _nextGameUpdateTime = Stopwatch.GetTimestamp();
@@ -250,25 +213,9 @@ namespace S33M3DXEngine.Main
         //Close Window to stop the Window Pump !
         //HACK [DebuggerStepThrough on EXIT] To avoid breaking inside while debugging => Remove it to give the possibility for the debugger to stop inside this function
         //[DebuggerStepThrough()]
-        public void Exit(bool forced)
+        public void Exit()
         {
-            if (_isFormClosed) return;
-            try
-            {
-                //Threading.SmartThread.ThreadPool.Shutdown(forced, 0);
-                //logger.Info("Engine shutDown requested, active background threads are being forced to close : {0}", Threading.SmartThread.ThreadPool.ActiveThreads);
-                //while (Threading.SmartThread.ThreadPool.ActiveThreads > 0) { }
-                //logger.Info("Engine shutDown requested,  all background thread are closed");
-
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                if (Engine.isFullScreen) Engine.isFullScreen = false;
-                CloseWinform();
-            }
+            Engine.IsShuttingDownRequested = true;
         }
 
         private void CloseWinform()
@@ -280,7 +227,6 @@ namespace S33M3DXEngine.Main
             }
             else
             {
-                //Create the Single Player NEW world data message
                 Engine.GameWindow.Close();
             }
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using S33M3_DXEngine.Main;
+using S33M3DXEngine;
 using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Multimedia;
@@ -23,6 +24,7 @@ namespace S33M3CoreComponents.Sound
         private Listener _listener;
         private float _generalSoundVolume;
         private int _maxVoicePoolPerFileType = 32; //Can play up to 32 differents song in parallel for each file type
+        private D3DEngine _d3dEngine;
 
         //XAudio2 variables
         //Sound engine objects
@@ -79,18 +81,20 @@ namespace S33M3CoreComponents.Sound
         public List<string> SoundDevices { get { return _soundDevices; } }
         #endregion
 
-        public SoundEngine(int maxVoicesNbr = 8)
-            : this(null, maxVoicesNbr)
+        public SoundEngine(D3DEngine d3dEngine, int maxVoicesNbr = 8)
+            : this(d3dEngine, null, maxVoicesNbr)
         {
         }
 
-        public SoundEngine(string SoundDeviceName, int maxVoicesNbr = 8)
+        public SoundEngine(D3DEngine d3dEngine, string SoundDeviceName, int maxVoicesNbr = 8)
         {
+            _d3dEngine = d3dEngine;
             Initialize(SoundDeviceName, maxVoicesNbr);
         }
 
         public override void BeforeDispose()
         {
+            _d3dEngine.OnShuttingDown -= d3dEngine_OnShuttingDown;
             _stopThreading = true;
             _syncro.Set();
             while (_thread.IsAlive) { }
@@ -376,6 +380,8 @@ namespace S33M3CoreComponents.Sound
 
             //Start Sound voice processing thread
             _syncro = new ManualResetEvent(false);
+            _d3dEngine.RunningThreadedWork.Add("SoundEngine");
+            _d3dEngine.OnShuttingDown += d3dEngine_OnShuttingDown;
             _thread = new Thread(DataSoundPocessingAsync) { Name = "SoundEngine" }; //Start the main loop
             _stopThreading = false;
             _thread.Start();
@@ -384,6 +390,8 @@ namespace S33M3CoreComponents.Sound
 
             _xaudio2.StartEngine();
         }
+
+
 
         private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
@@ -429,7 +437,7 @@ namespace S33M3CoreComponents.Sound
         //Function that is running its own thread responsible to do background stuff concerning sound
         private void DataSoundPocessingAsync()
         {
-            while (!IsDisposed && !_stopThreading)
+            while (!IsDisposed && !_stopThreading && !_d3dEngine.IsShuttingDownRequested)
             {
                 LoopingSoundRefresh();
                 //Reset only if no more fading sound in processing Voice List
@@ -442,6 +450,12 @@ namespace S33M3CoreComponents.Sound
 
                 Thread.Sleep(10);
             }
+            _d3dEngine.RunningThreadedWork.Remove("SoundEngine");
+        }
+
+        private void d3dEngine_OnShuttingDown(object sender, EventArgs e)
+        {
+            _syncro.Set();
         }
 
         /// <summary>

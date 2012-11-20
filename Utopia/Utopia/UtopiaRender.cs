@@ -54,8 +54,11 @@ namespace Utopia
 
         protected override void GameWindow_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
-            _isFormClosed = true; //Subscribe to Close event
-            //e.Cancel = true;
+            if (Engine.IsShuttingDownSafe == false)
+            {
+                e.Cancel = true;
+                Engine.IsShuttingDownRequested = true; //Trigger an engine shutdown
+            }
         }
 
         public override void Update(GameTime TimeSpend)
@@ -87,7 +90,7 @@ namespace Utopia
                 }
                 else
                 {
-                    this.Exit(false);
+                    this.Exit();
                 }
             }
 

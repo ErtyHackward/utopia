@@ -362,7 +362,6 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        //TODO: test for perfomance
         public void RemoveAll<T>(Predicate<T> condition)
         {
             lock (_syncRoot)

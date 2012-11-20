@@ -138,7 +138,7 @@ namespace Utopia.Components
         private Vector3I? _selectionEnd;
         private bool _toolMountPointSelection;
 
-        private List<BoundingBox> _frameShapeBBoxes;
+        private List<BoundingBox> _frameShapeBBoxes = null;
 
         #endregion
 

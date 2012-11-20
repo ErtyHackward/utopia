@@ -16,7 +16,6 @@ using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Maths;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;
-using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Models;

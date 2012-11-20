@@ -10,6 +10,7 @@ using SharpDX.Windows;
 using Device = SharpDX.Direct3D11.Device;
 using Resource = SharpDX.Direct3D11.Resource;
 using System.Collections.Generic;
+using S33M3DXEngine.Threading;
 
 namespace S33M3DXEngine
 {
@@ -40,6 +41,7 @@ namespace S33M3DXEngine
         private DepthStencilView _depthStencil;
         private Viewport _viewPort;
         private Factory1 _dx11factory;
+
 #if DEBUG
         public static readonly ShaderFlags ShaderFlags = ShaderFlags.Debug | ShaderFlags.SkipOptimization;
 #else
@@ -56,6 +58,12 @@ namespace S33M3DXEngine
         public Viewport ViewPort { get { return _viewPort; } set { _viewPort = value; } }
         public RenderForm GameWindow { get { return _renderForm; } }
         public SwapChain SwapChain { get { return _swapChain; } }
+
+        public bool IsShuttingDownRequested;
+        public bool IsShuttingDownSafe;
+        public event EventHandler OnShuttingDown;
+
+        public List<string> RunningThreadedWork = new List<string>();
 
         public RenderTargetView RenderTarget { get { return _renderTarget; } }
 
@@ -101,6 +109,7 @@ namespace S33M3DXEngine
         /// <param name="RenderResolution">if not passed or equal to 0;0 then the resolution will be the one from the Windows Size</param>
         public D3DEngine(Size startingSize, string windowCaption, SampleDescription samplingMode, Size renderResolution = default(Size))
         {
+            IsShuttingDownRequested = false;
             //Create the MainRendering Form
             _renderForm = new RenderForm()
             {
@@ -144,6 +153,30 @@ namespace S33M3DXEngine
 
             //Create the threaded contexts
             ImmediateContext = Device.ImmediateContext;
+        }
+
+        //Check if the shuttingDownCan be done safely
+        public void ShuttingDownProcess()
+        {
+            //Check for fullscreen state
+            if (isFullScreen)
+            {
+                isFullScreen = false;
+                return;
+            }
+
+            if (OnShuttingDown != null) OnShuttingDown(this, null);
+
+            //Independant Threaded work are still running, waiting them for shutting down.
+            if (RunningThreadedWork.Count > 0) return;
+
+            ThreadsManager.IsShuttingDown = true;
+
+            if (ThreadsManager.RunningThreads > 0) return;
+
+            ThreadsManager.Dispose();
+
+            IsShuttingDownSafe = true;
         }
 
         //Remove default F10 (Open menu) Form key push !
