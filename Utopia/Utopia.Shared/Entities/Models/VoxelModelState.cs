@@ -13,6 +13,7 @@ namespace Utopia.Shared.Entities.Models
     public class VoxelModelState : IBinaryStorable
     {
         private readonly VoxelModel _parentModel;
+        private BoundingBox _boundingBox;
 
         /// <summary>
         /// Gets or sets the state name
@@ -27,7 +28,11 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Gets or sets current state bounding box
         /// </summary>
-        public BoundingBox BoundingBox { get; set; }
+        public BoundingBox BoundingBox
+        {
+            get { return _boundingBox; }
+            set { _boundingBox = value; }
+        }
 
         /// <summary>
         /// Initialize a copy of the state
@@ -107,7 +112,7 @@ namespace Utopia.Shared.Entities.Models
 
                 partState.BoundingBox = bb;
 
-                BoundingBox = BoundingBox.Merge(BoundingBox, bb);
+                BoundingBox.Merge(ref _boundingBox, ref bb, out _boundingBox);
             }
         }
 
