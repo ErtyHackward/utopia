@@ -210,7 +210,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        bool OnEntityTop = false;
+        bool? OnEntityTop = null;
         Stopwatch debugWatch = new Stopwatch();
         private void CollisionCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
@@ -238,8 +238,10 @@ namespace Utopia.Entities.Managers
                         break;
                 }
             }
+
         }
 
+        bool _isOnGround;
         private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (entityTesting.SkipOneCollisionTest)
@@ -249,7 +251,7 @@ namespace Utopia.Entities.Managers
             }
 
             Vector3D newPositionWithColliding = previousPosition;
-            OnEntityTop = false;
+            OnEntityTop = null;
 
             newPositionWithColliding.X = newPosition2Evaluate.X;
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
@@ -281,19 +283,40 @@ namespace Utopia.Entities.Managers
                 //logger.Debug("ModelCollisionDetection Y detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Y, previousPosition.Y);
 
                 newPositionWithColliding.Y = previousPosition.Y;
-                OnEntityTop = true;
+                if (OnEntityTop == null)
+                {
+                    OnEntityTop = true;
+                }
+            }
+            else
+            {
+                if (_isOnGround)
+                {
+                    playerBoundingBox2Evaluate.Minimum.Y -= 0.01f;
+                    if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+                    {
+                        OnEntityTop = true;
+                    }
+
+                }
             }
 
             //Set the NEW player position after collision tests
             newPosition2Evaluate = newPositionWithColliding;
 
-            if (OnEntityTop)
+            if (OnEntityTop == true)
             {
                 physicSimu.OnGround = true;
+                _isOnGround = true;
                 physicSimu.AllowJumping = true;
             }
+            else
+            {
+                _isOnGround = false;
+            }
 
-            if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (OnEntityTop != true && IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
                 //I'm "Blocked" by this entity !
                 //Testing, inject Force to unblock myself !
@@ -513,7 +536,7 @@ namespace Utopia.Entities.Managers
             newPosition2Evaluate = newPositionWithColliding;
 
             // ? I'm on "TOP" of an object ???
-            if (OnEntityTop)
+            if (OnEntityTop == true)
             {
                 physicSimu.OnGround = true;
             }
