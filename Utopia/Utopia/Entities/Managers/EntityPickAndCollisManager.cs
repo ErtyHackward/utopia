@@ -297,7 +297,11 @@ namespace Utopia.Entities.Managers
             {
                 //I'm "Blocked" by this entity !
                 //Testing, inject Force to unblock myself !
-                physicSimu.Impulses.Add(new Impulse(){ ForceApplied = new Vector3(30,20,30) });
+
+                var forceDirection = playerBoundingBox2Evaluate.GetCenter() - entityTesting.WorldBBox.GetCenter();
+                forceDirection.Normalize();
+
+                physicSimu.Impulses.Add(new Impulse() { ForceApplied = forceDirection * 3 });
                 entityTesting.SkipOneCollisionTest = true;
             }
         }
