@@ -438,7 +438,7 @@ namespace Utopia.Shared.Entities.Inventory
 
             var currentItem = _items[position.X, position.Y];
 
-            if (currentItem == null || currentItem.Item.StackType == item.StackType)
+            if (currentItem == null || currentItem.CanStackWith(item, itemsCount))
                 return false;
 
             slotTaken = (T)currentItem.Clone();

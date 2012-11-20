@@ -232,11 +232,20 @@ namespace Utopia.Network
             if (!_pendingOperation)
                 throw new InvalidOperationException("Unable to put item without taking it first");
 
+
+
             // check if no need to send anything
             if (_sourceContainer == sender && e.Slot.GridPosition == _tempSlot.GridPosition && e.Slot.ItemsCount == _tempSlot.ItemsCount)
             {
                 _sourceContainer = null;
                 _pendingOperation = false;
+                return;
+            }
+
+            // special check, if user puts items at the place where it just take the stack, we decrease that amount and wait
+            if (_sourceContainer == sender && e.Slot.GridPosition == _tempSlot.GridPosition)
+            {
+                _tempSlot.ItemsCount -= e.Slot.ItemsCount;
                 return;
             }
 
