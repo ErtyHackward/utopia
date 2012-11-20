@@ -70,6 +70,19 @@ namespace Utopia.Editor.Forms
 
         private void ButtonAddClick(object sender, EventArgs e)
         {
+            // validate max stack count...
+            var obj = cbEntityType.SelectedItem;
+
+            if (obj is IItem)
+            {
+                var item = (IItem)obj;
+                if (item.MaxStackSize < numCount.Value)
+                {
+                    MessageBox.Show("Maximum stack size of this item is " + item.MaxStackSize, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+            }
+
             if (cbEntityType.SelectedIndex == -1)
             {
                 DialogResult = DialogResult.Cancel;

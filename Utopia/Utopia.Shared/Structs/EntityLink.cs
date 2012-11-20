@@ -242,7 +242,15 @@ namespace Utopia.Shared.Structs
             }
 
             return sEntity;
-        
+        }
+
+        public override string ToString()
+        {
+            if (IsDynamic)
+            {
+                return string.Format("[ELink:{0}]", DynamicEntityId);
+            }
+            return string.Format("[ELink:{0}:{1}]", ChunkPosition, string.Join(",",_tail));
         }
     }
 }
