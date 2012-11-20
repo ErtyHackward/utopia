@@ -5,6 +5,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Utopia.Components;
+using S33M3CoreComponents.Sound;
 
 namespace Realms.Client.States
 {
@@ -15,6 +16,7 @@ namespace Realms.Client.States
     {
         private readonly IKernel _iocContainer;
         private bool _isGameExited;
+        private ISoundEngine _soundEngine;
 
         // do we need to capture mouse on continue?
         private bool _captureMouse;
@@ -24,11 +26,12 @@ namespace Realms.Client.States
             get { return "InGameMenu"; }
         }
 
-        public InGameMenuState(GameStatesManager stateManager, IKernel iocContainer)
+        public InGameMenuState(GameStatesManager stateManager, IKernel iocContainer, ISoundEngine soundEngine)
             :base(stateManager)
         {
             _iocContainer = iocContainer;
             AllowMouseCaptureChange = false;
+            _soundEngine = soundEngine;
         }
 
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
@@ -84,8 +87,7 @@ namespace Realms.Client.States
             if (_isGameExited)
             {
                 //Disconnect in a clean way from the server
-                //var servercomp = _iocContainer.Get<ServerComponent>();
-                //servercomp.Disconnect();
+                _soundEngine.StopAllSounds();
 
                 //Dispose all components related to the Game scope
                 GameScope.CurrentGameScope.Dispose();
