@@ -13,9 +13,9 @@ namespace Utopia.Shared.Net.Messages
     [StructLayout(LayoutKind.Sequential)]
     public struct ItemTransferMessage : IBinaryMessage
     {
-        private EntityLink _sourceEntityId;
+        private EntityLink _sourceEntityLink;
         private Vector2I _sourceSlot;
-        private EntityLink _destinationEntityId;
+        private EntityLink _destinationEntityLink;
         private Vector2I _destinationSlot;
         private int _itemsCount;
         private uint _itemEntityId;
@@ -26,8 +26,8 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         public EntityLink SourceContainerEntityLink
         {
-            get { return _sourceEntityId; }
-            set { _sourceEntityId = value; }
+            get { return _sourceEntityLink; }
+            set { _sourceEntityLink = value; }
         }
 
         /// <summary>
@@ -46,8 +46,8 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         public EntityLink DestinationContainerEntityLink
         {
-            get { return _destinationEntityId; }
-            set { _destinationEntityId = value; }
+            get { return _destinationEntityLink; }
+            set { _destinationEntityLink = value; }
         }
         
         /// <summary>
@@ -102,9 +102,9 @@ namespace Utopia.Shared.Net.Messages
         /// <param name="writer"></param>
         public void Write(BinaryWriter writer)
         {
-            _sourceEntityId.Save(writer);
+            _sourceEntityLink.Save(writer);
             writer.Write(_sourceSlot);
-            _destinationEntityId.Save(writer);
+            _destinationEntityLink.Save(writer);
             writer.Write(_destinationSlot);
             writer.Write(_itemEntityId);
             writer.Write(_itemsCount);
@@ -115,15 +115,20 @@ namespace Utopia.Shared.Net.Messages
         {
             ItemTransferMessage msg;
 
-            msg._sourceEntityId = new EntityLink(reader);
+            msg._sourceEntityLink = new EntityLink(reader);
             msg._sourceSlot = reader.ReadVector2I();
-            msg._destinationEntityId = new EntityLink(reader);
+            msg._destinationEntityLink = new EntityLink(reader);
             msg._destinationSlot = reader.ReadVector2I();
             msg._itemEntityId = reader.ReadUInt32();
             msg._itemsCount = reader.ReadInt32();
             msg._isSwitch = reader.ReadBoolean();
 
             return msg;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("ItemTransferMessage [Src:{0}, {1}; Dest:{2}, {3}; Cnt:{4} Switch:{5}]", _sourceEntityLink, _sourceSlot, _destinationEntityLink, _destinationSlot, _itemsCount, _isSwitch ? "Y" : "N");
         }
     }
 }
