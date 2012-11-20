@@ -1,5 +1,6 @@
 using System.IO;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -31,7 +32,18 @@ namespace Utopia.Shared.Entities.Inventory
         /// <returns></returns>
         public bool CanStackWith(ContainedSlot slot)
         {
-            if (slot != null && slot.Item != null && Item != null && slot.Item.StackType == Item.StackType && slot.ItemsCount + ItemsCount <= Item.MaxStackSize)
+            return CanStackWith(slot.Item, slot.ItemsCount);
+        }
+
+        /// <summary>
+        /// Detects whether the slots can be stacked
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="itemsCount"> </param>
+        /// <returns></returns>
+        public bool CanStackWith(IItem item, int itemsCount)
+        {
+            if (item != null && Item != null && item.StackType == Item.StackType && itemsCount + ItemsCount <= Item.MaxStackSize)
                 return true;
             return false;
         }
