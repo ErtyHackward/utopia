@@ -25,6 +25,7 @@ using Utopia.Worlds.Weather;
 using UtopiaContent.Effects.Weather;
 using S33M3DXEngine.Threading;
 using System.Threading.Tasks;
+using Ninject;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {
@@ -93,7 +94,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private int _cloudBlocksCount;
 
-        public Clouds(D3DEngine engine, StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager, IWeather weather)
+        public Clouds(D3DEngine engine, [Named("SolidBuffer")] StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager, IWeather weather)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             _d3DEngine = engine;

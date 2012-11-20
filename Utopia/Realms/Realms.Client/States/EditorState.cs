@@ -53,5 +53,15 @@ namespace Realms.Client.States
         {
             StatesManager.ActivateGameStateAsync("MainMenu");
         }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            //Dispose all components related to the Game scope
+            GameScope.CurrentGameScope.Dispose();
+            //Create a new Scope
+            GameScope.CreateNewScope();
+
+            base.OnDisabled(nextState);
+        }
     }
 }

@@ -30,11 +30,12 @@ namespace Utopia.Components
         public Vector2 SolidStaggingBackBufferSize;
         #endregion
 
-        public StaggingBackBuffer(D3DEngine engine)
+        public StaggingBackBuffer(D3DEngine engine, string Name)
         {
             _engine = engine;
             _engine.ViewPort_Updated += engine_ViewPort_Updated;
-            this.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer"); //This should be call After all SOLID object have been draw on screen.
+            this.DrawOrders.UpdateIndex(0, 999, Name); //This should be call After all SOLID object have been draw on screen.
+            this.Name = Name;
         }
 
         public override void BeforeDispose()

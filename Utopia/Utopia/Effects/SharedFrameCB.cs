@@ -55,7 +55,7 @@ namespace Utopia.Effects.Shared
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
-                             StaggingBackBuffer backBuffer)
+                             [Named("SolidBuffer")] StaggingBackBuffer backBuffer)
             
         {
             _engine = engine;

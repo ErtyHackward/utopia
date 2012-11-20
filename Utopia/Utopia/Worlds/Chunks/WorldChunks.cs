@@ -31,6 +31,7 @@ using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Ninject;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -158,8 +159,8 @@ namespace Utopia.Worlds.Chunks
                            IEntityPickingManager pickingManager,
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
-                           StaggingBackBuffer solidBackBuffer,
-                           StaggingBackBuffer skyBackBuffer,
+                           [Named("SolidBuffer")] StaggingBackBuffer solidBackBuffer,
+                           [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
                            IChunkEntityImpactManager chunkEntityImpactManager
             )
