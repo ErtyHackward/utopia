@@ -157,7 +157,7 @@ namespace Utopia.Entities.Managers
                 entity = _entitiesNearPlayer[i];
                 if (entity.Entity.IsPickable)
                 {
-                    if (entity.Entity.CollisionType == Shared.Entities.Entity.EntityCollisionType.Model || entity is IUsableEntity) // ==> Find better interface, for all state swtiching static entities
+                    if (entity.Entity.CollisionType == Shared.Entities.Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
                         BoundingBox localStaticEntityBB = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
                         localStaticEntityBB = localStaticEntityBB.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
