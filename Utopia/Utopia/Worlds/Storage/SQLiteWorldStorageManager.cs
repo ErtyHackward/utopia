@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using Utopia.Shared;
 using Utopia.Worlds.Storage.Structs;
 using Utopia.Shared.Structs;
+using S33M3DXEngine;
 
 namespace Utopia.Worlds.Storage
 {
@@ -20,6 +21,7 @@ namespace Utopia.Worlds.Storage
         private SQLiteCommand _landscapeGetCmd;
         private SQLiteCommand _landscapeInsertCmd;
         private ManualResetEvent _threadSync;
+        private D3DEngine _d3dEngine;
         #endregion
 
         #region Public Properties/Variables
@@ -33,9 +35,11 @@ namespace Utopia.Worlds.Storage
         /// </summary>
         /// <param name="fileName">The SQLite database path</param>
         /// <param name="forceNew"></param>
-        public SQLiteWorldStorageManager(string fileName, bool forceNew = false)
+        public SQLiteWorldStorageManager(D3DEngine d3dEngine, string fileName, bool forceNew = false)
             : base(fileName, forceNew)
         {
+            _d3dEngine = d3dEngine;
+
             //Initiliaz the IChunkStorageManager
             ChunkStorageManagerInit();
 
@@ -43,6 +47,8 @@ namespace Utopia.Worlds.Storage
             GetChunksMd5();
 
             IsRunning = true;
+            _d3dEngine.RunningThreadedWork.Add("SQLIteWorldStorageManager");
+            _d3dEngine.OnShuttingDown += d3dEngine_OnShuttingDown;
             _storageThread = new Thread(StorageMainLoop) { Name = "SQLLite Client" }; //Start the main loop
             _storageThread.Start();
         }
@@ -71,12 +77,18 @@ namespace Utopia.Worlds.Storage
         }
 
         private void StorageMainLoop()
-        {           
-            while (IsRunning)
+        {
+            while (IsRunning && !_d3dEngine.IsShuttingDownRequested)
             {
                 if (ProcessQueues() == false) _threadSync.Reset();
                 _threadSync.WaitOne();
             }
+            _d3dEngine.RunningThreadedWork.Remove("SQLIteWorldStorageManager");
+        }
+
+        private void d3dEngine_OnShuttingDown(object sender, System.EventArgs e)
+        {
+            _threadSync.Set();
         }
         #endregion
 
@@ -217,6 +229,7 @@ namespace Utopia.Worlds.Storage
 
         public override void Dispose()
         {
+            _d3dEngine.OnShuttingDown -= d3dEngine_OnShuttingDown;
             IsRunning = false;
             //Wait thread the exit
             _threadSync.Set();

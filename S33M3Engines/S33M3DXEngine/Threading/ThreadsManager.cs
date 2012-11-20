@@ -26,6 +26,7 @@ namespace S33M3DXEngine.Threading
         #region Public Properties
         public static int RunningThreads { get { return _mainTaskSheduler.RunningThreads; } }
         public static int TaskQueueSize { get { return _mainTaskSheduler.TaskCount; } }
+        public static bool IsShuttingDown;
 
         public static bool IsBoostMode
         {
@@ -82,6 +83,7 @@ namespace S33M3DXEngine.Threading
                                 ThreadTaskPriority priority = ThreadTaskPriority.Normal,
                                 bool singleConcurrencyRun = false)
         {
+            if (IsShuttingDown) return null;
             return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority, singleConcurrencyRun));
         }
 
@@ -90,6 +92,7 @@ namespace S33M3DXEngine.Threading
                              ThreadTaskPriority priority = ThreadTaskPriority.Normal,
                              bool singleConcurrencyRun = false)
         {
+            if (IsShuttingDown) return null;
             return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority, singleConcurrencyRun)).ContinueWith(CallBack);
         }
 
@@ -98,6 +101,7 @@ namespace S33M3DXEngine.Threading
                                 ThreadTaskPriority priority = ThreadTaskPriority.Normal,
                                 bool singleConcurrencyRun = false)
         {
+            if (IsShuttingDown) return null;
             Task<TResult> t = Task.Factory.StartNew(func, CancellationToken.None, TaskCreationOptions.None, getScheduler(priority, singleConcurrencyRun));
             if(CallBack != null) t.ContinueWith(CallBack);
             return t;
