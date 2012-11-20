@@ -365,6 +365,8 @@ namespace Utopia.Shared.Entities.Models
 
                     psResult.Interpolation(psFrom, psTo, step);
                 }
+
+                _internalState.UpdateBoundingBox();
             }
         }
         /// <summary>
