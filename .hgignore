@@ -23,6 +23,7 @@ syntax: glob
 *.lib
 *.sbr
 *.scc
+*.vsp
 [Bb]in
 obj/
 [Rr]elease*/
