@@ -59,8 +59,9 @@ namespace Utopia.Entities.Renderer
         private IndexBuffer<ushort> _cubeIb;
         private ShaderResourceView _cubeTextureView;
         private readonly VoxelModelManager _voxelModelManager;
-        private VisualVoxelModel _voxelModel;
-        private VoxelModelInstance _voxelInstance;
+        private VisualVoxelModel _toolVoxelModel;
+        private VisualVoxelModel _playerModel;
+        private VoxelModelInstance _toolVoxelInstance;
         private HLSLVoxelModel _voxelModelEffect;
         private PlayerCharacter _player;
         private SingleArrayChunkContainer _chunkContainer;
@@ -135,57 +136,16 @@ namespace Utopia.Entities.Renderer
 
         public override void Draw(DeviceContext context, int index)
         {
-            //No tool equipped or not in first person mode, render nothing !
-            if (_tool == null) return;
-            
             if (_camManager.ActiveCamera.CameraType != CameraType.FirstPerson) return;
 
-            context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
-
-            float scale;
-            if (_renderingType == ToolRenderingType.Cube)
+            //No tool equipped or not in first person mode, render nothing !
+            if (_tool == null)
             {
-                scale = 0.75f;
+                DrawingArm(context);
             }
             else
             {
-                var voxelBB = _voxelInstance.State.BoundingBox.GetSize();
-                scale = 16 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z);
-                scale *= 0.70f;
-            }
-
-            var screenPosition = Matrix.RotationY(MathHelper.Pi) * Matrix.Scaling(scale) *
-                     Matrix.Translation(1.2f, -1, 0) *
-                     Matrix.Invert(_camManager.ActiveCamera.View_focused) *
-                     Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 1.8f);
-
-            if (_renderingType == ToolRenderingType.Cube)
-            {
-                //Render First person view of the tool, only if the tool is used by the current playing person !
-                _cubeToolEffect.Begin(context);
-                _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(screenPosition);
-                _cubeToolEffect.CBPerDraw.Values.LightColor = _lightColor.ValueInterp;
-                _cubeToolEffect.CBPerDraw.IsDirty = true;
-
-                _cubeToolEffect.Apply(context);
-                //Set the buffer to the device
-                _cubeVb.SetToDevice(context, 0);
-                _cubeIb.SetToDevice(context, 0);
-
-                //Draw things here.
-                context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
-            }
-            if (_renderingType == ToolRenderingType.Voxel && _voxelModel != null)
-            {
-                _voxelModelEffect.Begin(context);
-                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                _voxelModelEffect.CBPerFrame.IsDirty = true;
-                _voxelInstance.World = Matrix.Scaling(1f/16) * screenPosition;
-                _voxelInstance.LightColor = _lightColor.ValueInterp;
-
-                _voxelModel.Draw(context, _voxelModelEffect, _voxelInstance);
+                DrawingTool(context);
             }
         }
         #endregion
@@ -212,6 +172,21 @@ namespace Utopia.Entities.Renderer
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
 
             Tool = _player.Equipment.RightTool;
+
+            _playerModel = _voxelModelManager.GetModel(_player.ModelName);
+            if (_playerModel != null)
+            {
+                if (!_playerModel.Initialized)
+                {
+                    _playerModel.BuildMesh();
+                }
+
+                if (_player.ModelInstance == null)
+                {
+                    _player.ModelInstance = _playerModel.VoxelModel.CreateInstance();
+                }
+            }
+
         }
 
         private void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
@@ -235,17 +210,17 @@ namespace Utopia.Entities.Renderer
 
                 var voxelEntity = _tool as IVoxelEntity;
                 _renderingType = ToolRenderingType.Voxel;
-                _voxelModel = _voxelModelManager.GetModel(voxelEntity.ModelName);
+                _toolVoxelModel = _voxelModelManager.GetModel(voxelEntity.ModelName);
 
-                if (_voxelModel != null)
+                if (_toolVoxelModel != null)
                 {
-                    if (!_voxelModel.Initialized)
+                    if (!_toolVoxelModel.Initialized)
                     {
-                        _voxelModel.BuildMesh();
+                        _toolVoxelModel.BuildMesh();
                     }
 
-                    _voxelInstance = _voxelModel.VoxelModel.CreateInstance();
-                    _voxelInstance.SetState(_voxelModel.VoxelModel.GetMainState());
+                    _toolVoxelInstance = _toolVoxelModel.VoxelModel.CreateInstance();
+                    _toolVoxelInstance.SetState(_toolVoxelModel.VoxelModel.GetMainState());
                 }
                 else
                 {
@@ -275,6 +250,104 @@ namespace Utopia.Entities.Renderer
             _cubeVb.SetData(_d3dEngine.ImmediateContext, _cubeMesh.Vertices);
             _cubeIb.SetData(_d3dEngine.ImmediateContext, _cubeMesh.Indices);
         }
+
+
+        private void DrawingTool(DeviceContext context)
+        {
+            context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+
+            float scale;
+            if (_renderingType == ToolRenderingType.Cube)
+            {
+                scale = 0.75f;
+            }
+            else
+            {
+                var voxelBB = _toolVoxelInstance.State.BoundingBox.GetSize();
+                scale = 16 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z);
+                scale *= 0.70f;
+            }
+
+            var screenPosition = Matrix.RotationY(MathHelper.Pi) * Matrix.Scaling(scale) *
+                     Matrix.Translation(1.2f, -1, 0) *
+                     Matrix.Invert(_camManager.ActiveCamera.View_focused) *
+                     Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 1.8f);
+
+            if (_renderingType == ToolRenderingType.Cube)
+            {
+                //Render First person view of the tool, only if the tool is used by the current playing person !
+                _cubeToolEffect.Begin(context);
+                _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+                _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(screenPosition);
+                _cubeToolEffect.CBPerDraw.Values.LightColor = _lightColor.ValueInterp;
+                _cubeToolEffect.CBPerDraw.IsDirty = true;
+
+                _cubeToolEffect.Apply(context);
+                //Set the buffer to the device
+                _cubeVb.SetToDevice(context, 0);
+                _cubeIb.SetToDevice(context, 0);
+
+                //Draw things here.
+                context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
+            }
+            if (_renderingType == ToolRenderingType.Voxel && _toolVoxelModel != null)
+            {
+                _voxelModelEffect.Begin(context);
+                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+                _voxelModelEffect.CBPerFrame.IsDirty = true;
+                _toolVoxelInstance.World = Matrix.Scaling(1f / 16) * screenPosition;
+                _toolVoxelInstance.LightColor = _lightColor.ValueInterp;
+
+                _toolVoxelModel.Draw(context, _voxelModelEffect, _toolVoxelInstance);
+            }
+        }
+
+        private void DrawingArm(DeviceContext context)
+        {
+            //Get Voxel Arm of the character.
+            var armPartIndex = _player.ModelInstance.VoxelModel.GetArmIndex();
+            var visualvoxelpart = _playerModel.VisualVoxelParts[armPartIndex];
+
+            context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+
+            var screenPosition = Matrix.RotationX(MathHelper.Pi * 1.3f) * Matrix.RotationY(MathHelper.Pi * 0.01f) * Matrix.Scaling(1.7f) *
+            Matrix.Translation(0.1f, -1, 0) *
+            Matrix.Invert(_camManager.ActiveCamera.View_focused) *
+            Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 2.5f);
+
+            _voxelModelEffect.Begin(context);
+            _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
+            _voxelModelEffect.CBPerFrame.IsDirty = true;
+
+            _voxelModelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * screenPosition);
+            _voxelModelEffect.CBPerModel.Values.LightColor = _lightColor.ValueInterp;
+            _voxelModelEffect.CBPerModel.IsDirty = true;
+
+
+            _voxelModelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
+            _voxelModelEffect.CBPerPart.IsDirty = true;
+
+            if (_player.ModelInstance.VoxelModel.Parts[armPartIndex].ColorMapping != null)
+            {
+                _voxelModelEffect.CBPerModel.Values.ColorMapping = _player.ModelInstance.VoxelModel.Parts[armPartIndex].ColorMapping.BlockColors;
+                _voxelModelEffect.CBPerModel.IsDirty = true;
+            }
+
+            var vb = visualvoxelpart.VertexBuffers[0];
+            var ib = visualvoxelpart.IndexBuffers[0];
+
+            vb.SetToDevice(context, 0);
+            ib.SetToDevice(context, 0);
+
+            _voxelModelEffect.Apply(context);
+
+            context.DrawIndexed(ib.IndicesCount, 0, 0);
+
+
+        }
+
         #endregion
     }
 }
