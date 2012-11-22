@@ -22,10 +22,6 @@ namespace Utopia.Shared.Entities.Dynamic
             get { return EntityClassId.PlayerCharacter; }
         }
 
-        public override string Name
-        {
-            get { return CharacterName; }
-        }
         #endregion
 
         public PlayerCharacter()
@@ -44,6 +40,7 @@ namespace Utopia.Shared.Entities.Dynamic
             Type = EntityType.Dynamic;
             BodyRotation = Quaternion.Identity;
             ModelName = "s33m3";
+            Name = "Player";
         }
 
         #region Public Methods
