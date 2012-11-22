@@ -335,7 +335,7 @@ namespace Utopia.Entities.Managers
             //Render First person view of the tool, only if the tool is used by the current playing person !
             _cubeToolEffect.Begin(context);
             _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-            _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(Matrix.Scaling(8.0f) * charEntity.ModelInstance.GetToolTransform());
+            _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(Matrix.Scaling(10.0f) * Matrix.Translation(0f,5.5f,1.8f) * charEntity.ModelInstance.GetToolTransform());
             _cubeToolEffect.CBPerDraw.Values.LightColor = charEntity.ModelInstance.LightColor;
             _cubeToolEffect.CBPerDraw.IsDirty = true;
 
