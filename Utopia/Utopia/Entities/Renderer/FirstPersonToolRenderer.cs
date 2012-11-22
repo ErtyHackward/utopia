@@ -67,6 +67,9 @@ namespace Utopia.Entities.Renderer
         private SingleArrayChunkContainer _chunkContainer;
         private VisualWorldParameters _visualWorldParameters;
 
+        private VoxelModelPart _handVoxelModel;
+        private VisualVoxelPart _handVisualVoxelModel;
+
         private FTSValue<Color3> _lightColor = new FTSValue<Color3>();
         private ISkyDome _skyDome;
 
@@ -184,6 +187,11 @@ namespace Utopia.Entities.Renderer
                 if (_player.ModelInstance == null)
                 {
                     _player.ModelInstance = _playerModel.VoxelModel.CreateInstance();
+
+                    //Get Voxel Arm of the character.
+                    var armPartIndex = _player.ModelInstance.VoxelModel.GetArmIndex();
+                    _handVoxelModel = _player.ModelInstance.VoxelModel.Parts[armPartIndex];
+                    _handVisualVoxelModel = _playerModel.VisualVoxelParts[armPartIndex];
                 }
             }
 
@@ -305,47 +313,56 @@ namespace Utopia.Entities.Renderer
 
         private void DrawingArm(DeviceContext context)
         {
-            //Get Voxel Arm of the character.
-            var armPartIndex = _player.ModelInstance.VoxelModel.GetArmIndex();
-            var visualvoxelpart = _playerModel.VisualVoxelParts[armPartIndex];
-
+            //Prepare DirectX rendering pipeline
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
-            var screenPosition = Matrix.RotationX(MathHelper.Pi * 1.3f) * Matrix.RotationY(MathHelper.Pi * 0.01f) * Matrix.Scaling(1.7f) *
-            Matrix.Translation(0.1f, -1, 0) *
-            Matrix.Invert(_camManager.ActiveCamera.View_focused) *
-            Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 2.5f);
+            //Compute a "world matrix" for displaying the Arm
+            var screenPosition = 
+            Matrix.RotationX(MathHelper.Pi * 1.3f) * Matrix.RotationY(MathHelper.Pi * 0.01f) *  //Some rotations
+            Matrix.Scaling(1.7f) * //Adjusting scale
+            Matrix.Translation(0.1f, -1, 0) * //Translation
+            Matrix.Invert(_camManager.ActiveCamera.View_focused) * //Keep the Arm On screen
+            Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 2.5f); //Project the arm in the lookat Direction = Inside the screen
 
+            //Prepare Effect
             _voxelModelEffect.Begin(context);
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
 
+            //Assign model variables values
             _voxelModelEffect.CBPerModel.Values.World = Matrix.Transpose(Matrix.Scaling(1f / 16) * screenPosition);
             _voxelModelEffect.CBPerModel.Values.LightColor = _lightColor.ValueInterp;
             _voxelModelEffect.CBPerModel.IsDirty = true;
 
-
+            //Don't use the GetTransform of the Part because its linked to the entity body, here we have only the arm to display.
             _voxelModelEffect.CBPerPart.Values.Transform = Matrix.Transpose(Matrix.Identity);
             _voxelModelEffect.CBPerPart.IsDirty = true;
 
-            if (_player.ModelInstance.VoxelModel.Parts[armPartIndex].ColorMapping != null)
+            //Assign color mappings
+            if (_handVoxelModel.ColorMapping != null)
             {
-                _voxelModelEffect.CBPerModel.Values.ColorMapping = _player.ModelInstance.VoxelModel.Parts[armPartIndex].ColorMapping.BlockColors;
-                _voxelModelEffect.CBPerModel.IsDirty = true;
+                _voxelModelEffect.CBPerModel.Values.ColorMapping = _handVoxelModel.ColorMapping.BlockColors;
+            }
+            else
+            {
+                _voxelModelEffect.CBPerModel.Values.ColorMapping = _player.ModelInstance.VoxelModel.ColorMapping.BlockColors;
             }
 
-            var vb = visualvoxelpart.VertexBuffers[0];
-            var ib = visualvoxelpart.IndexBuffers[0];
+            _voxelModelEffect.CBPerModel.IsDirty = true;
+
+            //Assign buffers
+            var vb = _handVisualVoxelModel.VertexBuffers[0];
+            var ib = _handVisualVoxelModel.IndexBuffers[0];
 
             vb.SetToDevice(context, 0);
             ib.SetToDevice(context, 0);
 
+            //Push Effect
             _voxelModelEffect.Apply(context);
 
+            //Draw !
             context.DrawIndexed(ib.IndicesCount, 0, 0);
-
-
         }
 
         #endregion
