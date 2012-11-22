@@ -259,7 +259,6 @@ namespace Utopia.Entities.Renderer
             _cubeIb.SetData(_d3dEngine.ImmediateContext, _cubeMesh.Indices);
         }
 
-
         private void DrawingTool(DeviceContext context)
         {
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
