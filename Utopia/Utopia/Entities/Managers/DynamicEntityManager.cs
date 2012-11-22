@@ -43,7 +43,8 @@ namespace Utopia.Entities.Managers
             public VisualVoxelModel VisualModel;                    //A model
             public Dictionary<uint, VoxelModelInstance> Instances;  //Instanced model list
         }
-        
+
+        #region Private Variables
         private HLSLVoxelModelInstanced _voxelModelEffect;
         private HLSLVoxelModel _voxelToolEffect;
 
@@ -54,16 +55,19 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly PlayerEntityManager _playerEntityManager;
-        private SingleArrayChunkContainer _chunkContainer;
+        private readonly SingleArrayChunkContainer _chunkContainer;
+        private readonly ISkyDome _skyDome;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
+
         private Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>> _toolsModels = new Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>>();
         
-        // collection of the models and instances
+        //List of all models use by Dynamic Entity, associated with the Instances created from them
         private readonly Dictionary<string, ModelAndInstances> _models = new Dictionary<string, ModelAndInstances>();
-        
-        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
+        #endregion
 
+        #region Public Properties
+        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
         /// <summary>
         /// Gets or sets current player entity to display
         /// Set to null in first person mode
@@ -71,7 +75,8 @@ namespace Utopia.Entities.Managers
         public IDynamicEntity PlayerEntity
         {
             get { return _playerEntity; }
-            set {
+            set
+            {
                 if (_playerEntity == value)
                     return;
 
@@ -87,97 +92,42 @@ namespace Utopia.Entities.Managers
                 _playerEntity = value;
             }
         }
+        #endregion
 
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
-
-        private void OnEntityAdded(DynamicEntityEventArgs e)
-        {
-            var handler = EntityAdded;
-            if (handler != null) handler(this, e);
-        }
-
         public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
 
-        public void OnEntityRemoved(DynamicEntityEventArgs e)
-        {
-            var handler = EntityRemoved;
-            if (handler != null) handler(this, e);
-        }
 
-        // Dependencies vvv
-
-        [Inject]
-        public SingleArrayChunkContainer ChunkContainer
-        {
-            get { return _chunkContainer; }
-            set { _chunkContainer = value; }
-        }
-
-        [Inject]
-        public ISkyDome SkyDome { get; set; }
-
-        public DynamicEntityManager(D3DEngine d3DEngine, 
-                                    VoxelModelManager voxelModelManager, 
+        public DynamicEntityManager(D3DEngine d3DEngine,
+                                    VoxelModelManager voxelModelManager,
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
-                                    PlayerEntityManager playerEntityManager)
+                                    PlayerEntityManager playerEntityManager,
+                                    ISkyDome skyDome,
+                                    SingleArrayChunkContainer chunkContainer)
         {
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
+            _chunkContainer = chunkContainer;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
             _playerEntityManager = playerEntityManager;
+            _skyDome = skyDome;
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
-
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
-
-            DynamicEntities = new List<IVisualVoxelEntityContainer>();
-        }
-
-        void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
-        {
-            if (e.Camera.CameraType == CameraType.FirstPerson)
-            {
-                PlayerEntity = null;
-            }
-            else
-            {
-                PlayerEntity = null;
-                PlayerEntity = _playerEntityManager.Player;
-            }
-
-        }
-
-        void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
-        {
-            //ForEach different Voxel model in local collection
-            foreach (var modelAndInstances in _models)
-            {
-                //Check if the model receive is already existing. (By model name)
-                if (modelAndInstances.Key == e.Model.Name)
-                {
-                    var model = _voxelModelManager.GetModel(e.Model.Name); //I'm SURE the model exist ! (It's the reason of this)
-                    modelAndInstances.Value.VisualModel = model;
-                    model.BuildMesh();
-                    var keys = modelAndInstances.Value.Instances.Select(p => p.Key).ToList(); //Get all model instances where the instances where missing
-
-                    foreach (var id in keys)
-                    {
-                        var instance = model.VoxelModel.CreateInstance();
-                        modelAndInstances.Value.Instances[id] = instance;
-                        _dynamicEntitiesDico[id].ModelInstance = instance;
-                    }
-                }
-            }
         }
 
         public override void BeforeDispose()
         {
+            _voxelModelManager.VoxelModelAvailable -= VoxelModelManagerVoxelModelReceived;
+            _camManager.ActiveCameraChanged -= CamManagerActiveCameraChanged;
             foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
         }
+
+        #region Public Methods
 
         public override void Initialize()
         {
@@ -189,6 +139,8 @@ namespace Utopia.Entities.Managers
             {
                 _staticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
             }
+
+            DynamicEntities = new List<IVisualVoxelEntityContainer>();
         }
 
         public override void LoadContent(DeviceContext context)
@@ -205,12 +157,6 @@ namespace Utopia.Entities.Managers
             IsInitialized = false;
         }
 
-        private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
-        {
-            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
-        }
-        
-        #region Public Methods
         public override void Update(GameTime timeSpent)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
@@ -231,11 +177,11 @@ namespace Utopia.Entities.Managers
                 {
                     // we take the max color
                     var sunPart = (float)block.EmissiveColor.A / 255;
-                    var sunColor = SkyDome.SunColor * sunPart;
+                    var sunColor = _skyDome.SunColor * sunPart;
                     var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
 
                     entity.ModelLight.Value = resultColor;
-                    
+
                     if (entity.ModelLight.ValueInterp != entity.ModelLight.Value)
                     {
                         Color3.Lerp(ref entity.ModelLight.ValueInterp, ref entity.ModelLight.Value, timePassed / 100f, out entity.ModelLight.ValueInterp);
@@ -249,7 +195,7 @@ namespace Utopia.Entities.Managers
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
             _voxelModelEffect.Begin(context);
-            _voxelModelEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+            _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
@@ -264,9 +210,9 @@ namespace Utopia.Entities.Managers
                     var modelInstance = pairs.Value;
                     //Draw only the entities that are in Client view range
                     //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
-                    if(MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
+                    if (MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
                     {
-                        modelInstance.World = Matrix.Scaling(1f / 16) *  Matrix.Translation(entityToRender.WorldPosition.ValueInterp.AsVector3());
+                        modelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(entityToRender.WorldPosition.ValueInterp.AsVector3());
                         modelInstance.LightColor = entityToRender.ModelLight.ValueInterp;
                     }
                     else
@@ -281,7 +227,7 @@ namespace Utopia.Entities.Managers
             }
 
             _voxelToolEffect.Begin(context);
-            _voxelToolEffect.CBPerFrame.Values.LightDirection = SkyDome.LightDirection;
+            _voxelToolEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
             _voxelToolEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             _voxelToolEffect.CBPerFrame.IsDirty = true;
             _voxelToolEffect.Apply(context);
@@ -320,6 +266,24 @@ namespace Utopia.Entities.Managers
 
         }
 
+        #endregion
+
+        #region Private Methods
+        private void OnEntityAdded(DynamicEntityEventArgs e)
+        {
+            if (EntityAdded != null) EntityAdded(this, e);
+        }
+
+        public void OnEntityRemoved(DynamicEntityEventArgs e)
+        {
+            if (EntityRemoved != null) EntityRemoved(this, e);
+        }
+
+        private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
+        {
+            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
+        }
+
         public void AddEntity(IDynamicEntity entity)
         {
             //Do we already have this entity ??
@@ -333,10 +297,10 @@ namespace Utopia.Entities.Managers
                     //Model not existing ====
                     // load a new model
                     modelWithInstances = new ModelAndInstances
-                                    {
-                                        VisualModel = _voxelModelManager.GetModel(entity.ModelName), //Get the model from the VoxelModelManager
-                                        Instances = new Dictionary<uint, VoxelModelInstance>()       //Create a new dico of modelInstance  
-                                    };
+                    {
+                        VisualModel = _voxelModelManager.GetModel(entity.ModelName), //Get the model from the VoxelModelManager
+                        Instances = new Dictionary<uint, VoxelModelInstance>()       //Create a new dico of modelInstance  
+                    };
 
                     //If the voxel model was send back by the manager, create the Mesh from it (Vx and idx buffers)
                     if (modelWithInstances.VisualModel != null)
@@ -390,7 +354,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public void RemoveEntityById(uint entityId,bool dispose=true)
+        public void RemoveEntityById(uint entityId, bool dispose = true)
         {
             VisualDynamicEntity entity;
             if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
@@ -401,7 +365,7 @@ namespace Utopia.Entities.Managers
                     throw new InvalidOperationException("we have no such model");
                 }
                 instances.Instances.Remove(entityId);
-                
+
                 VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
                 DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
@@ -413,22 +377,58 @@ namespace Utopia.Entities.Managers
         public IDynamicEntity GetEntityById(uint p)
         {
             VisualDynamicEntity e;
-            if (_dynamicEntitiesDico.TryGetValue(p,out e))
+            if (_dynamicEntitiesDico.TryGetValue(p, out e))
             {
                 return e.DynamicEntity;
             }
             return null;
         }
 
-        public IEnumerator<VisualVoxelEntity> EnumerateVisualEntities()
-        {
-            foreach (var visualEntityContainer in DynamicEntities)
-            {
-                yield return visualEntityContainer.VisualVoxelEntity;
-            }
 
+        #region Events handling
+        private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
+        {
+            if (e.Camera.CameraType == CameraType.FirstPerson)
+            {
+                PlayerEntity = null;
+            }
+            else
+            {
+                PlayerEntity = null;
+                PlayerEntity = _playerEntityManager.Player;
+            }
         }
+
+        private void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
+        {
+            //ForEach different Voxel model in local collection
+            foreach (var modelAndInstances in _models)
+            {
+                //Check if the model receive is already existing. (By model name)
+                if (modelAndInstances.Key == e.Model.Name)
+                {
+                    var model = _voxelModelManager.GetModel(e.Model.Name); //I'm SURE the model exist ! (It's the reason of this)
+                    modelAndInstances.Value.VisualModel = model;
+                    model.BuildMesh();
+                    var keys = modelAndInstances.Value.Instances.Select(p => p.Key).ToList(); //Get all model instances where the instances where missing
+
+                    foreach (var id in keys)
+                    {
+                        var instance = model.VoxelModel.CreateInstance();
+                        modelAndInstances.Value.Instances[id] = instance;
+                        _dynamicEntitiesDico[id].ModelInstance = instance;
+                    }
+                }
+            }
+        }
+
         #endregion
+
+        #endregion
+
+
+
+
 
     }
 }

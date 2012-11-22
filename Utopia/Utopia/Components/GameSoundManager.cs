@@ -246,10 +246,12 @@ namespace Utopia.Components
             else
                 PlayBlockPut(e.Position);
         }
+
         private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
             _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
         }
+
         private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
             _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = e.Entity, Position = e.Entity.Position, isLocalSound = false });

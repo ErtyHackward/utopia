@@ -18,38 +18,31 @@ namespace Utopia.Shared.Entities.Dynamic
         private Quaternion _headRotation;
 
         #region Events
-
         /// <summary>
         /// Occurs when entity changes its view direction
         /// </summary>
         public event EventHandler<EntityViewEventArgs> ViewChanged;
-
         protected void OnViewChanged(EntityViewEventArgs e)
         {
-            var handler = ViewChanged;
-            if (handler != null) handler(this, e);
+            if (ViewChanged != null) ViewChanged(this, e);
         }
 
         /// <summary>
         /// Occurs when entity performs "use" operation
         /// </summary>
         public event EventHandler<EntityUseEventArgs> Use;
-
         protected void OnUse(EntityUseEventArgs e)
         {
-            var handler = Use;
-            if (handler != null) handler(this, e);
+            if (Use != null) Use(this, e);
         }
 
         /// <summary>
         /// Occurs when entity changes its position
         /// </summary>
         public event EventHandler<EntityMoveEventArgs> PositionChanged;
-
         protected void OnPositionChanged(EntityMoveEventArgs e)
         {
-            var handler = PositionChanged;
-            if (handler != null) handler(this, e);
+            if (PositionChanged != null) PositionChanged(this, e);
         }
 
         #endregion

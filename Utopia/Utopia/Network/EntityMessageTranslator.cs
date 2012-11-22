@@ -61,10 +61,10 @@ namespace Utopia.Network
             _server = server;
 
             //Handle Entity received Message from Server
-            _server.MessageEntityIn += ConnectionMessageEntityIn;
-            _server.MessageEntityOut += ConnectionMessageEntityOut;
-            _server.MessagePosition += ConnectionMessagePosition;
-            _server.MessageDirection += ConnectionMessageDirection;
+            _server.MessageEntityIn += ServerMessageEntityIn;
+            _server.MessageEntityOut += ServerMessageEntityOut;
+            _server.MessagePosition += ServerMessagePosition; 
+            _server.MessageDirection += ServerMessageDirection;
             _server.MessageEntityLock += ServerMessageEntityLock;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
@@ -76,34 +76,20 @@ namespace Utopia.Network
             PlayerEntity = playerEntity;
         }
 
-        void ServerMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
-        {
-            var link = e.Message.EntityLink;
-
-            if (link.IsStatic)
-            {
-                var entity = e.Message.EntityLink.ResolveStatic(_landscapeManager);
-                entity.Locked = e.Message.Lock;
-            }
-            else
-            {
-                var entity = _dynamicEntityManager.GetEntityById(link.DynamicEntityId);
-                entity.Locked = e.Message.Lock;
-            }
-        }
 
         public void Dispose()
         {
             PlayerEntity = null;  
 
-            _server.MessageEntityIn -= ConnectionMessageEntityIn;
-            _server.MessageEntityOut -= ConnectionMessageEntityOut;
-            _server.MessagePosition -= ConnectionMessagePosition;
-            _server.MessageDirection -= ConnectionMessageDirection;
+            _server.MessageEntityIn -= ServerMessageEntityIn;
+            _server.MessageEntityOut -= ServerMessageEntityOut;
+            _server.MessagePosition -= ServerMessagePosition;
+            _server.MessageDirection -= ServerMessageDirection;
             _server.MessageEntityLock -= ServerMessageEntityLock;
         }
 
-        void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
+        //IN Going Server Data concering entities =================================================================
+        void ServerMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
         {
             var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
@@ -114,18 +100,18 @@ namespace Utopia.Network
             }
         }
 
-        void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
+        void ServerMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
             var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
                 entity.Position = e.Message.Position;
             else
             {
-                logger.Error("Unable to update direction of an entity");
+                logger.Error("Unable to update Position of an entity");
             }
         }
 
-        void ConnectionMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
+        void ServerMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
             switch (e.Message.EntityType)
             {
@@ -144,7 +130,7 @@ namespace Utopia.Network
             }
         }
 
-        void ConnectionMessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
+        void ServerMessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
             switch (e.Message.Entity.Type)
             {
@@ -169,6 +155,24 @@ namespace Utopia.Network
             }
         }
 
+        void ServerMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
+        {
+            var link = e.Message.EntityLink;
+
+            if (link.IsStatic)
+            {
+                var entity = e.Message.EntityLink.ResolveStatic(_landscapeManager);
+                entity.Locked = e.Message.Lock;
+            }
+            else
+            {
+                var entity = _dynamicEntityManager.GetEntityById(link.DynamicEntityId);
+                entity.Locked = e.Message.Lock;
+            }
+        }
+        
+        //OUT Going Server Data concering current player =================================================================
+        //These are player event subscribing
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
             _server.ServerConnection.SendAsync(new EntityUseMessage
