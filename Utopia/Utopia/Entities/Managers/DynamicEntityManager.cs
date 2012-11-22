@@ -82,7 +82,7 @@ namespace Utopia.Entities.Managers
 
                 if (value != null)
                 {
-                    AddEntity(value);
+                    AddEntity(value, false);
                 }
                 else
                 {
@@ -118,6 +118,8 @@ namespace Utopia.Entities.Managers
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
+
+            DynamicEntities = new List<IVisualVoxelEntityContainer>();
         }
 
         public override void BeforeDispose()
@@ -139,8 +141,6 @@ namespace Utopia.Entities.Managers
             {
                 _staticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
             }
-
-            DynamicEntities = new List<IVisualVoxelEntityContainer>();
         }
 
         public override void LoadContent(DeviceContext context)
@@ -284,7 +284,7 @@ namespace Utopia.Entities.Managers
             return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
         }
 
-        public void AddEntity(IDynamicEntity entity)
+        public void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation)
         {
             //Do we already have this entity ??
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
@@ -312,6 +312,7 @@ namespace Utopia.Entities.Managers
                 }
 
                 VisualDynamicEntity newEntity = CreateVisualEntity(entity);
+                newEntity.WithNetworkInterpolation = withNetworkInterpolation;
                 _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
                 DynamicEntities.Add(newEntity);
 
