@@ -77,7 +77,6 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to load base information
             base.Load(reader, factory);
 
-            Name = reader.ReadString();
             ModelName = reader.ReadString();
             Description = reader.ReadString();
             MaxStackSize = reader.ReadInt32();
@@ -88,7 +87,6 @@ namespace Utopia.Shared.Entities.Inventory
             // first we need to save base information
             base.Save(writer);
 
-            writer.Write(Name ?? string.Empty);
             writer.Write(ModelName ?? string.Empty);
             writer.Write(Description ?? string.Empty);
             writer.Write(MaxStackSize);

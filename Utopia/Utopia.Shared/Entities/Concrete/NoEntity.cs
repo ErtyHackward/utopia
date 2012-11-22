@@ -7,19 +7,6 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     public class NoEntity : Entity
     {
-
-        public override string Name
-        {
-            get
-            {
-                return "No Entity";
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
-        }
-
         public override ushort ClassId
         {
             get

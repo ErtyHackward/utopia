@@ -19,7 +19,6 @@ namespace Utopia.Shared.Entities
             Model
         }
 
-        private string _name = "No name";
         /// <summary>
         /// Pickable entity Property
         /// </summary>
@@ -78,11 +77,12 @@ namespace Utopia.Shared.Entities
         /// Gets a displayed entity name
         /// </summary>
         [Category("Entity")]
-        public virtual string Name
+        public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
+        private string _name = "No name";
 
         /// <summary>
         /// Gets or sets Entity ID
@@ -112,8 +112,8 @@ namespace Utopia.Shared.Entities
         {
             // we no need to read class id because it is read by entity factory
             // to find the final type of the class
-
             BluePrintId = reader.ReadUInt16();
+
 
             Type = (EntityType)reader.ReadByte();
 
@@ -128,6 +128,9 @@ namespace Utopia.Shared.Entities
             CollisionType = (EntityCollisionType)reader.ReadByte();
 
             YForceOnSideHit = reader.ReadDouble();
+
+            _name = reader.ReadString();
+
         }
 
         /// <summary>
@@ -137,6 +140,7 @@ namespace Utopia.Shared.Entities
         public virtual void Save(BinaryWriter writer)
         {
             writer.Write(ClassId);
+
 
             writer.Write(BluePrintId);
             writer.Write((byte)Type);
@@ -152,6 +156,9 @@ namespace Utopia.Shared.Entities
             writer.Write((byte)CollisionType);
 
             writer.Write(YForceOnSideHit);
+
+            writer.Write(_name);
+
         }
 
         /// <summary>

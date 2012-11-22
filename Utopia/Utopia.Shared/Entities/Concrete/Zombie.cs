@@ -9,15 +9,11 @@ namespace Utopia.Shared.Entities.Concrete
             get { return EntityClassId.Zombie; }
         }
 
-        public override string Name
-        {
-            get { return "Zombie "+ CharacterName; }
-        }
-        
         public Zombie()
         {
             Type = EntityType.Dynamic;
             ModelName = "Girl";
+            Name = "Zombie";
         }
 
     }
