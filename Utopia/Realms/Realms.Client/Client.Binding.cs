@@ -214,7 +214,7 @@ namespace Realms.Client
             _iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
-            _iocContainer.Bind<ToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode
+            _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode
             //=============================================================
             _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ToolBarUi>().To<SandboxToolBar>().InScope(x => GameScope.CurrentGameScope);
