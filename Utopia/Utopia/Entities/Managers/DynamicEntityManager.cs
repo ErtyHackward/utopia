@@ -254,7 +254,6 @@ namespace Utopia.Entities.Managers
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
 
-
             //For each existing model
             foreach (var modelAndInstances in _models)
             {
