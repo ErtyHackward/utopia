@@ -25,6 +25,11 @@ using Utopia.Shared.World;
 using Utopia.Worlds.SkyDomes;
 using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Entities.Concrete;
+using S33M3CoreComponents.Meshes;
+using S33M3CoreComponents.Meshes.Factories;
+using S33M3DXEngine.Textures;
+using S33M3DXEngine.Buffers;
 
 namespace Utopia.Entities.Managers
 {
@@ -59,6 +64,10 @@ namespace Utopia.Entities.Managers
         private readonly ISkyDome _skyDome;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
+
+        //Cube Rendering
+        private Mesh _cubeMesh;
+        private Mesh _cubeMeshBluePrint;
 
         private Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>> _toolsModels = new Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>>();
         
@@ -143,10 +152,32 @@ namespace Utopia.Entities.Managers
             }
         }
 
+
+        private HLSLCubeTool _cubeToolEffect;
+        private IMeshFactory _milkShapeMeshfactory;
+        private ShaderResourceView _cubeTextureView;
+        private VertexBuffer<VertexMesh> _cubeVb;
+        private IndexBuffer<ushort> _cubeIb;
+        private Dictionary<int, int> _materialChangeMapping;
+
         public override void LoadContent(DeviceContext context)
         {
+            _milkShapeMeshfactory = new MilkShape3DMeshFactory();
+            //Prepare Textured Block rendering when equiped ==============================================================
+            _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
+            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
+            ToDispose(_cubeTextureView);
+            //Create Vertex/Index Buffer to store the loaded cube mesh.
+            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, VertexMesh.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
+            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
+
+            _cubeToolEffect = ToDispose(new HLSLCubeTool(context.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
+            _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
+            _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
+
             _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
             _voxelToolEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
+            _materialChangeMapping = new Dictionary<int, int>();
         }
 
         public override void UnloadContent()
@@ -239,36 +270,85 @@ namespace Utopia.Entities.Managers
                 if (charEntity != null)
                 {
                     //Take the Tool entity equiped in character Right hand
-                    var voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
-                    if (voxelItem != null && !string.IsNullOrEmpty(voxelItem.ModelName))
+                    if (charEntity.Equipment.RightTool is CubeResource)
                     {
-                        // get the model and instance
-                        KeyValuePair<VisualVoxelModel, VoxelModelInstance> mPair;
-                        if (!_toolsModels.TryGetValue(voxelItem.ModelName, out mPair))
+                        DrawCube(context, (CubeResource)charEntity.Equipment.RightTool, charEntity);
+                    }
+                    else if (charEntity.Equipment.RightTool is IVoxelEntity)
+                    {
+                        IVoxelEntity voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
+                        if (!string.IsNullOrEmpty(voxelItem.ModelName)) //Check if a voxel model is associated with the entity
                         {
-                            var model = _voxelModelManager.GetModel(voxelItem.ModelName, false);
-                            mPair = new KeyValuePair<VisualVoxelModel, VoxelModelInstance>(model, model.VoxelModel.CreateInstance());
-                            mPair.Value.SetState(model.VoxelModel.GetMainState());
-                            _toolsModels.Add(voxelItem.ModelName, mPair);
+                            DrawTool(voxelItem, charEntity);
                         }
-
-                        var instance = mPair.Value;
-
-                        // setup the tool instance
-                        instance.World = charEntity.ModelInstance.GetToolTransform();
-                        instance.LightColor = charEntity.ModelInstance.LightColor;
-
-                        // draw it
-                        mPair.Key.Draw(_d3DEngine.ImmediateContext, _voxelToolEffect, instance);
                     }
                 }
             }
-
         }
 
         #endregion
 
         #region Private Methods
+
+        private void DrawTool(IVoxelEntity voxelTool, CharacterEntity charEntity)
+        {
+            // get the model and instance
+            KeyValuePair<VisualVoxelModel, VoxelModelInstance> mPair;
+            if (!_toolsModels.TryGetValue(voxelTool.ModelName, out mPair))
+            {
+                var model = _voxelModelManager.GetModel(voxelTool.ModelName, false);
+                mPair = new KeyValuePair<VisualVoxelModel, VoxelModelInstance>(model, model.VoxelModel.CreateInstance());
+                mPair.Value.SetState(model.VoxelModel.GetMainState());
+                _toolsModels.Add(voxelTool.ModelName, mPair);
+            }
+
+            var instance = mPair.Value;
+
+            // setup the tool instance
+            instance.World = charEntity.ModelInstance.GetToolTransform();
+            instance.LightColor = charEntity.ModelInstance.LightColor;
+
+            // draw it
+            mPair.Key.Draw(_d3DEngine.ImmediateContext, _voxelToolEffect, instance);
+        }
+
+        private void DrawCube(DeviceContext context, CubeResource cube, CharacterEntity charEntity)
+        {
+            //Get the cube profile.
+            var cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.CubeId];
+
+            //Prapare to creation a new mesh with the correct texture mapping ID
+            _materialChangeMapping[0] = cubeProfile.Tex_Back;    //Change the Back Texture Id
+            _materialChangeMapping[1] = cubeProfile.Tex_Front;   //Change the Front Texture Id
+            _materialChangeMapping[2] = cubeProfile.Tex_Bottom;  //Change the Bottom Texture Id
+            _materialChangeMapping[3] = cubeProfile.Tex_Top;     //Change the Top Texture Id
+            _materialChangeMapping[4] = cubeProfile.Tex_Left;    //Change the Left Texture Id
+            _materialChangeMapping[5] = cubeProfile.Tex_Right;   //Change the Right Texture Id
+
+            //Create the cube Mesh from the blue Print one
+            _cubeMesh = _cubeMeshBluePrint.Clone(_materialChangeMapping);
+
+            //Refresh the mesh data inside the buffers
+            _cubeVb.SetData(context, _cubeMesh.Vertices);
+            _cubeIb.SetData(context, _cubeMesh.Indices);
+
+            //Render First person view of the tool, only if the tool is used by the current playing person !
+            _cubeToolEffect.Begin(context);
+            _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(Matrix.Scaling(8.0f) * charEntity.ModelInstance.GetToolTransform());
+            _cubeToolEffect.CBPerDraw.Values.LightColor = charEntity.ModelInstance.LightColor;
+            _cubeToolEffect.CBPerDraw.IsDirty = true;
+
+            _cubeToolEffect.Apply(context);
+            //Set the buffer to the device
+            _cubeVb.SetToDevice(context, 0);
+            _cubeIb.SetToDevice(context, 0);
+
+            //Draw things here.
+            context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
+        }
+
+        //Raised Events
         private void OnEntityAdded(DynamicEntityEventArgs e)
         {
             if (EntityAdded != null) EntityAdded(this, e);
@@ -279,6 +359,7 @@ namespace Utopia.Entities.Managers
             if (EntityRemoved != null) EntityRemoved(this, e);
         }
 
+        //Dynamic Entity management
         private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
         {
             return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
