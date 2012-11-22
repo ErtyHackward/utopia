@@ -76,7 +76,7 @@ namespace Sandbox.Client.States
             var fadeComponent = _ioc.Get<FadeComponent>();
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             fadeComponent.Visible = false;
-            var toolRenderer = _ioc.Get<ToolRenderer>();
+            var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
 
 
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();

@@ -240,7 +240,7 @@ namespace Realms.Client.States
             var soundManager = _ioc.Get<GameSoundManager>();
             var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
-            var toolRenderer = _ioc.Get<ToolRenderer>();
+            var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;

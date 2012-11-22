@@ -95,7 +95,7 @@ namespace Realms.Client.States
             fadeComponent.Visible = false;
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var adminConsole = _ioc.Get<AdminConsole>();
-            var toolRenderer = _ioc.Get<ToolRenderer>();
+            var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);

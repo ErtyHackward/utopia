@@ -35,7 +35,7 @@ namespace Utopia.Entities.Renderer
     /// It tool is an IVoxel entity then also draws the arm of the player model
     /// Works only in first person mode
     /// </summary>
-    public class ToolRenderer : DrawableGameComponent
+    public class FirstPersonToolRenderer : DrawableGameComponent
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -48,7 +48,6 @@ namespace Utopia.Entities.Renderer
         #region Private Variables
         private readonly D3DEngine _d3dEngine;
         private CameraManager<ICameraFocused> _camManager;
-
         private ToolRenderingType _renderingType;
         private ITool _tool;
         //Use to draw textured cubes
@@ -59,10 +58,7 @@ namespace Utopia.Entities.Renderer
         private VertexBuffer<VertexMesh> _cubeVb;
         private IndexBuffer<ushort> _cubeIb;
         private ShaderResourceView _cubeTextureView;
-        private IDynamicEntity _dynamicEntity;
         private readonly VoxelModelManager _voxelModelManager;
-        private readonly PlayerEntityManager _playerManager;
-        private bool _isPlayerCharacterOwner;
         private VisualVoxelModel _voxelModel;
         private VoxelModelInstance _voxelInstance;
         private HLSLVoxelModel _voxelModelEffect;
@@ -71,72 +67,61 @@ namespace Utopia.Entities.Renderer
         private VisualWorldParameters _visualWorldParameters;
 
         private FTSValue<Color3> _lightColor = new FTSValue<Color3>();
+        private ISkyDome _skyDome;
 
         #endregion
 
-
+        #region Public Properties
         public ITool Tool
         {
             get { return _tool; }
             set { _tool = value; ToolChange(); }
         }
+        #endregion
 
-        [Inject]
-        public ISkyDome SkyDome { get; set; }
-
-        [Inject]
-        public SingleArrayChunkContainer ChunkContainer
-        {
-            get { return _chunkContainer; }
-            set { _chunkContainer = value; }
-        }
-
-        public ToolRenderer(D3DEngine d3DEngine,
+        public FirstPersonToolRenderer(D3DEngine d3DEngine,
                             CameraManager<ICameraFocused> camManager,
-                            IDynamicEntity dynamicEntity,
+                            PlayerCharacter player,
                             VoxelModelManager voxelModelManager, 
-                            PlayerEntityManager playerManager,
-                            VisualWorldParameters visualWorldParameters)
+                            VisualWorldParameters visualWorldParameters,
+                            SingleArrayChunkContainer chunkContainer,
+                            ISkyDome skyDome)
         {
             _d3dEngine = d3DEngine;
             _milkShapeMeshfactory = new MilkShape3DMeshFactory();
             _camManager = camManager;
-            _dynamicEntity = dynamicEntity;
+            _player = player;
             _voxelModelManager = voxelModelManager;
-            _playerManager = playerManager;
-            _isPlayerCharacterOwner = _dynamicEntity is PlayerCharacter;
             _visualWorldParameters = visualWorldParameters;
+            _chunkContainer = chunkContainer;
+            _skyDome = skyDome;
+
+            _player.Equipment.ItemEquipped += EquipmentItemEquipped;
 
             DrawOrders.UpdateIndex(0, 5000);
         }
 
-        void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
+
+        public override void BeforeDispose()
         {
-            if (e.EquippedItem != null)
-            {
-                Tool = e.EquippedItem.Item as ITool;
-            }
-            else
-                Tool = null;
+            _player.Equipment.ItemEquipped -= EquipmentItemEquipped;
         }
+
 
         #region Public Methods
         public override void Update(GameTime timeSpend)
         {
-
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            
-            
             // update model color, get the cube where model is
-            var block = _chunkContainer.GetCube(_playerManager.CameraWorldPosition);
+            var block = _chunkContainer.GetCube(_player.Position);
             if (block.Id == 0)
             {
                 // we take the max color
                 var sunPart = (float)block.EmissiveColor.A / 255;
-                var sunColor = SkyDome.SunColor * sunPart;
+                var sunColor = _skyDome.SunColor * sunPart;
                 var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
 
                 _lightColor.Value = resultColor;
@@ -151,20 +136,29 @@ namespace Utopia.Entities.Renderer
         public override void Draw(DeviceContext context, int index)
         {
             //No tool equipped or not in first person mode, render nothing !
-            if (_tool == null) 
-                return;
+            if (_tool == null) return;
             
-            if (!_isPlayerCharacterOwner || _camManager.ActiveCamera.CameraType != CameraType.FirstPerson) 
-                return;
+            if (_camManager.ActiveCamera.CameraType != CameraType.FirstPerson) return;
 
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
 
+            float scale;
+            if (_renderingType == ToolRenderingType.Cube)
+            {
+                scale = 0.75f;
+            }
+            else
+            {
+                var voxelBB = _voxelInstance.State.BoundingBox.GetSize();
+                scale = 16 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z);
+                scale *= 0.70f;
+            }
 
-            var screenPosition = Matrix.RotationY(MathHelper.Pi * 2) * Matrix.RotationX(MathHelper.Pi * 2f) *
-                                 Matrix.Translation(1, -1, 0) *
-                                 Matrix.Invert(_camManager.ActiveCamera.View_focused) * Matrix.Scaling(0.5f) *
-                                 Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp);
+            var screenPosition = Matrix.RotationY(MathHelper.Pi) * Matrix.Scaling(scale) *
+                     Matrix.Translation(1.2f, -1, 0) *
+                     Matrix.Invert(_camManager.ActiveCamera.View_focused) *
+                     Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 1.8f);
 
             if (_renderingType == ToolRenderingType.Cube)
             {
@@ -199,9 +193,6 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public override void Initialize()
         {
-
-
-
         }
 
         public override void LoadContent(DeviceContext context)
@@ -220,14 +211,13 @@ namespace Utopia.Entities.Renderer
 
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
 
-            _player = _dynamicEntity as PlayerCharacter;
+            Tool = _player.Equipment.RightTool;
+        }
 
-            if (_player != null)
-            {
-                _player.Equipment.ItemEquipped += EquipmentItemEquipped;
-                Tool = _player.Equipment.RightTool;
-            }
-
+        private void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
+        {
+            if (e.EquippedItem != null) Tool = e.EquippedItem.Item as ITool;
+            else Tool = null;
         }
 
         //The tool has been changed !

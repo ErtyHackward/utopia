@@ -142,7 +142,7 @@
     <Compile Include="Entities\Managers\PlayerEntityManager.Move.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Move.Physic.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Picking.cs" />
-    <Compile Include="Entities\Renderer\ToolRenderer.cs" />
+    <Compile Include="Entities\Renderer\FirstPersonToolRenderer.cs" />
     <Compile Include="Entities\TerraCubes.cs" />
     <Compile Include="Entities\Voxel\VisualVoxelModel.cs" />
     <Compile Include="Entities\Voxel\VoxelModelManager.cs" />
