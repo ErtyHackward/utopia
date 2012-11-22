@@ -94,17 +94,16 @@ namespace Utopia.Entities
 
             var distanceSquared = Vector3D.DistanceSquared(DynamicEntity.Position, _netLocation.Interpolated);
 
+            //Activate / deactivate Model Playing animation
             if (_walking && distanceSquared < 0.06d)
             {
-                if (ModelInstance != null)
-                    ModelInstance.Stop();
+                if (ModelInstance != null) ModelInstance.Stop();
                 _walking = false;
             }
 
             if (!_walking && distanceSquared >= 0.06d)
             {
-                if (ModelInstance != null && ModelInstance.CanPlay("Walk"))
-                    ModelInstance.Play("Walk", true);
+                if (ModelInstance != null && ModelInstance.CanPlay("Walk")) ModelInstance.Play("Walk", true);
                 _walking = true;
             }
 
