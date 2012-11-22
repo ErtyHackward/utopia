@@ -18,7 +18,7 @@ namespace Utopia.Entities.Managers.Interfaces
 
         event EventHandler<DynamicEntityEventArgs> EntityRemoved;
 
-        void AddEntity(IDynamicEntity entity);
+        void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation);
 
         void RemoveEntity(IDynamicEntity entity);
 

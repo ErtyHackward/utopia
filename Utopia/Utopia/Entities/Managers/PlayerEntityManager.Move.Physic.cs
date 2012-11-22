@@ -84,13 +84,6 @@ namespace Utopia.Entities.Managers
 
             _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
             _worldPosition = newWorldPosition;
-
-
-            //After physic simulation, I'm still in the air ?
-            //if (_worldPosition.Y > _groundBelowEntity)
-            //{
-            //    _physicSimu.OnGround = false;
-            //}
         }
         #endregion
 

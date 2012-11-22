@@ -150,7 +150,7 @@ namespace Utopia.Network
 
                     break;
                 case EntityType.Dynamic:
-                    _dynamicEntityManager.AddEntity((IDynamicEntity) e.Message.Entity);
+                    _dynamicEntityManager.AddEntity((IDynamicEntity) e.Message.Entity, true);
                     break;
             }
         }

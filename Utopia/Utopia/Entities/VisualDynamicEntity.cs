@@ -39,6 +39,8 @@ namespace Utopia.Entities
 
         public VoxelModelInstance ModelInstance { get; set; }
 
+        public bool WithNetworkInterpolation { get; set; }
+
         private bool _walking = false;
 
         #endregion
@@ -86,26 +88,12 @@ namespace Utopia.Entities
             }
 
             _netLocation = new NetworkValue<Vector3D>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
+
+            WithNetworkInterpolation = true;
         }
 
         private void RefreshEntityMovementAndRotation()
         {
-            LookAtDirection.BackUpValue();
-
-            var distanceSquared = Vector3D.DistanceSquared(DynamicEntity.Position, _netLocation.Interpolated);
-
-            //Activate / deactivate Model Playing animation
-            if (_walking && distanceSquared < 0.06d)
-            {
-                if (ModelInstance != null) ModelInstance.Stop();
-                _walking = false;
-            }
-
-            if (!_walking && distanceSquared >= 0.06d)
-            {
-                if (ModelInstance != null && ModelInstance.CanPlay("Walk")) ModelInstance.Play("Walk", true);
-                _walking = true;
-            }
 
             var moveDirection = DynamicEntity.Position - _netLocation.Value;
             moveDirection.Normalize();
@@ -117,12 +105,32 @@ namespace Utopia.Entities
             moveQuaternion.Z = 0;
             moveQuaternion.Normalize();
             
+            //Derived BodyRotation from HeadRotation
             DynamicEntity.BodyRotation = Quaternion.Lerp(DynamicEntity.BodyRotation, moveQuaternion, (float)Vector3D.Distance(DynamicEntity.Position, _netLocation.Value));
 
             _netLocation.Value = DynamicEntity.Position;
-            LookAtDirection.Value = DynamicEntity.HeadRotation;
+
+            //CheckWalkingAnimation(ref _netLocation.Value, ref _netLocation.Interpolated, 0.06);
 
             Networkinterpolation();
+        }
+
+        private void CheckWalkingAnimation(ref Vector3D previousPosition, ref Vector3D currentPosition, double treeshold)
+        {
+            var distanceSquared = Vector3D.DistanceSquared(previousPosition, currentPosition);
+
+            //Activate / deactivate Model Playing animation
+            if (_walking && distanceSquared < treeshold)
+            {
+                if (ModelInstance != null) ModelInstance.Stop();
+                _walking = false;
+            }
+
+            if (!_walking && distanceSquared >= treeshold)
+            {
+                if (ModelInstance != null && ModelInstance.CanPlay("Walk")) ModelInstance.Play("Walk", true);
+                _walking = true;
+            }
         }
 
         private void Networkinterpolation()
@@ -150,25 +158,42 @@ namespace Utopia.Entities
 
             WorldPosition.Value = _netLocation.Interpolated;
         }
-
         #endregion
 
         #region Public Methods
         public void Update(GameTime timeSpent)
         {
-            RefreshEntityMovementAndRotation();
+            LookAtDirection.BackUpValue();
+            WorldPosition.BackUpValue();
+            MoveDirection.BackUpValue();
+
+            LookAtDirection.Value = DynamicEntity.HeadRotation;
+
+            if (WithNetworkInterpolation)
+            {
+                RefreshEntityMovementAndRotation();
+                MoveDirection.Value = DynamicEntity.BodyRotation;
+            }
+            else
+            {
+                WorldPosition.Value = DynamicEntity.Position;
+                MoveDirection.Value = DynamicEntity.BodyRotation;
+            }
+
+            CheckWalkingAnimation(ref WorldPosition.ValuePrev, ref WorldPosition.Value, 0.006);
         }
 
         //Draw interpolation (Before each Drawing)
         public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
         {
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
+            Quaternion.Slerp(ref MoveDirection.ValuePrev, ref MoveDirection.Value, interpolationLd, out MoveDirection.ValueInterp);
             Vector3D.Lerp(ref WorldPosition.ValuePrev, ref WorldPosition.Value, interpolationHd, out WorldPosition.ValueInterp);
 
             if (ModelInstance != null)
             {
                 ModelInstance.HeadRotation = Quaternion.Invert(LookAtDirection.ValueInterp);
-                ModelInstance.Rotation = Quaternion.Invert(DynamicEntity.BodyRotation);
+                ModelInstance.Rotation = Quaternion.Invert(MoveDirection.ValueInterp);
                 ModelInstance.Interpolation(timePassed);
             }
         }

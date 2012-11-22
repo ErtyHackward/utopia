@@ -62,17 +62,30 @@ namespace Utopia.Entities.Managers
             // Assign Body rotation by slowly rotate the body in the moving direction
             if (Player.Position != _worldPosition)
             {
-                // take only y-axis rotation of the head
-                var targetRotation = Player.HeadRotation;
-
-                targetRotation.X = 0;
-                targetRotation.Z = 0;
-                targetRotation.Normalize();
+                Quaternion targetRotation;
+                if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.FirstPerson)
+                {
+                    // take only y-axis rotation of the head
+                    targetRotation = Player.HeadRotation;
+                    targetRotation.X = 0;
+                    targetRotation.Z = 0;
+                    targetRotation.Normalize();
+                }
+                else
+                {
+                    //In 3th person camera I cannot use the HeadRotation, as the head is not rotated.
+                    targetRotation = _cameraManager.ActiveCamera.Orientation.Value;
+                    targetRotation.X = 0;
+                    targetRotation.Z = 0;
+                    targetRotation.Normalize();
+                }
 
                 //rotate from Current body rotation to Y axis head rotation "slowly"
                 Player.BodyRotation = Quaternion.Lerp(Player.BodyRotation, targetRotation, (float)Vector3D.Distance(Player.Position, _worldPosition));
             }
-            Player.Position = _worldPosition;
+
+            Player.Position = _worldPosition; //Send the newly compute location to the playercharacter dynamicEntity
+
             if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.FirstPerson)
             {
                 Player.HeadRotation = _entityRotations.EyeOrientation;
