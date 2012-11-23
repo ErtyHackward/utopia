@@ -44,6 +44,8 @@ namespace Utopia.Shared.Entities.Events
         /// </summary>
         public EntityLink PickedEntityLink { get; set; }
 
+        public Vector3 PickedBlockFaceOffset;
+
         public bool IsBlockPicked { get; set; }
 
         public bool IsEntityPicked { get; set; }
@@ -64,7 +66,8 @@ namespace Utopia.Shared.Entities.Events
                             PickedEntityPosition = state.PickedEntityPosition,
                             IsBlockPicked = state.IsBlockPicked,
                             IsEntityPicked = state.IsEntityPicked,
-                            PickedEntityLink = state.PickedEntityLink
+                            PickedEntityLink = state.PickedEntityLink,
+                            PickedBlockFaceOffset = state.PickedBlockFaceOffset
                         };
 
             return e;

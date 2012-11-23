@@ -40,6 +40,7 @@ namespace Utopia.Shared.Entities.Concrete
         {
             var playerRotation = owner.HeadRotation.GetLookAtVector();
             OrientedBlockItem entity = (OrientedBlockItem)cubeEntity;
+
             // locate the entity, set translation in World space
             cubeEntity.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
                                                owner.EntityState.NewBlockPosition.Y,

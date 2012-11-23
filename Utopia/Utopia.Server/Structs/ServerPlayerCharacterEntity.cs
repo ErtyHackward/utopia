@@ -134,6 +134,7 @@ namespace Utopia.Server.Structs
                     NewBlockPosition = e.NewBlockPosition, 
                     PickedBlockPosition = e.PickedBlockPosition,
                     PickedEntityPosition = e.PickedEntityPosition,
+                    PickedBlockFaceOffset = e.PickedBlockFaceOffset,
                     ToolId = e.Tool.StaticId
                 });
             }

@@ -42,6 +42,7 @@ namespace Utopia.Entities.Managers
         private InputsManager _input;
         private IWorldChunks _worldChunks;
         private PlayerEntityManager _playerManager;
+        private bool? _onEntityTop = null;
         #endregion
 
         #region public variables
@@ -157,6 +158,7 @@ namespace Utopia.Entities.Managers
                 entity = _entitiesNearPlayer[i];
                 if (entity.Entity.IsPickable)
                 {
+                    //Refresh entity bounding box world
                     if (entity.Entity.CollisionType == Shared.Entities.Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
                         BoundingBox localStaticEntityBB = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
@@ -209,8 +211,6 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        bool? OnEntityTop = null;
-        Stopwatch debugWatch = new Stopwatch();
         private void CollisionCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
@@ -250,7 +250,7 @@ namespace Utopia.Entities.Managers
             }
 
             Vector3D newPositionWithColliding = previousPosition;
-            OnEntityTop = null;
+            _onEntityTop = null;
 
             newPositionWithColliding.X = newPosition2Evaluate.X;
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
@@ -259,7 +259,7 @@ namespace Utopia.Entities.Managers
                 //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
 
                 newPositionWithColliding.X = previousPosition.X;
-                OnEntityTop = false;
+                _onEntityTop = false;
                 _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
 
             }
@@ -271,7 +271,7 @@ namespace Utopia.Entities.Managers
                 //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
 
                 newPositionWithColliding.Z = previousPosition.Z;
-                OnEntityTop = false;
+                _onEntityTop = false;
                 _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
             }
 
@@ -282,9 +282,9 @@ namespace Utopia.Entities.Managers
                 //logger.Debug("ModelCollisionDetection Y detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Y, previousPosition.Y);
 
                 newPositionWithColliding.Y = previousPosition.Y;
-                if (OnEntityTop == null)
+                if (_onEntityTop == null)
                 {
-                    OnEntityTop = true;
+                    _onEntityTop = true;
                 }
             }
             else
@@ -294,7 +294,7 @@ namespace Utopia.Entities.Managers
                     playerBoundingBox2Evaluate.Minimum.Y -= 0.01f;
                     if (IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
                     {
-                        OnEntityTop = true;
+                        _onEntityTop = true;
                     }
 
                 }
@@ -303,7 +303,7 @@ namespace Utopia.Entities.Managers
             //Set the NEW player position after collision tests
             newPosition2Evaluate = newPositionWithColliding;
 
-            if (OnEntityTop == true)
+            if (_onEntityTop == true)
             {
                 physicSimu.OnGround = true;
                 _isOnGround = true;
@@ -315,7 +315,7 @@ namespace Utopia.Entities.Managers
             }
 
             playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPositionWithColliding.AsVector3(), playerBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (OnEntityTop != true && IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
+            if (_onEntityTop != true && IsCollidingWithModel(entityTesting, playerBoundingBox2Evaluate))
             {
                 //I'm "Blocked" by this entity !
                 //Testing, inject Force to unblock myself !
@@ -512,7 +512,7 @@ namespace Utopia.Entities.Managers
                     newPositionWithColliding.Y = previousPosition.Y;
                 }
                 previousPosition.Y = newPositionWithColliding.Y;
-                OnEntityTop = true;
+                _onEntityTop = true;
             }
 
             newPositionWithColliding.X = newPosition2Evaluate.X;
@@ -520,7 +520,7 @@ namespace Utopia.Entities.Managers
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
             {
                 newPositionWithColliding.X = previousPosition.X;
-                OnEntityTop = false;
+                _onEntityTop = false;
             }
 
             newPositionWithColliding.Z = newPosition2Evaluate.Z;
@@ -528,14 +528,14 @@ namespace Utopia.Entities.Managers
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate, 0.001f))
             {
                 newPositionWithColliding.Z = previousPosition.Z;
-                OnEntityTop = false;
+                _onEntityTop = false;
             }
 
             //Set the NEW player position after collision tests
             newPosition2Evaluate = newPositionWithColliding;
 
             // ? I'm on "TOP" of an object ???
-            if (OnEntityTop == true)
+            if (_onEntityTop == true)
             {
                 physicSimu.OnGround = true;
             }

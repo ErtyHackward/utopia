@@ -3,6 +3,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using SharpDX;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -15,6 +16,7 @@ namespace Utopia.Shared.Net.Messages
         private Vector3I _newBlockPosition;
         private Vector3D _pickedEntityPosition;
         private EntityLink _pickedEntityLink;
+        private Vector3 _pickedBlockFaceOffset;
         private uint _toolId;
         private uint _entityId;
         private bool _isBlockPicked;
@@ -83,7 +85,12 @@ namespace Utopia.Shared.Net.Messages
             get { return _isEntityPicked; }
             set { _isEntityPicked = value; }
         }
-        
+
+        public Vector3 PickedBlockFaceOffset
+        {
+            get { return _pickedBlockFaceOffset; }
+            set { _pickedBlockFaceOffset = value; }
+        }
         /// <summary>
         /// Identification token of the use operation
         /// </summary>
@@ -126,6 +133,7 @@ namespace Utopia.Shared.Net.Messages
             msg._isEntityPicked = reader.ReadBoolean();
             msg._pickedEntityLink = reader.ReadEntityLink();
             msg._token = reader.ReadInt32();
+            msg._pickedBlockFaceOffset = reader.ReadVector3();
             msg._useMode = (ToolUseMode)reader.ReadByte();
 
             return msg;
@@ -148,6 +156,7 @@ namespace Utopia.Shared.Net.Messages
             writer.Write(_isEntityPicked);
             writer.Write(_pickedEntityLink);
             writer.Write(_token);
+            writer.Write(_pickedBlockFaceOffset);
             writer.Write((byte)_useMode);
         }
     }
