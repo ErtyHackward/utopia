@@ -30,6 +30,7 @@ using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3DXEngine.Textures;
 using S33M3DXEngine.Buffers;
+using S33M3Resources.Structs;
 
 namespace Utopia.Entities.Managers
 {
@@ -304,8 +305,12 @@ namespace Utopia.Entities.Managers
 
             var instance = mPair.Value;
 
+            var voxelBB = instance.State.BoundingBox.GetSize();
+            float scale = MathHelper.Min(1.0f, 32 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z));
+            scale *= 0.70f;
+
             // setup the tool instance
-            instance.World = charEntity.ModelInstance.GetToolTransform();
+            instance.World = Matrix.Scaling(scale) * charEntity.ModelInstance.GetToolTransform();
             instance.LightColor = charEntity.ModelInstance.LightColor;
 
             // draw it
