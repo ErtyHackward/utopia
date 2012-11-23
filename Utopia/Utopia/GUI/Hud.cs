@@ -10,6 +10,8 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using Utopia.Shared.Settings;
+using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.GUI
 {
@@ -25,6 +27,7 @@ namespace Utopia.GUI
         private readonly MainScreen _screen;
         private readonly D3DEngine _d3DEngine;
         private int _selectedSlot;
+        private readonly CameraManager<ICameraFocused> _camManager;
 
         /// <summary>
         /// _toolbarUI is a fixed part of the hud
@@ -41,7 +44,7 @@ namespace Utopia.GUI
             if (handler != null) handler(this, e);
         }
 
-        public Hud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager)
+        public Hud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager, CameraManager<ICameraFocused> camManager)
         {
             IsDefferedLoadContent = true;
 
@@ -52,6 +55,7 @@ namespace Utopia.GUI
             DrawOrders.UpdateIndex(0, 10000);
             _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
             ToolbarUi = toolbar;
+            _camManager = camManager;
 
             _inputManager.KeyboardManager.IsRunning = true;
         }
@@ -148,13 +152,12 @@ namespace Utopia.GUI
         //Draw at 2d level ! (Last draw called)
         public override void Draw(DeviceContext context, int index)
         {
-            //Clear the Depth Buffer Befor render the GUI !! => This draw must be DONE AFTER ALL other "3D" Draw.
-            //context.ClearDepthStencilView(_d3DEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
-
-            _spriteRender.Begin(false);
-            _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, ref _crosshair.ColorModifier);
-            _spriteRender.End(context);
-
+            if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson)
+            {
+                _spriteRender.Begin(false);
+                _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, ref _crosshair.ColorModifier);
+                _spriteRender.End(context);
+            }
         }
 
         public override void EnableComponent()
