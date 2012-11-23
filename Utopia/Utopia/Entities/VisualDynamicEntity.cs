@@ -115,20 +115,22 @@ namespace Utopia.Entities
             Networkinterpolation();
         }
 
-        private void CheckWalkingAnimation(ref Vector3D previousPosition, ref Vector3D currentPosition, double treeshold)
+        private void CheckWalkingAnimation(ref Vector3D previousPosition, ref Vector3D currentPosition, double threshold)
         {
             var distanceSquared = Vector3D.DistanceSquared(previousPosition, currentPosition);
 
             //Activate / deactivate Model Playing animation
-            if (_walking && distanceSquared < treeshold)
+            if (_walking && distanceSquared < threshold)
             {
-                if (ModelInstance != null) ModelInstance.Stop();
+                if (ModelInstance != null) 
+                    ModelInstance.Stop();
                 _walking = false;
             }
 
-            if (!_walking && distanceSquared >= treeshold)
+            if (!_walking && distanceSquared >= threshold)
             {
-                if (ModelInstance != null && ModelInstance.CanPlay("Walk")) ModelInstance.Play("Walk", true);
+                if (ModelInstance != null) 
+                    ModelInstance.TryPlay("Walk", true);
                 _walking = true;
             }
         }
