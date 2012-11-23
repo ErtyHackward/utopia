@@ -274,7 +274,7 @@ namespace Utopia.Entities.Renderer
             else
             {
                 var voxelBB = _toolVoxelInstance.State.BoundingBox.GetSize();
-                scale = 16 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z);
+                scale = MathHelper.Min(1.0f, 16 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z));
                 scale *= 0.70f;
             }
 
