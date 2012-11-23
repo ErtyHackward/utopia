@@ -32,7 +32,7 @@ namespace Utopia.Entities.Renderer
 {
     /// <summary>
     /// Renders a specific equipped tool by an entity, this tool can be a texture block or an IVoxelEntity.
-    /// It tool is an IVoxel entity then also draws the arm of the player model
+    /// If the tool is an IVoxel entity then also draws the arm of the player model
     /// Works only in first person mode
     /// </summary>
     public class FirstPersonToolRenderer : DrawableGameComponent
@@ -199,8 +199,10 @@ namespace Utopia.Entities.Renderer
 
         private void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
         {
-            if (e.EquippedItem != null) Tool = e.EquippedItem.Item as ITool;
-            else Tool = null;
+            if (e.EquippedItem != null) 
+                Tool = e.EquippedItem.Item as ITool;
+            else 
+                Tool = null;
         }
 
         //The tool has been changed !

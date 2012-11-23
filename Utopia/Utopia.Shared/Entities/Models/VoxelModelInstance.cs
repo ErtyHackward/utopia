@@ -240,6 +240,23 @@ namespace Utopia.Shared.Entities.Models
         }
 
         /// <summary>
+        /// Checks if the entity have an animation
+        /// And if it is plays it.
+        /// </summary>
+        /// <param name="animationName"></param>
+        /// <returns>true if animation is started to play otherwise false</returns>
+        public bool TryPlay(string animationName, bool repeat = false)
+        {
+            if (CanPlay(animationName))
+            {
+                Play(animationName, repeat);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Starts first animation with name specified
         /// </summary>
         /// <param name="animationName"></param>

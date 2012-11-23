@@ -39,7 +39,7 @@ namespace Utopia.Shared.Entities.Dynamic
             
             Type = EntityType.Dynamic;
             BodyRotation = Quaternion.Identity;
-            ModelName = "s33m3";
+            ModelName = "Girl";
             Name = "Player";
         }
 
