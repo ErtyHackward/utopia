@@ -52,7 +52,7 @@ namespace Utopia.Entities.Managers
         {
             Player.EntityState.IsBlockPicked = false;
 
-            //Check the Ray against all entity.
+            //Check the Ray against all entity first
             Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
             if (EntityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
             {
@@ -64,6 +64,8 @@ namespace Utopia.Entities.Managers
                 return true;
             }
 
+
+            //Check for Cube Picking
             //Sample 500 points in the view direction vector
             for (int ptNbr = 0; ptNbr < 500; ptNbr++)
             {
@@ -72,7 +74,16 @@ namespace Utopia.Entities.Managers
                 //Check if a block is picked up !
                 if (_cubesHolder.isPickable(ref pickingWorldPosition, out PickedCube))
                 {
+
                     Player.EntityState.PickedBlockPosition = PickedCube.Position;
+
+                    //Get the clicked point on face.
+                    BoundingBox cubeBB = new BoundingBox(PickedCube.Position, PickedCube.Position += 1);
+                    Vector3 faceInteresection;
+                    if (cubeBB.Intersects(ref pickingRay, out faceInteresection))
+                    {
+                        Player.EntityState.PickedBlockFaceOffset = Vector3.One - (PickedCube.Position - faceInteresection);
+                    }
 
                     bool newPlacechanged = false;
 

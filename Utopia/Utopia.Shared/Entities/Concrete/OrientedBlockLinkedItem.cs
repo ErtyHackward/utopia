@@ -39,23 +39,25 @@ namespace Utopia.Shared.Entities.Concrete
 
         protected override bool SetNewItemPlace(BlockLinkedItem cubeEntity, IDynamicEntity owner, Vector3I vector)
         {
+            Vector3 faceOffset = BlockFaceCentered ? new Vector3(0.5f, 0.5f, 0.5f) : owner.EntityState.PickedBlockFaceOffset;
+
             var playerRotation = owner.HeadRotation.GetLookAtVector();
             var entity = (OrientedBlockLinkedItem)cubeEntity;
             // locate the entity
             if (vector.Y == 1) // = Put on TOP 
             {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
                                                    owner.EntityState.PickedBlockPosition.Y + 1f,
-                                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                                                   owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
                 
             }
             else if (vector.Y == -1) // PUT on cube Bottom = (Ceiling)
             {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + 0.5f,
+                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
                                                    owner.EntityState.PickedBlockPosition.Y - 1f,
-                                                   owner.EntityState.PickedBlockPosition.Z + 0.5f);
+                                                   owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
             }
-            else // Put on a side not possible for OrientedCubePlaceabltItems
+            else // Put on a side not possible.
             {
                 return false;
             }

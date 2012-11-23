@@ -1,5 +1,6 @@
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using SharpDX;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -12,6 +13,11 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Global position of currently picked block
         /// </summary>
         public Vector3I PickedBlockPosition;
+
+        /// <summary>
+        /// Get an offset from block face that specify the location point being clicked (face origin being 0;0;0).
+        /// </summary>
+        public Vector3 PickedBlockFaceOffset;
 
         /// <summary>
         /// Is the entity a block at range, ready to by "picked-up"
@@ -37,6 +43,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Gets entity that currently picked by entity
         /// </summary>
         public EntityLink PickedEntityLink;
+
     }
 
 }
