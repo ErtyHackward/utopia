@@ -354,6 +354,7 @@ namespace Utopia.GUI.Inventory
                     if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
                         throw new InvalidOperationException();
                     UpdateDrag(slotTaken);
+                    CancelDrag();
                 }
                 else
                 {
