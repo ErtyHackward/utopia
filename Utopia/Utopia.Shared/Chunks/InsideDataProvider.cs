@@ -137,7 +137,9 @@ namespace Utopia.Shared.Chunks
         {
             // no need to do anything?
             if (_chunkSize == newSize) return;
-            
+
+            _chunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
+
             // copy data
             if (_blockBytes != null && copyData)
             {
