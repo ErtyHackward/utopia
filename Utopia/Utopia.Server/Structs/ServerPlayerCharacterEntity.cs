@@ -18,6 +18,8 @@ namespace Utopia.Server.Structs
     /// </summary>
     public class ServerPlayerCharacterEntity : ServerDynamicEntity
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Server _server;
 
         public ClientConnection Connection { get; private set; }
@@ -368,6 +370,8 @@ namespace Utopia.Server.Structs
 
         public override void ItemTransfer(ItemTransferMessage itm)
         {
+            logger.Info("Transfer " + itm.ToString());
+
             #region Switch
             if (itm.IsSwitch)
             {
@@ -418,7 +422,7 @@ namespace Utopia.Server.Structs
                 return;
             }
             #endregion
-
+            
             if (itm.SourceContainerSlot.X == -2)
             {
                 // set toolbar slot
