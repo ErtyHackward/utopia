@@ -33,6 +33,31 @@ namespace Utopia.GUI.Inventory
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<InventoryWindowCellMouseEventArgs> SlotMouseUp;
+
+        protected void OnSlotMouseUp(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = SlotMouseUp;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<InventoryWindowCellMouseEventArgs> SlotEnter;
+
+        protected void OnSlotEnter(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = SlotEnter;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<InventoryWindowCellMouseEventArgs> SlotLeave;
+
+        protected void OnSlotLeave(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = SlotLeave;
+            if (handler != null) handler(this, e);
+        }
+
+
         public ToolBarUi(PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
         {
             _player = player;
@@ -52,6 +77,9 @@ namespace Utopia.GUI.Inventory
                                   //Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
                               };
                 btn.MouseDown += BtnMouseDown;
+                btn.MouseUp += btn_MouseUp;
+                btn.MouseEnter += btn_MouseEnter;
+                btn.MouseLeave += btn_MouseLeave;
 
                 
                 if (_player.Toolbar[x] != 0)
@@ -63,6 +91,21 @@ namespace Utopia.GUI.Inventory
             }
 
 
+        }
+
+        void btn_MouseLeave(object sender, EventArgs e)
+        {
+            OnSlotLeave(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
+        }
+
+        void btn_MouseEnter(object sender, EventArgs e)
+        {
+            OnSlotEnter(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
+        }
+
+        void btn_MouseUp(object sender, MouseDownEventArgs e)
+        {
+            OnSlotMouseUp(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
         }
 
         void BtnMouseDown(object sender, MouseDownEventArgs e)

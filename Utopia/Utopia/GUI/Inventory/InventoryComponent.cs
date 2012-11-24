@@ -38,8 +38,10 @@ namespace Utopia.GUI.Inventory
         private InventoryWindow _containerInventoryWindow;
 
         private InventoryCell _dragControl;
+        private InventoryCell _toolbarSlot;
         private Point _dragOffset;
         private ItemInfoWindow _infoWindow;
+
 
         private SlotContainer<ContainedSlot> _sourceContainer;
 
@@ -127,6 +129,8 @@ namespace Utopia.GUI.Inventory
             _itemMessageTranslator = itemMessageTranslator;
             _hud = hud;
             _toolBar = hud.ToolbarUi;
+            _toolBar.SlotEnter += _toolBar_SlotEnter;
+            _toolBar.SlotLeave += _toolBar_SlotLeave;
 
             _hud.SlotClicked += HudSlotClicked;
             _guiManager.Screen.Desktop.Clicked += DesktopClicked;
@@ -134,6 +138,16 @@ namespace Utopia.GUI.Inventory
             _itemMessageTranslator.Enabled = false;
 
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
+        }
+
+        void _toolBar_SlotLeave(object sender, InventoryWindowCellMouseEventArgs e)
+        {
+            _toolbarSlot = null;
+        }
+
+        void _toolBar_SlotEnter(object sender, InventoryWindowCellMouseEventArgs e)
+        {
+            _toolbarSlot = e.Cell;
         }
         
         public override void BeforeDispose()
@@ -152,15 +166,17 @@ namespace Utopia.GUI.Inventory
             if (window is CharacterInventory)
             {
                 var charInventory = window as CharacterInventory;
-                charInventory.EquipmentSlotClicked += InventoryUiSlotClicked;
+                //charInventory.EquipmentSlotClicked += InventoryUiSlotClicked;
             }
 
             // listen standart inventory events
-            window.InventorySlotClicked += InventoryUiSlotClicked;
+            //window.InventorySlotClicked += InventoryUiSlotClicked;
             window.CellMouseEnter += InventoryUiCellMouseEnter;
             window.CellMouseLeave += InventoryUiCellMouseLeave;
+            window.CellMouseUp += charInventory_CellMouseUp;
+            window.CellMouseDown += charInventory_CellMouseDown;
         }
-
+        
         /// <summary>
         /// Removes all event handlers from the window, use this method when the windows is removed or hidden
         /// </summary>
@@ -171,18 +187,19 @@ namespace Utopia.GUI.Inventory
             if (window is CharacterInventory)
             {
                 var charInventory = window as CharacterInventory;
-                charInventory.EquipmentSlotClicked -= InventoryUiSlotClicked;
+                //charInventory.EquipmentSlotClicked -= InventoryUiSlotClicked;
             }
 
-            window.InventorySlotClicked -= InventoryUiSlotClicked;
+            //window.InventorySlotClicked -= InventoryUiSlotClicked;
             window.CellMouseEnter -= InventoryUiCellMouseEnter;
             window.CellMouseLeave -= InventoryUiCellMouseLeave;
+            window.CellMouseUp -= charInventory_CellMouseUp;
+            window.CellMouseDown -= charInventory_CellMouseDown;
         }
 
         public override void LoadContent(DeviceContext context)
         {
             _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
-            _toolBar.SlotClicked += ToolBarSlotClicked;
 
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
             {
@@ -277,14 +294,14 @@ namespace Utopia.GUI.Inventory
             _infoWindow.ActiveItem = e.Cell.Slot.Item;
         }
 
-        private void InventoryUiSlotClicked(object sender, InventoryWindowEventArgs e)
+        void charInventory_CellMouseDown(object sender, InventoryWindowEventArgs e)
         {
             var keyboard = _inputManager.KeyboardManager.CurKeyboardState;
             if (_dragControl.Slot == null)
             {
                 // taking item
                 var slot = e.Container.PeekSlot(e.SlotPosition);
-                
+
                 if (slot != null)
                 {
                     var itemsCount = slot.ItemsCount;
@@ -305,8 +322,25 @@ namespace Utopia.GUI.Inventory
                     _sourceContainer = e.Container;
                 }
             }
-            else
+        }
+
+        void charInventory_CellMouseUp(object sender, InventoryWindowEventArgs e)
+        {
+            var keyboard = _inputManager.KeyboardManager.CurKeyboardState;
+
+            if (_dragControl.Slot != null)
             {
+                if (e == null)
+                {
+                    if (_toolbarSlot != null)
+                    {
+                        ToolBarSlotClicked(sender, new InventoryWindowCellMouseEventArgs { Cell = _toolbarSlot });
+                    }
+
+                    CancelDrag();
+                    return;
+                }
+                
                 // put item
 
                 // check slot we want to put to
@@ -359,6 +393,17 @@ namespace Utopia.GUI.Inventory
         {
             _dragControl.Slot = slot;
             _dragControl.BringToFront();
+        }
+
+        private void CancelDrag()
+        {
+            // return item on the place
+            if (_dragControl.Slot != null)
+            {
+                _sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition,
+                                         _dragControl.Slot.ItemsCount);
+            }
+            EndDrag();
         }
 
         private void EndDrag()

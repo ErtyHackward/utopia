@@ -18,17 +18,6 @@ namespace Utopia.GUI.Inventory
         private readonly CharacterEntity _character;
         private readonly IconFactory _iconFactory;
 
-        /// <summary>
-        /// Occurs when an equipment slot is clicked
-        /// </summary>
-        public event EventHandler<InventoryWindowEventArgs> EquipmentSlotClicked;
-
-        private void OnEquipmentSlotClicked(InventoryWindowEventArgs e)
-        {
-            var handler = EquipmentSlotClicked;
-            if (handler != null) handler(this, e);
-        }
-
         public CharacterInventory(CharacterEntity character, IconFactory iconFactory, Point windowStartPosition,
                                   Point gridOffset, InputsManager inputManager)
             : base(character.Inventory, iconFactory, windowStartPosition, gridOffset, inputManager)
@@ -64,28 +53,13 @@ namespace Utopia.GUI.Inventory
             bodyCell.DrawGroupId = this.DrawGroupId;
             bodyCell.Name = inventorySlot.ToString();
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
-            bodyCell.MouseDown += BodyCellMouseDown;
-            bodyCell.MouseEnter += BodyCellMouseEnter;
-            bodyCell.MouseLeave += BodyCellMouseLeave;
+            bodyCell.MouseDown += ControlMouseDown;
+            bodyCell.MouseEnter += ControlMouseEnter;
+            bodyCell.MouseLeave += ControlMouseLeave;
+            bodyCell.MouseUp += ControlMouseUp;
             Children.Add(bodyCell);
             return bodyCell;
         }
 
-        private void BodyCellMouseLeave(object sender, EventArgs e)
-        {
-            OnCellMouseLeave(new InventoryWindowCellMouseEventArgs {Cell = (InventoryCell) sender});
-        }
-
-        private void BodyCellMouseEnter(object sender, EventArgs e)
-        {
-            OnCellMouseEnter(new InventoryWindowCellMouseEventArgs {Cell = (InventoryCell) sender});
-        }
-
-        private void BodyCellMouseDown(object sender, MouseDownEventArgs e)
-        {
-            var cell = (InventoryCell) sender;
-            OnEquipmentSlotClicked(new InventoryWindowEventArgs
-                                       {Container = _character.Equipment, SlotPosition = cell.InventoryPosition});
-        }
     }
 }
