@@ -20,6 +20,12 @@ namespace Utopia.GUI.Inventory
         private readonly IconFactory _iconFactory;
         private ContainedSlot _slot;
         private Shared.Entities.Dynamic.PlayerCharacter _player = null;
+        private int _drawIconsGroupId;
+
+        public SlotContainer<ContainedSlot> Container
+        {
+            get { return _container; }
+        }
 
         /// <summary>
         /// Gets current cell grid position
@@ -44,8 +50,7 @@ namespace Utopia.GUI.Inventory
         }
 
         public int DrawIconsActiveCellId { get; set; }
-
-        private int _drawIconsGroupId;
+        
         public int DrawIconsGroupId
         {
             get {
@@ -101,6 +106,14 @@ namespace Utopia.GUI.Inventory
 
         public EquipmentSlotType SlotType { get; set; }
 
+        public event EventHandler<MouseDownEventArgs> MouseUp;
+
+        private void OnMouseUp(MouseDownEventArgs e)
+        {
+            var handler = MouseUp;
+            if (handler != null) handler(this, e);
+        }
+
         public event EventHandler<MouseDownEventArgs> MouseDown;
         
         private void OnMouseDown(MouseDownEventArgs e)
@@ -155,6 +168,11 @@ namespace Utopia.GUI.Inventory
         protected override void OnMousePressed(MouseButtons button)
         {
             OnMouseDown(new MouseDownEventArgs { Buttons = button });
+        }
+
+        protected override void OnMouseReleased(MouseButtons button)
+        {
+            OnMouseUp(new MouseDownEventArgs {Buttons = button});
         }
     }
 

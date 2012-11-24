@@ -25,6 +25,7 @@ namespace Utopia.GUI.Inventory
         private readonly Point _windowStartPosition;
         protected readonly Point GridOffset;
         public const int CellSize = 52;
+        private InventoryCell _dropCell;
         
         /// <summary>
         /// Occurs when some slot get clicked
@@ -53,6 +54,21 @@ namespace Utopia.GUI.Inventory
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<InventoryWindowEventArgs> CellMouseUp;
+
+        private void OnMouseUp(InventoryWindowEventArgs e)
+        {
+            var handler = CellMouseUp;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<InventoryWindowEventArgs> CellMouseDown;
+
+        private void OnMouseDown(InventoryWindowEventArgs e)
+        {
+            var handler = CellMouseDown;
+            if (handler != null) handler(this, e);
+        }
 
         /// <summary>
         /// Gets or changes container wrapped
@@ -108,6 +124,7 @@ namespace Utopia.GUI.Inventory
                         cell.MouseDown -= ControlMouseDown;
                         cell.MouseEnter -= ControlMouseEnter;
                         cell.MouseLeave -= ControlMouseLeave;
+                        cell.MouseUp -= ControlMouseUp;
                         Children.Remove(cell);
                     }
                 }
@@ -122,14 +139,15 @@ namespace Utopia.GUI.Inventory
                 for (var y = 0; y < container.GridSize.Y; y++)
                 {
                     var control = new InventoryCell(_content, _iconFactory, new Vector2I(x, y), _inputManager)
-                                      {
-                                          Bounds = new UniRectangle(offset.X + x * CellSize, offset.Y + y * CellSize, CellSize, CellSize),
-                                          Name = "Cell" + x + "," + y,
-                                      };
-                    control.DrawGroupId = this.DrawGroupId;
+                        {
+                            Bounds = new UniRectangle(offset.X + x * CellSize, offset.Y + y * CellSize, CellSize, CellSize),
+                            Name = "Cell" + x + "," + y,
+                            DrawGroupId = DrawGroupId,
+                        };
                     control.MouseDown += ControlMouseDown;
                     control.MouseEnter += ControlMouseEnter;
                     control.MouseLeave += ControlMouseLeave;
+                    control.MouseUp += ControlMouseUp;
                     Children.Add(control);
 
                     UiGrid[x, y] = control;
@@ -139,32 +157,57 @@ namespace Utopia.GUI.Inventory
             CellsCreated();
         }
 
-        void ControlMouseLeave(object sender, EventArgs e)
+        protected void ControlMouseUp(object sender, MouseDownEventArgs e)
         {
+            OnMouseUp(CreateEventArgs(_dropCell));
+        }
+
+        protected void ControlMouseLeave(object sender, EventArgs e)
+        {
+            _dropCell = null;
             OnCellMouseLeave(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
         }
 
-        void ControlMouseEnter(object sender, EventArgs e)
+        protected void ControlMouseEnter(object sender, EventArgs e)
         {
+            _dropCell = (InventoryCell)sender;
             OnCellMouseEnter(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
         }
 
-        void ControlMouseDown(object sender, MouseDownEventArgs e)
+        protected InventoryWindowEventArgs CreateEventArgs(InventoryCell cell)
         {
+            if (cell == null)
+                return null;
 
-            var control = (InventoryCell)sender;
+            var control = cell;
             var state = _inputManager.MouseManager.Mouse.GetState();
-
             var bounds = control.GetAbsoluteBounds();
 
             // slot offset
             var offset = new Point(
                 (int)bounds.X - state.X,
-                (int)bounds.Y - state.Y 
+                (int)bounds.Y - state.Y
                 );
 
+            return new InventoryWindowEventArgs
+                {
+                    SlotPosition = control.InventoryPosition,
+                    MouseState = state,
+                    Container = cell.Container,
+                    Offset = offset
+                };
+        }
+
+
+        protected void ControlMouseDown(object sender, MouseDownEventArgs e)
+        {
+
+            var ea = CreateEventArgs((InventoryCell)sender);
+
+            OnMouseDown(ea);
+
             // tell everyone that user click some slot
-            OnSlotClicked(new InventoryWindowEventArgs { SlotPosition = control.InventoryPosition, MouseState = state, Container = _content, Offset = offset });
+            OnSlotClicked(ea);
         }
     }
 
