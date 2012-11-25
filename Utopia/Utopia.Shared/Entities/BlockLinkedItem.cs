@@ -54,66 +54,63 @@ namespace Utopia.Shared.Entities
         public BlockFace MountPoint { get; set; }
 
         // tool logic
-        public virtual IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer)
+        public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer)
         {
             var impact = new ToolImpact { Success = false };
 
-            if (useMode == ToolUseMode.RightMouse)
+            if (owner.EntityState.IsBlockPicked)
             {
-                if (owner.EntityState.IsBlockPicked)
-                {
-                    ILandscapeCursor cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
+                ILandscapeCursor cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
                     
-                    var moveVector = owner.EntityState.NewBlockPosition - owner.EntityState.PickedBlockPosition;
+                var moveVector = owner.EntityState.NewBlockPosition - owner.EntityState.PickedBlockPosition;
 
-                    // check if entity can be put there
-                    if (moveVector.Y == 1 && !MountPoint.HasFlag(BlockFace.Top))
-                        return impact;
+                // check if entity can be put there
+                if (moveVector.Y == 1 && !MountPoint.HasFlag(BlockFace.Top))
+                    return impact;
 
-                    if (moveVector.Y == -1 && !MountPoint.HasFlag(BlockFace.Bottom))
-                        return impact;
+                if (moveVector.Y == -1 && !MountPoint.HasFlag(BlockFace.Bottom))
+                    return impact;
 
-                    if ((Math.Abs(moveVector.X) == 1 || Math.Abs(moveVector.Z) == 1) && !MountPoint.HasFlag(BlockFace.Sides))
-                        return impact;
+                if ((Math.Abs(moveVector.X) == 1 || Math.Abs(moveVector.Z) == 1) && !MountPoint.HasFlag(BlockFace.Sides))
+                    return impact;
 
-                    // check if the place is free
-                    if (MountPoint.HasFlag(BlockFace.Top) && moveVector.Y == 1 && cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
-                        return impact;
+                // check if the place is free
+                if (MountPoint.HasFlag(BlockFace.Top) && moveVector.Y == 1 && cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
+                    return impact;
 
-                    if (MountPoint.HasFlag(BlockFace.Sides) && (moveVector.Y == 0) && cursor.PeekProfile(moveVector).IsSolidToEntity)
-                        return impact;
+                if (MountPoint.HasFlag(BlockFace.Sides) && (moveVector.Y == 0) && cursor.PeekProfile(moveVector).IsSolidToEntity)
+                    return impact;
 
-                    if (MountPoint.HasFlag(BlockFace.Bottom) && moveVector.Y == -1 && cursor.PeekProfile(Vector3I.Down).IsSolidToEntity) 
-                        return impact;
+                if (MountPoint.HasFlag(BlockFace.Bottom) && moveVector.Y == -1 && cursor.PeekProfile(Vector3I.Down).IsSolidToEntity) 
+                    return impact;
 
-                    // create a new version of the item, and put it into the world
-                    var cubeEntity = (BlockLinkedItem)entityFactory.CreateFromBluePrint(BluePrintId);
-                    cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
-                    cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
+                // create a new version of the item, and put it into the world
+                var cubeEntity = (BlockLinkedItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
+                cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
 
-                    if (BlockEmptyRequired)
+                if (BlockEmptyRequired)
+                {
+                    //Get the chunk where the entity will be added and check if another entity is not present at the destination root block !
+                    var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                    foreach (BlockLinkedItem entity in workingchunk.Entities.Entities.Values.Where(x => x is BlockLinkedItem && ((IBlockLinkedEntity)x).LinkedCube == owner.EntityState.PickedBlockPosition))
                     {
-                        //Get the chunk where the entity will be added and check if another entity is not present at the destination root block !
-                        var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
-                        foreach (BlockLinkedItem entity in workingchunk.Entities.Entities.Values.Where(x => x is BlockLinkedItem && ((IBlockLinkedEntity)x).LinkedCube == owner.EntityState.PickedBlockPosition))
+                        if (entity.BlockLocationRoot == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)
                         {
-                            if (entity.BlockLocationRoot == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)
-                            {
-                                //CubePlaced Entity already present at this location
-                                return impact;
-                            }
+                            //CubePlaced Entity already present at this location
+                            return impact;
                         }
                     }
-
-                    //cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
-
-                    //If was not possible to set Item Place do nothing
-                    if (!SetNewItemPlace(cubeEntity, owner, moveVector)) return impact;
-
-                    cursor.AddEntity(cubeEntity, owner.DynamicId);
-                    
-                    impact.Success = true;
                 }
+
+                //cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
+
+                //If was not possible to set Item Place do nothing
+                if (!SetNewItemPlace(cubeEntity, owner, moveVector)) return impact;
+
+                cursor.AddEntity(cubeEntity, owner.DynamicId);
+                    
+                impact.Success = true;
             }
             return impact;
         }

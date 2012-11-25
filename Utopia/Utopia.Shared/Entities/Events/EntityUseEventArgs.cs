@@ -50,8 +50,6 @@ namespace Utopia.Shared.Entities.Events
 
         public bool IsEntityPicked { get; set; }
 
-        public ToolUseMode UseMode { get; set; }
-
         /// <summary>
         /// Creates event args from entity state
         /// </summary>
