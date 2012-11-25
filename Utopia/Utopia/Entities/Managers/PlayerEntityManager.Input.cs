@@ -34,31 +34,31 @@ namespace Utopia.Entities.Managers
                 if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
                 {
                     //sends the client server event that does tool.use on server
-                    Player.RightToolUse(ToolUseMode.LeftMouse);
+                    Player.ToolUse();
 
                     //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
-                    Player.Equipment.RightTool.Use(Player, ToolUseMode.LeftMouse);
+                    Player.Equipment.RightTool.Use(Player);
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
-            {
-                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
-                {
-                    //Avoid the player to add a block where he is located !            
-                    BoundingBox playerPotentialNewBlock;
-                    ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
+            //if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
+            //{
+            //    if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
+            //    {
+            //        //Avoid the player to add a block where he is located !            
+            //        BoundingBox playerPotentialNewBlock;
+            //        ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
 
-                    if(! VisualVoxelEntity.WorldBBox.Intersects(ref playerPotentialNewBlock))
-                    {
-                        //sends the client server event that does tool.use on server
-                        Player.RightToolUse(ToolUseMode.RightMouse);
+            //        if(! VisualVoxelEntity.WorldBBox.Intersects(ref playerPotentialNewBlock))
+            //        {
+            //            //sends the client server event that does tool.use on server
+            //            Player.RightToolUse(ToolUseMode.RightMouse);
 
-                        //client invocation to keep the client inventory in synch
-                        Player.Equipment.RightTool.Use(Player, ToolUseMode.RightMouse);
-                    }
-                }
-            }
+            //            //client invocation to keep the client inventory in synch
+            //            Player.Equipment.RightTool.Use(Player, ToolUseMode.RightMouse);
+            //        }
+            //    }
+            //}
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {

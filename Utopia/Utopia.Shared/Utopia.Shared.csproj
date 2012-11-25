@@ -204,7 +204,6 @@
     <Compile Include="Entities\Models\VoxelModelState.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />
-    <Compile Include="Entities\ToolUseMode.cs" />
     <Compile Include="Entities\Models\VoxelFrame.cs" />
     <Compile Include="Entities\Models\VoxelModel.cs" />
     <Compile Include="Entities\Models\VoxelModelPart.cs" />

@@ -178,7 +178,7 @@ namespace Utopia.Server.Structs
 
                 if (tool != null)
                 {
-                    var toolImpact = tool.Use(playerCharacter, entityUseMessage.UseMode, true);
+                    var toolImpact = tool.Use(playerCharacter, true);
 
                     // returning tool feedback
                     Connection.SendAsync(new UseFeedbackMessage

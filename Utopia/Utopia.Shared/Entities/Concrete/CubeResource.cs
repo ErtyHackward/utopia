@@ -57,18 +57,6 @@ namespace Utopia.Shared.Entities.Concrete
             get { return "A world Cube"; }
         }
 
-        /// <summary>
-        /// Special static event to handle all world cubes changes
-        /// Occurs when someone add or remove block at the world
-        /// </summary>
-        public static event EventHandler<CubeChangedEventArgs> CubeChanged;
-
-        public static void OnCubeChanged(CubeChangedEventArgs e)
-        {
-            var handler = CubeChanged;
-            if (handler != null) handler(null, e);
-        }
-
         public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
         {
             base.Load(reader, factory);
@@ -87,16 +75,11 @@ namespace Utopia.Shared.Entities.Concrete
             Name = cubeName;
         }
 
-        public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
+        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
         {
             if (owner.EntityState.IsBlockPicked)
             {
-                return BlockImpact(owner, useMode, runOnServer);
-            }
-
-            if (owner.EntityState.IsEntityPicked)
-            {
-                return EntityImpact(owner, useMode, runOnServer);
+                return BlockImpact(owner, runOnServer);
             }
 
             var impact = new ToolImpact { Success = false };
@@ -104,89 +87,86 @@ namespace Utopia.Shared.Entities.Concrete
             return impact;
         }
 
-        public IToolImpact BlockImpact(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
+        public IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
         {
             var entity = owner;
             var impact = new ToolImpact { Success = false };
 
             if (entity.EntityState.IsBlockPicked)
             {
-                if (useMode == ToolUseMode.LeftMouse)
+                //Add new block
+                var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
+                if (cursor.Read() == WorldConfiguration.CubeId.Air)
                 {
-                    //Remove block and all attached entities to this blocks !
-                    var character = owner as CharacterEntity;
+                    cursor.Write(CubeId);
+                    impact.Success = true;
+                    return impact;
+                }
 
-                    var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
-                    var cube = cursor.Read();
-                    if (cube != WorldConfiguration.CubeId.Air)
-                    {
-                        var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                //if (useMode == ToolUseMode.LeftMouse)
+                //{
+                //    //Remove block and all attached entities to this blocks !
+                //    var character = owner as CharacterEntity;
 
-                        if (character != null)
-                        {
-                            foreach (var chunkEntity in chunk.Entities.EnumerateFast())
-                            {
-                                IBlockLinkedEntity cubeBlockLinkedEntity = chunkEntity as IBlockLinkedEntity;
-                                if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
-                                {
-                                    //Insert in the inventory the entity that will be removed !
-                                    var adder = (IItem)entityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
-                                    character.Inventory.PutItem(adder);
-                                }
-                            }
-                        }
+                //    var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
+                //    var cube = cursor.Read();
+                //    if (cube != WorldConfiguration.CubeId.Air)
+                //    {
+                //        var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
 
-                        //Removed all entities from collection that where linked to this removed cube !
-                        chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
+                //        if (character != null)
+                //        {
+                //            foreach (var chunkEntity in chunk.Entities.EnumerateFast())
+                //            {
+                //                IBlockLinkedEntity cubeBlockLinkedEntity = chunkEntity as IBlockLinkedEntity;
+                //                if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
+                //                {
+                //                    //Insert in the inventory the entity that will be removed !
+                //                    var adder = (IItem)entityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
+                //                    character.Inventory.PutItem(adder);
+                //                }
+                //            }
+                //        }
 
-                        //change the Block to AIR
-                        cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = WorldConfiguration.CubeId.Air });
+                //        //Removed all entities from collection that where linked to this removed cube !
+                //        chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
+
+                //        //change the Block to AIR
+                //        cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                //        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = WorldConfiguration.CubeId.Air });
                         
-                        //Add the removed cube into the inventory
-                        impact.Success = true;
+                //        //Add the removed cube into the inventory
+                //        impact.Success = true;
 
-                        return impact;
-                    }
-                }
-                else
-                {
-                    //Add new block
-                    var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
-                    {
-                        cursor.Write(CubeId);
-                        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = CubeId });
-                        impact.Success = true;
-                        return impact;
-                    }
-                }
+                //        return impact;
+                //    }
+                //}
             }
             impact.Message = "Pick a cube to use this tool";
             return impact;
         }
 
         //Entity impect when a player equiped with a cube click on the entity => Will remove the entity and place it to the inventory.
-        private IToolImpact EntityImpact(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
-        {
-            var impact = new ToolImpact { Success = false };
+        //private IToolImpact EntityImpact(IDynamicEntity owner, bool runOnServer = false)
+        //{
+        //    var impact = new ToolImpact { Success = false };
 
-            EntityLink entity = owner.EntityState.PickedEntityLink;
-            IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
-            IStaticEntity entityRemoved;
+        //    EntityLink entity = owner.EntityState.PickedEntityLink;
+        //    IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
+        //    IStaticEntity entityRemoved;
 
-            //Remove the entity from chunk
-            chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
+        //    //Remove the entity from chunk
+        //    chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
             
-            var character = owner as CharacterEntity;
-            if (character != null && entityRemoved != null)
-            {
-                //Create a new entity of the same clicked one and place it into the inventory
-                var adder = (IItem)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);  
-                character.Inventory.PutItem(adder);
-            }
-            return impact;
-        }
+        //    var character = owner as CharacterEntity;
+        //    if (character != null && entityRemoved != null)
+        //    {
+        //        //Create a new entity of the same clicked one and place it into the inventory
+        //        var adder = (IItem)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);  
+        //        character.Inventory.PutItem(adder);
+        //    }
+        //    return impact;
+        //}
 
         public void Rollback(IToolImpact impact)
         {

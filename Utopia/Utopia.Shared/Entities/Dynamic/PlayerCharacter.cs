@@ -45,13 +45,12 @@ namespace Utopia.Shared.Entities.Dynamic
 
         #region Public Methods
 
-        public void RightToolUse(ToolUseMode useMode)
+        public void ToolUse()
         {
             if (Equipment.RightTool != null)
             {
                 var args = EntityUseEventArgs.FromState(EntityState);
                 args.Tool = Equipment.RightTool;
-                args.UseMode = useMode;
                 OnUse(args);
             }
         }

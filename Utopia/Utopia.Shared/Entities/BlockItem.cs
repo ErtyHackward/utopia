@@ -36,43 +36,41 @@ namespace Utopia.Shared.Entities
         #endregion
 
         #region Public Methods
-        public IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false)
+        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
         {
             var impact = new ToolImpact { Success = false };
 
-            if (useMode == ToolUseMode.RightMouse)
+            if (owner.EntityState.IsBlockPicked)
             {
-                if (owner.EntityState.IsBlockPicked)
-                {
-                    var cursor = LandscapeManager.GetCursor(owner.EntityState.NewBlockPosition);
+                var cursor = LandscapeManager.GetCursor(owner.EntityState.NewBlockPosition);
                     
-                    // check if the place is free for te entity "Root"
-                    if (cursor.PeekProfile().IsSolidToEntity) return impact;
+                // check if the place is free for te entity "Root"
+                if (cursor.PeekProfile().IsSolidToEntity) return impact;
 
-                    // create a new version of the item, and put it into the world
-                    var cubeEntity = (BlockItem)entityFactory.CreateFromBluePrint(BluePrintId);
-                    cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
-                    // Get the chunk where the entity will be added and check if another entity is present inside this block
-                    var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
-                    foreach (IBlockLocationRoot entity in workingchunk.Entities.Entities.Values)
+                // create a new version of the item, and put it into the world
+                var cubeEntity = (BlockItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
+                // Get the chunk where the entity will be added and check if another entity is present inside this block
+                var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
+                foreach (IBlockLocationRoot entity in workingchunk.Entities.Entities.Values)
+                {
+                    if (entity.BlockLocationRoot == cubeEntity.BlockLocationRoot)
                     {
-                        if (entity.BlockLocationRoot == cubeEntity.BlockLocationRoot)
-                        {
-                            // IBlockLocationRoot Entity already present at this location
-                            return impact;
-                        }
+                        // IBlockLocationRoot Entity already present at this location
+                        return impact;
                     }
-
-                    // Do the Chunk on chunk Next to this one ==> TO DO
-
-                    // If was not possible to set Item Place do nothing
-                    if (!SetNewItemPlace(cubeEntity, owner)) return impact;
-
-                    cursor.AddEntity(cubeEntity, owner.DynamicId);
-
-                    impact.Success = true;
                 }
+
+                // Do the Chunk on chunk Next to this one ==> TO DO
+
+                // If was not possible to set Item Place do nothing
+                if (!SetNewItemPlace(cubeEntity, owner)) return impact;
+
+                cursor.AddEntity(cubeEntity, owner.DynamicId);
+
+                impact.Success = true;
             }
+
             return impact;
         }
 

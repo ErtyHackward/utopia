@@ -184,8 +184,7 @@ namespace Utopia.Network
                 PickedBlockPosition = e.PickedBlockPosition,
                 PickedEntityLink = e.PickedEntityLink,
                 PickedBlockFaceOffset = e.PickedBlockFaceOffset,
-                ToolId = e.Tool == null ? 0 : e.Tool.StaticId,
-                UseMode = e.UseMode
+                ToolId = e.Tool == null ? 0 : e.Tool.StaticId
             });
         }
 

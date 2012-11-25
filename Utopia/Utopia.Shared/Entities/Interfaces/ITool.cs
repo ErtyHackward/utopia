@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="useMode"></param>
         /// <param name="runOnServer">Indicates if tool is run on the server</param>
         /// <returns></returns>
-        IToolImpact Use(IDynamicEntity owner, ToolUseMode useMode, bool runOnServer = false);
+        IToolImpact Use(IDynamicEntity owner, bool runOnServer = false);
 
         /// <summary>
         /// Performs actions to rollback preliminary made actions on the client side
