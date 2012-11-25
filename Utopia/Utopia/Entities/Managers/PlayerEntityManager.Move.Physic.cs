@@ -55,7 +55,7 @@ namespace Utopia.Entities.Managers
                     else
                     {
                         _physicSimu.Friction = 0.0f;
-                        _physicSimu.AirFriction = 0.08f;
+                        _physicSimu.AirFriction = 0.07f;
                     }
                     PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
                     break;

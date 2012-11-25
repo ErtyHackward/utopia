@@ -171,11 +171,21 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Makes id valid for current container scope
+        /// Makes id valid for current container scope, if needed creates new item instance
         /// </summary>
         /// <param name="item"></param>
-        protected void ValidateId(IItem item)
+        protected void ValidateId(ref IItem item)
         {
+            var currentItem = Find(item.StaticId);
+
+            if (currentItem != null && currentItem.Item == item)
+            {
+                // we need to duplicate the item to avoid staticId collision
+                item = (IItem)item.Clone();
+                item.StaticId = GetFreeId();
+                return;
+            }
+
             if (item.StaticId == 0 || Find(item.StaticId) != null)
                 item.StaticId = GetFreeId();
         }
@@ -268,9 +278,10 @@ namespace Utopia.Shared.Entities.Inventory
 
                         if (!ValidateItem(item, pos))
                             continue;
+                        
+                        ValidateId(ref item);
 
                         var addSlot = new T { Item = item, GridPosition = pos, ItemsCount = count };
-                        ValidateId(item);
                         _items[x, y] = addSlot;
                         
                         _slotsCount ++;
@@ -317,9 +328,12 @@ namespace Utopia.Shared.Entities.Inventory
             }
             else
             {
+                
+                
+                ValidateId(ref  item);
+
                 // adding new slot
                 var addSlot = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
-                ValidateId(item);
                 _items[position.X, position.Y] = addSlot;
                 _slotsCount++;
                 item.Container = this;

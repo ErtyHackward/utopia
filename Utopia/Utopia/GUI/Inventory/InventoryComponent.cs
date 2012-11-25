@@ -38,7 +38,7 @@ namespace Utopia.GUI.Inventory
         private InventoryWindow _containerInventoryWindow;
 
         private InventoryCell _dragControl;
-        private InventoryCell _toolbarSlot;
+        private InventoryCell _hoverSlot;
         private Point _dragOffset;
         private ItemInfoWindow _infoWindow;
 
@@ -142,12 +142,12 @@ namespace Utopia.GUI.Inventory
 
         void _toolBar_SlotLeave(object sender, InventoryWindowCellMouseEventArgs e)
         {
-            _toolbarSlot = null;
+            _hoverSlot = null;
         }
 
         void _toolBar_SlotEnter(object sender, InventoryWindowCellMouseEventArgs e)
         {
-            _toolbarSlot = e.Cell;
+            _hoverSlot = e.Cell;
         }
         
         public override void BeforeDispose()
@@ -283,11 +283,14 @@ namespace Utopia.GUI.Inventory
 
         private void InventoryUiCellMouseLeave(object sender, InventoryWindowCellMouseEventArgs e)
         {
+            _hoverSlot = null;
             _infoWindow.ActiveItem = null;
         }
 
         private void InventoryUiCellMouseEnter(object sender, InventoryWindowCellMouseEventArgs e)
         {
+            _hoverSlot = e.Cell;
+
             if (e.Cell.Slot == null)
                 return;
             
@@ -330,16 +333,21 @@ namespace Utopia.GUI.Inventory
 
             if (_dragControl.Slot != null)
             {
-                if (e == null)
-                {
-                    if (_toolbarSlot != null)
-                    {
-                        ToolBarSlotClicked(sender, new InventoryWindowCellMouseEventArgs { Cell = _toolbarSlot });
-                    }
 
+                if (_hoverSlot == null)
+                {
                     CancelDrag();
                     return;
                 }
+
+                if (_hoverSlot.Parent == _toolBar)
+                {
+                    ToolBarSlotClicked(sender, new InventoryWindowCellMouseEventArgs { Cell = _hoverSlot });
+                    CancelDrag();
+                    return;
+                }
+
+                e = ( (InventoryWindow)_hoverSlot.Parent ).CreateEventArgs(_hoverSlot);
                 
                 // put item
 
@@ -349,10 +357,12 @@ namespace Utopia.GUI.Inventory
                 if (slot != null && !slot.CanStackWith(_dragControl.Slot))
                 {
                     // exchange
+                    var prevPosition = _dragControl.Slot.GridPosition;
                     _dragControl.Slot.GridPosition = e.SlotPosition;
                     ContainedSlot slotTaken;
                     if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
                         throw new InvalidOperationException();
+                    slotTaken.GridPosition = prevPosition;
                     UpdateDrag(slotTaken);
                     CancelDrag();
                 }
@@ -401,8 +411,8 @@ namespace Utopia.GUI.Inventory
             // return item on the place
             if (_dragControl.Slot != null)
             {
-                _sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition,
-                                         _dragControl.Slot.ItemsCount);
+                if (!_sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount))
+                    throw new InvalidOperationException();
             }
             EndDrag();
         }
