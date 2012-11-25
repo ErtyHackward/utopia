@@ -59,7 +59,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public bool IsEmpty
         {
-            get { return _isDynamic && _entityId == 0; }
+            get { return (!_isDynamic && _tail == null) || (_isDynamic && _entityId == 0); }
         }
 
         /// <summary>
@@ -246,11 +246,16 @@ namespace Utopia.Shared.Structs
 
         public override string ToString()
         {
+            if (IsEmpty)
+            {
+                return "[EL:Empty]";
+            }
+
             if (IsDynamic)
             {
-                return string.Format("[ELink:{0}]", DynamicEntityId);
+                return string.Format("[EL:{0}]", DynamicEntityId);
             }
-            return string.Format("[ELink:{0}{1}]", ChunkPosition, _tail == null ? "" : ":"+ string.Join(",",_tail));
+            return string.Format("[EL:{0}:{1}]", ChunkPosition.ToString().Replace(" ",""), string.Join(",",_tail));
         }
     }
 }

@@ -25,7 +25,6 @@ namespace Utopia.GUI.Inventory
         private readonly Point _windowStartPosition;
         protected readonly Point GridOffset;
         public const int CellSize = 52;
-        private InventoryCell _dropCell;
         
         /// <summary>
         /// Occurs when some slot get clicked
@@ -159,22 +158,20 @@ namespace Utopia.GUI.Inventory
 
         protected void ControlMouseUp(object sender, MouseDownEventArgs e)
         {
-            OnMouseUp(CreateEventArgs(_dropCell));
+            OnMouseUp(CreateEventArgs((InventoryCell)sender));
         }
 
         protected void ControlMouseLeave(object sender, EventArgs e)
         {
-            _dropCell = null;
             OnCellMouseLeave(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
         }
 
         protected void ControlMouseEnter(object sender, EventArgs e)
         {
-            _dropCell = (InventoryCell)sender;
             OnCellMouseEnter(new InventoryWindowCellMouseEventArgs { Cell = (InventoryCell)sender });
         }
 
-        protected InventoryWindowEventArgs CreateEventArgs(InventoryCell cell)
+        public InventoryWindowEventArgs CreateEventArgs(InventoryCell cell)
         {
             if (cell == null)
                 return null;
