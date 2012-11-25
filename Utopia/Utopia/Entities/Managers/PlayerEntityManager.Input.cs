@@ -57,7 +57,7 @@ namespace Utopia.Entities.Managers
             {
                 if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
                 {
-
+                    _inputsManager.MouseManager.MouseCapture = !_inputsManager.MouseManager.MouseCapture;
                 }
             }
 
