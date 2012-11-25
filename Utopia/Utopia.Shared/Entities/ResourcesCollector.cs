@@ -9,12 +9,12 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 
-namespace Utopia.Shared.Entities.Concrete
+namespace Utopia.Shared.Entities
 {
     /// <summary>
     /// The base class use to collect things in the world (= Removed them and put them in the inventory)
     /// </summary>
-    public abstract class Collector : Item, ITool, IWorldIntercatingEntity
+    public abstract class ResourcesCollector : Item, ITool, IWorldIntercatingEntity
     {
         #region Private Variables
         #endregion
@@ -32,9 +32,8 @@ namespace Utopia.Shared.Entities.Concrete
 
         #endregion
 
-        public Collector()
+        public ResourcesCollector()
         {
-
         }
 
         #region Private methods

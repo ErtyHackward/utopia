@@ -173,6 +173,13 @@ namespace Sandbox.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
+                ActionId = UtopiaActions.RightDown,
+                TriggerType = MouseTriggerMode.ButtonDown,
+                Binding = MouseButton.RightButton
+            });
+
+            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
                 ActionId = UtopiaActions.Use_LeftWhileCursorNotLocked,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.LeftButton,

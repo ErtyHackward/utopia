@@ -3,6 +3,7 @@ using Utopia.Action;
 using Utopia.Shared.Entities;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
+using S33M3CoreComponents.Cameras;
 
 namespace Utopia.Entities.Managers
 {
@@ -38,6 +39,25 @@ namespace Utopia.Entities.Managers
 
                     //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
                     Player.Equipment.RightTool.Use(Player);
+                }
+            }
+
+            if (_cameraManager.ActiveBaseCamera.CameraType == CameraType.ThirdPerson)
+            {
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.RightDown, CatchExclusiveAction))
+                {
+                    _inputsManager.MouseManager.MouseCapture = true;
+                }
+                else
+                {
+                    _inputsManager.MouseManager.MouseCapture = false;
+                }
+            }
+            else
+            {
+                if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
+                {
+
                 }
             }
 

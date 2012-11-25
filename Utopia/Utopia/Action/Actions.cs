@@ -26,5 +26,6 @@ namespace Utopia.Action
         public const int EndMove_Backward                   =46;
         public const int EndMove_StrafeLeft                 =47;
         public const int EndMove_StrafeRight                =48;
+        public const int RightDown                          =49;
     }
 }
