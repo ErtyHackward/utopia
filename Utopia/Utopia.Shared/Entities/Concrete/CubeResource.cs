@@ -102,71 +102,10 @@ namespace Utopia.Shared.Entities.Concrete
                     impact.Success = true;
                     return impact;
                 }
-
-                //if (useMode == ToolUseMode.LeftMouse)
-                //{
-                //    //Remove block and all attached entities to this blocks !
-                //    var character = owner as CharacterEntity;
-
-                //    var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
-                //    var cube = cursor.Read();
-                //    if (cube != WorldConfiguration.CubeId.Air)
-                //    {
-                //        var chunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
-
-                //        if (character != null)
-                //        {
-                //            foreach (var chunkEntity in chunk.Entities.EnumerateFast())
-                //            {
-                //                IBlockLinkedEntity cubeBlockLinkedEntity = chunkEntity as IBlockLinkedEntity;
-                //                if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
-                //                {
-                //                    //Insert in the inventory the entity that will be removed !
-                //                    var adder = (IItem)entityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
-                //                    character.Inventory.PutItem(adder);
-                //                }
-                //            }
-                //        }
-
-                //        //Removed all entities from collection that where linked to this removed cube !
-                //        chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
-
-                //        //change the Block to AIR
-                //        cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
-                //        OnCubeChanged(new CubeChangedEventArgs { DynamicEntity = owner, Position = cursor.GlobalPosition, Value = WorldConfiguration.CubeId.Air });
-                        
-                //        //Add the removed cube into the inventory
-                //        impact.Success = true;
-
-                //        return impact;
-                //    }
-                //}
             }
             impact.Message = "Pick a cube to use this tool";
             return impact;
         }
-
-        //Entity impect when a player equiped with a cube click on the entity => Will remove the entity and place it to the inventory.
-        //private IToolImpact EntityImpact(IDynamicEntity owner, bool runOnServer = false)
-        //{
-        //    var impact = new ToolImpact { Success = false };
-
-        //    EntityLink entity = owner.EntityState.PickedEntityLink;
-        //    IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
-        //    IStaticEntity entityRemoved;
-
-        //    //Remove the entity from chunk
-        //    chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
-            
-        //    var character = owner as CharacterEntity;
-        //    if (character != null && entityRemoved != null)
-        //    {
-        //        //Create a new entity of the same clicked one and place it into the inventory
-        //        var adder = (IItem)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);  
-        //        character.Inventory.PutItem(adder);
-        //    }
-        //    return impact;
-        //}
 
         public void Rollback(IToolImpact impact)
         {

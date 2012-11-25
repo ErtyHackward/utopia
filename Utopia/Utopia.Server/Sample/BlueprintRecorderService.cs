@@ -35,7 +35,7 @@ namespace Utopia.Server.Sample
             _server.CommandsManager.RegisterCommand(new BlueprintStopCommand());
             _server.CommandsManager.RegisterCommand(new BlueprintLoadCommand());
 
-            CubeResource.CubeChanged += CubeResourceCubeChanged;
+            //CubeResource.CubeChanged += CubeResourceCubeChanged;
         }
 
         void CubeResourceCubeChanged(object sender, CubeChangedEventArgs e)
@@ -105,7 +105,7 @@ namespace Utopia.Server.Sample
         public override void Dispose()
         {
             _server.CommandsManager.PlayerCommand -= CommandsManagerPlayerCommand;
-            CubeResource.CubeChanged -= CubeResourceCubeChanged;
+            //CubeResource.CubeChanged -= CubeResourceCubeChanged;
         }
     }
     

@@ -19,6 +19,7 @@ namespace Utopia.Shared.Entities
 
         // tools 
         public const ushort CubeResource = 1500;
+        public const ushort BasicCollector = 1501;
 
         // blocks
         public const ushort ThinGlass = 2001;
