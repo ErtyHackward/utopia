@@ -105,7 +105,10 @@ namespace S33M3CoreComponents.Cameras
             _activeCamera.CameraUpdateOrderChanged += ActiveCamera_CameraUpdateOrderChanged;
 
             //Change the focus
-            _worldFocusManager.WorldFocus = (IWorldFocus)newCamera;
+            if (_worldFocusManager != null)
+            {
+                _worldFocusManager.WorldFocus = (IWorldFocus)newCamera;
+            }
             newCamera.NewlyActivatedCamera = true;
             OnActiveCameraChanged(newCamera);
         }
