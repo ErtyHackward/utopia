@@ -8,6 +8,16 @@ namespace S33M3CoreComponents.Maths
 {
     public static class QuaternionExtension
     {
+        public static bool EqualsEpsilon(this Quaternion rotation, Quaternion other, float epsilon)
+        {
+            if (Math.Abs(rotation.X - other.X) < epsilon &&
+                Math.Abs(rotation.Y - other.Y) < epsilon &&
+                Math.Abs(rotation.Z - other.Z) < epsilon && 
+                Math.Abs(rotation.W - other.W) < epsilon)
+                return true;
+            return false;
+        }
+
         public static Vector3 GetLookAtVector(this Quaternion rotation)
         {
             Matrix entityRotation = Matrix.RotationQuaternion(Quaternion.Conjugate(rotation));
