@@ -117,7 +117,7 @@ namespace Utopia.Shared.Entities
 
         protected virtual bool SetNewItemPlace(BlockLinkedItem cubeEntity, IDynamicEntity owner, Vector3I vector)
         {
-            Vector3 faceOffset = BlockFaceCentered ? new Vector3(0.5f,0.5f,0.5f) : owner.EntityState.PickedBlockFaceOffset;
+            Vector3 faceOffset = owner.EntityState.PickedBlockFaceOffset;
 
             // locate the entity
             if (vector.Y == 1) // = Put on TOP 
@@ -135,15 +135,22 @@ namespace Utopia.Shared.Entities
             }
             else //Put on a side
             {
-                var newBlockPos = owner.EntityState.NewBlockPosition;
-
-                cubeEntity.Position = new Vector3D(newBlockPos + new Vector3(vector.X != 1 ? faceOffset.X : 0,
-                                                             faceOffset.Y,
-                                                             vector.Z != 1 ? faceOffset.Z : 0));
+                Vector3I newBlockPos;
+                if (BlockFaceCentered == false)
+                {
+                    newBlockPos = owner.EntityState.PickedBlockPosition;
+                    cubeEntity.Position = new Vector3D(newBlockPos + faceOffset);
+                }
+                else
+                {
+                    newBlockPos = owner.EntityState.NewBlockPosition;
+                    cubeEntity.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)vector.X / 2, 0.5f, 0.5f - (float)vector.Z / 2));
+                }
 
                 cubeEntity.Position += new Vector3D(vector.X == -1 ? -0.01 : 0, 
                                                     0, 
                                                     vector.Z == -1 ? -0.01 : 0);
+
 
                 var slope = 0d;
 
