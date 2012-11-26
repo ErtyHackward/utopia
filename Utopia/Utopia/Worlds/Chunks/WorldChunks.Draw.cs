@@ -44,9 +44,6 @@ namespace Utopia.Worlds.Chunks
 
         #endregion
 
-        #region public variables
-        #endregion
-
         #region Public methods
 
         private void ChunkVisibilityTest()
