@@ -73,6 +73,10 @@ namespace Utopia.Entities.Renderer
         private FTSValue<Color3> _lightColor = new FTSValue<Color3>();
         private ISkyDome _skyDome;
 
+        private bool _animation = false;
+        private bool _animationStated;
+        private Quaternion _animationRotation;
+
         #endregion
 
         #region Public Properties
@@ -101,8 +105,20 @@ namespace Utopia.Entities.Renderer
             _skyDome = skyDome;
 
             _player.Equipment.ItemEquipped += EquipmentItemEquipped;
+            _player.Use += _player_Use;
+
+            _animationRotation = Quaternion.Identity;
 
             DrawOrders.UpdateIndex(0, 5000);
+        }
+
+        void _player_Use(object sender, Shared.Entities.Events.EntityUseEventArgs e)
+        {
+            if (e.Tool != null)
+            {
+                _animation = true;
+                _animationStated = true;
+            }
         }
 
 
@@ -135,6 +151,30 @@ namespace Utopia.Entities.Renderer
                     Color3.Lerp(ref _lightColor.ValueInterp, ref _lightColor.Value, elapsedTime / 100f, out _lightColor.ValueInterp);
                 }
             }
+
+            // play animation
+            if (_animation)
+            {
+                const float speed = 0.021f;
+                if (elapsedTime == 0) elapsedTime = 1;
+                Quaternion finalRotation = Quaternion.RotationYawPitchRoll(0, MathHelper.PiOver2, 0);
+
+                if (_animationStated)
+                {
+                    Quaternion.Slerp(ref _animationRotation, ref finalRotation, elapsedTime * speed, out _animationRotation);
+
+                    if (_animationRotation.EqualsEpsilon(finalRotation, 0.1f))
+                        _animationStated = false;
+                }
+                else
+                {
+                    var identity = Quaternion.Identity;
+                    Quaternion.Slerp(ref _animationRotation, ref identity, elapsedTime * speed, out _animationRotation);
+                }
+
+                if (_animationRotation == Quaternion.Identity)
+                    _animation = false;
+            }
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -144,7 +184,7 @@ namespace Utopia.Entities.Renderer
             //No tool equipped or not in first person mode, render nothing !
             if (_tool == null)
             {
-                DrawingArm(context);
+                //DrawingArm(context);
             }
             else
             {
@@ -275,11 +315,11 @@ namespace Utopia.Entities.Renderer
             {
                 var voxelBB = _toolVoxelInstance.State.BoundingBox.GetSize();
                 scale = MathHelper.Min(1.0f, 16 / MathHelper.Max(MathHelper.Max(voxelBB.X, voxelBB.Y), voxelBB.Z));
-                scale *= 0.70f;
+                scale *= 1.20f;
             }
 
-            var screenPosition = Matrix.RotationY(MathHelper.Pi) * Matrix.Scaling(scale) *
-                     Matrix.Translation(1.2f, -1, 0) *
+            var screenPosition = Matrix.RotationQuaternion(_animationRotation) * Matrix.RotationX(MathHelper.Pi / 8) * Matrix.Scaling(scale) *
+                     Matrix.Translation(1.0f, -1, -0.8f) *
                      Matrix.Invert(_camManager.ActiveCamera.View_focused) *
                      Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 1.8f);
 
