@@ -76,6 +76,7 @@ namespace Utopia.Entities.Renderer
         private bool _animation = false;
         private bool _animationStated;
         private Quaternion _animationRotation;
+        private Vector3 _animationOffset;
 
         #endregion
 
@@ -158,10 +159,12 @@ namespace Utopia.Entities.Renderer
                 const float speed = 0.021f;
                 if (elapsedTime == 0) elapsedTime = 1;
                 Quaternion finalRotation = Quaternion.RotationYawPitchRoll(0, MathHelper.PiOver2, 0);
+                Vector3 finalOffset = new Vector3(0,0,1);
 
                 if (_animationStated)
                 {
                     Quaternion.Slerp(ref _animationRotation, ref finalRotation, elapsedTime * speed, out _animationRotation);
+                    Vector3.Lerp(ref _animationOffset, ref finalOffset, elapsedTime * speed, out _animationOffset);
 
                     if (_animationRotation.EqualsEpsilon(finalRotation, 0.1f))
                         _animationStated = false;
@@ -169,7 +172,9 @@ namespace Utopia.Entities.Renderer
                 else
                 {
                     var identity = Quaternion.Identity;
+                    var nullOffset = new Vector3();
                     Quaternion.Slerp(ref _animationRotation, ref identity, elapsedTime * speed, out _animationRotation);
+                    Vector3.Lerp(ref _animationOffset, ref nullOffset, elapsedTime * speed, out _animationOffset);
                 }
 
                 if (_animationRotation == Quaternion.Identity)
@@ -319,7 +324,7 @@ namespace Utopia.Entities.Renderer
             }
 
             var screenPosition = Matrix.RotationQuaternion(_animationRotation) * Matrix.RotationX(MathHelper.Pi / 8) * Matrix.Scaling(scale) *
-                     Matrix.Translation(1.0f, -1, -0.8f) *
+                     Matrix.Translation(new Vector3(1.0f, -1, -0.8f) + _animationOffset) *
                      Matrix.Invert(_camManager.ActiveCamera.View_focused) *
                      Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 1.8f);
 
