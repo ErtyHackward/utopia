@@ -80,6 +80,7 @@
     <Compile Include="Effects\Entities\HLSLCubeTool.cs" />
     <Compile Include="Effects\Entities\HLSLColorLine.cs" />
     <Compile Include="Effects\Entities\HLSLIcons.cs" />
+    <Compile Include="Effects\Entities\HLSLLoadingCube.cs" />
     <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModel.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModelInstanced.cs" />

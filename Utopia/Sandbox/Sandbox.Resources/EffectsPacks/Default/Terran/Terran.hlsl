@@ -18,7 +18,6 @@ cbuffer PerFrame
 	float2 Various;               //.x = 1 if head under water
 };
 
-
 static const float foglength = 20;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
 static float3 Nightfogcolor = {0, 0, 0 };
