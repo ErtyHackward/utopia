@@ -222,7 +222,7 @@ namespace Utopia.Shared.Entities.Models
             if (armIndex == -1 || !arm.PalmTransform.HasValue)
                 return Matrix.Identity;
 
-            // palmTransform value is stored only in the first state (wich is returned by GetArm())
+            // palmTransform value is stored only in the first state (which is returned by GetArm())
             // so we can't use current state palmTrasform value
             return arm.PalmTransform.Value * State.PartsStates[armIndex].GetTransformation() * Matrix.RotationQuaternion(Rotation) * World;
         }
