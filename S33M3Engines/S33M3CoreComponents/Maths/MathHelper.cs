@@ -299,17 +299,17 @@ namespace S33M3CoreComponents.Maths
 
         public static int Fastfloor(double x)
         {
-            return x > 0 ? (int)x : (int)x - 1;
+            return x >= 0 ? (int)x : (int)x - 1;
         }
 
         public static int Fastfloor(float x)
         {
-            return x > 0 ? (int)x : (int)x - 1;
+            return x >= 0 ? (int)x : (int)x - 1;
         }
 
         public static byte FastfloorByte(float x)
         {
-            return x > 0 ? (byte)x : (byte)(x - 1);
+            return x >= 0 ? (byte)x : (byte)(x - 1);
         }
 
         public static double Dot(int[] g, ref double x, ref double y, ref double z)
