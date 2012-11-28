@@ -3,15 +3,14 @@ using Utopia.Shared.Roleplay;
 namespace Utopia.Shared.Entities.Dynamic
 {
     /// <summary>
-    /// Represents a character with special RPG system
+    /// Represents a character with RPG skills system
     /// </summary>
-    public abstract class SpecialCharacterEntity : CharacterEntity
+    public abstract class RpgCharacterEntity : CharacterEntity
     {
-        protected SpecialCharacterEntity()
+        protected RpgCharacterEntity()
         {
             PrimaryAttributes = new CharacterPrimaryAttributes();
             SecondaryAttributes = new CharacterSecondaryAttributes();
-            Experience = new CharacterExperience();
         }
 
         /// <summary>
@@ -25,16 +24,26 @@ namespace Utopia.Shared.Entities.Dynamic
         public CharacterSecondaryAttributes SecondaryAttributes { get; set; }
 
         /// <summary>
-        /// Gets character level and experience
+        /// Gets character's free experience points that he can convert into the skill points
         /// </summary>
-        public CharacterExperience Experience { get; set; }
+        public uint Experience { get; set; }
+
+        /// <summary>
+        /// Returns amount of exp points needed to raise one skill point
+        /// </summary>
+        /// <param name="skillLevel"></param>
+        /// <returns></returns>
+        public int GetSkillPointPrice(byte skillLevel)
+        {
+            return (skillLevel / 10 + 1) * 20;
+        }
 
         public override void Save(System.IO.BinaryWriter writer)
         {
             base.Save(writer);
             PrimaryAttributes.Save(writer);
             SecondaryAttributes.Save(writer);
-            Experience.Save(writer);
+            writer.Write(Experience);
         }
 
         public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
@@ -42,7 +51,7 @@ namespace Utopia.Shared.Entities.Dynamic
             base.Load(reader, factory);
             PrimaryAttributes.Load(reader);
             SecondaryAttributes.Load(reader);
-            Experience.Load(reader);
+            Experience = reader.ReadUInt32();
         }
     }
 }

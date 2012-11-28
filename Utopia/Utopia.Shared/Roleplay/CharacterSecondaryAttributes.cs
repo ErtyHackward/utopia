@@ -84,17 +84,17 @@ namespace Utopia.Shared.Roleplay
             // agility
             // luck
             
-            attr.Bows = (byte)(2 * primary.Agility + primary.Strength + primary.Endurance);
-            attr.Swords = (byte)(3 * primary.Strength + primary.Endurance);
-            attr.Mine = (byte)(3 * primary.Strength + primary.Agility);
+            attr.Bows = (byte)(2 * primary.Dexterity + primary.Strength + primary.Stamina);
+            attr.Swords = (byte)(3 * primary.Strength + primary.Stamina);
+            attr.Mine = (byte)(3 * primary.Strength + primary.Dexterity);
             attr.Barter = (byte)(2 * primary.Charisma + primary.Perception + primary.Intellect);
             attr.Doctor = (byte)(primary.Perception + 2 * primary.Intellect + primary.Luck);
-            attr.Repair = (byte)(primary.Perception + 2 * primary.Intellect + primary.Agility);
+            attr.Repair = (byte)(primary.Perception + 2 * primary.Intellect + primary.Dexterity);
             attr.Science = (byte)(4 * primary.Intellect);
             attr.Speech = (byte)(4 * primary.Charisma);
-            attr.Steal = (byte)(3 * primary.Agility + primary.Luck);
-            attr.Cook = (byte)(primary.Perception + 2 * primary.Intellect + primary.Agility);
-            attr.Sneak = (byte)(3 * primary.Agility + primary.Luck);
+            attr.Steal = (byte)(3 * primary.Dexterity + primary.Luck);
+            attr.Cook = (byte)(primary.Perception + 2 * primary.Intellect + primary.Dexterity);
+            attr.Sneak = (byte)(3 * primary.Dexterity + primary.Luck);
 
             return attr;
         }

@@ -39,12 +39,12 @@ namespace Utopia.Shared.Entities.Dynamic
         public bool IsRealPlayer { get; set; }
 
         /// <summary>
-        /// Gets current health points of entity
+        /// Gets current health points of the entity
         /// </summary>
         public int Health { get; set; }
 
         /// <summary>
-        /// Gets maximum health point of entity
+        /// Gets maximum health point of the entity
         /// </summary>
         public int MaxHealth { get; set; }
 
