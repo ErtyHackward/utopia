@@ -84,7 +84,7 @@ namespace Utopia.Effects.Shared
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
             CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             CBPerFrame.Values.Various.Y = _animationValue; //Asign animation Value (From 0 => 1 in loop);
-            CBPerFrame.IsDirty = false;
+            CBPerFrame.IsDirty = true;
 
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }

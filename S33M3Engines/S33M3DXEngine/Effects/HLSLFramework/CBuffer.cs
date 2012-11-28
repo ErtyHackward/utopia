@@ -16,7 +16,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         string Name { get; set; }
         Shaders ShadersImpacted { get; set; }
         int[] Slot { get; set; }
-        void Set2Device(DeviceContext context, bool forced = false);
+        void Set2Device(DeviceContext context);
         void Update(DeviceContext context);
         iCBuffer Clone();
     }
@@ -106,24 +106,28 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         /// <param name="context"></param>
         public void Update(DeviceContext context)
         {
-            if (_isCloned) 
-            { 
-#if DEBUG 
-                logger.Warn("Cloned CBuffer should not by called for update, its his parent that is responsible to update the buffer !!");
+            if (_isDirty)
+            {
+                if (_isCloned)
+                {
+#if DEBUG
+                    logger.Warn("Cloned CBuffer should not by called for update, its his parent that is responsible to update the buffer !!");
 #endif
-                return;                     
-            }
+                    return;
+                }
 
-            ////If the T struct use Marshaling fct, then the only way to do an update is to use the StructureToPtr, but it is slower than the Write<T> !!!
-            if (_marshalUpdate)
-            {
-                Marshal.StructureToPtr(Values, _dataStream.DataPointer, false);
-                DataBox dataBox = new DataBox(_dataStream.DataPointer, _size, _size);
-                context.UpdateSubresource(dataBox, _CBuffer, 0);
-            }
-            else
-            {
-                context.UpdateSubresource(ref Values, _CBuffer);
+                ////If the T struct use Marshaling fct, then the only way to do an update is to use the StructureToPtr, but it is slower than the Write<T> !!!
+                if (_marshalUpdate)
+                {
+                    Marshal.StructureToPtr(Values, _dataStream.DataPointer, false);
+                    DataBox dataBox = new DataBox(_dataStream.DataPointer, _size, _size);
+                    context.UpdateSubresource(dataBox, _CBuffer, 0);
+                }
+                else
+                {
+                    context.UpdateSubresource(ref Values, _CBuffer);
+                }
+
             }
 
             _isDirty = false;
@@ -135,26 +139,14 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             return new CBuffer<T>(_device, this.Name, _marshalUpdate, _CBuffer);
         }
 
-        /// <summary>
-        /// 1) Start an update of the CBuffer value on the CPU if needed (Dirty or forced)
-        /// 2) Set the CBuffer to be used by the effect.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="withForcedUpdate"></param>
-        public void Set2Device(DeviceContext context, bool withForcedUpdate = false)
+        public void Set2Device(DeviceContext context)
         {
-            if (_isDirty || withForcedUpdate)
-            {
-                Update(context); //Update constant buffer with new values (From CPU to GPU)
-            }
-
 #if DEBUG
             if (_shadersImpacted == 0)
             {
                 logger.Error("Constant buffer define in {0} is not binded, please check the name of the constant buffers (inside HLSL file and the effectWrapper)", this.Name);
             }
 #endif
-
             if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetConstantBuffer(_slot[ShaderIDs.VS], _CBuffer);
             if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetConstantBuffer(_slot[ShaderIDs.GS], _CBuffer);
             if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetConstantBuffer(_slot[ShaderIDs.PS], _CBuffer);

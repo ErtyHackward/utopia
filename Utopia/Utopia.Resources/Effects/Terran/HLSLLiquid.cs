@@ -74,10 +74,10 @@ namespace Utopia.Resources.Effects.Terran
             TerraTexture = new ShaderResource("TerraTexture");
             ShaderResources.Add(TerraTexture);
 
-            SolidBackBuffer = new ShaderResource("SolidBackBuffer", false);
+            SolidBackBuffer = new ShaderResource("SolidBackBuffer");
             ShaderResources.Add(SolidBackBuffer);
 
-            SkyBackBuffer = new ShaderResource("SkyBackBuffer", false);
+            SkyBackBuffer = new ShaderResource("SkyBackBuffer");
             ShaderResources.Add(SkyBackBuffer);
 
             BiomesColors = new ShaderResource("BiomesColors");
