@@ -18,7 +18,7 @@ using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Shared.Settings;
 
-namespace Utopia.Effects.Shared
+namespace Utopia.Components
 {
     /// <summary>
     /// What is this?
@@ -67,16 +67,11 @@ namespace Utopia.Effects.Shared
             _visualWorldParam = visualWorldParam;
             _playerManager = playerManager;
             _backBuffer = backBuffer;
-
             DrawOrders.UpdateIndex(0, 0);
 
             CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine.Device, "PerFrame");
         }
 
-        void _backBuffer_BackBufferResized(object sender, EventArgs e)
-        {
-
-        }
 
         public override void Draw(DeviceContext context, int index)
         {

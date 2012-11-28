@@ -20,6 +20,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Entities.Managers;
+using Utopia.Worlds.SkyDomes.SharedComp;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -120,6 +121,9 @@ namespace Utopia.Worlds.SkyDomes
 
         public override void BeforeDispose()
         {
+            ((Clouds)_clouds).BeforeDispose();
+            _clouds.Dispose();
+
             _posiTextureEffect.Dispose();
             _skyDomeEffect.Dispose();
 

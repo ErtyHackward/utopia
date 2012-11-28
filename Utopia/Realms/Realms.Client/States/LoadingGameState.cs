@@ -4,7 +4,6 @@ using Ninject;
 using Ninject.Parameters;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
-using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;

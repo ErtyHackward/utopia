@@ -17,7 +17,6 @@ using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Direct3D11;
 using Utopia.Components;
-using Utopia.Effects.Shared;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.GameClocks;
@@ -103,6 +102,18 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _worldFocusManager = worldFocusManager;
             _cameraManager = cameraManager;
             _weather = weather;
+
+            _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
+        }
+
+        public override void BeforeDispose()
+        {
+            _skyBackBuffer.OnStaggingBackBufferChanged -= _skyBackBuffer_OnStaggingBackBufferChanged;
+        }
+
+        private void _skyBackBuffer_OnStaggingBackBufferChanged(ShaderResourceView newStaggingBackBuffer)
+        {
+            _effect.SolidBackBuffer.Value = newStaggingBackBuffer;
         }
 
         public void LateInitialization(SharedFrameCB sharedCB)
@@ -136,7 +147,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effect = ToDispose(new HLSLClouds(_d3DEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds.hlsl", VertexPosition2Cloud.VertexDeclaration, _sharedCB.CBPerFrame));
             _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
-            _effect.SolidBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
+            _effect.SolidBackBuffer.Value = _skyBackBuffer.BackBuffer;
 
             _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud>(_d3DEngine.Device, VertexPosition2Cloud.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Clouds"));
 

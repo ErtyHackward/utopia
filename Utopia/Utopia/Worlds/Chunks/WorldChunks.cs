@@ -15,7 +15,6 @@ using Utopia.Worlds.Storage;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Weather;
-using Utopia.Effects.Shared;
 using SharpDX;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Main;
@@ -185,6 +184,8 @@ namespace Utopia.Worlds.Chunks
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
 
+            _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
+
             DrawStaticInstanced = true;
 
             //Self injecting inside components, to avoid circular dependency
@@ -240,7 +241,7 @@ namespace Utopia.Worlds.Chunks
 
             Chunks = null;
             SortedChunks = null;
-
+            _skyBackBuffer.OnStaggingBackBufferChanged -= _skyBackBuffer_OnStaggingBackBufferChanged;
             DisposeDrawComponents();
 
         }

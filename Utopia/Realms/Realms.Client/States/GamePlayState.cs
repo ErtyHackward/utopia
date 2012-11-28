@@ -1,7 +1,6 @@
 ﻿using Ninject;
 using Realms.Client.Components;
 using S33M3DXEngine;
-using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
