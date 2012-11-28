@@ -75,7 +75,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         private InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud> _instancedBuffer;
         private IndexBuffer<ushort> _indexBuffer;
         private HLSLClouds _effect;
-        private readonly StaggingBackBuffer _solidBackBuffer;
+        private readonly StaggingBackBuffer _skyBackBuffer;
         private readonly IClock _worldclock;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly CameraManager<ICameraFocused> _cameraManager;
@@ -94,11 +94,11 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         private int _cloudBlocksCount;
 
-        public Clouds(D3DEngine engine, [Named("SolidBuffer")] StaggingBackBuffer solidBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager, IWeather weather)
+        public Clouds(D3DEngine engine, [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer, IClock worldclock, WorldFocusManager worldFocusManager, CameraManager<ICameraFocused> cameraManager, IWeather weather)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             _d3DEngine = engine;
-            _solidBackBuffer = solidBackBuffer;
+            _skyBackBuffer = skyBackBuffer;
             _worldclock = worldclock;
             _worldFocusManager = worldFocusManager;
             _cameraManager = cameraManager;
@@ -136,6 +136,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effect = ToDispose(new HLSLClouds(_d3DEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds.hlsl", VertexPosition2Cloud.VertexDeclaration, _sharedCB.CBPerFrame));
             _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
+            _effect.SolidBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
 
             _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud>(_d3DEngine.Device, VertexPosition2Cloud.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Clouds"));
 
@@ -254,7 +255,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         {
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
             _effect.Begin(_d3DEngine.ImmediateContext);
-            _effect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
+
 
             var world = Matrix.Identity * Matrix.Translation(-(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.X + (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.X, 140, -(CloudGridSize / 2 * CloudBlockSize) + _smallOffset.Y + (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.Z);
             

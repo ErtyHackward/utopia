@@ -6,7 +6,6 @@ cbuffer PerDraw
 {
 	matrix World;
 	float PopUpValue;
-	float FogType;
 };
 
 cbuffer PerFrame
@@ -16,6 +15,7 @@ cbuffer PerFrame
 	float fogdist;
 	float2 BackBufferSize;
 	float2 Various;               //.x = 1 if head under water
+	float FogType;
 };
 
 static const float foglength = 20;
@@ -123,7 +123,7 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float fogvalue = input.fogPower;
-	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1); 
+	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1);  //Clip if fog is complete
 
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	

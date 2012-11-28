@@ -14,6 +14,9 @@ using S33M3DXEngine.Threading;
 using Utopia.Shared.Settings;
 using Ninject;
 using S33M3CoreComponents.Config;
+using Utopia.Worlds.Chunks;
+using Utopia.Worlds.SkyDomes;
+using Utopia.Components;
 
 namespace Realms.Client.Components.GUI.Settings
 {
@@ -109,7 +112,10 @@ namespace Realms.Client.Components.GUI.Settings
                                 ChangeVSync((bool)row.FieldData.Value);
                                 break;
                             case "StaticEntityViewSize":
-                                ChangeVisiableStaticEntities((int)row.FieldData.Value);
+                                ChangeVisibleStaticEntities((int)row.FieldData.Value);
+                                break;
+                            case "LandscapeFog":
+                                ChangeLandscapeFog((string)row.FieldData.Value);
                                 break;
                             default:
                                 break;
@@ -305,9 +311,41 @@ namespace Realms.Client.Components.GUI.Settings
             _game.VSync = vsyncValue;
         }
 
-        private void ChangeVisiableStaticEntities(int distance)
+        private void ChangeVisibleStaticEntities(int distance)
         {
+            if (isGameRunning)
+            {
+                var worldChunks = _iocContainer.Get<IWorldChunks>();
 
+                if (distance > (ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5)
+                {
+                    worldChunks.StaticEntityViewRange = (int)((ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5) * 16;
+                }
+                else
+                {
+                    worldChunks.StaticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
+                }
+            }
+        }
+
+        private void ChangeLandscapeFog(string landscapeFogType)
+        {
+            if (isGameRunning)
+            {
+                var skyDome = _iocContainer.Get<ISkyDome>();
+                if (landscapeFogType == "SkyFog")
+                {
+                    StaggingBackBuffer skyBackBuffer = _iocContainer.Get<StaggingBackBuffer>("SkyBuffer");
+                    skyBackBuffer.EnableComponent(true);
+                    skyDome.DrawOrders.UpdateIndex(0, 40);
+                }
+                else
+                {
+                    StaggingBackBuffer skyBackBuffer = _iocContainer.Get<StaggingBackBuffer>("SkyBuffer");
+                    skyBackBuffer.DisableComponent();
+                    skyDome.DrawOrders.UpdateIndex(0, 990);
+                }
+            }
         }
 
         //ButtonList Event management ==========================================

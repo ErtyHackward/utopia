@@ -184,8 +184,10 @@ namespace Sandbox.Client.Components.GUI
             Resize(viewport);
         }
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced)
         {
+            if (!AutoStateEnabled && !forced) return;
+
             _screen.Desktop.Children.Add(_logo);
             _screen.Desktop.Children.Add(_version);
             _screen.Desktop.Children.Add(_shadow);

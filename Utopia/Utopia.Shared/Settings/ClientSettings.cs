@@ -138,9 +138,9 @@ namespace Utopia.Shared.Settings
     {
         [ParameterAttribute("Visible World Size", "World size in chunk unit between [10 and 50]", " chunk(s)", ParamInputMethod.Slider, 10, 50, true)]
         public int WorldSize { get; set; }
-        [ParameterAttribute("Visible World Entity range", "World entities view range in chunk unit between [1 and 32]", " chunk(s)", ParamInputMethod.Slider, 1, 32, true)]
+        [ParameterAttribute("Visible World Entity range", "World entities view range in chunk unit between [1 and 20]", " chunk(s)", ParamInputMethod.Slider, 1, 20, false)]
         public int StaticEntityViewSize { get; set; }
-        [ParameterAttribute("Landscape fog", "Foggy far away landscape", null, ParamInputMethod.ButtonList, true, "SkyFog", "SimpleFog", "NoFog")]
+        [ParameterAttribute("Landscape fog", "Foggy far away landscape", null, ParamInputMethod.ButtonList, false, "SkyFog", "SimpleFog", "NoFog")]
         public string LandscapeFog { get; set; }
         [ParameterAttribute("Textures pack", "Textures used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_TexturePacks")]
         public string TexturePack { get; set; }
@@ -313,7 +313,7 @@ namespace Utopia.Shared.Settings
                     GraphicalParameters = new GraphicalParameters
                     {
                         WorldSize = 32,
-                        StaticEntityViewSize = 20,
+                        StaticEntityViewSize = 10,
                         TexturePack = "Default",
                         LandscapeFog = "SkyFog",
                         VSync = true,

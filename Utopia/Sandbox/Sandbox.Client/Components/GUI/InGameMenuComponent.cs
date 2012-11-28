@@ -118,8 +118,10 @@ namespace Sandbox.Client.Components.GUI
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
         }
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced)
         {
+            if (!AutoStateEnabled && !forced) return;
+
             //Hide all currently existing components
             _screen.HideAll();
 

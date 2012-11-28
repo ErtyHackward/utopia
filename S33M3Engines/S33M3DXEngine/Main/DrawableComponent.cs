@@ -45,10 +45,12 @@ namespace S33M3DXEngine.Main
 
         #endregion
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced = false)
         {
+            if (!AutoStateEnabled && !forced) return;
+
             this.Visible = true;
-            base.EnableComponent();
+            base.EnableComponent(forced);
         }
 
         public override void DisableComponent()

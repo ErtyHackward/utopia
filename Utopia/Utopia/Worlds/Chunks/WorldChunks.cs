@@ -85,7 +85,6 @@ namespace Utopia.Worlds.Chunks
         private SharedFrameCB _sharedFrameCB;
         private IEntityPickingManager _pickingManager;
         private int _readyToDrawCount;
-        private StaggingBackBuffer _solidBackBuffer;
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
         private VoxelModelManager _voxelModelManager;
@@ -159,7 +158,6 @@ namespace Utopia.Worlds.Chunks
                            IEntityPickingManager pickingManager,
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
-                           [Named("SolidBuffer")] StaggingBackBuffer solidBackBuffer,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
                            IChunkEntityImpactManager chunkEntityImpactManager
@@ -183,7 +181,6 @@ namespace Utopia.Worlds.Chunks
             _weather = weather;
             _sharedFrameCB = sharedFrameCB;
             _pickingManager = pickingManager;
-            _solidBackBuffer = solidBackBuffer;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;

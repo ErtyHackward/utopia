@@ -67,8 +67,6 @@ namespace Sandbox.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
-            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
-            staggingBackBuffer.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer"); 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBackBuffer");
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
@@ -99,7 +97,6 @@ namespace Sandbox.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
             AddComponent(_sandboxGameSoundManager);
-            AddComponent(staggingBackBuffer);
             AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);

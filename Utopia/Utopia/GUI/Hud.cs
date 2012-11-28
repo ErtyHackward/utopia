@@ -160,8 +160,10 @@ namespace Utopia.GUI
             }
         }
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced)
         {
+            if (!AutoStateEnabled && !forced) return;
+
             if (!_screen.Desktop.Children.Contains(ToolbarUi))
                 _screen.Desktop.Children.Add(ToolbarUi);
 

@@ -79,12 +79,12 @@ namespace Utopia.Worlds.Chunks
                 if (!_playerManager.IsHeadInsideWater)
                 {
                     //Head not inside Water => Draw water front Faces
-                    RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+                    RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
                 }
                 else
                 {
                     //Head inside Water block, draw back faces only
-                    RenderStatesRepo.ApplyStates(DXStates.Rasters.CullFront, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+                    RenderStatesRepo.ApplyStates(DXStates.Rasters.CullFront, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
                 }
 
                 DefaultDrawLiquid(context);
@@ -137,21 +137,6 @@ namespace Utopia.Worlds.Chunks
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
-
-                        switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
-	                    {
-                            case "SkyFog":
-                                _terraEffect.CBPerDraw.Values.FogType = 0.0f;
-                                break;
-                            case "SimpleFog":
-                                _terraEffect.CBPerDraw.Values.FogType = 1.0f;
-                                break;
-                            case "NoFog":
-                            default:
-                                _terraEffect.CBPerDraw.Values.FogType = 2.0f;
-                            break;
-	                    }
-
                         _terraEffect.CBPerDraw.IsDirty = true;
                         _terraEffect.Apply(context);
 
@@ -173,8 +158,6 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.Begin(context);
 
             _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
-            _liquidEffect.SolidBackBuffer.Value = _solidBackBuffer.SolidStaggingBackBuffer;
-            _liquidEffect.SolidBackBuffer.IsDirty = true;
 
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {

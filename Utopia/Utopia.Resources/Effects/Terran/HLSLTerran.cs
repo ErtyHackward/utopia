@@ -34,8 +34,6 @@ namespace Utopia.Resources.Effects.Terran
             /// </summary>
             [FieldOffset(64)]
             public float PopUpValue;
-            [FieldOffset(68)]
-            public float FogType;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion
