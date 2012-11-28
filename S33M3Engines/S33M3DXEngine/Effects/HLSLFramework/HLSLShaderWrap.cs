@@ -274,9 +274,9 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         //Set all states that should only be done once for the Effect
         public void Begin(DeviceContext context)
         {
-            if (_vs != null) context.VertexShader.Set(_vs);
+            if (_vs != null) context.VertexShader.Set(_vs); else context.VertexShader.Set(null);
             if (_gs != null) context.GeometryShader.Set(_gs); else context.GeometryShader.Set(null);
-            if (_ps != null) context.PixelShader.Set(_ps);
+            if (_ps != null) context.PixelShader.Set(_ps); else context.PixelShader.Set(null);
 
             if (D3DEngine.SingleThreadRenderingOptimization)
             {
@@ -292,38 +292,44 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                 context.InputAssembler.InputLayout = _inputLayout;
             }
 
+            //Set the constants for the Effect
+            for (int i = 0; i < _cBuffers.Length; i++)
+            {
+                _cBuffers[i].Set2Device(context);
+            }
+
             //Set the resources (forced)
             for (int i = 0; i < _shaderResources.Length; i++)
             {
-                _shaderResources[i].Set2Device(context, true);
+                _shaderResources[i].Set2Device(context);
             }
 
             //Set the samplers (forced)
             for (int i = 0; i < _shaderSamplers.Length; i++)
             {
-                _shaderSamplers[i].Set2Device(context, true);
+                _shaderSamplers[i].Set2Device(context);
             }
         }
 
         //Will update the Constant Buffers that have been modified set in dirty states
         public void Apply(DeviceContext context)
         {
-            //Set the Constant Buffers
+            //Update the Constant Buffers to the GC if dirty
             for (int i = 0; i < _cBuffers.Length; i++)
             {
-                _cBuffers[i].Set2Device(context);
+                _cBuffers[i].Update(context);
+            }
+
+            //Set the resources (forced)
+            for (int i = 0; i < _shaderResources.Length; i++)
+            {
+                _shaderResources[i].Update(context);
             }
 
             //Set the samplers (forced)
             for (int i = 0; i < _shaderSamplers.Length; i++)
             {
-                _shaderSamplers[i].Set2Device(context, false);
-            }
-
-            //Set the resources
-            for (int i = 0; i < _shaderResources.Length; i++)
-            {
-                _shaderResources[i].Set2Device(context, false);
+                _shaderSamplers[i].Update(context);
             }
         }
 

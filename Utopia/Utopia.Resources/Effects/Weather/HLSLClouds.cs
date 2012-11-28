@@ -55,7 +55,7 @@ namespace UtopiaContent.Effects.Weather
             SamplerBackBuffer = new ShaderSampler("SamplerBackBuffer");
             ShaderSamplers.Add(SamplerBackBuffer);
 
-            SolidBackBuffer = new ShaderResource("SolidBackBuffer", false);
+            SolidBackBuffer = new ShaderResource("SolidBackBuffer");
             ShaderResources.Add(SolidBackBuffer);
 
             //Load the shaders only after the CBuffer have been defined
