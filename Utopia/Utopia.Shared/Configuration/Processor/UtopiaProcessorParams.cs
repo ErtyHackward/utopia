@@ -245,7 +245,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 2
+                BiomeColorArrayTexture = 2,
+                YBlockOffset = 0.1
             });
 
             //DynamicWater Block

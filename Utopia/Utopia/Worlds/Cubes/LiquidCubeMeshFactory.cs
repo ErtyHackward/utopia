@@ -32,22 +32,30 @@ namespace Utopia.Worlds.Cubes
         }
 
          //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube)
         {
-            if (cubeFace != CubeFaces.Top)
-            {
-                CubeProfile NeightBorProfile = _wp.WorldParameters.Configuration.CubeProfiles[NeightBorFaceCube.Id];
+            //if (cubeFace != CubeFaces.Top)
+            //{
+            //    CubeProfile NeightBorProfile = _wp.WorldParameters.Configuration.CubeProfiles[NeightBorFaceCube.Id];
 
-                if ((!NeightBorProfile.IsBlockingLight && NeightBorProfile.CubeFamilly != enuCubeFamilly.Liquid))
-                {
-                    return true;
-                }
-            }else{
-                if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == WorldConfiguration.CubeId.Air)
-                {
-                    return true;
-                }
+            //    if ((!NeightBorProfile.IsBlockingLight && NeightBorProfile.CubeFamilly != enuCubeFamilly.Liquid))
+            //    {
+            //        return true;
+            //    }
+            //}else{
+            //    if (cubePosiInWorld.Y == seaLevel || NeightBorFaceCube.Id == WorldConfiguration.CubeId.Air)
+            //    {
+            //        return true;
+            //    }
+            //}
+
+            CubeProfile NeightBorProfile = _wp.WorldParameters.Configuration.CubeProfiles[NeightBorFaceCube.Id];
+
+            if ((!NeightBorProfile.IsBlockingLight && NeightBorProfile.CubeFamilly != enuCubeFamilly.Liquid))
+            {
+                return true;
             }
+
             return false;
         }
 
@@ -86,14 +94,7 @@ namespace Utopia.Worlds.Cubes
             else
             {
                 //Add a naturel Offset to StillWater when touching water at the surface !
-                if (topCube.Id == WorldConfiguration.CubeId.Air && cubeProfile.CubeFamilly == enuCubeFamilly.Liquid)
-                {
-                    yBlockOffset = 0.1f;
-                }
-                else
-                {
-                    yBlockOffset = (float)cubeProfile.YBlockOffset;
-                }
+                yBlockOffset = (float)cubeProfile.YBlockOffset;
             }
 
             yBlockOffsetAsByte = (byte)(yBlockOffset * 255);

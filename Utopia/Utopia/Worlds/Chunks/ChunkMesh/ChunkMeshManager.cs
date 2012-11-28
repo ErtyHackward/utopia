@@ -229,13 +229,20 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             case enuCubeFamilly.Solid:
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
-                                if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, 64)) continue;
+                                if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
-                                if (!yOffsetDiff && !_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube, 64)) continue;
+
+                                //In case of Water block, never display the bottom or up face if both cube are of the same type !
+                                if (cubeFace == CubeFaces.Top || cubeFace == CubeFaces.Bottom)
+                                {
+                                    if (neightborCube.Id == currentCube.Id) continue;
+                                }
+
+                                if (!yOffsetDiff && !_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
                                 _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
                                 break;

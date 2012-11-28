@@ -229,7 +229,7 @@ namespace Utopia.Entities.Managers
         private void CheckForEventRaising()
         {
             //Landing on ground after falling event
-            if (_physicSimu.OnGround == false)
+            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying)
             {
                 //New "trigger"
                 if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;
