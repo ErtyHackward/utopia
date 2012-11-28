@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using SharpDX;
 using SharpDX.Direct3D11;
-using Utopia.Effects.Shared;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer.Interfaces;

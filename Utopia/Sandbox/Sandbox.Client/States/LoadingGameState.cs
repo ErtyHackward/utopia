@@ -3,7 +3,6 @@ using System.IO;
 using Ninject;
 using Ninject.Parameters;
 using Sandbox.Client.Components;
-using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;

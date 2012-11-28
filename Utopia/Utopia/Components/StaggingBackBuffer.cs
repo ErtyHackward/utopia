@@ -16,15 +16,18 @@ namespace Utopia.Components
         #region Private variables
         private readonly D3DEngine _engine;
         private Texture2D _solidBackBuffer;
-        private ShaderResourceView _solidStaggingBackBuffer;
+        private ShaderResourceView _backBuffer;
         #endregion
 
         #region Public variables/properties
-        public ShaderResourceView SolidStaggingBackBuffer
+        public delegate void StaggingBackBufferChanged(ShaderResourceView newStaggingBackBuffer);
+        public event StaggingBackBufferChanged OnStaggingBackBufferChanged;
+
+        public ShaderResourceView BackBuffer
         {
             get
             {
-                return _solidStaggingBackBuffer;
+                return _backBuffer;
             }
         }
         public Vector2 SolidStaggingBackBufferSize;
@@ -42,8 +45,18 @@ namespace Utopia.Components
 
         public override void BeforeDispose()
         {
+            //Force removal of event linked objects
+            if (OnStaggingBackBufferChanged != null)
+            {
+                //Remove all Events associated to this control (That haven't been unsubscribed !)
+                foreach (Delegate d in OnStaggingBackBufferChanged.GetInvocationList())
+                {
+                    OnStaggingBackBufferChanged -= (StaggingBackBufferChanged)d;
+                }
+            }
+
             if (_solidBackBuffer != null) _solidBackBuffer.Dispose();
-            if (_solidStaggingBackBuffer != null) _solidStaggingBackBuffer.Dispose();
+            if (_backBuffer != null) _backBuffer.Dispose();
             _engine.ViewPort_Updated -= engine_ViewPort_Updated;
         }
 
@@ -70,13 +83,15 @@ namespace Utopia.Components
         private void engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBuffer)
         {
             CreateSolidBackBuffer(newBackBuffer);
+
+            if (OnStaggingBackBufferChanged != null) OnStaggingBackBufferChanged(_backBuffer);
         }
 
         private void CreateSolidBackBuffer(Texture2DDescription newBackBuffer)
         {
-            if (_solidStaggingBackBuffer != null)
+            if (_backBuffer != null)
             {
-                _solidStaggingBackBuffer.Dispose();
+                _backBuffer.Dispose();
                 _solidBackBuffer.Dispose();
             }
 
@@ -97,7 +112,7 @@ namespace Utopia.Components
             SolidStaggingBackBufferSize = new Vector2(StaggingBackBufferDescr.Width, StaggingBackBufferDescr.Height);
             _solidBackBuffer = new Texture2D(_engine.Device, StaggingBackBufferDescr);
 
-            _solidStaggingBackBuffer = new ShaderResourceView(_engine.Device, _solidBackBuffer);
+            _backBuffer = new ShaderResourceView(_engine.Device, _solidBackBuffer);
         }
         #endregion
     }

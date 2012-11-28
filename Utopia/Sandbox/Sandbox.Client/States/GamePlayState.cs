@@ -1,7 +1,6 @@
 ﻿using Ninject;
 using S33M3DXEngine;
 using Sandbox.Client.Components;
-using Utopia.Effects.Shared;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
