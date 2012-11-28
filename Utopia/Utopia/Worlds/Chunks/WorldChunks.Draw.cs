@@ -28,7 +28,6 @@ namespace Utopia.Worlds.Chunks
         #region private variables
         private HLSLTerran _terraEffect;
         private HLSLLiquid _liquidEffect;
-        //private HLSLStaticEntitySprite _staticSpriteEffect;
 
         private HLSLVoxelModel _voxelModelEffect;
         private HLSLVoxelModelInstanced _voxelModelInstancedEffect;
@@ -125,9 +124,6 @@ namespace Utopia.Worlds.Chunks
             Matrix worldFocus = Matrix.Identity;
 
             _terraEffect.Begin(context);
-
-            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
-            _terraEffect.SkyBackBuffer.IsDirty = true;
 
             //Foreach faces type
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
@@ -306,6 +302,7 @@ namespace Utopia.Worlds.Chunks
             _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
             _terraEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _terraEffect.BiomesColors.Value = _biomesColors_View;
+            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.SolidStaggingBackBuffer;
 
             _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
@@ -314,6 +311,7 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _liquidEffect.BiomesColors.Value = _biomesColors_View;
             _liquidEffect.AnimatedTextures.Value = _textureAnimation_View;
+
 
             //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
             //_staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);

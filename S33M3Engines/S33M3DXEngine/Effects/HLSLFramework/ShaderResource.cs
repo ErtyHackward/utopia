@@ -14,7 +14,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         private ShaderResourceView _resourceView;
         Shaders _shadersImpacted;
         string _name;
-        bool _isStaticResource;
         #endregion
 
         #region Public properties and Variables
@@ -30,12 +29,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         {
             get { return _shadersImpacted; }
             set { _shadersImpacted = value; }
-        }
-
-        public bool IsStaticResource
-        {
-            get { return _isStaticResource; }
-            set { _isStaticResource = value; }
         }
 
         public int[] Slot
@@ -60,24 +53,25 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         /// </summary>
         /// <param name="Name">Resource Name</param>
         /// <param name="isStaticResource">Will this resource be considered as static, if yes then it will automatically by pushed to the device when the effect Begin()</param>
-        public ShaderResource(string Name, bool isStaticResource = true)
+        public ShaderResource(string Name)
         {
             _name = Name;
-            _isStaticResource = isStaticResource;
         }
 
-        public void Set2Device(DeviceContext context, bool forceStaticResourcesOnly)
+        public void Update(DeviceContext context)
         {
-            if (forceStaticResourcesOnly && _isStaticResource == false) return;
-
-            if (_isDirty || forceStaticResourcesOnly)
+            if (_isDirty) // The underlaying resource has been changed (Not the containt but the resource itself !) Need to Rebind it
             {
-                if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetShaderResource(_slot[ShaderIDs.VS], _resourceView);
-                if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetShaderResource(_slot[ShaderIDs.GS], _resourceView);
-                if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetShaderResource(_slot[ShaderIDs.PS], _resourceView);
-
+                Set2Device(context);
                 _isDirty = false;
             }
+        }
+
+        public void Set2Device(DeviceContext context)
+        {
+            if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetShaderResource(_slot[ShaderIDs.VS], _resourceView);
+            if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetShaderResource(_slot[ShaderIDs.GS], _resourceView);
+            if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetShaderResource(_slot[ShaderIDs.PS], _resourceView);
         }
     }
 }
