@@ -93,13 +93,15 @@ namespace Realms.Client.Components.GUI
             XRotation.Value = MathHelper.Pi / 5.0f;
         }
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced)
         {
+            if (!AutoStateEnabled && !forced) return;
+
             _dotsUpdate = DateTime.Now;
             _screen.Desktop.Children.Add(_loadingLabel);
             _screen.Desktop.Children.Add(_pleaseWaitLabel);
             Resize(_engine.ViewPort);
-            base.EnableComponent();
+            base.EnableComponent(forced);
         }
 
         public override void DisableComponent()

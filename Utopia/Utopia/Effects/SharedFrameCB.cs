@@ -16,6 +16,7 @@ using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
 using Utopia.Components;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Effects.Shared
 {
@@ -24,7 +25,7 @@ namespace Utopia.Effects.Shared
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 96)]
+        [StructLayout(LayoutKind.Explicit, Size = 112)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
@@ -37,6 +38,8 @@ namespace Utopia.Effects.Shared
             public Vector2 BackBufferSize;
             [FieldOffset(88)]
             public Vector2 Various;
+            [FieldOffset(96)]
+            public float fogType;
         }
 
         private D3DEngine _engine;
@@ -55,7 +58,7 @@ namespace Utopia.Effects.Shared
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
-                             [Named("SolidBuffer")] StaggingBackBuffer backBuffer)
+                             [Named("SkyBuffer")] StaggingBackBuffer backBuffer)
             
         {
             _engine = engine;
@@ -84,8 +87,22 @@ namespace Utopia.Effects.Shared
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
             CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             CBPerFrame.Values.Various.Y = _animationValue; //Asign animation Value (From 0 => 1 in loop);
-            CBPerFrame.IsDirty = true;
 
+            switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
+	        {
+                case "SkyFog":
+                    CBPerFrame.Values.fogType = 0.0f;
+                    break;
+                case "SimpleFog":
+                    CBPerFrame.Values.fogType = 1.0f;
+                    break;
+                case "NoFog":
+                default:
+                    CBPerFrame.Values.fogType = 2.0f;
+                break;
+	        }
+
+            CBPerFrame.IsDirty = true;
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 

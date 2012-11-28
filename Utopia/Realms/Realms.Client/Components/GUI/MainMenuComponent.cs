@@ -218,8 +218,9 @@ namespace Realms.Client.Components.GUI
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
         }
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced)
         {
+            if (!AutoStateEnabled && !forced) return;
 
             _nicknameLabel.Text = _runtime.DisplayName;
             _screen.Desktop.Children.Add(_helloLabel);
@@ -227,7 +228,7 @@ namespace Realms.Client.Components.GUI
             _screen.Desktop.Children.Add(_buttonsGroup);
             _screen.Desktop.Children.Add(_mainMenuLabel);
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
-            base.EnableComponent();
+            base.EnableComponent(forced);
         }
 
         public override void DisableComponent()

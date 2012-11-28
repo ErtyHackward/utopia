@@ -71,7 +71,7 @@ namespace Utopia.Worlds.SkyDomes
             _clouds = clouds;
 
             this.DrawOrders.UpdateIndex(0, 40);
-            cloudDrawIndex = this.DrawOrders.AddIndex(1000, "Clouds");
+            cloudDrawIndex = this.DrawOrders.AddIndex(989, "Clouds");
         }
 
         [Inject]

@@ -245,8 +245,10 @@ namespace Sandbox.Client.Components.GUI
             base.Initialize();
         }
 
-        public override void EnableComponent()
+        public override void EnableComponent(bool forced)
         {
+            if (!AutoStateEnabled && !forced) return;
+
             _screen.Desktop.Children.Add(_regButton);
             _screen.Desktop.Children.Add(_loginButton);
             _screen.Desktop.Children.Add(_emailControl);
@@ -258,7 +260,7 @@ namespace Sandbox.Client.Components.GUI
 
             Resize(_engine.ViewPort);
 
-            base.EnableComponent();
+            base.EnableComponent(forced);
         }
 
         public override void DisableComponent()

@@ -36,6 +36,8 @@ namespace Utopia.Components
             _engine.ViewPort_Updated += engine_ViewPort_Updated;
             this.DrawOrders.UpdateIndex(0, 999, Name); //This should be call After all SOLID object have been draw on screen.
             this.Name = Name;
+
+            AutoStateEnabled = false; //Need to activate the component myself.
         }
 
         public override void BeforeDispose()

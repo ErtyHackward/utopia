@@ -6,7 +6,6 @@ cbuffer PerDraw
 {
 	matrix World;
 	float PopUpValue;
-	float FogType;
 };
 
 cbuffer PerFrame
@@ -16,6 +15,7 @@ cbuffer PerFrame
 	float fogdist;
 	float2 BackBufferSize;
 	float2 Various;               //.x = 1 if head under water
+	float FogType;
 };
 
 static const float foglength = 20;
@@ -53,7 +53,6 @@ static const float SHADOW_EPSILON = 0.001f;
 Texture2DArray TerraTexture;
 Texture2DArray BiomesColors;
 Texture2DArray AnimatedTextures;
-Texture2D SolidBackBuffer;
 Texture2D SkyBackBuffer;
 
 SamplerState SamplerDiffuse;
@@ -151,16 +150,6 @@ PS_OUT PS(PS_IN input)
 	float2 backBufferSampling = {input.Position.x / BackBufferSize.x , input.Position.y / BackBufferSize.y};
 	
 	float4 color = colorInput;
-
-	if(colorInput.a < 1.0f)
-	{
-		//Get Solid landscape value (Saw trough seethourgh water)
-		float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
-
-		//Manual Blending with SolidBackBuffer color received
-		color.rgb = (colorInput.rgb * colorInput.a) + (backBufferColor.rgb * (1 - colorInput.a));
-		color.a = colorInput.a;
-	}
 
 	//Add overlay only when needed
 	if(input.causticPower < 1)

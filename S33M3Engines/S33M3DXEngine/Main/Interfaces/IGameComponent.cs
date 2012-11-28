@@ -13,7 +13,7 @@ namespace S33M3DXEngine.Main.Interfaces
         bool IsDefferedLoadContent { get; }
         bool CatchExclusiveActions { get; set; }
         bool IsDisposed { get; }
-        void EnableComponent();
+        void EnableComponent(bool forced = false);
         void DisableComponent();
         void Initialize();
         void LoadContent(DeviceContext context);

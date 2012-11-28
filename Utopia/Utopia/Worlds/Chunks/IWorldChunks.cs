@@ -109,5 +109,7 @@ namespace Utopia.Worlds.Chunks
         void InitDrawComponents(DeviceContext context);
 
         bool ValidatePosition(ref Vector3D newPosition2Evaluate);
+
+        int StaticEntityViewRange { get; set; }
     }
 }

@@ -14,11 +14,12 @@ cbuffer PerFrame
 	float fogdist;
 	float2 BackBufferSize;
 	float2 Various;               //.x = 1 if head under water
+	float FogType;
 };
 
 static const float foglength = 20;
 
-Texture2D SolidBackBuffer;
+Texture2D SkyBackBuffer;
 SamplerState SamplerBackBuffer;
 
 //--------------------------------------------------------------------------------------
@@ -72,12 +73,34 @@ PS_IN VS( VS_IN input )
 //--------------------------------------------------------------------------------------
 float4 PS( PS_IN input ) : SV_Target
 {
-    float2 backBufferSampling = {input.Pos.x / BackBufferSize.x , input.Pos.y / BackBufferSize.y};
-    float4 backBufferColor = SolidBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+	clip(FogType != 2.0 && input.fogPower >= 0.998 ? -1:1);
 
-	input.Col.a = lerp(input.Col.a, 0, input.fogPower);
+	float4 backBufferColor;
 
+	if(FogType == 0.0)
+	{
+		//Get sky Color
+		float2 backBufferSampling = {input.Pos.x / BackBufferSize.x , input.Pos.y / BackBufferSize.y};
+		backBufferColor = SkyBackBuffer.Sample(SamplerBackBuffer, backBufferSampling);
+	}else{
+		if(FogType == 1.0)
+		{
+			backBufferColor.xyz = SunColor / 1.5;
+			backBufferColor.w = input.Col.a;
+		}
+	}
+
+	float4 finalColor;
+	//Compute Transparency, and blend current color with sky color in a blended way
+	if(FogType != 2.0)
+	{
+		input.Col.a = lerp(input.Col.a, 0, input.fogPower);
+		finalColor.rgb = (input.Col.rgb * input.Col.a) + (backBufferColor.rgb * (1 - input.Col.a));
+		finalColor.a = input.Col.a;
+	}else{
+		finalColor = input.Col;
+	}
 	//Manual Blending with SolidBackBuffer color received
-	float4 color = {(input.Col.rgb * input.Col.a) + (backBufferColor.rgb * (1 - input.Col.a)), input.Col.a};
-	return color;
+
+	return finalColor;
 }

@@ -220,7 +220,6 @@ namespace Sandbox.Client.States
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
             var soundManager = _ioc.Get<GameSoundManager>();
-            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
 
@@ -252,7 +251,6 @@ namespace Sandbox.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
             AddComponent(soundManager);
-            AddComponent(staggingBackBuffer);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
 

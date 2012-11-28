@@ -37,6 +37,8 @@ namespace S33M3DXEngine.Main
             get { return Updatable; }
         }
 
+        public bool AutoStateEnabled { get; set; }
+
         public bool CatchExclusiveActions { get; set; }
 
         public bool Updatable
@@ -84,6 +86,7 @@ namespace S33M3DXEngine.Main
             : base(name)
         {
             IsDefferedLoadContent = false;
+            AutoStateEnabled = true;
         }
 
         public override void BeforeDispose()
@@ -107,8 +110,9 @@ namespace S33M3DXEngine.Main
             }
         }
 
-        public virtual void EnableComponent()
+        public virtual void EnableComponent(bool forced = false)
         {
+            if (!AutoStateEnabled && !forced) return;
             this.Updatable = true;
         }
 

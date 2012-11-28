@@ -202,6 +202,9 @@ namespace Realms.Client.States
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
             inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
 
+            var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
+            skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
+
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
@@ -220,13 +223,6 @@ namespace Realms.Client.States
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
 
-            StaggingBackBuffer skyBackBuffer = null;
-            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == "SkyFog")
-            {
-                skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
-                skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
-            }
-
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
@@ -238,7 +234,6 @@ namespace Realms.Client.States
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();
             var entityMessageTranslator = _ioc.Get<EntityMessageTranslator>();
             var soundManager = _ioc.Get<GameSoundManager>();
-            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
 
@@ -258,6 +253,7 @@ namespace Realms.Client.States
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
+            AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
             AddComponent(hud);
@@ -271,8 +267,6 @@ namespace Realms.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
             AddComponent(soundManager);
-            if (skyBackBuffer != null) AddComponent(skyBackBuffer);
-            AddComponent(staggingBackBuffer);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
 

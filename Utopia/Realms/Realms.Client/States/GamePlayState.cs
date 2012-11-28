@@ -61,6 +61,14 @@ namespace Realms.Client.States
             inventory.SwitchInventory += InventorySwitchInventory;
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
+
+            var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
+            skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
+            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == "SkyFog")
+            {
+                skyBackBuffer.EnableComponent(true);
+            }
+
             var skyDome = _ioc.Get<ISkyDome>();
 
             //Rendering time changed depending on landscape fog option, TRUE = Faster drawing (Because we are actively using depth testing)
@@ -79,15 +87,6 @@ namespace Realms.Client.States
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
-            var staggingBackBuffer = _ioc.Get<StaggingBackBuffer>("SolidBuffer");
-            staggingBackBuffer.DrawOrders.UpdateIndex(0, 999, "SolidBackBuffer");
-
-            StaggingBackBuffer skyBackBuffer = null;
-            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == "SkyFog")
-            {
-                skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
-                skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
-            }
 
             _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
@@ -102,6 +101,7 @@ namespace Realms.Client.States
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
+            AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
             AddComponent(hud);
@@ -115,8 +115,6 @@ namespace Realms.Client.States
             AddComponent(worldChunks);
             AddComponent(sharedFrameCB);
             AddComponent(_sandboxGameSoundManager);
-            AddComponent(staggingBackBuffer);
-            if (skyBackBuffer != null) AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
