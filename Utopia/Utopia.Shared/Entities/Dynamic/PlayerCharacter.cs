@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Represents a player character (it has a toolbar)
     /// </summary>
     /// <remarks></remarks>
-    public sealed class PlayerCharacter : SpecialCharacterEntity
+    public sealed class PlayerCharacter : RpgCharacterEntity
     {
         #region Public variables/properties
 

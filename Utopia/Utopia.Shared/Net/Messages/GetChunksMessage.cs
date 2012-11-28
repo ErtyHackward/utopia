@@ -7,7 +7,7 @@ using S33M3Resources.Structs;
 namespace Utopia.Shared.Net.Messages
 {
     /// <summary>
-    /// Defindes a message used by client to request a range of chunks from the server
+    /// Defindes a message used by a client to request a range of chunks from a server
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct GetChunksMessage : IBinaryMessage

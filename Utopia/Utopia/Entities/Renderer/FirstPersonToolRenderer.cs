@@ -159,7 +159,7 @@ namespace Utopia.Entities.Renderer
                 const float speed = 0.021f;
                 if (elapsedTime == 0) elapsedTime = 1;
                 Quaternion finalRotation = Quaternion.RotationYawPitchRoll(0, MathHelper.PiOver2, 0);
-                Vector3 finalOffset = new Vector3(0,0,1);
+                Vector3 finalOffset = new Vector3(0,0,2);
 
                 if (_animationStated)
                 {
