@@ -29,7 +29,7 @@ namespace Utopia.Worlds.Cubes
         }
 
         //Default Face Generation Checks !
-        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube, int seaLevel)
+        public bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube)
         {
             //By default I don't need to trace the cubeFace of my cube if the face NeightBor cube is blocking light ! (Not see-through)
             CubeProfile cubeProfile = _wp.WorldParameters.Configuration.CubeProfiles[cube.Id];
