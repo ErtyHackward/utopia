@@ -16,7 +16,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         private SamplerState _sampler;
         Shaders _shadersImpacted;
         string _name;
-        bool _isStaticResource;
         #endregion
 
         #region Public properties and Variables
@@ -29,12 +28,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         {
             get { return _shadersImpacted; }
             set { _shadersImpacted = value; }
-        }
-
-        public bool IsStaticResource
-        {
-            get { return _isStaticResource; }
-            set { _isStaticResource = value; }
         }
 
         public int[] Slot
@@ -54,29 +47,28 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         }
         #endregion
 
-        public ShaderSampler(string Name, bool isStaticResource = true)
+        public ShaderSampler(string Name)
         {
             _name = Name;
-            _isStaticResource = isStaticResource;
         }
 
-        public void Set2Device(DeviceContext context, bool forceStaticResourcesOnly)
+        public void Update(DeviceContext context)
         {
-            if (forceStaticResourcesOnly && _isStaticResource == false) return;
-
-            if (_isDirty || forceStaticResourcesOnly)
+            if (_isDirty)
             {
-#if DEBUG
-                if (_sampler == null)
-                    logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
-#endif
-
-                if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetSampler(_slot[ShaderIDs.VS], _sampler);
-                if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetSampler(_slot[ShaderIDs.GS], _sampler);
-                if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetSampler(_slot[ShaderIDs.PS], _sampler);
-
+                Set2Device(context);
                 _isDirty = false;
             }
+        }
+
+        public void Set2Device(DeviceContext context)
+        {
+#if DEBUG
+            if (_sampler == null) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+#endif
+            if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetSampler(_slot[ShaderIDs.VS], _sampler);
+            if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetSampler(_slot[ShaderIDs.GS], _sampler);
+            if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetSampler(_slot[ShaderIDs.PS], _sampler);
         }
     }
 }
