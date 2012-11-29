@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Ninject;
+using S33M3CoreComponents.Sound;
 using Sandbox.Client.Components;
 using Sandbox.Client.States;
 using Utopia;
@@ -140,6 +141,7 @@ namespace Sandbox.Client
 
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<ISoundEngine>().To<SoundEngine>().InSingletonScope();
             _iocContainer.Bind<GeneralSoundManager>().To<SandboxGeneralSoundManager>().InSingletonScope();
 
             //Debug Components ===========================================

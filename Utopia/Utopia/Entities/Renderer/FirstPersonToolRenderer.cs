@@ -324,7 +324,7 @@ namespace Utopia.Entities.Renderer
             }
 
             var screenPosition = Matrix.RotationQuaternion(_animationRotation) * Matrix.RotationX(MathHelper.Pi / 8) * Matrix.Scaling(scale) *
-                     Matrix.Translation(new Vector3(1.0f, -1, -0.8f) + _animationOffset) *
+                     Matrix.Translation(new Vector3(1.0f, -1, -0.2f) + _animationOffset) *
                      Matrix.Invert(_camManager.ActiveCamera.View_focused) *
                      Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 1.8f);
 
@@ -333,7 +333,7 @@ namespace Utopia.Entities.Renderer
                 //Render First person view of the tool, only if the tool is used by the current playing person !
                 _cubeToolEffect.Begin(context);
                 _cubeToolEffect.CBPerDraw.Values.Projection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
-                _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(screenPosition);
+                _cubeToolEffect.CBPerDraw.Values.Screen = Matrix.Transpose(Matrix.Translation(0.3f, 0.3f, 0.3f) *  screenPosition);
                 _cubeToolEffect.CBPerDraw.Values.LightColor = _lightColor.ValueInterp;
                 _cubeToolEffect.CBPerDraw.IsDirty = true;
 
