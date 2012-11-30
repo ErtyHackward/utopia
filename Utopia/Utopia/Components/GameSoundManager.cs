@@ -408,7 +408,7 @@ namespace Utopia.Components
                 {
                     //Play special "UnderGround" ambiant sound here.
                     // ==> I'm "below Surface cube"
-                    _currentlyPlayingMoodSound.Stop(3000);
+                    if(_currentlyPlayingMoodSound != null) _currentlyPlayingMoodSound.Stop(3000);
                     _currentlyPlayingMoodSound = null;
                     _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D("Fear", true, 3000);
                 }

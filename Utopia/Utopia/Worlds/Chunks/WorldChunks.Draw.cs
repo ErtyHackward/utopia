@@ -296,12 +296,6 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.AnimatedTextures.Value = _textureAnimation_View;
             _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
 
-            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out _spriteTexture_View);
-            //_staticSpriteEffect = new HLSLStaticEntitySprite(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/StaticEntitySprite.hlsl", VertexSprite3D.VertexDeclaration, _sharedFrameCB.CBPerFrame);
-            //_staticSpriteEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
-            //_staticSpriteEffect.DiffuseTexture.Value = _spriteTexture_View;
-            //_staticSpriteEffect.BiomesColor.Value = _biomesColors_View;
-
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _voxelModelInstancedEffect = ToDispose(new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
         }

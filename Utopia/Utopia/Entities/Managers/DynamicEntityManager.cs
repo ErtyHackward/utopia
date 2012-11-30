@@ -31,6 +31,8 @@ using S33M3CoreComponents.Meshes.Factories;
 using S33M3DXEngine.Textures;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs;
+using S33M3CoreComponents.Sprites._3D;
+using S33M3CoreComponents.Sprites;
 
 namespace Utopia.Entities.Managers
 {
@@ -53,6 +55,9 @@ namespace Utopia.Entities.Managers
         #region Private Variables
         private HLSLVoxelModelInstanced _voxelModelEffect;
         private HLSLVoxelModel _voxelToolEffect;
+
+        private Sprite3DRenderer _dynamicEntityNameRenderer;
+        private SpriteFont _dynamicEntityNameFont;
 
         private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
         private readonly D3DEngine _d3DEngine;
@@ -179,6 +184,16 @@ namespace Utopia.Entities.Managers
             _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
             _voxelToolEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _materialChangeMapping = new Dictionary<int, int>();
+
+
+            _dynamicEntityNameFont = ToDispose(new SpriteFont());
+            _dynamicEntityNameFont.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, context.Device);
+
+            _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer(context, _dynamicEntityNameFont, Sprite3DRenderer.Sprite3dBufferType.Sprite3DWithTexCoord,
+                                                                  RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear),
+                                                                  DXStates.Rasters.Default,
+                                                                  DXStates.Blenders.Disabled,
+                                                                  DXStates.DepthStencils.DepthEnabled));
         }
 
         public override void UnloadContent()
@@ -232,7 +247,7 @@ namespace Utopia.Entities.Managers
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
 
-            //For each existing model
+            //Draw each buffered Models =====================================
             foreach (var modelAndInstances in _models)
             {
                 //For each instance of the model that have received a body
@@ -264,11 +279,11 @@ namespace Utopia.Entities.Managers
             _voxelToolEffect.CBPerFrame.IsDirty = true;
             _voxelToolEffect.Apply(context);
 
-            // draw tools 
+            // draw tools ================
             foreach (var pair in _dynamicEntitiesDico)
             {
                 var charEntity = pair.Value.DynamicEntity as CharacterEntity;
-                if (charEntity != null)
+                if (charEntity != null && pair.Value.ModelInstance.World != Matrix.Zero)
                 {
                     //Take the Tool entity equiped in character Right hand
                     if (charEntity.Equipment.RightTool is CubeResource)
@@ -285,11 +300,29 @@ namespace Utopia.Entities.Managers
                     }
                 }
             }
+
+            DrawEntitiesName(context);
         }
 
         #endregion
 
         #region Private Methods
+
+        private void DrawEntitiesName(DeviceContext context)
+        {
+            _dynamicEntityNameRenderer.Begin(true);
+
+            foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance.World != Matrix.Zero))
+            {
+                Vector3 textPosition = dynamicEntity.WorldPosition.ValueInterp.AsVector3();
+                textPosition.Y += (dynamicEntity.ModelInstance.State.BoundingBox.Maximum.Y / 16); //Place the text above the BoundingBox
+                ByteColor color = Color.White;
+
+                _dynamicEntityNameRenderer.DrawText(dynamicEntity.DynamicEntity.Name, ref textPosition, 0.04f, ref color, _camManager.ActiveCamera);
+            }
+
+            _dynamicEntityNameRenderer.End(context, _camManager.ActiveCamera);
+        }
 
         private void DrawTool(IVoxelEntity voxelTool, CharacterEntity charEntity)
         {
