@@ -20,6 +20,8 @@ struct VSInput {
 	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
 	float4 Color				: COLOR;
 	float3 Info					: INFO;       //XY : Size, Z = Geometry Type (0 = Position Facing Billboard, 1 = View Facing Billboard)
+	float4 textCoordU			: TEXC0;
+	float4 textCoordV			: TEXC1;
 };
 
 //--------------------------------------------------------------------------------------
@@ -28,6 +30,8 @@ struct GSInput {
 	float4 Position				: POSITION;
 	float4 Color				: COLOR;
 	float3 Info					: INFO;
+	float4 textCoordU			: TEXC0;
+	float4 textCoordV			: TEXC1;
 };
 
 //Pixel shader Input
@@ -37,8 +41,6 @@ struct PSInput {
 	float3 UVW					: TEXCOORD0;
 };
 
-static const float texcoordU[4] = { 0.0f, 1.0f, 0.0f, 1.0f};
-static const float texcoordV[4] = { 1.0f, 1.0f, 0.0f, 0.0f};	
 static const float3 upVector = {0.0f, 1.0f, 0.0f };
 
 //--------------------------------------------------------------------------------------
@@ -83,6 +85,18 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 	vert[3] = vert[1]; // Get top right vertex
 	vert[3].y += Input.Info.y;
 
+	float texcoordU[4];
+	texcoordU[0] = Input.textCoordU.x;
+	texcoordU[1] = Input.textCoordU.y;
+	texcoordU[2] = Input.textCoordU.z;
+	texcoordU[3] = Input.textCoordU.w;
+
+	float texcoordV[4];
+	texcoordV[0] = Input.textCoordV.x;
+	texcoordV[1] = Input.textCoordV.y;
+	texcoordV[2] = Input.textCoordV.z;
+	texcoordV[3] = Input.textCoordV.w;
+
 	// *****************************************************
 	// generate the 4 vertices to make two triangles
 	for( uint i = 0 ; i < 4 ; i++ )
@@ -105,6 +119,8 @@ float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
+
+	//color = float4(1,1,1,1);
 	
 	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 

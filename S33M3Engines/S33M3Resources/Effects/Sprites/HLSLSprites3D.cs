@@ -5,13 +5,12 @@ using System.Text;
 using System.Runtime.InteropServices;
 using SharpDX;
 using S33M3DXEngine.Effects.HLSLFramework;
-using S33M3DXEngine;
-using S33M3DXEngine.VertexFormat;
 using SharpDX.Direct3D11;
+using S33M3DXEngine.VertexFormat;
 
-namespace S33M3Resources.Effects.Sprites
+namespace Utopia.Resources.Effects.Entities
 {
-    public class HLSLPointSprite3D : HLSLShaderWrap
+    public class HLSLSprites3D : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -23,17 +22,31 @@ namespace S33M3Resources.Effects.Sprites
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 96)]
-        public struct CBPerFrameLocal_Struct
+        [StructLayout(LayoutKind.Explicit, Size = 128)]
+        public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
-            public Matrix WorldViewProjection;
+            public Matrix WorldFocus;
             [FieldOffset(64)]
-            public Vector3 CameraWorldPosition;
-            [FieldOffset(80)]
-            public Vector3 LookAt;
+            public Matrix View;
         }
-        public CBuffer<CBPerFrameLocal_Struct> CBPerFrameLocal;
+        public CBuffer<CBPerFrame_Struct> CBPerFrameLocal;
+
+        [StructLayout(LayoutKind.Explicit, Size = 96)]
+        public struct CBPerFrame2_Struct
+        {
+            [FieldOffset(0)]
+            public Matrix ViewProjection;   //64 (4*4 float)
+            [FieldOffset(64)]
+            public Color3 SunColor;        //12 (3 float)
+            [FieldOffset(76)]
+            public float fogdist;           //4 (float)
+            [FieldOffset(80)]
+            public Vector2 BackBufferSize;
+            [FieldOffset(88)]
+            public Vector2 Various;
+        }
+        public CBuffer<CBPerFrame2_Struct> CBPerFrame2Remove;
         #endregion
 
         #region Resources
@@ -49,18 +62,21 @@ namespace S33M3Resources.Effects.Sprites
         EntryPoints _shadersEntryPoint = new EntryPoints()
         {
             VertexShader_EntryPoint = "VS",
-            GeometryShader_EntryPoint = "GS",
             PixelShader_EntryPoint = "PS"
         };
         #endregion
 
-        public HLSLPointSprite3D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLSprites3D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerFrameLocal = ToDispose(new CBuffer<CBPerFrameLocal_Struct>(device, "PerFrameLocal"));
+            CBPerFrameLocal = ToDispose(new CBuffer<CBPerFrame_Struct>(device, "PerFrameLocal"));
             CBuffers.Add(CBPerFrameLocal);
 
+            CBPerFrame2Remove = ToDispose(new CBuffer<CBPerFrame2_Struct>(device, "PerFrame"));
+            CBuffers.Add(CBPerFrame2Remove);
+
+            if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
             //Create the resource interfaces ==================================================
             DiffuseTexture = new ShaderResource("DiffuseTexture");
             ShaderResources.Add(DiffuseTexture);

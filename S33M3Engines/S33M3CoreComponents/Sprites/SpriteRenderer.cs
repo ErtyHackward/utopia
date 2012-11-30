@@ -69,8 +69,6 @@ namespace S33M3CoreComponents.Sprites
             Initialize();
         }
 
-
-
         #region Public methods
 
         public void Begin(bool withDepth)

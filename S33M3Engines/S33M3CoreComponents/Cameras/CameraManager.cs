@@ -61,7 +61,7 @@ namespace S33M3CoreComponents.Cameras
 
         public override void Update(GameTime timeSpend)
         {
-            if (_inputManager.ActionsManager.isTriggered(Actions.ChangeCameraType))
+            if (_inputManager != null && _inputManager.ActionsManager.isTriggered(Actions.ChangeCameraType))
             {
                 MoveToNextActiveCamera();
             }

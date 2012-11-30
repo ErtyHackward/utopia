@@ -94,6 +94,7 @@
     <Compile Include="Effects\Basics\HLSLVertexPositionNormalTexture.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionTexture.cs" />
     <Compile Include="Effects\Sprites\HLSLSprites2.cs" />
+    <Compile Include="Effects\Sprites\HLSLSprites3D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\FloatAsInt.cs" />
@@ -118,13 +119,14 @@
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Vector3D.cs" />
     <Compile Include="Structs\Vector3I.cs" />
+    <Compile Include="VertexFormats\VertexPointSprite3DTexCoord.cs" />
     <Compile Include="VertexFormats\Interfaces\IVertexType.cs" />
     <Compile Include="VertexFormats\VertexColumnChart.cs" />
     <Compile Include="VertexFormats\VertexCubeCloud.cs" />
     <Compile Include="VertexFormats\VertexCubeFaceHQ.cs" />
     <Compile Include="VertexFormats\VertexCubeFaceLQ.cs" />
     <Compile Include="VertexFormats\VertexMesh.cs" />
-    <Compile Include="VertexFormats\VertexPointSprite.cs" />
+    <Compile Include="VertexFormats\VertexPointSprite3D.cs" />
     <Compile Include="VertexFormats\VertexPosition.cs" />
     <Compile Include="VertexFormats\VertexPosition2.cs" />
     <Compile Include="VertexFormats\VertexPosition2Texture.cs" />
@@ -209,6 +211,12 @@
     <Content Include="Effects\Sprites\Blur.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Effects\Sprites\PointSprite3DTexCoord.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Effects\Sprites\Sprites3D.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\Sprites\ColorOverlay.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
