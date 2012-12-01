@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using Utopia.Shared.Entities.Models;
@@ -17,7 +18,7 @@ namespace Utopia.Entities.Voxel
     {
         private readonly VoxelModel _model;
         private readonly VoxelMeshFactory _voxelMeshFactory;
-        private VisualVoxelPart[] _visualParts;
+        private VisualVoxelFrame[] _visualFrames;
 
         private bool _initialized;
 
@@ -40,9 +41,9 @@ namespace Utopia.Entities.Voxel
         /// <summary>
         /// Gets array of visual data (verices and indices and transformed bounding boxes)
         /// </summary>
-        public VisualVoxelPart[] VisualVoxelParts
+        public VisualVoxelFrame[] VisualVoxelFrames
         {
-            get { return _visualParts; }
+            get { return _visualFrames; }
         }
 
         public VisualVoxelModel(VoxelModel model, VoxelMeshFactory voxelMeshFactory)
@@ -52,50 +53,46 @@ namespace Utopia.Entities.Voxel
         }
 
         /// <summary>
-        /// Removes a part from the model, free dx resources
+        /// Removes a frame from the model, free dx resources
         /// </summary>
         /// <param name="index"></param>
-        public void RemovePartAt(int index)
+        public void RemoveFrameAt(int index)
         {
-            var vp = _visualParts[index];
+            var vf = _visualFrames[index];
 
-            // free all frames buffers
-            for (int i = 0; i < vp.VertexBuffers.Length; i++)
-            {
-                vp.VertexBuffers[i].Dispose();
-                vp.IndexBuffers[i].Dispose();
-            }
-
+            vf.IndexBuffer.Dispose();
+            vf.VertexBuffer.Dispose();
+            
             foreach (var voxelModelState in VoxelModel.States)
             {
-                voxelModelState.PartsStates.RemoveAt(index);
+                foreach (var ps in voxelModelState.PartsStates)
+                {
+                    if (ps.ActiveFrame == index)
+                        ps.ActiveFrame = byte.MaxValue;
+                }
             }
 
-            ArrayHelper.RemoveAt(ref _visualParts, index);
+            ArrayHelper.RemoveAt(ref _visualFrames, index);
         }
 
         /// <summary>
         /// Re-generates vertices for a model part frame
         /// </summary>
-        /// <param name="partIndex"></param>
         /// <param name="frameIndex"></param>
-        public void RebuildFrame(int partIndex, int frameIndex)
+        public void RebuildFrame(int frameIndex)
         {
-            var part = _visualParts[partIndex];
-
             List<VertexVoxelInstanced> vertices;
             List<ushort> indices;
+            
+            _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[frameIndex].BlockData, out vertices, out indices);
+            
+            _visualFrames[frameIndex].VertexBuffer.Dispose();
+            _visualFrames[frameIndex].IndexBuffer.Dispose();
 
-            _voxelMeshFactory.GenerateVoxelFaces(_model.Parts[partIndex].Frames[frameIndex].BlockData, out vertices, out indices);
+            _visualFrames[frameIndex].VertexBuffer = _voxelMeshFactory.InitBuffer(vertices);
+            _visualFrames[frameIndex].IndexBuffer = _voxelMeshFactory.InitBuffer(indices);
 
-            part.VertexBuffers[frameIndex].Dispose();
-            part.IndexBuffers[frameIndex].Dispose();
-
-            part.VertexBuffers[frameIndex] = _voxelMeshFactory.InitBuffer(vertices);
-            part.IndexBuffers[frameIndex] = _voxelMeshFactory.InitBuffer(indices);
-
-            part.BoundingBoxes[frameIndex] = new BoundingBox(new Vector3(), _model.Parts[partIndex].Frames[frameIndex].BlockData.ChunkSize);
-
+            _visualFrames[frameIndex].BoundingBox = new BoundingBox(new Vector3(), _model.Frames[frameIndex].BlockData.ChunkSize);
         }
 
         /// <summary>
@@ -103,42 +100,32 @@ namespace Utopia.Entities.Voxel
         /// </summary>
         public void BuildMesh()
         {
-            if (_visualParts != null)
+            if (_visualFrames != null)
             {
-                // dispose prevoious DX data
-                foreach (var visualVoxelPart in _visualParts)
+                // dispose previous DX data
+                foreach (var visualVoxelFrame in _visualFrames)
                 {
-                    for (int i = 0; i < visualVoxelPart.VertexBuffers.Length; i++)
-                    {
-                        visualVoxelPart.VertexBuffers[i].Dispose();
-                        visualVoxelPart.IndexBuffers[i].Dispose();
-                    }
+                    visualVoxelFrame.IndexBuffer.Dispose();
+                    visualVoxelFrame.VertexBuffer.Dispose();
                 }
             }
 
-            _visualParts = new VisualVoxelPart[_model.Parts.Count];
+            _visualFrames = new VisualVoxelFrame[_model.Frames.Count];
 
-            for (int i = 0; i < _visualParts.Length; i++)
+            for (var i = 0; i < _visualFrames.Length; i++)
             {
-                var part = new VisualVoxelPart();
+                var frame = new VisualVoxelFrame();
                 
-                part.VertexBuffers = new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>[_model.Parts[i].Frames.Count];
-                part.IndexBuffers = new IndexBuffer<ushort>[_model.Parts[i].Frames.Count];
-                part.BoundingBoxes = new BoundingBox[_model.Parts[i].Frames.Count];
+                List<VertexVoxelInstanced> vertices;
+                List<ushort> indices;
 
-                for (int j = 0; j < _model.Parts[i].Frames.Count; j++)
-                {
-                    List<VertexVoxelInstanced> vertices;
-                    List<ushort> indices;
+                _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[i].BlockData, out vertices, out indices);
 
-                    _voxelMeshFactory.GenerateVoxelFaces(_model.Parts[i].Frames[j].BlockData, out vertices, out indices);
-
-                    part.VertexBuffers[j] = _voxelMeshFactory.InitBuffer(vertices);
-                    part.IndexBuffers[j] = _voxelMeshFactory.InitBuffer(indices);
-                    part.BoundingBoxes[j] = new BoundingBox(new Vector3(), _model.Parts[i].Frames[j].BlockData.ChunkSize);
-                }
+                frame.VertexBuffer = _voxelMeshFactory.InitBuffer(vertices);
+                frame.IndexBuffer = _voxelMeshFactory.InitBuffer(indices);
+                frame.BoundingBox = new BoundingBox(new Vector3(), _model.Frames[i].BlockData.ChunkSize);
                 
-                _visualParts[i] = part;
+                _visualFrames[i] = frame;
             }
 
             foreach (var state in _model.States)
@@ -175,26 +162,28 @@ namespace Utopia.Entities.Voxel
             {
                 var voxelModelPartState = state.PartsStates[i];
 
-                if (_visualParts[i] == null) continue;
+                if (_visualFrames[i] == null) continue;
 
                 if (voxelModelPartState.ActiveFrame == byte.MaxValue)
                     continue;
 
-                var vb = _visualParts[i].VertexBuffers[voxelModelPartState.ActiveFrame];
-                var ib = _visualParts[i].IndexBuffers[voxelModelPartState.ActiveFrame];
+                var vb = _visualFrames[voxelModelPartState.ActiveFrame].VertexBuffer;
+                var ib = _visualFrames[voxelModelPartState.ActiveFrame].IndexBuffer;
 
                 vb.SetToDevice(context, 0);
                 ib.SetToDevice(context, 0);
 
-                if (_model.Parts[i].ColorMapping != null)
+                var frame = _model.Frames[voxelModelPartState.ActiveFrame];
+
+                if (frame.ColorMapping != null)
                 {
-                    effect.CBPerModel.Values.ColorMapping = _model.Parts[i].ColorMapping.BlockColors;
+                    effect.CBPerModel.Values.ColorMapping = frame.ColorMapping.BlockColors;
                     effect.CBPerModel.IsDirty = true;
                 }
 
                 if (_model.Parts[i].IsHead)
                 {
-                    var bb = _visualParts[i].BoundingBoxes[voxelModelPartState.ActiveFrame];
+                    var bb = _visualFrames[voxelModelPartState.ActiveFrame].BoundingBox;
                     RotateHead(voxelModelPartState, instance, bb, out effect.CBPerPart.Values.Transform);
                     effect.CBPerPart.Values.Transform = Matrix.Transpose(effect.CBPerPart.Values.Transform);
                 }
@@ -227,19 +216,24 @@ namespace Utopia.Entities.Voxel
                      Matrix.Translation(move);
         }
 
-        private void DrawGroup(byte activeFrame, int partIndex, IList<VoxelModelInstance> instances)
+        /// <summary>
+        /// Draws multiple instances and parts of the same frame in the single draw call
+        /// </summary>
+        /// <param name="activeFrame"></param>
+        /// <param name="partIndex"></param>
+        /// <param name="itemsList"></param>
+        private void DrawGroup(byte activeFrame, byte partIndex, IList<VoxelModelInstance> itemsList)
         {
             if (activeFrame == byte.MaxValue)
                 return;
 
             // create instance data block that will be passed to the shader
-            //var instanceData = instances.Select(ins => new VoxelInstanceData { Transform = ins.World, LightColor = ins.LightColor }).ToArray();
-            VoxelInstanceData[] instanceData = new VoxelInstanceData[instances.Count];
+            var instanceData = new VoxelInstanceData[itemsList.Count];
 
             // update shader instance data by model instance variables
-            for (int instanceIndex = 0; instanceIndex < instances.Count; instanceIndex++)
+            for (var instanceIndex = 0; instanceIndex < itemsList.Count; instanceIndex++)
             {
-                var instance = instances[instanceIndex];
+                var instance = itemsList[instanceIndex];
                 var state = instance.State;
                 var voxelModelPartState = state.PartsStates[partIndex];
 
@@ -248,7 +242,7 @@ namespace Utopia.Entities.Voxel
                 // apply rotations from the state and instance (if the head)
                 if (_model.Parts[partIndex].IsHead)
                 {
-                    var bb = _visualParts[partIndex].BoundingBoxes[activeFrame];
+                    var bb = _visualFrames[activeFrame].BoundingBox;
                     RotateHead(voxelModelPartState, instance, bb, out instanceData[instanceIndex].Transform);
                 }
                 else
@@ -259,8 +253,8 @@ namespace Utopia.Entities.Voxel
                 instanceData[instanceIndex].Transform = Matrix.Transpose(instanceData[instanceIndex].Transform * instance.World);
             }
 
-            var vb = _visualParts[partIndex].VertexBuffers[activeFrame];
-            var ib = _visualParts[partIndex].IndexBuffers[activeFrame];
+            var vb = _visualFrames[activeFrame].VertexBuffer;
+            var ib = _visualFrames[activeFrame].IndexBuffer;
 
             vb.SetInstancedData(_voxelMeshFactory.Engine.ImmediateContext, instanceData);
 
@@ -276,12 +270,13 @@ namespace Utopia.Entities.Voxel
         /// <param name="context"> </param>
         /// <param name="effect"></param>
         /// <param name="instances"></param>
-        public void DrawInstanced(DeviceContext context, HLSLVoxelModelInstanced effect, IEnumerable<VoxelModelInstance> instances)
+        public void DrawInstanced(DeviceContext context, HLSLVoxelModelInstanced effect, IList<VoxelModelInstance> instances)
         {
-            if (!_initialized) return;
+            if (!_initialized) 
+                return;
 
-            var instancesList = instances.ToArray();
-            if (instancesList.Length == 0) return;
+            if (instances.Count == 0) 
+                return;
 
             if (_model.ColorMapping != null)
             {
@@ -291,20 +286,20 @@ namespace Utopia.Entities.Voxel
 
             effect.Apply(context);
 
-            // we need to draw each part separately
-            for (int partIndex = 0; partIndex < VoxelModel.Parts.Count; partIndex++)
+            if (VoxelModel.Frames.Count == 1 && VoxelModel.Parts.Count == 1)
             {
-                if (VoxelModel.Parts[partIndex].Frames.Count == 1 || VoxelModel.States.Count == 1)
+                // we have only one frame and part, so every model have the same VB
+                DrawGroup(0, 0, instances);
+            }
+            else
+            {
+                for (byte partIndex = 0; partIndex < VoxelModel.Parts.Count; partIndex++)
                 {
-                    // we have only one frame or state, so every model have the same VB
-                    DrawGroup(instancesList[0].State.PartsStates[partIndex].ActiveFrame, partIndex, instancesList);
-                }
-                else
-                {
-                    // group instances by active frame because they have different VB
-                    var groups = from inst in instancesList
-                                 group inst by inst.State.PartsStates[partIndex].ActiveFrame
-                                 into g select new {FrameIndex = g.Key, Instances = g.AsEnumerable().ToArray()};
+                    // group instances by an active frame because they have different VB
+                    byte index = partIndex;
+                    var groups = from inst in instances
+                                 group inst by inst.State.PartsStates[index].ActiveFrame
+                                 into g select new { FrameIndex = g.Key, Instances = g.AsEnumerable().ToArray() };
 
                     foreach (var g in groups)
                     {
@@ -312,6 +307,7 @@ namespace Utopia.Entities.Voxel
                     }
                 }
             }
+            
         }
 
         public override string ToString()
@@ -320,11 +316,17 @@ namespace Utopia.Entities.Voxel
         }
     }
 
-    public class VisualVoxelPart
+    public struct GroupItem
     {
-        public BoundingBox[] BoundingBoxes;
-        public InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>[] VertexBuffers;
-        public IndexBuffer<ushort>[] IndexBuffers;
+        public byte PartIndex;
+        public VoxelModelInstance Instance;
+    }
+
+    public class VisualVoxelFrame
+    {
+        public BoundingBox BoundingBox;
+        public InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData> VertexBuffer;
+        public IndexBuffer<ushort> IndexBuffer;
     }
 
     public struct VoxelInstanceData

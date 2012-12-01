@@ -15,6 +15,11 @@ namespace Utopia.Shared.Entities.Models
         private readonly InsideDataProvider _blockData;
 
         /// <summary>
+        /// Gets or sets global color mapping
+        /// </summary>
+        public ColorMapping ColorMapping { get; set; }
+
+        /// <summary>
         /// Gets a frame block data provider
         /// </summary>
         public InsideDataProvider BlockData
