@@ -2,6 +2,7 @@
 using System.IO;
 using Ninject;
 using Ninject.Parameters;
+using Realms.Client.Components.GUI;
 using Sandbox.Client.Components;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -13,10 +14,12 @@ using Utopia.GUI;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.World;
+using Utopia.Shared.World.Processors;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.Chunks.ChunkLandscape;
@@ -101,6 +104,9 @@ namespace Sandbox.Client.States
             {
                 var wp = _ioc.Get<WorldParameters>();
 
+                var configuration = WorldConfiguration.LoadFromFile("Config\\Island.realm");
+
+                wp.Configuration = configuration;
                 //wp not initialized ==> We are in "SandBox" mode, load from the "Utopia SandBox" Default WorldParameters
                 if (wp.SeedName == null)
                 {
@@ -159,13 +165,21 @@ namespace Sandbox.Client.States
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
+            _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
 
-            //IWorldProcessor processor1 = new s33m3WorldProcessor(clientSideworldParam);
-            //IWorldProcessor processor2 = new LandscapeLayersProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
-            //var worldGenerator = new WorldGenerator(clientSideworldParam, processor1, processor2);
-            //_ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
-
-            IWorldProcessor processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+            IWorldProcessor processor = null;
+            switch (clientSideworldParam.Configuration.WorldProcessor)
+            {
+                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Flat:
+                    processor = new FlatWorldProcessor();
+                    break;
+                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
+                    processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+                    break;
+                default:
+                    break;
+            }
+            
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
@@ -177,6 +191,7 @@ namespace Sandbox.Client.States
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
             var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
+            
             var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
             var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
@@ -188,8 +203,13 @@ namespace Sandbox.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
+            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var inventory = _ioc.Get<InventoryComponent>();
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
+            inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
+
+            var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
+            skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
 
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
@@ -198,8 +218,6 @@ namespace Sandbox.Client.States
             var skyDome = _ioc.Get<ISkyDome>();
             var weather = _ioc.Get<IWeather>();
 
-
-            var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
             var singleArrayChunkContainer = _ioc.Get<SingleArrayChunkContainer>();
@@ -208,6 +226,8 @@ namespace Sandbox.Client.States
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
+            var fadeComponent = _ioc.Get<FadeComponent>();
+            fadeComponent.Visible = false;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
@@ -252,6 +272,7 @@ namespace Sandbox.Client.States
             AddComponent(soundManager);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
+            AddComponent(fadeComponent);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

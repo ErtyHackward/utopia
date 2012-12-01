@@ -15,7 +15,9 @@ namespace Utopia.Shared.World
         /// The World Name
         /// </summary>
         public string WorldName { get; set; }
+
         public string SeedName { get; set; }
+
         public WorldConfiguration Configuration { get; set; }
 
         /// <summary>

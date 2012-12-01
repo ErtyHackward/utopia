@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using Ninject;
+using Realms.Client.Components.GUI;
 using S33M3CoreComponents.Sound;
 using Sandbox.Client.Components;
 using Sandbox.Client.States;
-using Utopia;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
-using Utopia.Server;
-using Utopia.Server.Managers;
-using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Web;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
@@ -42,18 +38,15 @@ using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Timers;
 using S33M3CoreComponents.Sprites;
 using S33M3CoreComponents.Inputs;
-using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.GUI.Nuclex;
 using Utopia.GUI.Inventory;
-using Utopia.GUI.Map;
 using S33M3DXEngine.Main.Interfaces;
 using Utopia.Action;
 using System.Collections.Generic;
 using System.Reflection;
 using S33M3CoreComponents.Debug;
 using Utopia.Shared.Entities;
-using Sandbox.Shared;
 using S33M3Resources.Structs;
 using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
@@ -135,9 +128,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
             //=============================================================
 
-            //Inventory ===================================================
-            _iocContainer.Bind<IconFactory>().ToSelf().InSingletonScope();       //Icon Factory
-            //=============================================================
 
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
@@ -156,17 +146,22 @@ namespace Sandbox.Client
             //DirectX layer & Helper ===================================
             _iocContainer.Bind<WorldFocusManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //==========================================================
+
+            //Inventory ===================================================
+            _iocContainer.Bind<IconFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //=============================================================
+
             //Parameters ===============================================
             _iocContainer.Bind<VisualWorldParameters>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).Named("FirstPCamera").WithConstructorArgument("nearPlane", 0.1f).WithConstructorArgument("farPlane", 2800); //Type of camera used
-            _iocContainer.Bind<ICameraFocused>().To<ThirdPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).Named("ThirdPCamera").WithConstructorArgument("nearPlane", 0.1f).WithConstructorArgument("farPlane", 2800); //Type of camera used
+            _iocContainer.Bind<ICameraFocused>().To<FirstPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).Named("FirstPCamera").WithConstructorArgument("nearPlane", 0.1f).WithConstructorArgument("farPlane", 2800f); //Type of camera used
+            _iocContainer.Bind<ICameraFocused>().To<ThirdPersonCameraWithFocus>().InScope(x => GameScope.CurrentGameScope).Named("ThirdPCamera").WithConstructorArgument("nearPlane", 0.1f).WithConstructorArgument("farPlane", 2800f); //Type of camera used
             //Force ICamera to use the same singleton as ICameraFocused !
-            //_iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>("FirstPCamera")).InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InScope(x => GameScope.CurrentGameScope);
 
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InScope(x => GameScope.CurrentGameScope);//Camera manager
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
-            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer");
+            _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer").WithConstructorArgument("Name", "SkyBuffer");
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
             
             //Network Related =============================================
@@ -174,9 +169,9 @@ namespace Sandbox.Client
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
             _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<SandboxEntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //_iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
 
-            _iocContainer.Bind<EntityFactory>().To<SandboxEntityFactory>().InScope(x => GameScope.CurrentGameScope).Named("Client");
+            _iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("Client");
 
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
@@ -187,8 +182,9 @@ namespace Sandbox.Client
             //Game Componenents =========================================
             _iocContainer.Bind<ServerComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IClock>().To<WorldClock>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PlayerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ContainerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<Hud>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
@@ -207,7 +203,6 @@ namespace Sandbox.Client
             _iocContainer.Bind<ILightingManager>().To<LightingManager>().InScope(x => GameScope.CurrentGameScope);     //Landscape lightings
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
-
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
             //=============================================================
 

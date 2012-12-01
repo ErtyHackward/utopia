@@ -45,6 +45,7 @@ namespace Realms.Client.Components
                 throw new InvalidOperationException("Already initialized");
 
             _worldParam = worldParam;
+
             _serverFactory = new EntityFactory(null);
             _serverFactory.Config = _worldParam.Configuration;
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
