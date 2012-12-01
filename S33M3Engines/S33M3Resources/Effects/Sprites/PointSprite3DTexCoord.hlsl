@@ -46,10 +46,10 @@ struct PSInput {
 
 //Billboard corners, 0 being no billboards
 static const float4 billboardCorners[4] = {
-											{-0.5, 1.0f, 0.0f, 1.0f}, //Botom left corner
-											{0.5, 1.0f, 0.0f, 1.0f},  //Botom right corner
-											{0.5, 0.0f, 0.0f, 1.0f},  //Top left corner
-											{-0.5, 0.0f, 0.0f, 1.0f}  //Top right corner
+											{0.5, 0.0f, 0.0f, 1.0f},  //Botom right corner
+											{-0.5, 0.0f, 0.0f, 1.0f}, //Botom left corner
+											{0.5, 1.0f, 0.0f, 1.0f},  //Top right corner
+											{-0.5, 1.0f, 0.0f, 1.0f}  //Top left corner
 										  };
 
 //--------------------------------------------------------------------------------------
@@ -112,9 +112,11 @@ float4 PS(PSInput IN) : SV_Target
 	//Texture Sampling
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
 
-	//color = float4(1,1,1,1);
-	
 	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
+
+	color.r = 1;
+	color.g = 1;
+	color.b = 1;
 
 	return color;	
 }
