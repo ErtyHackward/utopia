@@ -29,7 +29,7 @@ namespace Sandbox.Client.Components
     {
         private readonly RuntimeVariables _vars;
         private Server _server;
-        private SandboxEntityFactory _serverFactory;
+        private EntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
 
@@ -45,7 +45,7 @@ namespace Sandbox.Client.Components
 
             _worldParam = worldParam;
 
-            _serverFactory = new SandboxEntityFactory(null);
+            _serverFactory = new EntityFactory(null);
             _serverFactory.Config = _worldParam.Configuration;
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", _worldParam.WorldName, "ServerWorld.db");
 
