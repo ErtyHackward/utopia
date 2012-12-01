@@ -293,7 +293,7 @@ namespace Utopia.Entities.Managers
                     }
                 }
 
-                var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero);
+                var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero).ToList();
                 if (modelAndInstances.Value.VisualModel != null)
                     modelAndInstances.Value.VisualModel.DrawInstanced(_d3DEngine.ImmediateContext, _voxelModelEffect, instancesToDraw);
             }

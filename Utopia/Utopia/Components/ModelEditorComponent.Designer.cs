@@ -49,6 +49,7 @@ namespace Utopia.Components
 
         private struct DialogFrameEditStruct
         {
+            public string Name;
             public int SizeX;
             public int SizeY;
             public int SizeZ;
@@ -269,8 +270,8 @@ namespace Utopia.Components
             var framesEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
             var framesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
             var framesHideButton = new ButtonControl { Text = "Hide", Bounds = new UniRectangle(0, 0, 35, 20) };
-            _framesList = new ListControl { Name = "framesList", LayoutFlags = ControlLayoutFlags.WholeRow };
-            _framesList.Bounds = new UniRectangle(0, 0, 180, 50);
+            _framesList = new ListControl { Name = "framesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
+            _framesList.Bounds = new UniRectangle(0, 0, 180, 20);
             _framesList.SelectionMode = ListSelectionMode.Single;
             _framesList.SelectionChanged += delegate { SelectedFrameIndex = _framesList.SelectedItems.Count > 0 ? _framesList.SelectedItems[0] : -1; };
 
@@ -278,7 +279,7 @@ namespace Utopia.Components
             framesEditButton.Pressed += delegate { OnFrameEditPressed(); };
             framesDeleteButton.Pressed += delegate { OnFrameDeletePressed(); };
             framesHideButton.Pressed += delegate { OnFrameHidePressed(); };
-            _framesGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 90), LayoutFlags = ControlLayoutFlags.WholeRow };
+            _framesGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 90), LayoutFlags =  ControlLayoutFlags.FreeHeight | ControlLayoutFlags.WholeRow };
 
             _framesGroup.Children.Add(framesLabel);
             _framesGroup.Children.Add(framesAddButton);
@@ -331,7 +332,6 @@ namespace Utopia.Components
         private void OnFrameMode()
         {
             _modelNavigationWindow.Children.Clear();
-            _modelNavigationWindow.Children.Add(_partsGroup);
             _modelNavigationWindow.Children.Add(_framesGroup);
 
             OnFrameToolSelected(FrameEditorTools.Edit);

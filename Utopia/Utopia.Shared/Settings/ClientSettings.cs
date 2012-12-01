@@ -312,8 +312,8 @@ namespace Utopia.Shared.Settings
                     },
                     GraphicalParameters = new GraphicalParameters
                     {
-                        WorldSize = 32,
-                        StaticEntityViewSize = 10,
+                        WorldSize = 20,
+                        StaticEntityViewSize = 5,
                         TexturePack = "Default",
                         LandscapeFog = "SkyFog",
                         VSync = true,

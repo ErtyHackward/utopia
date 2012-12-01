@@ -68,7 +68,8 @@ namespace Utopia.Entities.Renderer
         private VisualWorldParameters _visualWorldParameters;
 
         private VoxelModelPart _handVoxelModel;
-        private VisualVoxelPart _handVisualVoxelModel;
+        private VoxelModelPartState _handState;
+        private VisualVoxelFrame _handVisualVoxelModel;
 
         private FTSValue<Color3> _lightColor = new FTSValue<Color3>();
         private ISkyDome _skyDome;
@@ -77,6 +78,7 @@ namespace Utopia.Entities.Renderer
         private bool _animationStated;
         private Quaternion _animationRotation;
         private Vector3 _animationOffset;
+        
 
         #endregion
 
@@ -236,7 +238,8 @@ namespace Utopia.Entities.Renderer
                     //Get Voxel Arm of the character.
                     var armPartIndex = _player.ModelInstance.VoxelModel.GetArmIndex();
                     _handVoxelModel = _player.ModelInstance.VoxelModel.Parts[armPartIndex];
-                    _handVisualVoxelModel = _playerModel.VisualVoxelParts[armPartIndex];
+                    _handState = _player.ModelInstance.VoxelModel.GetMainState().PartsStates[armPartIndex];
+                    _handVisualVoxelModel = _playerModel.VisualVoxelFrames[armPartIndex];
                 }
             }
 
@@ -365,11 +368,11 @@ namespace Utopia.Entities.Renderer
 
             //Compute a "world matrix" for displaying the Arm
             var screenPosition = 
-            Matrix.RotationX(MathHelper.Pi * 1.3f) * Matrix.RotationY(MathHelper.Pi * 0.01f) *  //Some rotations
-            Matrix.Scaling(1.7f) * //Adjusting scale
-            Matrix.Translation(0.1f, -1, 0) * //Translation
-            Matrix.Invert(_camManager.ActiveCamera.View_focused) * //Keep the Arm On screen
-            Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 2.5f); //Project the arm in the lookat Direction = Inside the screen
+                Matrix.RotationX(MathHelper.Pi * 1.3f) * Matrix.RotationY(MathHelper.Pi * 0.01f) *  //Some rotations
+                Matrix.Scaling(1.7f) * //Adjusting scale
+                Matrix.Translation(0.1f, -1, 0) * //Translation
+                Matrix.Invert(_camManager.ActiveCamera.View_focused) * //Keep the Arm On screen
+                Matrix.Translation(_camManager.ActiveCamera.LookAt.ValueInterp * 2.5f); //Project the arm in the lookat Direction = Inside the screen
 
             //Prepare Effect
             _voxelModelEffect.Begin(context);
@@ -386,9 +389,10 @@ namespace Utopia.Entities.Renderer
             _voxelModelEffect.CBPerPart.IsDirty = true;
 
             //Assign color mappings
-            if (_handVoxelModel.ColorMapping != null)
+            var colorMapping = _player.ModelInstance.VoxelModel.Frames[_handState.ActiveFrame].ColorMapping;
+            if (colorMapping != null)
             {
-                _voxelModelEffect.CBPerModel.Values.ColorMapping = _handVoxelModel.ColorMapping.BlockColors;
+                _voxelModelEffect.CBPerModel.Values.ColorMapping = colorMapping.BlockColors;
             }
             else
             {
@@ -398,8 +402,8 @@ namespace Utopia.Entities.Renderer
             _voxelModelEffect.CBPerModel.IsDirty = true;
 
             //Assign buffers
-            var vb = _handVisualVoxelModel.VertexBuffers[0];
-            var ib = _handVisualVoxelModel.IndexBuffers[0];
+            var vb = _handVisualVoxelModel.VertexBuffer;
+            var ib = _handVisualVoxelModel.IndexBuffer;
 
             vb.SetToDevice(context, 0);
             ib.SetToDevice(context, 0);

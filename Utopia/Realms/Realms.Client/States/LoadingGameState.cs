@@ -111,7 +111,8 @@ namespace Realms.Client.States
                 }
 
                 //Create a local server for single player purpose
-                if (_vars.LocalServer == null) _vars.LocalServer = _ioc.Get<LocalServer>();
+                if (_vars.LocalServer == null) 
+                    _vars.LocalServer = _ioc.Get<LocalServer>();
 
                 //Passed the WorldParameters to the server for single use purpose mode
                 _vars.LocalServer.InitSinglePlayerServer(wp);
@@ -185,6 +186,7 @@ namespace Realms.Client.States
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
             var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
+            
             var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
             var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
@@ -221,7 +223,6 @@ namespace Realms.Client.States
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
-
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
@@ -246,7 +247,6 @@ namespace Realms.Client.States
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
             
-
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);
@@ -268,7 +268,6 @@ namespace Realms.Client.States
             AddComponent(soundManager);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
-
             AddComponent(fadeComponent);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
