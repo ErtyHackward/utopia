@@ -257,6 +257,7 @@ namespace Sandbox.Client.States
             AddComponent(inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
+            AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
             AddComponent(hud);

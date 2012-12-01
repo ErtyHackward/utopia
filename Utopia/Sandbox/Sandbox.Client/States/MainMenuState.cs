@@ -39,7 +39,6 @@ namespace Sandbox.Client.States
             AddComponent(bg);
             AddComponent(gui);
             AddComponent(menu);
-            AddComponent(sound);
 
             base.Initialize(context);
         }

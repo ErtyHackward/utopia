@@ -137,7 +137,6 @@ namespace Sandbox.Client.States
             }
 
 #endif
-            chat.MessageOut += ChatMessageOut;
             base.Initialize(context);
         }
         
@@ -156,20 +155,6 @@ namespace Sandbox.Client.States
             {
                 fadeComponent.Visible = true;
                 inventory.ShowInventory();
-            }
-        }
-
-        void ChatMessageOut(object sender, ChatMessageEventArgs e)
-        {
-            if (e.Message == "/reloadtex")
-            {
-                e.DoNotSend = true;
-                var worldChunks = _ioc.Get<IWorldChunks>();
-
-                //Refresh the texture pack values
-                TexturePackConfig.Current.Load();
-
-                worldChunks.InitDrawComponents(_ioc.Get<D3DEngine>().ImmediateContext);
             }
         }
 
