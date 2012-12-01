@@ -68,38 +68,37 @@ namespace S33M3CoreComponents.Sprites._3D
 
         public void Draw(ref Vector3 worldPosition, ref Vector2 size, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref Vector4 textCoordU, ref Vector4 textCoordV, int textureArrayIndex = 0)
         {
-            Vector3 Info = new Vector3(size.X, size.Y, (int)spriterenderingType);
+            //Vector3 Info = new Vector3(size.X, size.Y, (int)spriterenderingType);
 
-            _spritesCollection.Add(new VertexPointSprite3DTexCoord(new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, textureArrayIndex), color, Info, textCoordU, textCoordV));
-            _isCollectionDirty = true;
+            //_spritesCollection.Add(new VertexPointSprite3DTexCoord(new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, textureArrayIndex), color, Info, textCoordU, textCoordV));
+            //_isCollectionDirty = true;
         }
 
         public void DrawText(string text, SpriteFont spriteFont, SpriteTexture texture, ref Vector3 worldPosition, float scaling, ref ByteColor color, ICamera camera, int textureArrayIndex = 0, bool XCenteredText = true, bool MultiLineHandling = false)
         {
             int nextLineOffset = 0;
-            Vector3 origin;
-            Vector3 textPosition = worldPosition;
+            Vector3 origin = worldPosition;
+
+            Vector3 localPosition = Vector3.Zero;
             int nbrLine = 1;
             if (MultiLineHandling)
             {
                 nbrLine = text.Count(f => f == '\n') + 1;
             }
             
-            textPosition.Y += (spriteFont.CharHeight * scaling) * nbrLine; //remove the char. height
+            localPosition.Y += (spriteFont.CharHeight) * nbrLine; //remove the char. height
 
             if (XCenteredText)
             {
                 if (!MultiLineHandling)
                 {
-                    textPosition.X -= (spriteFont.MeasureString(text).X / 2) * scaling; //Center text on X World Position
+                    localPosition.X -= (spriteFont.MeasureString(text).X / 2); //Center text on X World Position
                 }
                 else
                 {
-                    textPosition.X -= (spriteFont.MeasureString(GetLine(ref text, nextLineOffset, out nextLineOffset)).X / 2) * scaling; //Center text on X World Position
+                    localPosition.X -= (spriteFont.MeasureString(GetLine(ref text, nextLineOffset, out nextLineOffset)).X / 2); //Center text on X World Position
                 }
             }
-
-            origin = worldPosition;
 
             bool newCharInserted = false;
             int length = text.Length;
@@ -120,73 +119,65 @@ namespace S33M3CoreComponents.Sprites._3D
                 //Managing Space
                 if (character == ' ')
                 {
-                    textPosition.X += spriteFont.SpaceWidth * scaling;
+                    localPosition.X += spriteFont.SpaceWidth;
                 }
                 else
                 {
                     //Managing New Line
                     if (character == '\n')
                     {
-                        InsertNewLine(ref text, ref textPosition, ref currentLineWidth, spriteFont, worldPosition.X, scaling, XCenteredText, MultiLineHandling, ref nextLineOffset);
+                        InsertNewLine(ref text, ref localPosition, ref currentLineWidth, spriteFont, XCenteredText, MultiLineHandling, ref nextLineOffset);
                     }
                     else
                     {
                         //All other characters goes here
                         RectangleF desc = spriteFont.CharDescriptors[character];
-                        //Transform the desc to Texture coordinate with World scaling
+                        //Create texture coordinate in Texture coordinate
                         RectangleF sourceRectInTexCoord = new RectangleF((desc.Left / (float)texture.Width), desc.Top / (float)texture.Height, desc.Right / (float)texture.Width, desc.Bottom / (float)texture.Height);
 
-                        Draw(ref textPosition, desc.Width * scaling, desc.Height * scaling, ref color, Sprite3DRenderer.SpriteRenderingType.BillboardOnLookAt, ref sourceRectInTexCoord, 0, camera, ref origin);
+                        Draw(ref localPosition, desc.Width, desc.Height, ref color, Sprite3DRenderer.SpriteRenderingType.BillboardOnLookAt, ref sourceRectInTexCoord, 0, camera, ref origin);
                         
-                        textPosition.X += desc.Width * scaling;
+                        localPosition.X += desc.Width;
                         newCharInserted = true;
                     }
                 }
 
-                if (newCharInserted) textPosition.X += 1 * scaling;
+                if (newCharInserted) localPosition.X += 1;
             }
         }
 
-        private void Draw(ref Vector3 worldPosition, float width, float height, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
+        private void Draw(ref Vector3 Offset, float width, float height, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
         {
+            Matrix scaleRotateAndTranslate = Matrix.Transpose(Matrix.Scaling(0.04f) * Matrix.RotationQuaternion(Quaternion.Invert(camera.YAxisOrientation.ValueInterp)) * Matrix.Translation(origin));
+            //Vector3 worldPosition = Vector3.TransformCoordinate(Offset, scaleRotateAndTranslate);
 
-            Vector3 Offset = worldPosition - origin;
-
-            Matrix rotateAndTranslate = Matrix.Translation(Offset) * Matrix.RotationQuaternion(Quaternion.Invert(camera.YAxisOrientation.ValueInterp)) * Matrix.Translation(origin);
-
-            Vector3 newworldPosition = Vector3.TransformCoordinate(Vector3.Zero, rotateAndTranslate);
-
-            Vector4 position = new Vector4(newworldPosition.X, newworldPosition.Y, newworldPosition.Z, textureArrayIndex);
-
-            //Vector4 position = new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, textureArrayIndex);
-            Vector3 Info = new Vector3(width, height, (int)spriterenderingType);
-
+            Vector4 position = new Vector4(Offset.X, Offset.Y, Offset.Z, textureArrayIndex);
             Vector4 textCoordU = new Vector4(textCoord.Right, textCoord.Left, textCoord.Right, textCoord.Left);
             Vector4 textCoordV = new Vector4(textCoord.Bottom, textCoord.Bottom, textCoord.Top, textCoord.Top);
+            Vector2 Size = new Vector2(width, height);
 
-            _spritesCollection.Add(new VertexPointSprite3DTexCoord(position, color, Info, textCoordU, textCoordV));
+            _spritesCollection.Add(new VertexPointSprite3DTexCoord(ref scaleRotateAndTranslate, ref position, ref color, ref Size, ref textCoordU, ref textCoordV));
             _isCollectionDirty = true;
         }
         #endregion
 
         #region Private Methods
-        private void InsertNewLine(ref string text, ref Vector3 textPosition, ref float currentLineWidth, SpriteFont spriteFont, float xOffset, float scaling, bool XCenteredText, bool MultiLineHandling, ref int nextLineOffset)
+        private void InsertNewLine(ref string text, ref Vector3 textPosition, ref float currentLineWidth, SpriteFont spriteFont, bool XCenteredText, bool MultiLineHandling, ref int nextLineOffset)
         {
-            textPosition.Y -= spriteFont.CharHeight * scaling;
-            textPosition.X = xOffset;
+            textPosition.Y -= spriteFont.CharHeight;
+            textPosition.X = 0;
 
             if (XCenteredText)
             {
                 if (!MultiLineHandling)
                 {
-                    textPosition.X -= (spriteFont.MeasureString(text).X / 2) * scaling; //Center text on X World Position
+                    textPosition.X -= (spriteFont.MeasureString(text).X / 2); //Center text on X World Position
                 }
                 else
                 {
-                    textPosition.X -= (spriteFont.MeasureString(GetLine(ref text, nextLineOffset, out nextLineOffset)).X / 2) * scaling; //Center text on X World Position
+                    textPosition.X -= (spriteFont.MeasureString(GetLine(ref text, nextLineOffset, out nextLineOffset)).X / 2); //Center text on X World Position
                 }
             }
-
             currentLineWidth = 0;
         }
 
