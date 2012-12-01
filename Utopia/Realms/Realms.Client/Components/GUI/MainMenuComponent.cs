@@ -244,7 +244,7 @@ namespace Realms.Client.Components.GUI
         {
             _helloLabel.Bounds    = new UniRectangle((_engine.ViewPort.Width - 212) / 2 - 250, _headerHeight + 90, 50, 40);
             _nicknameLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 - 195, _headerHeight + 90, 200, 40);
-            _mainMenuLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 + 60, _headerHeight + 96, 85, 50);
+            _mainMenuLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 + 65, _headerHeight + 96, 85, 50);
             _buttonsGroup.Bounds  = new UniRectangle((_engine.ViewPort.Width - 212) / 2, _headerHeight + 137, 212, 400);
         }
     }

@@ -15,10 +15,11 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModel : IBinaryStorable
     {
-        public const int ModelFormatVersion = 1;
+        public const int ModelFormatVersion = 2;
 
         public VoxelModel()
         {
+            Frames = new List<VoxelFrame>();
             Parts = new List<VoxelModelPart>();
             States = new List<VoxelModelState>();
             Animations = new List<VoxelModelAnimation>();
@@ -28,6 +29,11 @@ namespace Utopia.Shared.Entities.Models
         /// Gets or sets model name
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets a list of model frames
+        /// </summary>
+        public List<VoxelFrame> Frames { get; private set; }
 
         /// <summary>
         /// Gets a list of parts of the model
@@ -63,59 +69,33 @@ namespace Utopia.Shared.Entities.Models
             {
                 var writer = new BinaryWriter(ms);
 
-                writer.Write(ModelFormatVersion);
-
-                ColorMapping.Write(writer, ColorMapping);
-
-                foreach (var voxelModelPart in Parts)
-                {
-                    foreach (var voxelFrame in voxelModelPart.Frames)
-                    {
-                        var bytes = voxelFrame.BlockData.GetBlocksBytes();
-                        ms.Write(bytes, 0, bytes.Length);
-                    }
-
-                    if (voxelModelPart.ColorMapping != null)
-                    {
-                        foreach (var color in voxelModelPart.ColorMapping.BlockColors)
-                        {
-                            writer.Write((int)color);
-                        }
-                    }
-                }
-
-                foreach (var voxelModelState in States)
-                {
-                    voxelModelState.Save(writer);
-                }
-
-                foreach (var animation in Animations)
-                {
-                    animation.Save(writer);
-                }
+                SaveImpl(writer);
 
                 ms.Position = 0;
                 Hash = Md5Hash.Calculate(ms);
             }
         }
-        
-        public void Save(BinaryWriter writer)
-        {
-            UpdateHash();
 
+        private void SaveImpl(BinaryWriter writer, Md5Hash hash = null)
+        {
             writer.Write(ModelFormatVersion);
 
             writer.Write(Name);
 
-            if (Hash != null)
+            if (hash != null)
             {
                 writer.Write((byte)16);
-                writer.Write(Hash.Bytes);
+                writer.Write(hash.Bytes);
             }
             else writer.Write((byte)0);
 
             ColorMapping.Write(writer, ColorMapping);
 
+            writer.Write((byte)Frames.Count);
+            foreach (var voxelFrame in Frames)
+            {
+                voxelFrame.Save(writer);
+            }
             writer.Write((byte)Parts.Count);
             foreach (var voxelModelPart in Parts)
             {
@@ -131,6 +111,12 @@ namespace Utopia.Shared.Entities.Models
             {
                 voxelModelAnimation.Save(writer);
             }
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            UpdateHash();
+            SaveImpl(writer, Hash);
         }
 
         public void Load(BinaryReader reader)
@@ -154,6 +140,17 @@ namespace Utopia.Shared.Entities.Models
             else Hash = null;
 
             ColorMapping = ColorMapping.Read(reader);
+
+            count = reader.ReadByte();
+
+            Frames.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                var frame = new VoxelFrame();
+                frame.Load(reader);
+                Frames.Add(frame);
+            }
 
             count = reader.ReadByte();
 

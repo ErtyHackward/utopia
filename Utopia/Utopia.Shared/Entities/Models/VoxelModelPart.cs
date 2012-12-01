@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
@@ -25,21 +23,6 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         public bool IsArm { get; set; }
 
-        /// <summary>
-        /// Gets a list of frames
-        /// </summary>
-        public List<VoxelFrame> Frames { get; set; }
-
-        /// <summary>
-        /// Gets or sets a default part color mapping, can be null
-        /// </summary>
-        public ColorMapping ColorMapping { get; set; }
-
-        public VoxelModelPart()
-        {
-            Frames = new List<VoxelFrame>();
-        }
-
         public void Save(BinaryWriter writer)
         {
             if (string.IsNullOrEmpty(Name))
@@ -48,14 +31,6 @@ namespace Utopia.Shared.Entities.Models
             writer.Write(Name);
             writer.Write(IsHead);
             writer.Write(IsArm);
-
-            writer.Write((byte)Frames.Count);
-            foreach (var voxelFrame in Frames)
-            {
-                voxelFrame.Save(writer);
-            }
-
-            ColorMapping.Write(writer, ColorMapping);
         }
 
         public void Load(BinaryReader reader)
@@ -63,17 +38,6 @@ namespace Utopia.Shared.Entities.Models
             Name = reader.ReadString();
             IsHead = reader.ReadBoolean();
             IsArm = reader.ReadBoolean();
-
-            Frames.Clear();
-            var framesCount = reader.ReadByte();
-            for (int i = 0; i < framesCount; i++)
-            {
-                var frame = new VoxelFrame();
-                frame.Load(reader);
-                Frames.Add(frame);
-            }
-
-            ColorMapping = ColorMapping.Read(reader);
         }
 
         public override string ToString()
