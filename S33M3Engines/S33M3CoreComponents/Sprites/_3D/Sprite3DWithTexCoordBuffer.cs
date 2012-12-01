@@ -148,11 +148,11 @@ namespace S33M3CoreComponents.Sprites._3D
 
         private void Draw(ref Vector3 Offset, float width, float height, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
         {
-            Matrix scaleRotateAndTranslate = Matrix.Transpose(Matrix.Scaling(0.04f) * Matrix.RotationQuaternion(Quaternion.Invert(camera.YAxisOrientation.ValueInterp)) * Matrix.Translation(origin));
+            Matrix scaleRotateAndTranslate = Matrix.Transpose(Matrix.Scaling(0.04f) * Matrix.RotationQuaternion(Quaternion.Invert(camera.Orientation.ValueInterp)) * Matrix.Translation(origin));
             //Vector3 worldPosition = Vector3.TransformCoordinate(Offset, scaleRotateAndTranslate);
 
             Vector4 position = new Vector4(Offset.X, Offset.Y, Offset.Z, textureArrayIndex);
-            Vector4 textCoordU = new Vector4(textCoord.Left, textCoord.Right, textCoord.Left, textCoord.Right);
+            Vector4 textCoordU = new Vector4(textCoord.Right, textCoord.Left, textCoord.Right, textCoord.Left);
             Vector4 textCoordV = new Vector4(textCoord.Bottom, textCoord.Bottom, textCoord.Top, textCoord.Top);
             Vector2 Size = new Vector2(width, height);
 

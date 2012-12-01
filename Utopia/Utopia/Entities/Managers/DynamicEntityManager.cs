@@ -53,6 +53,9 @@ namespace Utopia.Entities.Managers
         }
 
         #region Private Variables
+        private readonly int VOXEL_DRAW = 0;
+        private readonly int SPRITENAME_DRAW;
+
         private HLSLVoxelModelInstanced _voxelModelEffect;
         private HLSLVoxelModel _voxelToolEffect;
 
@@ -135,6 +138,9 @@ namespace Utopia.Entities.Managers
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
 
             DynamicEntities = new List<IVisualVoxelEntityContainer>();
+
+            DrawOrders.UpdateIndex(VOXEL_DRAW, 99, "VOXEL_DRAW");
+            SPRITENAME_DRAW = DrawOrders.AddIndex(1060, "NAME_DRAW");
         }
 
         public override void BeforeDispose()
@@ -185,14 +191,13 @@ namespace Utopia.Entities.Managers
             _voxelToolEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _materialChangeMapping = new Dictionary<int, int>();
 
-
             _dynamicEntityNameFont = ToDispose(new SpriteFont());
             _dynamicEntityNameFont.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, context.Device);
 
             _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer(context, _dynamicEntityNameFont, Sprite3DRenderer.Sprite3dBufferType.Sprite3DWithTexCoord,
-                                                                  RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear),
+                                                                  RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text),
                                                                   DXStates.Rasters.Default,
-                                                                  DXStates.Blenders.Disabled,
+                                                                  DXStates.Blenders.Enabled,
                                                                   DXStates.DepthStencils.DepthEnabled));
         }
 
@@ -238,6 +243,26 @@ namespace Utopia.Entities.Managers
         }
 
         public override void Draw(DeviceContext context, int index)
+        {
+            if (index == VOXEL_DRAW)
+            {
+                VoxelDraw(context);
+                return;
+            }
+
+            if (index == SPRITENAME_DRAW)
+            {
+                DrawEntitiesName(context);
+                return;
+            }
+
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void VoxelDraw(DeviceContext context)
         {
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
@@ -300,13 +325,7 @@ namespace Utopia.Entities.Managers
                     }
                 }
             }
-
-            DrawEntitiesName(context);
         }
-
-        #endregion
-
-        #region Private Methods
 
         private void DrawEntitiesName(DeviceContext context)
         {

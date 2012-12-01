@@ -178,6 +178,7 @@ namespace Utopia.Shared.GameDXStates
             public static int UWrapVClamp_MinMagMipLinear;
             public static int UVWrap_MinMagMipLinear;
             public static int UVWrap_MinMagPointMipLinear;
+            public static int UVWrap_Text;
         }
 
         private static void CreateSamplerStatesCollection()
@@ -250,6 +251,18 @@ namespace Utopia.Shared.GameDXStates
                 AddressV = TextureAddressMode.Wrap,
                 AddressW = TextureAddressMode.Wrap,
                 Filter = Filter.MinMagMipLinear,
+                MaximumLod = float.MaxValue,
+                MinimumLod = 0
+            }
+                    );
+
+            //Samplers.UVWrap_MinMagMipLinear
+            Samplers.UVWrap_Text = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
+            {
+                AddressU = TextureAddressMode.Clamp,
+                AddressV = TextureAddressMode.Clamp,
+                AddressW = TextureAddressMode.Clamp,
+                Filter = Filter.Anisotropic,
                 MaximumLod = float.MaxValue,
                 MinimumLod = 0
             }
