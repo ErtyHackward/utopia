@@ -213,7 +213,7 @@ namespace Realms.Client.Components.GUI
             _linen.Bounds = new UniRectangle(0 + _borderOffset, _headerHeight, viewport.Width - (_borderOffset * 2), (viewport.Height - _headerHeight) - (_borderOffset * 2));
             _shadow.Bounds = new UniRectangle(0, _headerHeight - 117, viewport.Width, 287);
             _logo.Bounds = new UniRectangle((viewport.Width - 562) / 2, _headerHeight - 44, 562, 113);
-            _version.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 360, _headerHeight + 49, 196, 31);
+            _version.Bounds = new UniRectangle((viewport.Width - 490) / 2 + 360, _headerHeight + 49, 89, 31);
 
             foreach (RotationCube cube in _rotatingCubes)
             {
