@@ -46,10 +46,10 @@ struct PSInput {
 
 //Billboard corners, 0 being no billboards
 static const float4 billboardCorners[4] = {
-											{-0.5, 0.0f, 0.0f, 1.0f}, //Botom left corner
-											{0.5, 0.0f, 0.0f, 1.0f},  //Botom right corner
-											{-0.5, 1.0f, 0.0f, 1.0f},  //Top left corner
-											{0.5, 1.0f, 0.0f, 1.0f}  //Top right corner
+											{-0.5, 1.0f, 0.0f, 1.0f}, //Botom left corner
+											{0.5, 1.0f, 0.0f, 1.0f},  //Botom right corner
+											{0.5, 0.0f, 0.0f, 1.0f},  //Top left corner
+											{-0.5, 0.0f, 0.0f, 1.0f}  //Top right corner
 										  };
 
 //--------------------------------------------------------------------------------------
@@ -88,6 +88,8 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 		//Scale to billboard local size
 		billboardPosition.xy *= Input.Size; 
 
+		billboardPosition.xy += Input.Position.xy; 
+
 		//Tranform billboardPosition from Local => World 
 		float4 WorldPosition = mul(mul(billboardPosition, Input.WorldTransform), ViewProjection);
 
@@ -110,7 +112,7 @@ float4 PS(PSInput IN) : SV_Target
 	//Texture Sampling
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
 
-	color = float4(1,1,1,1);
+	//color = float4(1,1,1,1);
 	
 	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
