@@ -64,7 +64,8 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         public void Set2Device(DeviceContext context)
         {
 #if DEBUG
-            if (_sampler == null) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+            if (_sampler == null) 
+                logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
 #endif
             if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetSampler(_slot[ShaderIDs.VS], _sampler);
             if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetSampler(_slot[ShaderIDs.GS], _sampler);
