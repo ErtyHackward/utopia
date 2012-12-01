@@ -51,9 +51,9 @@ namespace Sandbox.Client.Components
 
             PreLoadSound("Put", @"Sounds\Blocks\put.wav", 0.3f, 12.0f);
             PreLoadSound("Take", @"Sounds\Blocks\take.wav", 0.3f, 12.0f);
-            PreLoadSound("Hurt", @"Sounds\Events\hurt.wav", 1.0f, 16.0f);
+            PreLoadSound("Hurt", @"Sounds\Events\hurt.wav", 0.3f, 16.0f);
             PreLoadSound("WaterDrop", @"Sounds\Events\waterdrop.wav", 1.0f, 16.0f);
-            PreLoadSound("Peaceful", @"Sounds\Moods\peaceful.adpcm.wav", 0.3f, 16.0f);
+            PreLoadSound("Peaceful", @"Sounds\Moods\peaceful.adpcm.wav", 0.1f, 16.0f);
             PreLoadSound("Fear", @"Sounds\Moods\fear.adpcm.wav", 0.2f, 16.0f);
         }
 

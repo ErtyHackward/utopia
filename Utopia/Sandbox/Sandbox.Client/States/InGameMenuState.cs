@@ -30,8 +30,8 @@ namespace Sandbox.Client.States
             :base(stateManager)
         {
             _iocContainer = iocContainer;
-            _soundEngine = soundEngine;
             AllowMouseCaptureChange = false;
+            _soundEngine = soundEngine;
         }
 
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
@@ -86,7 +86,7 @@ namespace Sandbox.Client.States
         {
             if (_isGameExited)
             {
-                //Stop all playing sound
+                //Disconnect in a clean way from the server
                 _soundEngine.StopAllSounds();
 
                 //Dispose all components related to the Game scope

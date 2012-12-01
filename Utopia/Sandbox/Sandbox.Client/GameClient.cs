@@ -81,8 +81,6 @@ namespace Sandbox.Client
 
             _iocContainer.Dispose();
 
-            game.Dispose();
-
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -142,12 +140,6 @@ namespace Sandbox.Client
             }
 
             //Set Default Threads - initializing the thread Engine component
-            if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize == 0)
-            {
-                ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize = ClientSettings.Current.Settings.GraphicalParameters.WorldSize - 5;
-                needSave = true;
-            }
-            
             if (ClientSettings.Current.Settings.DefaultAllocatedThreads == 0)
             {
                 ClientSettings.Current.Settings.DefaultAllocatedThreads = ThreadsManager.SetOptimumNbrThread(0);
@@ -156,6 +148,12 @@ namespace Sandbox.Client
             else
             {
                 ThreadsManager.SetOptimumNbrThread(ClientSettings.Current.Settings.DefaultAllocatedThreads + ClientSettings.Current.Settings.EngineParameters.AllocatedThreadsModifier, true);
+            }
+
+            if (ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize == 0)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize = ClientSettings.Current.Settings.GraphicalParameters.WorldSize - 5;
+                needSave = true;
             }
 
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.EngineParameters.EffectPack))
@@ -167,6 +165,12 @@ namespace Sandbox.Client
             {
                 ClientSettings.Current.Settings.GraphicalParameters.MSAA = new SampleDescriptionSetting() { SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0) };
                 needSave = true;
+            }
+
+                        //Set Default Threads - initializing the thread Engine component
+            if (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog == null)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog = "SkyFog";
             }
 
             return needSave;

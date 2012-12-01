@@ -15,6 +15,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Entities;
 using System.IO;
 using S33M3CoreComponents.Config;
+using Utopia.Components;
 
 namespace Sandbox.Client.States
 {
@@ -43,10 +44,10 @@ namespace Sandbox.Client.States
         {
             var guiManager = _iocContainer.Get<GuiManager>();
             var inputManager = _iocContainer.Get<InputsManager>();
+            var generalSoundManager = _iocContainer.Get<GeneralSoundManager>();
 
             DebugComponent debugComponent = null;
-            if (Program.ShowDebug)
-                debugComponent = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
+            if (Program.ShowDebug) debugComponent = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
 
             //Init Common GUI Menu resources
             var commonResources = _iocContainer.Get<SandboxCommonResources>();
@@ -64,11 +65,11 @@ namespace Sandbox.Client.States
 
             var storage = (ModelSQLiteStorage)_iocContainer.Get<IVoxelModelStorage>();
             storage.ImportFromPath("Models");
-
-            if (debugComponent != null)
-                AddComponent(debugComponent);
+            
+            AddComponent(debugComponent);
             AddComponent(guiManager);
             AddComponent(inputManager);
+            AddComponent(generalSoundManager);
             base.Initialize(context);
         }
 
