@@ -341,9 +341,11 @@ namespace Utopia.Entities.Managers
 
             //Get current Active state = A model can have multiple "State" (Like open, close, mid open, ...)
             var activeModelState = instance.State;
+
+            var visualModel = visualVoxelEntity.VisualVoxelModel;
             
             //For each Part in the model (A model can be composed of several parts)
-            for (int partId = 0; partId < visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
+            for (int partId = 0; partId < visualModel.VoxelModel.Parts.Count && !collisionDetected; partId++)
             {
                 VoxelModelPartState partState = activeModelState.PartsStates[partId];
 
@@ -351,11 +353,11 @@ namespace Utopia.Entities.Managers
                 if (partState.ActiveFrame == byte.MaxValue)
                     continue;
 
-                VoxelModelPart part = visualVoxelEntity.VisualVoxelModel.VoxelModel.Parts[partId];
-                BoundingBox frameBoundingBox = visualVoxelEntity.VisualVoxelModel.VisualVoxelParts[partId].BoundingBoxes[partState.ActiveFrame];
+                VoxelModelPart part = visualModel.VoxelModel.Parts[partId];
+                BoundingBox frameBoundingBox = visualModel.VisualVoxelFrames[partState.ActiveFrame].BoundingBox;
                
                 //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
-                var activeframe = part.Frames[partState.ActiveFrame]; //one active at a time
+                var activeframe = visualModel.VoxelModel.Frames[partState.ActiveFrame]; //one active at a time
 
                 Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation) * instance.World;
                 invertedEntityWorldMatrix.Invert();

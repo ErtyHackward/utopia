@@ -71,6 +71,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         {
             this.ThumbPosition = 0.0f;
             this.ThumbSize = 1.0f;
+            ThumbMaxValue = 1;
         }
 
         /// <summary>whether the mouse is currently hovering over the thumb</summary>
