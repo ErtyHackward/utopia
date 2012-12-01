@@ -1,7 +1,5 @@
 using System.IO;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using Utopia.Shared.Tools.BinarySerializer;
 
@@ -13,6 +11,11 @@ namespace Utopia.Shared.Entities.Models
     public class VoxelFrame : IBinaryStorable
     {
         private readonly InsideDataProvider _blockData;
+
+        /// <summary>
+        /// Gets or sets frame name
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets global color mapping
@@ -30,11 +33,11 @@ namespace Utopia.Shared.Entities.Models
         public VoxelFrame()
         {
             _blockData = new InsideDataProvider();
+            Name = "Noname";
         }
 
-        public VoxelFrame(Vector3I size)
+        public VoxelFrame(Vector3I size) : this()
         {
-            _blockData = new InsideDataProvider();
             _blockData.UpdateChunkSize(size);
         }
 
@@ -42,6 +45,8 @@ namespace Utopia.Shared.Entities.Models
         {
             writer.Write(_blockData.ChunkSize);
             writer.Write(_blockData.GetBlocksBytes());
+            writer.Write(Name ?? "Noname");
+            ColorMapping.Write(writer, ColorMapping);
         }
 
         public void Load(BinaryReader reader)
@@ -59,11 +64,15 @@ namespace Utopia.Shared.Entities.Models
 
             _blockData.UpdateChunkSize(size);
             _blockData.SetBlockBytes(bytes);
+
+            Name = reader.ReadString();
+
+            ColorMapping = ColorMapping.Read(reader);
         }
 
         public override string ToString()
         {
-            return _blockData.ChunkSize.ToString();
+            return Name + " " + _blockData.ChunkSize;
         }
     }
 }

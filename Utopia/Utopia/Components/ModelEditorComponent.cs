@@ -777,7 +777,7 @@ namespace Utopia.Components
                 return;
             }
 
-            _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogFrameEditStruct { SizeX = 16, SizeY = 16, SizeZ = 16 }, "Add a new frame", OnFrameAdded);
+            _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogFrameEditStruct { SizeX = 16, SizeY = 16, SizeZ = 16, Name = "noname" }, "Add a new frame", OnFrameAdded);
         }
         private void OnFrameAdded(DialogFrameEditStruct e)
         {
@@ -786,7 +786,7 @@ namespace Utopia.Components
                 _gui.MessageBox("Each part of frame size should be in range [1;128]");
                 return;
             }
-            var frame = new VoxelFrame(new Vector3I(e.SizeX, e.SizeY, e.SizeZ));
+            var frame = new VoxelFrame(new Vector3I(e.SizeX, e.SizeY, e.SizeZ)) { Name = e.Name };
             _visualVoxelModel.VoxelModel.Frames.Add(frame);
             _visualVoxelModel.BuildMesh();
             _framesList.Items.Add(frame);
@@ -805,7 +805,8 @@ namespace Utopia.Components
             var args = new DialogFrameEditStruct {
                 SizeX = size.X, 
                 SizeY = size.Y, 
-                SizeZ = size.Z
+                SizeZ = size.Z,
+                Name = frame.Name
             };
             
             _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, args, "Edit frame size", OnFrameEdited);
@@ -813,7 +814,7 @@ namespace Utopia.Components
         private void OnFrameEdited(DialogFrameEditStruct e)
         {
             var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex];
-
+            frame.Name = e.Name;
             frame.BlockData.UpdateChunkSize(new Vector3I(e.SizeX, e.SizeY, e.SizeZ), true);
             RebuildFrameVertices();
             ClearSelection();
