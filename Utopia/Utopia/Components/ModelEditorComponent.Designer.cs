@@ -49,6 +49,7 @@ namespace Utopia.Components
 
         private struct DialogFrameEditStruct
         {
+            public string Name;
             public int SizeX;
             public int SizeY;
             public int SizeZ;
