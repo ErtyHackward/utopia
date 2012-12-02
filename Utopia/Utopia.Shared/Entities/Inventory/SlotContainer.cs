@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -12,6 +13,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents a base container implementation (this is not an entity)
     /// </summary>
+    [ProtoContract]
     public class SlotContainer<T> : ISlotContainer<T>, IStaticContainer where T: ContainedSlot, new()
     {
         private readonly IEntity _parentEntity;
@@ -22,8 +24,19 @@ namespace Utopia.Shared.Entities.Inventory
         private List<SlotContainer<T>> _joinedScope;
 
         /// <summary>
+        /// Don't use, serialize only
+        /// </summary>
+        [ProtoMember(1)]
+        public int SerializeSlotsCount
+        {
+            get { return _slotsCount; }
+            set { _slotsCount = value; }
+        }
+
+        /// <summary>
         /// Gets container grid size
         /// </summary>
+        [ProtoMember(2)]
         public Vector2I GridSize
         {
             get { return _gridSize; }
@@ -32,6 +45,34 @@ namespace Utopia.Shared.Entities.Inventory
                 _gridSize = value;
                 //todo: copy of items to new container from old
                 _items = new T[_gridSize.X, _gridSize.Y];
+            }
+        }
+
+        /// <summary>
+        /// Don't use, serialize only
+        /// </summary>
+        [ProtoMember(3)]
+        public uint SerializeMaxId
+        {
+            get { return _maxId; }
+            set { _maxId = value; }
+        }
+
+        /// <summary>
+        /// Don't use, serialize only
+        /// </summary>
+        [ProtoMember(4)]
+        public List<T> SerializeItems
+        {
+            get { return this.ToList(); }
+            set
+            {
+                _items = new T[_gridSize.X, _gridSize.Y];
+
+                foreach (var slot in value)
+                {
+                    _items[slot.GridPosition.X, slot.GridPosition.Y] = slot;
+                }
             }
         }
 
@@ -94,45 +135,6 @@ namespace Utopia.Shared.Entities.Inventory
             : this(parentEntity, new Vector2I(6, 5))
         {
             
-        }
-        
-        public void Save(BinaryWriter writer)
-        {
-            // we need to save items count to be able to load again
-            writer.Write(_slotsCount);
-
-            // writing grid size
-            writer.Write(_gridSize);
-
-            // write max id
-            writer.Write(_maxId);
-
-            // saving containing items
-            foreach (var slot in this)
-            {
-                slot.Save(writer);
-            }
-        }
-
-        public void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // read contained slots count
-            _slotsCount = reader.ReadInt32();
-
-            // read container grid size
-            _gridSize = reader.ReadVector2I();
-
-            // read max id
-            _maxId = reader.ReadUInt32();
-
-            // load contained slots (slot is count and entity example)
-            for (int i = 0; i < _slotsCount; i++)
-            {
-                var containedSlot = new T();
-
-                containedSlot.LoadSlot(reader, factory);
-                _items[containedSlot.GridPosition.X, containedSlot.GridPosition.Y] = containedSlot;
-            }
         }
 
         /// <summary>
@@ -388,7 +390,7 @@ namespace Utopia.Shared.Entities.Inventory
             ValidatePosition(pos);
 
             var slot = _items[pos.X, pos.Y];
-            if(slot != null)
+            if (slot != null)
                 return (T)slot.Clone();
             return null;
         }

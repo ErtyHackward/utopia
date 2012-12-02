@@ -1,3 +1,4 @@
+using ProtoBuf;
 using Utopia.Shared.Roleplay;
 
 namespace Utopia.Shared.Entities.Dynamic
@@ -5,6 +6,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// <summary>
     /// Represents a character with RPG skills system
     /// </summary>
+    [ProtoContract]
     public abstract class RpgCharacterEntity : CharacterEntity
     {
         protected RpgCharacterEntity()
@@ -16,16 +18,19 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets character primary attributes
         /// </summary>
+        [ProtoMember(1)]
         public CharacterPrimaryAttributes PrimaryAttributes { get; set; }
 
         /// <summary>
         /// Gets character secondary attributes (skills)
         /// </summary>
+        [ProtoMember(2)]
         public CharacterSecondaryAttributes SecondaryAttributes { get; set; }
 
         /// <summary>
         /// Gets character's free experience points that he can convert into the skill points
         /// </summary>
+        [ProtoMember(3)]
         public uint Experience { get; set; }
 
         /// <summary>
@@ -36,22 +41,6 @@ namespace Utopia.Shared.Entities.Dynamic
         public int GetSkillPointPrice(byte skillLevel)
         {
             return (skillLevel / 10 + 1) * 20;
-        }
-
-        public override void Save(System.IO.BinaryWriter writer)
-        {
-            base.Save(writer);
-            PrimaryAttributes.Save(writer);
-            SecondaryAttributes.Save(writer);
-            writer.Write(Experience);
-        }
-
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-            PrimaryAttributes.Load(reader);
-            SecondaryAttributes.Load(reader);
-            Experience = reader.ReadUInt32();
         }
     }
 }

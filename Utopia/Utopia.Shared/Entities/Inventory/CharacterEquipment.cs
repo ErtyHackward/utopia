@@ -1,4 +1,5 @@
 using System;
+using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3Resources.Structs;
 
@@ -7,6 +8,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents character equipment
     /// </summary>
+    [ProtoContract]
     public class CharacterEquipment : SlotContainer<ContainedSlot>
     {
         /// <summary>

@@ -1,6 +1,5 @@
-using System;
 using System.ComponentModel;
-using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
@@ -11,8 +10,11 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Represents a base entity 
     /// </summary>
+    [ProtoContract]
     public abstract class Entity : IEntity
     {
+        private string _name = "No name";
+
         public enum EntityCollisionType : byte
         {
             BoundingBox,
@@ -20,76 +22,85 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
-        /// Pickable entity Property
+        /// Gets or sets Entity ID used in configuration to distinguish entities of the same final type
         /// </summary>
-        [Category("Entity")]
-        public bool IsPickable { get; set; }
-
-        /// <summary>
-        /// Player Collision checked entity Property
-        /// </summary>
-        [Category("Entity")]
-        public bool IsPlayerCollidable { get; set; }
-
-        /// <summary>
-        /// Gets or sets voxel model instance
-        /// </summary>
-        [Browsable(true)]
-        public EntityCollisionType CollisionType { get; set; }
-
-        /// <summary>
-        /// Gets or sets voxel model instance
-        /// </summary>
-        [Browsable(true)]
-        public double YForceOnSideHit { get; set; }
-
-        /// <summary>
-        /// Gets entity class id
-        /// </summary>
-        [Category("Entity")]
-        public abstract ushort ClassId { get; }
+        [Browsable(false)]
+        [ProtoMember(1)]
+        public ushort BluePrintId { get; set; }
 
         /// <summary>
         /// Gets current entity type
         /// </summary>
         [Category("Entity")]
+        [ProtoMember(2)]
         public EntityType Type { get; protected set; }
 
         /// <summary>
         /// Entity maximum size
         /// </summary>
         [Category("Entity")]
+        [ProtoMember(3)]
         public Vector3 DefaultSize { get; set; }
 
         /// <summary>
         /// Gets or sets entity position
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(4)]
         public virtual Vector3D Position { get; set; }
-        
+
+        /// <summary>
+        /// Pickable entity Property
+        /// </summary>
+        [Category("Entity")]
+        [ProtoMember(5)]
+        public bool IsPickable { get; set; }
+
+        /// <summary>
+        /// Player Collision checked entity Property
+        /// </summary>
+        [Category("Entity")]
+        [ProtoMember(6)]
+        public bool IsPlayerCollidable { get; set; }
+
         /// <summary>
         /// Is this entity a system Entity (Mandatory for the system to run)
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(7)]
         public bool isSystemEntity { get; set; }
+
+        /// <summary>
+        /// Gets or sets model collision type
+        /// </summary>
+        [Browsable(true)]
+        [ProtoMember(8)]
+        public EntityCollisionType CollisionType { get; set; }
+
+        /// <summary>
+        /// TODO: finish description
+        /// </summary>
+        [Browsable(true)]
+        [ProtoMember(7)]
+        public double YForceOnSideHit { get; set; }
 
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
         [Category("Entity")]
+        [ProtoMember(8)]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
-        private string _name = "No name";
 
         /// <summary>
-        /// Gets or sets Entity ID
+        /// Gets entity class id
         /// </summary>
-        [Browsable(false)]
-        public ushort BluePrintId { get; set; }
-
+        [Category("Entity")]
+        public abstract ushort ClassId { get; }
+        
         /// <summary>
         /// Indicates that the entity must be locked to be used
         /// </summary>
@@ -102,64 +113,6 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [Browsable(false)]
         public virtual bool Locked { get; set; }
-
-        /// <summary>
-        /// Loads current entity from a binaryReader
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="factory"> </param>
-        public virtual void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // we no need to read class id because it is read by entity factory
-            // to find the final type of the class
-            BluePrintId = reader.ReadUInt16();
-
-
-            Type = (EntityType)reader.ReadByte();
-
-            DefaultSize = reader.ReadVector3();
-            Position = reader.ReadVector3D();
-
-            IsPickable = reader.ReadBoolean();
-            IsPlayerCollidable = reader.ReadBoolean();
-
-            isSystemEntity = reader.ReadBoolean();
-
-            CollisionType = (EntityCollisionType)reader.ReadByte();
-
-            YForceOnSideHit = reader.ReadDouble();
-
-            _name = reader.ReadString();
-
-        }
-
-        /// <summary>
-        /// Saves(serializes) current entity instance to a binaryWriter
-        /// </summary>
-        /// <param name="writer"></param>
-        public virtual void Save(BinaryWriter writer)
-        {
-            writer.Write(ClassId);
-
-
-            writer.Write(BluePrintId);
-            writer.Write((byte)Type);
-
-            writer.Write(DefaultSize);
-            writer.Write(Position);
-
-            writer.Write(IsPickable);
-            writer.Write(IsPlayerCollidable);
-            
-            writer.Write(isSystemEntity);
-
-            writer.Write((byte)CollisionType);
-
-            writer.Write(YForceOnSideHit);
-
-            writer.Write(_name);
-
-        }
 
         /// <summary>
         /// Returns link to the entity
