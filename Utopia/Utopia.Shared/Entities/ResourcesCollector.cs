@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using ProtoBuf;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -14,12 +12,9 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// The base class use to collect things in the world (= Removed them and put them in the inventory)
     /// </summary>
+    [ProtoContract]
     public abstract class ResourcesCollector : Item, ITool, IWorldIntercatingEntity
     {
-        #region Private Variables
-        #endregion
-
-        #region Public properties/variables
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
@@ -29,12 +24,6 @@ namespace Utopia.Shared.Entities
         /// Gets entityFactory, this field is injected
         /// </summary>
         public EntityFactory entityFactory { get; set; }
-
-        #endregion
-
-        public ResourcesCollector()
-        {
-        }
 
         #region Private methods
         private IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)

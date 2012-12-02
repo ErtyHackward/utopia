@@ -1,5 +1,4 @@
-using System.IO;
-using System.Runtime.InteropServices;
+using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -7,20 +6,9 @@ namespace Utopia.Shared.Net.Messages
     /// <summary>
     /// Chat message is sent to exchange messages between clients, or to inform client by server
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [ProtoContract]
     public struct ChatMessage : IBinaryMessage
     {
-        /// <summary>
-        /// Login of the sender, can be null if system message
-        /// </summary>
-        private string _displayName;
-        /// <summary>
-        /// Actual message text
-        /// </summary>
-        private string _message;
-        private bool _action;
-        private bool _operator;
-
         /// <summary>
         /// Gets current message Id
         /// </summary>
@@ -30,64 +18,27 @@ namespace Utopia.Shared.Net.Messages
         }
 
         /// <summary>
-        /// Gets or sets display name of the sender, can be null if system message
-        /// </summary>
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { _displayName = value; }
-        }
-        
-        /// <summary>
         /// Indicates if message should be displayed in format: * nick message
         /// </summary>
-        public bool Action
-        {
-            get { return _action; }
-            set { _action = value; }
-        }
+        [ProtoMember(1)]
+        public bool Action { get; set; }
 
         /// <summary>
         /// Indicates if user is operator
         /// </summary>
-        public bool Operator
-        {
-            get { return _operator; }
-            set { _operator = value; }
-        }
+        [ProtoMember(2)]
+        public bool Operator { get; set; }
+
+        /// <summary>
+        /// Gets or sets display name of the sender, can be null if system message
+        /// </summary>
+        [ProtoMember(3)]
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Gets or sets actual message text
         /// </summary>
-        public string Message
-        {
-            get { return _message; }
-            set { _message = value; }
-        }
-
-        public static ChatMessage Read(BinaryReader reader)
-        {
-            ChatMessage msg;
-
-            msg._action = reader.ReadBoolean();
-            msg._operator = reader.ReadBoolean();
-            msg._displayName = reader.ReadString();
-            msg._message = reader.ReadString();
-
-            return msg;
-        }
-
-        public static void Write(BinaryWriter writer, ChatMessage msg)
-        {
-            writer.Write(msg._action);
-            writer.Write(msg._operator);
-            writer.Write(msg._displayName);
-            writer.Write(msg._message);
-        }
-
-        public void Write(BinaryWriter writer)
-        {
-            Write(writer, this);
-        }
+        [ProtoMember(4)]
+        public string Message { get; set; }
     }
 }

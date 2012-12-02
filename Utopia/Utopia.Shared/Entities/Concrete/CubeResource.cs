@@ -1,15 +1,16 @@
+using ProtoBuf;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 using System;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities.Concrete
 {
+    [ProtoContract]
     public class CubeResource : StaticEntity, ITool, IWorldIntercatingEntity
     {
         /// <summary>
@@ -22,6 +23,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         public EntityFactory entityFactory { get; set; }
 
+        [ProtoMember(1)]
         public byte CubeId { get; private set; }
     
         public EquipmentSlotType AllowedSlots
@@ -55,18 +57,6 @@ namespace Utopia.Shared.Entities.Concrete
         public string Description
         {
             get { return "A world Cube"; }
-        }
-
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-            CubeId = reader.ReadByte();
-        }
-
-        public override void Save(System.IO.BinaryWriter writer)
-        {
-            base.Save(writer);
-            writer.Write(CubeId);
         }
 
         public void SetCube(byte cubeId, string cubeName)

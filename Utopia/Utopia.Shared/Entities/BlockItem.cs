@@ -1,7 +1,7 @@
-﻿using S33M3Resources.Structs;
+﻿using ProtoBuf;
+using S33M3Resources.Structs;
 using System;
 using System.ComponentModel;
-using System.IO;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -13,9 +13,9 @@ namespace Utopia.Shared.Entities
     /// Base class for Item that will be placed in a centered way on a block,
     /// This entity cannot be placed on a block where another entity is placed.
     /// </summary>
+    [ProtoContract]
     public abstract class BlockItem : Item, ITool, IWorldIntercatingEntity, IBlockLocationRoot
     {
-        #region Public Properties
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
@@ -32,8 +32,9 @@ namespace Utopia.Shared.Entities
         /// The cube where the entity root belongs to.
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(1)]
         public Vector3I BlockLocationRoot { get; set; }
-        #endregion
+
 
         #region Public Methods
         public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
@@ -88,20 +89,6 @@ namespace Utopia.Shared.Entities
             throw new NotImplementedException();
         }
 
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // first we need to load base information
-            base.Load(reader, factory);
-            BlockLocationRoot = reader.ReadVector3I();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            // first we need to save base information
-            base.Save(writer);
-            writer.Write(BlockLocationRoot);
-        }
         #endregion
     }
 }
