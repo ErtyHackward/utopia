@@ -135,7 +135,7 @@ namespace S33M3CoreComponents.Sprites._3D
                         //Create texture coordinate in Texture coordinate
                         RectangleF sourceRectInTexCoord = new RectangleF((desc.Left / (float)texture.Width), desc.Top / (float)texture.Height, desc.Right / (float)texture.Width, desc.Bottom / (float)texture.Height);
 
-                        Draw(ref localPosition, desc.Width, desc.Height, ref color, Sprite3DRenderer.SpriteRenderingType.BillboardOnLookAt, ref sourceRectInTexCoord, 0, camera, ref origin);
+                        Draw(ref localPosition, scaling, desc.Width, desc.Height, ref color, Sprite3DRenderer.SpriteRenderingType.BillboardOnLookAt, ref sourceRectInTexCoord, 0, camera, ref origin);
                         
                         localPosition.X += desc.Width;
                         newCharInserted = true;
@@ -146,9 +146,9 @@ namespace S33M3CoreComponents.Sprites._3D
             }
         }
 
-        private void Draw(ref Vector3 Offset, float width, float height, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
+        private void Draw(ref Vector3 Offset, float scaling, float width, float height, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
         {
-            Matrix scaleRotateAndTranslate = Matrix.Transpose(Matrix.Scaling(0.04f) * Matrix.RotationQuaternion(Quaternion.Invert(camera.Orientation.ValueInterp)) * Matrix.Translation(origin));
+            Matrix scaleRotateAndTranslate = Matrix.Transpose(Matrix.Scaling(scaling) * Matrix.RotationQuaternion(Quaternion.Invert(camera.Orientation.ValueInterp)) * Matrix.Translation(origin));
             //Vector3 worldPosition = Vector3.TransformCoordinate(Offset, scaleRotateAndTranslate);
 
             Vector4 position = new Vector4(Offset.X, Offset.Y, Offset.Z, textureArrayIndex);

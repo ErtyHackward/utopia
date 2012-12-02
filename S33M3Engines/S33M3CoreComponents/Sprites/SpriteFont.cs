@@ -14,6 +14,7 @@ using Color = SharpDX.Color;
 using SharpDX.Direct3D;
 using S33M3CoreComponents.Config;
 using S33M3_DXEngine.Main;
+using S33M3CoreComponents.Unsafe;
 
 namespace S33M3CoreComponents.Sprites
 {
@@ -78,6 +79,43 @@ namespace S33M3CoreComponents.Sprites
             Initialize(antiAliased, device);
         }
 
+        private UnsafeNativeMethods.KERNINGPAIR[] GetFontKernings()
+        {
+            UnsafeNativeMethods.KERNINGPAIR[] pairs = null;
+
+            using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                g.PageUnit = GraphicsUnit.Pixel;
+                IntPtr hdc = g.GetHdc();
+                IntPtr hFont = _font.ToHfont();
+                IntPtr old = UnsafeNativeMethods.SelectObject(hdc, hFont);
+                try
+                {
+                    int numPairs = UnsafeNativeMethods.GetKerningPairs(hdc, 0, null);
+                    if (numPairs > 0)
+                    {
+                        pairs = new UnsafeNativeMethods.KERNINGPAIR[numPairs];
+                        numPairs = UnsafeNativeMethods.GetKerningPairs(hdc, numPairs, pairs);
+                        return pairs;
+                    }
+                    else
+                    {
+                        logger.Info("No Kerning information for font : {0}", _font.Name);
+                    }
+                }
+                catch (Exception e)
+                {
+                    logger.Error("Error while extracting Kerning information for font : {0}", _font.Name);
+                }
+                finally
+                {
+                    old = UnsafeNativeMethods.SelectObject(hdc, old);
+                }
+
+                return null;
+            }
+        }
+
         private void Initialize(bool antiAliased, SharpDX.Direct3D11.Device device)
         {
             TextRenderingHint hint = antiAliased ? TextRenderingHint.AntiAliasGridFit : TextRenderingHint.SystemDefault;
@@ -89,6 +127,26 @@ namespace S33M3CoreComponents.Sprites
             _fontGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             _fontGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             _fontGraphics.TextRenderingHint = hint;
+
+            //Get Kerning Information.
+            //var result = GetFontKernings();
+            //var kerningScale = (_font.Height / _font.Size);
+
+            //Dictionary<short, Dictionary<short, int>> KerningResult = new Dictionary<short, Dictionary<short, int>>();
+            //Dictionary<short, int> dico2;
+            //int amount;
+
+            //foreach (var value in result)
+            //{
+            //    if (!KerningResult.TryGetValue(value.First, out dico2))
+            //    {
+            //        dico2 = new Dictionary<short, int>();
+            //        KerningResult.Add(value.First, dico2);
+            //    }
+
+            //    if (!dico2.TryGetValue(value.Second, out dico2))
+            //}
+
 
             HeightInPoints = _font.SizeInPoints;
             _charHeight = _font.Height;// * 1.1f;

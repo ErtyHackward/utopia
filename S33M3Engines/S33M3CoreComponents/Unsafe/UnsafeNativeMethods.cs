@@ -59,6 +59,26 @@ namespace S33M3CoreComponents.Unsafe
         public static extern bool GetKeyboardLayoutName(StringBuilder pwszKLID);
         [DllImport("user32.dll")]
         public static extern short GetKeyState(int virtualKeyCode);
+
+    //        <StructLayout(LayoutKind.Sequential)> _
+    //Public Structure KERNINGPAIR
+    //    Public First As Short
+    //    Public Second As Short
+    //    Public KernAmount As Integer
+    //End Structure
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct KERNINGPAIR
+        {
+            public short First;
+            public short Second;
+            public int KernAmount;
+        }
+
+        [DllImport("gdi32.dll")]
+        public static extern int GetKerningPairs(IntPtr hdc, int cPairs, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)][Out()] KERNINGPAIR[] lpkrnpair);
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hObject);
     }
  
 
