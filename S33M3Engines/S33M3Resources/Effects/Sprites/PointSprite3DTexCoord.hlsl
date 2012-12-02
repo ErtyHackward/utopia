@@ -110,15 +110,13 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling
-	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
+	float alpha = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW).a;
 
-	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
+	clip( alpha < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
-	color.r = 1;
-	color.g = 1;
-	color.b = 1;
+	IN.Color.a = alpha;
 
-	return color;	
+	return IN.Color;	
 }
 
 //--------------------------------------------------------------------------------------
