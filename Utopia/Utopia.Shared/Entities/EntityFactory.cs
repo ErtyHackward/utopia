@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ProtoBuf;
 using ProtoBuf.Meta;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -32,7 +33,7 @@ namespace Utopia.Shared.Entities
 
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
-            _protoTypeModel = TypeModel.Create();
+            _protoTypeModel = RuntimeTypeModel.Default;
 
             // type hierarhy should be described here
 
@@ -63,11 +64,11 @@ namespace Utopia.Shared.Entities
             rpgCharType.AddSubType(100, typeof(PlayerCharacter));
 
             staticEntityType.AddSubType(100, typeof(Item));
-            staticEntityType.AddSubType(101, typeof(CubeResource));
 
             itemType.AddSubType(100, typeof(BlockItem));
             itemType.AddSubType(101, typeof(BlockLinkedItem));
             itemType.AddSubType(102, typeof(ResourcesCollector));
+            itemType.AddSubType(103, typeof(CubeResource));
 
             blockItem.AddSubType(100, typeof(OrientedBlockItem));
 
@@ -129,6 +130,10 @@ namespace Utopia.Shared.Entities
             vector3d.AddField(2, "Y");
             vector3d.AddField(3, "Z");
 
+            var vector3i = _protoTypeModel.Add(typeof(Vector3I), true);
+            vector3i.AddField(1, "X");
+            vector3i.AddField(2, "Y");
+            vector3i.AddField(3, "Z");
 
             LandscapeManager = landscapeManager;
         }
@@ -307,9 +312,8 @@ namespace Utopia.Shared.Entities
                 throw new InvalidDataException();
 
             var tag = new LiquidTag();
-            tag.Load(reader);
-
-            return tag;
+            
+            return (BlockTag)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, tag, tag.GetType());
         }
 
         /// <summary>
@@ -329,7 +333,7 @@ namespace Utopia.Shared.Entities
 
                 foreach (var blueprintSlot in set)
                 {
-                    IItem item = null;
+                    Item item;
                     if (blueprintSlot.BlueprintId < 256)
                     {
                         var res = CreateEntity<CubeResource>();

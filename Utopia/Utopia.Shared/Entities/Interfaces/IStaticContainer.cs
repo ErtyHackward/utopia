@@ -9,20 +9,20 @@
         /// Adds new static entity to the container. Updates static entity id and Container properties
         /// </summary>
         /// <param name="entity"></param>
-        void Add(IStaticEntity entity);
+        void Add(StaticEntity entity);
 
         /// <summary>
         /// Removes static entity from the container
         /// </summary>
         /// <param name="entity"></param>
-        void Remove(IStaticEntity entity);
+        void Remove(StaticEntity entity);
 
         /// <summary>
         /// Gets entity by its static id
         /// </summary>
         /// <param name="staticId"></param>
         /// <returns></returns>
-        IStaticEntity GetStaticEntity(uint staticId);
+        StaticEntity GetStaticEntity(uint staticId);
 
         /// <summary>
         /// Deletes all items from the container

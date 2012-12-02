@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using ProtoBuf;
+using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Interfaces;
 
@@ -25,34 +27,40 @@ namespace Utopia.Shared.Net.Messages
         /// <returns></returns>
         public IBinaryMessage ReadMessage(MessageTypes id, BinaryReader reader)
         {
+            var length = reader.ReadInt32();
+            var bytes = reader.ReadBytes(length);
+            Type msgType;
             switch (id)
             {
-                case MessageTypes.BlockChange:      return BlocksChangedMessage.Read(reader);
-                case MessageTypes.Chat:             return ChatMessage.Read(reader);
-                case MessageTypes.ChunkData:        return ChunkDataMessage.Read(reader);
-                case MessageTypes.DateTime:         return DateTimeMessage.Read(reader);
-                case MessageTypes.Error:            return ErrorMessage.Read(reader);
-                case MessageTypes.GameInformation:  return GameInformationMessage.Read(reader);
-                case MessageTypes.GetChunks:        return GetChunksMessage.Read(reader);
-                case MessageTypes.Login:            return LoginMessage.Read(reader);
-                case MessageTypes.LoginResult:      return LoginResultMessage.Read(reader);
-                case MessageTypes.EntityDirection:  return EntityHeadDirectionMessage.Read(reader);
-                case MessageTypes.EntityIn:         return EntityInMessage.Read(reader, EntityFactory);
-                case MessageTypes.EntityOut:        return EntityOutMessage.Read(reader);
-                case MessageTypes.EntityPosition:   return EntityPositionMessage.Read(reader);
-                case MessageTypes.EntityUse:        return EntityUseMessage.Read(reader);
-                case MessageTypes.Ping:             return PingMessage.Read(reader);
-                case MessageTypes.EntityVoxelModel: return EntityVoxelModelMessage.Read(reader);
-                case MessageTypes.ItemTransfer:     return ItemTransferMessage.Read(reader);
-                case MessageTypes.EntityEquipment:  return EntityEquipmentMessage.Read(reader, EntityFactory);
-                case MessageTypes.Weather:          return WeatherMessage.Read(reader);
-                case MessageTypes.EntityImpulse:    return EntityImpulseMessage.Read(reader);
-                case MessageTypes.EntityLock:       return EntityLockMessage.Read(reader);
-                case MessageTypes.EntityLockResult: return EntityLockResultMessage.Read(reader);
-                case MessageTypes.UseFeedback:      return UseFeedbackMessage.Read(reader);
+                case MessageTypes.BlockChange:      msgType = typeof(BlocksChangedMessage); break;
+                case MessageTypes.Chat:             msgType = typeof(ChatMessage); break;
+                case MessageTypes.ChunkData:        msgType = typeof(ChunkDataMessage); break;
+                case MessageTypes.DateTime:         msgType = typeof(DateTimeMessage); break;
+                case MessageTypes.Error:            msgType = typeof(ErrorMessage); break;
+                case MessageTypes.GameInformation:  msgType = typeof(GameInformationMessage); break;
+                case MessageTypes.GetChunks:        msgType = typeof(GetChunksMessage); break;
+                case MessageTypes.Login:            msgType = typeof(LoginMessage); break;
+                case MessageTypes.LoginResult:      msgType = typeof(LoginResultMessage); break;
+                case MessageTypes.EntityDirection:  msgType = typeof(EntityHeadDirectionMessage); break;
+                case MessageTypes.EntityIn:         msgType = typeof(EntityInMessage); break; 
+                case MessageTypes.EntityOut:        msgType = typeof(EntityOutMessage); break; 
+                case MessageTypes.EntityPosition:   msgType = typeof(EntityPositionMessage); break; 
+                case MessageTypes.EntityUse:        msgType = typeof(EntityUseMessage); break;
+                case MessageTypes.Ping:             msgType = typeof(PingMessage); break;
+                case MessageTypes.EntityVoxelModel: msgType = typeof(EntityVoxelModelMessage); break;
+                case MessageTypes.ItemTransfer:     msgType = typeof(ItemTransferMessage); break;
+                case MessageTypes.EntityEquipment:  msgType = typeof(EntityEquipmentMessage); break;
+                case MessageTypes.Weather:          msgType = typeof(WeatherMessage); break;
+                case MessageTypes.EntityImpulse:    msgType = typeof(EntityImpulseMessage); break;
+                case MessageTypes.EntityLock:       msgType = typeof(EntityLockMessage); break;
+                case MessageTypes.EntityLockResult: msgType = typeof(EntityLockResultMessage); break;
+                case MessageTypes.UseFeedback:      msgType = typeof(UseFeedbackMessage); break;
                 default:
                     throw new ArgumentException("Invalid message id received");
             }
+
+            var ms = new MemoryStream(bytes);
+            return (IBinaryMessage)RuntimeTypeModel.Default.Deserialize(ms, null, msgType);
         }
     }
 }

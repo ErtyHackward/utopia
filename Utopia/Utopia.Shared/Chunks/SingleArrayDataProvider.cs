@@ -268,68 +268,6 @@ namespace Utopia.Shared.Chunks
             }
         }
 
-        // used to store chunk in the local storage
-        public override void Save(BinaryWriter writer)
-        {
-            lock (_syncRoot)
-            {
-                //Save the Chunk Block informations ==================
-                writer.Write(_chunkSize);
-                writer.Write(GetBlocksBytes());
-
-                //Save the Block tags metaData informations ==========
-                writer.Write(_tags.Count);
-                foreach (var pair in _tags)
-                {
-                    writer.Write(pair.Key); //Block Tag Position
-                    writer.Write(pair.Value.Id); //Block Tag Cube ID
-                    pair.Value.Save(writer); //Block tag object binary form
-                }
-
-                //Save the Chunk Column informations =================
-                writer.Write(ChunkColumns.Length); //Save the qt of chunkColumn
-                for (var i = 0; i < ChunkColumns.Length; i++)
-                {
-                    ChunkColumns[i].Save(writer); //Save the chunkColumn object data
-                }
-
-                //Save The chunk metaData
-                ChunkMetaData.Save(writer);
-            }
-        }
-
-        public override void Load(BinaryReader reader)
-        {
-            lock (_syncRoot)
-            {
-                //Load the Chunk Block informations ==================
-                _chunkSize = reader.ReadVector3I();
-                var bytesCount = _chunkSize.X*_chunkSize.Y*_chunkSize.Z;
-                SetBlockBytes(reader.ReadBytes(bytesCount));
-
-                //Load the Block tags metaData informations ==========
-                var tagsCount = reader.ReadInt32();
-                _tags.Clear();
-                for (var i = 0; i < tagsCount; i++)
-                {
-                    var position = reader.ReadVector3I();
-                    var tag = EntityFactory.CreateTagFromBytes(reader);
-                    _tags.Add(position, tag);
-                }
-
-                //Load the Chunk Column informations =================
-                var columnsInfoCount = reader.ReadInt32();
-                for (var i = 0; i < columnsInfoCount; i++)
-                {
-                    ChunkColumns[i] = new ChunkColumnInfo();
-                    ChunkColumns[i].Load(reader);
-                }
-
-                //Load The chunk metaData
-                ChunkMetaData.Load(reader);
-            }
-        }
-
         public override object WriteSyncRoot
         {
             get { return _syncRoot; }
