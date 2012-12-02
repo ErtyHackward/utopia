@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -13,18 +14,21 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Provides basic functionality for all static entities
     /// </summary>
+    [ProtoContract]
     public abstract class StaticEntity : Entity, IStaticEntity
     {
         /// <summary>
         /// Gets or sets static entity id. This id is unique only in current container. Invalid without Container property set
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(1)]
         public uint StaticId { get; set; }
         
         /// <summary>
         /// Gets or sets entity world rotation
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(2)]
         public Quaternion Rotation { get; set; }
 
         private IStaticContainer _container;
@@ -99,22 +103,6 @@ namespace Utopia.Shared.Entities
             
             // wrong root
             throw new InvalidOperationException("Unable to take link from that object");
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            base.Save(writer);
-
-            writer.Write(StaticId);
-            writer.Write(Rotation);
-        }
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-
-            StaticId = reader.ReadUInt32();
-            Rotation = reader.ReadQuaternion();
         }
     }
 }

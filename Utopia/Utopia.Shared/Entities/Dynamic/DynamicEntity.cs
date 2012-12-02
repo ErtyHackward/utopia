@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -12,6 +13,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// <summary>
     /// Represents dynamic voxel entity (players, robots, animals, NPC)
     /// </summary>
+    [ProtoContract]
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
         public DynamicEntityState EntityState;
@@ -22,27 +24,33 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Occurs when entity changes its view direction
         /// </summary>
         public event EventHandler<EntityViewEventArgs> ViewChanged;
+
         protected void OnViewChanged(EntityViewEventArgs e)
         {
-            if (ViewChanged != null) ViewChanged(this, e);
+            var handler = ViewChanged;
+            if (handler != null) handler(this, e);
         }
-
+        
         /// <summary>
         /// Occurs when entity performs "use" operation
         /// </summary>
         public event EventHandler<EntityUseEventArgs> Use;
-        protected void OnUse(EntityUseEventArgs e)
-        {
-            if (Use != null) Use(this, e);
-        }
 
+        protected virtual void OnUse(EntityUseEventArgs e)
+        {
+            var handler = Use;
+            if (handler != null) handler(this, e);
+        }
+        
         /// <summary>
         /// Occurs when entity changes its position
         /// </summary>
         public event EventHandler<EntityMoveEventArgs> PositionChanged;
-        protected void OnPositionChanged(EntityMoveEventArgs e)
+
+        protected virtual void OnPositionChanged(EntityMoveEventArgs e)
         {
-            if (PositionChanged != null) PositionChanged(this, e);
+            var handler = PositionChanged;
+            if (handler != null) handler(this, e);
         }
 
         #endregion
@@ -68,21 +76,6 @@ namespace Utopia.Shared.Entities.Dynamic
             get { return EntityState; }
             set { EntityState = value; }
         }
-
-        /// <summary>
-        /// The speed at wich the dynamic entity can walk
-        /// </summary>
-        public float MoveSpeed { get; set; }
-
-        /// <summary>
-        /// The speed at wich the dynamic is doing move rotation
-        /// </summary>
-        public float RotationSpeed { get; set; }
-
-        /// <summary>
-        /// The displacement mode use by this entity (Walk, swim, fly, ...)
-        /// </summary>
-        public EntityDisplacementModes DisplacementMode { get; set; }
         
         /// <summary>
         /// Gets or sets current voxel model name
@@ -158,44 +151,28 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets or sets dynamic entity id
         /// </summary>
+        [ProtoMember(1)]
         public uint DynamicId { get; set; }
 
+        /// <summary>
+        /// The displacement mode use by this entity (Walk, swim, fly, ...)
+        /// </summary>
+        [ProtoMember(2)]
+        public EntityDisplacementModes DisplacementMode { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic entity can walk
+        /// </summary>
+        [ProtoMember(3)]
+        public float MoveSpeed { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic is doing move rotation
+        /// </summary>
+        [ProtoMember(4)]
+        public float RotationSpeed { get; set; }
+
         #endregion
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-
-            var containsModel = reader.ReadBoolean();
-
-            if (containsModel)
-            {
-                ModelInstance = new VoxelModelInstance();
-                ModelInstance.Load(reader);
-            }
-
-            DynamicId = reader.ReadUInt32();
-            DisplacementMode = (EntityDisplacementModes)reader.ReadByte();
-            MoveSpeed = reader.ReadSingle();
-            RotationSpeed = reader.ReadSingle();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            base.Save(writer);
-
-            if (ModelInstance != null)
-            {
-                writer.Write(true);
-                ModelInstance.Save(writer);
-            }
-            else writer.Write(false);
-
-            writer.Write(DynamicId);
-            writer.Write((byte)DisplacementMode);
-            writer.Write(MoveSpeed);
-            writer.Write(RotationSpeed);
-        }
 
         public override int GetHashCode()
         {

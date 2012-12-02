@@ -85,17 +85,5 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <returns></returns>
         EntityLink GetLink();
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        void Save(BinaryWriter writer);
-
-        /// <summary>
-        /// Loads current object from binary form
-        /// </summary>
-        /// <param name="reader"></param>
-        void Load(BinaryReader reader, EntityFactory factory);
     }
 }
