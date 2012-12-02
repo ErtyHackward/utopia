@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ProtoBuf;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
@@ -10,6 +11,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Represents a base chunk class
     /// </summary>
+    [ProtoContract]
     public abstract class AbstractChunk : IAbstractChunk
     {
         #region Static
@@ -31,105 +33,63 @@ namespace Utopia.Shared.Chunks
         private ChunkDataProvider _blockDataProvider;
 
         protected Md5Hash Md5HashData;
+        private EntityCollection _entities;
 
         /// <summary>
         /// Gets a chunk blocks data provider
         /// </summary>
+        [ProtoMember(1)]
         public ChunkDataProvider BlockData
         {
             get { return _blockDataProvider; }
-        }
+            set { 
 
-        /// <summary>
-        /// Provides ability to change the chunk block data provider
-        /// </summary>
-        /// <param name="newProvider">New provider to replace</param>
-        /// <param name="sameData">Indicates if new provider has the same block data as previous</param>
-        public virtual void ChangeBlockDataProvider(ChunkDataProvider newProvider, bool sameData)
-        {
-            if (_blockDataProvider != newProvider)
-            {
                 if (_blockDataProvider != null)
                 {
                     _blockDataProvider.BlockBufferChanged -= BlockBufferChanged;
                     _blockDataProvider.BlockDataChanged -= BlockDataChanged;
                 }
 
-                _blockDataProvider = newProvider;
+                _blockDataProvider = value;
 
                 if (_blockDataProvider != null)
                 {
                     _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
                     _blockDataProvider.BlockDataChanged += BlockDataChanged;
                 }
-
-                if(!sameData)
-                    Md5HashData = null;
             }
         }
 
         /// <summary>
         /// Gets entity collection of the chunk
         /// </summary>
-        public EntityCollection Entities { get; protected set; }
-        
+        [ProtoMember(2)]
+        public EntityCollection Entities
+        {
+            get { return _entities; }
+            set {
+
+                if (_entities != value)
+                {
+                    _entities.CollectionDirty -= EntitiesCollectionDirty;
+                }
+
+                _entities = value;
+
+                if (_entities != value)
+                {
+                    _entities.Chunk = this;
+                    _entities.CollectionDirty += EntitiesCollectionDirty;
+                }
+            }
+        }
+
         #endregion
         
         protected AbstractChunk(ChunkDataProvider blockDataProvider)
         {
-            _blockDataProvider = blockDataProvider;
-            _blockDataProvider.BlockBufferChanged += BlockBufferChanged;
-            _blockDataProvider.BlockDataChanged += BlockDataChanged;
-
+            BlockData = blockDataProvider;
             Entities = new EntityCollection(this);
-            Entities.CollectionDirty += EntitiesCollectionDirty;
-        }
-
-
-        /// <summary>
-        /// Loads chunk data from bytes array (blocks and entites)
-        /// </summary>
-        /// <param name="factory"></param>
-        /// <param name="bytes"></param>
-        public void Deserialize(EntityFactory factory, byte[] bytes)
-        {
-            Deserialize(factory, new MemoryStream(bytes));
-        }
-
-        /// <summary>
-        /// Loads chunk data from memory stream (blocks and entites)
-        /// </summary>
-        /// <param name="factory"></param>
-        /// <param name="ms"></param>
-        public void Deserialize(EntityFactory factory, MemoryStream ms)
-        {
-            ms.Position = 0;
-            var reader = new BinaryReader(ms);
-            BlockData.Load(reader);
-            Entities.Clear();
-            Entities.LoadEntities(factory, reader);
-            ms.Dispose();
-        }
-
-        /// <summary>
-        /// Saves current chunk data to binary format (blocks and entites)
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Serialize(BinaryWriter writer)
-        {
-            BlockData.Save(writer);
-            Entities.SaveEntities(writer);
-        }
-
-        /// <summary>
-        /// Saves current chunk data to binary format (blocks and entites)
-        /// </summary>
-        public byte[] Serialize()
-        {
-            var ms = new MemoryStream();
-            var writer = new BinaryWriter(ms);
-            Serialize(writer);
-            return ms.ToArray();
         }
 
         /// <summary>
@@ -139,6 +99,13 @@ namespace Utopia.Shared.Chunks
         public Md5Hash GetMd5Hash()
         {
             return Md5HashData ?? (Md5HashData = Md5Hash.Calculate(Serialize()));
+        }
+
+        public byte[] Serialize()
+        {
+            var ms = new MemoryStream();
+            Serializer.Serialize(ms, this);
+            return ms.ToArray();
         }
 
         /// <summary>

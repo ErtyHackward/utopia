@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityCollection : IStaticContainer
     {
-        private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
+        private readonly SortedList<uint, StaticEntity> _entities = new SortedList<uint, StaticEntity>();
         private readonly object _syncRoot = new object();
         private bool _initialisation;
 
@@ -70,7 +70,7 @@ namespace Utopia.Shared.Entities
 
         public bool IsDirty { get; set; }
 
-        public SortedList<uint, IStaticEntity> Entities { get { return _entities; } } 
+        public SortedList<uint, StaticEntity> Entities { get { return _entities; } } 
 
         /// <summary>
         /// Gets entities count in collection
@@ -83,7 +83,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets parent chunk object
         /// </summary>
-        public AbstractChunk Chunk { get; private set; }
+        public AbstractChunk Chunk { get; set; }
 
         public EntityCollection(AbstractChunk chunk)
         {
@@ -139,7 +139,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId"></param>
-        public void Add(IStaticEntity entity, uint sourceDynamicId = 0, bool atChunkCreationTime = false)
+        public void Add(StaticEntity entity, uint sourceDynamicId = 0, bool atChunkCreationTime = false)
         {
             lock (_syncRoot)
             {
@@ -156,7 +156,7 @@ namespace Utopia.Shared.Entities
         /// Adds new static entity to the container. Updates static entity id and Container properties
         /// </summary>
         /// <param name="entity"></param>
-        public void Add(IStaticEntity entity)
+        public void Add(StaticEntity entity)
         {
             Add(entity, 0, false);
         }
@@ -168,7 +168,7 @@ namespace Utopia.Shared.Entities
         /// <param name="sourceDynamicId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryAdd(IStaticEntity entity, uint sourceDynamicId = 0, int timeout = 0, bool atChunkCreationTime = false)
+        public bool TryAdd(StaticEntity entity, uint sourceDynamicId = 0, int timeout = 0, bool atChunkCreationTime = false)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
@@ -195,7 +195,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceId"></param>
-        public void Remove(IStaticEntity entity, uint sourceId = 0)
+        public void Remove(StaticEntity entity, uint sourceId = 0)
         {
             bool removed;
             lock (_syncRoot)
@@ -220,7 +220,7 @@ namespace Utopia.Shared.Entities
         /// <param name="sourceId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
         /// <returns>True if succeed otherwise False</returns>
-        public bool TryRemove(IStaticEntity entity, uint sourceId, int timeout = 0)
+        public bool TryRemove(StaticEntity entity, uint sourceId, int timeout = 0)
         {
             if (Monitor.TryEnter(_syncRoot, timeout))
             {
@@ -254,7 +254,7 @@ namespace Utopia.Shared.Entities
         /// <param name="staticEntityId"></param>
         /// <param name="sourceDynamicEntityId"></param>
         /// <param name="entity"></param>
-        public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId, out IStaticEntity entity)
+        public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId, out StaticEntity entity)
         {
             lock (_syncRoot)
             {
@@ -282,7 +282,7 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
-                IStaticEntity entity;
+                StaticEntity entity;
                 if (_entities.TryGetValue(staticEntityId, out entity))
                 {
                     IsDirty = true;
@@ -322,7 +322,7 @@ namespace Utopia.Shared.Entities
         /// Use this method to enumerate over the entites with exclusive lock. (Use it only for fast operations)
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<IStaticEntity> EnumerateFast()
+        public IEnumerable<StaticEntity> EnumerateFast()
         {
             lock (_syncRoot)
             {
@@ -338,7 +338,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IEnumerable<T> Enumerate<T>()
+        public IEnumerable<T> Enumerate<T>() where  T: StaticEntity
         {
             lock (_syncRoot)
             {
@@ -350,7 +350,7 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        public void Foreach<T>(Action<T> action)
+        public void Foreach<T>(Action<T> action) where T : StaticEntity
         {
             lock (_syncRoot)
             {
@@ -362,14 +362,14 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        public void RemoveAll<T>(Predicate<T> condition)
+        public void RemoveAll<T>(Predicate<T> condition) where T : StaticEntity
         {
             lock (_syncRoot)
             {
                 for (int i = _entities.Count - 1; i >= 0; i--)
                 {
                     var value = _entities[_entities.Keys[i]]; // O(1)
-                    if (value is T && condition((T) value))
+                    if (value is T && condition((T)value))
                     {
                         IsDirty = true;
                         _entities.RemoveAt(i); // O(Count)
@@ -382,40 +382,6 @@ namespace Utopia.Shared.Entities
 
                 if (IsDirty)
                     OnCollectionDirty();
-            }
-        }
-
-        /// <summary>
-        /// Performs loading of the entites from binary format
-        /// </summary>
-        /// <param name="factory">A factory used to generate new entities</param>
-        /// <param name="reader">Data flaw coming embeeded inside a binary reader</param>
-        public void LoadEntities(EntityFactory factory, BinaryReader reader)
-        {
-            _initialisation = true;
-            int nbrEntities = reader.ReadInt32();
-            for (int i = 0; i < nbrEntities; i++)
-            {
-                var entity = (IStaticEntity)factory.CreateFromBytes(reader);
-                Add(entity, 0, true);
-            }
-            _initialisation = false;
-        }
-
-        /// <summary>
-        /// Performs saving of entites to binary format
-        /// </summary>
-        /// <param name="writer"></param>
-        public void SaveEntities(BinaryWriter writer)
-        {
-            lock (_syncRoot)
-            {
-                //Write the Nbr of Entities that needs to be saved
-                writer.Write(_entities.Count);
-                foreach (var entity in _entities)
-                {
-                    entity.Value.Save(writer);
-                }
             }
         }
 
@@ -438,7 +404,7 @@ namespace Utopia.Shared.Entities
         /// <param name="staticEntityId"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool ContainsId(uint staticEntityId, out IStaticEntity entity)
+        public bool ContainsId(uint staticEntityId, out StaticEntity entity)
         {
             lock (_syncRoot)
             {
@@ -450,7 +416,7 @@ namespace Utopia.Shared.Entities
         /// Removes static entity from the container
         /// </summary>
         /// <param name="entity"></param>
-        public void Remove(IStaticEntity entity)
+        public void Remove(StaticEntity entity)
         {
             Remove(entity, 0);
         }
@@ -460,7 +426,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="staticId"></param>
         /// <returns></returns>
-        public IStaticEntity GetStaticEntity(uint staticId)
+        public StaticEntity GetStaticEntity(uint staticId)
         {
             lock (_syncRoot)
                 return _entities[staticId];

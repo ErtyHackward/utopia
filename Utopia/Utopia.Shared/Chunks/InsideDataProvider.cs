@@ -441,46 +441,11 @@ namespace Utopia.Shared.Chunks
         }
         #endregion
 
-
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        public override void Save(BinaryWriter writer)
-        {
-            lock (_writeSyncRoot)
-            {
-                //Save the Chunk Block informations ==================
-                writer.Write(_chunkSize);
-                writer.Write(_blockBytes);
-
-                //Save the Block tags metaData informations ==========
-                writer.Write(_tags.Count);
-                foreach (var pair in _tags)
-                {
-                    writer.Write(pair.Key); //Block Tag Position
-                    writer.Write(pair.Value.Id); //Block Tag Cube ID
-                    pair.Value.Save(writer); //Block tag object binary form
-                }
-
-                //Save the Chunk Column informations =================
-                writer.Write(_chunkColumns.Length); //Save the qt of chunkColumn
-                for (var i = 0; i < _chunkColumns.Length; i++)
-                {
-                    _chunkColumns[i].Save(writer); //Save the chunkColumn object data
-                }
-
-                //Save The chunk metaData
-                ChunkMetaData.Save(writer);
-            }
-        }
-
         /// <summary>
         /// Loads current object from binary form
         /// </summary>
         /// <param name="reader"></param>
-        public override void Load(BinaryReader reader)
+        public void Load(BinaryReader reader)
         {
             //Load the Chunk Block informations ==================
             _chunkSize = reader.ReadVector3I(); 

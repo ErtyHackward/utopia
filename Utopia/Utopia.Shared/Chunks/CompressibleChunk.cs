@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 
@@ -126,7 +127,7 @@ namespace Utopia.Shared.Chunks
                         Md5HashData = Md5Hash.Calculate(decompressed);
                         decompressed.Position = 0;
                     }
-                    Deserialize(factory, decompressed);
+                    RuntimeTypeModel.Default.Deserialize(decompressed, this, typeof(AbstractChunk));
                     decompressed.Dispose();
                     CompressedDirty = false;
                 }
@@ -145,16 +146,6 @@ namespace Utopia.Shared.Chunks
             OnBlockDataChanged();
 
             base.BlockBufferChanged(sender, e);
-        }
-
-        public override void ChangeBlockDataProvider(ChunkDataProvider newProvider, bool sameData)
-        {
-            base.ChangeBlockDataProvider(newProvider, sameData);
-
-            if (!sameData)
-            {
-                OnBlockDataChanged();
-            }
         }
 
         protected override void EntitiesCollectionDirty(object sender, EventArgs e)

@@ -193,16 +193,6 @@ namespace System.IO
             return item;
         }
 
-        public static void Write(this BinaryWriter writer, EntityLink link)
-        {
-            link.Save(writer);
-        }
-
-        public static EntityLink ReadEntityLink(this BinaryReader reader)
-        {
-            return new EntityLink(reader);
-        }
-
         public static void SerializeArray<T>(this BinaryWriter writer, T[] arrayValues) where T : IBinaryStorable
         {
             int arraySize = arrayValues.Length;

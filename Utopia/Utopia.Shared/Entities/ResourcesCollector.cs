@@ -48,14 +48,14 @@ namespace Utopia.Shared.Entities
                         if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                         {
                             //Insert in the inventory the entity that will be removed !
-                            var adder = (IItem)entityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
+                            var adder = (Item)entityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
                             character.Inventory.PutItem(adder);
                         }
                     }
                 }
 
                 //Removed all entities from collection that where linked to this removed cube !
-                chunk.Entities.RemoveAll<IBlockLinkedEntity>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
+                chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                 //change the Block to AIR
                 cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
@@ -76,7 +76,7 @@ namespace Utopia.Shared.Entities
 
             EntityLink entity = owner.EntityState.PickedEntityLink;
             IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
-            IStaticEntity entityRemoved;
+            StaticEntity entityRemoved;
 
             //Remove the entity from chunk
             chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
@@ -85,7 +85,7 @@ namespace Utopia.Shared.Entities
             if (character != null && entityRemoved != null)
             {
                 //Create a new entity of the same clicked one and place it into the inventory
-                var adder = (IItem)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);
+                var adder = (Item)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);
                 character.Inventory.PutItem(adder);
             }
             return impact;

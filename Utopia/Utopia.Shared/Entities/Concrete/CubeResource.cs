@@ -11,7 +11,7 @@ using Utopia.Shared.Configuration;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
-    public class CubeResource : StaticEntity, ITool, IWorldIntercatingEntity
+    public class CubeResource : Item, ITool, IWorldIntercatingEntity
     {
         /// <summary>
         /// Gets landscape manager, this field is injected
@@ -26,17 +26,6 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(1)]
         public byte CubeId { get; private set; }
     
-        public EquipmentSlotType AllowedSlots
-        {
-            get { return EquipmentSlotType.Hand; }
-            set { throw new NotSupportedException(); }
-        }
-
-        public int MaxStackSize
-        {
-            get { return 999; }
-        }
-
         public override ushort ClassId
         {
             get { return EntityClassId.CubeResource; }
@@ -46,19 +35,6 @@ namespace Utopia.Shared.Entities.Concrete
 
         public AbstractChunk ParentChunk { get; set; }
         
-        public string StackType
-        {
-            get
-            {
-                return "CubeResource" + CubeId; //effectively this.getType().Name + cubeid , so blockadder1 blockadder2 etc ...
-            }
-        }
-        
-        public string Description
-        {
-            get { return "A world Cube"; }
-        }
-
         public void SetCube(byte cubeId, string cubeName)
         {
             CubeId = cubeId;
