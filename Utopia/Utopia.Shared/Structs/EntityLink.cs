@@ -1,36 +1,60 @@
 ﻿using System;
-using System.IO;
+using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Structs
 {
     /// <summary>
     /// Represents a link to a entity. First level of the link can be dynamic entity or chunk position
     /// </summary>
-    public struct EntityLink : IBinaryStorable
+    [ProtoContract]
+    public struct EntityLink
     {
         private bool _isDynamic;
         private Vector2I _chunkPosition;
         private uint _entityId;
         private uint[] _tail;
+        
+        /// <summary>
+        /// Indicates whether the entity link has dynamic entity as root otherwise root is world chunk
+        /// </summary>
+        [ProtoMember(1)]
+        public bool IsDynamic
+        {
+            get { return _isDynamic; }
+            set { _isDynamic = value; }
+        }
+
+        /// <summary>
+        /// Gets world chunk position
+        /// </summary>
+        [ProtoMember(2)]
+        public Vector2I ChunkPosition
+        {
+            get { return _chunkPosition; }
+            set { _chunkPosition = value; }
+        }
+
+        /// <summary>
+        /// Gets dynamic entity id
+        /// </summary>
+        [ProtoMember(3)]
+        public uint DynamicEntityId
+        {
+            get { return _entityId; }
+            set { _entityId = value; }
+        }
 
         /// <summary>
         /// Gets chain of static entities (example: chunk pos (root) -> chest (Tail[0]) -> shovel (Tail[1])
         /// </summary>
+        [ProtoMember(4)]
         public uint[] Tail
         {
             get { return _tail; }
-        }
-
-        /// <summary>
-        /// Indicates whether the entity link has dynamic entity as root otherwise root is world chunk
-        /// </summary>
-        public bool IsDynamic
-        {
-            get { return _isDynamic; }
+            set { _tail = value; }
         }
 
         public bool IsStatic
@@ -38,22 +62,6 @@ namespace Utopia.Shared.Structs
             get { return !_isDynamic; }
         }
         
-        /// <summary>
-        /// Gets world chunk position
-        /// </summary>
-        public Vector2I ChunkPosition
-        {
-            get { return _chunkPosition; }
-        }
-        
-        /// <summary>
-        /// Gets dynamic entity id
-        /// </summary>
-        public uint DynamicEntityId
-        {
-            get { return _entityId; }
-        }
-
         /// <summary>
         /// Returns whether the link is empty
         /// </summary>
@@ -104,16 +112,6 @@ namespace Utopia.Shared.Structs
             _tail = tail;
         }
 
-        public EntityLink(BinaryReader reader)
-        {
-            _isDynamic = false;
-            _entityId = 0;
-            _chunkPosition = new Vector2I();
-            _tail = null;
-
-            Load(reader);
-        }
-
         /// <summary>
         /// Determines whether the link points to dynamicEntity specified
         /// </summary>
@@ -124,51 +122,9 @@ namespace Utopia.Shared.Structs
             return _isDynamic && _entityId == entity.DynamicId;
         }
 
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(_isDynamic);
-            if(_isDynamic)
-                writer.Write(_entityId);
-            else
-                writer.Write(_chunkPosition);
-
-            if (_tail == null || _tail.Length == 0)
-                writer.Write((byte)0);
-            else writer.Write((byte)_tail.Length);
-
-            if (_tail != null)
-            {
-                foreach (uint u in _tail)
-                {
-                    writer.Write(u);
-                }
-            }
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            _isDynamic = reader.ReadBoolean();
-            if(_isDynamic)
-                _entityId = reader.ReadUInt32();
-            else 
-                _chunkPosition = reader.ReadVector2I();
-
-            var count = reader.ReadByte();
-
-            if (count > 0)
-            {
-                _tail = new uint[count];
-                for (int i = 0; i < count; i++)
-                {
-                    _tail[i] = reader.ReadUInt32();
-                }
-            }
-            else _tail = null;
-        }
-
         public override int GetHashCode()
         {
-            if(IsDynamic)
+            if (IsDynamic)
             {
                 return (int)_entityId;
             }

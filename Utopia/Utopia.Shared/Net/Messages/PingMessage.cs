@@ -1,4 +1,4 @@
-using System.IO;
+using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -6,53 +6,24 @@ namespace Utopia.Shared.Net.Messages
     /// <summary>
     /// Describes message for connection testing
     /// </summary>
+    [ProtoContract]
     public struct PingMessage : IBinaryMessage
     {
-        private long _token;
-        private bool _request;
-
         /// <summary>
         /// Any long number to verify ping command
         /// </summary>
-        public long Token
-        {
-            get { return _token; }
-            set { _token = value; }
-        }
-        
+        [ProtoMember(1)]
+        public long Token { get; set; }
+
         /// <summary>
         /// Indicates whether this command is request or responce
         /// </summary>
-        public bool Request
-        {
-            get { return _request; }
-            set { _request = value; }
-        }
+        [ProtoMember(2)]
+        public bool Request { get; set; }
 
         public byte MessageId
         {
             get { return (byte)MessageTypes.Ping; }
-        }
-
-        public static PingMessage Read(BinaryReader reader)
-        {
-            PingMessage msg;
-
-            msg._request = reader.ReadBoolean();
-            msg._token = reader.ReadInt64();
-
-            return msg;
-        }
-
-        public static void Write(BinaryWriter writer, PingMessage msg)
-        {
-            writer.Write(msg._request);
-            writer.Write(msg._token);
-        }
-
-        public void Write(BinaryWriter writer)
-        {
-            Write(writer, this);
         }
     }
 }

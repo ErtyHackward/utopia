@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Entities.Interfaces;
-
-namespace Utopia.Shared.Entities.Inventory
+﻿namespace Utopia.Shared.Entities.Inventory
 {
-    public class EquipmentSlot<T> : ContainedSlot
+    public class EquipmentSlot<T> : ContainedSlot where T: Item
     {
         public T Equipment
         {

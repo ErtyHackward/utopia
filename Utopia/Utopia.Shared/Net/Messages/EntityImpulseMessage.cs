@@ -1,4 +1,4 @@
-using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Net.Interfaces;
 
@@ -7,28 +7,20 @@ namespace Utopia.Shared.Net.Messages
     /// <summary>
     /// Defines a message to describe physical impulse to some entity. Entity may change its position or respond with opposite
     /// </summary>
+    [ProtoContract]
     public struct EntityImpulseMessage : IBinaryMessage
     {
-        private uint _entityId;
-        private Vector3 _vector3;
-
         /// <summary>
         /// Entity is affected by impulse
         /// </summary>
-        public uint DynamicEntityId
-        {
-            get { return _entityId; }
-            set { _entityId = value; }
-        }
-        
+        [ProtoMember(1)]
+        public uint DynamicEntityId { get; set; }
+
         /// <summary>
         /// Impulse vector
         /// </summary>
-        public Vector3 Vector3
-        {
-            get { return _vector3; }
-            set { _vector3 = value; }
-        }
+        [ProtoMember(2)]
+        public Vector3 Vector3 { get; set; }
 
         /// <summary>
         /// Gets a message identification number
@@ -36,26 +28,6 @@ namespace Utopia.Shared.Net.Messages
         public byte MessageId
         {
             get { return (byte)MessageTypes.EntityImpulse; }
-        }
-
-        public static EntityImpulseMessage Read(BinaryReader reader)
-        {
-            EntityImpulseMessage msg;
-
-            msg._entityId = reader.ReadUInt32();
-            msg._vector3 = reader.ReadVector3();
-
-            return msg;
-        }
-
-        /// <summary>
-        /// Writes all necessary instance members
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Write(BinaryWriter writer)
-        {
-            writer.Write(_entityId);
-            writer.Write(_vector3);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System.IO;
-using Utopia.Shared.Chunks.Tags;
+﻿using ProtoBuf;
 
 namespace Utopia.Shared.Chunks.Tags
 {
+    [ProtoContract]
     public class LiquidTag : BlockTag, ICubeYOffsetModifier
     {
         //YOffset : 0 = FULL cube, 1 = Empty cube
@@ -14,10 +14,13 @@ namespace Utopia.Shared.Chunks.Tags
         /// <summary>
         /// Pressure of the liquid, 10 - full block
         /// </summary>
+        [ProtoMember(1)]
         public ushort Pressure;
-        
+
+        [ProtoMember(2)]
         public byte LiquidType;
 
+        [ProtoMember(3)]
         public bool Sourced;
 
         public override byte Id
@@ -28,20 +31,6 @@ namespace Utopia.Shared.Chunks.Tags
         public override int GetHashCode()
         {
             return Pressure.GetHashCode() ^ LiquidType.GetHashCode() ^ Sourced.GetHashCode() ^ Id.GetHashCode();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            writer.Write(LiquidType);
-            writer.Write(Pressure);
-            writer.Write(Sourced);
-        }
-
-        public override void Load(BinaryReader reader)
-        {
-            LiquidType = reader.ReadByte();
-            Pressure = reader.ReadUInt16();
-            Sourced = reader.ReadBoolean();
         }
     }
 }
