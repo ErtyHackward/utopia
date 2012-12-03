@@ -1,4 +1,4 @@
-﻿using S33M3CoreComponents.Sprites;
+﻿using S33M3CoreComponents.Sprites2D;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 {

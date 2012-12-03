@@ -15,7 +15,7 @@ using Utopia.Shared.Structs;
 using UtopiaContent.Effects.Entities;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;

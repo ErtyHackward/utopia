@@ -1,5 +1,5 @@
 ﻿using System;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;

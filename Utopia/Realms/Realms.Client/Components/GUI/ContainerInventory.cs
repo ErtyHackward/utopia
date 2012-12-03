@@ -1,6 +1,6 @@
 using System.Drawing;
 using S33M3CoreComponents.Inputs;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;

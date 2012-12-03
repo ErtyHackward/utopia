@@ -36,7 +36,7 @@ using S33M3CoreComponents.States;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Timers;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.GUI.Nuclex;

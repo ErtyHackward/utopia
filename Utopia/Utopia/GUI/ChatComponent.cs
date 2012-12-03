@@ -8,7 +8,7 @@ using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using System.Diagnostics;
 using S33M3DXEngine.Main;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
