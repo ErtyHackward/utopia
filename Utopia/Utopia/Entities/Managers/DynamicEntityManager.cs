@@ -366,7 +366,7 @@ namespace Utopia.Entities.Managers
                 }
 
                 var distance = MVector3.Distance(dynamicEntity.WorldPosition.ValueInterp, _camManager.ActiveCamera.WorldPosition.ValueInterp);
-                float scaling = Math.Min( 0.035f, Math.Max(0.01f, 0.01f / 8 * (float)distance));
+                float scaling = Math.Min( 0.040f, Math.Max(0.01f, 0.01f / 12 * (float)distance ));
                 _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
             }
 

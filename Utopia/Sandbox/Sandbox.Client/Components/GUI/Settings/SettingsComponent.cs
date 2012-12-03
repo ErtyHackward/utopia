@@ -20,6 +20,9 @@ using S33M3DXEngine.Main.Interfaces;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using Sandbox.Client.States;
 using S33M3CoreComponents.Config;
+using Utopia.Worlds.SkyDomes;
+using Utopia.Components;
+using Utopia.Worlds.Chunks;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
@@ -35,7 +38,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         #endregion
 
         public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, IKernel iocContainer)
-            :base(game, engine, screen, commonResources)
+            : base(game, engine, screen, commonResources)
         {
             _iocContainer = iocContainer;
         }
@@ -90,7 +93,7 @@ namespace Sandbox.Client.Components.GUI.Settings
                     if (row.FieldData.Value.GetType() != piTmp.PropertyType)
                     {
                         var castedValue = piTmp.PropertyType.InvokeMember("Parse", BindingFlags.InvokeMethod, null, piTmp.PropertyType, new object[] { row.FieldData.Value });
-                        if (previousValue.ToString()  != castedValue.ToString())
+                        if (previousValue.ToString() != castedValue.ToString())
                         {
                             if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                             piTmp.SetValue(Parameter, castedValue, null);
@@ -107,12 +110,18 @@ namespace Sandbox.Client.Components.GUI.Settings
                         switch (row.FieldData.Name)
                         {
                             case "TexturePack":
-                                    //Refresh TexturePackConfig value
+                                //Refresh TexturePackConfig value
                                 TexturePackConfig.Current = new XmlSettingsManager<TexturePackSetting>(@"TexturePackConfig.xml", SettingsStorage.CustomPath, @"TexturesPacks\" + ClientSettings.Current.Settings.GraphicalParameters.TexturePack + @"\");
-                                    TexturePackConfig.Current.Load();
+                                TexturePackConfig.Current.Load();
                                 break;
                             case "VSync":
                                 ChangeVSync((bool)row.FieldData.Value);
+                                break;
+                            case "StaticEntityViewSize":
+                                ChangeVisibleStaticEntities((int)row.FieldData.Value);
+                                break;
+                            case "LandscapeFog":
+                                ChangeLandscapeFog((string)row.FieldData.Value);
                                 break;
                             default:
                                 break;
@@ -306,6 +315,43 @@ namespace Sandbox.Client.Components.GUI.Settings
         private void ChangeVSync(bool vsyncValue)
         {
             _game.VSync = vsyncValue;
+        }
+
+        private void ChangeVisibleStaticEntities(int distance)
+        {
+            if (isGameRunning)
+            {
+                var worldChunks = _iocContainer.Get<IWorldChunks>();
+
+                if (distance > (ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5)
+                {
+                    worldChunks.StaticEntityViewRange = (int)((ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5) * 16;
+                }
+                else
+                {
+                    worldChunks.StaticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
+                }
+            }
+        }
+
+        private void ChangeLandscapeFog(string landscapeFogType)
+        {
+            if (isGameRunning)
+            {
+                var skyDome = _iocContainer.Get<ISkyDome>();
+                if (landscapeFogType == "SkyFog")
+                {
+                    StaggingBackBuffer skyBackBuffer = _iocContainer.Get<StaggingBackBuffer>("SkyBuffer");
+                    skyBackBuffer.EnableComponent(true);
+                    skyDome.DrawOrders.UpdateIndex(0, 40);
+                }
+                else
+                {
+                    StaggingBackBuffer skyBackBuffer = _iocContainer.Get<StaggingBackBuffer>("SkyBuffer");
+                    skyBackBuffer.DisableComponent();
+                    skyDome.DrawOrders.UpdateIndex(0, 990);
+                }
+            }
         }
 
         //ButtonList Event management ==========================================
