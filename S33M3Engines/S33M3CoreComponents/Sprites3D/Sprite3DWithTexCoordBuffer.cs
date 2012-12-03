@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Sprites2D;
+using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
@@ -11,7 +13,7 @@ using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 
-namespace S33M3CoreComponents.Sprites._3D
+namespace S33M3CoreComponents.Sprites3D
 {
     public class Sprite3DWithTexCoordBuffer : BaseComponent, ISprite3DBuffer
     {

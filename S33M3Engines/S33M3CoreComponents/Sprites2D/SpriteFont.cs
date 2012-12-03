@@ -16,7 +16,7 @@ using S33M3CoreComponents.Config;
 using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Unsafe;
 
-namespace S33M3CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites2D
 {
     public class SpriteFont : BaseComponent
     {
@@ -114,7 +114,7 @@ namespace S33M3CoreComponents.Sprites
                 }
                 catch (Exception e)
                 {
-                    logger.Error("Error while extracting Kerning information for font : {0}", _font.Name);
+                    logger.Error("Error while extracting Kerning information for font : {0} : {1}", _font.Name, e.Message);
                 }
                 finally
                 {

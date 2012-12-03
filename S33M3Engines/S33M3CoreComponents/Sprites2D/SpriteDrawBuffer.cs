@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using SharpDX;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Effects.HLSLFramework;
 using SharpDX.Direct3D11;
 
-namespace S33M3CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites2D
 {
     /// <summary>
     /// The aim of this class is to bufferize the incoming sprite draw request, and sort them by Texture type

@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using S33M3CoreComponents.Config;
 
-namespace S33M3CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites2D
 {
     /// <summary>
     /// Server specific settings

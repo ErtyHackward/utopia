@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3CoreComponents.Cameras.Interfaces;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
 
-namespace S33M3CoreComponents.Sprites._3D
+namespace S33M3CoreComponents.Sprites3D.Interfaces
 {
     public interface ISprite3DBuffer
     {
