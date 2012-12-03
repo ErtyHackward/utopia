@@ -149,12 +149,10 @@ namespace Sandbox.Client.States
             if (e.Closing)
             {
                 fadeComponent.Visible = false;
-                inventory.HideInventory();
             }
             else
             {
                 fadeComponent.Visible = true;
-                inventory.ShowInventory();
             }
         }
 
