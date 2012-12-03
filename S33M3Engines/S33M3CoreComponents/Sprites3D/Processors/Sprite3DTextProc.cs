@@ -7,33 +7,43 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine.Buffers;
+using S33M3Resources.Effects.Sprites;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 
-namespace S33M3CoreComponents.Sprites3D
+namespace S33M3CoreComponents.Sprites3D.Processors
 {
-    public class Sprite3DWithTexCoordBuffer : BaseComponent, ISprite3DBuffer
+    public class Sprite3DTextProc : BaseComponent, ISprite3DProcessor
     {
         #region Private Variables
         private List<VertexPointSprite3DTexCoord> _spritesCollection;
         private VertexBuffer<VertexPointSprite3DTexCoord> _vb;
         private bool _isCollectionDirty;
+        private SpriteFont _spriteFont;
+        private HLSLSprite3D _effect;
+        private SamplerState _spriteSampler;
         #endregion
 
         #region Public Properties
         #endregion
-
-        public Sprite3DWithTexCoordBuffer(int TextureWidth, int TextureHeight)
+        public Sprite3DTextProc(SpriteFont spriteFont, SamplerState SpriteSampler)
         {
-
+            _spriteFont = spriteFont;
+            _spriteSampler = SpriteSampler;
         }
 
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
+            _effect = ToDispose(new HLSLSprite3D(context.Device, @"Effects\Sprites\PointSprite3DTexCoord.hlsl", VertexPointSprite3DTexCoord.VertexDeclaration));
+
+            //Set the Texture
+            _effect.DiffuseTexture.Value = _spriteFont.SpriteTexture.Texture;
+            _effect.SamplerDiffuse.Value = _spriteSampler;
+
             _spritesCollection = new List<VertexPointSprite3DTexCoord>();
             _vb = new VertexBuffer<VertexPointSprite3DTexCoord>(context.Device, 16, VertexPointSprite3DTexCoord.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DProcessorTexCoord", usage, 10);
             _isCollectionDirty = false;
@@ -52,31 +62,21 @@ namespace S33M3CoreComponents.Sprites3D
             }
         }
 
-        public void Set2DeviceAndDraw(DeviceContext context)
+        public void Set2DeviceAndDraw(DeviceContext context, ICamera camera)
         {
+            //Set Effect Constant Buffer
+            _effect.Begin(context);
+            _effect.CBPerFrameLocal.Values.ViewProjection = Matrix.Transpose(camera.ViewProjection3D);
+            _effect.CBPerFrameLocal.IsDirty = true;
+            _effect.Apply(context);
+
             if (_spritesCollection.Count == 0) return;
             _vb.SetToDevice(context, 0);
             context.Draw(_vb.VertexCount, 0);
             _spritesCollection.Clear(); //Free buffer;
         }
 
-        public void Draw(ref Vector3 worldPosition, ref Vector2 size, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, int textureArrayIndex = 0)
-        {
-            //Create the Vertex, add it into the vertex Collection
-            Vector4 textCoordU = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
-            Vector4 textCoordV = new Vector4(1.0f, 1.0f, 0.0f, 0.0f);
-            Draw(ref worldPosition, ref size, ref color, spriterenderingType, ref textCoordU, ref textCoordV, textureArrayIndex);
-        }
-
-        public void Draw(ref Vector3 worldPosition, ref Vector2 size, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref Vector4 textCoordU, ref Vector4 textCoordV, int textureArrayIndex = 0)
-        {
-            //Vector3 Info = new Vector3(size.X, size.Y, (int)spriterenderingType);
-
-            //_spritesCollection.Add(new VertexPointSprite3DTexCoord(new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, textureArrayIndex), color, Info, textCoordU, textCoordV));
-            //_isCollectionDirty = true;
-        }
-
-        public void DrawText(string text, SpriteFont spriteFont, SpriteTexture texture, ref Vector3 worldPosition, float scaling, ref ByteColor color, ICamera camera, int textureArrayIndex = 0, bool XCenteredText = true, bool MultiLineHandling = false)
+        public void DrawText(string text, ref Vector3 worldPosition, float scaling, ref ByteColor color, ICamera camera, int textureArrayIndex = 0, bool XCenteredText = true, bool MultiLineHandling = false)
         {
             int nextLineOffset = 0;
             Vector3 origin = worldPosition;
@@ -87,18 +87,18 @@ namespace S33M3CoreComponents.Sprites3D
             {
                 nbrLine = text.Count(f => f == '\n') + 1;
             }
-            
-            localPosition.Y += (spriteFont.CharHeight) * nbrLine; //remove the char. height
+
+            localPosition.Y += (_spriteFont.CharHeight) * nbrLine; //remove the char. height
 
             if (XCenteredText)
             {
                 if (!MultiLineHandling)
                 {
-                    localPosition.X -= (spriteFont.MeasureString(text).X / 2); //Center text on X World Position
+                    localPosition.X -= (_spriteFont.MeasureString(text).X / 2); //Center text on X World Position
                 }
                 else
                 {
-                    localPosition.X -= (spriteFont.MeasureString(GetLine(ref text, nextLineOffset, out nextLineOffset)).X / 2); //Center text on X World Position
+                    localPosition.X -= (_spriteFont.MeasureString(GetLine(ref text, nextLineOffset, out nextLineOffset)).X / 2); //Center text on X World Position
                 }
             }
 
@@ -122,33 +122,33 @@ namespace S33M3CoreComponents.Sprites3D
                 //Managing Space
                 if (character == ' ')
                 {
-                    localPosition.X += spriteFont.SpaceWidth;
+                    localPosition.X += _spriteFont.SpaceWidth;
                 }
                 else
                 {
                     //Managing New Line
                     if (character == '\n')
                     {
-                        InsertNewLine(ref text, ref localPosition, ref currentLineWidth, spriteFont, XCenteredText, MultiLineHandling, ref nextLineOffset);
+                        InsertNewLine(ref text, ref localPosition, ref currentLineWidth, _spriteFont, XCenteredText, MultiLineHandling, ref nextLineOffset);
                     }
                     else
                     {
                         //All other characters goes here
-                        RectangleF desc = spriteFont.CharDescriptors[character];
+                        RectangleF desc = _spriteFont.CharDescriptors[character];
                         //Create texture coordinate in Texture coordinate
-                        RectangleF sourceRectInTexCoord = new RectangleF((desc.Left / (float)texture.Width), desc.Top / (float)texture.Height, desc.Right / (float)texture.Width, desc.Bottom / (float)texture.Height);
+                        RectangleF sourceRectInTexCoord = new RectangleF((desc.Left / (float)_spriteFont.SpriteTexture.Width), desc.Top / (float)_spriteFont.SpriteTexture.Height, desc.Right / (float)_spriteFont.SpriteTexture.Width, desc.Bottom / (float)_spriteFont.SpriteTexture.Height);
 
                         //Apply Kerning
-                        if (!isFirstChar && spriteFont.WithKerning)
+                        if (!isFirstChar && _spriteFont.WithKerning)
                         {
-                            int kerningAmount = spriteFont.GetKerning(previousChar, character);
+                            int kerningAmount = _spriteFont.GetKerning(previousChar, character);
                             localPosition.X += kerningAmount;
                         }
 
                         //The drawing is done from the center of the font in 3d mode !
                         localPosition.X += (desc.Width / 2);
 
-                        Draw(ref localPosition, scaling, desc.Width, desc.Height, ref color, Sprite3DRenderer.SpriteRenderingType.BillboardOnLookAt, ref sourceRectInTexCoord, 0, camera, ref origin);
+                        AddNewGlyph(ref localPosition, scaling, desc.Width, desc.Height, ref color,  ref sourceRectInTexCoord, 0, camera, ref origin);
 
                         localPosition.X += (desc.Width / 2);
 
@@ -159,8 +159,11 @@ namespace S33M3CoreComponents.Sprites3D
 
             }
         }
+        #endregion
 
-        private void Draw(ref Vector3 Offset, float scaling, float width, float height, ref ByteColor color, Sprite3DRenderer.SpriteRenderingType spriterenderingType, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
+        #region Private Methods
+
+        private void AddNewGlyph(ref Vector3 Offset, float scaling, float width, float height, ref ByteColor color, ref RectangleF textCoord, int textureArrayIndex, ICamera camera, ref Vector3 origin)
         {
             Matrix scaleRotateAndTranslate = Matrix.Transpose(Matrix.Scaling(scaling) * Matrix.RotationQuaternion(Quaternion.Invert(camera.Orientation.ValueInterp)) * Matrix.Translation(origin));
             //Vector3 worldPosition = Vector3.TransformCoordinate(Offset, scaleRotateAndTranslate);
@@ -173,9 +176,7 @@ namespace S33M3CoreComponents.Sprites3D
             _spritesCollection.Add(new VertexPointSprite3DTexCoord(ref scaleRotateAndTranslate, ref position, ref color, ref Size, ref textCoordU, ref textCoordV));
             _isCollectionDirty = true;
         }
-        #endregion
 
-        #region Private Methods
         private void InsertNewLine(ref string text, ref Vector3 textPosition, ref float currentLineWidth, SpriteFont spriteFont, bool XCenteredText, bool MultiLineHandling, ref int nextLineOffset)
         {
             textPosition.Y -= spriteFont.CharHeight;
