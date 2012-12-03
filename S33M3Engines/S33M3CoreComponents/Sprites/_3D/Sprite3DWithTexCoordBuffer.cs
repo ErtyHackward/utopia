@@ -100,10 +100,11 @@ namespace S33M3CoreComponents.Sprites._3D
                 }
             }
 
-            bool newCharInserted = false;
             int length = text.Length;
 
             int numCharsToDraw = length;
+            char previousChar = (char)0;
+            bool isFirstChar = true;
 
             //For Each character in the text
             float currentLineWidth = 0;
@@ -135,14 +136,25 @@ namespace S33M3CoreComponents.Sprites._3D
                         //Create texture coordinate in Texture coordinate
                         RectangleF sourceRectInTexCoord = new RectangleF((desc.Left / (float)texture.Width), desc.Top / (float)texture.Height, desc.Right / (float)texture.Width, desc.Bottom / (float)texture.Height);
 
+                        //Apply Kerning
+                        if (!isFirstChar && spriteFont.WithKerning)
+                        {
+                            int kerningAmount = spriteFont.GetKerning(previousChar, character);
+                            localPosition.X += kerningAmount;
+                        }
+
+                        //The drawing is done from the center of the font in 3d mode !
+                        localPosition.X += (desc.Width / 2);
+
                         Draw(ref localPosition, scaling, desc.Width, desc.Height, ref color, Sprite3DRenderer.SpriteRenderingType.BillboardOnLookAt, ref sourceRectInTexCoord, 0, camera, ref origin);
-                        
-                        localPosition.X += desc.Width;
-                        newCharInserted = true;
+
+                        localPosition.X += (desc.Width / 2);
+
+                        previousChar = character;
+                        isFirstChar = false;
                     }
                 }
 
-                if (newCharInserted) localPosition.X += 1;
             }
         }
 
