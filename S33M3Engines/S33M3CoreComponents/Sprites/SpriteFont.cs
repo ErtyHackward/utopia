@@ -38,6 +38,11 @@ namespace S33M3CoreComponents.Sprites
         public float CharHeight { get { return _charHeight; } }
         public float HeightInPoints { get; set; }
         public float HeightInPixel { get; set; }
+        public bool WithKerning
+        {
+            get { return _withKerning; }
+            set { _withKerning = value; }
+        }
         #endregion
 
         #region Private Variables
@@ -48,6 +53,10 @@ namespace S33M3CoreComponents.Sprites
         protected float _charHeight;
         protected Font _font;
         protected Graphics _fontGraphics;
+        private Dictionary<int, int> _kernings;
+        private bool _withKerning = false;
+
+ 
         #endregion
 
         public SpriteFont()
@@ -63,20 +72,20 @@ namespace S33M3CoreComponents.Sprites
 
         #region Public Methods
 
-        public void Initialize(FontFamily family, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device)
+        public void Initialize(FontFamily family, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device, bool withKerning = false)
         {
             _size = fontSize;
             this.FontStyle = fontStyle;
             _font = ToDispose(new Font(family, fontSize, fontStyle, GraphicsUnit.Pixel));
-            Initialize(antiAliased, device);
+            Initialize(antiAliased, device, withKerning);
         }
 
-        public void Initialize(string fontName, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device)
+        public void Initialize(string fontName, float fontSize, FontStyle fontStyle, bool antiAliased, SharpDX.Direct3D11.Device device, bool withKerning = false)
         {
             _size = fontSize;
             this.FontStyle = fontStyle;
             _font = ToDispose(new Font(fontName, fontSize, fontStyle, GraphicsUnit.Pixel));
-            Initialize(antiAliased, device);
+            Initialize(antiAliased, device, withKerning);
         }
 
         private UnsafeNativeMethods.KERNINGPAIR[] GetFontKernings()
@@ -116,7 +125,12 @@ namespace S33M3CoreComponents.Sprites
             }
         }
 
-        private void Initialize(bool antiAliased, SharpDX.Direct3D11.Device device)
+        private int GetKerningHash(char a, char b)
+        {
+            return (a << 16) + b;
+        }
+
+        private void Initialize(bool antiAliased, SharpDX.Direct3D11.Device device, bool withKerning)
         {
             TextRenderingHint hint = antiAliased ? TextRenderingHint.AntiAliasGridFit : TextRenderingHint.SystemDefault;
 
@@ -127,29 +141,30 @@ namespace S33M3CoreComponents.Sprites
             _fontGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             _fontGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             _fontGraphics.TextRenderingHint = hint;
+            _withKerning = withKerning;
 
-            //Get Kerning Information.
-            //var result = GetFontKernings();
-            //var kerningScale = (_font.Height / _font.Size);
+            if(withKerning){
+                _kernings = new Dictionary<int, int>();
 
-            //Dictionary<short, Dictionary<short, int>> KerningResult = new Dictionary<short, Dictionary<short, int>>();
-            //Dictionary<short, int> dico2;
-            //int amount;
-
-            //foreach (var value in result)
-            //{
-            //    if (!KerningResult.TryGetValue(value.First, out dico2))
-            //    {
-            //        dico2 = new Dictionary<short, int>();
-            //        KerningResult.Add(value.First, dico2);
-            //    }
-
-            //    if (!dico2.TryGetValue(value.Second, out dico2))
-            //}
-
+                //Get Kerning Information.
+                var result = GetFontKernings();
+                if (result != null)
+                {
+                    //Dictionary<short, int> dico2;
+                    //int amount;
+                    foreach (var value in result)
+                    {
+                        if (value.KernAmount != 0)
+                        {
+                            int kernHash = GetKerningHash((char)value.First, (char)value.Second);
+                            _kernings.Add(kernHash, value.KernAmount);
+                        }
+                    }
+                }
+            }
 
             HeightInPoints = _font.SizeInPoints;
-            _charHeight = _font.Height;// * 1.1f;
+            _charHeight = _font.Height;
 
             var ascent = _font.FontFamily.GetCellAscent(FontStyle);
             var descent = _font.FontFamily.GetCellDescent(FontStyle);
@@ -185,9 +200,7 @@ namespace S33M3CoreComponents.Sprites
 
             SizeF sizeRect = _fontGraphics.MeasureString(allCharsString, _font, unicodeCharToBuffer);
 
-            //int numRows = (int)(sizeRect.Width / TexWidth) + 1;
-            int texHeight = (int)(sizeRect.Height + (sizeRect.Height * 0.1)); //(int)(numRows * _charHeight) + 1;
-
+            int texHeight = (int)(sizeRect.Height + (sizeRect.Height * 0.1)); 
 
             // Create a temporary Bitmap and Graphics for drawing the characters one by one
             int tempSize = (int)(_size * 2);
@@ -227,7 +240,7 @@ namespace S33M3CoreComponents.Sprites
                     {
                         if (drawBitmap.GetPixel(x, y).A > 0)
                         {
-                            minX = x;
+                            minX = Math.Max(0, x - 1);
                             x = tempSize;
                             break;
                         }
@@ -242,14 +255,14 @@ namespace S33M3CoreComponents.Sprites
                     {
                         if (drawBitmap.GetPixel(x, y).A > 0)
                         {
-                            maxX = x;
+                            maxX = Math.Min(tempSize - 1, x + 1);
                             x = -1;
                             break;
                         }
                     }
                 }
 
-                int charWidth = maxX - minX + 1;
+                int charWidth = maxX - minX;
 
                 // Figure out if we need to move to the next row
                 if (currentX + charWidth >= TexWidth)
@@ -257,12 +270,6 @@ namespace S33M3CoreComponents.Sprites
                     currentX = 0;
                     currentY += (int)(_charHeight) + 1;
                 }
-
-                // Fill out the structure describing the character position
-                //CharDescriptors[allCharsString[i]].X = (float)(currentX);
-                //CharDescriptors[allCharsString[i]].Y = (float)(currentY);
-                //CharDescriptors[allCharsString[i]].Width = (float)(charWidth);
-                //CharDescriptors[allCharsString[i]].Height = (float)(_charHeight);
 
                 CharDescriptors[allCharsString[i]] = new RectangleF(currentX, currentY, currentX + charWidth, currentY + _charHeight);
 
@@ -304,8 +311,6 @@ namespace S33M3CoreComponents.Sprites
 
             ShaderResourceViewDescription srDesc = new ShaderResourceViewDescription();
             srDesc.Format = Format.R8G8B8A8_UNorm;
-            //srDesc.Dimension = ShaderResourceViewDimension.Texture2D;
-            //srDesc.Texture2D = new ShaderResourceViewDescription.Texture2DResource() { MipLevels = 1, MostDetailedMip = 0 };
             srDesc.Dimension = ShaderResourceViewDimension.Texture2DArray;
             srDesc.Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource() { MostDetailedMip = 0, MipLevels = 1, FirstArraySlice = 0, ArraySize = 1 };
 
@@ -321,6 +326,17 @@ namespace S33M3CoreComponents.Sprites
 
         }
         #endregion
+
+        public int GetKerning(char first, char second)
+        {
+            if (!_withKerning) return 0;
+
+            int kernHash = GetKerningHash(first, second);
+            int kerningValue = 0;
+            _kernings.TryGetValue(kernHash, out kerningValue);
+
+            return kerningValue;
+        }
 
         public Vector2 MeasureString(StringBuilder stringBuilder)
         {

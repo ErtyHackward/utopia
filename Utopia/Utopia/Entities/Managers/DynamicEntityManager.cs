@@ -192,7 +192,7 @@ namespace Utopia.Entities.Managers
             _materialChangeMapping = new Dictionary<int, int>();
 
             _dynamicEntityNameFont = ToDispose(new SpriteFont());
-            _dynamicEntityNameFont.Initialize("Lucida Console", 12f, System.Drawing.FontStyle.Regular, true, context.Device);
+            _dynamicEntityNameFont.Initialize("Lucida Console", 32f, System.Drawing.FontStyle.Regular, true, context.Device, false);
 
             _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer(context, _dynamicEntityNameFont, Sprite3DRenderer.Sprite3dBufferType.Sprite3DWithTexCoord,
                                                                   RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text),
@@ -333,11 +333,32 @@ namespace Utopia.Entities.Managers
 
             foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance.World != Matrix.Zero))
             {
+                bool isMultiline = false;
+                string Name;
                 Vector3 textPosition = dynamicEntity.WorldPosition.ValueInterp.AsVector3();
                 textPosition.Y += (dynamicEntity.ModelInstance.State.BoundingBox.Maximum.Y / 16); //Place the text above the BoundingBox
                 ByteColor color = Color.White;
 
-                _dynamicEntityNameRenderer.DrawText(dynamicEntity.DynamicEntity.Name, ref textPosition, 0.04f, ref color, _camManager.ActiveCamera);
+                if (dynamicEntity.DynamicEntity is CharacterEntity)
+                {
+                    Name = ((CharacterEntity)dynamicEntity.DynamicEntity).CharacterName;
+                    if (_playerEntity == dynamicEntity.DynamicEntity)
+                    {
+                        color = Color.Yellow;
+                    }
+                    else
+                    {
+                        Name += Environment.NewLine + "<" + dynamicEntity.DynamicEntity.Name + ">";
+                        isMultiline = true;
+                    }
+                }
+                else
+                {
+                    Name = dynamicEntity.DynamicEntity.Name;
+                    color = Color.WhiteSmoke;
+                }
+
+                _dynamicEntityNameRenderer.DrawText(Name, ref textPosition, 0.01f, ref color, _camManager.ActiveCamera, multilineSupport: isMultiline);
             }
 
             _dynamicEntityNameRenderer.End(context, _camManager.ActiveCamera);

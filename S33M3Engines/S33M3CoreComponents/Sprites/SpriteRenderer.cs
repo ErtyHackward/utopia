@@ -182,7 +182,7 @@ namespace S33M3CoreComponents.Sprites
             Vector2 textPosition = position;
             if (textFontPosition == TextFontPosition.RelativeToFontBottom) textPosition.Y -= spriteFont.CharHeight; //remove the char. height
 
-            bool newCharInserted = false;
+            bool isFirstChar = true;
             int length = text.Length;
             if (length == 0 && withCarret == -1) return;
 
@@ -212,6 +212,7 @@ namespace S33M3CoreComponents.Sprites
             }
 
             //For each Words
+            char previousChar = (char)0;
             float currentLineWidth = 0;
             foreach (SpriteFont.WordInfo info in infos)
             {
@@ -247,19 +248,27 @@ namespace S33M3CoreComponents.Sprites
                         }
                         else
                         {
+                            //Apply Kerning
+                            if (!isFirstChar && spriteFont.WithKerning)
+                            {
+                                int kerningAmount = spriteFont.GetKerning(previousChar, character);
+                                textPosition.X += kerningAmount;
+                            }
+
                             //All other characters goes here
                             RectangleF desc = spriteFont.CharDescriptors[character];
                             spritesDrawFont.AddSprite(ref textPosition, ref desc, true, 0, ref color, _spriteBuffer.AutoDepth); //Add Carret at startUp text Position
 
                             textPosition.X += desc.Width;
-                            newCharInserted = true;
+                            previousChar = character;
+                            isFirstChar = false;
                         }
                     }
 
                     //Display carret ??
                     if (i == withCarret) spritesDrawFont.AddSprite(ref textPosition, ref _descCarret, true, 0, ref color, _spriteBuffer.AutoDepth); //Add Carret at startUp text Position
 
-                    if (newCharInserted) textPosition.X += 1;
+                    //if (newCharInserted) textPosition.X += 1;
                 }
 
                 //If in word max mode, then add a space after the word
