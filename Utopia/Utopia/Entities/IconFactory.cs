@@ -277,6 +277,7 @@ namespace Utopia.Entities
 
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
+                System.Threading.Thread.Sleep(0);
                 texture.Begin();
 
                 RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
