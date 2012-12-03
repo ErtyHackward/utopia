@@ -262,6 +262,7 @@ namespace S33M3CoreComponents.States
                     {
                         foreach (var gc in state.GameComponents.Where(x => x.IsDefferedLoadContent == false && x.IsInitialized == false))
                         {
+                            Thread.Sleep(0);
                             gc.LoadContent(_engine.ImmediateContext);
                             gc.IsInitialized = true;
                         }
