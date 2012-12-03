@@ -20,7 +20,7 @@ License along with this library
 
 using SharpDX;
 using Rectangle = SharpDX.Rectangle;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using System;
 using SharpDX.Direct3D11;
 using S33M3Resources.Structs;

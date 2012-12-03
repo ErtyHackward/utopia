@@ -19,7 +19,7 @@ License along with this library
 #endregion
 
 using System;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using SharpDX;
 using System.Collections.Generic;
 using S33M3Resources.Structs;

@@ -4,7 +4,7 @@ using SharpDX;
 using Utopia.GUI.Inventory;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.Main;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;

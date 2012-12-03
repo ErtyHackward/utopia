@@ -1,7 +1,7 @@
 ﻿using System; using SharpDX;
 using System.Collections.Generic;
 using System.Text;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 {

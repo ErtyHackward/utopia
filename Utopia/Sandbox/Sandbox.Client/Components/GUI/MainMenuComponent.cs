@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs.Helpers;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;

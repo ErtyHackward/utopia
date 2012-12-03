@@ -31,8 +31,8 @@ using S33M3CoreComponents.Meshes.Factories;
 using S33M3DXEngine.Textures;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs;
-using S33M3CoreComponents.Sprites._3D;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
+using S33M3CoreComponents.Sprites3D;
 
 namespace Utopia.Entities.Managers
 {

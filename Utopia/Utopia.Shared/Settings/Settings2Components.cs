@@ -6,7 +6,7 @@ using System.Reflection;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Tools;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Settings

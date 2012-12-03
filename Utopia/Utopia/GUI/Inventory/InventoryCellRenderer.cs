@@ -1,5 +1,5 @@
 ﻿using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.GUI.Nuclex;
 
 namespace Utopia.GUI.Inventory

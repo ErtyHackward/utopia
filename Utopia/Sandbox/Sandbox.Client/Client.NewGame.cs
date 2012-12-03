@@ -8,7 +8,7 @@ using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Config;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 
 namespace Sandbox.Client
 {

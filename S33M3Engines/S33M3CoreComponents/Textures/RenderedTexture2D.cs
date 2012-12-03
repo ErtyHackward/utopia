@@ -6,7 +6,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using S33M3DXEngine;
 using SharpDX;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 using S33M3_DXEngine.Main;
 

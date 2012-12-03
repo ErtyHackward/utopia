@@ -2,7 +2,7 @@
 
 using Utopia.Shared.Structs;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 using SharpDX;
 

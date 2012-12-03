@@ -7,7 +7,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using SharpDX.Direct3D11;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;

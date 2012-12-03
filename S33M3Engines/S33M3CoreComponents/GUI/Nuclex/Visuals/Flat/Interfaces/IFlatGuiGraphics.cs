@@ -23,7 +23,7 @@ using SharpDX;
 using System.Collections.Generic;
 using SharpDX.Direct3D11;
 using Rectangle = SharpDX.Rectangle;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces

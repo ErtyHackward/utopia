@@ -1,5 +1,5 @@
 ﻿using System;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
