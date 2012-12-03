@@ -670,10 +670,17 @@ namespace Utopia.Shared.Chunks
 
             var offset = _config.CubeProfiles[cube.Id].YBlockOffset;
 
-            if (offset == 0f || offset > pos.Y % 1)
-                return cube;
+            if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
+            {
+                //I'm inside an offsetted block in the Air part, then send back the block above this one !
+                pos.Y++;
+                if (pos.Y < AbstractChunk.ChunkSize.Y)
+                {
+                    cubeIndex++; //Going Up one block
+                    cube = Cubes[cubeIndex];
+                }
+            }
 
-            cube.Id = WorldConfiguration.CubeId.Air;
             return cube;
         }
 
@@ -703,11 +710,19 @@ namespace Utopia.Shared.Chunks
 
             var offset = _config.CubeProfiles[cube.Id].YBlockOffset;
 
-            if (offset == 0f || offset > pos.Y % 1)
-                return cube;
+            if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
+            {
+                //I'm inside an offsetted block in the Air part, then send back the block above this one !
+                cubePos.Y++;
+                if (cubePos.Y < AbstractChunk.ChunkSize.Y)
+                {
+                    cubeIndex++; //Going Up one block
+                    cube = Cubes[cubeIndex];
+                }
+            }
 
-            cube.Id = WorldConfiguration.CubeId.Air;
             return cube;
         }
+
     }
 }
