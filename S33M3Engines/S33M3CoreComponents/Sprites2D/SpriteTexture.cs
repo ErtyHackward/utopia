@@ -13,7 +13,7 @@ using Rectangle = SharpDX.Rectangle;
 using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3_DXEngine.Main;
 
-namespace S33M3CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites2D
 {
     public class SpriteTexture : BaseComponent
     {

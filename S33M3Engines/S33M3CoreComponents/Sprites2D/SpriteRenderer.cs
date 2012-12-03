@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using S33M3CoreComponents.Sprites;
+using S33M3CoreComponents.Sprites2D;
 using SharpDX;
-using S33M3CoreComponents.Sprites.Interfaces;
+using S33M3CoreComponents.Sprites2D.Interfaces;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3Resources.Effects.Sprites;
@@ -12,7 +12,7 @@ using S33M3Resources.Structs.Vertex;
 using Rectangle = SharpDX.Rectangle;
 using S33M3_DXEngine.Main;
 
-namespace S33M3CoreComponents.Sprites
+namespace S33M3CoreComponents.Sprites2D
 {
     public class SpriteRenderer : BaseComponent, ISpriteRenderer
     {
@@ -267,8 +267,6 @@ namespace S33M3CoreComponents.Sprites
 
                     //Display carret ??
                     if (i == withCarret) spritesDrawFont.AddSprite(ref textPosition, ref _descCarret, true, 0, ref color, _spriteBuffer.AutoDepth); //Add Carret at startUp text Position
-
-                    //if (newCharInserted) textPosition.X += 1;
                 }
 
                 //If in word max mode, then add a space after the word
