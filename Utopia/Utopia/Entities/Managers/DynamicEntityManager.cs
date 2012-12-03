@@ -33,6 +33,8 @@ using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D;
+using S33M3CoreComponents.Sprites3D.Interfaces;
+using S33M3CoreComponents.Sprites3D.Processors;
 
 namespace Utopia.Entities.Managers
 {
@@ -59,7 +61,7 @@ namespace Utopia.Entities.Managers
         private HLSLVoxelModelInstanced _voxelModelEffect;
         private HLSLVoxelModel _voxelToolEffect;
 
-        private Sprite3DRenderer _dynamicEntityNameRenderer;
+        private Sprite3DRenderer<Sprite3DTextProc> _dynamicEntityNameRenderer;
         private SpriteFont _dynamicEntityNameFont;
 
         private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
@@ -191,14 +193,19 @@ namespace Utopia.Entities.Managers
             _voxelToolEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _materialChangeMapping = new Dictionary<int, int>();
 
+            //Create the font to base use by the sprite3dText Processor
             _dynamicEntityNameFont = ToDispose(new SpriteFont());
             _dynamicEntityNameFont.Initialize("Lucida Console", 32f, System.Drawing.FontStyle.Regular, true, context.Device, false);
 
-            _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer(context, _dynamicEntityNameFont, Sprite3DRenderer.Sprite3dBufferType.Sprite3DWithTexCoord,
-                                                                  RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text),
-                                                                  DXStates.Rasters.Default,
-                                                                  DXStates.Blenders.Enabled,
-                                                                  DXStates.DepthStencils.DepthEnabled));
+            //Create the processor that will be used by the Sprite3DRenderer
+            Sprite3DTextProc textProcessor = ToDispose(new Sprite3DTextProc(_dynamicEntityNameFont, RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text)));
+
+            //Create a sprite3Drenderer that will use the previously created processor to accumulate text data for drawing.
+            _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer<Sprite3DTextProc>(textProcessor, 
+                                                                        DXStates.Rasters.Default,
+                                                                        DXStates.Blenders.Enabled,
+                                                                        DXStates.DepthStencils.DepthEnabled,
+                                                                        context));
         }
 
         public override void UnloadContent()
@@ -358,7 +365,9 @@ namespace Utopia.Entities.Managers
                     color = Color.WhiteSmoke;
                 }
 
-                _dynamicEntityNameRenderer.DrawText(Name, ref textPosition, 0.01f, ref color, _camManager.ActiveCamera, multilineSupport: isMultiline);
+                var distance = MVector3.Distance(dynamicEntity.WorldPosition.ValueInterp, _camManager.ActiveCamera.WorldPosition.ValueInterp);
+                float scaling = Math.Min( 0.035f, Math.Max(0.01f, 0.01f / 8 * (float)distance));
+                _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
             }
 
             _dynamicEntityNameRenderer.End(context, _camManager.ActiveCamera);

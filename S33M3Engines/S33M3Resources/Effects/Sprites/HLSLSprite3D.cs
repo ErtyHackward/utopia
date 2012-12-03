@@ -11,7 +11,7 @@ using SharpDX.Direct3D11;
 
 namespace S33M3Resources.Effects.Sprites
 {
-    public class HLSLPointSprite3D : HLSLShaderWrap
+    public class HLSLSprite3D : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -23,15 +23,11 @@ namespace S33M3Resources.Effects.Sprites
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 96)]
+        [StructLayout(LayoutKind.Explicit, Size = 64)]
         public struct CBPerFrameLocal_Struct
         {
             [FieldOffset(0)]
-            public Matrix WorldViewProjection;
-            [FieldOffset(64)]
-            public Vector3 CameraWorldPosition;
-            [FieldOffset(80)]
-            public Vector3 LookAt;
+            public Matrix ViewProjection;
         }
         public CBuffer<CBPerFrameLocal_Struct> CBPerFrameLocal;
         #endregion
@@ -54,7 +50,7 @@ namespace S33M3Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLPointSprite3D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
+        public HLSLSprite3D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration)
         {
             //Create Constant Buffers interfaces ==================================================

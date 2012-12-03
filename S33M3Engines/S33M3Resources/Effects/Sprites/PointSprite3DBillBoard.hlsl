@@ -19,7 +19,7 @@ SamplerState SamplerDiffuse;
 struct VSInput {
 	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
 	float4 Color				: COLOR;
-	float3 Info					: INFO;       //XY : Size, Z = Geometry Type (0 = Position Facing Billboard, 1 = View Facing Billboard)
+	float2 Size					: SIZE;       //XY : Size
 };
 
 //--------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ struct VSInput {
 struct GSInput {
 	float4 Position				: POSITION;
 	float4 Color				: COLOR;
-	float3 Info					: INFO;
+	float2 Size					: SIZE;
 };
 
 //Pixel shader Input
@@ -55,16 +55,12 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 	PSInput Output;
 	GSInput Input = Inputs[0];
 	
-	float halfWidth = Input.Info.x / 2.0f;
+	float halfWidth = Input.Size.x / 2.0f;
 
 	float3 spriteNormal;
-	if(Input.Info.z == 0.0f){
-		//The billboard will face the "Player", no matter the view vector.
-		spriteNormal = Input.Position.xyz - CameraWorldPosition.xyz;
-	}else{
-		//The billbard will face the LookAt vector of the player
-		spriteNormal = LookAt;
-	}
+
+	//The billboard will face the "Player", no matter the view vector.
+	spriteNormal = Input.Position.xyz - CameraWorldPosition.xyz;
 
 	spriteNormal.y = 0.0f; //By removing Y from the vector, we assure that the rotation can only be made around XZ axis (Don't want to see the billboard rotating in the Y axis)
 	spriteNormal = normalize(spriteNormal);
@@ -79,9 +75,9 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 	vert[0] = Input.Position.xyz - rightVector; // Get bottom left vertex
 	vert[1] = Input.Position.xyz + rightVector; // Get bottom right vertex
 	vert[2] = vert[0]; // Get top left vertex
-	vert[2].y += Input.Info.y;
+	vert[2].y += Input.Size.y;
 	vert[3] = vert[1]; // Get top right vertex
-	vert[3].y += Input.Info.y;
+	vert[3].y += Input.Size.y;
 
 	// *****************************************************
 	// generate the 4 vertices to make two triangles

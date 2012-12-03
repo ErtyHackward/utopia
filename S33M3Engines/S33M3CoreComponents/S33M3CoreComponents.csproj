@@ -271,10 +271,11 @@
     <Compile Include="Sound\SoundBufferedDataSource.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sound\SoundVoice.cs" />
-    <Compile Include="Sprites3D\Interfaces\ISprite3DBuffer.cs" />
-    <Compile Include="Sprites3D\Sprite3DBuffer.cs" />
+    <Compile Include="Sprites3D\Interfaces\ISprite3DProcessor.cs" />
+    <Compile Include="Sprites3D\Processors\Sprite3DBillBoardProc.cs" />
+    <Compile Include="Sprites3D\Processors\Sprite3DImpostorProc.cs" />
     <Compile Include="Sprites3D\Sprite3DRenderer.cs" />
-    <Compile Include="Sprites3D\Sprite3DWithTexCoordBuffer.cs" />
+    <Compile Include="Sprites3D\Processors\Sprite3DTextProc.cs" />
     <Compile Include="Sprites2D\Interfaces\ISpriteRenderer.cs" />
     <Compile Include="Sprites2D\LanguageUnicodeRanges.cs" />
     <Compile Include="Sprites2D\SpriteDrawBuffer.cs" />
