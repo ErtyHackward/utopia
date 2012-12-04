@@ -276,7 +276,7 @@ namespace Utopia.Shared.Net.Connections
                             
                             // using Factory here makes additional box\unbox operation to pass strucutre by interface
                             // need to profile in real conditions
-                            var message = _networkMessageFactory.ReadMessage(idByte, reader);
+                            var message = NetworkMessageFactory.ReadMessage(idByte, reader);
 
                             _concurrentQueue.Enqueue(message);
                         }

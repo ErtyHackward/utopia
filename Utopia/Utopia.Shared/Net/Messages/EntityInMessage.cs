@@ -1,5 +1,6 @@
 using ProtoBuf;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -20,7 +21,7 @@ namespace Utopia.Shared.Net.Messages
         }
 
         [ProtoMember(1)]
-        public Entity Entity { get; set; }
+        public IEntity Entity { get; set; }
 
         /// <summary>
         /// Entity id that throws an item (optional, default 0)

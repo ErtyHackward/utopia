@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ProtoBuf;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
@@ -149,10 +150,7 @@ namespace Utopia.Server.Managers
                     {
                         using (var ms = new MemoryStream(bytes))
                         {
-                            var reader = new BinaryReader(ms);
-                            // skip 2 bytes
-                            reader.ReadUInt16();
-                            playerEntity.DynamicEntity.Load(reader, _factory);
+                            playerEntity.DynamicEntity = Serializer.Deserialize<PlayerCharacter>(ms);
                         }
 
                     }

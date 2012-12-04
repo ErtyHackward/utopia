@@ -30,7 +30,26 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Gets wrapped entity
         /// </summary>
-        public IDynamicEntity DynamicEntity { get; private set; }
+        public IDynamicEntity DynamicEntity
+        {
+            get { return _dynamicEntity; }
+            set { 
+                if (_dynamicEntity == value)
+                    return;
+
+                if (_dynamicEntity != null)
+                {
+                    _dynamicEntity.PositionChanged -= EntityPositionChanged;
+                }
+
+                _dynamicEntity = value;
+
+                if (_dynamicEntity != null)
+                {
+                    _dynamicEntity.PositionChanged += EntityPositionChanged;
+                }
+            }
+        }
 
         /// <summary>
         /// Perform actions when getting closer to area. Entity should add all needed event handlers
@@ -45,6 +64,7 @@ namespace Utopia.Server.Structs
         public abstract void RemoveArea(MapArea area);
 
         private MapArea _currentArea;
+        private IDynamicEntity _dynamicEntity;
 
         /// <summary>
         /// Gets or sets current entity area
@@ -80,7 +100,7 @@ namespace Utopia.Server.Structs
         protected ServerDynamicEntity(IDynamicEntity entity)
         {
             DynamicEntity = entity;
-            entity.PositionChanged += EntityPositionChanged;
+            
         }
 
         void EntityPositionChanged(object sender, EntityMoveEventArgs e)

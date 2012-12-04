@@ -1,5 +1,6 @@
 using System;
 using ProtoBuf;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -19,7 +20,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets or sets entity
         /// </summary>
         [ProtoMember(2)]
-        public Item Item { get; set; }
+        public IItem Item { get; set; }
 
         /// <summary>
         /// Indicates if slot is empty

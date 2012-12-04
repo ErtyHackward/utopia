@@ -167,7 +167,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="item"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        protected virtual bool ValidateItem(Item item, Vector2I position)
+        protected virtual bool ValidateItem(IItem item, Vector2I position)
         {
             return true;
         }
@@ -176,7 +176,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// Makes id valid for current container scope, if needed creates new item instance
         /// </summary>
         /// <param name="item"></param>
-        protected void ValidateId(ref Item item)
+        protected void ValidateId(ref IItem item)
         {
             var currentItem = Find(item.StaticId);
 
@@ -214,7 +214,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="position"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public bool CanPut(Item item, Vector2I position, int count = 1)
+        public bool CanPut(IItem item, Vector2I position, int count = 1)
         {
             ValidatePosition(position);
 
@@ -234,7 +234,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns>True if item put into the inventory otherwise false</returns>
-        public bool PutItem(Item item, int count = 1)
+        public bool PutItem(IItem item, int count = 1)
         {
             // inventory is full?
             if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
@@ -304,7 +304,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="position"></param>
         /// <param name="itemsCount"></param>
         /// <returns>True if succeed otherwise false</returns>
-        public bool PutItem(Item item, Vector2I position, int itemsCount = 1)
+        public bool PutItem(IItem item, Vector2I position, int itemsCount = 1)
         {
             ValidatePosition(position);
 
@@ -440,7 +440,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <param name="item"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public bool PutItemExchange(Item item, Vector2I position, int itemsCount, out T slotTaken)
+        public bool PutItemExchange(IItem item, Vector2I position, int itemsCount, out T slotTaken)
         {
             slotTaken = null;
 
@@ -499,7 +499,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool Contains(StaticEntity entity)
+        public bool Contains(IStaticEntity entity)
         {
             for (int x = 0; x < _gridSize.X; x++)
             {
@@ -540,7 +540,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// This method is not supported. Use PutItem instead.
         /// </summary>
         /// <param name="entity"></param>
-        public void Add(StaticEntity entity)
+        public void Add(IStaticEntity entity)
         {
             throw new NotSupportedException("This method is not supported. Use PutItem instead.");
         }
@@ -549,7 +549,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// This method is not supported. Use TakeItem instead.
         /// </summary>
         /// <param name="entity"></param>
-        public void Remove(StaticEntity entity)
+        public void Remove(IStaticEntity entity)
         {
             throw new NotSupportedException("This method is not supported. Use TakeItem instead.");
         }
@@ -559,7 +559,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="staticId"></param>
         /// <returns></returns>
-        public StaticEntity GetStaticEntity(uint staticId)
+        public IStaticEntity GetStaticEntity(uint staticId)
         {
             var slot = Find(staticId);
             if (slot != null)

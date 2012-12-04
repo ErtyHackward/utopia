@@ -1,6 +1,8 @@
-﻿namespace Utopia.Shared.Entities.Inventory
+﻿using Utopia.Shared.Entities.Interfaces;
+
+namespace Utopia.Shared.Entities.Inventory
 {
-    public class EquipmentSlot<T> : ContainedSlot where T: Item
+    public class EquipmentSlot<T> : ContainedSlot where T: IItem
     {
         public T Equipment
         {

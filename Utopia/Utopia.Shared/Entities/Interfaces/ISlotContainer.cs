@@ -41,7 +41,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="item"></param>
         /// <param name="count"></param>
         /// <returns>True if succeed otherwise false</returns>
-        bool PutItem(Item item, int count = 1);
+        bool PutItem(IItem item, int count = 1);
 
         /// <summary>
         /// Tries to put items into slot specified
@@ -50,7 +50,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="position"></param>
         /// <param name="itemsCount"></param>
         /// <returns></returns>
-        bool PutItem(Item item, Vector2I position, int itemsCount = 1);
+        bool PutItem(IItem item, Vector2I position, int itemsCount = 1);
 
         /// <summary>
         /// Tries to get item from slot. Checks the Entity type 
@@ -75,7 +75,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="item"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        bool PutItemExchange(Item item, Vector2I position, int itemsCount, out T slotTaken);
+        bool PutItemExchange(IItem item, Vector2I position, int itemsCount, out T slotTaken);
 
         /// <summary>
         /// Updates specified slot, should be used in scripts and editor

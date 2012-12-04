@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ProtoBuf;
 using Utopia.Server.Structs;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
@@ -284,8 +285,7 @@ namespace Utopia.Server
                     try
                     {
                         Writer.Write(msg.MessageId);
-                        msg.Write(Writer);
-                        
+                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian);                        
                     }
                     catch (IOException io)
                     {
@@ -317,7 +317,7 @@ namespace Utopia.Server
                 try
                 {
                     Writer.Write(msg.MessageId);
-                    msg.Write(Writer);
+                    Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian); 
                     Writer.Flush();
                     return true;
                 }
@@ -342,7 +342,7 @@ namespace Utopia.Server
                     foreach (var msg in messages)
                     {
                         Writer.Write(msg.MessageId);
-                        msg.Write(Writer);
+                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian); 
                     }
                     Writer.Flush();
                     return true;
@@ -384,50 +384,52 @@ namespace Utopia.Server
                         {
                             startPosition = ms.Position;
                             var idByte = (MessageTypes)reader.ReadByte();
-                            
+
+                            var message = NetworkMessageFactory.ReadMessage(idByte, reader);
+
                             switch (idByte)
                             {
                                 case MessageTypes.Login:
-                                    OnMessageLogin(LoginMessage.Read(reader));
+                                    OnMessageLogin((LoginMessage)message);
                                     break;
                                 case MessageTypes.Chat:
-                                    OnMessageChat(ChatMessage.Read(reader));
+                                    OnMessageChat((ChatMessage)message);
                                     break;
                                 case MessageTypes.GetChunks:
-                                    OnMessageGetChunks(GetChunksMessage.Read(reader));
+                                    OnMessageGetChunks((GetChunksMessage)message);
                                     break;
                                 case MessageTypes.EntityPosition:
-                                    OnMessagePosition(EntityPositionMessage.Read(reader));
+                                    OnMessagePosition((EntityPositionMessage)message);
                                     break;
                                 case MessageTypes.EntityDirection:
-                                    OnMessageDirection(EntityHeadDirectionMessage.Read(reader));
+                                    OnMessageDirection((EntityHeadDirectionMessage)message);
                                     break;
                                 case MessageTypes.EntityUse:
-                                    OnMessageEntityUse(EntityUseMessage.Read(reader));
+                                    OnMessageEntityUse((EntityUseMessage)message);
                                     break;
                                 case MessageTypes.Ping:
-                                    OnMessagePing(PingMessage.Read(reader));
+                                    OnMessagePing((PingMessage)message);
                                     break;
                                 case MessageTypes.EntityVoxelModel:
-                                    OnMessageEntityVoxelModel(EntityVoxelModelMessage.Read(reader));
+                                    OnMessageEntityVoxelModel((EntityVoxelModelMessage)message);
                                     break;
                                 case MessageTypes.ItemTransfer:
-                                    OnMessageItemTransfer(ItemTransferMessage.Read(reader));
+                                    OnMessageItemTransfer((ItemTransferMessage)message);
                                     break;
                                 case MessageTypes.EntityEquipment:
-                                    OnMessageEntityEquipment(EntityEquipmentMessage.Read(reader, EntityFactory));
+                                    OnMessageEntityEquipment((EntityEquipmentMessage)message);
                                     break;
                                 case MessageTypes.EntityImpulse:
-                                    OnMessageEntityImpulse(EntityImpulseMessage.Read(reader));
+                                    OnMessageEntityImpulse((EntityImpulseMessage)message);
                                     break;
                                 case MessageTypes.EntityLock:
-                                    OnMessageEntityLock(EntityLockMessage.Read(reader));
+                                    OnMessageEntityLock((EntityLockMessage)message);
                                     break;
                                 case MessageTypes.GetVoxelModels:
-                                    OnMessageGetVoxelModels(GetVoxelModelsMessage.Read(reader));
+                                    OnMessageGetVoxelModels((GetVoxelModelsMessage)message);
                                     break;
                                 case MessageTypes.VoxelModelData:
-                                    OnMessageVoxelModelData(VoxelModelDataMessage.Read(reader));
+                                    OnMessageVoxelModelData((VoxelModelDataMessage)message);
                                     break;
                                 default:
                                     throw new ArgumentException("Invalid message id");
