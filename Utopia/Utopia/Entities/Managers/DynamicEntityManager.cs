@@ -35,6 +35,8 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3CoreComponents.Sprites3D.Processors;
+using Utopia.Components;
+using UtopiaContent.Effects;
 
 namespace Utopia.Entities.Managers
 {
@@ -73,6 +75,7 @@ namespace Utopia.Entities.Managers
         private readonly PlayerEntityManager _playerEntityManager;
         private readonly SingleArrayChunkContainer _chunkContainer;
         private readonly ISkyDome _skyDome;
+        private readonly SharedFrameCB _sharedFrameCB;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
 
@@ -125,7 +128,8 @@ namespace Utopia.Entities.Managers
                                     VisualWorldParameters visualWorldParameters,
                                     PlayerEntityManager playerEntityManager,
                                     ISkyDome skyDome,
-                                    SingleArrayChunkContainer chunkContainer)
+                                    SingleArrayChunkContainer chunkContainer,
+                                    SharedFrameCB sharedFrameCB)
         {
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
@@ -135,6 +139,7 @@ namespace Utopia.Entities.Managers
             _visualWorldParameters = visualWorldParameters;
             _playerEntityManager = playerEntityManager;
             _skyDome = skyDome;
+            _sharedFrameCB = sharedFrameCB;
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
@@ -198,7 +203,7 @@ namespace Utopia.Entities.Managers
             _dynamicEntityNameFont.Initialize("Lucida Console", 32f, System.Drawing.FontStyle.Regular, true, context.Device, false);
 
             //Create the processor that will be used by the Sprite3DRenderer
-            Sprite3DTextProc textProcessor = ToDispose(new Sprite3DTextProc(_dynamicEntityNameFont, RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text)));
+            Sprite3DTextProc textProcessor = ToDispose(new Sprite3DTextProc(_dynamicEntityNameFont, RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text), ToDispose(new UtopiaIncludeHandler()), _sharedFrameCB.CBPerFrame));
 
             //Create a sprite3Drenderer that will use the previously created processor to accumulate text data for drawing.
             _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer<Sprite3DTextProc>(textProcessor, 
@@ -372,7 +377,7 @@ namespace Utopia.Entities.Managers
                 _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
             }
 
-            _dynamicEntityNameRenderer.End(context, _camManager.ActiveCamera);
+            _dynamicEntityNameRenderer.End(context);
         }
 
         private void DrawTool(IVoxelEntity voxelTool, CharacterEntity charEntity)

@@ -13,7 +13,7 @@ namespace UtopiaContent.Effects.Entities
 {
     public class HLSLColorLine : HLSLShaderWrap
     {
-                #region Define Constant Buffer Structs !
+        #region Define Constant Buffer Structs !
         // follow the packing rules from here:
         // http://msdn.microsoft.com/en-us/library/bb509632(VS.85).aspx
         //

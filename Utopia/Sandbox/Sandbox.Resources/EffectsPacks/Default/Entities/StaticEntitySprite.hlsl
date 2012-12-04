@@ -83,7 +83,7 @@ PSInput VS (VSInput input)
 
 
 	worldPosition = mul(worldPosition, WorldFocus); //Translate to vertex to the correct location
-	output.Position = mul(worldPosition, ViewProjection);
+	output.Position = mul(worldPosition, ViewProjection_focused);
 	output.UVW = input.Textcoord;
 
 	output.BiomeData = input.BiomeData;

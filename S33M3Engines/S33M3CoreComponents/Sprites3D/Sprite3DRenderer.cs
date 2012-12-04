@@ -60,18 +60,16 @@ namespace S33M3CoreComponents.Sprites3D
         }
 
         public void ReplayLast(DeviceContext context, 
-                               ICamera camera,  
                                bool ApplyRenderStates = true)
         {
             if (ApplyRenderStates) SetRenderStates();
-            End(context, camera);
+            End(context);
         }
 
-        public void End(DeviceContext context, 
-                        ICamera camera)
+        public void End(DeviceContext context)
         {
             _processor.SetData(context); //Send the accumulated buffer to the GC ==> "Only" if Collection are "dirty"
-            _processor.Set2DeviceAndDraw(context, camera);
+            _processor.Set2DeviceAndDraw(context);
         }
 
         #endregion

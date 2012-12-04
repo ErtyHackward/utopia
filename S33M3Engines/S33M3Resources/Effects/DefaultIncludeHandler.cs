@@ -4,9 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SharpDX.D3DCompiler;
-using Utopia.Shared.Settings;
 
-namespace UtopiaContent.Effects
+namespace S33m3Engines.Effects
 {
     public class DefaultIncludeHandler : Include
     {
@@ -17,20 +16,9 @@ namespace UtopiaContent.Effects
             stream.Close();
         }
 
-        public DefaultIncludeHandler()
-        {
-        }
-
-        public Stream Open(IncludeType type, string fileName, Stream parentStream)
+        public virtual Stream Open(IncludeType type, string fileName, Stream parentStream)
         {
             string IncludeFilePath;
-
-            //Look inside the activated custom Effect pack directory
-            IncludeFilePath = Path.Combine(ClientSettings.EffectPack, fileName);
-            if (File.Exists(IncludeFilePath))
-            {
-                return File.Open(IncludeFilePath, FileMode.Open);
-            }
 
             //Look inside Default Directory
             IncludeFilePath = @"Effects\" + fileName;

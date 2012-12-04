@@ -25,7 +25,7 @@ namespace Utopia.Components
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 112)]
+        [StructLayout(LayoutKind.Explicit, Size = 176)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
@@ -39,11 +39,9 @@ namespace Utopia.Components
             [FieldOffset(88)]
             public Vector2 Various;
             [FieldOffset(96)]
+            public Matrix ViewProjection;           //64 (4*4 float)
+            [FieldOffset(160)]
             public float fogType;
-            //[FieldOffset(96)]
-            //public Matrix ViewProjection;           //64 (4*4 float)
-            //[FieldOffset(160)]
-            //public float fogType;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -86,7 +84,7 @@ namespace Utopia.Components
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
             CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             CBPerFrame.Values.Various.Y = _animationValue; //Asign animation Value (From 0 => 1 in loop);
-            //CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
+            CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
 
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {
