@@ -7,6 +7,7 @@ using SharpDX;
 using S33M3DXEngine.VertexFormat;
 using S33M3DXEngine.Effects.HLSLFramework;
 using SharpDX.Direct3D11;
+using UtopiaContent.Effects;
 
 namespace Utopia.Resources.Effects.Terran
 {
@@ -59,7 +60,7 @@ namespace Utopia.Resources.Effects.Terran
         #endregion
 
         public HLSLTerran(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration)
+            : base(device, shaderPath, VertexDeclaration, new DefaultIncludeHandler())
         {
             //Create Contstant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));

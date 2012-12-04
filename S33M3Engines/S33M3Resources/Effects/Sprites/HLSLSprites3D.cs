@@ -67,7 +67,7 @@ namespace Utopia.Resources.Effects.Entities
         #endregion
 
         public HLSLSprites3D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration)
+            : base(device, shaderPath, VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerFrameLocal = ToDispose(new CBuffer<CBPerFrame_Struct>(device, "PerFrameLocal"));

@@ -85,6 +85,7 @@
     <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModel.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModelInstanced.cs" />
+    <Compile Include="Effects\DefaultIncludeHandler.cs" />
     <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />
@@ -139,6 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Effects\SharedFrameCB.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
