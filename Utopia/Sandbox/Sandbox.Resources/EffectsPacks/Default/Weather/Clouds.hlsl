@@ -7,15 +7,7 @@ cbuffer PerDraw
 	float Brightness;
 }
 
-cbuffer PerFrame
-{
-	matrix ViewProjection;
-	float3 SunColor;			  // Diffuse lighting color
-	float fogdist;
-	float2 BackBufferSize;
-	float2 Various;               //.x = 1 if head under water
-	float FogType;
-};
+#include <SharedFrameCB.hlsl>
 
 static const float foglength = 20;
 
@@ -60,7 +52,7 @@ PS_IN VS( VS_IN input )
 	output.Pos = float4(input.Pos.xyz, 1);
 	output.Pos = mul( output.Pos, World );
 	output.Pos = mul( output.Pos, offsetMatrix );
-	output.Pos = mul( output.Pos, ViewProjection );
+	output.Pos = mul( output.Pos, ViewProjection_focused );
 	output.Col = float4(input.Col.rgb * Brightness, input.Col.a);
 	
 	output.fogPower = clamp(((length(output.Pos.xyz) - 900) / foglength), 0, 1);

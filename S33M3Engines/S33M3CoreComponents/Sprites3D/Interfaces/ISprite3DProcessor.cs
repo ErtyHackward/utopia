@@ -17,6 +17,6 @@ namespace S33M3CoreComponents.Sprites3D.Interfaces
         void Begin();
 
         void SetData(DeviceContext context);
-        void Set2DeviceAndDraw(DeviceContext context, ICamera camera);
+        void Set2DeviceAndDraw(DeviceContext context);
     }
 }

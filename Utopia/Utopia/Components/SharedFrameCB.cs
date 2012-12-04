@@ -21,26 +21,34 @@ using Utopia.Shared.Settings;
 namespace Utopia.Components
 {
     /// <summary>
-    /// What is this?
+    /// Values that are "statics" for a single frame, these are stored inside a shadder constant buffer, and can be use by any shadder
+    /// without the need to be reuploaded.
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 112)]
+        [StructLayout(LayoutKind.Explicit, Size = 240)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
-            public Matrix ViewProjection;   //64 (4*4 float)
+            public Matrix ViewProjection_focused;   //64 (4*4 float)
             [FieldOffset(64)]
-            public Color3 SunColor;        //12 (3 float)
+            public Color3 SunColor;                 //12 (3 float)
             [FieldOffset(76)]
-            public float fogdist;           //4 (float)
+            public float fogdist;                   //4 (float)
             [FieldOffset(80)]
             public Vector2 BackBufferSize;
             [FieldOffset(88)]
             public Vector2 Various;
             [FieldOffset(96)]
+            public Matrix ViewProjection;           //64 (4*4 float)
+            [FieldOffset(160)]
             public float fogType;
+            [FieldOffset(164)]
+            public Vector3 CameraWorldPosition;
+            [FieldOffset(176)]
+            public Matrix InvertedOrientation;
         }
+        public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
         private D3DEngine _engine;
         private CameraManager<ICameraFocused> _cameraManager;
@@ -51,7 +59,6 @@ namespace Utopia.Components
         private float _animationValue = 0.0f;
         private float _animationSpeed = 0.0005f;
 
-        public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
         public SharedFrameCB(D3DEngine engine,
                              CameraManager<ICameraFocused> cameraManager,
@@ -75,13 +82,16 @@ namespace Utopia.Components
 
         public override void Draw(DeviceContext context, int index)
         {
-            CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D_focused);
+            CBPerFrame.Values.ViewProjection_focused = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D_focused);
             if (_playerManager.IsHeadInsideWater) CBPerFrame.Values.SunColor = new Color3(_skydome.SunColor.Red / 3, _skydome.SunColor.Green / 3, _skydome.SunColor.Blue);
             else CBPerFrame.Values.SunColor = _skydome.SunColor;
             CBPerFrame.Values.fogdist = ((_visualWorldParam.WorldVisibleSize.X) / 2) - 48;
             CBPerFrame.Values.BackBufferSize = _backBuffer.SolidStaggingBackBufferSize;
             CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             CBPerFrame.Values.Various.Y = _animationValue; //Asign animation Value (From 0 => 1 in loop);
+            CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
+            CBPerFrame.Values.CameraWorldPosition = _cameraManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
+            CBPerFrame.Values.InvertedOrientation = Matrix.Transpose(Matrix.RotationQuaternion(Quaternion.Invert(_cameraManager.ActiveCamera.Orientation.ValueInterp)));
 
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {

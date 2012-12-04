@@ -43,8 +43,8 @@ namespace S33M3DXEngine.Buffers
         public VertexBuffer(Device device, int vertexCount, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, string bufferName, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)            
         {                    
             _autoResizePerc = AutoResizePerc;
-            _vertexCount = vertexCount;
-            _bufferCount = _vertexCount + ((int)(_vertexCount * AutoResizePerc / 100));
+            _vertexCount = 0;
+            _bufferCount = vertexCount + ((int)(vertexCount * AutoResizePerc / 100));
             _bufferName = bufferName;
             _vertexDeclatation = vertexDeclatation;
             _primitiveTopology = primitiveTopology;

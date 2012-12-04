@@ -47,7 +47,7 @@ namespace S33M3Resources.Effects.Basics
         #endregion
 
         public HLSLScreenSpaceRect(Device device)
-            : base(device, @"Effects\Basics\ScreenSpaceRect.hlsl", VertexPosition2.VertexDeclaration)
+            : base(device, @"Effects\Basics\ScreenSpaceRect.hlsl", VertexPosition2.VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));

@@ -85,9 +85,12 @@
     <Compile Include="Effects\Basics\HLSLScreenSpaceRect.cs" />
     <Compile Include="Effects\Debug\DebugEffect.cs" />
     <Compile Include="Effects\Debug\HLSLColumnChart.cs" />
+    <Compile Include="Effects\DefaultIncludeHandler.cs" />
+    <Compile Include="Effects\Sprites\HLSLPointSprite3DBillBoard.cs" />
+    <Compile Include="Effects\Sprites\HLSLPointSprite3DImpostor.cs" />
     <Compile Include="Effects\Sprites\HLSLBlur.cs" />
     <Compile Include="Effects\Sprites\HLSLColorOverlay.cs" />
-    <Compile Include="Effects\Sprites\HLSLSprite3D.cs" />
+    <Compile Include="Effects\Sprites\HLSLPointSprite3DText.cs" />
     <Compile Include="Effects\Sprites\HLSLSprites.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionColor.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionColorTexture.cs" />
@@ -211,10 +214,13 @@
     <Content Include="Effects\Sprites\Blur.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Effects\Sprites\PointSpriteParticule.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\Sprites\PointSprite3DBillBoard.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Effects\Sprites\PointSprite3DTexCoord.hlsl">
+    <None Include="Effects\Sprites\PointSprite3DText.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Sprites\Sprites3D.hlsl">

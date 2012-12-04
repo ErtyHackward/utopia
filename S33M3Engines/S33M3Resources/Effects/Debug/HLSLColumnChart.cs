@@ -44,7 +44,7 @@ namespace S33M3Resources.Effects.Debug
         #endregion
 
         public HLSLColumnChart(Device device)
-            : base(device, @"Effects\Debug\ColumnChart.hlsl", VertexColumnChart.VertexDeclaration)
+            : base(device, @"Effects\Debug\ColumnChart.hlsl", VertexColumnChart.VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerBatch_Struct>(device, "CBPerDraw"));

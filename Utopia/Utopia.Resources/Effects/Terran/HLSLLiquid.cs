@@ -8,6 +8,7 @@ using S33M3DXEngine.VertexFormat;
 using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
+using UtopiaContent.Effects;
 
 namespace Utopia.Resources.Effects.Terran
 {
@@ -61,7 +62,7 @@ namespace Utopia.Resources.Effects.Terran
         #endregion
 
         public HLSLLiquid(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration)
+            : base(device, shaderPath, VertexDeclaration, new UtopiaIncludeHandler())
         {
 
             //Create Constant Buffers interfaces ==================================================
