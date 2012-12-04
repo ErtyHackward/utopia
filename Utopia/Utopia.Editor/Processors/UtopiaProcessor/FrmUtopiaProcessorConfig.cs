@@ -16,7 +16,7 @@ namespace Utopia.Editor
     {
         public TreeView tvBiomesList { get { return this.tvBiomeList; } }
         public PropertyGrid gpBiome { get { return this.gpBiome; } }
-        public WorldConfiguration<UtopiaProcessorParams> Configuration { get; set; }
+        public UtopiaWorldConfiguration Configuration { get; set; }
 
         public FrmUtopiaProcessorConfig()
         {
@@ -39,7 +39,7 @@ namespace Utopia.Editor
             RefreshValueWorldTypeValue();
         }
 
-        public FrmUtopiaProcessorConfig(WorldConfiguration<UtopiaProcessorParams> param)
+        public FrmUtopiaProcessorConfig(UtopiaWorldConfiguration param)
             :this()
         {
             Configuration = param;
@@ -48,7 +48,7 @@ namespace Utopia.Editor
 
         //Clear all the Biomes node items
 
-        private void LoadConfigParam(WorldConfiguration<UtopiaProcessorParams> param)
+        private void LoadConfigParam(UtopiaWorldConfiguration param)
         {
             tvBiomeList.Nodes.Clear();
 

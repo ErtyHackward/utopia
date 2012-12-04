@@ -145,7 +145,7 @@ namespace Utopia.Network
                     // skip the message if the source is our entity (because we already have added the entity)
                     if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
                     {
-                        chunk.Entities.Add((IStaticEntity)e.Message.Entity, e.Message.SourceEntityId);
+                        chunk.Entities.Add((StaticEntity)e.Message.Entity, e.Message.SourceEntityId);
                     }
 
                     break;

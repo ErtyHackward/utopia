@@ -58,6 +58,55 @@ namespace Utopia.Tests
             Trace.WriteLine(result.ToString());
 
         }
+
+        [TestMethod]
+        public void ProtoAbstractTest()
+        {
+            var model = TypeModel.Create();
+
+            var baseType = model.Add(typeof(BaseAbstract), true);
+            var subType1 = model.Add(typeof(Derived), true);
+
+            baseType.AddSubType(100, typeof(Derived));
+
+            var inst = new Derived();
+
+            inst.Name = "n1";
+            inst.NameDerived = "d1";
+            inst.Value = 55;
+
+            var ms = new MemoryStream();
+
+            model.Serialize(ms, inst);
+
+            ms.Position = 0;
+
+            var result = model.Deserialize(ms, null, typeof(Derived));
+
+            Trace.WriteLine(result.ToString());
+
+        }
+    }
+
+    public interface ITest
+    {
+        string Name { get; set; }
+    }
+
+    [ProtoContract]
+    public abstract class BaseAbstract : ITest
+    {
+        [ProtoMember(1)]
+        public string Name { get; set; }
+        [ProtoMember(2)]
+        public int Value { get; set; }
+    }
+
+    [ProtoContract]
+    public class Derived : BaseAbstract
+    {
+        [ProtoMember(1)]
+        public string NameDerived { get; set; }
     }
 
     [ProtoContract]

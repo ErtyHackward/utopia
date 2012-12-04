@@ -1,6 +1,7 @@
 using System;
 using ProtoBuf;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Interfaces;
 
@@ -30,7 +31,7 @@ namespace Utopia.Shared.Net.Messages
     [ProtoContract]
     public struct EquipmentItem
     {
-        private Entity _entity;
+        private IEntity _entity;
         private EquipmentSlotType _slot;
 
         [ProtoMember(1)]
@@ -41,13 +42,13 @@ namespace Utopia.Shared.Net.Messages
         }
 
         [ProtoMember(2)]
-        public Entity Entity
+        public IEntity Entity
         {
             get { return _entity; }
             set { _entity = value; }
         }
 
-        public EquipmentItem(EquipmentSlotType slot, Entity entity)
+        public EquipmentItem(EquipmentSlotType slot, IEntity entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
             _slot = slot;

@@ -12,20 +12,13 @@ namespace Utopia.Shared.Net.Messages
     /// </summary>
     public class NetworkMessageFactory
     {
-        public EntityFactory EntityFactory { get; set; }
-
-        public NetworkMessageFactory(EntityFactory entityFactory)
-        {
-            EntityFactory = entityFactory;
-        }
-
         /// <summary>
         /// Creates network message
         /// </summary>
         /// <param name="id"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IBinaryMessage ReadMessage(MessageTypes id, BinaryReader reader)
+        public static IBinaryMessage ReadMessage(MessageTypes id, BinaryReader reader)
         {
             var length = reader.ReadInt32();
             var bytes = reader.ReadBytes(length);

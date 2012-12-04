@@ -232,7 +232,7 @@ namespace Utopia.Server.Structs
                         IStaticEntity entity;
                         chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.DynamicId, out entity);
 
-                        _itemTaken = new ContainedSlot { Item = (IItem)entity };
+                        _itemTaken = new ContainedSlot { Item = (Item)entity };
                         return true;
                     }
                 }

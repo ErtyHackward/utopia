@@ -76,7 +76,7 @@ namespace Utopia.Shared.Entities
 
             EntityLink entity = owner.EntityState.PickedEntityLink;
             IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
-            StaticEntity entityRemoved;
+            IStaticEntity entityRemoved;
 
             //Remove the entity from chunk
             chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
