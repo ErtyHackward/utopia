@@ -12,10 +12,9 @@ using SharpDX.D3DCompiler;
 
 namespace S33M3Resources.Effects.Sprites
 {
-    public class HLSLSprite3D : HLSLShaderWrap
+    public class HLSLPointSprite3DText : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
-
         #endregion
 
         #region Resources
@@ -36,7 +35,7 @@ namespace S33M3Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLSprite3D(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
+        public HLSLPointSprite3DText(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration, includeHandler)
         {
             //Create Constant Buffers interfaces ==================================================

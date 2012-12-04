@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer PerFrameLocal
-{
-	matrix WorldViewProjection;
-	float3 CameraWorldPosition;
-	float3 LookAt;
-};
+
+#include <SharedFrameCB.hlsl>
 
 //--------------------------------------------------------------------------------------
 // Texture Samplers
@@ -61,7 +57,6 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 
 	//The billboard will face the "Player", no matter the view vector.
 	spriteNormal = Input.Position.xyz - CameraWorldPosition.xyz;
-
 	spriteNormal.y = 0.0f; //By removing Y from the vector, we assure that the rotation can only be made around XZ axis (Don't want to see the billboard rotating in the Y axis)
 	spriteNormal = normalize(spriteNormal);
 
@@ -83,7 +78,7 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 	// generate the 4 vertices to make two triangles
 	for( uint i = 0 ; i < 4 ; i++ )
 	{
-		Output.Position =  mul(float4(vert[i], 1.0f), WorldViewProjection);
+		Output.Position =  mul(float4(vert[i], 1.0f), ViewProjection);
 		Output.Color = Input.Color;
 		Output.UVW = float3( texcoordU[i], 
 							 texcoordV[i],
@@ -101,10 +96,10 @@ float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
-	
-	clip( color.a < 0.1f ? -1:1 ); //Remove the pixel if alpha < 0.1
 
-	return color;	
+	clip( color.a < 0.01f ? -1:1 ); //Remove the pixel if alpha < 0.1
+
+	return color;
 }
 
 //--------------------------------------------------------------------------------------

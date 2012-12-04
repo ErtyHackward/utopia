@@ -267,7 +267,6 @@ namespace Utopia.Entities.Managers
                 DrawEntitiesName(context);
                 return;
             }
-
         }
 
         #endregion
