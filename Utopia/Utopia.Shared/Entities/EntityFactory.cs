@@ -154,6 +154,16 @@ namespace Utopia.Shared.Entities
             rangeB.AddField(1, "Min");
             rangeB.AddField(2, "Max");
 
+            var color4 = protoTypeModel.Add(typeof(Color4), true);
+            color4.AddField(1, "Alpha");
+            color4.AddField(2, "Red");
+            color4.AddField(3, "Green");
+            color4.AddField(4, "Blue");
+
+            var boundingbox = protoTypeModel.Add(typeof(BoundingBox), true);
+            boundingbox.AddField(1, "Minimum");
+            boundingbox.AddField(2, "Maximum");
+
         }
 
         public EntityFactory(ILandscapeManager2D landscapeManager)

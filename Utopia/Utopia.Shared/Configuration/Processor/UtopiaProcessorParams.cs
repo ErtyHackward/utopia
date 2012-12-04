@@ -19,6 +19,9 @@ namespace Utopia.Shared.Configuration
     [ProtoContract]
     public class UtopiaProcessorParams : IProcessorParams
     {
+        private List<Biome> _biomes;
+        private WorldConfiguration _config;
+
         public static class DefaultConfig
         {
             public const int BasicPlain_Flat = 0;
@@ -42,21 +45,38 @@ namespace Utopia.Shared.Configuration
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;          
+            var handler = PropertyChanged;          
             if (handler != null)                                            
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));  
             }
         }
 
-        public WorldConfiguration Config { get; set; }
+        public WorldConfiguration Config
+        {
+            get { return _config; }
+            set {
+                _config = value;
+
+                foreach (var biome in Biomes)
+                {
+                    biome.Configuration = _config;
+                }
+            }
+        }
 
         #region Public Properties
         /// <summary>
         /// Holds Biomes Profiles configuration
         /// </summary>
         [ProtoMember(1)]
-        public List<Biome> Biomes { get; set; }
+        public List<Biome> Biomes
+        {
+            get { return _biomes; }
+            set { 
+                _biomes = value;
+            }
+        }
 
         [ProtoMember(2)]
         public List<LandscapeRange> BasicPlain { get; set; }
