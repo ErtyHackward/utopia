@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -9,21 +10,19 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Represents a player character (it has a toolbar)
     /// </summary>
     /// <remarks></remarks>
+    [ProtoContract]
     public sealed class PlayerCharacter : RpgCharacterEntity
     {
-        #region Public variables/properties
-
         public static float DefaultMoveSpeed = 5f;
         
-        public List<uint> Toolbar { get; private set; }
+        [ProtoMember(1)]
+        public List<uint> Toolbar { get; set; }
         
         public override ushort ClassId
         {
             get { return EntityClassId.PlayerCharacter; }
         }
-
-        #endregion
-
+        
         public PlayerCharacter()
         {
             //Define the default PlayerCharacter ToolBar
@@ -42,8 +41,6 @@ namespace Utopia.Shared.Entities.Dynamic
             ModelName = "Girl";
             Name = "Player";
         }
-
-        #region Public Methods
 
         public void ToolUse()
         {
@@ -64,26 +61,6 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-
-            Toolbar.Clear();
-            for (int i = 0; i < 10; i++)
-            {
-                Toolbar.Add(reader.ReadUInt32());
-            }
-        }
-
-        public override void Save(System.IO.BinaryWriter writer)
-        {
-            base.Save(writer);
-            for (int i = 0; i < 10; i++)
-            {
-                writer.Write(Toolbar[i]);
-            }
-        }
-
         public IItem LookupItem(uint itemId)
         {
             if (itemId==0) return null;
@@ -100,8 +77,5 @@ namespace Utopia.Shared.Entities.Dynamic
             return null;
         }
 
-       
-
-        #endregion
     }
 }

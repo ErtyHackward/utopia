@@ -521,7 +521,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
                 entity.Position = new Vector3D(chunkWorldPosition.X + x + XOffset, y + 1, chunkWorldPosition.Z + z + ZOffset);
 
-                chunk.Entities.Add((IStaticEntity)entity);
+                chunk.Entities.Add((StaticEntity)entity);
             }
         }
 

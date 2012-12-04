@@ -1,14 +1,15 @@
-﻿using S33M3CoreComponents.Maths;
+﻿using ProtoBuf;
+using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using SharpDX;
 using System;
 using System.ComponentModel;
-using System.IO;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
 {
+    [ProtoContract]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {
         public override ushort ClassId
@@ -20,11 +21,13 @@ namespace Utopia.Shared.Entities.Concrete
         /// Gets or sets item orientation
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(1)]
         public OrientedItem Orientation { get; set; }
         
         /// <summary>
         /// Gets or sets value indicating if entity can climb on this entity by the angle of 45 degree
         /// </summary>
+        [ProtoMember(2)]
         public bool IsOrientedSlope { get; set; }
         
         public OrientedBlockItem()
@@ -79,22 +82,6 @@ namespace Utopia.Shared.Entities.Concrete
             cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
 
             return true;
-        }
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // first we need to load base information
-            base.Load(reader, factory);
-            Orientation = (OrientedItem)reader.ReadByte();
-            IsOrientedSlope = reader.ReadBoolean();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            // first we need to save base information
-            base.Save(writer);
-            writer.Write((byte)Orientation);
-            writer.Write(IsOrientedSlope);
         }
         #endregion
 

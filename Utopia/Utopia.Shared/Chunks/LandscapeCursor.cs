@@ -1,4 +1,5 @@
 using System;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -277,7 +278,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
-        public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
+        public void AddEntity(StaticEntity entity, uint sourceDynamicId = 0)
         {
             Vector3I entityBlockPosition;
             //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.

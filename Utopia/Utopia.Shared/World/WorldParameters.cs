@@ -1,23 +1,24 @@
-﻿using System;
-using System.ComponentModel;
+﻿using ProtoBuf;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World
 {
     /// <summary>
     /// Base class for world generation settings, inherit it to send additional data to world processors
     /// </summary>
-    public class WorldParameters : IBinaryStorable
+    [ProtoContract]
+    public class WorldParameters
     {
         /// <summary>
         /// The World Name
         /// </summary>
+        [ProtoMember(1)]
         public string WorldName { get; set; }
 
+        [ProtoMember(2)]
         public string SeedName { get; set; }
 
+        [ProtoMember(3)]
         public WorldConfiguration Configuration { get; set; }
 
         /// <summary>
@@ -35,29 +36,6 @@ namespace Utopia.Shared.World
         {
             WorldName = null;
             SeedName = null;
-        }
-
-        public void Save(System.IO.BinaryWriter writer)
-        {
-            writer.Write(WorldName);
-            writer.Write(SeedName);
-            Configuration.Save(writer);
-        }
-
-        public void Load(System.IO.BinaryReader reader)
-        {
-            WorldName = reader.ReadString();
-            SeedName = reader.ReadString();
-
-            //Buffer the position
-            long pos = reader.BaseStream.Position;
-            //Read the Configuration Type
-            string processorType = "Utopia.Shared.Configuration." + ((WorldConfiguration.WorldProcessors)reader.ReadByte()).ToString() + "ProcessorParams, Utopia.Shared";
-            Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-            Configuration = (WorldConfiguration)Activator.CreateInstance(type);
-            reader.BaseStream.Position = pos;
-
-            Configuration.Load(reader);
         }
     }
 }

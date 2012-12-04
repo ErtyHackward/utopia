@@ -1,5 +1,4 @@
-using System.IO;
-using Utopia.Shared.Entities;
+using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -10,94 +9,53 @@ namespace Utopia.Shared.Net.Messages
     /// <summary>
     /// Defines a message that informs server about client tool using
     /// </summary>
+    [ProtoContract]
     public struct EntityUseMessage : IBinaryMessage
     {
-        private Vector3I _pickedBlockPosition;
-        private Vector3I _newBlockPosition;
-        private Vector3D _pickedEntityPosition;
-        private EntityLink _pickedEntityLink;
-        private Vector3 _pickedBlockFaceOffset;
-        private uint _toolId;
-        private uint _entityId;
-        private bool _isBlockPicked;
-        private bool _isEntityPicked;
-
-        private int _token;
-
         /// <summary>
         /// Identification number of entity that performs use operation (player or NPC)
         /// </summary>
-        public uint DynamicEntityId
-        {
-            get { return _entityId; }
-            set { _entityId = value; }
-        }
+        [ProtoMember(1)]
+        public uint DynamicEntityId { get; set; }
 
-        public Vector3I PickedBlockPosition
-        {
-            get { return _pickedBlockPosition; }
-            set { _pickedBlockPosition = value; }
-        }
-        
-        public Vector3I NewBlockPosition
-        {
-            get { return _newBlockPosition; }
-            set { _newBlockPosition = value; }
-        }
+        [ProtoMember(2)]
+        public Vector3I PickedBlockPosition { get; set; }
+
+        [ProtoMember(3)]
+        public Vector3I NewBlockPosition { get; set; }
 
         /// <summary>
         /// Gets or sets Tool Entity Id that performs action
         /// </summary>
-        public uint ToolId
-        {
-            get { return _toolId; }
-            set { _toolId = value; }
-        }
-        
+        [ProtoMember(4)]
+        public uint ToolId { get; set; }
+
         /// <summary>
         /// Picked entity position (optional)
         /// </summary>
-        public Vector3D PickedEntityPosition
-        {
-            get { return _pickedEntityPosition; }
-            set { _pickedEntityPosition = value; }
-        }
+        [ProtoMember(5)]
+        public Vector3D PickedEntityPosition { get; set; }
 
         /// <summary>
         /// Picked entity link (optional)
         /// </summary>
-        public EntityLink PickedEntityLink
-        {
-            get { return _pickedEntityLink; }
-            set { _pickedEntityLink = value; }
-        }
+        [ProtoMember(6)]
+        public EntityLink PickedEntityLink { get; set; }
 
-        
-        public bool IsBlockPicked
-        {
-            get { return _isBlockPicked; }
-            set { _isBlockPicked = value; }
-        }
+        [ProtoMember(7)]
+        public bool IsBlockPicked { get; set; }
 
-        public bool IsEntityPicked
-        {
-            get { return _isEntityPicked; }
-            set { _isEntityPicked = value; }
-        }
+        [ProtoMember(8)]
+        public bool IsEntityPicked { get; set; }
 
-        public Vector3 PickedBlockFaceOffset
-        {
-            get { return _pickedBlockFaceOffset; }
-            set { _pickedBlockFaceOffset = value; }
-        }
+        [ProtoMember(9)]
+        public Vector3 PickedBlockFaceOffset { get; set; }
+
         /// <summary>
         /// Identification token of the use operation
         /// </summary>
-        public int Token
-        {
-            get { return _token; }
-            set { _token = value; }
-        }
+        [ProtoMember(10)]
+        public int Token { get; set; }
 
         /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)
@@ -105,47 +63,6 @@ namespace Utopia.Shared.Net.Messages
         public byte MessageId
         {
             get { return (byte)MessageTypes.EntityUse; }
-        }
-        
-        public static EntityUseMessage Read(BinaryReader reader)
-        {
-            EntityUseMessage msg;
-
-            msg._entityId = reader.ReadUInt32();
-            msg._pickedBlockPosition = reader.ReadVector3I();
-            msg._newBlockPosition = reader.ReadVector3I();
-            msg._pickedEntityPosition = new Vector3D();
-            msg._pickedEntityPosition.X = reader.ReadDouble();
-            msg._pickedEntityPosition.Y = reader.ReadDouble();
-            msg._pickedEntityPosition.Z = reader.ReadDouble();
-            msg._toolId = reader.ReadUInt32();
-            msg._isBlockPicked = reader.ReadBoolean();
-            msg._isEntityPicked = reader.ReadBoolean();
-            msg._pickedEntityLink = reader.ReadEntityLink();
-            msg._token = reader.ReadInt32();
-            msg._pickedBlockFaceOffset = reader.ReadVector3();
-
-            return msg;
-        }
-
-        /// <summary>
-        /// Writes all necessary instance members
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Write(BinaryWriter writer)
-        {
-            writer.Write(_entityId);
-            writer.Write(_pickedBlockPosition);
-            writer.Write(_newBlockPosition);
-            writer.Write(_pickedEntityPosition.X);
-            writer.Write(_pickedEntityPosition.Y);
-            writer.Write(_pickedEntityPosition.Z);
-            writer.Write(_toolId);
-            writer.Write(_isBlockPicked);
-            writer.Write(_isEntityPicked);
-            writer.Write(_pickedEntityLink);
-            writer.Write(_token);
-            writer.Write(_pickedBlockFaceOffset);
         }
     }
 }

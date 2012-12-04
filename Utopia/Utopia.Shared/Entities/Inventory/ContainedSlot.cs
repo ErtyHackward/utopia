@@ -1,4 +1,4 @@
-using System.IO;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
 
@@ -7,6 +7,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents a contained slot that can be stored into the inventory grid. 
     /// </summary>
+    [ProtoContract]
     public class ContainedSlot : Slot
     {
         public ContainedSlot()
@@ -23,6 +24,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Gets or sets slot position in container grid
         /// </summary>
+        [ProtoMember(1)]
         public Vector2I GridPosition { get; set; }
 
         /// <summary>
@@ -46,26 +48,6 @@ namespace Utopia.Shared.Entities.Inventory
             if (item != null && Item != null && item.StackType == Item.StackType && itemsCount + ItemsCount <= Item.MaxStackSize)
                 return true;
             return false;
-        }
-
-        public override void LoadSlot(BinaryReader reader, EntityFactory factory)
-        {
-            base.LoadSlot(reader, factory);
-
-            if (!IsEmpty)
-            {
-                GridPosition = reader.ReadVector2I();
-            }
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            base.Save(writer);
-
-            if (!IsEmpty)
-            {
-                writer.Write(GridPosition);
-            }
         }
 
         public override object Clone()

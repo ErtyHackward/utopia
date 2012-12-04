@@ -2,24 +2,28 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using ProtoBuf;
 
 namespace Utopia.Shared.Structs
 {
     /// <summary>
     /// Represents a 16 byte md5 hash
     /// </summary>
+    [ProtoContract]
     public class Md5Hash : IEquatable<Md5Hash>
     {
         private static readonly Md5Hash _empty = new Md5Hash(new byte[16]);
 
-        private readonly byte[] _bytes;
-        
+        private byte[] _bytes;
+
         /// <summary>
         /// Gets hash bytes
         /// </summary>
+        [ProtoMember(1)]
         public byte[] Bytes
         {
             get { return _bytes; }
+            set { _bytes = value; }
         }
 
         /// <summary>

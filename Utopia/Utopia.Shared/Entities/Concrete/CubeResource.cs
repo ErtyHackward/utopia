@@ -1,16 +1,17 @@
+using ProtoBuf;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 using System;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class CubeResource : StaticEntity, ITool, IWorldIntercatingEntity
+    [ProtoContract]
+    public class CubeResource : Item, ITool, IWorldIntercatingEntity
     {
         /// <summary>
         /// Gets landscape manager, this field is injected
@@ -22,19 +23,9 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         public EntityFactory entityFactory { get; set; }
 
+        [ProtoMember(1)]
         public byte CubeId { get; private set; }
     
-        public EquipmentSlotType AllowedSlots
-        {
-            get { return EquipmentSlotType.Hand; }
-            set { throw new NotSupportedException(); }
-        }
-
-        public int MaxStackSize
-        {
-            get { return 999; }
-        }
-
         public override ushort ClassId
         {
             get { return EntityClassId.CubeResource; }
@@ -44,31 +35,6 @@ namespace Utopia.Shared.Entities.Concrete
 
         public AbstractChunk ParentChunk { get; set; }
         
-        public string StackType
-        {
-            get
-            {
-                return "CubeResource" + CubeId; //effectively this.getType().Name + cubeid , so blockadder1 blockadder2 etc ...
-            }
-        }
-        
-        public string Description
-        {
-            get { return "A world Cube"; }
-        }
-
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-            CubeId = reader.ReadByte();
-        }
-
-        public override void Save(System.IO.BinaryWriter writer)
-        {
-            base.Save(writer);
-            writer.Write(CubeId);
-        }
-
         public void SetCube(byte cubeId, string cubeName)
         {
             CubeId = cubeId;

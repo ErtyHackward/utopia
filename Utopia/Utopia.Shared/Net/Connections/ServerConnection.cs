@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
@@ -132,7 +133,7 @@ namespace Utopia.Shared.Net.Connections
                             }
 
                             Writer.Write(msg.MessageId);
-                            msg.Write(Writer);
+                            Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian);
                         }
 
                         Writer.Flush();
@@ -169,7 +170,7 @@ namespace Utopia.Shared.Net.Connections
                     if (socket.Connected)
                     {
                         Writer.Write(msg.MessageId);
-                        msg.Write(Writer);
+                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian);
                         Writer.Flush();
                     }
                     else

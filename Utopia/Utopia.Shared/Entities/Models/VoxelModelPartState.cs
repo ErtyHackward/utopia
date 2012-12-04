@@ -1,4 +1,5 @@
 using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools.BinarySerializer;
@@ -8,6 +9,7 @@ namespace Utopia.Shared.Entities.Models
     /// <summary>
     /// Contains a layout of a single part of the model and a current active frame
     /// </summary>
+    [ProtoContract]
     public class VoxelModelPartState : IBinaryStorable
     {
         private Vector3 _scale;
@@ -21,11 +23,13 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Current active frame, set byte.MaxValue to hide
         /// </summary>
+        [ProtoMember(1)]
         public byte ActiveFrame;
         
         /// <summary>
         /// Frame scale
         /// </summary>
+        [ProtoMember(2)]
         public Vector3 Scale
         {
             get { return _scale; }
@@ -39,6 +43,7 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Frame rotation
         /// </summary>
+        [ProtoMember(3)]
         public Quaternion Rotation
         {
             get { return _rotation; }
@@ -52,6 +57,7 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Frame rotation offset, Its the location from where the rotation is applied
         /// </summary>
+        [ProtoMember(4)]
         public Vector3 RotationOffset
         {
             get { return _rotationOffset; }
@@ -65,6 +71,7 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Frame translation
         /// </summary>
+        [ProtoMember(5)]
         public Vector3 Translation
         {
             get { return _translation; }
@@ -77,6 +84,7 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Optional palm tranformation. Specifies the location of the tool equipped. Only for arm
         /// </summary>
+        [ProtoMember(6)]
         public Matrix? PalmTransform;
 
         /// <summary>
