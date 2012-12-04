@@ -13,6 +13,11 @@ namespace Utopia.Shared.Configuration
     {
         private int _worldHeight;
 
+        public override int ConfigType
+        {
+            get { return 1; }
+        }
+
         /// <summary>
         /// Holds parameters for Utopia processor
         /// </summary>
@@ -32,7 +37,7 @@ namespace Utopia.Shared.Configuration
 
                 if (value >= 128 && value <= 256)
                 {
-                    if (ProcessorParam.WorldGeneratedHeight <= value) 
+                    if (ProcessorParam != null && ProcessorParam.WorldGeneratedHeight <= value) 
                         return;
                     
                     _worldHeight = value;
@@ -54,6 +59,7 @@ namespace Utopia.Shared.Configuration
 
         protected override void CreateDefaultCubeProfiles()
         {
+            CubeProfiles = new CubeProfile[255];
             int id = 0;
             //Air Block
             CubeProfiles[id] = (new CubeProfile()

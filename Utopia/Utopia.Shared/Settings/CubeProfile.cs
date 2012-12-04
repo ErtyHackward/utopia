@@ -1,49 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ProtoBuf;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs;
 using System.ComponentModel;
-using System.IO;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Settings
 {
-    [Serializable]
-    public class CubeProfile : IBinaryStorable
+    [ProtoContract]
+    public class CubeProfile
     {
         [Browsable(false)]
+        [ProtoMember(1)]
         public bool IsSystemCube { get; set; }
+
         [Description("The cube's name"), Category("General")]
+        [ProtoMember(2)]
         public string Name { get; set; }
+
         [Description("The cube's description"), Category("General")]
+        [ProtoMember(3)]
         public string Description { get; set; }
+
         [Browsable(false), Description("Cube internal ID"), Category("General")]
+        [ProtoMember(4)]
         public byte Id { get; set; }
+
         [Description("Can be picked-up by player"), Category("General")]
+        [ProtoMember(5)]
         public bool IsPickable { get; set; }
+
         [Browsable(false)]
         public bool IsBlockingLight { get { return LightAbsorbed == 255; } }
+        
         [Description("Blocking light block"), Category("General")]
+        [ProtoMember(7)]
         public byte LightAbsorbed { get; set; }
+
         [Description("Is partially or completly transparent ?"), Category("General")]
+        [ProtoMember(8)]
         public bool IsSeeThrough { get; set; }
+
         [Description("Is blocking water propagation ?"), Category("General")]
+        [ProtoMember(9)]
         public bool IsBlockingWater { get; set; }
+
         [Description("Is subject to collision detection"), Category("General")]
+        [ProtoMember(10)]
         public bool IsSolidToEntity { get; set; }
+        
         [Browsable(false), Description("Can this block contain TAG informations = Metadata information"), Category("Technical")]
+        [ProtoMember(11)]
         public bool IsTaggable { get; set; }
+
         [Description("Is Y offseted block, to create not full block"), Category("General")]
+        [ProtoMember(12)]
         public double YBlockOffset { get; set; }
+
         [Description("Cube Familly"), Category("General")]
+        [ProtoMember(13)]
         public enuCubeFamilly CubeFamilly { get; set; }
+
         [Description("Value indicating if the block up and down faces are shorter"), Category("General")]
+        [ProtoMember(14)]
         public byte SideOffsetMultiplier { get; set; }
 
 
+        [ProtoMember(15)]
         public ByteColor EmissiveColor;
+
         [Description("Is the block emitting light"), Category("Light Source Color")]
+        [ProtoMember(16)]
         public bool IsEmissiveColorLightSource { get; set; }
+
         [Description("A value for the emmited color"), Category("Light Source Color")]
         public byte EmissiveColorA { get { return EmissiveColor.A; } set { EmissiveColor.A = value; } }
         [Description("R value for the emmited color"), Category("Light Source Color")]
@@ -53,13 +81,19 @@ namespace Utopia.Shared.Settings
         [Description("B value for the emmited color"), Category("Light Source Color")]
         public byte EmissiveColorB { get { return EmissiveColor.B; } set { EmissiveColor.B = value; } }
 
+        
+
         [Description("Low friction value will make the move on it easier = faster"), Category("Physics")]
+        [ProtoMember(17)]
         public float Friction { get; set; }
+
         [Description("When stop moving on the block, will the player continue to move"), Category("Physics")]
+        [ProtoMember(18)]
         public float SlidingValue { get; set; }
 
         private byte _biomeColorArrayTexture = 255;
         [Browsable(false), Description("Is the block subject to biome color mapping"), Category("Biome color")]
+        [ProtoMember(19)]
         public byte BiomeColorArrayTexture
         {
             get { return _biomeColorArrayTexture; }
@@ -67,6 +101,7 @@ namespace Utopia.Shared.Settings
         }
 
         //Texture id foreach face
+        [ProtoMember(20)]
         public byte[] Textures = new byte[6];
         [Description("Front texture Id"), Category("Textures")]
         public byte Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }
@@ -82,81 +117,10 @@ namespace Utopia.Shared.Settings
         public byte Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
 
         private List<SoundSource> _walkingOverSound = new List<SoundSource>();
+
         [Description("Sound played when entity walk over a this cube"), Category("Sound")]
+        [ProtoMember(21)]
         public List<SoundSource> WalkingOverSound { get { return _walkingOverSound; } set { _walkingOverSound = value; } }
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(IsSystemCube);
-            writer.Write(Name);
-            writer.Write(Id);
-            writer.Write(IsPickable);
-            writer.Write(LightAbsorbed);
-            writer.Write(IsSeeThrough);
-            writer.Write(IsBlockingWater);
-            writer.Write(IsSolidToEntity);
-            writer.Write(IsTaggable);
-            writer.Write(YBlockOffset);
-            writer.Write((byte)CubeFamilly);
-            writer.Write(SideOffsetMultiplier);
-            writer.Write(IsEmissiveColorLightSource);
-            writer.Write(EmissiveColor.R);
-            writer.Write(EmissiveColor.G);
-            writer.Write(EmissiveColor.B);
-            writer.Write(EmissiveColor.A);
-            writer.Write(Friction);
-            writer.Write(SlidingValue);
-            writer.Write(BiomeColorArrayTexture);
-            writer.Write(Textures[0]);
-            writer.Write(Textures[1]);
-            writer.Write(Textures[2]);
-            writer.Write(Textures[3]);
-            writer.Write(Textures[4]);
-            writer.Write(Textures[5]);
-
-            writer.SerializeArray(WalkingOverSound);
-        }
-
-        /// <summary>
-        /// Loads current object from binary form
-        /// </summary>
-        /// <param name="reader"></param>
-        public void Load(BinaryReader reader)
-        {
-            IsSystemCube = reader.ReadBoolean();
-            Name = reader.ReadString();
-            Id = reader.ReadByte();
-            IsPickable = reader.ReadBoolean();
-            LightAbsorbed = reader.ReadByte();
-            IsSeeThrough = reader.ReadBoolean();
-            IsBlockingWater = reader.ReadBoolean();
-            IsSolidToEntity = reader.ReadBoolean();
-            IsTaggable = reader.ReadBoolean();
-            YBlockOffset = reader.ReadDouble();
-            CubeFamilly = (enuCubeFamilly)reader.ReadByte();
-            SideOffsetMultiplier = reader.ReadByte();
-            IsEmissiveColorLightSource = reader.ReadBoolean();
-            EmissiveColor = new ByteColor();
-            EmissiveColor.R = reader.ReadByte();
-            EmissiveColor.G = reader.ReadByte();
-            EmissiveColor.B = reader.ReadByte();
-            EmissiveColor.A = reader.ReadByte();
-            Friction = reader.ReadSingle();
-            SlidingValue = reader.ReadSingle();
-            BiomeColorArrayTexture = reader.ReadByte();
-            Textures[0] = reader.ReadByte();
-            Textures[1] = reader.ReadByte();
-            Textures[2] = reader.ReadByte();
-            Textures[3] = reader.ReadByte();
-            Textures[4] = reader.ReadByte();
-            Textures[5] = reader.ReadByte();
-
-            reader.DeserializeArray(out _walkingOverSound);
-        }
 
         public override string ToString()
         {

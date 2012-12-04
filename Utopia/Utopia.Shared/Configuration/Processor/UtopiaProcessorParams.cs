@@ -7,7 +7,6 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
-using Utopia.Shared.Tools.BinarySerializer;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
@@ -18,7 +17,7 @@ namespace Utopia.Shared.Configuration
     /// Class that will hold the various parameters needed for landscape generation by the processor Utopia
     /// </summary>
     [ProtoContract]
-    public class UtopiaProcessorParams : IBinaryStorable, IProcessorParams
+    public class UtopiaProcessorParams : IProcessorParams
     {
         public static class DefaultConfig
         {
@@ -52,56 +51,75 @@ namespace Utopia.Shared.Configuration
 
         public WorldConfiguration Config { get; set; }
 
-        // TODO: implement protobuf save/load
-        [ProtoMember(1)]
-        public byte[] SerializedBytes
-        {
-            get
-            {
-                var ms = new MemoryStream();
-                var writer = new BinaryWriter(ms);
-                Save(writer);
-                return ms.GetBuffer();
-            }
-            set
-            {
-                var ms = new MemoryStream(value);
-                var reader = new BinaryReader(ms);
-                Load(reader);
-            }
-        }
-
         #region Public Properties
         /// <summary>
         /// Holds Biomes Profiles configuration
         /// </summary>
+        [ProtoMember(1)]
         public List<Biome> Biomes { get; set; }
 
+        [ProtoMember(2)]
         public List<LandscapeRange> BasicPlain { get; set; }
+
+        [ProtoMember(3)]
         public List<LandscapeRange> BasicMidland { get; set; }
+
+        [ProtoMember(4)]
         public List<LandscapeRange> BasicMontain { get; set; }
+
+        [ProtoMember(5)]
         public List<LandscapeRange> BasicOcean { get; set; }
+
+        [ProtoMember(6)]
         public List<LandscapeRange> Ground { get; set; }
+
+        [ProtoMember(7)]
         public List<LandscapeRange> Ocean { get; set; }
+
+        [ProtoMember(8)]
         public List<LandscapeRange> World { get; set; }
+
+        [ProtoMember(9)]
         public enuWorldType WorldType { get; set; }
 
+        [ProtoMember(10)]
         public int WorldGeneratedHeight { get; set; }
+
+        [ProtoMember(11)]
         public int WaterLevel  { get; set; }
 
-        public double PlainCtrlFrequency { get; set; }
-        public int PlainCtrlOctave { get; set; }
-        public double GroundCtrlFrequency { get; set; }
-        public int GroundCtrlOctave { get; set; }
-        public double WorldCtrlFrequency  { get; set; }
-        public int WorldCtrlOctave { get; set; }
-        public double IslandCtrlSize { get; set; }
-
+        [ProtoMember(12)]
         public double TempCtrlFrequency { get; set; }
+
+        [ProtoMember(13)]
         public int TempCtrlOctave { get; set; }
 
+        [ProtoMember(14)]
         public double MoistureCtrlFrequency { get; set; }
+
+        [ProtoMember(15)]
         public int MoistureCtrlOctave { get; set; }
+
+        [ProtoMember(16)]
+        public double PlainCtrlFrequency { get; set; }
+
+        [ProtoMember(17)]
+        public int PlainCtrlOctave { get; set; }
+
+        [ProtoMember(18)]
+        public double GroundCtrlFrequency { get; set; }
+
+        [ProtoMember(19)]
+        public int GroundCtrlOctave { get; set; }
+
+        [ProtoMember(20)]
+        public double WorldCtrlFrequency { get; set; }
+
+        [ProtoMember(21)]
+        public int WorldCtrlOctave { get; set; }
+
+        [ProtoMember(22)]
+        public double IslandCtrlSize { get; set; }
 
         #endregion
 
@@ -760,174 +778,6 @@ namespace Utopia.Shared.Configuration
         }
 
         #endregion
-
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(Biomes.Count);
-            foreach (var biome in Biomes)
-            {
-                biome.Save(writer);
-            }
-
-            writer.Write(BasicPlain.Count);
-            for (int i = 0; i < BasicPlain.Count; i++)
-            {
-                BasicPlain[i].Save(writer);
-            }
-
-            writer.Write(BasicMidland.Count);
-            for (int i = 0; i < BasicMidland.Count; i++)
-            {
-                BasicMidland[i].Save(writer);
-            }
-
-            writer.Write(BasicMontain.Count);
-            for (int i = 0; i < BasicMontain.Count; i++)
-            {
-                BasicMontain[i].Save(writer);
-            }
-
-            writer.Write(BasicOcean.Count);
-            for (int i = 0; i < BasicOcean.Count; i++)
-            {
-                BasicOcean[i].Save(writer);
-            }
-
-            writer.Write(Ground.Count);
-            for (int i = 0; i < Ground.Count; i++)
-            {
-                Ground[i].Save(writer);
-            }
-
-            writer.Write(Ocean.Count);
-            for (int i = 0; i < Ocean.Count; i++)
-            {
-                Ocean[i].Save(writer);
-            }
-
-            writer.Write(World.Count);
-            for (int i = 0; i < World.Count; i++)
-            {
-                World[i].Save(writer);
-            }
-
-            writer.Write((int)WorldType);
-
-            writer.Write(WorldGeneratedHeight);
-            writer.Write(WaterLevel);
-
-            writer.Write(TempCtrlFrequency);
-            writer.Write(TempCtrlOctave);
-
-            writer.Write(MoistureCtrlFrequency);
-            writer.Write(MoistureCtrlOctave);
-
-            writer.Write(PlainCtrlFrequency);
-            writer.Write(PlainCtrlOctave);
-
-            writer.Write(GroundCtrlFrequency);
-            writer.Write(GroundCtrlOctave);
-
-            writer.Write(WorldCtrlFrequency);
-            writer.Write(WorldCtrlOctave);
-
-            writer.Write(IslandCtrlSize);
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            ClearAllinternalCollections();
-            LandscapeRange landscapeRange;
-            int count;
-
-            count = reader.ReadInt32();
-            for (var i = 0; i < count; i++)
-            {
-                var biome = new Biome(Config);
-                biome.Load(reader);
-                Biomes.Add(biome);
-            }
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                BasicPlain.Add(landscapeRange);
-            }
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                BasicMidland.Add(landscapeRange);
-            }
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                BasicMontain.Add(landscapeRange);
-            }
-
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                BasicOcean.Add(landscapeRange);
-            }
-
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                Ground.Add(landscapeRange);
-            }
-
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                Ocean.Add(landscapeRange);
-            }
-
-            count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                landscapeRange = new LandscapeRange();
-                landscapeRange.Load(reader);
-                World.Add(landscapeRange);
-            }
-            WorldType = (enuWorldType)reader.ReadInt32();
-
-            WorldGeneratedHeight = reader.ReadInt32();
-            WaterLevel = reader.ReadInt32();
-
-            TempCtrlFrequency = reader.ReadDouble();
-            TempCtrlOctave = reader.ReadInt32();
-
-            MoistureCtrlFrequency = reader.ReadDouble();
-            MoistureCtrlOctave = reader.ReadInt32();
-
-            PlainCtrlFrequency = reader.ReadDouble();
-            PlainCtrlOctave = reader.ReadInt32();
-
-            GroundCtrlFrequency = reader.ReadDouble();
-            GroundCtrlOctave = reader.ReadInt32();
-
-            WorldCtrlFrequency = reader.ReadDouble();
-            WorldCtrlOctave = reader.ReadInt32();
-
-            IslandCtrlSize = reader.ReadDouble();
-        }
 
         //Helper inner class, to quickly get the corresponding static cube ID (These cannot be modified by users), they are "system" blocks
         public static class CubeId

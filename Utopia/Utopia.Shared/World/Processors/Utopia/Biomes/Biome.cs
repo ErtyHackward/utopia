@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Structs;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.World.Processors.Utopia.LandformFct;
 using S33M3CoreComponents.Maths;
@@ -10,15 +8,13 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
-using System.IO;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public partial class Biome : IBinaryStorable
+    [ProtoContract]
+    public partial class Biome
     {
         #region Private Variables
         //Chunk Population elements
@@ -42,19 +38,25 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         #endregion
 
         #region Public Properties
+        [Category("General")]
+        [ProtoMember(1)]
+        public string Name { get; set; }
+
         [Browsable(false)]
+        [ProtoMember(2)]
         public byte SurfaceCube { get; set; }
 
         [Browsable(false)]
+        [ProtoMember(3)]
         public byte UnderSurfaceCube { get; set; }
 
         [Browsable(false)]
+        [ProtoMember(4)]
         public byte GroundCube { get; set; }
-
-        [Category("General")]
-        public string Name { get; set; }
+        
 
         [Description("Under surface layer size"), Category("Composition")]
+        [ProtoMember(5)]
         public RangeI UnderSurfaceLayers
         {
             get { return _underSurfaceLayers; }
@@ -62,6 +64,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Mineral veins spawning configuration"), Category("Population")]
+        [ProtoMember(6)]
         public List<CubeVein> CubeVeins
         {
             get { return _cubeVeins; }
@@ -69,6 +72,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Entities spawning configuration"), Category("Population")]
+        [ProtoMember(7)]
         public List<BiomeEntity> BiomeEntities
         {
             get { return _biomeEntities; }
@@ -76,6 +80,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Biome linked ambient music"), Category("Sound")]
+        [ProtoMember(8)]
         public List<BiomeSoundSource> AmbientSound
         {
             get { return _ambientSound; }
@@ -83,6 +88,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Cavern spawning configuration"), Category("Population")]
+        [ProtoMember(9)]
         public List<Cavern> Caverns
         {
             get { return _caverns; }
@@ -90,6 +96,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Tree spawning configuration"), Category("Population")]
+        [ProtoMember(10)]
         public BiomeTrees BiomeTrees
         {
             get { return _biomeTrees; }
@@ -97,6 +104,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("LandForm falling inside this biome"), Category("Filter")]
+        [ProtoMember(11)]
         public List<enuLandFormType> LandFormFilters
         {
             get { return _landFormFilters; }
@@ -104,6 +112,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Temperature range [0.00 to 1.00] inside this biome"), Category("Filter")]
+        [ProtoMember(12)]
         public RangeD TemperatureFilter
         {
             get { return _temperatureFilter; }
@@ -111,12 +120,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         [Description("Moisture range [0.00 to 1.00] inside this biome"), Category("Filter")]
+        [ProtoMember(13)]
         public RangeD MoistureFilter
         {
             get { return _moistureFilter; }
             set { _moistureFilter = value; }
         }
-
+        
+        
         #endregion
 
         public Biome(WorldConfiguration config)

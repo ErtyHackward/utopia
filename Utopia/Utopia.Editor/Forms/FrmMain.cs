@@ -156,6 +156,7 @@ namespace Utopia.Editor.Forms
                 catch (Exception x)
                 {
                     MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    throw;
                 }
             }
         }
@@ -312,6 +313,7 @@ namespace Utopia.Editor.Forms
             catch (Exception x)
             {
                 MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
             }
         }
 

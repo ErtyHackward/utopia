@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using ProtoBuf;
+using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
@@ -28,7 +28,13 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         private const int RealmFormat = 1;
 
+        private const string FormatMagic = "s33m3&Erty Hackward";
+
+
         #region Public Properties
+
+        public abstract int ConfigType { get; }
+
         public readonly EntityFactory Factory;
 
         /// <summary>
@@ -121,7 +127,7 @@ namespace Utopia.Shared.Configuration
 
         #endregion
 
-        public WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
+        protected WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
         {
             if (factory == null) factory = new EntityFactory(null);
             if (withHelperAssignation) EditorConfigHelper.Config = this;
@@ -141,27 +147,37 @@ namespace Utopia.Shared.Configuration
         {
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
+                var writer = new BinaryWriter(fs);
+                writer.Write(FormatMagic);
+                writer.Write(ConfigType);
+
                 Serializer.Serialize(fs, this);
             }
         }
         
         public static WorldConfiguration LoadFromFile(string path, EntityFactory factory = null, bool withHelperAssignation = false)
         {
-            string processorType;
-            //Read the Generic type of the saved file.
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
                 var reader = new BinaryReader(fs);
-                processorType = "Utopia.Shared.Configuration." + ((WorldProcessors)reader.ReadByte()).ToString() + "ProcessorParams, Utopia.Shared";
-            }
 
-            //Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-            //WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, withHelperAssignation);
+                if (reader.ReadString() != FormatMagic)
+                {
+                    throw new InvalidDataException("Realm file is in wrong format");
+                }
 
-            using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
-            {
-                return Serializer.Deserialize<WorldConfiguration>(fs);
-                
+                var typeId = reader.ReadInt32();
+                Type type;
+                switch (typeId)
+                {
+                    case 1:
+                        type = typeof(UtopiaWorldConfiguration);
+                        break;
+                    default:
+                        throw new FormatException("unable to load such configuration type, update your game");
+                }
+
+                return (WorldConfiguration)RuntimeTypeModel.Default.Deserialize(fs, null, type);
             }
         }
         #endregion
@@ -230,7 +246,7 @@ namespace Utopia.Shared.Configuration
         private void InitCollections()
         {
             BluePrints = new Dictionary<ushort, Entity>();
-            CubeProfiles = new CubeProfile[255];
+            CubeProfiles = new CubeProfile[0];
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
         }
