@@ -13,23 +13,20 @@ SamplerState SamplerDiffuse;
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
-	float4 Color				: COLOR;
-	float2 Size					: SIZE;       //XY : Size, Z = Geometry Type (0 = Position Facing Billboard, 1 = View Facing Billboard)
+	float3 Position				: POSITION;   //XYZ world location
+	uint4  Info					: INFO;		  //X = Particule texture index, Y = Particule size
 };
 
 //--------------------------------------------------------------------------------------
 //Geometry shader Input
 struct GSInput {
-	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
-	float4 Color				: COLOR;
-	float2 Size					: SIZE;       //XY : Size, Z = Geometry Type (0 = Position Facing Billboard, 1 = View Facing Billboard)
+	float3 Position				: POSITION;   //XYZ world location
+	uint4  Info					: INFO;		  //X = Particule texture index, Y = Particule size
 };
 
 //Pixel shader Input
 struct PSInput {
 	float4 Position	 			: SV_POSITION;
-	float4 Color				: COLOR;
 	float3 UVW					: TEXCOORD0;
 };
 
@@ -73,18 +70,16 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 		billboardPosition = mul(billboardPosition, InvertedOrientation);
 
 		//Scale to billboard local size
-		billboardPosition.xy *= Input.Size; 
-
-		billboardPosition.xyz += Input.Position.xyz; 
+		billboardPosition.xy *= Input.Info.y; 
+		billboardPosition.xyz += Input.Position.xyz;  //Already in world position
 
 		//Rotating the billboard to make it face the camera, and project it against the Screen
 		float4 WorldPosition = mul(billboardPosition, ViewProjection);
 
 		Output.Position = WorldPosition;
-		Output.Color = Input.Color;
 		Output.UVW = float3( texcoord[i].x, 
 							 texcoord[i].y,
-							 Input.Position.w);
+							 Input.Info.x);
 
 		//Transform point in screen space
 		TriStream.Append( Output );
