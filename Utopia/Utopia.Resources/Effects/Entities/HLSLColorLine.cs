@@ -13,7 +13,7 @@ namespace UtopiaContent.Effects.Entities
 {
     public class HLSLColorLine : HLSLShaderWrap
     {
-                #region Define Constant Buffer Structs !
+        #region Define Constant Buffer Structs !
         // follow the packing rules from here:
         // http://msdn.microsoft.com/en-us/library/bb509632(VS.85).aspx
         //
@@ -49,7 +49,7 @@ namespace UtopiaContent.Effects.Entities
         #endregion
 
         public HLSLColorLine(Device engine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(engine, shaderPath, VertexDeclaration)
+            : base(engine, shaderPath, VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = new CBuffer<CBPerDrawStructure>(engine, "PerDraw");

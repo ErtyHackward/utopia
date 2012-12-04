@@ -59,7 +59,7 @@ namespace S33M3Resources.Effects.Sprites
         }
 
         public HLSLSprites2(Device device, string shaderFilePath)
-            : base(device, shaderFilePath, VertexSprite2.VertexDeclaration)
+            : base(device, shaderFilePath, VertexSprite2.VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));

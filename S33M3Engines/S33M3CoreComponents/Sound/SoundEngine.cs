@@ -431,7 +431,7 @@ namespace S33M3CoreComponents.Sound
         //Voice end sound reading call back
         private void Voice_BufferEnd(IntPtr obj)
         {
-            _syncro.Set();
+            if(!_stopThreading) _syncro.Set();
         }
 
         //Function that is running its own thread responsible to do background stuff concerning sound

@@ -30,8 +30,8 @@ namespace S33M3DXEngine.Buffers
         #endregion
         public IndexBuffer(Device device, int IndicesCount, Format indexFormat, string bufferName, int AutoResizePerc = 0, ResourceUsage usage = ResourceUsage.Default)
         {
-            _indicesCount = IndicesCount;
-            _bufferCount = _indicesCount + (_indicesCount * _autoResizePerc / 100);
+            _indicesCount = 0;
+            _bufferCount = IndicesCount + (IndicesCount * _autoResizePerc / 100);
 
             _autoResizePerc = AutoResizePerc;
             _bufferName = bufferName;

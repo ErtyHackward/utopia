@@ -8,15 +8,7 @@ cbuffer PerDraw
 	float PopUpValue;
 };
 
-cbuffer PerFrame
-{
-	matrix ViewProjection;
-	float3 SunColor;			  // Diffuse lighting color
-	float fogdist;
-	float2 BackBufferSize;
-	float2 Various;               //.x = 1 if head under water
-	float FogType;
-};
+#include <SharedFrameCB.hlsl>
 
 static const float foglength = 20;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
@@ -96,7 +88,7 @@ PS_IN VS(VS_IN input)
 	newPosition.y -= (YOffset + (PopUpValue * 128));
 
     float4 worldPosition = mul(newPosition, World);
-	output.Position = mul(worldPosition, ViewProjection);
+	output.Position = mul(worldPosition, ViewProjection_focused);
 
 	int facetype = input.VertexInfo.y;
 	//Compute the texture mapping

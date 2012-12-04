@@ -45,7 +45,7 @@ namespace UtopiaContent.Effects.Weather
         #endregion
 
         public HLSLClouds(Device device, string effectPath, VertexDeclaration vertexDeclaration, params iCBuffer[] externalCBuffers)
-            : base(device, effectPath, vertexDeclaration, externalCBuffers)
+            : base(device, effectPath, vertexDeclaration, new UtopiaIncludeHandler(), externalCBuffers)
         {
             //Create Constant Buffers interfaces
             CBPerDraw = ToDispose(new CBuffer<CBPerDrawStruct>(device, "PerDraw"));

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using S33M3_DXEngine.Main;
+using S33M3CoreComponents.Particules;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine.Buffers;
@@ -17,11 +18,11 @@ using SharpDX.Direct3D11;
 
 namespace S33M3CoreComponents.Sprites3D.Processors
 {
-    public class Sprite3DBillBoardProc : BaseComponent, ISprite3DProcessor
+    public class Sprite3DParticuleProc : BaseComponent, ISprite3DProcessor
     {
         #region Private Variables
-        private List<VertexPointSprite3D> _spritesCollection;
-        private VertexBuffer<VertexPointSprite3D> _vb;
+        private List<VertexParticule> _spritesCollection;
+        private VertexBuffer<VertexParticule> _vb;
         private bool _isCollectionDirty;
         private HLSLPointSprite3DBillBoard _effect;
         private ShaderResourceView _texture;
@@ -32,7 +33,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
 
         #region Public Properties
         #endregion
-        public Sprite3DBillBoardProc(ShaderResourceView texture, SamplerState SpriteSampler, Include sharedCBIncludeHandler, iCBuffer frameSharedCB)
+        public Sprite3DParticuleProc(ShaderResourceView texture, SamplerState SpriteSampler, Include sharedCBIncludeHandler, iCBuffer frameSharedCB)
         {
             _texture = texture;
             _spriteSampler = SpriteSampler;
@@ -43,14 +44,14 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
-            _effect = ToDispose(new HLSLPointSprite3DBillBoard(context.Device, @"Effects\Sprites\PointSprite3DBillBoard.hlsl", VertexPointSprite3D.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
+            _effect = ToDispose(new HLSLPointSprite3DBillBoard(context.Device, @"Effects\Sprites\PointSpriteParticule.hlsl", VertexPointSprite3D.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             //Set the Texture
             _effect.DiffuseTexture.Value = _texture;
             _effect.SamplerDiffuse.Value = _spriteSampler;
 
-            _spritesCollection = new List<VertexPointSprite3D>();
-            _vb = new VertexBuffer<VertexPointSprite3D>(context.Device, 16, VertexPointSprite3D.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DBillBoardProcessor", usage, 10);
+            _spritesCollection = new List<VertexParticule>();
+            _vb = new VertexBuffer<VertexParticule>(context.Device, 16, VertexParticule.VertexDeclaration, PrimitiveTopology.PointList, "VB VertexParticule", usage, 10);
             _isCollectionDirty = false;
         }
 
@@ -80,9 +81,9 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             context.Draw(_vb.VertexCount, 0);
         }
 
-        public void Draw(ref Vector3 worldPosition, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0)
+        public void Draw(ref Vector3D worldPosition, ref Vector4B info)
         {
-            _spritesCollection.Add(new VertexPointSprite3D(new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, textureArrayIndex), color, size));
+            _spritesCollection.Add(new VertexParticule(new Vector3((float)worldPosition.X, (float)worldPosition.Y, (float)worldPosition.Z), info));
             _isCollectionDirty = true;
         }
 

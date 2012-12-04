@@ -62,7 +62,7 @@ namespace S33M3Resources.Effects.Sprites
         }
 
         public HLSLColorOverlay(Device device, string shaderFilePath)
-            : base(device, shaderFilePath, VertexPosition2Texture.VertexDeclaration)
+            : base(device, shaderFilePath, VertexPosition2Texture.VertexDeclaration, null)
         {
 
             //Create Constant Buffers interfaces
