@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using ProtoBuf;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -6,29 +6,11 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents a slot containing an entity(ies) from a blueprint
     /// Should be used to initialize containers
     /// </summary>
+    [ProtoContract]
     public class BlueprintSlot : ContainedSlot
     {
+        [ProtoMember(1)]
         public ushort BlueprintId { get; set; }
-
-        // overriding items and do whole writing by ourself
-        public override void Save(BinaryWriter writer)
-        {
-            // saving toolbar slot position
-            writer.Write(GridPosition);
-
-            // saving values
-            writer.Write(ItemsCount);
-            writer.Write(BlueprintId);
-        }
-
-        public override void LoadSlot(BinaryReader reader, EntityFactory factory)
-        {
-            // reading toolbar slot position
-            GridPosition = reader.ReadVector2I();
-
-            ItemsCount = reader.ReadInt32();
-            BlueprintId = reader.ReadUInt16();
-        }
 
         public override object Clone()
         {

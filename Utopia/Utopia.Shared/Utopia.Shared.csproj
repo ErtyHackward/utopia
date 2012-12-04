@@ -125,7 +125,7 @@
     <Compile Include="Configuration\Processor\FlatProcessorParams.cs" />
     <Compile Include="Configuration\IProcessorParams.cs" />
     <Compile Include="Configuration\Processor\UtopiaProcessorParams.cs" />
-    <Compile Include="Configuration\WorldConfigurationGeneric.cs" />
+    <Compile Include="Configuration\UtopiaWorldConfiguration.cs" />
     <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
     <Compile Include="Entities\ResourcesCollector.cs" />
@@ -147,7 +147,6 @@
     <Compile Include="Entities\Inventory\BlueprintSlot.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\CubeResource.cs" />
-    <Compile Include="Entities\Concrete\NoEntity.cs" />
     <Compile Include="Entities\Concrete\Zombie.cs" />
     <Compile Include="Entities\BlockLinkedItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />

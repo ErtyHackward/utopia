@@ -10,13 +10,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     public class BiomeHelper
     {
         #region Private Variables
-        private WorldConfiguration<UtopiaProcessorParams> _config;
+        private UtopiaWorldConfiguration _config;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public BiomeHelper(WorldConfiguration<UtopiaProcessorParams> config)
+        public BiomeHelper(UtopiaWorldConfiguration config)
         {
             _config = config;
         }

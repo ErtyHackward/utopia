@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
+using ProtoBuf;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
@@ -19,6 +20,7 @@ namespace Utopia.Shared.Configuration
     /// Holds possible entities types, their names, world generator settings, defines everything
     /// Allows to save and load the realm configuration
     /// </summary>
+    [ProtoContract]
     public abstract class WorldConfiguration
     {
         /// <summary>
@@ -32,51 +34,61 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// General realm display name
         /// </summary>
+        [ProtoMember(1)]
         public string ConfigurationName { get; set; }
 
         /// <summary>
         /// Author name of the realm
         /// </summary>
+        [ProtoMember(2)]
         public string Author { get; set; }
 
         /// <summary>
         /// Get, set the world processor attached
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(3)]
         public WorldProcessors WorldProcessor { get; set; }
 
         /// <summary>
         /// World Height
         /// </summary>
+        [ProtoMember(4)]
         public virtual int WorldHeight { get; set; }        
 
         /// <summary>
         /// Datetime of the moment of creation
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(5)]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// Datetime of the last update
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(6)]
         public DateTime UpdatedAt { get; set; }
 
         /// <summary>
         /// Allows to comapre the realms equality
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(7)]
         public Md5Hash IntegrityHash { get; set; }
 
         /// <summary>
         /// Keep a list of the entities lookable by ConcreteId
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(8)]
         public Dictionary<ushort, Entity> BluePrints { get; set; }
+
         /// <summary>
         /// Holds Cube Profiles configuration
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(9)]
         public CubeProfile[] CubeProfiles { get; set; }
 
         /// <summary>
@@ -87,6 +99,7 @@ namespace Utopia.Shared.Configuration
         /// You can see strings here instead of Services itself because of need to link server library here
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(10)]
         public List<KeyValuePair<string,string>> Services { get; set; }
 
         /// <summary>
@@ -95,6 +108,7 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [Browsable(false)]
         [Description("Defines the sets used to fill containers")]
+        [ProtoMember(11)]
         public Dictionary<string, SlotContainer<BlueprintSlot>> ContainerSets { get; set; }
 
         /// <summary>
@@ -102,6 +116,7 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [Description("Defines the start inventory set of the player")]
         [TypeConverter(typeof(ContainerSetSelector))]
+        [ProtoMember(12)]
         public string StartSet { get; set; }
 
         #endregion
@@ -126,111 +141,10 @@ namespace Utopia.Shared.Configuration
         {
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
-                var writer = new BinaryWriter(fs);
-                Save(writer);
+                Serializer.Serialize(fs, this);
             }
         }
-
-        public virtual void Save(BinaryWriter writer)
-        {
-            writer.Write((byte)WorldProcessor);
-
-            writer.Write(RealmFormat);
-
-            writer.Write(ConfigurationName ?? string.Empty);
-            writer.Write(Author ?? string.Empty);
-            writer.Write(CreatedAt.ToBinary());
-            writer.Write(UpdatedAt.ToBinary());
-            
-            writer.Write(WorldHeight);
-
-            writer.Write(StartSet ?? string.Empty);
-
-            writer.Write(BluePrints.Count);
-            foreach (var pair in BluePrints)
-            {
-                pair.Value.Save(writer);
-            }
-
-            writer.Write(CubeProfiles.Where(x => x != null && x.Name != "System Reserved").Count());
-            foreach (var cubeProfile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
-            {
-                cubeProfile.Save(writer);
-            }
-
-            writer.Write(Services.Count);
-            foreach (var pair in Services)
-            {
-                writer.Write(pair.Key);
-                writer.Write(pair.Value);
-            }
-
-            writer.Write(ContainerSets.Count);
-            foreach (var pair in ContainerSets)
-            {
-                writer.Write(pair.Key);
-                pair.Value.Save(writer);
-            }
-        }
-
-        public virtual void Load(BinaryReader reader)
-        {
-            InitCollections();
-
-            WorldProcessor = (WorldProcessors)reader.ReadByte();
-
-            var currentFormat = reader.ReadInt32();
-            if (currentFormat != RealmFormat)
-                throw new InvalidDataException("Unsupported realm config format, expected " + RealmFormat + " current " + currentFormat);
-
-            ConfigurationName = reader.ReadString();
-            Author = reader.ReadString();
-            CreatedAt = DateTime.FromBinary(reader.ReadInt64());
-            UpdatedAt = DateTime.FromBinary(reader.ReadInt64());
-            
-            WorldHeight = reader.ReadInt32();
-
-            StartSet = reader.ReadString();
-
-            BluePrints.Clear();
-            int countEntity = reader.ReadInt32();
-            for (var i = 0; i < countEntity; i++)
-            {
-                var entity = Factory.CreateFromBytes(reader);
-                BluePrints.Add(entity.BluePrintId, entity);
-            }
-
-            CubeProfiles = new CubeProfile[255];
-            var countCubes = reader.ReadInt32();
-            for (var i = 0; i < countCubes; i++)
-            {
-                var cp = new CubeProfile();
-                cp.Load(reader);
-                CubeProfiles[cp.Id] = cp;
-            }
-
-            FilledUpReservedCubeInArray();
-
-            Services.Clear();
-            var servicesCount = reader.ReadInt32();
-            for (int i = 0; i < servicesCount; i++)
-            {
-                var pair = new KeyValuePair<string, string>(reader.ReadString(), reader.ReadString());
-                Services.Add(pair);
-            }
-
-            ContainerSets.Clear();
-            var setsCount = reader.ReadInt32();
-            for (int i = 0; i < setsCount; i++)
-            {
-                var name = reader.ReadString();
-                var slotContainer = new SlotContainer<BlueprintSlot>();
-                slotContainer.Load(reader, null);
-
-                ContainerSets.Add(name, slotContainer);
-            }
-        }
-
+        
         public static WorldConfiguration LoadFromFile(string path, EntityFactory factory = null, bool withHelperAssignation = false)
         {
             string processorType;
@@ -241,16 +155,14 @@ namespace Utopia.Shared.Configuration
                 processorType = "Utopia.Shared.Configuration." + ((WorldProcessors)reader.ReadByte()).ToString() + "ProcessorParams, Utopia.Shared";
             }
 
-            Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-            WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, withHelperAssignation);
+            //Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
+            //WorldConfiguration configuration = (WorldConfiguration)Activator.CreateInstance(type, factory, withHelperAssignation);
 
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
-                var reader = new BinaryReader(fs);
-                configuration.Load(reader);
+                return Serializer.Deserialize<WorldConfiguration>(fs);
+                
             }
-
-            return configuration;
         }
         #endregion
 

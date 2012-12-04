@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Tools.BinarySerializer;
 using Utopia.Shared.World.Processors.Utopia;
@@ -20,6 +17,7 @@ namespace Utopia.Shared.Configuration
     /// <summary>
     /// Class that will hold the various parameters needed for landscape generation by the processor Utopia
     /// </summary>
+    [ProtoContract]
     public class UtopiaProcessorParams : IBinaryStorable, IProcessorParams
     {
         public static class DefaultConfig
@@ -52,9 +50,26 @@ namespace Utopia.Shared.Configuration
             }
         }
 
-        #region Private Variables
         public WorldConfiguration Config { get; set; }
-        #endregion
+
+        // TODO: implement protobuf save/load
+        [ProtoMember(1)]
+        public byte[] SerializedBytes
+        {
+            get
+            {
+                var ms = new MemoryStream();
+                var writer = new BinaryWriter(ms);
+                Save(writer);
+                return ms.GetBuffer();
+            }
+            set
+            {
+                var ms = new MemoryStream(value);
+                var reader = new BinaryReader(ms);
+                Load(reader);
+            }
+        }
 
         #region Public Properties
         /// <summary>

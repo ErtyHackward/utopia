@@ -24,7 +24,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private WorldParameters _worldParameters;
         private EntityFactory _entityFactory;
         private int _worldGeneratedHeight = 128;
-        private WorldConfiguration<UtopiaProcessorParams> _config;
+        private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
         #endregion
 
@@ -49,7 +49,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;
-            _config = (WorldConfiguration<UtopiaProcessorParams>)worldParameters.Configuration;
+            _config = (UtopiaWorldConfiguration)worldParameters.Configuration;
             _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
         }

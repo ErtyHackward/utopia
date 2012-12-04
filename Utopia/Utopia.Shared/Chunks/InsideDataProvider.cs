@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ProtoBuf;
 using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
@@ -10,6 +11,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Represents a chunk data provider that holds block data inside the chunk. Allows to change chunk size
     /// </summary>
+    [ProtoContract]
     public class InsideDataProvider : ChunkDataProvider
     {
         private readonly object _writeSyncRoot = new object();
@@ -18,15 +20,56 @@ namespace Utopia.Shared.Chunks
         private ChunkColumnInfo[] _chunkColumns;
         private ChunkMetaData _chunkMetaData;
 
-        // transaction allows to delay events by accumulating changes
+        // transaction allows to delay events by accumulating the changes
         private bool _transaction;
         private readonly List<Vector3I> _transactionPositions = new List<Vector3I>();
         private readonly List<byte> _transactionValues = new List<byte>();
         private readonly List<BlockTag> _transactionTags = new List<BlockTag>();
 
-        private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
-        
-        //Get Or Set the Chunk MetaData
+        private Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
+
+        public Vector3I ChunkSize
+        {
+            get { return _chunkSize; }
+        }
+
+        /// <summary>
+        /// Don't use, serialize only
+        /// </summary>
+        [ProtoMember(1)]
+        public Vector3I SerializeChunkSize
+        {
+            get { return _chunkSize; }
+            set
+            {
+                UpdateChunkSize(_chunkSize);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the inside buffer
+        /// </summary>
+        [ProtoMember(2)]
+        public byte[] BlockBytes
+        {
+            get { return _blockBytes; }
+            set { _blockBytes = value; }
+        }
+
+        /// <summary>
+        /// Don't use, serialize only
+        /// </summary>
+        [ProtoMember(3)]
+        public Dictionary<Vector3I, BlockTag> SerializeTags
+        {
+            get { return _tags; }
+            set { _tags = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the chunk MetaData
+        /// </summary>
+        [ProtoMember(4)]
         public override ChunkMetaData ChunkMetaData
         {
             get
@@ -37,15 +80,6 @@ namespace Utopia.Shared.Chunks
             {
                 _chunkMetaData = value;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the inside buffer
-        /// </summary>
-        public byte[] BlockBytes
-        {
-            get { return _blockBytes; }
-            set { _blockBytes = value; }
         }
 
         public override object WriteSyncRoot
@@ -62,11 +96,6 @@ namespace Utopia.Shared.Chunks
             return _blockBytes;
         }
         
-        public Vector3I ChunkSize
-        {
-            get { return _chunkSize; }
-        }
-
         public InsideDataProvider()
         {
             _chunkSize = AbstractChunk.ChunkSize;
@@ -412,46 +441,11 @@ namespace Utopia.Shared.Chunks
         }
         #endregion
 
-
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        public override void Save(BinaryWriter writer)
-        {
-            lock (_writeSyncRoot)
-            {
-                //Save the Chunk Block informations ==================
-                writer.Write(_chunkSize);
-                writer.Write(_blockBytes);
-
-                //Save the Block tags metaData informations ==========
-                writer.Write(_tags.Count);
-                foreach (var pair in _tags)
-                {
-                    writer.Write(pair.Key); //Block Tag Position
-                    writer.Write(pair.Value.Id); //Block Tag Cube ID
-                    pair.Value.Save(writer); //Block tag object binary form
-                }
-
-                //Save the Chunk Column informations =================
-                writer.Write(_chunkColumns.Length); //Save the qt of chunkColumn
-                for (var i = 0; i < _chunkColumns.Length; i++)
-                {
-                    _chunkColumns[i].Save(writer); //Save the chunkColumn object data
-                }
-
-                //Save The chunk metaData
-                ChunkMetaData.Save(writer);
-            }
-        }
-
         /// <summary>
         /// Loads current object from binary form
         /// </summary>
         /// <param name="reader"></param>
-        public override void Load(BinaryReader reader)
+        public void Load(BinaryReader reader)
         {
             //Load the Chunk Block informations ==================
             _chunkSize = reader.ReadVector3I(); 

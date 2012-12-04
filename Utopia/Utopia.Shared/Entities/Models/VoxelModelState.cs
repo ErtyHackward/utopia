@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Interfaces;
@@ -10,6 +11,7 @@ namespace Utopia.Shared.Entities.Models
     /// <summary>
     /// Contains a model parts layout
     /// </summary>
+    [ProtoContract]
     public class VoxelModelState : IBinaryStorable
     {
         private readonly VoxelModel _parentModel;
@@ -18,16 +20,19 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Gets or sets the state name
         /// </summary>
+        [ProtoMember(1)]
         public string Name { get; set; }
 
         /// <summary>
         /// Corresponding array for voxel model parts
         /// </summary>
-        public List<VoxelModelPartState> PartsStates { get; private set; }
+        [ProtoMember(2)]
+        public List<VoxelModelPartState> PartsStates { get; set; }
 
         /// <summary>
         /// Gets or sets current state bounding box
         /// </summary>
+        [ProtoMember(3)]
         public BoundingBox BoundingBox
         {
             get { return _boundingBox; }
