@@ -7,10 +7,12 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine.Buffers;
+using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3Resources.Effects.Sprites;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
+using SharpDX.D3DCompiler;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 
@@ -25,20 +27,24 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         private SpriteFont _spriteFont;
         private HLSLSprite3D _effect;
         private SamplerState _spriteSampler;
+        private Include _sharedCBIncludeHandler;
+        private iCBuffer _frameSharedCB;
         #endregion
 
         #region Public Properties
         #endregion
-        public Sprite3DTextProc(SpriteFont spriteFont, SamplerState SpriteSampler)
+        public Sprite3DTextProc(SpriteFont spriteFont, SamplerState SpriteSampler, Include sharedCBIncludeHandler, iCBuffer frameSharedCB)
         {
             _spriteFont = spriteFont;
             _spriteSampler = SpriteSampler;
+            _sharedCBIncludeHandler = sharedCBIncludeHandler;
+            _frameSharedCB = frameSharedCB;
         }
 
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
-            _effect = ToDispose(new HLSLSprite3D(context.Device, @"Effects\Sprites\PointSprite3DTexCoord.hlsl", VertexPointSprite3DTexCoord.VertexDeclaration));
+            _effect = ToDispose(new HLSLSprite3D(context.Device, @"Effects\Sprites\PointSprite3DTexCoord.hlsl", VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             //Set the Texture
             _effect.DiffuseTexture.Value = _spriteFont.SpriteTexture.Texture;
@@ -62,12 +68,10 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             }
         }
 
-        public void Set2DeviceAndDraw(DeviceContext context, ICamera camera)
+        public void Set2DeviceAndDraw(DeviceContext context)
         {
             //Set Effect Constant Buffer
             _effect.Begin(context);
-            _effect.CBPerFrameLocal.Values.ViewProjection = Matrix.Transpose(camera.ViewProjection3D);
-            _effect.CBPerFrameLocal.IsDirty = true;
             _effect.Apply(context);
 
             if (_spritesCollection.Count == 0) return;

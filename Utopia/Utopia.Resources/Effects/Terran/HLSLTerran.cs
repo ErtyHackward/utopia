@@ -60,13 +60,12 @@ namespace Utopia.Resources.Effects.Terran
         #endregion
 
         public HLSLTerran(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration, new DefaultIncludeHandler())
+            : base(device, shaderPath, VertexDeclaration, new UtopiaIncludeHandler())
         {
             //Create Contstant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
-            //CBPerFrame = new CBuffer<CBPerFrame_Struct>(_d3dEngine, "PerFrame");
             if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
 
             //Create the resource interfaces ==================================================

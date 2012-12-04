@@ -62,7 +62,7 @@ namespace Utopia.Resources.Effects.Terran
         #endregion
 
         public HLSLLiquid(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration, new DefaultIncludeHandler())
+            : base(device, shaderPath, VertexDeclaration, new UtopiaIncludeHandler())
         {
 
             //Create Constant Buffers interfaces ==================================================

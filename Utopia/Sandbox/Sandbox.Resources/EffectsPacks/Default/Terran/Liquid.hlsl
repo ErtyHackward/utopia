@@ -95,7 +95,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	newPosition.y -= (YOffset + (PopUpValue * 128));
 
     float4 worldPosition = mul(newPosition, World);
-	output.Position = mul(worldPosition, ViewProjection);
+	output.Position = mul(worldPosition, ViewProjection_focused);
 
 	int facetype = input.VertexInfo1.x;
 	//Compute the texture mapping

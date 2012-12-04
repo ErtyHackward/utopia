@@ -85,6 +85,7 @@
     <Compile Include="Effects\Basics\HLSLScreenSpaceRect.cs" />
     <Compile Include="Effects\Debug\DebugEffect.cs" />
     <Compile Include="Effects\Debug\HLSLColumnChart.cs" />
+    <Compile Include="Effects\DefaultIncludeHandler.cs" />
     <Compile Include="Effects\Sprites\HLSLBlur.cs" />
     <Compile Include="Effects\Sprites\HLSLColorOverlay.cs" />
     <Compile Include="Effects\Sprites\HLSLSprite3D.cs" />
