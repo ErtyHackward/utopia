@@ -13,6 +13,8 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Settings;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.Entities
 {
@@ -21,9 +23,7 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
-        private RuntimeTypeModel _protoTypeModel;
-
-
+        
         public WorldConfiguration Config { get; set; }
 
         /// <summary>
@@ -31,25 +31,32 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public ILandscapeManager2D LandscapeManager { get; set; }
 
-        public EntityFactory(ILandscapeManager2D landscapeManager)
+        public static void InitializeProtobufInheritanceHierarchy()
         {
-            _protoTypeModel = RuntimeTypeModel.Default;
+            var protoTypeModel = RuntimeTypeModel.Default;
 
-            // type hierarhy should be described here
+            var entityType = protoTypeModel.Add(typeof(Entity), true);
+            var dynEntityType = protoTypeModel.Add(typeof(DynamicEntity), true);
+            var staticEntityType = protoTypeModel.Add(typeof(StaticEntity), true);
+            var charEntityType = protoTypeModel.Add(typeof(CharacterEntity), true);
+            var rpgCharType = protoTypeModel.Add(typeof(RpgCharacterEntity), true);
+            var itemType = protoTypeModel.Add(typeof(Item), true);
+            var slotType = protoTypeModel.Add(typeof(Slot), true);
+            var containedSlotType = protoTypeModel.Add(typeof(ContainedSlot), true);
+            var blockItem = protoTypeModel.Add(typeof(BlockItem), true);
+            var orientedBlockItem = protoTypeModel.Add(typeof(OrientedBlockItem), true);
+            var blockLinkedItem = protoTypeModel.Add(typeof(BlockLinkedItem), true);
+            var orientedBlockLinkedItem = protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
+            var resourceCollector = protoTypeModel.Add(typeof(ResourcesCollector), true);
+            var worldConfig = protoTypeModel.Add(typeof(WorldConfiguration), true);
+            var soundSource = protoTypeModel.Add(typeof(SoundSource), true);
 
-            var entityType = _protoTypeModel.Add(typeof(Entity), true);
-            var dynEntityType = _protoTypeModel.Add(typeof(DynamicEntity), true);
-            var staticEntityType = _protoTypeModel.Add(typeof(StaticEntity), true);
-            var charEntityType = _protoTypeModel.Add(typeof(CharacterEntity), true);
-            var rpgCharType = _protoTypeModel.Add(typeof(RpgCharacterEntity), true);
-            var itemType = _protoTypeModel.Add(typeof(Item), true);
-            var slotType = _protoTypeModel.Add(typeof(Slot), true);
-            var containedSlotType = _protoTypeModel.Add(typeof(ContainedSlot), true);
-            var blockItem = _protoTypeModel.Add(typeof(BlockItem), true);
-            var orientedBlockItem = _protoTypeModel.Add(typeof(OrientedBlockItem), true);
-            var blockLinkedItem = _protoTypeModel.Add(typeof(BlockLinkedItem), true);
-            var orientedBlockLinkedItem = _protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
-            var resourceCollector = _protoTypeModel.Add(typeof(ResourcesCollector), true);
+
+            soundSource.AddSubType(100, typeof(BiomeSoundSource));
+
+            // world configs
+
+            worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
 
             // entities hierarchy
 
@@ -92,48 +99,69 @@ namespace Utopia.Shared.Entities
 
             // add mappings for 3rd party objects
 
-            var vector2I = _protoTypeModel.Add(typeof(Vector2I), true);
+            var vector2I = protoTypeModel.Add(typeof(Vector2I), true);
             vector2I.AddField(1, "X");
             vector2I.AddField(2, "Y");
 
-            var byteColor = _protoTypeModel.Add(typeof(ByteColor), true);
+            var byteColor = protoTypeModel.Add(typeof(ByteColor), true);
             byteColor.AddField(1, "R");
             byteColor.AddField(2, "G");
             byteColor.AddField(3, "B");
             byteColor.AddField(4, "A");
 
-            var quaternion = _protoTypeModel.Add(typeof(Quaternion), true);
+            var quaternion = protoTypeModel.Add(typeof(Quaternion), true);
             quaternion.AddField(1, "X");
             quaternion.AddField(2, "Y");
             quaternion.AddField(3, "Z");
             quaternion.AddField(4, "W");
 
-            var vector4 = _protoTypeModel.Add(typeof(Vector4), true);
+            var vector4 = protoTypeModel.Add(typeof(Vector4), true);
             vector4.AddField(1, "X");
             vector4.AddField(2, "Y");
             vector4.AddField(3, "Z");
             vector4.AddField(4, "W");
 
-            var matrix = _protoTypeModel.Add(typeof(Matrix), true);
+            var matrix = protoTypeModel.Add(typeof(Matrix), true);
             matrix.AddField(1, "Row1");
             matrix.AddField(2, "Row2");
             matrix.AddField(3, "Row3");
             matrix.AddField(4, "Row4");
 
-            var vector3 = _protoTypeModel.Add(typeof(Vector3), true);
+            var vector3 = protoTypeModel.Add(typeof(Vector3), true);
             vector3.AddField(1, "X");
             vector3.AddField(2, "Y");
             vector3.AddField(3, "Z");
 
-            var vector3d = _protoTypeModel.Add(typeof(Vector3D), true);
+            var vector3d = protoTypeModel.Add(typeof(Vector3D), true);
             vector3d.AddField(1, "X");
             vector3d.AddField(2, "Y");
             vector3d.AddField(3, "Z");
 
-            var vector3i = _protoTypeModel.Add(typeof(Vector3I), true);
+            var vector3i = protoTypeModel.Add(typeof(Vector3I), true);
             vector3i.AddField(1, "X");
             vector3i.AddField(2, "Y");
             vector3i.AddField(3, "Z");
+
+            var rangeI = protoTypeModel.Add(typeof(RangeI), true);
+            rangeI.AddField(1, "Min");
+            rangeI.AddField(2, "Max");
+
+            var rangeD = protoTypeModel.Add(typeof(RangeD), true);
+            rangeD.AddField(1, "Min");
+            rangeD.AddField(2, "Max");
+
+            var rangeB = protoTypeModel.Add(typeof(RangeB), true);
+            rangeB.AddField(1, "Min");
+            rangeB.AddField(2, "Max");
+
+        }
+
+        public EntityFactory(ILandscapeManager2D landscapeManager)
+        {
+            
+
+            // type hierarhy should be described here
+
 
             LandscapeManager = landscapeManager;
         }
@@ -282,7 +310,7 @@ namespace Utopia.Shared.Entities
             
             var entity = CreateFromClassId(classId);
 
-            return (Entity)_protoTypeModel.Deserialize(reader.BaseStream, entity, entity.GetType());
+            return (Entity)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, entity, entity.GetType());
         }
 
         public void Serialize(Entity entity, Stream stream)
@@ -290,7 +318,7 @@ namespace Utopia.Shared.Entities
             using (var writer = new BinaryWriter(stream))
                 writer.Write(entity.ClassId);
 
-            _protoTypeModel.Serialize(stream, entity);
+            Serializer.Serialize(stream, entity);
         }
 
         public Entity CreateFromBytes(byte[] bytes)

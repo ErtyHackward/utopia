@@ -81,14 +81,14 @@ namespace Utopia.Shared.Entities
         /// TODO: finish description
         /// </summary>
         [Browsable(true)]
-        [ProtoMember(7)]
+        [ProtoMember(9)]
         public double YForceOnSideHit { get; set; }
 
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
         [Category("Entity")]
-        [ProtoMember(8)]
+        [ProtoMember(10)]
         public string Name
         {
             get { return _name; }
