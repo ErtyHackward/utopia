@@ -60,7 +60,7 @@ namespace Utopia.Resources.Effects.Skydome
         #endregion
 
         public HLSLPlanetSkyDome(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration)
+            : base(device, shaderPath, VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));

@@ -49,7 +49,7 @@ namespace UtopiaContent.Effects.Entities
         #endregion
 
         public HLSLColorLine(Device engine, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(engine, shaderPath, VertexDeclaration)
+            : base(engine, shaderPath, VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = new CBuffer<CBPerDrawStructure>(engine, "PerDraw");

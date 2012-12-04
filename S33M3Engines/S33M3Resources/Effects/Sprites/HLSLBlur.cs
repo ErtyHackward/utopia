@@ -65,7 +65,7 @@ namespace S33M3Resources.Effects.Sprites
         }
 
         public HLSLBlur(Device device, BlurPass pass, string effectFilePath)
-            : base(device, effectFilePath , VertexPosition2Texture.VertexDeclaration)
+            : base(device, effectFilePath, VertexPosition2Texture.VertexDeclaration, null)
         {
 
             //Create Constant Buffers interfaces

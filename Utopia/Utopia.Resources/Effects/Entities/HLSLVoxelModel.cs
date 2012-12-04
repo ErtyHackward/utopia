@@ -64,7 +64,7 @@ namespace UtopiaContent.Effects.Entities
         #endregion
 
         public HLSLVoxelModel(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration)
+            : base(device, shaderPath, VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerFrame = new CBuffer<CBPerFrameStructure>(device, "VoxelModelPerFrame");

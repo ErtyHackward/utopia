@@ -55,7 +55,7 @@ namespace S33M3Resources.Effects.Basics
         #endregion
 
         public HLSLVertexPositionColor(Device device)
-            : base(device, @"Effects\Basics\VertexPositionColor.hlsl", VertexPosition3Color.VertexDeclaration)
+            : base(device, @"Effects\Basics\VertexPositionColor.hlsl", VertexPosition3Color.VertexDeclaration, null)
         {
 
             //Create Constant Buffers interfaces

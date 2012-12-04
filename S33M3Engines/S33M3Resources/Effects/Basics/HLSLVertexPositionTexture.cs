@@ -63,7 +63,7 @@ namespace S33M3Resources.Effects.Basics
         #endregion
 
         public HLSLVertexPositionTexture(Device device)
-            : base(device, @"Effects\Basics\VertexPositionTexture.hlsl", VertexPositionTexture.VertexDeclaration)
+            : base(device, @"Effects\Basics\VertexPositionTexture.hlsl", VertexPositionTexture.VertexDeclaration, null)
         {
         
             //Create Constant Buffers interfaces ==================================================

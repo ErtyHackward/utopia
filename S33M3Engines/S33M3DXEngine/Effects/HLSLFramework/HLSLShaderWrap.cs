@@ -42,6 +42,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
     public abstract class HLSLShaderWrap : BaseComponent
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private Include _includeHandler;
 
         //Managing the Effect at a Higher level, in order to avoid to "Reset" states when not needed
         protected static int LastEffectSet = 0;
@@ -80,10 +81,13 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         #endregion
 
         //Ctor
-        public HLSLShaderWrap(Device device, string filePathName, VertexDeclaration VertexDeclaration, params iCBuffer[] externalCBuffers)
+        public HLSLShaderWrap(Device device, string filePathName, VertexDeclaration VertexDeclaration, Include includeHandler, params iCBuffer[] externalCBuffers)
         {
             //Extract FileName from Path
             _fileName = Path.GetFileName(filePathName);
+            _includeHandler = includeHandler;
+
+            if (_includeHandler != null) ToDispose(_includeHandler);
 
             _filePathName = filePathName;
             this.device = device;
@@ -126,7 +130,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.VertexShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler))
                     {
                         //Log Compilation Warning
                         if (bytecode.Message != null) logger.Warn("Vertex Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
@@ -161,7 +165,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.GeometryShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler))
                     {
                         //Log Compilation Warning
                         if (bytecode.Message != null) logger.Warn("Geometry Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
@@ -192,7 +196,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.PixelShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, null))
+                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler))
                     {
                         //Log Compilation Warning
                         if (bytecode.Message != null) logger.Warn("Pixel Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);

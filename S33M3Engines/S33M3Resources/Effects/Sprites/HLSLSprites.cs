@@ -71,7 +71,7 @@ namespace S33M3Resources.Effects.Sprites
         #endregion
 
         public HLSLSprites(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration)
+            : base(device, shaderPath, VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerBatch_Struct>(device, "PerBatch"));
