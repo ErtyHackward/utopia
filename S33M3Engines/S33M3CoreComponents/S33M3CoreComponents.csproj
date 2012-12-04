@@ -259,6 +259,12 @@
     <Compile Include="Noise\Various\Cache.cs" />
     <Compile Include="Noise\Various\NoiseAccess.cs" />
     <Compile Include="Noise\Various\NoiseAnalyse.cs" />
+    <Compile Include="Particules\BaseParticule.cs" />
+    <Compile Include="Particules\Emitter.cs" />
+    <Compile Include="Particules\Interfaces\IEmitter.cs" />
+    <Compile Include="Particules\ParticuleEngine.cs" />
+    <Compile Include="Particules\ParticuleGenerationMode.cs" />
+    <Compile Include="Particules\VertexParticule.cs" />
     <Compile Include="Physics\Euler\EulerSimulator.cs" />
     <Compile Include="Physics\Impulse.cs" />
     <Compile Include="Physics\SimulatorCst.cs" />
@@ -272,6 +278,7 @@
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sound\SoundVoice.cs" />
     <Compile Include="Sprites3D\Interfaces\ISprite3DProcessor.cs" />
+    <Compile Include="Sprites3D\Processors\Sprite3DParticuleProc.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DBillBoardProc.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DImpostorProc.cs" />
     <Compile Include="Sprites3D\Sprite3DRenderer.cs" />
