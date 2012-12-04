@@ -12,6 +12,7 @@ namespace Utopia.Shared.Configuration
     public class UtopiaWorldConfiguration : WorldConfiguration
     {
         private int _worldHeight;
+        private UtopiaProcessorParams _processorParam;
 
         public override int ConfigType
         {
@@ -23,7 +24,14 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [Browsable(false)]
         [ProtoMember(1)]
-        public UtopiaProcessorParams ProcessorParam { get; set; }
+        public UtopiaProcessorParams ProcessorParam
+        {
+            get { return _processorParam; }
+            set { 
+                _processorParam = value;
+                _processorParam.Config = this;
+            }
+        }
 
         /// <summary>
         /// World Height
@@ -54,7 +62,6 @@ namespace Utopia.Shared.Configuration
             : base(factory, withHelperAssignation)
         {
             ProcessorParam = new UtopiaProcessorParams();
-            ProcessorParam.Config = this;
         }
 
         protected override void CreateDefaultCubeProfiles()

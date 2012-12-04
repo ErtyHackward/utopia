@@ -8,6 +8,7 @@ using S33M3DXEngine.Threading;
 using S33M3CoreComponents.Inputs;
 using S33M3DXEngine;
 using Sandbox.Client.Components.GUI.Settings;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 
@@ -26,6 +27,8 @@ namespace Sandbox.Client
         #region Public Methods
         public void Run()
         {
+            EntityFactory.InitializeProtobufInheritanceHierarchy();
+
             //Load Client config XML file
             LoadClientsSettings();
 

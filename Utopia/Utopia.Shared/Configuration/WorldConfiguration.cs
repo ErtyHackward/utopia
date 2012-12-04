@@ -145,6 +145,9 @@ namespace Utopia.Shared.Configuration
         #region Loading / Saving Configuration
         public void SaveToFile(string path)
         {
+            if (File.Exists(path))
+                File.Delete(path);
+
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
                 var writer = new BinaryWriter(fs);

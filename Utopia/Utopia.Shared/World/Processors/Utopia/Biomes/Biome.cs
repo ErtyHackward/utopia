@@ -35,6 +35,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private RangeD _moistureFilter = new RangeD(0.0, 1.0);
         private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>() { enuLandFormType.Plain };
         private WorldConfiguration _config;
+
         #endregion
 
         #region Public Properties
@@ -126,8 +127,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             get { return _moistureFilter; }
             set { _moistureFilter = value; }
         }
-        
-        
+
+        public WorldConfiguration Configuration
+        {
+            get { return _config; }
+            set { _config = value; }
+        }
+
         #endregion
 
         public Biome(WorldConfiguration config)

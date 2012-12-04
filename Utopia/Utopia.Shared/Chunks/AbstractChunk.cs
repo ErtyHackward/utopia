@@ -68,15 +68,17 @@ namespace Utopia.Shared.Chunks
         {
             get { return _entities; }
             set {
+                if (_entities == value)
+                    return;
 
-                if (_entities != value)
+                if (_entities != null)
                 {
                     _entities.CollectionDirty -= EntitiesCollectionDirty;
                 }
 
                 _entities = value;
 
-                if (_entities != value)
+                if (_entities != null)
                 {
                     _entities.Chunk = this;
                     _entities.CollectionDirty += EntitiesCollectionDirty;
