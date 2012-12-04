@@ -21,11 +21,12 @@ using Utopia.Shared.Settings;
 namespace Utopia.Components
 {
     /// <summary>
-    /// What is this?
+    /// Values that are "statics" for a single frame, these are stored inside a shadder constant buffer, and can be use by any shadder
+    /// without the need to be reuploaded.
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 176)]
+        [StructLayout(LayoutKind.Explicit, Size = 240)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
@@ -42,6 +43,10 @@ namespace Utopia.Components
             public Matrix ViewProjection;           //64 (4*4 float)
             [FieldOffset(160)]
             public float fogType;
+            [FieldOffset(164)]
+            public Vector3 CameraWorldPosition;
+            [FieldOffset(176)]
+            public Matrix InvertedOrientation;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -85,6 +90,8 @@ namespace Utopia.Components
             CBPerFrame.Values.Various.X = _playerManager.IsHeadInsideWater ? 1.0f : 0.0f;
             CBPerFrame.Values.Various.Y = _animationValue; //Asign animation Value (From 0 => 1 in loop);
             CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
+            CBPerFrame.Values.CameraWorldPosition = _cameraManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
+            CBPerFrame.Values.InvertedOrientation = Matrix.Transpose(Matrix.RotationQuaternion(Quaternion.Invert(_cameraManager.ActiveCamera.Orientation.ValueInterp)));
 
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {

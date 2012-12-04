@@ -25,7 +25,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         private VertexBuffer<VertexPointSprite3DTexCoord> _vb;
         private bool _isCollectionDirty;
         private SpriteFont _spriteFont;
-        private HLSLSprite3D _effect;
+        private HLSLPointSprite3DText _effect;
         private SamplerState _spriteSampler;
         private Include _sharedCBIncludeHandler;
         private iCBuffer _frameSharedCB;
@@ -44,7 +44,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
-            _effect = ToDispose(new HLSLSprite3D(context.Device, @"Effects\Sprites\PointSprite3DTexCoord.hlsl", VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
+            _effect = ToDispose(new HLSLPointSprite3DText(context.Device, @"Effects\Sprites\PointSprite3DText.hlsl", VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             //Set the Texture
             _effect.DiffuseTexture.Value = _spriteFont.SpriteTexture.Texture;
@@ -57,6 +57,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
 
         public void Begin()
         {
+            _spritesCollection.Clear(); //Free buffer;
         }
 
         public void SetData(DeviceContext context)
@@ -70,14 +71,14 @@ namespace S33M3CoreComponents.Sprites3D.Processors
 
         public void Set2DeviceAndDraw(DeviceContext context)
         {
+            if (_vb.VertexCount == 0) return;
+
             //Set Effect Constant Buffer
             _effect.Begin(context);
             _effect.Apply(context);
 
-            if (_spritesCollection.Count == 0) return;
             _vb.SetToDevice(context, 0);
             context.Draw(_vb.VertexCount, 0);
-            _spritesCollection.Clear(); //Free buffer;
         }
 
         public void DrawText(string text, ref Vector3 worldPosition, float scaling, ref ByteColor color, ICamera camera, int textureArrayIndex = 0, bool XCenteredText = true, bool MultiLineHandling = false)
