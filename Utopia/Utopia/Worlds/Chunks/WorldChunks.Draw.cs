@@ -61,7 +61,7 @@ namespace Utopia.Worlds.Chunks
 
                 _chunkDrawByFrame = 0;
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
                 DrawSolidFaces(context);
 
 #if DEBUG
@@ -79,12 +79,12 @@ namespace Utopia.Worlds.Chunks
                 if (!_playerManager.IsHeadInsideWater)
                 {
                     //Head not inside Water => Draw water front Faces
-                    RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+                    RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
                 }
                 else
                 {
                     //Head inside Water block, draw back faces only
-                    RenderStatesRepo.ApplyStates(DXStates.Rasters.CullFront, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+                    RenderStatesRepo.ApplyStates(DXStates.Rasters.CullFront, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
                 }
 
                 DefaultDrawLiquid(context);
@@ -93,7 +93,7 @@ namespace Utopia.Worlds.Chunks
 
             if (index == ENTITIES_DRAW)
             {
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
                 DrawStaticEntities(context);
                 return;
             }

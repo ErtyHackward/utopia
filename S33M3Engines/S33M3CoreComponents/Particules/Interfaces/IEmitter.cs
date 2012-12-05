@@ -21,8 +21,6 @@ namespace S33M3CoreComponents.Particules.Interfaces
 
         List<Particule> Particules { get; }
 
-        void Update(Vector3D cameraPosition);
-
         /// <summary>
         /// Genere landscape collision check for the emmitted particles
         /// </summary>

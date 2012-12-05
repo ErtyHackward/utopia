@@ -336,7 +336,7 @@ namespace Utopia.Worlds.SkyDomes
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             //Set States.
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             _skyDomeEffect.Begin(context);
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);

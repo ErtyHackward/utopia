@@ -131,22 +131,19 @@ namespace S33M3CoreComponents.Particules
 
         }
 
-        public void Update(Vector3D cameraPosition)
-        {
-            _particules.RemoveAll(x => x.Age > _maximumAge);
-
-            List<Particule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position, cameraPosition)).ToList();
-            _particules = sortedList;
-        }
-
         public void Update(GameTime timeSpend)
         {
-            throw new NotImplementedException();
+            if (_particules.Count == 0) return;
+            _particules.RemoveAll(x => x.Age > _maximumAge);
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
+            if (_particules.Count == 0) return;
             RefreshExistingParticules(elapsedTime);
+
+            List<Particule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position, ParentParticuleEngine.CameraPosition)).ToList();
+            _particules = sortedList;
         }
 
         public void Draw(DeviceContext context, int index)
