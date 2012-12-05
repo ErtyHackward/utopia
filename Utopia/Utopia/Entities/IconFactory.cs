@@ -218,7 +218,7 @@ namespace Utopia.Entities
 
             texture.Begin();
 
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             _voxelEffect.Begin(context);
 
@@ -280,7 +280,7 @@ namespace Utopia.Entities
                 System.Threading.Thread.Sleep(0);
                 texture.Begin();
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
                 _voxelEffect.Begin(context);
 

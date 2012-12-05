@@ -93,8 +93,6 @@ namespace Utopia.Entities.Managers
         // Will be used to compute entity rotation movements
         private EntityRotations _entityRotations;
         private InventoryComponent _inventoryComponent;
-
-        private UtopiaParticuleEngine _particuleEngine;
         #endregion
 
         #region Public variables/properties
@@ -227,8 +225,7 @@ namespace Utopia.Entities.Managers
                                    IPickingRenderer pickingRenderer,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
-                                   ILandscapeManager2D landscapeManager,
-                                   UtopiaParticuleEngine particuleEngine
+                                   ILandscapeManager2D landscapeManager
             )
         {
             _d3DEngine = engine;
@@ -239,7 +236,6 @@ namespace Utopia.Entities.Managers
             _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
             _landscapeManager = landscapeManager;
-            _particuleEngine = particuleEngine;
 
             Player = player;
 

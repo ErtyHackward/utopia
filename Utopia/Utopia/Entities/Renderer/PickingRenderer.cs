@@ -86,7 +86,7 @@ namespace Utopia.Entities.Renderer
         public override void Draw(DeviceContext context, int index)
         {
             //Applying Correct Render States
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             if (_player.EntityState.IsBlockPicked || _player.EntityState.IsEntityPicked)
             {

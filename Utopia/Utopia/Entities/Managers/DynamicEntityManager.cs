@@ -209,7 +209,7 @@ namespace Utopia.Entities.Managers
             _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer<Sprite3DTextProc>(textProcessor, 
                                                                         DXStates.Rasters.Default,
                                                                         DXStates.Blenders.Enabled,
-                                                                        DXStates.DepthStencils.DepthEnabled,
+                                                                        DXStates.DepthStencils.DepthReadWriteEnabled,
                                                                         context));
         }
 
@@ -276,7 +276,7 @@ namespace Utopia.Entities.Managers
         private void VoxelDraw(DeviceContext context)
         {
             //Applying Correct Render States
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthEnabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _voxelModelEffect.Begin(context);
             _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
@@ -321,7 +321,7 @@ namespace Utopia.Entities.Managers
             foreach (var pair in _dynamicEntitiesDico)
             {
                 var charEntity = pair.Value.DynamicEntity as CharacterEntity;
-                if (charEntity != null && pair.Value.ModelInstance.World != Matrix.Zero)
+                if (charEntity != null &&  pair.Value.ModelInstance.World != Matrix.Zero)
                 {
                     //Take the Tool entity equiped in character Right hand
                     if (charEntity.Equipment.RightTool is CubeResource)

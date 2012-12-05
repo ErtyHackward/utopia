@@ -16,9 +16,9 @@ namespace S33M3CoreComponents.Particules
     public abstract class ParticuleEngine : DrawableGameComponent
     {
         #region Private Variables
-        private List<IEmitter> _liveEmitter;
-        private iCBuffer _sharedFrameBuffer;
-        private D3DEngine _d3dEngine;
+        protected List<IEmitter> _liveEmitter;
+        protected iCBuffer _sharedFrameBuffer;
+        protected D3DEngine _d3dEngine;
         #endregion
 
         #region Public Properties
@@ -50,7 +50,7 @@ namespace S33M3CoreComponents.Particules
             _liveEmitter.RemoveAll(x => x.isStopped);
 
             //Update live emitters
-            foreach (var emitter in _liveEmitter) emitter.Update(CameraPosition);
+            foreach (var emitter in _liveEmitter) emitter.Update(timeSpent);
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)

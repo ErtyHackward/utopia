@@ -137,7 +137,8 @@ namespace Utopia.Shared.GameDXStates
 
         public static class DepthStencils
         {
-            public static int DepthEnabled;
+            public static int DepthReadWriteEnabled;
+            public static int DepthReadEnabled;
             public static int DepthDisabled;
         }
 
@@ -146,7 +147,7 @@ namespace Utopia.Shared.GameDXStates
             List<DepthStencilStateDescription> statesCollection = new List<DepthStencilStateDescription>();
 
             //DepthStencil.DepthEnabled
-            DepthStencils.DepthEnabled = RenderStatesRepo.AddDepthStencilStates(new DepthStencilStateDescription()
+            DepthStencils.DepthReadWriteEnabled = RenderStatesRepo.AddDepthStencilStates(new DepthStencilStateDescription()
             {
                 IsDepthEnabled = true,
                 IsStencilEnabled = false,
@@ -163,6 +164,18 @@ namespace Utopia.Shared.GameDXStates
                 IsDepthEnabled = false,
                 IsStencilEnabled = false,
                 DepthWriteMask = DepthWriteMask.All,
+                DepthComparison = Comparison.Less,
+                BackFace = new DepthStencilOperationDescription() { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
+                FrontFace = new DepthStencilOperationDescription() { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
+            }
+                                 );
+
+            //DepthStencil.DepthDisabled
+            DepthStencils.DepthReadEnabled = RenderStatesRepo.AddDepthStencilStates(new DepthStencilStateDescription()
+            {
+                IsDepthEnabled = true,
+                IsStencilEnabled = false,
+                DepthWriteMask = DepthWriteMask.Zero,
                 DepthComparison = Comparison.Less,
                 BackFace = new DepthStencilOperationDescription() { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep },
                 FrontFace = new DepthStencilOperationDescription() { Comparison = Comparison.Always, DepthFailOperation = StencilOperation.Keep, FailOperation = StencilOperation.Keep, PassOperation = StencilOperation.Keep }
