@@ -285,7 +285,7 @@ namespace Utopia.Server
                     try
                     {
                         Writer.Write(msg.MessageId);
-                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian);                        
+                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32);                        
                     }
                     catch (IOException io)
                     {
@@ -317,7 +317,7 @@ namespace Utopia.Server
                 try
                 {
                     Writer.Write(msg.MessageId);
-                    Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian); 
+                    Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32); 
                     Writer.Flush();
                     return true;
                 }
@@ -342,7 +342,7 @@ namespace Utopia.Server
                     foreach (var msg in messages)
                     {
                         Writer.Write(msg.MessageId);
-                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian); 
+                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32); 
                     }
                     Writer.Flush();
                     return true;
