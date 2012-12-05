@@ -265,7 +265,6 @@
     <Compile Include="Net\Messages\LoginMessage.cs" />
     <Compile Include="Net\Messages\LoginResultMessage.cs" />
     <Compile Include="Net\Messages\MessageTypes.cs" />
-    <Compile Include="Net\Messages\NetworkMessageFactory.cs" />
     <Compile Include="Net\Messages\PingMessage.cs" />
     <Compile Include="Net\Messages\UseFeedbackMessage.cs" />
     <Compile Include="Net\Messages\VoxelModelDataMessage.cs" />

@@ -10,7 +10,7 @@ namespace Utopia.Shared.Net.Messages
     /// This message handles all items transactions
     /// </summary>
     [ProtoContract]
-    public struct ItemTransferMessage : IBinaryMessage
+    public class ItemTransferMessage : IBinaryMessage
     {
         /// <summary>
         /// Source object item taken from, use 0 if item was taken from world space

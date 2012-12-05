@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Represents a request for one or more voxel models
     /// </summary>
     [ProtoContract]
-    public struct GetVoxelModelsMessage : IBinaryMessage
+    public class GetVoxelModelsMessage : IBinaryMessage
     {
         public byte MessageId
         {

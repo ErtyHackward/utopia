@@ -9,7 +9,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defindes a message used by a client to request a range of chunks from a server
     /// </summary>
     [ProtoContract]
-    public struct GetChunksMessage : IBinaryMessage
+    public class GetChunksMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Describes message for connection testing
     /// </summary>
     [ProtoContract]
-    public struct PingMessage : IBinaryMessage
+    public class PingMessage : IBinaryMessage
     {
         /// <summary>
         /// Any long number to verify ping command

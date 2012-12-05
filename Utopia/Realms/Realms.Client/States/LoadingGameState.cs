@@ -118,7 +118,7 @@ namespace Realms.Client.States
                 _vars.LocalServer.InitSinglePlayerServer(wp);
 
                 if (serverComponent.ServerConnection == null ||
-                    serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
+                    serverComponent.ServerConnection.Status != Utopia.Shared.Net.Connections.TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     serverComponent.BindingServer("127.0.0.1");
@@ -129,7 +129,7 @@ namespace Realms.Client.States
             else
             {
                 if (serverComponent.ServerConnection == null ||
-                    serverComponent.ServerConnection.ConnectionStatus != Utopia.Shared.Net.Connections.ConnectionStatus.Connected)
+                    serverComponent.ServerConnection.Status != Utopia.Shared.Net.Connections.TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     serverComponent.BindingServer(_vars.CurrentServerAddress);

@@ -9,7 +9,7 @@ namespace Utopia.Shared.Net.Messages
     /// BlockChange message is sent when some entity or player does modification of some amount of blocks 
     /// </summary>
     [ProtoContract]
-    public struct BlocksChangedMessage : IBinaryMessage
+    public class BlocksChangedMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets current message Id

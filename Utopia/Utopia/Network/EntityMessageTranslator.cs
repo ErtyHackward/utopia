@@ -175,7 +175,7 @@ namespace Utopia.Network
         //These are player event subscribing
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
-            _server.ServerConnection.SendAsync(new EntityUseMessage
+            _server.ServerConnection.Send(new EntityUseMessage
             {
                 IsEntityPicked = e.IsEntityPicked,
                 IsBlockPicked = e.IsBlockPicked,
@@ -190,7 +190,7 @@ namespace Utopia.Network
 
         private void PlayerEntityViewChanged(object sender, EntityViewEventArgs e)
         {
-            _server.ServerConnection.SendAsync(new EntityHeadDirectionMessage
+            _server.ServerConnection.Send(new EntityHeadDirectionMessage
             {
                 Rotation = e.Entity.HeadRotation,
                 EntityId = e.Entity.DynamicId
@@ -199,7 +199,7 @@ namespace Utopia.Network
 
         private void PlayerEntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
-            _server.ServerConnection.SendAsync(new EntityPositionMessage
+            _server.ServerConnection.Send(new EntityPositionMessage
             {
                 Position = e.Entity.Position,
                 EntityId = e.Entity.DynamicId

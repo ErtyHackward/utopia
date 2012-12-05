@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel;
-using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -10,6 +10,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Base interface for entities
     /// </summary>
+    [ProtoContract]
     public interface IEntity : ICloneable
     {
         /// <summary>

@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message used to inform about tool use result
     /// </summary>
     [ProtoContract]
-    public struct UseFeedbackMessage : IBinaryMessage
+    public class UseFeedbackMessage : IBinaryMessage
     {
         /// <summary>
         /// Identification token of the use operation
@@ -24,7 +24,6 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Gets a message identification number
         /// </summary>
-        [ProtoMember(3)]
         public byte MessageId
         {
             get { return (byte)MessageTypes.UseFeedback; }

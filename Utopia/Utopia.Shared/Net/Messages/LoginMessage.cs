@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message used by client to log in to the server
     /// </summary>
     [ProtoContract]
-    public struct LoginMessage : IBinaryMessage
+    public class LoginMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id
@@ -28,8 +28,7 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         [ProtoMember(2)]
         public string Password { get; set; }
-
-
+        
         /// <summary>
         /// Gets or sets value indicating if client is asking to register
         /// </summary>

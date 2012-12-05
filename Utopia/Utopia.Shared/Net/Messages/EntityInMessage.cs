@@ -10,7 +10,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that informs player that another entity somewhere near, provides an entity object
     /// </summary>
     [ProtoContract]
-    public struct EntityInMessage : IBinaryMessage
+    public class EntityInMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

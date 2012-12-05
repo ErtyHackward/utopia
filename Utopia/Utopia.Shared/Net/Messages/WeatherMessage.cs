@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message to inform about current weather
     /// </summary>
     [ProtoContract]
-    public struct WeatherMessage : IBinaryMessage
+    public class WeatherMessage : IBinaryMessage
     {
         /// <summary>
         /// Current wind direction and strength in range [-1;1]

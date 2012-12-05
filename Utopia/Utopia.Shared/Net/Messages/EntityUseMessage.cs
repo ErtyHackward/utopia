@@ -10,7 +10,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that informs server about client tool using
     /// </summary>
     [ProtoContract]
-    public struct EntityUseMessage : IBinaryMessage
+    public class EntityUseMessage : IBinaryMessage
     {
         /// <summary>
         /// Identification number of entity that performs use operation (player or NPC)

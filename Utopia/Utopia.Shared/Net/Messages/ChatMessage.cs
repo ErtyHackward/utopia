@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Chat message is sent to exchange messages between clients, or to inform client by server
     /// </summary>
     [ProtoContract]
-    public struct ChatMessage : IBinaryMessage
+    public class ChatMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets current message Id
