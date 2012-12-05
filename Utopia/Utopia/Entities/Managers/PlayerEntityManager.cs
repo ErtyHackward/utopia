@@ -29,6 +29,9 @@ using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.World;
+using S33M3CoreComponents.Particules;
+using Utopia.Components;
+using Utopia.Particules;
 
 namespace Utopia.Entities.Managers
 {
@@ -91,9 +94,11 @@ namespace Utopia.Entities.Managers
         private EntityRotations _entityRotations;
         private InventoryComponent _inventoryComponent;
 
+        private UtopiaParticuleEngine _particuleEngine;
         #endregion
 
         #region Public variables/properties
+
         /// <summary>
         /// The Player
         /// </summary>
@@ -222,7 +227,8 @@ namespace Utopia.Entities.Managers
                                    IPickingRenderer pickingRenderer,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
-                                   ILandscapeManager2D landscapeManager
+                                   ILandscapeManager2D landscapeManager,
+                                   UtopiaParticuleEngine particuleEngine
             )
         {
             _d3DEngine = engine;
@@ -233,6 +239,7 @@ namespace Utopia.Entities.Managers
             _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
             _landscapeManager = landscapeManager;
+            _particuleEngine = particuleEngine;
 
             Player = player;
 

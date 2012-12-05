@@ -26,6 +26,8 @@ using Utopia.Components;
 using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Configuration;
+using S33M3CoreComponents.Particules;
+using Utopia.Particules;
 
 namespace Realms.Client.States
 {
@@ -94,6 +96,7 @@ namespace Realms.Client.States
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var adminConsole = _ioc.Get<AdminConsole>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
+            var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -117,6 +120,7 @@ namespace Realms.Client.States
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
+            AddComponent(particuleEngine);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

@@ -4,12 +4,24 @@ using Utopia.Shared.Entities;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3CoreComponents.Cameras;
+using S33M3CoreComponents.Particules.Interfaces;
+using S33M3CoreComponents.Particules;
+using S33M3Resources.Structs;
+using Utopia.Shared.GameDXStates;
+using S33M3DXEngine.Textures;
+using Utopia.Shared.Settings;
+using SharpDX.Direct3D11;
+using S33M3DXEngine.RenderStates;
 
 namespace Utopia.Entities.Managers
 {
+
     //Handle all Input related stuff for player
     public partial class PlayerEntityManager
     {
+        private ShaderResourceView _particules;
+        private IEmitter _testEmitter;
+
         #region Private Methods
         /// <summary>
         /// Handle Player Actions - Movement and rotation input are not handled here
@@ -57,29 +69,37 @@ namespace Utopia.Entities.Managers
             {
                 if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
                 {
-                    _inputsManager.MouseManager.MouseCapture = !_inputsManager.MouseManager.MouseCapture;
+                    if (_particules == null)
+                    {
+                        ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Particules/", @"*.png", FilterFlags.Point, "ArrayTexture_Particules", out _particules);
+                        ToDispose(_particules);
+
+                        //Testing a Particule generator
+                        _testEmitter = new Emitter(this._cameraManager.ActiveCamera.WorldPosition.Value,
+                                                           new Vector3(0, 2, 0),
+                                                           new Vector2(5, 5),
+                                                           5.0f,
+                                                           Emitter.ParticuleGenerationMode.Manual,
+                                                           new Vector3(2, 1, 2),
+                                                           new Vector3D(0, -9.8, 0),
+                                                           RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear),
+                                                           _particules,
+                                                           DXStates.Rasters.Default,
+                                                           DXStates.Blenders.Enabled,
+                                                           DXStates.DepthStencils.DepthEnabled);
+
+
+                        _particuleEngine.AddEmitter(_testEmitter);
+
+                    }
+
+                    _testEmitter.EmmitParticule(10);
+
+
                 }
             }
 
-            //if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
-            //{
-            //    if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
-            //    {
-            //        //Avoid the player to add a block where he is located !            
-            //        BoundingBox playerPotentialNewBlock;
-            //        ComputeBlockBoundingBox(ref Player.EntityState.NewBlockPosition, out playerPotentialNewBlock);
-
-            //        if(! VisualVoxelEntity.WorldBBox.Intersects(ref playerPotentialNewBlock))
-            //        {
-            //            //sends the client server event that does tool.use on server
-            //            Player.RightToolUse(ToolUseMode.RightMouse);
-
-            //            //client invocation to keep the client inventory in synch
-            //            Player.Equipment.RightTool.Use(Player, ToolUseMode.RightMouse);
-            //        }
-            //    }
-            //}
-
+            
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {
                 // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 

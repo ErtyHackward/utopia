@@ -4,22 +4,34 @@ using System.Linq;
 using System.Text;
 using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Particules.Interfaces;
+using S33M3DXEngine;
+using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3DXEngine.Main;
+using S33M3Resources.Structs;
+using SharpDX;
+using SharpDX.Direct3D11;
 
 namespace S33M3CoreComponents.Particules
 {
-    public class ParticuleEngine : DrawableGameComponent
+    public abstract class ParticuleEngine : DrawableGameComponent
     {
         #region Private Variables
-        public List<IEmitter> _liveEmitter;
+        private List<IEmitter> _liveEmitter;
+        private iCBuffer _sharedFrameBuffer;
+        private D3DEngine _d3dEngine;
         #endregion
 
         #region Public Properties
+        public abstract Vector3D CameraPosition { get; }
         #endregion
 
-        public ParticuleEngine()
+        public ParticuleEngine(D3DEngine d3dEngine, 
+                               iCBuffer sharedFrameBuffer)
         {
-            Initialize();
+            _d3dEngine = d3dEngine;
+            _sharedFrameBuffer = sharedFrameBuffer;
+
+            DrawOrders.UpdateIndex(0, 1059, "ParticuleEngine");
         }
 
         #region Public Methods
@@ -28,9 +40,17 @@ namespace S33M3CoreComponents.Particules
             _liveEmitter = new List<IEmitter>();
         }
 
+        public override void LoadContent(DeviceContext context)
+        {
+        }
+
         public override void Update(GameTime timeSpent)
         {
-            foreach (var emitter in _liveEmitter) emitter.Update(timeSpent);
+            //Remove stopped Emitters
+            _liveEmitter.RemoveAll(x => x.isStopped);
+
+            //Update live emitters
+            foreach (var emitter in _liveEmitter) emitter.Update(CameraPosition);
         }
 
         public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -43,9 +63,12 @@ namespace S33M3CoreComponents.Particules
             foreach (var emitter in _liveEmitter) emitter.Draw(context, index);
         }
 
-
-        public void InsertEmitter(IEmitter emitter)
+        public void AddEmitter(IEmitter emitter)
         {
+            //bind the Emitter with this PArticuleEngine for rendering
+            emitter.ParentParticuleEngine = this;
+            emitter.Initialize(_d3dEngine.ImmediateContext, _sharedFrameBuffer);
+
             _liveEmitter.Add(emitter);
         }
         #endregion

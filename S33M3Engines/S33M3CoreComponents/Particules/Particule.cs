@@ -7,11 +7,20 @@ using SharpDX;
 
 namespace S33M3CoreComponents.Particules
 {
-    public struct Particule
+    public class Particule
     {
-        public Vector3D Position;
         public Vector3 Velocity;
         public Vector2 Size;
+        public Vector3D Position;
         public float Age;
+
+        public Particule(Vector3D position,Vector3 velocity, Vector2 size)
+        {
+            Age = 0;
+            Size = size;
+            Velocity = velocity;
+            Position = position;
+        }
+
     }
 }
