@@ -11,7 +11,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message to inform about entity equipment change
     /// </summary>
     [ProtoContract]
-    public struct EntityEquipmentMessage : IBinaryMessage
+    public class EntityEquipmentMessage : IBinaryMessage
     {
         /// <summary>
         /// Array of items are equipped.

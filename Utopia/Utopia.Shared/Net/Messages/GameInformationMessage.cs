@@ -9,7 +9,7 @@ namespace Utopia.Shared.Net.Messages
     /// Describes a message used to send game specified information to client
     /// </summary>
     [ProtoContract]
-    public struct GameInformationMessage : IBinaryMessage
+    public class GameInformationMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

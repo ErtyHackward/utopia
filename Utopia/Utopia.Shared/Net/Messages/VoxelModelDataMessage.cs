@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Represents a message containing a voxel model
     /// </summary>
     [ProtoContract]
-    public struct VoxelModelDataMessage : IBinaryMessage
+    public class VoxelModelDataMessage : IBinaryMessage
     {
 
         public byte MessageId

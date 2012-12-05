@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Threading;
 using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Connections
 {
-    public class TcpConnection
+    public abstract class TcpConnection : IDisposable
     {
         protected TcpClient Client;
         private TcpConnectionStatus _status;
-        private Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
+        private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
+        private bool _sendThreadActive;
 
         public TcpConnectionStatus Status
         {
@@ -26,23 +28,34 @@ namespace Utopia.Shared.Net.Connections
             }
         }
 
+        public EndPoint RemoteAddress {
+            get { return Client.Client.RemoteEndPoint; }
+        }
+
         public event EventHandler<TcpConnectionStatusEventArgs> StatusChanged;
 
-        protected void OnStatusChanged(TcpConnectionStatusEventArgs e)
+        protected virtual void OnStatusChanged(TcpConnectionStatusEventArgs e)
         {
             var handler = StatusChanged;
             if (handler != null) handler(this, e);
         }
 
-        public TcpConnection()
+        protected TcpConnection()
         {
-            Client = new TcpClient();
-
-            // set defaults
-            Client.ReceiveTimeout = 5000;
-            Client.SendTimeout = 5000;
-            Client.ReceiveBufferSize = 64 * 1024;
-            Client.SendBufferSize = 64 * 1024;
+            Client = new TcpClient
+                {
+                    ReceiveTimeout = 5000,
+                    SendTimeout = 5000,
+                    ReceiveBufferSize = 64 * 1024,
+                    SendBufferSize = 64 * 1024
+                };
+        }
+        
+        protected TcpConnection(Socket socket)
+            : this()
+        {
+            Client.Client = socket;
+            Status = socket.Connected ? TcpConnectionStatus.Connected : TcpConnectionStatus.Disconnected;
         }
         
         public void Connect(string address, int port)
@@ -52,8 +65,36 @@ namespace Utopia.Shared.Net.Connections
                 Status = TcpConnectionStatus.Connecting;
                 Client.Connect(address, port);
                 Status = TcpConnectionStatus.Connected;
+
+                Listen();
             }
             catch (Exception x)
+            {
+                Status = TcpConnectionStatus.Disconnected;
+            }
+        }
+
+        public void Listen()
+        {
+            ThreadPool.QueueUserWorkItem(o => ReadThread());
+        }
+
+        protected abstract void OnMessage(IBinaryMessage msg);
+        
+        protected void ReadThread()
+        {
+            try
+            {
+                using (var stream = Client.GetStream())
+                {
+                    while (true)
+                    {
+                        var msg = Serializer.DeserializeWithLengthPrefix<IBinaryMessage>(stream, PrefixStyle.Fixed32);
+                        OnMessage(msg);
+                    }
+                }
+            }
+            catch (Exception)
             {
                 Status = TcpConnectionStatus.Disconnected;
             }
@@ -64,29 +105,73 @@ namespace Utopia.Shared.Net.Connections
             lock (_messages)
             {
                 _messages.Enqueue(msg);
+                if (!_sendThreadActive)
+                {
+                    _sendThreadActive = true;
+                    ThreadPool.QueueUserWorkItem(o => SendThread());
+                }
+            }
+        }
+
+        public void Send(params IBinaryMessage[] msg)
+        {
+            lock (_messages)
+            {
+                foreach (var binaryMessage in msg)
+                {
+                    _messages.Enqueue(binaryMessage);    
+                }
+                
+                if (!_sendThreadActive)
+                {
+                    _sendThreadActive = true;
+                    ThreadPool.QueueUserWorkItem(o => SendThread());
+                }
             }
         }
 
         private void SendThread()
         {
-            while (true)
+            try
             {
-                IBinaryMessage msg;
-                lock (_messages)
-                    msg = _messages.Dequeue();
+                using (var stream = Client.GetStream())
+                {
+                    while (true)
+                    {
+                        IBinaryMessage msg;
+                        lock (_messages)
+                            msg = _messages.Dequeue();
+                        
+                        Serializer.SerializeWithLengthPrefix(stream, msg, PrefixStyle.Fixed32);
 
-                Serializer.SerializeWithLengthPrefix(Client.GetStream()
-
+                        lock (_messages)
+                        {
+                            if (_messages.Count == 0)
+                            {
+                                _sendThreadActive = false;
+                                break;
+                            }
+                        }
+                    }
+                    stream.Flush();
+                }
+            }
+            catch (Exception x)
+            {
+                Status = TcpConnectionStatus.Disconnected;
             }
         }
 
-        public TcpConnection(Socket socket)
-            : this()
+        public void Disconnect()
         {
-            Client.Client = socket;
-            Status = socket.Connected ? TcpConnectionStatus.Connected : TcpConnectionStatus.Disconnected;
+            Dispose();
         }
 
+        public void Dispose()
+        {
+            Client.Close();
+            Status = TcpConnectionStatus.Disconnected;
+        }
     }
 
     public class TcpConnectionStatusEventArgs : EventArgs

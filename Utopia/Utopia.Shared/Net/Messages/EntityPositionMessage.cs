@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message used to inform about entity position change event
     /// </summary>
     [ProtoContract]
-    public struct EntityPositionMessage : IBinaryMessage
+    public class EntityPositionMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

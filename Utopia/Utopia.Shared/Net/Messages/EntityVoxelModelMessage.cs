@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that informs about voxel model change
     /// </summary>
     [ProtoContract]
-    public struct EntityVoxelModelMessage: IBinaryMessage
+    public class EntityVoxelModelMessage : IBinaryMessage
     {
         /// <summary>
         /// Link to the entity

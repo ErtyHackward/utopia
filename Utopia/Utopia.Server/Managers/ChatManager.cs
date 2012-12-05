@@ -62,7 +62,7 @@ namespace Utopia.Server.Managers
 
         public void SendMessage(ClientConnection connection, string message, string nick, bool isOperator)
         {
-            connection.SendAsync(new ChatMessage { DisplayName = nick, Message = message, Operator = isOperator });
+            connection.Send(new ChatMessage { DisplayName = nick, Message = message, Operator = isOperator });
         }
 
         public void Broadcast(string message)

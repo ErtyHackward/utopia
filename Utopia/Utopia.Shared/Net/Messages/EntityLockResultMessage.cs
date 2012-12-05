@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message used to inform about lock operation result
     /// </summary>
     [ProtoContract]
-    public struct EntityLockResultMessage : IBinaryMessage
+    public class EntityLockResultMessage : IBinaryMessage
     {
         /// <summary>
         /// Entity that was requested to be locked

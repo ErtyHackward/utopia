@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that used to inform client about login operation result
     /// </summary>
     [ProtoContract]
-    public struct LoginResultMessage : IBinaryMessage
+    public class LoginResultMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

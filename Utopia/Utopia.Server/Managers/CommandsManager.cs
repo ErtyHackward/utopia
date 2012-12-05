@@ -71,7 +71,7 @@ namespace Utopia.Server.Managers
                 IServerCommand command;
                 if (!_commands.TryGetValue(cmd, out command))
                 {
-                    connection.SendAsync(new ChatMessage { DisplayName = "server", Message = "Sorry, no such command." });
+                    connection.Send(new ChatMessage { DisplayName = "server", Message = "Sorry, no such command." });
                     return true;
                 }
 
@@ -80,7 +80,7 @@ namespace Utopia.Server.Managers
                 {
                     if (!(command as IRoleRestrictedCommand).HasAccess(connection.UserRole))
                     {
-                        connection.SendAsync(new ChatMessage { DisplayName = "server", Message = "Sorry, access denied." });
+                        connection.Send(new ChatMessage { DisplayName = "server", Message = "Sorry, access denied." });
                         return true;
                     }
                 }
@@ -97,7 +97,7 @@ namespace Utopia.Server.Managers
 
                         var commandsList = string.Join(", ", result);
 
-                        connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("Available commands: {0}.\nUse help [command_name] to get additioanl information about command", commandsList) });
+                        connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Available commands: {0}.\nUse help [command_name] to get additioanl information about command", commandsList) });
                         
                         return true;
                     }
@@ -107,9 +107,9 @@ namespace Utopia.Server.Managers
                     IServerCommand c;
                     if (_commands.TryGetValue(cmdName, out c))
                     {
-                        connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("{0} - {1}", cmdName, c.Description) });
+                        connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("{0} - {1}", cmdName, c.Description) });
                     }
-                    else connection.SendAsync(new ChatMessage { DisplayName = "server", Message = "No such command" });
+                    else connection.Send(new ChatMessage { DisplayName = "server", Message = "No such command" });
                     
                     return true;
                 }
@@ -124,7 +124,7 @@ namespace Utopia.Server.Managers
                     sb.AppendFormat("Entities count: {0}\n", _server.AreaManager.EntitiesCount);
                     sb.AppendFormat("Perfomance: CPU usage {1}%, Free RAM {2}Mb, DynamicUpdate {0} msec", _server.PerformanceManager.UpdateAverageTime, _server.PerformanceManager.CpuUsage, _server.PerformanceManager.FreeRAM);
 
-                    connection.SendAsync(new ChatMessage { DisplayName = "server", Message = sb.ToString() });
+                    connection.Send(new ChatMessage { DisplayName = "server", Message = sb.ToString() });
                     return true;
                 }
                 #endregion
@@ -132,14 +132,14 @@ namespace Utopia.Server.Managers
                 if (command is SaveCommand)
                 {
                     _server.LandscapeManager.SaveChunks();
-                    connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", _server.LandscapeManager.SaveTime, _server.LandscapeManager.ChunksSaved) });
+                    connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", _server.LandscapeManager.SaveTime, _server.LandscapeManager.ChunksSaved) });
                     return true;
                 }
                 #endregion
                 #region Services command
                 if (command is ServicesCommand)
                 {
-                    connection.SendAsync(new ChatMessage { DisplayName = "server", Message = "Currenty active services: " + string.Join(", ", (from s in _server.Services select s.ServiceName)) });
+                    connection.Send(new ChatMessage { DisplayName = "server", Message = "Currenty active services: " + string.Join(", ", (from s in _server.Services select s.ServiceName)) });
                     
                     return true;
                 }
@@ -161,7 +161,7 @@ namespace Utopia.Server.Managers
                     catch (Exception ex)
                     {
                         if(ex is OverflowException || ex is FormatException)
-                            connection.SendAsync(new ChatMessage { DisplayName = "server", Message = "wrong time value, try 9:00 or 21:00" });
+                            connection.Send(new ChatMessage { DisplayName = "server", Message = "wrong time value, try 9:00 or 21:00" });
                         else throw;
                     }
                     return true;

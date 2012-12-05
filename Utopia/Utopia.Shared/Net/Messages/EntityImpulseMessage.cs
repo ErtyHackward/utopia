@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message to describe physical impulse to some entity. Entity may change its position or respond with opposite
     /// </summary>
     [ProtoContract]
-    public struct EntityImpulseMessage : IBinaryMessage
+    public class EntityImpulseMessage : IBinaryMessage
     {
         /// <summary>
         /// Entity is affected by impulse

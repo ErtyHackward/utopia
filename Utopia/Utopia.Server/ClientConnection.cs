@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using ProtoBuf;
 using Utopia.Server.Structs;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server
 {
@@ -21,15 +17,7 @@ namespace Utopia.Server
     /// </summary>
     public class ClientConnection : TcpConnection
     {
-        #region Fields
-
-        private byte[] _tail;
-        protected NetworkStream Stream;
-        protected BinaryWriter Writer;
-
         private readonly ConcurrentQueue<IBinaryMessage> _delayedMessages = new ConcurrentQueue<IBinaryMessage>();
-
-        #endregion
 
         #region Properties
 
@@ -243,206 +231,56 @@ namespace Utopia.Server
 
             Id = string.Format("{0}:{1}", endPoint.Address, endPoint.Port);
             VisibleGroup = new List<ClientConnection>();
-            Stream = new NetworkStream(socket);
-            Writer = new BinaryWriter(new BufferedStream(Stream, 1024 * 32));
         }
 
-        public void SendAsync(IBinaryMessage msg)
+        protected override void OnMessage(IBinaryMessage message)
         {
-            _delayedMessages.Enqueue(msg);
-            if (!_sendThreadActive)
+            switch ((MessageTypes)message.MessageId)
             {
-                _sendThreadActive = true;
-                new ThreadStart(SendDelayed).BeginInvoke(null, null);
-            }
-        }
-
-        public void SendAsync(params IBinaryMessage[] msgs)
-        {
-            for (int i = 0; i < msgs.Length; i++)
-            {
-                _delayedMessages.Enqueue(msgs[i]);    
-            }
-            if (!_sendThreadActive)
-            {
-                _sendThreadActive = true;
-                new ThreadStart(SendDelayed).BeginInvoke(null, null);
-            }
-        }
-
-        private volatile bool _sendThreadActive;
-
-        private void SendDelayed()
-        {
-            lock (SendSyncRoot)
-            {
-                start:
-
-                _sendThreadActive = true;
-                IBinaryMessage msg;
-                while (_delayedMessages.TryDequeue(out msg))
-                {
-                    try
-                    {
-                        Writer.Write(msg.MessageId);
-                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32);                        
-                    }
-                    catch (IOException io)
-                    {
-                        TraceHelper.Write("Send fail... " + io.Message);
-                        return;
-                    }
-                }
-                if (this.ConnectionStatus != Shared.Net.Connections.ConnectionStatus.Connected) return;
-                Writer.Flush();
-                // allow next thread to start
-                _sendThreadActive = false;
-
-                // we need to try get messages again because we may lose next thread start when setting _sendThreadActive = false
-                if (!_delayedMessages.IsEmpty)
-                {
-                    goto start;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sends a message to client
-        /// </summary>
-        /// <param name="msg"></param>
-        protected bool Send(IBinaryMessage msg)
-        {
-            lock (SendSyncRoot)
-            {
-                try
-                {
-                    Writer.Write(msg.MessageId);
-                    Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32); 
-                    Writer.Flush();
-                    return true;
-                }
-                catch (IOException io)
-                {
-                    Console.WriteLine("Send fail... " + io.Message);
-                    return false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sends a group of messages to client
-        /// </summary>
-        /// <param name="messages"></param>
-        protected bool Send(params IBinaryMessage[] messages)
-        {
-            lock (SendSyncRoot)
-            {
-                try
-                {
-                    foreach (var msg in messages)
-                    {
-                        Writer.Write(msg.MessageId);
-                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32); 
-                    }
-                    Writer.Flush();
-                    return true;
-                }
-                catch (IOException io)
-                {
-                    TraceHelper.Write("Send fail... " + io.Message);
-                    return false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Parse a raw byte array
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="length"></param>
-        public override void ParseRaw(byte[] buffer, int length)
-        {
-            if (_tail != null)
-            {
-                var nBuffer = new byte[_tail.Length + length];
-                System.Buffer.BlockCopy(_tail, 0, nBuffer, 0, _tail.Length);
-                System.Buffer.BlockCopy(buffer, 0, nBuffer, _tail.Length, length);
-
-                buffer = nBuffer;
-                length = nBuffer.Length;
-                _tail = null;
-            }
-
-            using (var ms = new MemoryStream(buffer, 0, length))
-            {
-                using (var reader = new BinaryReader(ms))
-                {
-                    long startPosition = 0;
-                    try
-                    {
-                        while (ms.Position != ms.Length)
-                        {
-                            startPosition = ms.Position;
-                            var idByte = (MessageTypes)reader.ReadByte();
-
-                            var message = NetworkMessageFactory.ReadMessage(idByte, reader);
-
-                            switch (idByte)
-                            {
-                                case MessageTypes.Login:
-                                    OnMessageLogin((LoginMessage)message);
-                                    break;
-                                case MessageTypes.Chat:
-                                    OnMessageChat((ChatMessage)message);
-                                    break;
-                                case MessageTypes.GetChunks:
-                                    OnMessageGetChunks((GetChunksMessage)message);
-                                    break;
-                                case MessageTypes.EntityPosition:
-                                    OnMessagePosition((EntityPositionMessage)message);
-                                    break;
-                                case MessageTypes.EntityDirection:
-                                    OnMessageDirection((EntityHeadDirectionMessage)message);
-                                    break;
-                                case MessageTypes.EntityUse:
-                                    OnMessageEntityUse((EntityUseMessage)message);
-                                    break;
-                                case MessageTypes.Ping:
-                                    OnMessagePing((PingMessage)message);
-                                    break;
-                                case MessageTypes.EntityVoxelModel:
-                                    OnMessageEntityVoxelModel((EntityVoxelModelMessage)message);
-                                    break;
-                                case MessageTypes.ItemTransfer:
-                                    OnMessageItemTransfer((ItemTransferMessage)message);
-                                    break;
-                                case MessageTypes.EntityEquipment:
-                                    OnMessageEntityEquipment((EntityEquipmentMessage)message);
-                                    break;
-                                case MessageTypes.EntityImpulse:
-                                    OnMessageEntityImpulse((EntityImpulseMessage)message);
-                                    break;
-                                case MessageTypes.EntityLock:
-                                    OnMessageEntityLock((EntityLockMessage)message);
-                                    break;
-                                case MessageTypes.GetVoxelModels:
-                                    OnMessageGetVoxelModels((GetVoxelModelsMessage)message);
-                                    break;
-                                case MessageTypes.VoxelModelData:
-                                    OnMessageVoxelModelData((VoxelModelDataMessage)message);
-                                    break;
-                                default:
-                                    throw new ArgumentException("Invalid message id");
-                            }
-                        }
-                    }
-                    catch (EndOfStreamException)
-                    {
-                        // we need to save tail data to use it with next tcp pocket
-                        _tail = new byte[ms.Length - startPosition];
-                        System.Buffer.BlockCopy(buffer, (int)startPosition, _tail, 0, _tail.Length);
-                    }
-                }
+                case MessageTypes.Login:
+                    OnMessageLogin((LoginMessage)message);
+                    break;
+                case MessageTypes.Chat:
+                    OnMessageChat((ChatMessage)message);
+                    break;
+                case MessageTypes.GetChunks:
+                    OnMessageGetChunks((GetChunksMessage)message);
+                    break;
+                case MessageTypes.EntityPosition:
+                    OnMessagePosition((EntityPositionMessage)message);
+                    break;
+                case MessageTypes.EntityDirection:
+                    OnMessageDirection((EntityHeadDirectionMessage)message);
+                    break;
+                case MessageTypes.EntityUse:
+                    OnMessageEntityUse((EntityUseMessage)message);
+                    break;
+                case MessageTypes.Ping:
+                    OnMessagePing((PingMessage)message);
+                    break;
+                case MessageTypes.EntityVoxelModel:
+                    OnMessageEntityVoxelModel((EntityVoxelModelMessage)message);
+                    break;
+                case MessageTypes.ItemTransfer:
+                    OnMessageItemTransfer((ItemTransferMessage)message);
+                    break;
+                case MessageTypes.EntityEquipment:
+                    OnMessageEntityEquipment((EntityEquipmentMessage)message);
+                    break;
+                case MessageTypes.EntityImpulse:
+                    OnMessageEntityImpulse((EntityImpulseMessage)message);
+                    break;
+                case MessageTypes.EntityLock:
+                    OnMessageEntityLock((EntityLockMessage)message);
+                    break;
+                case MessageTypes.GetVoxelModels:
+                    OnMessageGetVoxelModels((GetVoxelModelsMessage)message);
+                    break;
+                case MessageTypes.VoxelModelData:
+                    OnMessageVoxelModelData((VoxelModelDataMessage)message);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid message id");
             }
         }
     }

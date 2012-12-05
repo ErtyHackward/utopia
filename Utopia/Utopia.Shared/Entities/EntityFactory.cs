@@ -13,7 +13,10 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.Entities
@@ -59,7 +62,6 @@ namespace Utopia.Shared.Entities
             worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
 
             // entities hierarchy
-
             entityType.AddSubType(100, typeof(DynamicEntity));
             entityType.AddSubType(101, typeof(StaticEntity));
 
@@ -164,6 +166,38 @@ namespace Utopia.Shared.Entities
             boundingbox.AddField(1, "Minimum");
             boundingbox.AddField(2, "Maximum");
 
+            var range2I = protoTypeModel.Add(typeof(Range2I), true);
+            range2I.AddField(1, "Position");
+            range2I.AddField(2, "Size");
+
+            #region Network messages
+
+            var iBinaryMessage = protoTypeModel.Add(typeof(IBinaryMessage), true);
+
+            iBinaryMessage.AddSubType(100, typeof(BlocksChangedMessage));
+            iBinaryMessage.AddSubType(101, typeof(ChatMessage));
+            iBinaryMessage.AddSubType(102, typeof(ChunkDataMessage));
+            iBinaryMessage.AddSubType(103, typeof(DateTimeMessage));
+            iBinaryMessage.AddSubType(104, typeof(ErrorMessage));
+            iBinaryMessage.AddSubType(105, typeof(GameInformationMessage));
+            iBinaryMessage.AddSubType(106, typeof(GetChunksMessage));
+            iBinaryMessage.AddSubType(107, typeof(LoginMessage));
+            iBinaryMessage.AddSubType(108, typeof(LoginResultMessage));
+            iBinaryMessage.AddSubType(109, typeof(EntityHeadDirectionMessage));
+            iBinaryMessage.AddSubType(110, typeof(EntityInMessage));
+            iBinaryMessage.AddSubType(111, typeof(EntityOutMessage));
+            iBinaryMessage.AddSubType(112, typeof(EntityPositionMessage));
+            iBinaryMessage.AddSubType(113, typeof(EntityUseMessage));
+            iBinaryMessage.AddSubType(114, typeof(PingMessage));
+            iBinaryMessage.AddSubType(115, typeof(EntityVoxelModelMessage));
+            iBinaryMessage.AddSubType(116, typeof(ItemTransferMessage));
+            iBinaryMessage.AddSubType(117, typeof(EntityEquipmentMessage));
+            iBinaryMessage.AddSubType(118, typeof(WeatherMessage));
+            iBinaryMessage.AddSubType(119, typeof(EntityImpulseMessage));
+            iBinaryMessage.AddSubType(120, typeof(EntityLockMessage));
+            iBinaryMessage.AddSubType(121, typeof(EntityLockResultMessage));
+            iBinaryMessage.AddSubType(122, typeof(UseFeedbackMessage));
+            #endregion
         }
 
         public EntityFactory(ILandscapeManager2D landscapeManager)

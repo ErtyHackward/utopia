@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that inform about change in view direction of the entity
     /// </summary>
     [ProtoContract]
-    public struct EntityHeadDirectionMessage : IBinaryMessage
+    public class EntityHeadDirectionMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

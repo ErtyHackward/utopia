@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message used to inform clients about current time and date
     /// </summary>
     [ProtoContract]
-    public struct DateTimeMessage : IBinaryMessage
+    public class DateTimeMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

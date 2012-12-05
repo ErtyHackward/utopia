@@ -80,7 +80,7 @@ namespace Utopia.Server.Managers
             {
                 if (!_server.UsersStorage.Register(e.Message.Login, e.Message.Password, UserRole.Administrator))
                 {
-                    connection.SendAsync(new ErrorMessage
+                    connection.Send(new ErrorMessage
                     {
                         ErrorCode = ErrorCodes.LoginAlreadyRegistered,
                         Message = "Such login is already registered"
@@ -98,7 +98,7 @@ namespace Utopia.Server.Managers
                     Data = Server.ServerProtocolVersion,
                     Message = "Wrong client version, expected " + Server.ServerProtocolVersion
                 };
-                connection.SendAsync(error);
+                connection.Send(error);
                 connection.Disconnect();
                 return;
             }
@@ -110,7 +110,7 @@ namespace Utopia.Server.Managers
                 var oldConnection = _server.ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
                 {
-                    oldConnection.SendAsync(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you connected. You will be disconnected." });
+                    oldConnection.Send(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you connected. You will be disconnected." });
                     oldConnection.Disconnect();
                 }
 
@@ -159,7 +159,7 @@ namespace Utopia.Server.Managers
 
                 connection.ServerEntity = playerEntity;
 
-                connection.SendAsync(new LoginResultMessage { Logged = true });
+                connection.Send(new LoginResultMessage { Logged = true });
                 TraceHelper.Write("{1} ({3}) logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId, e.Message.DisplayName);
                 var gameInfo = new GameInformationMessage
                 {
@@ -168,12 +168,12 @@ namespace Utopia.Server.Managers
                     WorldParameter = _server.LandscapeManager.WorldGenerator.WorldParameters,
                 };
 
-                connection.SendAsync(gameInfo);
-                connection.SendAsync(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
-                connection.SendAsync(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
+                connection.Send(gameInfo);
+                connection.Send(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
+                connection.Send(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
 
                 _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", e.Message.DisplayName), Operator = true });
-                connection.SendAsync(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.DisplayName), Operator = true });
+                connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.DisplayName), Operator = true });
 
                 // adding entity to world
                 _server.AreaManager.AddEntity(playerEntity);
@@ -189,7 +189,7 @@ namespace Utopia.Server.Managers
                 TraceHelper.Write("Incorrect login information {0} ({1})", e.Message.Login,
                                   connection.Id);
 
-                connection.SendAsync(error, new LoginResultMessage { Logged = false });
+                connection.Send(error, new LoginResultMessage { Logged = false });
             }
         }
 

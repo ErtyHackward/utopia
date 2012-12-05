@@ -7,7 +7,7 @@ namespace Utopia.Shared.Net.Messages
     /// Message used to inform the client about some of urgent event
     /// </summary>
     [ProtoContract]
-    public struct ErrorMessage : IBinaryMessage
+    public class ErrorMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id

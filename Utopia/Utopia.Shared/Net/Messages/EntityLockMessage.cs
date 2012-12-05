@@ -8,7 +8,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message to acquire entity lock for operations like inventory items transfers
     /// </summary>
     [ProtoContract]
-    public struct EntityLockMessage : IBinaryMessage
+    public class EntityLockMessage : IBinaryMessage
     {
         /// <summary>
         /// Entity to be locked/unlocked

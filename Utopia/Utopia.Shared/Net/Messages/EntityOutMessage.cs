@@ -9,7 +9,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message used to inform that some other entity left view range
     /// </summary>
     [ProtoContract]
-    public struct EntityOutMessage : IBinaryMessage
+    public class EntityOutMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id
