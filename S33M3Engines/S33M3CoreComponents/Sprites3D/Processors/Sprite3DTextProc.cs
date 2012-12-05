@@ -71,7 +71,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
 
         public void Set2DeviceAndDraw(DeviceContext context)
         {
-            if (_vb.VertexCount == 0) return;
+            if (_spritesCollection.Count == 0) return;
 
             //Set Effect Constant Buffer
             _effect.Begin(context);

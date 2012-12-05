@@ -70,14 +70,16 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 		//Get the billboard template corner
 		float4 billboardPosition = billboardCorners[i];
 
-		billboardPosition = mul(billboardPosition, InvertedOrientation);
-
-		//Scale to billboard local size
+		//Scale to billboard
 		billboardPosition.xy *= Input.Size; 
 
+		//Rotating the billboard to make it face the camera
+		billboardPosition = mul(billboardPosition, InvertedOrientation);
+
+		//Translation billboard to world position
 		billboardPosition.xyz += Input.Position.xyz; 
 
-		//Rotating the billboard to make it face the camera, and project it against the Screen
+		//and project it against the Screen
 		float4 WorldPosition = mul(billboardPosition, ViewProjection);
 
 		Output.Position = WorldPosition;

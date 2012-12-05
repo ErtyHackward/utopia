@@ -47,6 +47,8 @@ using Utopia.Shared.Settings;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.World.Processors;
+using S33M3CoreComponents.Particules;
+using Utopia.Particules;
 
 namespace Realms.Client.States
 {
@@ -236,6 +238,7 @@ namespace Realms.Client.States
             var soundManager = _ioc.Get<GameSoundManager>();
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
+            var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -269,6 +272,7 @@ namespace Realms.Client.States
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
             AddComponent(fadeComponent);
+            AddComponent(particuleEngine);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

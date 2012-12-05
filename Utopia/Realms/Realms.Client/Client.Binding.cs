@@ -52,6 +52,8 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
 using S33M3CoreComponents.Sound;
+using S33M3CoreComponents.Particules;
+using Utopia.Particules;
 
 namespace Realms.Client
 {
@@ -218,6 +220,7 @@ namespace Realms.Client
             _iocContainer.Bind<ToolBarUi>().To<SandboxToolBar>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<FadeComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<AdminConsole>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<UtopiaParticuleEngine>().ToSelf().InScope(x => GameScope.CurrentGameScope);
         }
     }
 }
