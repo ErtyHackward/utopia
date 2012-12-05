@@ -20,8 +20,13 @@ namespace Utopia.Shared.Net.Messages
         /// <returns></returns>
         public static IBinaryMessage ReadMessage(MessageTypes id, BinaryReader reader)
         {
-            var length = reader.ReadInt32();
-            var bytes = reader.ReadBytes(length);
+            int length;
+
+            if (!Serializer.TryReadLengthPrefix(reader.BaseStream, PrefixStyle.Fixed32, out length))
+            {
+                throw new EndOfStreamException();
+            }
+
             Type msgType;
             switch (id)
             {

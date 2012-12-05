@@ -15,12 +15,9 @@ namespace Utopia.Shared.Net.Connections
     /// <summary>
     /// Represents a tcp connection from client to server. Should be used on client side.
     /// </summary>
-    public class ServerConnection : TcpConnection
+    public class ServerConnection
     {
-        private byte[] _tail; // used to store incomplete binary data
-        protected NetworkStream Stream;
-        protected BinaryWriter Writer;
-
+        private TcpClient _client;
         // async block
         private bool _isrunning = true;
         private readonly NetworkMessageFactory _networkMessageFactory;
@@ -70,16 +67,27 @@ namespace Utopia.Shared.Net.Connections
         /// Gets or sets user display message
         /// </summary>
         public string DisplayName { get; set; }
-               
+
+        private void PrepareClient()
+        {
+            _client = new TcpClient();
+
+            // set defaults
+            _client.ReceiveTimeout = 5000;
+            _client.SendTimeout = 5000;
+            _client.ReceiveBufferSize = 64 * 1024;
+            _client.SendBufferSize = 64 * 1024;
+        }
+
         /// <summary>
         /// Creates new instance of ServerConnection using address and port
         /// </summary>
         /// <param name="address"></param>
         /// <param name="port"></param>
-        public ServerConnection(string address, int port, NetworkMessageFactory networkMessageFactory) : base(address, port)
+        public ServerConnection(string address, int port, NetworkMessageFactory networkMessageFactory)
         {
-            //Set default server connection timeout
-            ConnectionTimeOut = 5000; //5 secondes by default
+
+            
             _networkMessageFactory = networkMessageFactory;
 
             StartSendThread();
@@ -133,7 +141,7 @@ namespace Utopia.Shared.Net.Connections
                             }
 
                             Writer.Write(msg.MessageId);
-                            Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian);
+                            Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32);
                         }
 
                         Writer.Flush();
@@ -170,7 +178,7 @@ namespace Utopia.Shared.Net.Connections
                     if (socket.Connected)
                     {
                         Writer.Write(msg.MessageId);
-                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32BigEndian);
+                        Serializer.SerializeWithLengthPrefix(Writer.BaseStream, msg, PrefixStyle.Fixed32);
                         Writer.Flush();
                     }
                     else
