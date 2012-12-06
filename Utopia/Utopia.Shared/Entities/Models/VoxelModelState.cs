@@ -3,7 +3,6 @@ using System.IO;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using SharpDX;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
@@ -14,7 +13,7 @@ namespace Utopia.Shared.Entities.Models
     [ProtoContract]
     public class VoxelModelState : IBinaryStorable
     {
-        private readonly VoxelModel _parentModel;
+        private VoxelModel _parentModel;
         private BoundingBox _boundingBox;
 
         /// <summary>
@@ -39,13 +38,33 @@ namespace Utopia.Shared.Entities.Models
             set { _boundingBox = value; }
         }
 
+        public VoxelModel ParentModel
+        {
+            get { return _parentModel; }
+            set { 
+                _parentModel = value;
+
+                if (PartsStates.Count != _parentModel.Parts.Count)
+                {
+                    for (int i = 0; i < _parentModel.Parts.Count; i++)
+                    {
+                        PartsStates.Add(new VoxelModelPartState());
+                    }
+                }
+            }
+        }
+
+        public VoxelModelState()
+        {
+            PartsStates = new List<VoxelModelPartState>();
+        }
+
         /// <summary>
         /// Initialize a copy of the state
         /// </summary>
         /// <param name="copyFrom"></param>
-        public VoxelModelState(VoxelModelState copyFrom)
+        public VoxelModelState(VoxelModelState copyFrom) : this()
         {
-            PartsStates = new List<VoxelModelPartState>();
             _parentModel = copyFrom._parentModel;
             Name = copyFrom.Name;
             BoundingBox = copyFrom.BoundingBox;
@@ -56,17 +75,9 @@ namespace Utopia.Shared.Entities.Models
 
         }
 
-        public VoxelModelState(VoxelModel parentModel)
+        public VoxelModelState(VoxelModel parentModel) : this()
         {
-            PartsStates = new List<VoxelModelPartState>();
-
-            _parentModel = parentModel;
-            
-            for (int i = 0; i < _parentModel.Parts.Count; i++)
-            {
-                PartsStates.Add(new VoxelModelPartState() );
-            }
-
+            ParentModel = parentModel;
         }
 
         public void Save(BinaryWriter writer)

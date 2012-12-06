@@ -48,7 +48,7 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         [ProtoMember(4)]
         public List<VoxelModelPart> Parts { get; private set; }
-        
+
         /// <summary>
         /// Gets a list of model states
         /// </summary>
@@ -66,6 +66,16 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         [ProtoMember(7)]
         public ColorMapping ColorMapping { get; set; }
+
+        [ProtoAfterDeserialization]
+        public void Deserialized()
+        {
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.ParentModel = this;
+            }
+        }
+
 
         /// <summary>
         /// Calculates a md5 hash from a model

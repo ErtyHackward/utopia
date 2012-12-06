@@ -44,7 +44,7 @@ namespace Utopia.Shared.Net.Connections
         {
             Client = new TcpClient
                 {
-                    ReceiveTimeout = 5000,
+                    ReceiveTimeout = 0,
                     SendTimeout = 5000,
                     ReceiveBufferSize = 64 * 1024,
                     SendBufferSize = 64 * 1024
@@ -134,27 +134,25 @@ namespace Utopia.Shared.Net.Connections
         {
             try
             {
-                using (var stream = Client.GetStream())
+                var stream = Client.GetStream();
+                while (true)
                 {
-                    while (true)
-                    {
-                        IBinaryMessage msg;
-                        lock (_messages)
-                            msg = _messages.Dequeue();
-                        
-                        Serializer.SerializeWithLengthPrefix(stream, msg, PrefixStyle.Fixed32);
+                    IBinaryMessage msg;
+                    lock (_messages)
+                        msg = _messages.Dequeue();
 
-                        lock (_messages)
+                    Serializer.SerializeWithLengthPrefix(stream, msg, PrefixStyle.Fixed32);
+
+                    lock (_messages)
+                    {
+                        if (_messages.Count == 0)
                         {
-                            if (_messages.Count == 0)
-                            {
-                                _sendThreadActive = false;
-                                break;
-                            }
+                            _sendThreadActive = false;
+                            break;
                         }
                     }
-                    stream.Flush();
                 }
+                stream.Flush();
             }
             catch (Exception x)
             {

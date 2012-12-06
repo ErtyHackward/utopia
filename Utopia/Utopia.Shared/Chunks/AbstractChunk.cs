@@ -106,7 +106,8 @@ namespace Utopia.Shared.Chunks
         public byte[] Serialize()
         {
             var ms = new MemoryStream();
-            Serializer.Serialize(ms, this);
+            Serializer.SerializeWithLengthPrefix(ms, BlockData, PrefixStyle.Fixed32);
+            Serializer.SerializeWithLengthPrefix(ms, Entities, PrefixStyle.Fixed32);
             return ms.ToArray();
         }
 

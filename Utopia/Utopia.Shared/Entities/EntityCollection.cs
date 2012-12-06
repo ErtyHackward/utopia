@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using ProtoBuf;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -11,9 +12,10 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Represents a threadsafe collection of entities
     /// </summary>
+    [ProtoContract]
     public class EntityCollection : IStaticContainer
     {
-        private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
+        private SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
         private bool _initialisation;
 
@@ -70,7 +72,12 @@ namespace Utopia.Shared.Entities
 
         public bool IsDirty { get; set; }
 
-        public SortedList<uint, IStaticEntity> Entities { get { return _entities; } } 
+        [ProtoMember(1)]
+        public SortedList<uint, IStaticEntity> Entities
+        {
+            get { return _entities; }
+            set { _entities = value; }
+        }
 
         /// <summary>
         /// Gets entities count in collection
@@ -84,6 +91,11 @@ namespace Utopia.Shared.Entities
         /// Gets parent chunk object
         /// </summary>
         public AbstractChunk Chunk { get; set; }
+
+        public EntityCollection()
+        {
+
+        }
 
         public EntityCollection(AbstractChunk chunk)
         {
