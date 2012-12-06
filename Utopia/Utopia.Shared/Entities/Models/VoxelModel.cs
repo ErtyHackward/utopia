@@ -232,20 +232,16 @@ namespace Utopia.Shared.Entities.Models
         {
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
-                var writer = new BinaryWriter(fs);
-                Save(writer);
+                Serializer.Serialize(fs, this);
             }
         }
 
         public static VoxelModel LoadFromFile(string path)
         {
-            var voxelModel = new VoxelModel();
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
-                var reader = new BinaryReader(fs);
-                voxelModel.Load(reader);
+                return Serializer.Deserialize<VoxelModel>(fs);   
             }
-            return voxelModel;
         }
 
         /// <summary>
