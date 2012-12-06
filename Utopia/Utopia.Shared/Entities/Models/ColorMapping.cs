@@ -1,4 +1,5 @@
 using System.IO;
+using ProtoBuf;
 using SharpDX;
 
 namespace Utopia.Shared.Entities.Models
@@ -6,11 +7,13 @@ namespace Utopia.Shared.Entities.Models
     /// <summary>
     /// Defines a color mapping information of a model part
     /// </summary>
+    [ProtoContract]
     public class ColorMapping
     {
         /// <summary>
         /// Gets colors scheme, maximum 64 items
         /// </summary>
+        [ProtoMember(1)]
         public Color4[] BlockColors { get; set; }
 
         public static ColorMapping Read(BinaryReader reader)

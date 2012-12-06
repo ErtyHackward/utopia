@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Interfaces;
+﻿using System.Linq;
+using ProtoBuf;
 using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Chunks
 {
+    [ProtoContract]
     public class ChunkMetaData : IBinaryStorable
     {
+        [ProtoMember(1)]
         public byte ChunkMasterBiomeType;
+        [ProtoMember(2)]
         public byte ChunkMaxHeightBuilt;
 
         public ChunkMetaData()

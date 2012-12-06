@@ -109,7 +109,7 @@ namespace Utopia.Server.Managers
             conn.Listen();
 
             if (!e.Handled)
-                conn.BeginDispose();
+                conn.Dispose();
         }
 
         void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
@@ -120,7 +120,7 @@ namespace Utopia.Server.Managers
             {
                 var msg = e.Message;
                 msg.Request = false;
-                connection.SendAsync(msg);
+                connection.Send(msg);
             }
         }
 
@@ -135,33 +135,7 @@ namespace Utopia.Server.Managers
                 foreach (var connection in _connections.Values)
                 {
                     if(connection.Authorized)
-                        connection.SendAsync(message);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sends a message to every connected and authorized client
-        /// </summary>
-        /// <param name="buffer">a byte array to send</param>
-        public void Broadcast(byte[] buffer)
-        {
-            Broadcast(buffer, buffer.Length);
-        }
-
-        /// <summary>
-        /// Sends a message to every connected and authorized client
-        /// </summary>
-        /// <param name="buffer">a byte array to send</param>
-        /// <param name="length">length of the message</param>
-        public void Broadcast(byte[] buffer, int length)
-        {
-            lock (_syncRoot)
-            {
-                foreach (var connection in _connections.Values)
-                {
-                    if (connection.Authorized)
-                        connection.Send(buffer, length);
+                        connection.Send(message);
                 }
             }
         }
@@ -183,15 +157,15 @@ namespace Utopia.Server.Managers
 
             OnConnectionAdded(new ConnectionEventArgs { Connection = connection });
 
-            connection.ConnectionStatusChanged += ConnectionConnectionStatusChanged;
+            connection.StatusChanged += ConnectionConnectionStatusChanged;
             return true;
         }
 
-        void ConnectionConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
+        void ConnectionConnectionStatusChanged(object sender, TcpConnectionStatusEventArgs e)
         {
             var connection = sender as ClientConnection;
 
-            if (e.Status == ConnectionStatus.Disconnected)
+            if (e.Status == TcpConnectionStatus.Disconnected)
             {
                 var ea = new ConnectionEventArgs { Connection = connection };
                 OnBeforeConnectionRemoved(ea);
@@ -229,7 +203,7 @@ namespace Utopia.Server.Managers
                 Listener.Dispose();
                 foreach (var connection in _connections.Values)
                 {
-                    connection.BeginDispose();
+                    connection.Dispose();
                 }
             }
 

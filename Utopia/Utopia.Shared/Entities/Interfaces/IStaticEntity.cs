@@ -1,10 +1,12 @@
-﻿using SharpDX;
+﻿using ProtoBuf;
+using SharpDX;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
     /// <summary>
     /// Represents an entity that can be stored in chunk entiteis
     /// </summary>
+    [ProtoContract]
     public interface IStaticEntity : IEntity
     {
         /// <summary>

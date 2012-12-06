@@ -46,7 +46,7 @@ namespace Utopia.Editor.Forms
                             break;
                         case WorldConfiguration.WorldProcessors.Utopia:
                             if (_processorControl != null) _processorControl.Dispose();
-                            AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as WorldConfiguration<UtopiaProcessorParams>));
+                            AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as UtopiaWorldConfiguration));
                             break;
                     }
 
@@ -130,12 +130,8 @@ namespace Utopia.Editor.Forms
 
             if (processorChoose.ShowDialog(this) == System.Windows.Forms.DialogResult.Cancel)
                 return;
-
-            string processorType = "Utopia.Shared.Configuration." + processorChoose.SelectedProcessor.ToString() + "ProcessorParams, Utopia.Shared";
-
-            //Create new instance of Worldconfiguration dynamicaly, following Processor type !            
-            Type type = typeof(WorldConfiguration<>).MakeGenericType(Type.GetType(processorType));
-            WorldConfiguration newConfiguration = (WorldConfiguration)Activator.CreateInstance(type, null, false);
+            
+            var newConfiguration = new UtopiaWorldConfiguration();
 
             newConfiguration.InjectMandatoryObjects();
             newConfiguration.ConfigurationName = "noname";

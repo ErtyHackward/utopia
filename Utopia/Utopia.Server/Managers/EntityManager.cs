@@ -138,7 +138,7 @@ namespace Utopia.Server.Managers
 
                     if (staticEntity == null)
                     {
-                        connection.SendAsync(new EntityLockResultMessage
+                        connection.Send(new EntityLockResultMessage
                         {
                             EntityLink = e.Message.EntityLink,
                             LockResult = LockResult.NoSuchEntity
@@ -150,7 +150,7 @@ namespace Utopia.Server.Managers
                     {
                         if (_lockedStaticEntities.ContainsKey(e.Message.EntityLink))
                         {
-                            connection.SendAsync(new EntityLockResultMessage
+                            connection.Send(new EntityLockResultMessage
                                                      {
                                                          EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.FailAlreadyLocked
@@ -162,7 +162,7 @@ namespace Utopia.Server.Managers
                     }
                     
                     connection.ServerEntity.LockedEntity = staticEntity;
-                    connection.SendAsync(new EntityLockResultMessage
+                    connection.Send(new EntityLockResultMessage
                     {
                         EntityLink = e.Message.EntityLink,
                         LockResult = LockResult.SuccessLocked
@@ -178,7 +178,7 @@ namespace Utopia.Server.Managers
                     {
                         if (_lockedDynamicEntities.ContainsKey(e.Message.EntityLink.DynamicEntityId))
                         {
-                            connection.SendAsync(new EntityLockResultMessage
+                            connection.Send(new EntityLockResultMessage
                                                      {
                                                          EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.FailAlreadyLocked
@@ -196,7 +196,7 @@ namespace Utopia.Server.Managers
                             var lockEntity = (IEntity)dynEntity.DynamicEntity;
 
                             connection.ServerEntity.LockedEntity = lockEntity;
-                            connection.SendAsync(new EntityLockResultMessage
+                            connection.Send(new EntityLockResultMessage
                                                      {
                                                          EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.SuccessLocked
@@ -206,7 +206,7 @@ namespace Utopia.Server.Managers
                         }
                         else
                         {
-                            connection.SendAsync(new EntityLockResultMessage
+                            connection.Send(new EntityLockResultMessage
                                                      {
                                                          EntityLink = e.Message.EntityLink,
                                                          LockResult = LockResult.NoSuchEntity

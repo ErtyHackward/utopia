@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Tools;
 
@@ -7,46 +8,32 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Represents an two-state item, that can be switched between them by use operation
     /// </summary>
+    [ProtoContract]
     public class Door : OrientedBlockItem, IUsableEntity
     {
         [Category("Door")]
+        [Description("Current entity state (initial)")]
+        [ProtoMember(1)]
+        public bool IsOpen { get; set; }
+        
+        [Category("Door")]
         [Description("Model state if the door is opened")]
         [TypeConverter(typeof(ModelStateSelector))]
+        [ProtoMember(2)]
         public string OpenedState { get; set; }
 
         [Category("Door")]
         [Description("Model state if the door is closed")]
         [TypeConverter(typeof(ModelStateSelector))]
+        [ProtoMember(3)]
         public string ClosedState { get; set; }
-
-        [Category("Door")]
-        [Description("Current entity state (initial)")]
-        public bool IsOpen { get; set; }
-
+        
         public override ushort ClassId
         {
             get
             {
                 return EntityClassId.Door;
             }
-        }
-
-        public override void Save(System.IO.BinaryWriter writer)
-        {
-            base.Save(writer);
-
-            writer.Write(OpenedState ?? string.Empty);
-            writer.Write(ClosedState ?? string.Empty);
-            writer.Write(IsOpen);
-        }
-
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-
-            OpenedState = reader.ReadString();
-            ClosedState = reader.ReadString();
-            IsOpen = reader.ReadBoolean();
         }
 
         protected override void OnInstanceChanged()

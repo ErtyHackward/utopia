@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Utopia.Shared.Net.Interfaces
 {
     /// <summary>
@@ -11,11 +9,5 @@ namespace Utopia.Shared.Net.Interfaces
         /// Gets a message identification number
         /// </summary>
         byte MessageId { get; }
-
-        /// <summary>
-        /// Writes all necessary instance members
-        /// </summary>
-        /// <param name="writer"></param>
-        void Write(BinaryWriter writer);
     }
 }

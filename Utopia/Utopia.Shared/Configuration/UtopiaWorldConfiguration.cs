@@ -1,29 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Configuration
 {
-    //World Configuration subtyped with a processor Type
-    public class WorldConfiguration<T> : WorldConfiguration, IBinaryStorable where T : IBinaryStorable, IProcessorParams, new()
+    /// <summary>
+    /// World configuration for utopia world generator
+    /// </summary>
+    [ProtoContract]
+    public class UtopiaWorldConfiguration : WorldConfiguration
     {
-        #region Private Variables
         private int _worldHeight;
-        #endregion
+        private UtopiaProcessorParams _processorParam;
 
-        #region Public Properties
+        public override int ConfigType
+        {
+            get { return 1; }
+        }
+
         /// <summary>
         /// Holds parameters for Utopia processor
         /// </summary>
         [Browsable(false)]
-        public T ProcessorParam { get; set; }
+        [ProtoMember(1)]
+        public UtopiaProcessorParams ProcessorParam
+        {
+            get { return _processorParam; }
+            set { 
+                _processorParam = value;
+                _processorParam.Config = this;
+            }
+        }
 
         /// <summary>
         /// World Height
@@ -37,32 +45,28 @@ namespace Utopia.Shared.Configuration
 
                 if (value >= 128 && value <= 256)
                 {
-                    UtopiaProcessorParams utopiaParam = ProcessorParam as UtopiaProcessorParams;
-                    if(utopiaParam != null)
-                    {
-                        if (utopiaParam.WorldGeneratedHeight <= value) return;
-                    }
+                    if (ProcessorParam != null && ProcessorParam.WorldGeneratedHeight <= value) 
+                        return;
+                    
                     _worldHeight = value;
                 }
             }
         }
-        #endregion
 
-        public WorldConfiguration()
+        public UtopiaWorldConfiguration()
             :this(null, false)
         {
         }
 
-        public WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
+        public UtopiaWorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
             : base(factory, withHelperAssignation)
         {
-            ProcessorParam = new T();
-            ProcessorParam.Config = this;
+            ProcessorParam = new UtopiaProcessorParams();
         }
 
-        #region Public Methods
         protected override void CreateDefaultCubeProfiles()
         {
+            CubeProfiles = new CubeProfile[255];
             int id = 0;
             //Air Block
             CubeProfiles[id] = (new CubeProfile()
@@ -100,22 +104,5 @@ namespace Utopia.Shared.Configuration
 
             base.CreateDefaultEntities();
         }
-        #endregion
-
-        #region Private Methods
-        #endregion
-
-        public override void Load(BinaryReader reader)
-        {
-            base.Load(reader);
-            ProcessorParam.Load(reader);
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            base.Save(writer);
-            ProcessorParam.Save(writer);
-        }
-
     }
 }

@@ -629,7 +629,7 @@ namespace Utopia.Worlds.Chunks
             logger.Trace("Chunk bulk request to server (Init Phases, data in chunk unit) position : {0} ; Size : {1}", chunkRange.Position, chunkRange.Size);
 #endif
 
-            _server.ServerConnection.SendAsync(
+            _server.ServerConnection.Send(
             new GetChunksMessage()
             {
                 Range = chunkRange,

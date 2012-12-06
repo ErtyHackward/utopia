@@ -24,12 +24,12 @@ namespace Sandbox.Client.Components.GUI
         {
             get
             {
-                return 1;
+                return 2;
             }
         }
 
         public PlayerInventory(D3DEngine engine, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
-            base(character, iconFactory, new Point(100,20), new Point(340,120), inputManager)
+            base(character, iconFactory, new Point(200,120), new Point(270,50), inputManager)
         {
             _commonResources = commonResources;
             _stInventoryWindow              = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window.png");
@@ -39,14 +39,18 @@ namespace Sandbox.Client.Components.GUI
             _stInventoryCloseButtonLabel    = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_label.png");
 
             CustomWindowImage = _stInventoryWindow;
-            Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(812, 526);
+            Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(674, 388);
 
+            CellsCreated();
             PrepareCells();
         }
 
-        private void PrepareCells()
+        protected override void CellsCreated()
         {
-            var cellSize = new Vector2I(60,60);
+            if (_commonResources == null)
+                return;
+
+            var cellSize = new Vector2I(42, 42);
 
             for (var x = 0; x < UiGrid.GetLength(0); x++)
             {
@@ -57,8 +61,18 @@ namespace Sandbox.Client.Components.GUI
                     cell.CustomBackground = _commonResources.StInventorySlot;
                     cell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
                     cell.Bounds = new S33M3CoreComponents.GUI.Nuclex.UniRectangle(GridOffset.X + x * cellSize.X, GridOffset.Y + y * cellSize.Y, 42, 42);
+                    cell.DrawIconsGroupId = 5;
+                    cell.DrawIconsActiveCellId = 6;
                 }
             }
+        }
+
+        private void PrepareCells()
+        {
+            var slot = BuildBodyslot(Utopia.Shared.Entities.Inventory.EquipmentSlotType.Hand, 19, 142, 42);
+
+            slot.CustomBackground = _commonResources.StInventoryEquipmentSlot;
+            slot.CustomBackgroundHover = _commonResources.StInventoryEquipmentSlotHover;
         }
     }
 }

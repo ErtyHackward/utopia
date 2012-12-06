@@ -10,10 +10,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public partial class CubeVein
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
         [TypeConverter(typeof(CubeConverter))]
         [DisplayName("Cube")]
         public string CubeName
@@ -29,33 +25,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 CubeId = EditorConfigHelper.Config.CubeProfiles.First(x => x.Name == value).Id;
             }
         }
-        #endregion
-
-        #region Public Methods
-        public void Save(System.IO.BinaryWriter writer)
-        {
-            writer.Write(CubeId);
-            writer.Write(Name);
-            writer.Write(VeinSize);
-            writer.Write(SpawningHeight.Min);
-            writer.Write(SpawningHeight.Max);
-            writer.Write(VeinPerChunk);
-            writer.Write(ChanceOfSpawning);
-        }
-
-        public void Load(System.IO.BinaryReader reader)
-        {
-            CubeId = reader.ReadByte();
-            Name = reader.ReadString();
-            VeinSize = reader.ReadInt32();
-            SpawningHeight = new RangeB(reader.ReadByte(), reader.ReadByte());
-            VeinPerChunk = reader.ReadInt32();
-            ChanceOfSpawning = reader.ReadDouble();
-        }
-        #endregion
-
-        #region Private Methods
-        #endregion
 
         public class CubeConverter : StringConverter
         {

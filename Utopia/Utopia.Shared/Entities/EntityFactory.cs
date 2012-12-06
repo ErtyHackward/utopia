@@ -1,5 +1,9 @@
 using System;
 using System.IO;
+using ProtoBuf;
+using ProtoBuf.Meta;
+using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
@@ -7,9 +11,13 @@ using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks.Tags;
-using System.Collections.Generic;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Structs;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.Entities
 {
@@ -18,7 +26,7 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
-
+        
         public WorldConfiguration Config { get; set; }
 
         /// <summary>
@@ -26,8 +34,185 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public ILandscapeManager2D LandscapeManager { get; set; }
 
+        public static void InitializeProtobufInheritanceHierarchy()
+        {
+            var protoTypeModel = RuntimeTypeModel.Default;
+
+            var entityInterface = protoTypeModel.Add(typeof(IEntity), true);
+            var entityType = protoTypeModel.Add(typeof(Entity), true);
+            var dynEntityType = protoTypeModel.Add(typeof(DynamicEntity), true);
+            var staticEntityType = protoTypeModel.Add(typeof(StaticEntity), true);
+            var charEntityType = protoTypeModel.Add(typeof(CharacterEntity), true);
+            var rpgCharType = protoTypeModel.Add(typeof(RpgCharacterEntity), true);
+            var itemType = protoTypeModel.Add(typeof(Item), true);
+            var slotType = protoTypeModel.Add(typeof(Slot), true);
+            var containedSlotType = protoTypeModel.Add(typeof(ContainedSlot), true);
+            var blockItem = protoTypeModel.Add(typeof(BlockItem), true);
+            var orientedBlockItem = protoTypeModel.Add(typeof(OrientedBlockItem), true);
+            var blockLinkedItem = protoTypeModel.Add(typeof(BlockLinkedItem), true);
+            var orientedBlockLinkedItem = protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
+            var resourceCollector = protoTypeModel.Add(typeof(ResourcesCollector), true);
+            var worldConfig = protoTypeModel.Add(typeof(WorldConfiguration), true);
+            var soundSource = protoTypeModel.Add(typeof(SoundSource), true);
+            var chunkDataProvider = protoTypeModel.Add(typeof(ChunkDataProvider), true);
+
+
+            chunkDataProvider.AddSubType(100, typeof(InsideDataProvider));
+
+            soundSource.AddSubType(100, typeof(BiomeSoundSource));
+
+            // world configs
+
+            worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
+
+            entityInterface.AddSubType(100, typeof(Entity));
+
+            // entities hierarchy
+            entityType.AddSubType(100, typeof(DynamicEntity));
+            entityType.AddSubType(101, typeof(StaticEntity));
+
+            dynEntityType.AddSubType(100, typeof(CharacterEntity));
+
+            charEntityType.AddSubType(100, typeof(RpgCharacterEntity));
+            charEntityType.AddSubType(101, typeof(Zombie));
+
+            rpgCharType.AddSubType(100, typeof(PlayerCharacter));
+
+            staticEntityType.AddSubType(100, typeof(Item));
+
+            itemType.AddSubType(100, typeof(BlockItem));
+            itemType.AddSubType(101, typeof(BlockLinkedItem));
+            itemType.AddSubType(102, typeof(ResourcesCollector));
+            itemType.AddSubType(103, typeof(CubeResource));
+
+            blockItem.AddSubType(100, typeof(OrientedBlockItem));
+
+            orientedBlockItem.AddSubType(100, typeof(Door));
+
+            blockLinkedItem.AddSubType(100, typeof(OrientedBlockLinkedItem));
+            blockLinkedItem.AddSubType(101, typeof(Plant));
+            blockLinkedItem.AddSubType(102, typeof(SideLightSource));
+
+            orientedBlockLinkedItem.AddSubType(100, typeof(Container));
+
+            resourceCollector.AddSubType(100, typeof(BasicCollector));
+
+            // slots hierarchy
+
+            slotType.AddSubType(100, typeof(ContainedSlot));
+
+            containedSlotType.AddSubType(100, typeof(BlueprintSlot));
+
+
+
+            // add mappings for 3rd party objects
+
+            var vector2I = protoTypeModel.Add(typeof(Vector2I), true);
+            vector2I.AddField(1, "X");
+            vector2I.AddField(2, "Y");
+
+            var byteColor = protoTypeModel.Add(typeof(ByteColor), true);
+            byteColor.AddField(1, "R");
+            byteColor.AddField(2, "G");
+            byteColor.AddField(3, "B");
+            byteColor.AddField(4, "A");
+
+            var quaternion = protoTypeModel.Add(typeof(Quaternion), true);
+            quaternion.AddField(1, "X");
+            quaternion.AddField(2, "Y");
+            quaternion.AddField(3, "Z");
+            quaternion.AddField(4, "W");
+
+            var vector4 = protoTypeModel.Add(typeof(Vector4), true);
+            vector4.AddField(1, "X");
+            vector4.AddField(2, "Y");
+            vector4.AddField(3, "Z");
+            vector4.AddField(4, "W");
+
+            var matrix = protoTypeModel.Add(typeof(Matrix), true);
+            matrix.AddField(1, "Row1");
+            matrix.AddField(2, "Row2");
+            matrix.AddField(3, "Row3");
+            matrix.AddField(4, "Row4");
+
+            var vector3 = protoTypeModel.Add(typeof(Vector3), true);
+            vector3.AddField(1, "X");
+            vector3.AddField(2, "Y");
+            vector3.AddField(3, "Z");
+
+            var vector3d = protoTypeModel.Add(typeof(Vector3D), true);
+            vector3d.AddField(1, "X");
+            vector3d.AddField(2, "Y");
+            vector3d.AddField(3, "Z");
+
+            var vector3i = protoTypeModel.Add(typeof(Vector3I), true);
+            vector3i.AddField(1, "X");
+            vector3i.AddField(2, "Y");
+            vector3i.AddField(3, "Z");
+
+            var rangeI = protoTypeModel.Add(typeof(RangeI), true);
+            rangeI.AddField(1, "Min");
+            rangeI.AddField(2, "Max");
+
+            var rangeD = protoTypeModel.Add(typeof(RangeD), true);
+            rangeD.AddField(1, "Min");
+            rangeD.AddField(2, "Max");
+
+            var rangeB = protoTypeModel.Add(typeof(RangeB), true);
+            rangeB.AddField(1, "Min");
+            rangeB.AddField(2, "Max");
+
+            var color4 = protoTypeModel.Add(typeof(Color4), true);
+            color4.AddField(1, "Alpha");
+            color4.AddField(2, "Red");
+            color4.AddField(3, "Green");
+            color4.AddField(4, "Blue");
+
+            var boundingbox = protoTypeModel.Add(typeof(BoundingBox), true);
+            boundingbox.AddField(1, "Minimum");
+            boundingbox.AddField(2, "Maximum");
+
+            var range2I = protoTypeModel.Add(typeof(Range2I), true);
+            range2I.AddField(1, "Position");
+            range2I.AddField(2, "Size");
+
+            #region Network messages
+
+            var iBinaryMessage = protoTypeModel.Add(typeof(IBinaryMessage), true);
+
+            iBinaryMessage.AddSubType(100, typeof(BlocksChangedMessage));
+            iBinaryMessage.AddSubType(101, typeof(ChatMessage));
+            iBinaryMessage.AddSubType(102, typeof(ChunkDataMessage));
+            iBinaryMessage.AddSubType(103, typeof(DateTimeMessage));
+            iBinaryMessage.AddSubType(104, typeof(ErrorMessage));
+            iBinaryMessage.AddSubType(105, typeof(GameInformationMessage));
+            iBinaryMessage.AddSubType(106, typeof(GetChunksMessage));
+            iBinaryMessage.AddSubType(107, typeof(LoginMessage));
+            iBinaryMessage.AddSubType(108, typeof(LoginResultMessage));
+            iBinaryMessage.AddSubType(109, typeof(EntityHeadDirectionMessage));
+            iBinaryMessage.AddSubType(110, typeof(EntityInMessage));
+            iBinaryMessage.AddSubType(111, typeof(EntityOutMessage));
+            iBinaryMessage.AddSubType(112, typeof(EntityPositionMessage));
+            iBinaryMessage.AddSubType(113, typeof(EntityUseMessage));
+            iBinaryMessage.AddSubType(114, typeof(PingMessage));
+            iBinaryMessage.AddSubType(115, typeof(EntityVoxelModelMessage));
+            iBinaryMessage.AddSubType(116, typeof(ItemTransferMessage));
+            iBinaryMessage.AddSubType(117, typeof(EntityEquipmentMessage));
+            iBinaryMessage.AddSubType(118, typeof(WeatherMessage));
+            iBinaryMessage.AddSubType(119, typeof(EntityImpulseMessage));
+            iBinaryMessage.AddSubType(120, typeof(EntityLockMessage));
+            iBinaryMessage.AddSubType(121, typeof(EntityLockResultMessage));
+            iBinaryMessage.AddSubType(122, typeof(UseFeedbackMessage));
+            #endregion
+        }
+
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
+            
+
+            // type hierarhy should be described here
+
+
             LandscapeManager = landscapeManager;
         }
 
@@ -77,9 +262,6 @@ namespace Utopia.Shared.Entities
             {
                 switch (classId)
                 {
-                    case EntityClassId.None:
-                        entity = new NoEntity();
-                        break;
                     case EntityClassId.PlayerCharacter:
                         entity = new PlayerCharacter();
                         break;
@@ -178,9 +360,15 @@ namespace Utopia.Shared.Entities
             
             var entity = CreateFromClassId(classId);
 
-            entity.Load(reader, this);
+            return (Entity)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, entity, entity.GetType());
+        }
 
-            return entity;
+        public void Serialize(Entity entity, Stream stream)
+        {
+            using (var writer = new BinaryWriter(stream))
+                writer.Write(entity.ClassId);
+
+            Serializer.Serialize(stream, entity);
         }
 
         public Entity CreateFromBytes(byte[] bytes)
@@ -202,9 +390,8 @@ namespace Utopia.Shared.Entities
                 throw new InvalidDataException();
 
             var tag = new LiquidTag();
-            tag.Load(reader);
-
-            return tag;
+            
+            return (BlockTag)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, tag, tag.GetType());
         }
 
         /// <summary>
@@ -224,7 +411,7 @@ namespace Utopia.Shared.Entities
 
                 foreach (var blueprintSlot in set)
                 {
-                    IItem item = null;
+                    Item item;
                     if (blueprintSlot.BlueprintId < 256)
                     {
                         var res = CreateEntity<CubeResource>();
