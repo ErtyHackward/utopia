@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using Utopia.Shared.Configuration;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Tools.BinarySerializer;
+﻿using System.ComponentModel;
+using ProtoBuf;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
-    public partial class BiomeEntity : IBinaryStorable
+    [ProtoContract]
+    public partial class BiomeEntity
     {
         [Browsable(false)]
+        [ProtoMember(1)]
         public ushort BluePrintId { get; set; }
+
+        [ProtoMember(2)]
         public int EntityPerChunk { get; set; }
+
+        [ProtoMember(3)]
         public double ChanceOfSpawning { get; set; }
     }
 }

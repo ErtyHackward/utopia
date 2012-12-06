@@ -548,7 +548,7 @@ namespace Utopia.Entities.Managers
                 float impulsePower = 1;
                 if (_input.ActionsManager.isTriggered(UtopiaActions.Move_Run)) impulsePower = 2;
 
-                _server.ServerConnection.SendAsync(new EntityImpulseMessage
+                _server.ServerConnection.Send(new EntityImpulseMessage
                 {
                     DynamicEntityId = (entityTesting.Entity as IDynamicEntity).DynamicId,
                     Vector3 = MQuaternion.GetLookAtFromQuaternion(_player.Player.HeadRotation) * impulsePower

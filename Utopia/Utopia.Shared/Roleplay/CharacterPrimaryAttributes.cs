@@ -1,41 +1,54 @@
 ﻿using System;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Tools.BinarySerializer;
+using ProtoBuf;
 
 namespace Utopia.Shared.Roleplay
 {
     /// <summary>
     /// Role-playing players and NPC attributes. All parameters can be in range [1; 10]
     /// </summary>
-    public class CharacterPrimaryAttributes : IBinaryStorable
+    [ProtoContract]
+    public class CharacterPrimaryAttributes
     {
         /// <summary>
         /// Defines how much weight a character can carry, how power is a character's attack is, how fast he can destruct a block
         /// </summary>
+        [ProtoMember(1)]
         public byte Strength { get; set; }
+
         /// <summary>
         /// Defines how much a character is smart
         /// </summary>
+        [ProtoMember(2)]
         public byte Intellect { get; set; }
+
         /// <summary>
         /// Defines how far a character can see (entites, not landscape)
         /// </summary>
+        [ProtoMember(3)]
         public byte Perception { get; set; }
+
         /// <summary>
         /// Defines how long a character can run
         /// </summary>
+        [ProtoMember(4)]
         public byte Stamina { get; set; }
+
         /// <summary>
         /// Defines how the others NPC likes a character
         /// </summary>
+        [ProtoMember(5)]
         public byte Charisma { get; set; }
+
         /// <summary>
         /// Defines how fast a character coordinates his actions
         /// </summary>
+        [ProtoMember(6)]
         public byte Dexterity { get; set; }
+
         /// <summary>
         /// Defines a probability in any random events
         /// </summary>
+        [ProtoMember(7)]
         public byte Luck { get; set; }
 
         /// <summary>
@@ -106,28 +119,6 @@ namespace Utopia.Shared.Roleplay
             {
                 return new CharacterPrimaryAttributes { Strength = 4, Perception = 7, Stamina = 4, Charisma = 4, Intellect = 7, Dexterity = 7, Luck = 7 };
             }
-        }
-
-        public void Save(System.IO.BinaryWriter writer)
-        {
-            writer.Write(Strength);
-            writer.Write(Intellect);
-            writer.Write(Perception);
-            writer.Write(Stamina);
-            writer.Write(Charisma);
-            writer.Write(Dexterity);
-            writer.Write(Luck);
-        }
-
-        public void Load(System.IO.BinaryReader reader)
-        {
-            Strength = reader.ReadByte();
-            Intellect = reader.ReadByte();
-            Perception = reader.ReadByte();
-            Stamina = reader.ReadByte();
-            Charisma = reader.ReadByte();
-            Dexterity = reader.ReadByte();
-            Luck = reader.ReadByte();
         }
     }
 }

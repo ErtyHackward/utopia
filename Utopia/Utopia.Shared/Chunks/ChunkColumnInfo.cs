@@ -1,16 +1,23 @@
-﻿using Utopia.Shared.Tools.BinarySerializer;
+﻿using ProtoBuf;
+using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Chunks
 {
     /// <summary>
     /// Contains common information about column of blocks in the chunk
     /// </summary>
+    [ProtoContract]
     public struct ChunkColumnInfo : IBinaryStorable
     {
+        [ProtoMember(1)]
         public byte Temperature;
+        [ProtoMember(2)]
         public byte Moisture;
+        [ProtoMember(3)]
         public byte MaxHeight;
+        [ProtoMember(4)]
         public byte MaxGroundHeight;
+        [ProtoMember(5)]
         public byte Biome;
 
         public void Save(System.IO.BinaryWriter writer)

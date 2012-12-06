@@ -16,9 +16,6 @@ namespace Utopia.Network
     public class ServerComponent : GameComponent, IDebugInfo
     {
 
-        #region Private variables
-        private readonly NetworkMessageFactory _networkMessageFactory;
-        #endregion
 
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
@@ -133,19 +130,19 @@ namespace Utopia.Network
         public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
         #endregion
 
-        public ServerComponent(NetworkMessageFactory networkMessageFactory)
+        public ServerComponent()
         {
-            _networkMessageFactory = networkMessageFactory;
+
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
         }
 
         public override void BeforeDispose()
         {
             if (ServerConnection != null &&
-               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnected &&
-               ServerConnection.ConnectionStatus != ConnectionStatus.Disconnecting)
+               ServerConnection.Status != TcpConnectionStatus.Disconnected &&
+               ServerConnection.Status != TcpConnectionStatus.Disconnecting)
             {
-                ServerConnection.Disconnect();
+                ServerConnection.Dispose();
             }
 
             this.MessageGameInformation -= ServerComponent_MessageGameInformation;
@@ -156,17 +153,20 @@ namespace Utopia.Network
         #region Public Methods
         public void Disconnect()
         {
-            if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
+            if (ServerConnection != null && ServerConnection.Status == TcpConnectionStatus.Connected) 
+                ServerConnection.Dispose();
         }
 
         public bool BindingServer(string address)
         {
-            if (ServerConnection != null && ServerConnection.ConnectionStatus == ConnectionStatus.Connected) ServerConnection.Disconnect();
+            if (ServerConnection != null && ServerConnection.Status == TcpConnectionStatus.Connected) 
+                ServerConnection.Dispose();
 
             Address = address;
 
-            if(ServerConnection != null) ServerConnection.Dispose();
-            ServerConnection = new ServerConnection(address, _networkMessageFactory);
+            if(ServerConnection != null) 
+                ServerConnection.Dispose();
+            ServerConnection = new ServerConnection();
             return true;
         }
 
@@ -184,9 +184,9 @@ namespace Utopia.Network
             ServerConnection.ClientVersion = 1;
             ServerConnection.Register = false;
 
-            if (ServerConnection.ConnectionStatus != ConnectionStatus.Connected)
+            if (ServerConnection.Status != TcpConnectionStatus.Connected)
             {
-                ServerConnection.ConnectAsync();
+                ServerConnection.Connect(Address, 4815);
             }
             else
             {
@@ -437,7 +437,7 @@ namespace Utopia.Network
         {
             if (ShowDebugInfo)
             {
-                return string.Format("Received: {1} Receive speed: {0}", BytesHelper.FormatBytes(ServerConnection.AverageReceiveSpeed), BytesHelper.FormatBytes(ServerConnection.TotalBytesReceived));
+                return string.Format("Received: NotImpl Receive speed: NotImpl");
             }
             else
             {

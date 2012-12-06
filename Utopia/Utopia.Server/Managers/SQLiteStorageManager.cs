@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ProtoBuf;
 using Utopia.Server.Interfaces;
 using Utopia.Shared;
 using Utopia.Shared.Entities;
@@ -210,8 +211,7 @@ namespace Utopia.Server.Managers
             byte[] bytes;
             using (var ms = new MemoryStream())
             {
-                var writer = new BinaryWriter(ms);
-                entity.Save(writer);
+                Serializer.Serialize(ms, entity);
                 bytes = ms.ToArray();
             }
 
@@ -297,8 +297,12 @@ namespace Utopia.Server.Managers
         void IVoxelModelStorage.Save(VoxelModel model)
         {
             CheckName(model.Name);
-            var bytes = model.Serialize();
-            InsertBlob(string.Format("INSERT INTO models (id,data) VALUES ('{0}', @blob)", model.Name), bytes);
+            using (var ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, model);
+                var bytes = ms.ToArray();
+                InsertBlob(string.Format("INSERT INTO models (id,data) VALUES ('{0}', @blob)", model.Name), bytes);
+            }
         }
 
         /// <summary>

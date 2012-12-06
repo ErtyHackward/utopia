@@ -1,68 +1,89 @@
 ﻿using System.ComponentModel;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Tools.BinarySerializer;
+using ProtoBuf;
 
 namespace Utopia.Shared.Roleplay
 {
     /// <summary>
     /// Secondary character's attributes in [0; 255] range
     /// </summary>
-    public class CharacterSecondaryAttributes : IBinaryStorable
+    [ProtoContract]
+    public class CharacterSecondaryAttributes
     {
         /// <summary>
         /// Defines a bow attack skill
         /// </summary>
         [Description("Defines a bow attack skill")]
+        [ProtoMember(1)]
         public byte Bows { get; set; }
+
         /// <summary>
         /// Defines a sword attack skill
         /// </summary>
         [Description("Defines a sword attack skill")]
+        [ProtoMember(2)]
         public byte Swords { get; set; }
+
         /// <summary>
         /// Defines how much resources character can mine from one block
         /// </summary>
         [Description("Defines how much resources character can mine from one block")]
+        [ProtoMember(3)]
         public byte Mine { get; set; }
+
         /// <summary>
         /// Defines how profitable a character can trade
         /// </summary>
         [Description("Defines how profitable a character can trade")]
+        [ProtoMember(4)]
         public byte Barter { get; set; }
+
         /// <summary>
         /// Defines how strong a character can heal
         /// </summary>
         [Description("Defines how strong a character can heal")]
+        [ProtoMember(5)]
         public byte Doctor { get; set; }
+
         /// <summary>
         /// Determines how well a character can fix something
         /// </summary>
         [Description("Determines how well a character can fix something")]
+        [ProtoMember(6)]
         public byte Repair { get; set; }
+
         /// <summary>
         /// Defines how well a character can affects hi-technology thins like computers, robots, girls.
         /// </summary>
         [Description("Defines how well a character can affects hi-technology thins like computers, robots")]
+        [ProtoMember(7)]
         public byte Science { get; set; }
+        
         /// <summary>
         /// Determines how a character can influence others while talking
         /// </summary>
         [Description("Determines how a character can influence others while talking")]
+        [ProtoMember(8)]
         public byte Speech { get; set; }
+
         /// <summary>
         /// Determines how well a character steals 
         /// </summary>
         [Description("Determines how well a character steals ")]
+        [ProtoMember(9)]
         public byte Steal { get; set; }
+
         /// <summary>
         /// Defines a quality of a food that a character can produce
         /// </summary>
         [Description("Defines a quality of a food that a character can produce")]
+        [ProtoMember(10)]
         public byte Cook { get; set; }
+
         /// <summary>
         /// Defines how well a character can sneak
         /// </summary>
         [Description("Defines how well a character can sneak")]
+        [ProtoMember(11)]
         public byte Sneak { get; set; }
 
         /// <summary>
@@ -97,36 +118,6 @@ namespace Utopia.Shared.Roleplay
             attr.Sneak = (byte)(3 * primary.Dexterity + primary.Luck);
 
             return attr;
-        }
-
-        public void Save(System.IO.BinaryWriter writer)
-        {
-            writer.Write(Bows);
-            writer.Write(Swords);
-            writer.Write(Mine);
-            writer.Write(Barter);
-            writer.Write(Doctor);
-            writer.Write(Repair);
-            writer.Write(Science);
-            writer.Write(Speech);
-            writer.Write(Steal);
-            writer.Write(Cook);
-            writer.Write(Sneak);
-        }
-
-        public void Load(System.IO.BinaryReader reader)
-        {
-            Bows = reader.ReadByte();
-            Swords = reader.ReadByte();
-            Mine = reader.ReadByte();
-            Barter = reader.ReadByte();
-            Doctor = reader.ReadByte();
-            Repair = reader.ReadByte();
-            Science = reader.ReadByte();
-            Speech = reader.ReadByte();
-            Steal = reader.ReadByte();
-            Cook = reader.ReadByte();
-            Sneak = reader.ReadByte();
         }
     }
 }

@@ -53,11 +53,17 @@ namespace Utopia.Shared.Settings
                     if (File.Exists(serverDataBasePath))
                     {
                         //Load and extract information from database
-                        LocalWorldsParam param = new LocalWorldsParam();
+                        var param = new LocalWorldsParam();
                         param.WorldParameters = ExtractInformationData(serverDataBasePath, out param.LastAccess);
-                        param.WorldServerRootPath = new DirectoryInfo(directory);
-                        param.WorldClientRootPath = new DirectoryInfo(GetSinglePlayerClientRootPath(applicationRootPath)+ @"\" + param.WorldServerRootPath.Name);
-                        worldsParameters.Add(param);
+
+                        if (param.WorldParameters != null)
+                        {
+                            param.WorldServerRootPath = new DirectoryInfo(directory);
+                            param.WorldClientRootPath =
+                                new DirectoryInfo(GetSinglePlayerClientRootPath(applicationRootPath) + @"\" +
+                                                  param.WorldServerRootPath.Name);
+                            worldsParameters.Add(param);
+                        }
                     }
                 }
             }

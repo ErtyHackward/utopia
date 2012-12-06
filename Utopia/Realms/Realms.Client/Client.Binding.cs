@@ -166,7 +166,6 @@ namespace Realms.Client
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
 
             //Network Related =============================================
-            _iocContainer.Bind<NetworkMessageFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
             _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
 

@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel;
-using System.IO;
+using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -10,6 +10,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Base interface for entities
     /// </summary>
+    [ProtoContract]
     public interface IEntity : ICloneable
     {
         /// <summary>
@@ -85,17 +86,5 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <returns></returns>
         EntityLink GetLink();
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        void Save(BinaryWriter writer);
-
-        /// <summary>
-        /// Loads current object from binary form
-        /// </summary>
-        /// <param name="reader"></param>
-        void Load(BinaryReader reader, EntityFactory factory);
     }
 }

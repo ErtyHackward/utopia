@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using ProtoBuf;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -11,9 +12,10 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Represents a threadsafe collection of entities
     /// </summary>
+    [ProtoContract]
     public class EntityCollection : IStaticContainer
     {
-        private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
+        private SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
         private bool _initialisation;
 
@@ -70,7 +72,12 @@ namespace Utopia.Shared.Entities
 
         public bool IsDirty { get; set; }
 
-        public SortedList<uint, IStaticEntity> Entities { get { return _entities; } } 
+        [ProtoMember(1)]
+        public SortedList<uint, IStaticEntity> Entities
+        {
+            get { return _entities; }
+            set { _entities = value; }
+        }
 
         /// <summary>
         /// Gets entities count in collection
@@ -83,7 +90,12 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets parent chunk object
         /// </summary>
-        public AbstractChunk Chunk { get; private set; }
+        public AbstractChunk Chunk { get; set; }
+
+        public EntityCollection()
+        {
+
+        }
 
         public EntityCollection(AbstractChunk chunk)
         {
@@ -338,7 +350,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IEnumerable<T> Enumerate<T>()
+        public IEnumerable<T> Enumerate<T>() where  T: IStaticEntity
         {
             lock (_syncRoot)
             {
@@ -350,7 +362,7 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        public void Foreach<T>(Action<T> action)
+        public void Foreach<T>(Action<T> action) where T : IStaticEntity
         {
             lock (_syncRoot)
             {
@@ -362,14 +374,14 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        public void RemoveAll<T>(Predicate<T> condition)
+        public void RemoveAll<T>(Predicate<T> condition) where T : IStaticEntity
         {
             lock (_syncRoot)
             {
                 for (int i = _entities.Count - 1; i >= 0; i--)
                 {
                     var value = _entities[_entities.Keys[i]]; // O(1)
-                    if (value is T && condition((T) value))
+                    if (value is T && condition((T)value))
                     {
                         IsDirty = true;
                         _entities.RemoveAt(i); // O(Count)
@@ -382,40 +394,6 @@ namespace Utopia.Shared.Entities
 
                 if (IsDirty)
                     OnCollectionDirty();
-            }
-        }
-
-        /// <summary>
-        /// Performs loading of the entites from binary format
-        /// </summary>
-        /// <param name="factory">A factory used to generate new entities</param>
-        /// <param name="reader">Data flaw coming embeeded inside a binary reader</param>
-        public void LoadEntities(EntityFactory factory, BinaryReader reader)
-        {
-            _initialisation = true;
-            int nbrEntities = reader.ReadInt32();
-            for (int i = 0; i < nbrEntities; i++)
-            {
-                var entity = (IStaticEntity)factory.CreateFromBytes(reader);
-                Add(entity, 0, true);
-            }
-            _initialisation = false;
-        }
-
-        /// <summary>
-        /// Performs saving of entites to binary format
-        /// </summary>
-        /// <param name="writer"></param>
-        public void SaveEntities(BinaryWriter writer)
-        {
-            lock (_syncRoot)
-            {
-                //Write the Nbr of Entities that needs to be saved
-                writer.Write(_entities.Count);
-                foreach (var entity in _entities)
-                {
-                    entity.Value.Save(writer);
-                }
             }
         }
 
