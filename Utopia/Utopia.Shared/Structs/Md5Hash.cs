@@ -34,6 +34,11 @@ namespace Utopia.Shared.Structs
             get { return _empty; }
         }
 
+        public Md5Hash()
+        {
+            _bytes = new byte[16];
+        }
+
         /// <summary>
         /// Creates new instance of Md5Hash
         /// </summary>

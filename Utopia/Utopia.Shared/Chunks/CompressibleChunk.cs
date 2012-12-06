@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using ProtoBuf;
 using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
@@ -127,7 +128,10 @@ namespace Utopia.Shared.Chunks
                         Md5HashData = Md5Hash.Calculate(decompressed);
                         decompressed.Position = 0;
                     }
-                    RuntimeTypeModel.Default.Deserialize(decompressed, this, typeof(AbstractChunk));
+
+                    BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
+                    Entities = Serializer.DeserializeWithLengthPrefix<EntityCollection>(decompressed, PrefixStyle.Fixed32);
+
                     decompressed.Dispose();
                     CompressedDirty = false;
                 }

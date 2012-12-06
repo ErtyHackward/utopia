@@ -1,4 +1,5 @@
 ﻿using System;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Represents a base class for a voxel block storage
     /// </summary>
+    [ProtoContract]
     public abstract class ChunkDataProvider
     {
         /// <summary>

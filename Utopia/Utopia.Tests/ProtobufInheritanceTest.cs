@@ -86,6 +86,42 @@ namespace Utopia.Tests
             Trace.WriteLine(result.ToString());
 
         }
+
+        [TestMethod]
+        public void ProtoArrayTest()
+        {
+
+            var inst = new TmpClass();
+
+            var ms = new MemoryStream();
+
+            Serializer.Serialize(ms, inst);
+
+            ms.Position = 0;
+
+            var result = Serializer.Deserialize<TmpClass>(ms);
+
+            Trace.WriteLine(result.ToString());
+        }
+
+    }
+
+    [ProtoContract]
+    public class TmpClass
+    {
+        public TmpClass()
+        {
+            _bytes = new byte[1024];
+        }
+
+        private byte[] _bytes;
+
+        [ProtoMember(1)]
+        public byte[] Bytes
+        {
+            get { return _bytes; }
+            set { _bytes = value; }
+        }
     }
 
     public interface ITest

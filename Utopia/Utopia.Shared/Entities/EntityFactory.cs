@@ -38,6 +38,7 @@ namespace Utopia.Shared.Entities
         {
             var protoTypeModel = RuntimeTypeModel.Default;
 
+            var entityInterface = protoTypeModel.Add(typeof(IEntity), true);
             var entityType = protoTypeModel.Add(typeof(Entity), true);
             var dynEntityType = protoTypeModel.Add(typeof(DynamicEntity), true);
             var staticEntityType = protoTypeModel.Add(typeof(StaticEntity), true);
@@ -53,13 +54,18 @@ namespace Utopia.Shared.Entities
             var resourceCollector = protoTypeModel.Add(typeof(ResourcesCollector), true);
             var worldConfig = protoTypeModel.Add(typeof(WorldConfiguration), true);
             var soundSource = protoTypeModel.Add(typeof(SoundSource), true);
+            var chunkDataProvider = protoTypeModel.Add(typeof(ChunkDataProvider), true);
 
+
+            chunkDataProvider.AddSubType(100, typeof(InsideDataProvider));
 
             soundSource.AddSubType(100, typeof(BiomeSoundSource));
 
             // world configs
 
             worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
+
+            entityInterface.AddSubType(100, typeof(Entity));
 
             // entities hierarchy
             entityType.AddSubType(100, typeof(DynamicEntity));

@@ -42,7 +42,7 @@ namespace Utopia.Shared.Chunks
             get { return _chunkSize; }
             set
             {
-                UpdateChunkSize(_chunkSize);
+                _chunkSize = value;
             }
         }
 
@@ -53,7 +53,9 @@ namespace Utopia.Shared.Chunks
         public byte[] BlockBytes
         {
             get { return _blockBytes; }
-            set { _blockBytes = value; }
+            set { 
+                _blockBytes = value;
+            }
         }
 
         /// <summary>
@@ -82,6 +84,19 @@ namespace Utopia.Shared.Chunks
             }
         }
 
+        [ProtoMember(5)]
+        public override ChunkColumnInfo[] ColumnsInfo
+        {
+            get
+            {
+                return _chunkColumns;
+            }
+            set
+            {
+                _chunkColumns = value;
+            }
+        }
+
         public override object WriteSyncRoot
         {
             get { return _writeSyncRoot; }
@@ -95,7 +110,14 @@ namespace Utopia.Shared.Chunks
         {
             return _blockBytes;
         }
-        
+
+        [ProtoBeforeDeserialization]
+        public void BeforeDeserilize()
+        {
+            _blockBytes = null;
+            _chunkColumns = null;
+        }
+
         public InsideDataProvider()
         {
             _chunkSize = AbstractChunk.ChunkSize;
@@ -393,17 +415,6 @@ namespace Utopia.Shared.Chunks
         }
 
         #region Chunk Column Information Manager
-        public override ChunkColumnInfo[] ColumnsInfo
-        {
-            get
-            {
-                return _chunkColumns;
-            }
-            set
-            {
-                _chunkColumns = value;
-            }
-        }
 
         public override ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
         {
