@@ -202,7 +202,7 @@ namespace Utopia.Server.Managers
                         {
                             if (e.Message.Md5Hashes[hashIndex] == chunk.GetMd5Hash())
                             {
-                                connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
+                                connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkMd5Equal, ChunkHash = chunk.GetMd5Hash() });
                                 return;
                             }
                         }
@@ -210,13 +210,13 @@ namespace Utopia.Server.Managers
 
                     if (chunk.PureGenerated)
                     {
-                        connection.SendAsync(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
+                        connection.Send(new ChunkDataMessage { Position = pos, Flag = ChunkDataMessageFlag.ChunkCanBeGenerated, ChunkHash = chunk.GetMd5Hash() });
                         return;
                     }
 
                 sendAllData:
                     // send data anyway
-                    connection.SendAsync(new ChunkDataMessage
+                    connection.Send(new ChunkDataMessage
                     {
                         Position = pos,
                         ChunkHash = chunk.GetMd5Hash(),

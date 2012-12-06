@@ -1,4 +1,5 @@
-﻿using SharpDX;
+﻿using ProtoBuf;
+using SharpDX;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -180,27 +181,12 @@ namespace System.IO
             }
         }
 
-        public static T Deserialize<T>(this byte[] array) where T : IBinaryStorable, new()
+        public static T Deserialize<T>(this byte[] array)
         {
-            var item = new T();
-
             using (var ms = new MemoryStream(array))
             {
-                var reader = new BinaryReader(ms);
-                item.Load(reader);
+                return Serializer.Deserialize<T>(ms);   
             }
-            
-            return item;
-        }
-
-        public static void Write(this BinaryWriter writer, EntityLink link)
-        {
-            link.Save(writer);
-        }
-
-        public static EntityLink ReadEntityLink(this BinaryReader reader)
-        {
-            return new EntityLink(reader);
         }
 
         public static void SerializeArray<T>(this BinaryWriter writer, T[] arrayValues) where T : IBinaryStorable

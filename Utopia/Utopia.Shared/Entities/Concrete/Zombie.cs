@@ -1,7 +1,9 @@
+using ProtoBuf;
 using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.Shared.Entities.Concrete
 {
+    [ProtoContract]
     public class Zombie : CharacterEntity
     {
         public override ushort ClassId

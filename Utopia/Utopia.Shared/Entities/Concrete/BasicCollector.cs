@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ProtoBuf;
 
 namespace Utopia.Shared.Entities.Concrete
 {
+    [ProtoContract]
     public class BasicCollector : ResourcesCollector
     {
         public override ushort ClassId { get { return EntityClassId.BasicCollector; } }

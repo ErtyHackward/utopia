@@ -106,9 +106,9 @@ namespace Utopia.Components
             _gameClockTime = gameClockTime;
             _playerEntityManager = playerEntityManager;
             _visualWorldParameters = visualWorldParameters;
-            if (visualWorldParameters.WorldParameters.Configuration is WorldConfiguration<UtopiaProcessorParams>)
+            if (visualWorldParameters.WorldParameters.Configuration is UtopiaWorldConfiguration)
             {
-                _biomesParams = ((WorldConfiguration<UtopiaProcessorParams>)visualWorldParameters.WorldParameters.Configuration).ProcessorParam;
+                _biomesParams = ((UtopiaWorldConfiguration)visualWorldParameters.WorldParameters.Configuration).ProcessorParam;
             }
 
             _dynamicEntityManager = dynamicEntityManager;

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
+using ProtoBuf;
 using SharpDX;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
-using Utopia.Shared.Configuration;
 using System.Linq;
 using Utopia.Shared.Entities.Concrete.Interface;
 
@@ -17,6 +15,7 @@ namespace Utopia.Shared.Entities
     /// Base class for items that can be placed into a world cube, wih a relationship with it (Removing the linked key will remove the entity)
     /// A Cube placeable Item will be by default a centered cube position, and can only be placed in a cube where no other CubePlaceableItem is present.
     /// </summary>
+    [ProtoContract]
     public abstract class BlockLinkedItem : Item, ITool, IWorldIntercatingEntity, IBlockLinkedEntity, IBlockLocationRoot
     {
         /// <summary>
@@ -35,24 +34,28 @@ namespace Utopia.Shared.Entities
         /// The cube where the entity root belongs to.
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(1)]
         public Vector3I BlockLocationRoot { get; set; }
-
-        [Description("The entity will be centered into the choosen block face")]
-        public bool BlockFaceCentered { get; set; }
-
-
-        [Description("The entity cannot be added if the block where it will be placed contain another entity")]
-        public bool BlockEmptyRequired { get; set; }
 
         /// <summary>
         /// The cube at wich the Entity is linked, if this cube is removed, the entity will also be removed
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(2)]
         public Vector3I LinkedCube { get; set; }
 
         [Description("Allows to specify the possible face of the block where entity can be attached to")]
+        [ProtoMember(3)]
         public BlockFace MountPoint { get; set; }
 
+        [Description("The entity will be centered into the choosen block face")]
+        [ProtoMember(4)]
+        public bool BlockFaceCentered { get; set; }
+        
+        [Description("The entity cannot be added if the block where it will be placed contain another entity")]
+        [ProtoMember(5)]
+        public bool BlockEmptyRequired { get; set; }
+        
         // tool logic
         public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer)
         {
@@ -168,28 +171,6 @@ namespace Utopia.Shared.Entities
         public void Rollback(IToolImpact impact)
         {
             throw new NotImplementedException();
-        }
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // first we need to load base information
-            base.Load(reader, factory);
-            BlockLocationRoot = reader.ReadVector3I();
-            LinkedCube = reader.ReadVector3I();
-            MountPoint = (BlockFace)reader.ReadByte();
-            BlockFaceCentered = reader.ReadBoolean();
-            BlockEmptyRequired = reader.ReadBoolean();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            // first we need to save base information
-            base.Save(writer);
-            writer.Write(BlockLocationRoot);
-            writer.Write(LinkedCube);
-            writer.Write((byte)MountPoint);
-            writer.Write(BlockFaceCentered);
-            writer.Write(BlockEmptyRequired);
         }
     }
 }

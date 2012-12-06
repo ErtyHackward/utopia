@@ -81,7 +81,7 @@ namespace Utopia.Entities.Voxel
 
             // don't request the model before we are initialized or already requested
             if (requested && _initialized && _server != null)
-                _server.ServerConnection.SendAsync(new GetVoxelModelsMessage { Names = new [] { name } });
+                _server.ServerConnection.Send(new GetVoxelModelsMessage { Names = new[] { name } });
         }
 
         /// <summary>

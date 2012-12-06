@@ -6,7 +6,7 @@ using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
-    public interface ILightEmitterEntity
+    public interface ILightEmitterEntity : IStaticEntity
     {
         ByteColor EmittedLightColor { get; set; }
     }

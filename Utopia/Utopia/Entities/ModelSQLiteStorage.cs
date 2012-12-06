@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using ProtoBuf;
 using Utopia.Shared;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
@@ -95,12 +96,19 @@ namespace Utopia.Entities
         public void Save(VoxelModel model)
         {
             CheckName(model.Name);
-            var bytes = model.Serialize();
 
-            if (Contains(model.Name))
-                Delete(model.Name);
+            using (var ms= new MemoryStream() )
+            {
+                Serializer.Serialize(ms, model);
+                var bytes = ms.ToArray();
 
-            InsertBlob(string.Format("INSERT INTO models (id, updated, data) VALUES ('{0}', datetime('now'), @blob)", model.Name), bytes);
+                if (Contains(model.Name))
+                    Delete(model.Name);
+
+                InsertBlob(string.Format("INSERT INTO models (id, updated, data) VALUES ('{0}', datetime('now'), @blob)", model.Name), bytes);
+            }
+
+
         }
 
         /// <summary>

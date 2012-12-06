@@ -1,16 +1,15 @@
 ﻿using System;
-using System.IO;
+using ProtoBuf;
 using S33M3Resources.Structs;
-using Utopia.Shared.Interfaces;
 using System.Collections.Generic;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Chunks
 {
     /// <summary>
     /// Represents a base class for a voxel block storage
     /// </summary>
-    public abstract class ChunkDataProvider : IBinaryStorable
+    [ProtoContract]
+    public abstract class ChunkDataProvider
     {
         /// <summary>
         /// Occurs when block data was changed
@@ -144,18 +143,6 @@ namespace Utopia.Shared.Chunks
             get { return GetBlock(position); }
             set { SetBlock(position, value); }
         }
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        public abstract void Save(BinaryWriter writer);
-
-        /// <summary>
-        /// Loads current object from binary form
-        /// </summary>
-        /// <param name="reader"></param>
-        public abstract void Load(BinaryReader reader);
 
         /// <summary>
         /// Allows to block write operations for the chunk for threadsafety

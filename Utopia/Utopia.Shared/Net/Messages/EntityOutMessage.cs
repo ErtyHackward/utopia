@@ -1,5 +1,4 @@
-using System.IO;
-using System.Runtime.InteropServices;
+using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
@@ -9,17 +8,9 @@ namespace Utopia.Shared.Net.Messages
     /// <summary>
     /// Defines a message used to inform that some other entity left view range
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct EntityOutMessage : IBinaryMessage
+    [ProtoContract]
+    public class EntityOutMessage : IBinaryMessage
     {
-        /// <summary>
-        /// Identification number of the entity
-        /// </summary>
-        private uint _entityId;
-        private uint _takerEntityId;
-        private EntityType _entityType;
-        private EntityLink _link;
-
         /// <summary>
         /// Gets message id
         /// </summary>
@@ -31,64 +22,25 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Gets or sets an identification number of the entity
         /// </summary>
-        public uint EntityId
-        {
-            get { return _entityId; }
-            set { _entityId = value; }
-        }
+        [ProtoMember(1)]
+        public uint EntityId { get; set; }
 
         /// <summary>
         /// A link for an entity
         /// </summary>
-        public EntityLink Link
-        {
-            get { return _link; }
-            set { _link = value; }
-        }
-        
+        [ProtoMember(2)]
+        public EntityLink Link { get; set; }
+
         /// <summary>
         /// Optional id of entity that takes the item
         /// </summary>
-        public uint TakerEntityId
-        {
-            get { return _takerEntityId; }
-            set { _takerEntityId = value; }
-        }
+        [ProtoMember(3)]
+        public uint TakerEntityId { get; set; }
 
         /// <summary>
         /// The type of the entity that was removed
         /// </summary>
-        public EntityType EntityType
-        {
-            get { return _entityType; }
-            set { _entityType = value; }
-        }
-
-        public static EntityOutMessage Read(BinaryReader reader)
-        {
-            EntityOutMessage msg;
-            msg._takerEntityId = reader.ReadUInt32();
-            msg._entityId = reader.ReadUInt32();
-            msg._entityType = (EntityType)reader.ReadByte();
-            msg._link = reader.ReadEntityLink();
-            return msg;
-        }
-
-        public static void Write(BinaryWriter writer, EntityOutMessage msg)
-        {
-            writer.Write(msg._takerEntityId);
-            writer.Write(msg._entityId);
-            writer.Write((byte)msg._entityType);
-            writer.Write(msg._link);
-        }
-        
-        /// <summary>
-        /// Writes all necessary instance members
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Write(BinaryWriter writer)
-        {
-            Write(writer, this);
-        }
+        [ProtoMember(4)]
+        public EntityType EntityType { get; set; }
     }
 }

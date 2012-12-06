@@ -113,7 +113,7 @@ namespace Utopia.Network
             if (_lockedEntity != null)
                 throw new InvalidOperationException("Some entity was already locked or requested to be locked. Unable to lock more than one entity at once");
             _lockedEntity = entity;
-            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
+            _server.ServerConnection.Send(new EntityLockMessage { EntityLink = entity.GetLink(), Lock = true });
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Utopia.Network
         {
             if (_lockedEntity == null)
                 throw new InvalidOperationException("Unable to release the lock because no entity was locked");
-            _server.ServerConnection.SendAsync(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
+            _server.ServerConnection.Send(new EntityLockMessage { EntityLink = _lockedEntity.GetLink(), Lock = false });
             _lockedEntity = null;
         }
 
@@ -195,7 +195,7 @@ namespace Utopia.Network
             if (srcLink.IsEmpty)
                 msg.ItemEntityId = _tempSlot.Item.StaticId;
 
-            _server.ServerConnection.SendAsync(msg);
+            _server.ServerConnection.Send(msg);
 
             _tempSlot.Item = e.Exchanged.Item;
             _tempSlot.ItemsCount = e.Exchanged.ItemsCount;
@@ -220,7 +220,7 @@ namespace Utopia.Network
 
         public void SetToolBar(int slot, uint entityId)
         {
-            _server.ServerConnection.SendAsync(new ItemTransferMessage { SourceContainerSlot = new Vector2I(-2, slot), ItemEntityId = entityId });
+            _server.ServerConnection.Send(new ItemTransferMessage { SourceContainerSlot = new Vector2I(-2, slot), ItemEntityId = entityId });
         }
 
         // handling player inventory requests
@@ -274,7 +274,7 @@ namespace Utopia.Network
             if (srcLink.IsEmpty)
                 msg.ItemEntityId = _tempSlot.Item.StaticId;
 
-            _server.ServerConnection.SendAsync(msg);
+            _server.ServerConnection.Send(msg);
 
             if (e.Slot.ItemsCount == _tempSlot.ItemsCount)
             {
@@ -321,7 +321,7 @@ namespace Utopia.Network
                 srcPosition.X = -1;
             }
 
-            _server.ServerConnection.SendAsync(new ItemTransferMessage
+            _server.ServerConnection.Send(new ItemTransferMessage
             {
                 SourceContainerEntityLink = _sourceContainer.Parent.GetLink(),
                 SourceContainerSlot = srcPosition,

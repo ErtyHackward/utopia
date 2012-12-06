@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using Utopia.Editor.Forms;
 using Utopia.Editor.Properties;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Editor
 {
@@ -22,6 +23,8 @@ namespace Utopia.Editor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            EntityFactory.InitializeProtobufInheritanceHierarchy();
 
             IconManager = new IconManager();
 

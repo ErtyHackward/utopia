@@ -149,6 +149,11 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                         _inputWorldName.Text = string.Empty;
                         _inputSeedName.Text = string.Empty;
                     }
+                    else
+                    {
+                        _guiManager.MessageBox("World's forlder exists. Select different name.", "Error");
+                        return;
+                    }
                 }
                 catch (Exception error)
                 {

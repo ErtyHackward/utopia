@@ -1,40 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Maths;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     [TypeConverter(typeof(BiomeTreesTypeConverter))]
-    public partial class BiomeTrees : IBinaryStorable
+    [ProtoContract]
+    public partial class BiomeTrees
     {
-        #region Private Variables
         private int _small;
         private int _medium;
         private int _big;
         private int _cactus;
         private TreeTemplates.TreeType[] _treeTypeDistribution = new TreeTemplates.TreeType[100];
-        #endregion
 
-        #region Public Properties
-        public int Small { get { return _small; } set { _small = value; RefreshTreeTypeDistribution(); } }
-        public int Medium { get { return _medium; } set { _medium = value; RefreshTreeTypeDistribution(); } }
-        public int Big { get { return _big; } set { _big = value; RefreshTreeTypeDistribution(); } }
-        public int Cactus { get { return _cactus; } set { _cactus = value; RefreshTreeTypeDistribution(); } }
+        #region Public properties
+        [ProtoMember(1)]
+        public int Small
+        {
+            get { return _small; }
+            set
+            {
+                _small = value;
+                RefreshTreeTypeDistribution();
+            }
+        }
+
+        [ProtoMember(2)]
+        public int Medium
+        {
+            get { return _medium; }
+            set
+            {
+                _medium = value;
+                RefreshTreeTypeDistribution();
+            }
+        }
+
+        [ProtoMember(3)]
+        public int Big
+        {
+            get { return _big; }
+            set
+            {
+                _big = value;
+                RefreshTreeTypeDistribution();
+            }
+        }
+
+        [ProtoMember(4)]
+        public int Cactus
+        {
+            get { return _cactus; }
+            set
+            {
+                _cactus = value;
+                RefreshTreeTypeDistribution();
+            }
+        }
+
+        [ProtoMember(5)]
         public RangeI TreePerChunks { get; set; }
         #endregion
 
-        #region Public Methods
-        #endregion
 
-        #region Private Methods
-        #endregion
         public BiomeTrees()
         {
             _small = 50;

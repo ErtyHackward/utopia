@@ -1,4 +1,4 @@
-using System.IO;
+using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -7,28 +7,20 @@ namespace Utopia.Shared.Net.Messages
     /// <summary>
     /// Defines a message to acquire entity lock for operations like inventory items transfers
     /// </summary>
-    public struct EntityLockMessage : IBinaryMessage
+    [ProtoContract]
+    public class EntityLockMessage : IBinaryMessage
     {
-        private EntityLink _entityId;
-        private bool _lock;
-
         /// <summary>
         /// Entity to be locked/unlocked
         /// </summary>
-        public EntityLink EntityLink
-        {
-            get { return _entityId; }
-            set { _entityId = value; }
-        }
-        
+        [ProtoMember(1)]
+        public EntityLink EntityLink { get; set; }
+
         /// <summary>
         /// True - request the lock, False - release the lock
         /// </summary>
-        public bool Lock
-        {
-            get { return _lock; }
-            set { _lock = value; }
-        }
+        [ProtoMember(2)]
+        public bool Lock { get; set; }
 
         /// <summary>
         /// Gets a message identification number
@@ -36,24 +28,6 @@ namespace Utopia.Shared.Net.Messages
         public byte MessageId
         {
             get { return (byte)MessageTypes.EntityLock; }
-        }
-
-        public static EntityLockMessage Read(BinaryReader reader)
-        {
-            EntityLockMessage msg;
-            msg._entityId = reader.ReadEntityLink();
-            msg._lock = reader.ReadBoolean();
-            return msg;
-        }
-
-        /// <summary>
-        /// Writes all necessary instance members
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Write(BinaryWriter writer)
-        {
-            writer.Write(_entityId);
-            writer.Write(_lock);
         }
     }
 }

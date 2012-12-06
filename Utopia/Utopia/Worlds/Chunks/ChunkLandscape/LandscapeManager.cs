@@ -212,7 +212,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.ChunkID);
 
                     //We have already in the store manager a modified version of the chunk, do the server request with these information
-                    _server.ServerConnection.SendAsync(new GetChunksMessage
+                    _server.ServerConnection.Send(new GetChunksMessage
                     {
                         HashesCount = 1,
                         Md5Hashes = new Md5Hash[] { hash },
@@ -224,7 +224,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 else
                 {
                     //Chunk has never been modified. Request it by the chunkposition to the server
-                    _server.ServerConnection.SendAsync(new GetChunksMessage
+                    _server.ServerConnection.Send(new GetChunksMessage
                     {
                         Range = new Range2I(chunk.ChunkPosition, Vector2I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
