@@ -1,6 +1,7 @@
 using System;
 using Utopia.Shared.Chunks;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
 
@@ -90,7 +91,7 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
-        void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);
+        void AddEntity(StaticEntity entity, uint sourceDynamicId = 0);
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs

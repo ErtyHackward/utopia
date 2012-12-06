@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Tools;
@@ -8,6 +9,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Represents a container block entity
     /// </summary>
+    [ProtoContract]
     public class Container : OrientedBlockLinkedItem
     {
         SlotContainer<ContainedSlot> _content;
@@ -15,11 +17,13 @@ namespace Utopia.Shared.Entities.Concrete
         [Category("Container")]
         [Description("Model state if the container is opened")]
         [TypeConverter(typeof(ModelStateSelector))]
+        [ProtoMember(1)]
         public string OpenedState { get; set; }
 
         [Category("Container")]
         [Description("Model state if the container is closed")]
         [TypeConverter(typeof(ModelStateSelector))]
+        [ProtoMember(2)]
         public string ClosedState { get; set; }
 
         public override bool RequiresLock
@@ -115,26 +119,6 @@ namespace Utopia.Shared.Entities.Concrete
         {
             Content = new SlotContainer<ContainedSlot>(this);
             MountPoint = BlockFace.Top;
-        }
-
-        public override void Save(System.IO.BinaryWriter writer)
-        {
-            base.Save(writer);
-
-            writer.Write(OpenedState ?? string.Empty);
-            writer.Write(ClosedState ?? string.Empty);
-
-            _content.Save(writer);
-        }
-
-        public override void Load(System.IO.BinaryReader reader, EntityFactory factory)
-        {
-            base.Load(reader, factory);
-
-            OpenedState = reader.ReadString();
-            ClosedState = reader.ReadString();
-            
-            _content.Load(reader, factory);
         }
 
         public override object Clone()

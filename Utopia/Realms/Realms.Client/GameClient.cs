@@ -9,6 +9,7 @@ using S33M3CoreComponents.States;
 using S33M3DXEngine.Threading;
 using S33M3CoreComponents.Inputs;
 using S33M3DXEngine;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 
@@ -26,6 +27,8 @@ namespace Realms.Client
         #region Public Methods
         public void Run()
         {
+            EntityFactory.InitializeProtobufInheritanceHierarchy();
+
             //Load Client config XML file
             LoadClientsSettings();
 

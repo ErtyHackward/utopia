@@ -9,10 +9,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public partial class BiomeEntity
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
         [TypeConverter(typeof(CubeConverter))] //Display Cube List
         [DisplayName("Entity")]
         public string EntityName
@@ -28,26 +24,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 BluePrintId = EditorConfigHelper.Config.BluePrints.Values.First(x => x.Name == value).BluePrintId;
             }
         }
-        #endregion
-
-        #region Public Methods
-        public void Save(System.IO.BinaryWriter writer)
-        {
-            writer.Write(BluePrintId);
-            writer.Write(EntityPerChunk);
-            writer.Write(ChanceOfSpawning);
-        }
-
-        public void Load(System.IO.BinaryReader reader)
-        {
-            BluePrintId = reader.ReadUInt16();
-            EntityPerChunk = reader.ReadInt32();
-            ChanceOfSpawning = reader.ReadDouble();
-        }
-        #endregion
-
-        #region Private Methods
-        #endregion
 
         internal class CubeConverter : StringConverter
         {

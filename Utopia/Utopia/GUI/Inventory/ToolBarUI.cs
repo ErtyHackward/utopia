@@ -83,7 +83,7 @@ namespace Utopia.GUI.Inventory
 
                 
                 if (_player.Toolbar[x] != 0)
-                    btn.Slot = new ContainedSlot { Item = _player.FindToolById(_player.Toolbar[x]) };
+                    btn.Slot = new ContainedSlot { Item = (Item)_player.FindToolById(_player.Toolbar[x]) };
 
                 _toolbarSlots.Add(btn);
 

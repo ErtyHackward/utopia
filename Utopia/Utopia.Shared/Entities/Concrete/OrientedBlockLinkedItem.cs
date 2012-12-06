@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
+using ProtoBuf;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -9,18 +9,21 @@ using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Concrete
 {
-    public class OrientedBlockLinkedItem : BlockLinkedItem, IOrientedItem, IOrientedSlope
+    [ProtoContract]
+    public class OrientedBlockLinkedItem : BlockLinkedItem, IOrientedSlope
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
         [Browsable(false)]
+        [ProtoMember(1)]
         public OrientedItem Orientation { get; set; }
 
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
+        [ProtoMember(2)]
         public bool IsOrientedSlope { get; set; }
 
         public override ushort ClassId
@@ -95,23 +98,5 @@ namespace Utopia.Shared.Entities.Concrete
 
             return true;
         }
-
-
-        public override void Load(BinaryReader reader, EntityFactory factory)
-        {
-            // first we need to load base information
-            base.Load(reader, factory);
-            Orientation = (OrientedItem)reader.ReadByte();
-            IsOrientedSlope = reader.ReadBoolean();
-        }
-
-        public override void Save(BinaryWriter writer)
-        {
-            // first we need to save base information
-            base.Save(writer);
-            writer.Write((byte)Orientation);
-            writer.Write(IsOrientedSlope);
-        }
-
     }
 }

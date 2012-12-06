@@ -54,7 +54,7 @@ namespace Utopia.Server.Structs
                 if (serverEntity != this)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
+                    Connection.Send(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
         }
@@ -75,31 +75,31 @@ namespace Utopia.Server.Structs
                 if (serverEntity != DynamicEntity)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.SendAsync(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = serverEntity.DynamicEntity.GetLink() });
+                    Connection.Send(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
         }
 
         void AreaEntityLockChanged(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<EntityLockMessage> e)
         {
-            Connection.SendAsync(e.Message);
+            Connection.Send(e.Message);
         }
         
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = EntityType.Static, Link = e.Entity.GetLink() });
+            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = EntityType.Static, Link = e.Entity.GetLink() });
         }
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
-            Connection.SendAsync(new EntityInMessage { Entity = e.Entity, SourceEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
+            Connection.Send(new EntityInMessage { Entity = e.Entity, SourceEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.EquippedItem.Item) } });
+                Connection.Send(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.EquippedItem.Item) } });
             }
         }
 
@@ -108,7 +108,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = e.Entity.DynamicEntity.GetLink() });
+                Connection.Send(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 
@@ -117,7 +117,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.SendAsync(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
+                Connection.Send(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 
@@ -130,7 +130,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityUseMessage 
+                Connection.Send(new EntityUseMessage 
                 {
                     DynamicEntityId = e.Entity.DynamicId, 
                     NewBlockPosition = e.NewBlockPosition, 
@@ -146,7 +146,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityPositionMessage { EntityId = e.Entity.DynamicId, Position = e.Entity.Position });
+                Connection.Send(new EntityPositionMessage { EntityId = e.Entity.DynamicId, Position = e.Entity.Position });
             }
         }
 
@@ -154,13 +154,13 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.SendAsync(new EntityHeadDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.HeadRotation });
+                Connection.Send(new EntityHeadDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.HeadRotation });
             }
         }
 
         void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
         {
-            Connection.SendAsync(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations, Tags = e.Tags });
+            Connection.Send(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations, Tags = e.Tags });
         }
 
         public override void Use(EntityUseMessage entityUseMessage)
@@ -181,7 +181,7 @@ namespace Utopia.Server.Structs
                     var toolImpact = tool.Use(playerCharacter, true);
 
                     // returning tool feedback
-                    Connection.SendAsync(new UseFeedbackMessage
+                    Connection.Send(new UseFeedbackMessage
                                              {
                                                  Token = entityUseMessage.Token,
                                                  EntityImpactBytes = toolImpact.Serialize()
@@ -189,7 +189,7 @@ namespace Utopia.Server.Structs
                 }
                 else
                 {
-                    Connection.SendAsync(new ChatMessage
+                    Connection.Send(new ChatMessage
                                              {
                                                  DisplayName = "toolsystem",
                                                  Message = "Invalid toolid provided. Can not use the tool"
@@ -232,7 +232,7 @@ namespace Utopia.Server.Structs
                         IStaticEntity entity;
                         chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.DynamicId, out entity);
 
-                        _itemTaken = new ContainedSlot { Item = (IItem)entity };
+                        _itemTaken = new ContainedSlot { Item = (Item)entity };
                         return true;
                     }
                 }
@@ -449,7 +449,7 @@ namespace Utopia.Server.Structs
 
         private void ItemError()
         {
-            Connection.SendAsync(new ChatMessage { DisplayName = "inventory", Message = "Invalid transfer operation" });
+            Connection.Send(new ChatMessage { DisplayName = "inventory", Message = "Invalid transfer operation" });
         }
 
     }

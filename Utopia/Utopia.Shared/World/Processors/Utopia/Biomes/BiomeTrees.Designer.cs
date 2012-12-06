@@ -11,39 +11,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public partial class BiomeTrees
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
-        #endregion
-
-        #region Public Methods
-        public void Save(System.IO.BinaryWriter writer)
-        {
-            writer.Write(_small);
-            writer.Write(_medium);
-            writer.Write(_big);
-            writer.Write(_cactus);
-            writer.Write(TreePerChunks.Min);
-            writer.Write(TreePerChunks.Max);
-        }
-
-        public void Load(System.IO.BinaryReader reader)
-        {
-            _small = reader.ReadInt32();
-            _medium = reader.ReadInt32();
-            _big = reader.ReadInt32();
-            _cactus = reader.ReadInt32();
-            TreePerChunks = new RangeI(reader.ReadInt32(), reader.ReadInt32());
-
-            RefreshTreeTypeDistribution();
-        }
-        #endregion
-
-        #region Private Methods
-        #endregion
-
-
         //Property Grid editing Purpose
         internal class BiomeTreesTypeConverter : ExpandableObjectConverter
         {

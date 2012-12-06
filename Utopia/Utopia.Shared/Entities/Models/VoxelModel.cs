@@ -1,11 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using ProtoBuf;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -13,7 +12,8 @@ namespace Utopia.Shared.Entities.Models
     /// Represents a voxel model for voxel entities. Model consists from one or more parts. 
     /// Each part have its own relative position and rotation and may have a color mapping scheme.
     /// </summary>
-    public class VoxelModel : IBinaryStorable
+    [ProtoContract]
+    public class VoxelModel
     {
         public const int ModelFormatVersion = 2;
 
@@ -28,37 +28,54 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Gets or sets model name
         /// </summary>
+        [ProtoMember(1)]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets current model md5 hash
+        /// </summary>
+        [ProtoMember(2)]
+        public Md5Hash Hash { get; private set; }
 
         /// <summary>
         /// Gets a list of model frames
         /// </summary>
+        [ProtoMember(3)]
         public List<VoxelFrame> Frames { get; private set; }
 
         /// <summary>
         /// Gets a list of parts of the model
         /// </summary>
+        [ProtoMember(4)]
         public List<VoxelModelPart> Parts { get; private set; }
-
-        /// <summary>
-        /// Gets current model md5 hash
-        /// </summary>
-        public Md5Hash Hash { get; private set; }
 
         /// <summary>
         /// Gets a list of model states
         /// </summary>
+        [ProtoMember(5)]
         public List<VoxelModelState> States { get; private set; }
 
         /// <summary>
         /// Gets a list of model animations
         /// </summary>
+        [ProtoMember(6)]
         public List<VoxelModelAnimation> Animations { get; private set; }
         
         /// <summary>
         /// Gets or sets global color mapping
         /// </summary>
+        [ProtoMember(7)]
         public ColorMapping ColorMapping { get; set; }
+
+        [ProtoAfterDeserialization]
+        public void Deserialized()
+        {
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.ParentModel = this;
+            }
+        }
+
 
         /// <summary>
         /// Calculates a md5 hash from a model
@@ -215,20 +232,16 @@ namespace Utopia.Shared.Entities.Models
         {
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
-                var writer = new BinaryWriter(fs);
-                Save(writer);
+                Serializer.Serialize(fs, this);
             }
         }
 
         public static VoxelModel LoadFromFile(string path)
         {
-            var voxelModel = new VoxelModel();
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
-                var reader = new BinaryReader(fs);
-                voxelModel.Load(reader);
+                return Serializer.Deserialize<VoxelModel>(fs);   
             }
-            return voxelModel;
         }
 
         /// <summary>

@@ -196,7 +196,7 @@ namespace Utopia.GUI
                                 msg.Action = true;
                                 msg.Message = input.Remove(0, 4);
                             }
-                            _server.ServerConnection.SendAsync(msg);
+                            _server.ServerConnection.Send(msg);
                         }
                     }
                     _textInput.isListening = false;
