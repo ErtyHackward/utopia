@@ -16,10 +16,16 @@ namespace Utopia.Shared.Entities.Inventory
         [ProtoMember(1)]
         public int ItemsCount { get; set; }
 
+        [ProtoMember(2)]
+        public IEntity SerializeItem
+        {
+            get { return Item; }
+            set { Item = (IItem)value; }
+        }
+
         /// <summary>
         /// Gets or sets entity
         /// </summary>
-        [ProtoMember(2)]
         public IItem Item { get; set; }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents a base container implementation (this is not an entity)
     /// </summary>
     [ProtoContract]
-    public class SlotContainer<T> : ISlotContainer<T>, IStaticContainer where T: ContainedSlot, new()
+    public class SlotContainer<T> : ISlotContainer<T> where T: ContainedSlot, new()
     {
         private readonly IEntity _parentEntity;
         private T[,] _items;
@@ -61,10 +61,14 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Don't use, serialize only
         /// </summary>
-        [ProtoMember(4)]
+        [ProtoMember(4, OverwriteList = true)]
         public List<T> SerializeItems
         {
-            get { return this.ToList(); }
+            get
+            {
+                var list = this.ToList();
+                return list; 
+            }
             set
             {
                 _items = new T[_gridSize.X, _gridSize.Y];
@@ -129,9 +133,17 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Creates new instance of container with GridSize of 8x5 items
+        /// Creates new instance of container with GridSize of 6x5 items
         /// </summary>
-        public SlotContainer(IEntity parentEntity = null)
+        public SlotContainer() :this(null)
+        {
+            
+        }
+
+        /// <summary>
+        /// Creates new instance of container with GridSize of 6x5 items
+        /// </summary>
+        public SlotContainer(IEntity parentEntity)
             : this(parentEntity, new Vector2I(6, 5))
         {
             
@@ -338,7 +350,6 @@ namespace Utopia.Shared.Entities.Inventory
                 var addSlot = new T { Item = item, GridPosition = position, ItemsCount = itemsCount };
                 _items[position.X, position.Y] = addSlot;
                 _slotsCount++;
-                item.Container = this;
             }
 
             OnItemPut(new EntityContainerEventArgs<T> { Slot = new T{ Item = item, GridPosition = position, ItemsCount = itemsCount } });
@@ -540,7 +551,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// This method is not supported. Use PutItem instead.
         /// </summary>
         /// <param name="entity"></param>
-        public void Add(IStaticEntity entity)
+        public void Add_(IStaticEntity entity)
         {
             throw new NotSupportedException("This method is not supported. Use PutItem instead.");
         }

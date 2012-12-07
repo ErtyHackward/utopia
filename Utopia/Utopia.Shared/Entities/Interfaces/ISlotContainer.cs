@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProtoBuf;
 using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 
@@ -8,6 +9,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Describes a container for entities
     /// </summary>
+    [ProtoContract]
     public interface ISlotContainer<T> : IEnumerable<T> where T : ContainedSlot
     {
         /// <summary>
