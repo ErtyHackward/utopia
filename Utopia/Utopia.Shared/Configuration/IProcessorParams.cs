@@ -12,5 +12,6 @@ namespace Utopia.Shared.Configuration
         WorldConfiguration Config { get; set; }
         IEnumerable<CubeProfile> InjectDefaultCubeProfiles();
         IEnumerable<IEntity> InjectDefaultEntities();
+        void CreateDefaultValues();
     }
 }

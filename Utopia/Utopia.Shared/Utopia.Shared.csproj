@@ -122,6 +122,7 @@
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
     <Compile Include="Configuration\EditorConfigHelper.cs" />
+    <Compile Include="Configuration\FlatWorldConfiguration.cs" />
     <Compile Include="Configuration\Processor\FlatProcessorParams.cs" />
     <Compile Include="Configuration\IProcessorParams.cs" />
     <Compile Include="Configuration\Processor\UtopiaProcessorParams.cs" />

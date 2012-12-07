@@ -15,5 +15,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         [ProtoMember(3)]
         public double ChanceOfSpawning { get; set; }
+
+        public BiomeEntity()
+        {
+            BluePrintId = 256; //Default first True entity
+        }
     }
 }
