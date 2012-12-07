@@ -100,6 +100,9 @@ namespace Utopia.Shared.Entities
 
             // slots hierarchy
 
+            protoTypeModel.Add(typeof(SlotContainer<BlueprintSlot>), true);
+            protoTypeModel.Add(typeof(SlotContainer<ContainedSlot>), true);
+
             slotType.AddSubType(100, typeof(ContainedSlot));
 
             containedSlotType.AddSubType(100, typeof(BlueprintSlot));
