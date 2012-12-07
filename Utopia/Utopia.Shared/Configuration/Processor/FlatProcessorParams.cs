@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Configuration
 {
+    [ProtoContract]
     public class FlatProcessorParams : IBinaryStorable, IProcessorParams
     {
         #region Private Variables
@@ -63,6 +65,11 @@ namespace Utopia.Shared.Configuration
         {
             public const byte Air = 0;
             public const byte Ground = 1;
+        }
+
+
+        public void CreateDefaultValues()
+        {
         }
     }
 }

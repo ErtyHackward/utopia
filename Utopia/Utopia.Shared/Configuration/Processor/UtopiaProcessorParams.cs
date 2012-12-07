@@ -140,16 +140,9 @@ namespace Utopia.Shared.Configuration
 
         [ProtoMember(22)]
         public double IslandCtrlSize { get; set; }
-
         #endregion
 
         public UtopiaProcessorParams()
-        {
-            Initialize();
-        }
-
-        #region Public Methods
-        private void Initialize()
         {
             BasicPlain = new List<LandscapeRange>();
             BasicMidland = new List<LandscapeRange>();
@@ -158,9 +151,12 @@ namespace Utopia.Shared.Configuration
             Ground = new List<LandscapeRange>();
             Ocean = new List<LandscapeRange>();
             World = new List<LandscapeRange>();
-
             Biomes = new List<Biome>();
+        }
 
+        #region Public Methods
+        public void CreateDefaultValues()
+        {
             WorldType = enuWorldType.Normal;
             WorldGeneratedHeight = 128;
             WaterLevel = 64;

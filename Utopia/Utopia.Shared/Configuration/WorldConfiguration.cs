@@ -33,7 +33,7 @@ namespace Utopia.Shared.Configuration
 
         #region Public Properties
 
-        public abstract int ConfigType { get; }
+        public abstract WorldProcessors ConfigType { get; }
 
         public readonly EntityFactory Factory;
 
@@ -152,7 +152,7 @@ namespace Utopia.Shared.Configuration
             {
                 var writer = new BinaryWriter(fs);
                 writer.Write(FormatMagic);
-                writer.Write(ConfigType);
+                writer.Write((int)ConfigType);
 
                 Serializer.Serialize(fs, this);
             }
@@ -169,18 +169,27 @@ namespace Utopia.Shared.Configuration
                     throw new InvalidDataException("Realm file is in wrong format");
                 }
 
-                var typeId = reader.ReadInt32();
+                WorldProcessors processorType = (WorldProcessors)reader.ReadInt32();
                 Type type;
-                switch (typeId)
+                switch (processorType)
                 {
-                    case 1:
+                    case WorldProcessors.Utopia:
                         type = typeof(UtopiaWorldConfiguration);
+                        break;
+                    case WorldProcessors.Flat:
+                        type = typeof(FlatWorldConfiguration);
                         break;
                     default:
                         throw new FormatException("unable to load such configuration type, update your game");
                 }
 
-                return (WorldConfiguration)RuntimeTypeModel.Default.Deserialize(fs, null, type);
+                WorldConfiguration configuration = (WorldConfiguration)RuntimeTypeModel.Default.Deserialize(fs, null, type);
+                if (withHelperAssignation)
+                {
+                    EditorConfigHelper.Config = configuration;
+                }
+
+                return configuration;
             }
         }
         #endregion
@@ -308,11 +317,10 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// Defines world processor possible types
         /// </summary>
-        public enum WorldProcessors : byte
+        public enum WorldProcessors : int
         {
-            Flat,
-            Utopia
-            //Plan
+            Utopia = 1,
+            Flat = 2
         }
         #endregion
     }

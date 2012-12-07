@@ -130,8 +130,22 @@ namespace Utopia.Editor.Forms
 
             if (processorChoose.ShowDialog(this) == System.Windows.Forms.DialogResult.Cancel)
                 return;
-            
-            var newConfiguration = new UtopiaWorldConfiguration();
+
+            WorldConfiguration newConfiguration = null;
+
+            switch (processorChoose.SelectedProcessor)
+            {
+                case WorldConfiguration.WorldProcessors.Flat:
+                    newConfiguration = new FlatWorldConfiguration();
+                    ((FlatWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
+                    break;
+                case WorldConfiguration.WorldProcessors.Utopia:
+                    newConfiguration = new UtopiaWorldConfiguration();
+                    ((UtopiaWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
+                    break;
+                default:
+                    break;
+            }
 
             newConfiguration.InjectMandatoryObjects();
             newConfiguration.ConfigurationName = "noname";

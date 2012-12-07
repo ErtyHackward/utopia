@@ -1,22 +1,22 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using ProtoBuf;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Configuration
 {
-    /// <summary>
-    /// World configuration for utopia world generator
-    /// </summary>
     [ProtoContract]
-    public class UtopiaWorldConfiguration : WorldConfiguration
+    public class FlatWorldConfiguration : WorldConfiguration
     {
-        private int _worldHeight;
-        private UtopiaProcessorParams _processorParam;
+        private FlatProcessorParams _processorParam;
 
         public override WorldProcessors ConfigType
         {
-            get { return WorldProcessors.Utopia; }
+            get { return WorldProcessors.Flat; }
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [Browsable(false)]
         [ProtoMember(1)]
-        public UtopiaProcessorParams ProcessorParam
+        public FlatProcessorParams ProcessorParam
         {
             get { return _processorParam; }
             set { 
@@ -33,35 +33,16 @@ namespace Utopia.Shared.Configuration
             }
         }
 
-        /// <summary>
-        /// World Height
-        /// </summary>
-        public override int WorldHeight
-        {
-            get { return _worldHeight; }
-            set
-            {
-                _worldHeight = value;
 
-                if (value >= 128 && value <= 256)
-                {
-                    if (ProcessorParam != null && ProcessorParam.WorldGeneratedHeight <= value) 
-                        return;
-                    
-                    _worldHeight = value;
-                }
-            }
-        }
-
-        public UtopiaWorldConfiguration()
+        public FlatWorldConfiguration()
             :this(null, false)
         {
         }
 
-        public UtopiaWorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
+        public FlatWorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
             : base(factory, withHelperAssignation)
         {
-            ProcessorParam = new UtopiaProcessorParams();
+            ProcessorParam = new FlatProcessorParams();
         }
 
         protected override void CreateDefaultCubeProfiles()

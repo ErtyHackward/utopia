@@ -122,6 +122,12 @@ namespace Utopia.Shared.Settings
         [ProtoMember(21)]
         public List<SoundSource> WalkingOverSound { get { return _walkingOverSound; } set { _walkingOverSound = value; } }
 
+        [ProtoBeforeDeserialization]
+        public void BeforeDeserialize()
+        {
+            Textures = null;
+        }
+
         public override string ToString()
         {
             return Name;

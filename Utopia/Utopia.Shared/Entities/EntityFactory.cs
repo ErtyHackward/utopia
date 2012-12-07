@@ -64,6 +64,7 @@ namespace Utopia.Shared.Entities
             // world configs
 
             worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
+            worldConfig.AddSubType(101, typeof(FlatWorldConfiguration));
 
             entityInterface.AddSubType(100, typeof(Entity));
 
