@@ -69,7 +69,7 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// Holds Biomes Profiles configuration
         /// </summary>
-        [ProtoMember(1)]
+        [ProtoMember(1, OverwriteList = true)]
         public List<Biome> Biomes
         {
             get { return _biomes; }
@@ -78,25 +78,25 @@ namespace Utopia.Shared.Configuration
             }
         }
 
-        [ProtoMember(2)]
+        [ProtoMember(2, OverwriteList = true)]
         public List<LandscapeRange> BasicPlain { get; set; }
 
-        [ProtoMember(3)]
+        [ProtoMember(3, OverwriteList = true)]
         public List<LandscapeRange> BasicMidland { get; set; }
 
-        [ProtoMember(4)]
+        [ProtoMember(4, OverwriteList = true)]
         public List<LandscapeRange> BasicMontain { get; set; }
 
-        [ProtoMember(5)]
+        [ProtoMember(5, OverwriteList = true)]
         public List<LandscapeRange> BasicOcean { get; set; }
 
-        [ProtoMember(6)]
+        [ProtoMember(6, OverwriteList = true)]
         public List<LandscapeRange> Ground { get; set; }
 
-        [ProtoMember(7)]
+        [ProtoMember(7, OverwriteList = true)]
         public List<LandscapeRange> Ocean { get; set; }
 
-        [ProtoMember(8)]
+        [ProtoMember(8, OverwriteList=true)]
         public List<LandscapeRange> World { get; set; }
 
         [ProtoMember(9)]
