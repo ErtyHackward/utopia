@@ -33,7 +33,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         //A moisture
         private RangeD _temperatureFilter = new RangeD(0.0, 1.0);
         private RangeD _moistureFilter = new RangeD(0.0, 1.0);
-        private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>() { enuLandFormType.Plain };
+        private List<enuLandFormType> _landFormFilters = new List<enuLandFormType>();
         private WorldConfiguration _config;
 
         #endregion
