@@ -58,6 +58,7 @@ namespace Utopia.Shared.Entities
 
 
             chunkDataProvider.AddSubType(100, typeof(InsideDataProvider));
+            chunkDataProvider.AddSubType(101, typeof(SingleArrayDataProvider));
 
             soundSource.AddSubType(100, typeof(BiomeSoundSource));
 
@@ -106,8 +107,6 @@ namespace Utopia.Shared.Entities
             slotType.AddSubType(100, typeof(ContainedSlot));
 
             containedSlotType.AddSubType(100, typeof(BlueprintSlot));
-
-
 
             // add mappings for 3rd party objects
 
@@ -212,11 +211,7 @@ namespace Utopia.Shared.Entities
 
         public EntityFactory(ILandscapeManager2D landscapeManager)
         {
-            
-
             // type hierarhy should be described here
-
-
             LandscapeManager = landscapeManager;
         }
 
@@ -343,7 +338,7 @@ namespace Utopia.Shared.Entities
         /// Sets required field for special types of entities
         /// </summary>
         /// <param name="entity"></param>
-        protected virtual void InjectFields(Entity entity)
+        protected virtual void InjectFields(IEntity entity)
         {
             if (entity is IWorldIntercatingEntity)
             {
@@ -366,6 +361,8 @@ namespace Utopia.Shared.Entities
 
             return (Entity)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, entity, entity.GetType());
         }
+
+
 
         public void Serialize(Entity entity, Stream stream)
         {
@@ -430,6 +427,43 @@ namespace Utopia.Shared.Entities
                     }
 
                     container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
+                }
+            }
+        }
+
+        public void ProcessMessage(IBinaryMessage imsg)
+        {
+            switch ((MessageTypes)imsg.MessageId)
+            {
+                case MessageTypes.EntityIn:
+
+                    var msg = (EntityInMessage)imsg;
+
+                    if (msg.Entity != null)
+                    {
+                        PrepareEntity(msg.Entity);
+                    }
+                    break;
+
+            }
+        }
+
+        private void PrepareEntity(IEntity entity)
+        {
+            InjectFields(entity);
+
+            if (entity is CharacterEntity)
+            {
+                var charEntity = (CharacterEntity)entity;
+
+                foreach (var slot in charEntity.Equipment)
+                {
+                    InjectFields(slot.Item);
+                }
+
+                foreach (var slot in charEntity.Inventory)
+                {
+                    InjectFields(slot.Item);
                 }
             }
         }

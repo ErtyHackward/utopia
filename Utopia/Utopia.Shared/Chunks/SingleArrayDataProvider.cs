@@ -1,9 +1,8 @@
 using System;
+using ProtoBuf;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
-using System.IO;
-using Utopia.Shared.Entities;
 using System.Collections.Generic;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Configuration;
@@ -13,6 +12,7 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Represents a chunk data provider that holds data inside the single big-buffer
     /// </summary>
+    [ProtoContract]
     public class SingleArrayDataProvider : ChunkDataProvider
     {
         private readonly object _syncRoot = new object();
@@ -24,6 +24,44 @@ namespace Utopia.Shared.Chunks
         public SingleArrayChunkContainer ChunkCubes { get; set; }
         public ChunkColumnInfo[] ChunkColumns;
         private ChunkMetaData _chunkMetaData;
+
+        #region Serialization
+
+        [ProtoMember(1)]
+        public Vector3I SerializeChunkSize
+        {
+            get { return _chunkSize; }
+            set { _chunkSize = value; }
+        }
+
+        [ProtoMember(2, OverwriteList = true)]
+        public byte[] SerializeBytes {
+            get { return GetBlocksBytes(); }
+            set { SetBlockBytes(value); }
+        }
+
+        [ProtoMember(3)]
+        public Dictionary<Vector3I, BlockTag> SeriazlieTags
+        {
+            get { return _tags; }
+        }
+
+        [ProtoMember(4)]
+        public ChunkMetaData SerializeChunkMetaData
+        {
+            get { return _chunkMetaData; }
+            set { _chunkMetaData = value; }
+        }
+
+        [ProtoMember(5, OverwriteList = true)]
+        public ChunkColumnInfo[] SerializeChunkColums
+        {
+            get { return ChunkColumns; }
+            set { ChunkColumns = value; }
+        }
+
+        #endregion
+
 
         public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
         {

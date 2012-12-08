@@ -90,6 +90,11 @@ namespace Utopia.Shared.Net.Connections
                     while (true)
                     {
                         var msg = Serializer.DeserializeWithLengthPrefix<IBinaryMessage>(stream, PrefixStyle.Fixed32);
+                        if (msg == null)
+                        {
+                            Status = TcpConnectionStatus.Disconnected;
+                            return;
+                        }
                         OnMessage(msg);
                     }
                 }

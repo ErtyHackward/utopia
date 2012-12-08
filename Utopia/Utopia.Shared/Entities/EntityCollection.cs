@@ -72,7 +72,29 @@ namespace Utopia.Shared.Entities
 
         public bool IsDirty { get; set; }
 
-        [ProtoMember(1)]
+        [ProtoMember(1, OverwriteList = true)]
+        public List<KeyValuePair<uint, IEntity>> SerializeEntities {
+            get
+            {
+                var list = new List<KeyValuePair<uint, IEntity>>();
+
+                foreach (var staticEntity in _entities)
+                {
+                    list.Add(new KeyValuePair<uint, IEntity>(staticEntity.Key, staticEntity.Value));    
+                }
+
+                return list;
+            }
+            set {
+                _entities.Clear();
+                foreach (var keyValuePair in value)
+                {
+                    _entities.Add(keyValuePair.Key, (IStaticEntity)keyValuePair.Value);
+                }
+            }
+        }
+
+
         public SortedList<uint, IStaticEntity> Entities
         {
             get { return _entities; }
