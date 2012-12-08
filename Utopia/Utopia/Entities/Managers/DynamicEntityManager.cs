@@ -321,7 +321,7 @@ namespace Utopia.Entities.Managers
             foreach (var pair in _dynamicEntitiesDico)
             {
                 var charEntity = pair.Value.DynamicEntity as CharacterEntity;
-                if (charEntity != null &&  pair.Value.ModelInstance.World != Matrix.Zero)
+                if (charEntity != null && pair.Value.ModelInstance != null && pair.Value.ModelInstance.World != Matrix.Zero)
                 {
                     //Take the Tool entity equiped in character Right hand
                     if (charEntity.Equipment.RightTool is CubeResource)
