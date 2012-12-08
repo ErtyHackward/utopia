@@ -125,7 +125,8 @@ namespace Utopia.Worlds.Chunks
         public event EventHandler ChunksArrayInitialized;
         private void OnChunksArrayInitialized()
         {
-            if (ChunksArrayInitialized != null) ChunksArrayInitialized(this, EventArgs.Empty);
+            if (ChunksArrayInitialized != null) 
+                ChunksArrayInitialized(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -682,10 +683,6 @@ namespace Utopia.Worlds.Chunks
             VisualWorldParameters.WrapEnd = new Vector2I(XWrap, ZWrap);
         }
 
-
-        #endregion
-
-        #region Events Handling
 
         #endregion
 

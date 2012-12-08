@@ -49,7 +49,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets or sets the inside buffer
         /// </summary>
-        [ProtoMember(2)]
+        [ProtoMember(2, OverwriteList = true)]
         public byte[] BlockBytes
         {
             get { return _blockBytes; }
@@ -84,7 +84,7 @@ namespace Utopia.Shared.Chunks
             }
         }
 
-        [ProtoMember(5)]
+        [ProtoMember(5, OverwriteList = true)]
         public override ChunkColumnInfo[] ColumnsInfo
         {
             get
@@ -109,13 +109,6 @@ namespace Utopia.Shared.Chunks
         public override byte[] GetBlocksBytes()
         {
             return _blockBytes;
-        }
-
-        [ProtoBeforeDeserialization]
-        public void BeforeDeserilize()
-        {
-            _blockBytes = null;
-            _chunkColumns = null;
         }
 
         public InsideDataProvider()
