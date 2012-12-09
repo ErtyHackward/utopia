@@ -100,7 +100,21 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public Md5Hash GetMd5Hash()
         {
-            return Md5HashData ?? (Md5HashData = Md5Hash.Calculate(Serialize()));
+            return Md5HashData ?? (Md5HashData = Md5Hash.Calculate(GetBytesForHash()));
+        }
+
+        private byte[] GetBytesForHash()
+        {
+            using (var ms = new MemoryStream())
+            {
+                var writer = new BinaryWriter(ms);
+                writer.Write(BlockData.GetBlocksBytes());
+                Serializer.Serialize(ms, BlockData.GetTags());
+                Serializer.Serialize(ms, BlockData.ChunkMetaData);
+                Serializer.Serialize(ms, BlockData.ColumnsInfo);
+                Serializer.Serialize(ms, Entities);
+                return ms.ToArray();
+            }
         }
 
         public byte[] Serialize()

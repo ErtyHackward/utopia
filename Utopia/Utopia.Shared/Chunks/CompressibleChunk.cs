@@ -83,9 +83,11 @@ namespace Utopia.Shared.Chunks
             using (var zip = new GZipStream(ms, CompressionMode.Compress))
             {
                 var serializedBytes = Serialize();
-                Md5HashData = hash = Md5Hash.Calculate(serializedBytes);
+                
                 zip.Write(serializedBytes, 0, serializedBytes.Length);
             }
+
+            hash = GetMd5Hash();
 
             var bytes = ms.ToArray();
 
@@ -98,12 +100,11 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="compressedBytes"></param>
-        /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
-        public void Decompress(EntityFactory factory, byte[] compressedBytes, bool getHash = false)
+        public void Decompress(EntityFactory factory, byte[] compressedBytes)
         {
             if (compressedBytes == null) throw new ArgumentNullException("compressedBytes");
             CompressedBytes = compressedBytes;
-            Decompress(factory, getHash);
+            Decompress(factory);
             CompressedBytes = null;
         }
 
@@ -112,7 +113,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
-        public void Decompress(EntityFactory factory, bool getHash = false)
+        public void Decompress(EntityFactory factory)
         {
             if (CompressedBytes == null)
                 throw new InvalidOperationException("Set CompressedBytes property before decompression");
@@ -124,13 +125,12 @@ namespace Utopia.Shared.Chunks
                     var decompressed = new MemoryStream();
                     zip.CopyTo(decompressed);
                     decompressed.Position = 0;
-                    if (getHash)
-                    {
-                        Md5HashData = Md5Hash.Calculate(decompressed);
-                        decompressed.Position = 0;
-                    }
 
-                    BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
+                    var inst = GetDataProviderBaseInstance();
+
+                    BlockData = (ChunkDataProvider)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, inst, typeof(ChunkDataProvider), PrefixStyle.Fixed32, 0);
+
+                    //BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
                     Entities = Serializer.DeserializeWithLengthPrefix<EntityCollection>(decompressed, PrefixStyle.Fixed32);
 
                     OnDecompressed();
@@ -139,6 +139,11 @@ namespace Utopia.Shared.Chunks
                     CompressedDirty = false;
                 }
             }
+        }
+
+        protected virtual ChunkDataProvider GetDataProviderBaseInstance()
+        {
+            return null;
         }
 
         protected virtual void OnDecompressed()

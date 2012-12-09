@@ -631,15 +631,15 @@ namespace Utopia.Worlds.Chunks
 #endif
 
             _server.ServerConnection.Send(
-            new GetChunksMessage()
-            {
-                Range = chunkRange,
-                Md5Hashes = chunkHash.ToArray(),
-                Positions = chunkPosition.ToArray(),
-                HashesCount = chunkHash.Count,
-                Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
-            }
-            );
+                new GetChunksMessage()
+                    {
+                        Range = chunkRange,
+                        Md5Hashes = chunkHash.ToArray(),
+                        Positions = chunkPosition.ToArray(),
+                        HashesCount = chunkHash.Count,
+                        Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                    }
+                );
 
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
 
