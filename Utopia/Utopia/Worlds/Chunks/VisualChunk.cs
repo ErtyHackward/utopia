@@ -233,11 +233,20 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
+        protected override ChunkDataProvider GetDataProviderBaseInstance()
+        {
+            if (base.BlockData is SingleArrayDataProvider)
+            {
+                return base.BlockData;
+            }
+            return null;
+        }
+
         protected override void OnDecompressed()
         {
+            // convert data from the server
             if (base.BlockData is InsideDataProvider)
             {
-
                 var provider = new SingleArrayDataProvider(_singleArrayContainer);
                 provider.DataProviderUser = this;
 
@@ -246,10 +255,6 @@ namespace Utopia.Worlds.Chunks
                 provider.SetBlockBytes(baseBlockData.GetBlocksBytes(), baseBlockData.GetTags());
 
                 base.BlockData = provider;
-            }
-            else
-            {
-                System.Diagnostics.Debugger.Break();
             }
         }
 

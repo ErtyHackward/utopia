@@ -62,13 +62,16 @@ namespace Utopia.Shared.Chunks
 
         #endregion
 
-
-        public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer)
+        public SingleArrayDataProvider()
         {
-            ChunkCubes = singleArrayContainer;
             _chunkSize = AbstractChunk.ChunkSize;
             ChunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
             _chunkMetaData = new ChunkMetaData();
+        }
+
+        public SingleArrayDataProvider(SingleArrayChunkContainer singleArrayContainer) : this()
+        {
+            ChunkCubes = singleArrayContainer;
         }
 
         #region Circular Array access through chunk

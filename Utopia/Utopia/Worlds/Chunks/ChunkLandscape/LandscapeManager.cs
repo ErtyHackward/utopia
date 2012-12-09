@@ -218,8 +218,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     _server.ServerConnection.Send(new GetChunksMessage
                     {
                         HashesCount = 1,
-                        Md5Hashes = new Md5Hash[] { hash },
-                        Positions = new Vector2I[] { chunk.ChunkPosition },
+                        Md5Hashes = new[] { hash },
+                        Positions = new[] { chunk.ChunkPosition },
                         Range = new Range2I(chunk.ChunkPosition, Vector2I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
