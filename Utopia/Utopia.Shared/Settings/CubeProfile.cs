@@ -91,14 +91,9 @@ namespace Utopia.Shared.Settings
         [ProtoMember(18)]
         public float SlidingValue { get; set; }
 
-        private byte _biomeColorArrayTexture = 255;
-        [Browsable(false), Description("Is the block subject to biome color mapping"), Category("Biome color")]
+        [Browsable(true), Description("Is the block subject to biome color mapping"), Category("Biome color")]
         [ProtoMember(19)]
-        public byte BiomeColorArrayTexture
-        {
-            get { return _biomeColorArrayTexture; }
-            set { _biomeColorArrayTexture = value; }
-        }
+        public byte BiomeColorArrayTexture { get; set; }
 
         //Texture id foreach face
         [ProtoMember(20)]
