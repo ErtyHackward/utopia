@@ -131,6 +131,8 @@ namespace Utopia.Shared.Chunks
 
                     BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
                     Entities = Serializer.DeserializeWithLengthPrefix<EntityCollection>(decompressed, PrefixStyle.Fixed32);
+                    if (Entities == null)
+                        Entities = new EntityCollection(this);
 
                     decompressed.Dispose();
                     CompressedDirty = false;

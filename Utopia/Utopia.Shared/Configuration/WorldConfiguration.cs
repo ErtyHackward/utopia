@@ -94,7 +94,7 @@ namespace Utopia.Shared.Configuration
         /// Holds Cube Profiles configuration
         /// </summary>
         [Browsable(false)]
-        [ProtoMember(9)]
+        [ProtoMember(9, OverwriteList = true)]
         public CubeProfile[] CubeProfiles { get; set; }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace Utopia.Shared.Configuration
         private void InitCollections()
         {
             BluePrints = new Dictionary<ushort, Entity>();
-            CubeProfiles = new CubeProfile[0];
+            CubeProfiles = new CubeProfile[255];
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
         }

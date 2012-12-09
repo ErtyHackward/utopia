@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities.Models
         /// <summary>
         /// Gets colors scheme, maximum 64 items
         /// </summary>
-        [ProtoMember(1)]
+        [ProtoMember(1, OverwriteList = true)]
         public Color4[] BlockColors { get; set; }
 
         public static ColorMapping Read(BinaryReader reader)

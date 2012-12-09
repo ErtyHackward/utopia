@@ -19,7 +19,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets hash bytes
         /// </summary>
-        [ProtoMember(1)]
+        [ProtoMember(1, OverwriteList = true)]
         public byte[] Bytes
         {
             get { return _bytes; }
