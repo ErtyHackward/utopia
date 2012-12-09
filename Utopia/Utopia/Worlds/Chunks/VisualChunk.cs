@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
@@ -10,27 +8,22 @@ using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Shared.World;
-using Utopia.Entities;
 using Utopia.Resources.ModelComp;
 using Utopia.Entities.Managers.Interfaces;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
 using S33M3DXEngine;
-using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Effects.Basics;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Maths;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Entities.Voxel;
-using UtopiaContent.Effects.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Resources.VertexFormats;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Models;
 
@@ -239,7 +232,26 @@ namespace Utopia.Worlds.Chunks
         }
 
         #region Public methods
-        
+
+        protected override void OnDecompressed()
+        {
+            if (base.BlockData is InsideDataProvider)
+            {
+
+                var provider = new SingleArrayDataProvider(_singleArrayContainer);
+                provider.DataProviderUser = this;
+
+                var baseBlockData = base.BlockData;
+
+                provider.SetBlockBytes(baseBlockData.GetBlocksBytes(), baseBlockData.GetTags());
+
+                base.BlockData = provider;
+            }
+            else
+            {
+                System.Diagnostics.Debugger.Break();
+            }
+        }
 
         public void RefreshBorderChunk()
         {
