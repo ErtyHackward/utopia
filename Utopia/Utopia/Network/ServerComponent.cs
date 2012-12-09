@@ -227,7 +227,10 @@ namespace Utopia.Network
 
         protected void OnMessageChunkData(ChunkDataMessage ea)
         {
-            if (MessageChunkData != null) MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
+            ea.MessageRecTime = DateTime.Now;
+
+            if (MessageChunkData != null) 
+                MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
         }
 
         protected void OnMessageChat(ChatMessage ea)
