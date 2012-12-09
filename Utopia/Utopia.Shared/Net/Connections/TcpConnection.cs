@@ -16,6 +16,8 @@ namespace Utopia.Shared.Net.Connections
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
         private bool _sendThreadActive;
 
+        private EndPoint _endPoint;
+
         public TcpConnectionStatus Status
         {
             get { return _status; }
@@ -29,7 +31,7 @@ namespace Utopia.Shared.Net.Connections
         }
 
         public EndPoint RemoteAddress {
-            get { return Client.Client.RemoteEndPoint; }
+            get { return _endPoint; }
         }
 
         public event EventHandler<TcpConnectionStatusEventArgs> StatusChanged;
@@ -55,7 +57,13 @@ namespace Utopia.Shared.Net.Connections
             : this()
         {
             Client.Client = socket;
+            
             Status = socket.Connected ? TcpConnectionStatus.Connected : TcpConnectionStatus.Disconnected;
+
+            if (Status == TcpConnectionStatus.Connected)
+            {
+                _endPoint = Client.Client.RemoteEndPoint;
+            }
         }
         
         public void Connect(string address, int port)
@@ -65,7 +73,7 @@ namespace Utopia.Shared.Net.Connections
                 Status = TcpConnectionStatus.Connecting;
                 Client.Connect(address, port);
                 Status = TcpConnectionStatus.Connected;
-
+                _endPoint = Client.Client.RemoteEndPoint;
                 Listen();
             }
             catch (Exception x)

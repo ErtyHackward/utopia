@@ -85,13 +85,16 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //New chunk Received !
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
+
+            Int64 chunkId = VisualChunk.ComputeChunkId(e.Message.Position.X, e.Message.Position.Y);
 #if DEBUG
-            //logger.Trace("Chunk received from server id : {0}; Position : {1}", e.Message.Position.GetID(), e.Message.Position);
+            logger.Debug("Chunk received from server id : {0}; Position : {1}, Flag :{2}", chunkId, e.Message.Position, e.Message.Flag);
 #endif
 
             //Bufferize the Data here
-            Int64 chunkId = VisualChunk.ComputeChunkId(e.Message.Position.X, e.Message.Position.Y);
-            if (_receivedServerChunks.ContainsKey(chunkId)) _receivedServerChunks.Remove(chunkId);
+            
+            if (_receivedServerChunks.ContainsKey(chunkId)) 
+                _receivedServerChunks.Remove(chunkId);
             _receivedServerChunks.Add(chunkId, e.Message);
         }
 

@@ -344,7 +344,7 @@ namespace Utopia.Entities.Managers
         {
             _dynamicEntityNameRenderer.Begin(true);
 
-            foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance.World != Matrix.Zero))
+            foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance != null && x.ModelInstance.World != Matrix.Zero))
             {
                 bool isMultiline = false;
                 string Name;
