@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Utopia.Editor.Forms;
 using Utopia.Editor.Properties;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Editor
 {
@@ -45,9 +47,29 @@ namespace Utopia.Editor
 
             IconManager.Initialize(Settings.Default.UtopiaFolder);
 
+            // collect all sound files
+            var baseSoundPath = Path.Combine(Settings.Default.UtopiaFolder);
+            SoundSelector.PossibleSound = GetFiles(Path.Combine(Settings.Default.UtopiaFolder), "*.wav").Select(f => f.Remove(0, baseSoundPath.Length + 1)).ToArray();
+            
             ModelIcons = new Dictionary<string, Image>();
 
             Application.Run(new FrmMain());
+        }
+
+        private static IEnumerable<string> GetFiles(string folder, string mask)
+        {
+            foreach (var file in Directory.GetFiles(folder, mask))
+            {
+                yield return file;
+            }
+
+            foreach (var dir in Directory.GetDirectories(folder))
+            {
+                foreach (var file in GetFiles(dir, mask))
+                {
+                    yield return file;    
+                }
+            }
         }
     }
 }

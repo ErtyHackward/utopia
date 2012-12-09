@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using Ninject;
 using ProtoBuf;
 using ProtoBuf.Meta;
+using S33M3CoreComponents.Sound;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Chunks;
@@ -10,7 +12,6 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Interfaces;
@@ -34,27 +35,33 @@ namespace Utopia.Shared.Entities
         /// </summary>
         public ILandscapeManager2D LandscapeManager { get; set; }
 
+        /// <summary>
+        /// Gets or sets optional sound manager used by ISoundEmitterEntities
+        /// </summary>
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
+
         public static void InitializeProtobufInheritanceHierarchy()
         {
             var protoTypeModel = RuntimeTypeModel.Default;
 
-            var entityInterface = protoTypeModel.Add(typeof(IEntity), true);
-            var entityType = protoTypeModel.Add(typeof(Entity), true);
-            var dynEntityType = protoTypeModel.Add(typeof(DynamicEntity), true);
-            var staticEntityType = protoTypeModel.Add(typeof(StaticEntity), true);
-            var charEntityType = protoTypeModel.Add(typeof(CharacterEntity), true);
-            var rpgCharType = protoTypeModel.Add(typeof(RpgCharacterEntity), true);
-            var itemType = protoTypeModel.Add(typeof(Item), true);
-            var slotType = protoTypeModel.Add(typeof(Slot), true);
-            var containedSlotType = protoTypeModel.Add(typeof(ContainedSlot), true);
-            var blockItem = protoTypeModel.Add(typeof(BlockItem), true);
-            var orientedBlockItem = protoTypeModel.Add(typeof(OrientedBlockItem), true);
-            var blockLinkedItem = protoTypeModel.Add(typeof(BlockLinkedItem), true);
-            var orientedBlockLinkedItem = protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
-            var resourceCollector = protoTypeModel.Add(typeof(ResourcesCollector), true);
-            var worldConfig = protoTypeModel.Add(typeof(WorldConfiguration), true);
-            var soundSource = protoTypeModel.Add(typeof(SoundSource), true);
-            var chunkDataProvider = protoTypeModel.Add(typeof(ChunkDataProvider), true);
+            var entityInterface =           protoTypeModel.Add(typeof(IEntity), true);
+            var entityType =                protoTypeModel.Add(typeof(Entity), true);
+            var dynEntityType =             protoTypeModel.Add(typeof(DynamicEntity), true);
+            var staticEntityType =          protoTypeModel.Add(typeof(StaticEntity), true);
+            var charEntityType =            protoTypeModel.Add(typeof(CharacterEntity), true);
+            var rpgCharType =               protoTypeModel.Add(typeof(RpgCharacterEntity), true);
+            var itemType =                  protoTypeModel.Add(typeof(Item), true);
+            var slotType =                  protoTypeModel.Add(typeof(Slot), true);
+            var containedSlotType =         protoTypeModel.Add(typeof(ContainedSlot), true);
+            var blockItem =                 protoTypeModel.Add(typeof(BlockItem), true);
+            var orientedBlockItem =         protoTypeModel.Add(typeof(OrientedBlockItem), true);
+            var blockLinkedItem =           protoTypeModel.Add(typeof(BlockLinkedItem), true);
+            var orientedBlockLinkedItem =   protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
+            var resourceCollector =         protoTypeModel.Add(typeof(ResourcesCollector), true);
+            var worldConfig =               protoTypeModel.Add(typeof(WorldConfiguration), true);
+            var soundSource =               protoTypeModel.Add(typeof(SoundSource), true);
+            var chunkDataProvider =         protoTypeModel.Add(typeof(ChunkDataProvider), true);
 
 
             chunkDataProvider.AddSubType(100, typeof(InsideDataProvider));
@@ -143,15 +150,15 @@ namespace Utopia.Shared.Entities
             vector3.AddField(2, "Y");
             vector3.AddField(3, "Z");
 
-            var vector3d = protoTypeModel.Add(typeof(Vector3D), true);
-            vector3d.AddField(1, "X");
-            vector3d.AddField(2, "Y");
-            vector3d.AddField(3, "Z");
+            var vector3D = protoTypeModel.Add(typeof(Vector3D), true);
+            vector3D.AddField(1, "X");
+            vector3D.AddField(2, "Y");
+            vector3D.AddField(3, "Z");
 
-            var vector3i = protoTypeModel.Add(typeof(Vector3I), true);
-            vector3i.AddField(1, "X");
-            vector3i.AddField(2, "Y");
-            vector3i.AddField(3, "Z");
+            var vector3I = protoTypeModel.Add(typeof(Vector3I), true);
+            vector3I.AddField(1, "X");
+            vector3I.AddField(2, "Y");
+            vector3I.AddField(3, "Z");
 
             var rangeI = protoTypeModel.Add(typeof(RangeI), true);
             rangeI.AddField(1, "Min");
@@ -309,18 +316,18 @@ namespace Utopia.Shared.Entities
             return CreateFromBluePrint(entity.BluePrintId);
         }
 
-        public Entity CreateFromBluePrint(ushort bluePrintID)
+        public Entity CreateFromBluePrint(ushort bluePrintId)
         {
-            if (bluePrintID == 0)
+            if (bluePrintId == 0)
             {
                 //The bluePrintID 0 means not linked to a blueprint !
-                throw new ArgumentOutOfRangeException("bluePrintID");
+                throw new ArgumentOutOfRangeException("bluePrintId");
             }
 
-            Entity entity = null;
-            if (Config.BluePrints.TryGetValue(bluePrintID, out entity) == false)
+            Entity entity;
+            if (Config.BluePrints.TryGetValue(bluePrintId, out entity) == false)
             {
-                throw new ArgumentOutOfRangeException("bluePrintID");
+                throw new ArgumentOutOfRangeException("bluePrintId");
             }
 
             //Create a clone of this entity.
@@ -346,53 +353,37 @@ namespace Utopia.Shared.Entities
                 item.LandscapeManager = LandscapeManager;
                 item.entityFactory = this;
             }
+
+            if (entity is ISoundEmitterEntity)
+            {
+                var item = entity as ISoundEmitterEntity;
+                item.SoundEngine = SoundEngine;
+            }
+        }
+        
+        public void Serialize(Entity entity, Stream stream)
+        {
+            Serializer.Serialize(stream, entity);
         }
 
         /// <summary>
         /// Creates and loads blueprint entity from binary form
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="bytes"></param>
         /// <returns></returns>
-        public Entity CreateFromBytes(BinaryReader reader)
-        {
-            var classId = reader.ReadUInt16();
-            
-            var entity = CreateFromClassId(classId);
-
-            return (Entity)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, entity, entity.GetType());
-        }
-
-
-
-        public void Serialize(Entity entity, Stream stream)
-        {
-            using (var writer = new BinaryWriter(stream))
-                writer.Write(entity.ClassId);
-
-            Serializer.Serialize(stream, entity);
-        }
-
         public Entity CreateFromBytes(byte[] bytes)
         {
             using (var ms = new MemoryStream(bytes))
             {
-                var reader = new BinaryReader(ms);
-                return CreateFromBytes(reader);
+                var entity = (Entity)RuntimeTypeModel.Default.Deserialize(ms, null, typeof(IEntity));
+                PrepareEntity(entity);
+                return entity;
             }
         }
 
         public static BlockTag CreateTagFromBytes(BinaryReader reader)
         {
-            var tagId = reader.ReadByte();
-
-            if (tagId == 0) return null;
-
-            if (tagId != 1)
-                throw new InvalidDataException();
-
-            var tag = new LiquidTag();
-            
-            return (BlockTag)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, tag, tag.GetType());
+            return (BlockTag)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, null, typeof(BlockTag));
         }
 
         /// <summary>
@@ -448,7 +439,7 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        private void PrepareEntity(IEntity entity)
+        public void PrepareEntity(IEntity entity)
         {
             InjectFields(entity);
 

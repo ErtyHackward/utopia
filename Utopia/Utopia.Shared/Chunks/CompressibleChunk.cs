@@ -123,6 +123,7 @@ namespace Utopia.Shared.Chunks
                 {
                     var decompressed = new MemoryStream();
                     zip.CopyTo(decompressed);
+                    decompressed.Position = 0;
                     if (getHash)
                     {
                         Md5HashData = Md5Hash.Calculate(decompressed);
@@ -131,13 +132,18 @@ namespace Utopia.Shared.Chunks
 
                     BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
                     Entities = Serializer.DeserializeWithLengthPrefix<EntityCollection>(decompressed, PrefixStyle.Fixed32);
-                    if (Entities == null)
-                        Entities = new EntityCollection(this);
 
+                    OnDecompressed();
+                    
                     decompressed.Dispose();
                     CompressedDirty = false;
                 }
             }
+        }
+
+        protected virtual void OnDecompressed()
+        {
+
         }
 
         protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)

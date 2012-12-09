@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;

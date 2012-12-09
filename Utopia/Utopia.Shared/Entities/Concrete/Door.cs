@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Tools;
 
@@ -9,7 +10,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// Represents an two-state item, that can be switched between them by use operation
     /// </summary>
     [ProtoContract]
-    public class Door : OrientedBlockItem, IUsableEntity
+    public class Door : OrientedBlockItem, IUsableEntity, ISoundEmitterEntity
     {
         [Category("Door")]
         [Description("Current entity state (initial)")]
@@ -27,7 +28,15 @@ namespace Utopia.Shared.Entities.Concrete
         [TypeConverter(typeof(ModelStateSelector))]
         [ProtoMember(3)]
         public string ClosedState { get; set; }
-        
+
+        [Category("Sound")]
+        [Description("Sound of the door opening/closing")]
+        [TypeConverter(typeof(SoundSelector))]
+        [ProtoMember(4)]
+        public string SwitchSound { get; set; }
+
+        public ISoundEngine SoundEngine { get; set; }
+
         public override ushort ClassId
         {
             get
@@ -56,6 +65,12 @@ namespace Utopia.Shared.Entities.Concrete
                 if (!string.IsNullOrEmpty(newState))
                     ModelInstance.SwitchState(newState);
             }
+
+            if (!string.IsNullOrEmpty(SwitchSound) && SoundEngine != null)
+            {
+                SoundEngine.StartPlay3D(SwitchSound, SwitchSound, Position.AsVector3());
+            }
+
             NotifyParentContainerChange();
         }
     }
