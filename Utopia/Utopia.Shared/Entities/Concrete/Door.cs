@@ -35,7 +35,13 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(4)]
         public string SwitchSound { get; set; }
 
-        public ISoundEngine SoundEngine { get; set; }
+        private ISoundEngine _soundEngine;
+
+        public ISoundEngine SoundEngine
+        {
+            get { return _soundEngine; }
+            set { _soundEngine = value; }
+        }
 
         public override ushort ClassId
         {

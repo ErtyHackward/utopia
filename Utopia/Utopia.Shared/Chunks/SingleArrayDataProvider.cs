@@ -15,6 +15,8 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public class SingleArrayDataProvider : ChunkDataProvider
     {
+        public override int ChunkDataProviderFormatID { get { return 1; } }
+
         private readonly object _syncRoot = new object();
         private Vector3I _chunkSize;
         private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
@@ -41,7 +43,7 @@ namespace Utopia.Shared.Chunks
         }
 
         [ProtoMember(3)]
-        public Dictionary<Vector3I, BlockTag> SeriazlieTags
+        public Dictionary<Vector3I, BlockTag> SerializeTags
         {
             get { return _tags; }
         }

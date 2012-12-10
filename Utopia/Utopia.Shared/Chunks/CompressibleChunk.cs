@@ -100,11 +100,11 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="compressedBytes"></param>
-        public void Decompress(EntityFactory factory, byte[] compressedBytes)
+        public void Inject(EntityFactory factory, byte[] compressedBytes)
         {
             if (compressedBytes == null) throw new ArgumentNullException("compressedBytes");
             CompressedBytes = compressedBytes;
-            Decompress(factory);
+            Decompress(factory, true);
             CompressedBytes = null;
         }
 
@@ -113,7 +113,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="getHash">Do we need to take md5hash of the chunk?</param>
-        public void Decompress(EntityFactory factory)
+        public void Decompress(EntityFactory factory, bool injection = false)
         {
             if (CompressedBytes == null)
                 throw new InvalidOperationException("Set CompressedBytes property before decompression");
@@ -126,29 +126,37 @@ namespace Utopia.Shared.Chunks
                     zip.CopyTo(decompressed);
                     decompressed.Position = 0;
 
-                    var inst = GetDataProviderBaseInstance();
+                    BinaryReader br = new BinaryReader(decompressed);
+                    int providerFormatId = br.ReadInt32();
 
-                    BlockData = (ChunkDataProvider)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, inst, typeof(ChunkDataProvider), PrefixStyle.Fixed32, 0);
+                    //The new chunk data can be deserialized, and then replace currently existing chunkDataProvider
+                    if (injection == false)
+                    {
+                        BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
+                    }
+                    else
+                    {
+                        //Injection mode
+                        if (providerFormatId != base.BlockData.ChunkDataProviderFormatID)
+                        {
+                            OnDecompressedExternalFormat(Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32));
+                        }
+                        else
+                        {
+                            RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, base.BlockData, typeof(ChunkDataProvider), PrefixStyle.Fixed32, 0);
+                        }
+                    }
 
-                    //BlockData = Serializer.DeserializeWithLengthPrefix<ChunkDataProvider>(decompressed, PrefixStyle.Fixed32);
                     Entities = Serializer.DeserializeWithLengthPrefix<EntityCollection>(decompressed, PrefixStyle.Fixed32);
 
-                    OnDecompressed();
-                    
                     decompressed.Dispose();
                     CompressedDirty = false;
                 }
             }
         }
 
-        protected virtual ChunkDataProvider GetDataProviderBaseInstance()
+        protected virtual void OnDecompressedExternalFormat(ChunkDataProvider dataProvider)
         {
-            return null;
-        }
-
-        protected virtual void OnDecompressed()
-        {
-
         }
 
         protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
