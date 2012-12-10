@@ -151,6 +151,7 @@ namespace Utopia.Server.Managers
                         using (var ms = new MemoryStream(bytes))
                         {
                             playerEntity.DynamicEntity = Serializer.Deserialize<PlayerCharacter>(ms);
+                            _server.EntityFactory.PrepareEntity(playerEntity.DynamicEntity);
                         }
 
                     }
