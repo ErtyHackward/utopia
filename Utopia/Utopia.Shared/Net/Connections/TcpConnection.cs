@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -76,7 +77,7 @@ namespace Utopia.Shared.Net.Connections
                 _endPoint = Client.Client.RemoteEndPoint;
                 Listen();
             }
-            catch (Exception x)
+            catch (Exception)
             {
                 Status = TcpConnectionStatus.Disconnected;
             }
@@ -88,7 +89,8 @@ namespace Utopia.Shared.Net.Connections
         }
 
         protected abstract void OnMessage(IBinaryMessage msg);
-        
+
+        [DebuggerStepThrough()]
         protected void ReadThread()
         {
             try
@@ -143,6 +145,7 @@ namespace Utopia.Shared.Net.Connections
             }
         }
 
+        [DebuggerStepThrough()]
         private void SendThread()
         {
             try
@@ -167,7 +170,7 @@ namespace Utopia.Shared.Net.Connections
                 }
                 stream.Flush();
             }
-            catch (Exception x)
+            catch (Exception)
             {
                 Status = TcpConnectionStatus.Disconnected;
             }

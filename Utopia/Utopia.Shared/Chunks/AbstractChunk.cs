@@ -119,10 +119,15 @@ namespace Utopia.Shared.Chunks
 
         public byte[] Serialize()
         {
-            var ms = new MemoryStream();
-            Serializer.SerializeWithLengthPrefix(ms, BlockData, PrefixStyle.Fixed32);
-            Serializer.SerializeWithLengthPrefix(ms, Entities, PrefixStyle.Fixed32);
-            return ms.ToArray();
+            using (var ms = new MemoryStream())
+            {
+                var writer = new BinaryWriter(ms);
+                writer.Write(BlockData.ChunkDataProviderFormatID);
+                Serializer.SerializeWithLengthPrefix(ms, BlockData, PrefixStyle.Fixed32);
+                Serializer.SerializeWithLengthPrefix(ms, Entities, PrefixStyle.Fixed32);
+                writer.Dispose();
+                return ms.ToArray();
+            }
         }
 
         /// <summary>

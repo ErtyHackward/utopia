@@ -14,6 +14,8 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public class InsideDataProvider : ChunkDataProvider
     {
+        public override int ChunkDataProviderFormatID { get { return 0; } }
+
         private readonly object _writeSyncRoot = new object();
         private Vector3I _chunkSize;
         private byte[] _blockBytes;

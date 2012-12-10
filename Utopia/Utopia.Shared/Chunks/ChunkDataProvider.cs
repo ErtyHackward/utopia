@@ -11,6 +11,8 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public abstract class ChunkDataProvider
     {
+        public abstract int ChunkDataProviderFormatID { get; }
+
         /// <summary>
         /// Occurs when block data was changed
         /// </summary>

@@ -422,6 +422,7 @@ namespace Utopia.Shared.Entities
             }
         }
 
+        //Analyse Network Message, and if needed Inject Field to the passed in Object
         public void ProcessMessage(IBinaryMessage imsg)
         {
             switch ((MessageTypes)imsg.MessageId)
@@ -435,13 +436,15 @@ namespace Utopia.Shared.Entities
                         PrepareEntity(msg.Entity);
                     }
                     break;
-
             }
         }
 
+        //Prepare Entity by binding needed object to it:
+        //LandscapeManager or
+        //SoundEngine
         public void PrepareEntity(IEntity entity)
         {
-            InjectFields(entity);
+            InjectFields(entity); //Inject fields at the entity level
 
             if (entity is CharacterEntity)
             {
@@ -449,12 +452,12 @@ namespace Utopia.Shared.Entities
 
                 foreach (var slot in charEntity.Equipment)
                 {
-                    InjectFields(slot.Item);
+                    InjectFields(slot.Item); //Inject Equipment fields
                 }
 
                 foreach (var slot in charEntity.Inventory)
                 {
-                    InjectFields(slot.Item);
+                    InjectFields(slot.Item); //Inject Inventory fields
                 }
             }
         }
