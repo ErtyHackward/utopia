@@ -227,8 +227,6 @@ namespace Utopia.Network
 
         protected void OnMessageChunkData(ChunkDataMessage ea)
         {
-            ea.MessageRecTime = DateTime.Now;
-
             if (MessageChunkData != null) 
                 MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
         }
@@ -354,6 +352,11 @@ namespace Utopia.Network
         private void InvokeEventForNetworkDataReceived(IBinaryMessage msg)
         {
             _factory.ProcessMessage(msg);
+
+            if (msg is ITimeStampedMsg)
+            {
+                ((ITimeStampedMsg)msg).MessageRecTime = DateTime.Now;
+            }
             
             switch ((MessageTypes)msg.MessageId)
             {
