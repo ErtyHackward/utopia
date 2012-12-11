@@ -1,5 +1,5 @@
 using System;
-using Utopia.Shared.Net.Web.Responces;
+using Utopia.Shared.Net.Web.Responses;
 
 namespace Utopia.Shared.Net.Web
 {
@@ -16,10 +16,12 @@ namespace Utopia.Shared.Net.Web
         /// <summary>
         /// Occurs when login procedure is completed
         /// </summary>
-        public event EventHandler<WebEventArgs<LoginResponce>> LoginCompleted;
+        public event EventHandler<WebEventArgs<TokenResponse>> LoginCompleted;
 
-        private void OnLoginCompleted(WebEventArgs<LoginResponce> e)
+        private void OnLoginCompleted(WebEventArgs<TokenResponse> e)
         {
+            Token = e.Response != null ? e.Response.AccessToken : null;
+
             var handler = LoginCompleted;
             if (handler != null) handler(this, e);
         }
@@ -27,9 +29,9 @@ namespace Utopia.Shared.Net.Web
         /// <summary>
         /// Occurs when server list is received
         /// </summary>
-        public event EventHandler<WebEventArgs<ServerListResponce>> ServerListReceived;
+        public event EventHandler<WebEventArgs<ServerListResponse>> ServerListReceived;
 
-        private void OnServerListReceived(WebEventArgs<ServerListResponce> e)
+        private void OnServerListReceived(WebEventArgs<ServerListResponse> e)
         {
             var handler = ServerListReceived;
             if (handler != null) handler(this, e);
@@ -42,26 +44,7 @@ namespace Utopia.Shared.Net.Web
         /// <param name="passwordHash"></param>
         public void UserLoginAsync(string email, string passwordHash)
         {
-            PostRequestAsync(ServerUrl + "/login", string.Format("login={0}&pass={1}", email, passwordHash), LoginCompleteCallback);
-        }
-
-        /// <summary>
-        /// Sends a log off request to the server
-        /// </summary>
-        public void UserLogOffAsync()
-        {
-            CheckToken();
-            PostRequestAsync(ServerUrl + "/logoff", string.Format("token={0}", Token), null);
-            Token = null;
-        }
-
-        /// <summary>
-        /// Sends a get-servers request and fires ServerListReceived event when done
-        /// </summary>
-        public void GetServersListAsync()
-        {
-            CheckToken();
-            PostRequestAsync(ServerUrl + "/serverlist", string.Format("token={0}", Token), ServerListCallback);
+            PostRequestAsync<WebEventArgs<TokenResponse>>(ServerUrl + "/login", string.Format("login={0}&pass={1}", email, passwordHash), OnLoginCompleted);
         }
         
         private void CheckToken()
@@ -70,26 +53,10 @@ namespace Utopia.Shared.Net.Web
                 throw new InvalidOperationException("Token check operation failed because login procedure was not completed");
         }
 
-        private void LoginCompleteCallback(IAsyncResult result)
+        public void GetServersListAsync()
         {
-            var ea = ParseResult<LoginResponce>(result);
-
-            Token = ea.Responce != null ? ea.Responce.Token : null;
-            
-            OnLoginCompleted(ea);
-        }
-
-        private void ServerListCallback(IAsyncResult result)
-        {
-            var ea = ParseResult<ServerListResponce>(result);
-
-            OnServerListReceived(ea);
-        }
-
-        public override void Dispose()
-        {
-            if (Token != null)
-                UserLogOffAsync();
+            CheckToken();
+            PostRequestAsync<WebEventArgs<ServerListResponse>>(ServerUrl + "/servers", "", OnServerListReceived);
         }
     }
 }
