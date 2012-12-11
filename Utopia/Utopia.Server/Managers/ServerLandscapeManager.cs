@@ -476,6 +476,8 @@ namespace Utopia.Server.Managers
 
         public void Dispose()
         {
+            SaveChunks();
+
             lock (_chunks)
             {
                 _chunks.Clear();

@@ -15,7 +15,7 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public static float DefaultMoveSpeed = 5f;
         
-        [ProtoMember(1)]
+        [ProtoMember(1, OverwriteList = true)]
         public List<uint> Toolbar { get; set; }
         
         public override ushort ClassId
