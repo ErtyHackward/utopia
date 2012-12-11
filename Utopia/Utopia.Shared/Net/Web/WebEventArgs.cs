@@ -1,10 +1,18 @@
 using System;
+using Newtonsoft.Json;
 
 namespace Utopia.Shared.Net.Web
 {
-    public class WebEventArgs<T> : EventArgs
+    public class WebEventArgs : EventArgs
     {
-        public T Responce { get; set; }
         public Exception Exception { get; set; }
+    }
+
+    public class WebEventArgs<T> : WebEventArgs
+    {
+        public T Response { get; set; }
+
+        [JsonProperty("error")]
+        public int Error { get; set; }
     }
 }

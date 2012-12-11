@@ -7,7 +7,7 @@ using Utopia.Shared.ClassExt;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Utopia.Shared.Net.Web;
-using Utopia.Shared.Net.Web.Responces;
+using Utopia.Shared.Net.Web.Responses;
 using Utopia.Shared.Settings;
 
 namespace Realms.Client.States
@@ -54,7 +54,7 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
-        void WebApiLoginCompleted(object sender, WebEventArgs<LoginResponce> e)
+        void WebApiLoginCompleted(object sender, WebEventArgs<TokenResponse> e)
         {
             var login = _iocContainer.Get<LoginComponent>();
 
@@ -65,20 +65,20 @@ namespace Realms.Client.States
                 return;
             }
 
-            if (!e.Responce.Logged)
+            if (string.IsNullOrEmpty(e.Response.AccessToken))
             {
                 login.ShowErrorText("Wrong login/password combination");
                 login.Locked = false;
                 return;
             }
 
-            if (e.Responce != null && e.Responce.Logged)
+            if (e.Response != null && !string.IsNullOrEmpty(e.Response.AccessToken))
             {
                 var vars = _iocContainer.Get<RuntimeVariables>();
 
                 vars.Login = login.Email;
                 vars.PasswordHash = login.Password.GetSHA1Hash();
-                vars.DisplayName = e.Responce.DisplayName;
+                vars.DisplayName = e.Response.DisplayName;
 
                 ClientSettings.Current.Settings.Login = login.Email;
                 ClientSettings.Current.Save();
