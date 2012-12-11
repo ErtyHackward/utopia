@@ -14,8 +14,9 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         private int[] _slot = new int[ShaderIDs.NbrShaders];
         private bool _isDirty;
         private SamplerState _sampler;
-        Shaders _shadersImpacted;
-        string _name;
+        private Shaders _shadersImpacted;
+        private string _name;
+        private bool _isStatic;
         #endregion
 
         #region Public properties and Variables
@@ -56,17 +57,22 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         {
             if (_isDirty)
             {
-                Set2Device(context);
+                Set2Device(context, true);
                 _isDirty = false;
             }
         }
 
-        public void Set2Device(DeviceContext context)
+        public void Set2Device(DeviceContext context, bool force = false)
         {
+            if (_sampler == null)
+            {
 #if DEBUG
-            if (_sampler == null) 
-                logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
+
+                if(force) logger.Warn("Sampler {0} is NULL when pushed to contexte", _name);
 #endif
+                return;
+            }
+
             if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetSampler(_slot[ShaderIDs.VS], _sampler);
             if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetSampler(_slot[ShaderIDs.GS], _sampler);
             if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetSampler(_slot[ShaderIDs.PS], _sampler);
