@@ -21,6 +21,7 @@ using S33M3CoreComponents.Particules.Emitters;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Shared.Configuration;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Particules
 {
@@ -39,6 +40,7 @@ namespace Utopia.Particules
         //Small Cube emitter, will emit on cube Change ! 
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private CubeEmitter _cubeEmitter;
+        private IWorldChunks _worldChunks;
         #endregion
 
         #region Public Properties
@@ -53,7 +55,8 @@ namespace Utopia.Particules
                              CameraManager<ICameraFocused> cameraManager,
                              InputsManager inputsManager,
                              VisualWorldParameters worldParameters,
-                             IChunkEntityImpactManager chunkEntityImpactManager)
+                             IChunkEntityImpactManager chunkEntityImpactManager,
+                             IWorldChunks worldChunks)
             : base(d3dEngine, sharedFrameCB.CBPerFrame)
         {
             _sharedFrameCB = sharedFrameCB;
@@ -61,6 +64,7 @@ namespace Utopia.Particules
             _inputsManager = inputsManager;
             _worldParameters = worldParameters;
             _chunkEntityImpactManager = chunkEntityImpactManager;
+            _worldChunks = worldChunks;
 
             _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
         }
@@ -74,7 +78,7 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", _worldParameters);
+            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", 5, _worldParameters, _worldChunks);
             AddEmitter(_cubeEmitter);
 
             base.Initialize();
