@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ninject;
-using Sandbox.Client.Components;
-using Utopia;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Net.Web;
-using Utopia.Shared.Net.Web.Responces;
+using Utopia.Shared.Net.Web.Responses;
 
 namespace Sandbox.Client.States
 {
@@ -57,7 +55,7 @@ namespace Sandbox.Client.States
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }
 
-        void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponce> e)
+        void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponse> e)
         {
             var selection = _iocContainer.Get<ServerSelectionComponent>();
 
@@ -65,13 +63,13 @@ namespace Sandbox.Client.States
             {
                 selection.List.Items.Clear();
 
-                if (e.Responce.Servers != null)
+                if (e.Response.Servers != null)
                 {
-                    foreach (var serverInfo in e.Responce.Servers)
+                    foreach (var serverInfo in e.Response.Servers)
                     {
                         selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount) );
                     }
-                    ServerList = e.Responce.Servers;
+                    ServerList = e.Response.Servers;
                 }
             }
             else
