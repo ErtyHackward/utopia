@@ -24,7 +24,7 @@ namespace S33m3Engines.Effects
             IncludeFilePath = @"Effects\" + fileName;
             if (File.Exists(IncludeFilePath))
             {
-                return File.Open(IncludeFilePath, FileMode.Open);
+                return File.Open(IncludeFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
             //Impossible to locate the Include file !!
