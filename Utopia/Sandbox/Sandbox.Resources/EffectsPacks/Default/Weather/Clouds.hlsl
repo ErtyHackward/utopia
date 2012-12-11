@@ -79,6 +79,8 @@ float4 PS( PS_IN input ) : SV_Target
 		{
 			backBufferColor.xyz = SunColor / 1.5;
 			backBufferColor.w = input.Col.a;
+		}else{
+			backBufferColor = float4(0.0,0.0,0.0,0.0);
 		}
 	}
 
