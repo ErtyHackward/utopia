@@ -138,10 +138,7 @@ namespace Utopia.Shared.Chunks
         public virtual void Consume(AbstractChunk chunk)
         {
             BlockData.Consume(chunk.BlockData);
-
-            var entities = chunk.Entities;
-            chunk.Entities = null;
-            Entities = entities;
+            Entities.Import(chunk.Entities);
         }
 
         /// <summary>
