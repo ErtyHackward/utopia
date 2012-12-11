@@ -16,7 +16,6 @@ namespace S33M3DXEngine.Effects.HLSLFramework
         private SamplerState _sampler;
         private Shaders _shadersImpacted;
         private string _name;
-        private bool _isStatic;
         #endregion
 
         #region Public properties and Variables

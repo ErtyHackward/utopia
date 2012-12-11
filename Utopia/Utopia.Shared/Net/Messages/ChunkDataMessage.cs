@@ -2,6 +2,7 @@ using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using System;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -9,7 +10,7 @@ namespace Utopia.Shared.Net.Messages
     /// Defines a message that can be sent by the server in responce to the GetChunks message. 
     /// </summary>
     [ProtoContract]
-    public class ChunkDataMessage : IBinaryMessage
+    public class ChunkDataMessage : IBinaryMessage, ITimeStampedMsg
     {
         /// <summary>
         /// Gets message id
@@ -22,7 +23,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Value filled in with the datetime at message creation time
         /// </summary>
-        public System.DateTime MessageRecTime { get; set; }
+        public DateTime MessageRecTime { get; set; }
 
         /// <summary>
         /// Gets or sets chunk position
