@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using Utopia.Shared.Net.Connections;
@@ -201,7 +202,10 @@ namespace Utopia.Server.Managers
             lock (_syncRoot)
             {
                 Listener.Dispose();
-                foreach (var connection in _connections.Values)
+
+                var disposeList = _connections.Values.ToList();
+
+                foreach (var connection in disposeList)
                 {
                     connection.Dispose();
                 }
