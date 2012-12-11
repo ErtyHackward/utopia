@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
