@@ -5,6 +5,7 @@ using System.Text;
 using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3CoreComponents.Particules.Interfaces;
+using S33M3CoreComponents.Particules.ParticulesCol;
 using S33M3CoreComponents.Sprites3D;
 using S33M3CoreComponents.Sprites3D.Processors;
 using S33M3DXEngine.Effects.HLSLFramework;
@@ -28,7 +29,7 @@ namespace S33M3CoreComponents.Particules.Emitters
 
         #region Private Variables
         private Random _rnd;
-        private List<Particule> _particules;
+        private List<BaseParticule> _particules;
         private Vector3D _initialPosition;
         private Vector3 _initialVelocity;
         private Vector2 _initialSize;
@@ -54,7 +55,7 @@ namespace S33M3CoreComponents.Particules.Emitters
 
         public ParticuleEngine ParentParticuleEngine { get; set; }
 
-        public List<Particule> Particules
+        public List<BaseParticule> Particules
         {
             get { return _particules; }
         }
@@ -96,7 +97,7 @@ namespace S33M3CoreComponents.Particules.Emitters
                         int StateBlenderId,
                         int StateDepthId)
         {
-            _particules = new List<Particule>();
+            _particules = new List<BaseParticule>();
             _rnd = new Random();
 
             _forceOnEmittedParticules = forceOnEmittedParticules;
@@ -142,7 +143,7 @@ namespace S33M3CoreComponents.Particules.Emitters
             if (_particules.Count == 0) return;
             RefreshExistingParticules(elapsedTime);
 
-            List<Particule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position, ParentParticuleEngine.CameraPosition)).ToList();
+            List<BaseParticule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position, ParentParticuleEngine.CameraPosition)).ToList();
             _particules = sortedList;
         }
 
@@ -150,7 +151,7 @@ namespace S33M3CoreComponents.Particules.Emitters
         {
             if (_particules.Count == 0) return;
             //Accumulate particules here for this emitters, and render them
-            Particule p;
+            BaseParticule p;
 
             _particuleRenderer.Begin(true);
             for (int i = 0; i < _particules.Count; i++)
@@ -187,7 +188,7 @@ namespace S33M3CoreComponents.Particules.Emitters
                 finalVelocity.Y += (((float)_rnd.NextDouble() * 2) - 1) * _velocityRndPower.Y;
                 finalVelocity.Z += (((float)_rnd.NextDouble() * 2) - 1) * _velocityRndPower.Z;
 
-                _particules.Add(new Particule(_initialPosition, finalVelocity, _initialSize));
+                _particules.Add(new BaseParticule() { Position = _initialPosition, Velocity = finalVelocity, Age = 0, Size = _initialSize });
                 nbr--;
             }
         }
@@ -196,7 +197,7 @@ namespace S33M3CoreComponents.Particules.Emitters
         {
             //Parallel processing here !! <== TO DO !!
 
-            Particule p;
+            BaseParticule p;
             for (int i = 0; i < _particules.Count; i++)
             {
                 //Computation of the new dimension, its a simple deterministic computation using this formula :
@@ -204,7 +205,7 @@ namespace S33M3CoreComponents.Particules.Emitters
                 p = _particules[i];
                 p.Age += elapsedTime / 1000.0f; //Age in Seconds
                 
-                p.Position = ((0.5 * p.Age * p.Age) * _forceOnEmittedParticules)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity)
+                p.Position = ((0.5 * p.Age * p.Age) * _forceOnEmittedParticules)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity) = Acceleration Force
                               + (p.Age * p.Velocity)                                 //New position based on time and move vector
                               + _initialPosition;                                    //Initial Position
             }
