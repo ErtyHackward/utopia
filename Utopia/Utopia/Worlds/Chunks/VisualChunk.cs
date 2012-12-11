@@ -233,17 +233,6 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
-        protected override void OnDecompressedExternalFormat(ChunkDataProvider dataProvider)
-        {
-            // convert data from the server
-            if (dataProvider is InsideDataProvider)
-            {
-                BlockData.SetBlockBytes(dataProvider.GetBlocksBytes(), dataProvider.GetTags());
-                BlockData.ChunkColumns =  dataProvider.ColumnsInfo;
-                BlockData.ChunkMetaData = dataProvider.ChunkMetaData;
-            }
-        }
-
         public void RefreshBorderChunk()
         {
             IsBorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);

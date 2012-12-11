@@ -15,8 +15,6 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public class SingleArrayDataProvider : ChunkDataProvider
     {
-        public override int ChunkDataProviderFormatID { get { return 1; } }
-
         private readonly object _syncRoot = new object();
         private Vector3I _chunkSize;
         private readonly Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
@@ -30,7 +28,7 @@ namespace Utopia.Shared.Chunks
         #region Serialization
 
         [ProtoMember(1)]
-        public Vector3I SerializeChunkSize
+        public override Vector3I ChunkSize
         {
             get { return _chunkSize; }
             set { _chunkSize = value; }
@@ -139,6 +137,13 @@ namespace Utopia.Shared.Chunks
             if (tag != null) SetTag(tag, worldPosition);
 
             RefreshMetaData(ref worldPosition);
+
+            OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
+                                   {
+                                       Locations = new[] { worldPosition },
+                                       Bytes = new[] { blockValue },
+                                       Tags = tag != null ? new[] { tag } : null
+                                   });
         }
 
         private void RefreshMetaData(ref Vector3I worldPosition)
@@ -247,21 +252,6 @@ namespace Utopia.Shared.Chunks
             {
                 ChunkColumns = value;
             }
-        }
-
-        public override ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
-        {
-            return ChunkColumns[inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z];
-        }
-
-        public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
-        {
-            return ChunkColumns[inChunkPosition.X * _chunkSize.Z + inChunkPosition.Y];
-        }
-
-        public override ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ)
-        {
-            return ChunkColumns[inChunkPositionX * _chunkSize.Z + inChunkPositionZ];
         }
 
         public override ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ)

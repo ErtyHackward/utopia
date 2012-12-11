@@ -127,8 +127,12 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     {
                         //In this case the message contains the data from the landscape !
                         case ChunkDataMessageFlag.ChunkWasModified:
-                            
-                            chunk.Inject(EntityFactory, message.Data); //Set the data into the "Big Array"
+
+                            var networkChunk = new CompressibleChunk(new InsideDataProvider());
+                            networkChunk.Decompress(message.Data);
+
+                            chunk.Consume(networkChunk); //Set the data into the "Big Array"
+
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             //CreateVisualEntities(chunk, chunk);
 
@@ -148,7 +152,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                                                              ChunkX = chunk.ChunkPosition.X,
                                                                              ChunkZ = chunk.ChunkPosition.Y,
                                                                              Md5Hash = message.ChunkHash,
-                                                                             CubeData = message.Data
+                                                                             CubeData = chunk.Compress()
                                                                          }
                                                                      );
                             }
@@ -177,7 +181,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             if (data != null)
                             {
                                 //Data are present !
-                                chunk.Inject(EntityFactory, data.CubeData); //Set the data into the "Big Array"
+                                chunk.Decompress(data.CubeData); //Set the data into the "Big Array"
                                 _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
 
                                 //CreateVisualEntities(chunk, chunk);
@@ -187,6 +191,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                     _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                     chunk.StorageRequestTicket = 0;
                                 }
+                            }
+                            else
+                            {
+                                logger.Error("Can't load chunk from local storage");
                             }
                             break;
                         default:

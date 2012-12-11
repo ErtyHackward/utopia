@@ -26,6 +26,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class ServerLandscapeManager : LandscapeManager<ServerChunk>, IDisposable
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Server _server;
         private readonly IChunksStorage _chunksStorage;
         private readonly WorldGenerator _generator;
@@ -301,8 +303,8 @@ namespace Utopia.Server.Managers
                         }
                         else
                         {
-                            chunk = new ServerChunk { Position = position, CompressedBytes = data };
-                            chunk.Decompress(EntityFactory);
+                            chunk = new ServerChunk { Position = position };
+                            chunk.Decompress(data);
                         }
 
                         _chunks.Add(position, chunk);

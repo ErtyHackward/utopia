@@ -20,6 +20,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
     public class ChunkEntityImpactManager : IChunkEntityImpactManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variables
         private bool _initialized;
         private ServerComponent _server;
@@ -179,8 +181,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             // Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
             // Is it Worth ????
             impactedChunk.CompressedDirty = true;
-            Md5Hash chunkHash;
-            byte[] chunkDataCompressed = impactedChunk.CompressAndComputeHash(out chunkHash);
+            Md5Hash chunkHash = impactedChunk.GetMd5Hash();
+            byte[] chunkDataCompressed = impactedChunk.Compress();
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
 
             return true;

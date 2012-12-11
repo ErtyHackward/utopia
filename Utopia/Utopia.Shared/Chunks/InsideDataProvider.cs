@@ -14,8 +14,6 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public class InsideDataProvider : ChunkDataProvider
     {
-        public override int ChunkDataProviderFormatID { get { return 0; } }
-
         private readonly object _writeSyncRoot = new object();
         private Vector3I _chunkSize;
         private byte[] _blockBytes;
@@ -29,17 +27,12 @@ namespace Utopia.Shared.Chunks
         private readonly List<BlockTag> _transactionTags = new List<BlockTag>();
 
         private Dictionary<Vector3I, BlockTag> _tags = new Dictionary<Vector3I, BlockTag>();
-
-        public Vector3I ChunkSize
-        {
-            get { return _chunkSize; }
-        }
-
+        
         /// <summary>
         /// Don't use, serialize only
         /// </summary>
         [ProtoMember(1)]
-        public Vector3I SerializeChunkSize
+        public override Vector3I ChunkSize
         {
             get { return _chunkSize; }
             set
@@ -410,21 +403,6 @@ namespace Utopia.Shared.Chunks
         }
 
         #region Chunk Column Information Manager
-
-        public override ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
-        {
-            return _chunkColumns[inChunkPosition.Z * _chunkSize.X + inChunkPosition.X];
-        }
-
-        public override ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
-        {
-            return _chunkColumns[inChunkPosition.Y * _chunkSize.X + inChunkPosition.X];
-        }
-
-        public override ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ)
-        {
-            return _chunkColumns[inChunkPositionZ * _chunkSize.X + inChunkPositionX];
-        }
 
         public override ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ)
         {
