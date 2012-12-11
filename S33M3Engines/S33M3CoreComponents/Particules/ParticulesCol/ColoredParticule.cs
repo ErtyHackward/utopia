@@ -9,6 +9,9 @@ namespace S33M3CoreComponents.Particules.ParticulesCol
 {
     public class ColoredParticule : BaseParticule
     {
+        public bool isFrozen;
+        public float computationAge;
+        public bool wasColliding;
         public Color ParticuleColor;
         public Vector3D InitialPosition;
     }
