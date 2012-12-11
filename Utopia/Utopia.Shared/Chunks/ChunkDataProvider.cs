@@ -11,8 +11,6 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public abstract class ChunkDataProvider
     {
-        public abstract int ChunkDataProviderFormatID { get; }
-
         /// <summary>
         /// Occurs when block data was changed
         /// </summary>
@@ -36,6 +34,11 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
+        /// Gets or sets chunk size
+        /// </summary>
+        public abstract Vector3I ChunkSize { get; set; }
+
+        /// <summary>
         /// Will send back chunk columns informations = "Kind of Data heightmap"
         /// </summary>
         /// <returns></returns>
@@ -46,26 +49,35 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
-        public abstract ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition);
+        public ChunkColumnInfo GetColumnInfo(Vector2I inChunkPosition)
+        {
+            return GetColumnInfo(inChunkPosition.X, inChunkPosition.Y);
+        }
 
         /// <summary>
         /// Gets a single ColumnInf from internal location specified
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
-        public abstract ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition);
+        public ChunkColumnInfo GetColumnInfo(Vector3I inChunkPosition)
+        {
+            return GetColumnInfo(inChunkPosition.X, inChunkPosition.Z);
+        }
 
         /// <summary>
         /// Gets a single ColumnInf from internal location specified
         /// </summary>
-        /// <param name="inChunkPosition"></param>
+        /// <param name="inChunkPositionX"></param>
+        /// <param name="inChunkPositionZ"></param>
         /// <returns></returns>
-        public abstract ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ);
+        public ChunkColumnInfo GetColumnInfo(byte inChunkPositionX, byte inChunkPositionZ)
+        {
+            return GetColumnInfo((int)inChunkPositionX, inChunkPositionZ);
+        }
 
         /// <summary>
         /// Gets a single ColumnInf from internal location specified
         /// </summary>
-        /// <param name="inChunkPosition"></param>
         /// <returns></returns>
         public abstract ChunkColumnInfo GetColumnInfo(int inChunkPositionX, int inChunkPositionZ);
 
@@ -150,5 +162,23 @@ namespace Utopia.Shared.Chunks
         /// Allows to block write operations for the chunk for threadsafety
         /// </summary>
         public abstract object WriteSyncRoot { get; }
+
+        /// <summary>
+        /// Consumes all data from the provider, om nom nom nom
+        /// Don't use consumed provider anymore
+        /// </summary>
+        /// <param name="blockData"></param>
+        public void Consume(ChunkDataProvider blockData)
+        {
+            ChunkSize = blockData.ChunkSize;
+
+            ColumnsInfo = blockData.ColumnsInfo;
+            ChunkMetaData = blockData.ChunkMetaData;
+
+            SetBlockBytes(blockData.GetBlocksBytes(), blockData.GetTags());
+
+            blockData.ColumnsInfo = null;
+            blockData.ChunkMetaData = null;
+        }
     }
 }

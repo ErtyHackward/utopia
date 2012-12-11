@@ -74,6 +74,7 @@ namespace Utopia.Shared.Chunks
                 if (_entities != null)
                 {
                     _entities.CollectionDirty -= EntitiesCollectionDirty;
+                    _entities.Chunk = null;
                 }
 
                 _entities = value;
@@ -107,13 +108,15 @@ namespace Utopia.Shared.Chunks
         {
             using (var ms = new MemoryStream())
             {
-                var writer = new BinaryWriter(ms);
-                writer.Write(BlockData.GetBlocksBytes());
-                Serializer.Serialize(ms, BlockData.GetTags());
-                Serializer.Serialize(ms, BlockData.ChunkMetaData);
-                Serializer.Serialize(ms, BlockData.ColumnsInfo);
-                Serializer.Serialize(ms, Entities);
-                return ms.ToArray();
+                using (var writer = new BinaryWriter(ms))
+                {
+                    writer.Write(BlockData.GetBlocksBytes());
+                    Serializer.Serialize(ms, BlockData.GetTags());
+                    Serializer.Serialize(ms, BlockData.ChunkMetaData);
+                    Serializer.Serialize(ms, BlockData.ColumnsInfo);
+                    Serializer.Serialize(ms, Entities);
+                    return ms.ToArray();
+                }
             }
         }
 
@@ -121,13 +124,24 @@ namespace Utopia.Shared.Chunks
         {
             using (var ms = new MemoryStream())
             {
-                var writer = new BinaryWriter(ms);
-                writer.Write(BlockData.ChunkDataProviderFormatID);
                 Serializer.SerializeWithLengthPrefix(ms, BlockData, PrefixStyle.Fixed32);
                 Serializer.SerializeWithLengthPrefix(ms, Entities, PrefixStyle.Fixed32);
-                writer.Dispose();
                 return ms.ToArray();
             }
+        }
+
+        /// <summary>
+        /// Consumes all data from the chunk provided, om nom nom nom
+        /// Don't use the consumed chunk anymore
+        /// </summary>
+        /// <param name="chunk"></param>
+        public void Consume(AbstractChunk chunk)
+        {
+            BlockData.Consume(chunk.BlockData);
+
+            var entities = chunk.Entities;
+            chunk.Entities = null;
+            Entities = entities;
         }
 
         /// <summary>
