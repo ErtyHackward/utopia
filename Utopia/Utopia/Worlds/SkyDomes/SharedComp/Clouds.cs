@@ -147,7 +147,6 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
             _effect = ToDispose(new HLSLClouds(_d3DEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds.hlsl", VertexPosition2Cloud.VertexDeclaration, _sharedCB.CBPerFrame));
             _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
-            _effect.SolidBackBuffer.Value = _skyBackBuffer.BackBuffer;
 
             _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud>(_d3DEngine.Device, VertexPosition2Cloud.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Clouds"));
 
@@ -159,6 +158,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public override void LoadContent(DeviceContext context)
         {
+            //Done here to be sure that the BackBuffer as been initialized.
+            _effect.SolidBackBuffer.Value = _skyBackBuffer.BackBuffer;
+
             _topFace    = new ByteColor(240, 240, 255, 200);
             _side1Face  = new ByteColor(230, 230, 255, 200);
             _side2Face  = new ByteColor(220, 220, 245, 200);
