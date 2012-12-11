@@ -30,6 +30,7 @@ namespace S33M3CoreComponents.Particules
         {
             _d3dEngine = d3dEngine;
             _sharedFrameBuffer = sharedFrameBuffer;
+            _liveEmitter = new List<IEmitter>();
 
             DrawOrders.UpdateIndex(0, 1059, "ParticuleEngine");
         }
@@ -37,7 +38,6 @@ namespace S33M3CoreComponents.Particules
         #region Public Methods
         public override void Initialize()
         {
-            _liveEmitter = new List<IEmitter>();
         }
 
         public override void LoadContent(DeviceContext context)

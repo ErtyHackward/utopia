@@ -238,7 +238,7 @@ namespace Utopia.Entities.Managers
             _landscapeManager = landscapeManager;
 
             Player = player;
-
+            
             ShowDebugInfo = true;
 
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)

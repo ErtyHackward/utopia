@@ -186,6 +186,7 @@
     <Compile Include="Network\EntityMessageTranslator.cs" />
     <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Network\ServerComponent.cs" />
+    <Compile Include="Particules\CubeEmitter.cs" />
     <Compile Include="Particules\UtopiaParticuleEngine.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -260,7 +260,7 @@
     <Compile Include="Noise\Various\NoiseAccess.cs" />
     <Compile Include="Noise\Various\NoiseAnalyse.cs" />
     <Compile Include="Particules\Particule.cs" />
-    <Compile Include="Particules\Emitter.cs" />
+    <Compile Include="Particules\Emitters\Emitter.cs" />
     <Compile Include="Particules\Interfaces\IEmitter.cs" />
     <Compile Include="Particules\ParticuleEngine.cs" />
     <Compile Include="Particules\ParticuleGenerationMode.cs" />
