@@ -186,6 +186,8 @@ namespace Sandbox.Client.Components.GUI
 
         public override void Initialize()
         {
+            base.Initialize();
+
             _authenticationLabel = new ImageControl { Image = _stAutentification };
 
             _emailControl = new InputControl
@@ -242,7 +244,7 @@ namespace Sandbox.Client.Components.GUI
                 Autosizing = true
             };
 
-            base.Initialize();
+            
         }
 
         public override void EnableComponent(bool forced)

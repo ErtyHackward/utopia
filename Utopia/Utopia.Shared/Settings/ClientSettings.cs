@@ -254,6 +254,11 @@ namespace Utopia.Shared.Settings
         public string Login { get; set; }
 
         /// <summary>
+        /// Token to access api methods
+        /// </summary>
+        public string Token { get; set; }
+
+        /// <summary>
         /// Compute the first time the engine is started
         /// </summary>
         public int DefaultAllocatedThreads { get; set; }

@@ -8,6 +8,9 @@ namespace Utopia.Shared.Net.Web
     /// </summary>
     public class ClientWebApi : UtopiaWebApiBase
     {
+        private const string ClientId = "RZDNCumxDHtJHY74mPQDaDzvFBkzcg";
+        private const string ClientSecret = "Hx3bKHoXEMKeVBx2vKyUrAruYMyQPQ";
+
         /// <summary>
         /// Gets a token received from a login procedure
         /// </summary>
@@ -16,11 +19,11 @@ namespace Utopia.Shared.Net.Web
         /// <summary>
         /// Occurs when login procedure is completed
         /// </summary>
-        public event EventHandler<WebEventArgs<TokenResponse>> LoginCompleted;
+        public event EventHandler<TokenResponse> LoginCompleted;
 
-        private void OnLoginCompleted(WebEventArgs<TokenResponse> e)
+        private void OnLoginCompleted(TokenResponse e)
         {
-            Token = e.Response != null ? e.Response.AccessToken : null;
+            Token = e != null ? e.AccessToken : null;
 
             var handler = LoginCompleted;
             if (handler != null) handler(this, e);
@@ -44,7 +47,7 @@ namespace Utopia.Shared.Net.Web
         /// <param name="passwordHash"></param>
         public void UserLoginAsync(string email, string passwordHash)
         {
-            PostRequestAsync<WebEventArgs<TokenResponse>>(ServerUrl + "/login", string.Format("login={0}&pass={1}", email, passwordHash), OnLoginCompleted);
+            GetRequestAsync<TokenResponse>(ServerUrl + "/oauth/token?" + string.Format("username={0}&password={1}&client_id={2}&client_secret={3}&grant_type=password&mode=login", Uri.EscapeDataString(email), passwordHash, ClientId, ClientSecret), OnLoginCompleted);
         }
         
         private void CheckToken()

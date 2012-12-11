@@ -35,7 +35,7 @@ namespace Sandbox.Client.Components.GUI
 
         public override void Initialize()
         {
-            _creditsLabel = new LabelControl { Text = "Credits: \nFabian Ceressia [s33m3]\nSimon Lebettre [Enomi]\nVladislav Pozdnyakov [Hackward]" };
+            _creditsLabel = new LabelControl { Text = "Credits: \nFabian Ceressia [s33m3]\nIgor Romanov [rkit]\nVladislav Pozdnyakov [Erty Hackward]" };
             _backButton = new ButtonControl { Text = "Back" };
             _backButton.Pressed += delegate { OnBackPressed(); };
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
