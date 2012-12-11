@@ -19,8 +19,6 @@ namespace S33M3CoreComponents.Particules.Interfaces
         //The emmiter has been stopped, and can be cleaned up
         bool isStopped { get; }
 
-        List<Particule> Particules { get; }
-
         /// <summary>
         /// Genere landscape collision check for the emmitted particles
         /// </summary>
