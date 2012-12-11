@@ -233,6 +233,19 @@ namespace Utopia.Worlds.Chunks
 
         #region Public methods
 
+        public void CreateVisualEntities()
+        {
+            foreach (var entity in Entities.EnumerateFast())
+            {
+                Entities_EntityAdded(null,
+                                     new Shared.Entities.Events.EntityCollectionEventArgs
+                                     {
+                                         Chunk = this,
+                                         Entity = entity
+                                     });
+            }
+        }
+
         public void RefreshBorderChunk()
         {
             IsBorderChunk = isBorderChunk(ChunkPositionBlockUnit.X, ChunkPositionBlockUnit.Y);
