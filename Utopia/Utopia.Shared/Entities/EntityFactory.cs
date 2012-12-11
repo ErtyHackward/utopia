@@ -461,6 +461,13 @@ namespace Utopia.Shared.Entities
                 }
             }
         }
-
+        
+        public void PrepareEntities(EntityCollection entityCollection)
+        {
+            foreach (var staticEntity in entityCollection.EnumerateFast())
+            {
+                PrepareEntity(staticEntity);
+            }
+        }
     }
 }

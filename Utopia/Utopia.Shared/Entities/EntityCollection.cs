@@ -89,7 +89,8 @@ namespace Utopia.Shared.Entities
                 _entities.Clear();
                 foreach (var keyValuePair in value)
                 {
-                    _entities.Add(keyValuePair.Key, (IStaticEntity)keyValuePair.Value);
+                    var entity = (IStaticEntity)keyValuePair.Value;
+                    Add(entity, 0, true);
                 }
             }
         }

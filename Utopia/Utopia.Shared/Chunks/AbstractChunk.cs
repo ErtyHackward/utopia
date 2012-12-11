@@ -135,13 +135,10 @@ namespace Utopia.Shared.Chunks
         /// Don't use the consumed chunk anymore
         /// </summary>
         /// <param name="chunk"></param>
-        public void Consume(AbstractChunk chunk)
+        public virtual void Consume(AbstractChunk chunk)
         {
             BlockData.Consume(chunk.BlockData);
-
-            var entities = chunk.Entities;
-            chunk.Entities = null;
-            Entities = entities;
+            Entities.Import(chunk.Entities);
         }
 
         /// <summary>

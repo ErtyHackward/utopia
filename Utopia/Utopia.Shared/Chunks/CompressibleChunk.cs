@@ -93,7 +93,7 @@ namespace Utopia.Shared.Chunks
                 zip.CopyTo(decompressed);
                 decompressed.Position = 0;
                 BlockData = (ChunkDataProvider)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, BlockData, typeof(ChunkDataProvider), PrefixStyle.Fixed32, 0);
-                Entities = Serializer.DeserializeWithLengthPrefix<EntityCollection>(decompressed, PrefixStyle.Fixed32);
+                Entities = (EntityCollection)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, Entities, typeof(EntityCollection), PrefixStyle.Fixed32, 0);
             }
         }
 
