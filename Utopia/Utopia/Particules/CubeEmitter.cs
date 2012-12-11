@@ -295,8 +295,8 @@ namespace Utopia.Particules
                         continue;
                     }
                     //Colliding with landscape !
-                    //p.computationAge = 0;
-                    p.Velocity *= -1f;
+                    p.computationAge = 0;
+                    p.Velocity *= -1.0f;
                     p.InitialPosition = p.Position.ValuePrev;
                     p.Position.Value = p.Position.ValuePrev;
                     p.wasColliding = true;
