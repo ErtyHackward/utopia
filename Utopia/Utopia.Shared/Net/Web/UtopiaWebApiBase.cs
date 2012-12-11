@@ -3,40 +3,13 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using ProtoBuf;
+using Newtonsoft.Json;
 
 namespace Utopia.Shared.Net.Web
 {
     public abstract class UtopiaWebApiBase : IDisposable
     {
-        protected const string ServerUrl = "http://api.utopiarealms.com"; // "http://localhost:20753"
-
-        protected WebEventArgs<T> ParseResult<T>(IAsyncResult result)
-        {
-            WebResponse responce = null;
-            Stream respStream = null;
-            var request = (WebRequest)result.AsyncState;
-            var ea = new WebEventArgs<T>();
-            try
-            {
-                responce = request.EndGetResponse(result);
-                respStream = responce.GetResponseStream();
-                ea.Responce = Serializer.Deserialize<T>(respStream);
-            }
-            catch (Exception x)
-            {
-                ea.Exception = x;
-            }
-            finally
-            {
-                if (respStream != null)
-                    respStream.Close();
-                if (responce != null)
-                    responce.Close();
-            }
-
-            return ea;
-        }
+        protected const string ServerUrl = "http://utopiarealms.com";
 
         /// <summary>
         /// Performs a post http request, use IAsyncResult.State as WebRequest class
@@ -44,7 +17,7 @@ namespace Utopia.Shared.Net.Web
         /// <param name="url"></param>
         /// <param name="pars"></param>
         /// <param name="callback"></param>
-        public static void PostRequestAsync(string url, string pars, AsyncCallback callback)
+        public static void PostRequestAsync<T>(string url, string pars, Action<T> callback) where T : WebEventArgs, new()
         {
             new ThreadStart(delegate {
                 var postBytes = Encoding.UTF8.GetBytes(pars);
@@ -57,8 +30,27 @@ namespace Utopia.Shared.Net.Web
 
                 using (var requestStream = request.GetRequestStream())
                     requestStream.Write(postBytes, 0, postBytes.Length);
-                
-                request.BeginGetResponse(callback, request);
+
+                request.BeginGetResponse(delegate(IAsyncResult result)
+                {
+                    var ea = new T();
+                    try
+                    {
+                        using (var responce = request.EndGetResponse(result))
+                        using (var respStream = responce.GetResponseStream())
+                        using (var streamReader = new StreamReader(respStream))
+                        {
+                            ea = JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                        }
+                    }
+                    catch (Exception x)
+                    {
+                        ea.Exception = x;
+                    }
+
+                    callback(ea);
+
+                }, request);
             }
             ).BeginInvoke(null, null);
         }
@@ -84,11 +76,10 @@ namespace Utopia.Shared.Net.Web
                 requestStream.Write(postBytes, 0, postBytes.Length);
 
             using (var responce = request.GetResponse())
+            using (var respStream = responce.GetResponseStream())
+            using (var streamReader = new StreamReader(respStream))
             {
-                using (var respStream = responce.GetResponseStream())
-                {
-                    return Serializer.Deserialize<T>(respStream);
-                }
+                return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
             }
         }
 
