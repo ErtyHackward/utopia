@@ -8,7 +8,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// <summary>
     /// Represents character equipment
     /// </summary>
-    [ProtoContract]
+    [ProtoContract(IgnoreListHandling = true)]
     public class CharacterEquipment : SlotContainer<ContainedSlot>
     {
         /// <summary>

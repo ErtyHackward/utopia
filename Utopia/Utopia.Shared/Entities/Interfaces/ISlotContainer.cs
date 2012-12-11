@@ -9,7 +9,6 @@ namespace Utopia.Shared.Entities.Interfaces
     /// <summary>
     /// Describes a container for entities
     /// </summary>
-    [ProtoContract]
     public interface ISlotContainer<T> : IEnumerable<T> where T : ContainedSlot
     {
         /// <summary>
