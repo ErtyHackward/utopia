@@ -20,6 +20,8 @@ namespace Utopia.Shared.World.Processors.Utopia
 {
     public class UtopiaProcessor : IWorldProcessor
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         private WorldParameters _worldParameters;
         private EntityFactory _entityFactory;
@@ -68,6 +70,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                 GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
+
+                logger.Debug("Chunk at position {0}, using Seed : {1}", chunk.Position, _worldParameters.Seed + chunk.Position.GetHashCode());
+
                 //Create a byte array that will receive the landscape generated
                 byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
                 //Create an array that wll receive the ColumnChunk Informations

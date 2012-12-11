@@ -28,7 +28,16 @@ namespace Utopia.Shared.World
         {
             get
             {
-                return SeedName.GetHashCode();
+                //return SeedName.GetHashCode();
+                unchecked
+                {
+                    int hash = 23;
+                    foreach (char c in SeedName)
+                    {
+                        hash = hash * 31 + c;
+                    }
+                    return hash;
+                }
             }
         }
 
