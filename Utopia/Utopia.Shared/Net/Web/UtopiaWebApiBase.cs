@@ -56,6 +56,43 @@ namespace Utopia.Shared.Net.Web
         }
 
         /// <summary>
+        /// Performs a post http request, use IAsyncResult.State as WebRequest class
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="pars"></param>
+        /// <param name="callback"></param>
+        public static void GetRequestAsync<T>(string url, Action<T> callback) where T : WebEventArgs, new()
+        {
+            new ThreadStart(delegate
+            {
+                var request = WebRequest.Create(url);
+                request.Method = "GET";
+
+                request.BeginGetResponse(delegate(IAsyncResult result)
+                {
+                    var ea = new T();
+                    try
+                    {
+                        using (var responce = request.EndGetResponse(result))
+                        using (var respStream = responce.GetResponseStream())
+                        using (var streamReader = new StreamReader(respStream))
+                        {
+                            ea = JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                        }
+                    }
+                    catch (Exception x)
+                    {
+                        ea.Exception = x;
+                    }
+
+                    callback(ea);
+
+                }, request);
+            }
+            ).BeginInvoke(null, null);
+        }
+
+        /// <summary>
         /// Perfoms a post request in this thread
         /// </summary>
         /// <typeparam name="T"></typeparam>

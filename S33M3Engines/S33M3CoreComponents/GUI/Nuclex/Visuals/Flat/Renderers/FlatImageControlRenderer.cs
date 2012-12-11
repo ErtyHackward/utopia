@@ -13,13 +13,16 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             rect.Width  = control.Bounds.Size.X.Offset;
             rect.Height = control.Bounds.Size.Y.Offset;
 
-            if (control.Stretch)
+            if (control.Image != null)
             {
-                graphics.DrawCustomTexture(control.Image, ref rect, 0, control.DrawGroupId);
-            }
-            else
-            {
-                graphics.DrawCustomTextureTiled(control.Image, ref rect, 0 , control.DrawGroupId);
+                if (control.Stretch)
+                {
+                    graphics.DrawCustomTexture(control.Image, ref rect, 0, control.DrawGroupId);
+                }
+                else
+                {
+                    graphics.DrawCustomTextureTiled(control.Image, ref rect, 0, control.DrawGroupId);
+                }
             }
         }
     }
