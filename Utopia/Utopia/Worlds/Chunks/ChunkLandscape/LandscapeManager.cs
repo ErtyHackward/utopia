@@ -44,6 +44,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             set { _worldGenerator = value; }
         }
 
+        public IWorldChunks WorldChunks { get; set; }
+
         public EntityFactory EntityFactory { get; set; }
 
         public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager, VoxelModelManager voxelModelManager)
@@ -106,12 +108,27 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         private void ChunkBufferCleanup()
         {
-            var expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 60).ToList();
 
+            //Remove Data received from the Server that have not been processed for 1 minutes !
+            var expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 60).ToList();
             for (int i = 0; i < expiredIndex.Count; i++)
             {
+                //Remove Data not used,but received from the server
                 _receivedServerChunks.Remove(expiredIndex[i].Key);
+                logger.Warn("Data received from server never used for 60 seconds, was cleaned up !");
             }
+
+            //Check for chunk that are waiting for server data for more than 30 seconds.
+            foreach (var chunk in WorldChunks.Chunks.Where(x => x.IsServerRequested))
+            {
+                if (DateTime.Now.Subtract(chunk.ServerRequestTime).Seconds > 30)
+                {
+                    //Request the chunk again to the server !!
+                    chunk.IsServerRequested = false;
+                    logger.Warn("Requested Chunk {0} did not received server data for 30s. Requesting it again !", chunk.ChunkID);
+                }
+            }
+
         }
 
         private void CheckServerReceivedData(VisualChunk chunk)
@@ -168,7 +185,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
                             CreateLandscapeFromGenerator(chunk);
-
+                            _receivedServerChunks.Remove(chunk.ChunkID);
                             if (chunk.StorageRequestTicket != 0)
                             {
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);

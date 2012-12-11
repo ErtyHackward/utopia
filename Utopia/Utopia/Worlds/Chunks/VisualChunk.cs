@@ -96,6 +96,12 @@ namespace Utopia.Worlds.Chunks
         public int UpdateOrder { get; set; }              // Variable for sync drawing at rebuild time.
         public bool IsBorderChunk { get; set; }               // Set to true if the chunk is located at the border of the visible world !
         private bool _ready2Draw;
+
+        private bool _isServerRequested;
+        private DateTime _serverRequestTime;
+
+
+
         public VisualChunk[] SurroundingChunks;
         /// <summary>
         /// Whenever the chunk mesh are ready to be rendered to screen
@@ -132,7 +138,15 @@ namespace Utopia.Worlds.Chunks
         public Matrix World;                                  // The chunk World matrix ==> Not a property, to be sure it will be direct variables acces !!
         public BoundingBox ChunkWorldBoundingBox;             // The chunk World BoundingBox ==> Not a property, to be sure it will be direct variables acces !!
 
-        public bool IsServerRequested { get; set; }           //If the chunk has been requested to the server
+        public bool IsServerRequested
+        {
+            get { return _isServerRequested; }
+            set { _isServerRequested = value; if (value) _serverRequestTime = DateTime.Now; }
+        }
+        public DateTime ServerRequestTime
+        {
+            get { return _serverRequestTime; }
+        }
 
         public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
 
