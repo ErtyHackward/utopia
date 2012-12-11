@@ -55,7 +55,6 @@ namespace Utopia.Worlds.Chunks
         #region Public properties/Variable
         //List are use instead of standard array because it's not possible to know the number of vertices/indices that will be produced at cubes creation time.
         //After vertex/index buffer creation those collections are cleared.
-        public Dictionary<long, int> CubeVerticeDico; // Dictionnary used in the mesh creation, to avoid to recreate a vertex that has already been used create for another cube.
         public List<VertexCubeSolid> SolidCubeVertices;      // Collection use to collect the vertices at the solid cube creation time
         public List<ushort> SolidCubeIndices;                // Collection use to collect the indices at the solid cube creation time
         public List<VertexCubeLiquid> LiquidCubeVertices;    // Collection use to collect the vertices at the liquid cube creation time
@@ -287,7 +286,6 @@ namespace Utopia.Worlds.Chunks
         //Graphical Part
         public void InitializeChunkBuffers()
         {
-            CubeVerticeDico = new Dictionary<long, int>();
             SolidCubeVertices = new List<VertexCubeSolid>();
             SolidCubeIndices = new List<ushort>();
             LiquidCubeVertices = new List<VertexCubeLiquid>();
@@ -331,8 +329,6 @@ namespace Utopia.Worlds.Chunks
             }
             SolidCubeIB.SetData(_d3dEngine.ImmediateContext, SolidCubeIndices.ToArray());
             SolidCubeIndices.Clear();
-
-            CubeVerticeDico.Clear();
         }
 
         //Liquid Cube

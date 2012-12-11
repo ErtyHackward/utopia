@@ -54,7 +54,7 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
-        void WebApiLoginCompleted(object sender, WebEventArgs<TokenResponse> e)
+        void WebApiLoginCompleted(object sender, TokenResponse e)
         {
             var login = _iocContainer.Get<LoginComponent>();
 
@@ -65,28 +65,30 @@ namespace Realms.Client.States
                 return;
             }
 
-            if (string.IsNullOrEmpty(e.Response.AccessToken))
+            if (string.IsNullOrEmpty(e.AccessToken))
             {
                 login.ShowErrorText("Wrong login/password combination");
                 login.Locked = false;
                 return;
             }
 
-            if (e.Response != null && !string.IsNullOrEmpty(e.Response.AccessToken))
+            if (e != null && !string.IsNullOrEmpty(e.AccessToken))
             {
                 var vars = _iocContainer.Get<RuntimeVariables>();
 
                 vars.Login = login.Email;
                 vars.PasswordHash = login.Password.GetSHA1Hash();
-                vars.DisplayName = e.Response.DisplayName;
+                vars.DisplayName = e.DisplayName;
 
                 ClientSettings.Current.Settings.Login = login.Email;
+                ClientSettings.Current.Settings.Token = e.AccessToken;
                 ClientSettings.Current.Save();
 
                 StatesManager.ActivateGameStateAsync("MainMenu");
             }
-            
+
         }
+        
         
         public override void OnEnabled(GameState previousState)
         {

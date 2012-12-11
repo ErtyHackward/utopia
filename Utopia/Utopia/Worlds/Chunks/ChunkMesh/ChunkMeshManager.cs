@@ -93,6 +93,8 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
             int xNeight, yNeight, zNeight;
 
+            Dictionary<long, int> verticeDico = new Dictionary<long, int>();
+
             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
                 XWorld = (x + chunk.CubeRange.Position.X);
@@ -231,7 +233,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;
                                 if (!yOffsetDiff && !_solidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
-                                _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
+                                _solidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube, verticeDico);
                                 break;
                             case enuCubeFamilly.Liquid:
                                 //Default linked to : CubeMeshFactory.GenLiquidCubeFace;
@@ -244,7 +246,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                                 if (!yOffsetDiff && !_liquidCubeMeshFactory.FaceGenerationCheck(ref currentCube, ref cubePosiInWorld, cubeFace, ref neightborCube)) continue;
                                 topCube = _cubesHolder.Cubes[topCubeIndex];
-                                _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube);
+                                _liquidCubeMeshFactory.GenCubeFace(ref currentCube, cubeFace, ref cubePosiInChunk, ref cubePosiInWorld, chunk, ref topCube, verticeDico);
                                 break;
                             case enuCubeFamilly.Other:
                                 break;
@@ -253,6 +255,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     }
                 }
             }
+            verticeDico.Clear();
         }
 
         //private void GenerateStaticEntitiesMesh(VisualChunk chunk)
