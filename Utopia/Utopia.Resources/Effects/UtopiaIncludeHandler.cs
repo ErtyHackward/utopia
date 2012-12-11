@@ -19,7 +19,7 @@ namespace UtopiaContent.Effects
             IncludeFilePath = Path.Combine(ClientSettings.EffectPack, fileName);
             if (File.Exists(IncludeFilePath))
             {
-                return File.Open(IncludeFilePath, FileMode.Open);
+                return File.Open(IncludeFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
 
             return base.Open(type, fileName, parentStream);
