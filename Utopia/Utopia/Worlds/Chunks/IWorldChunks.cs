@@ -98,7 +98,7 @@ namespace Utopia.Worlds.Chunks
         ILandscapeManager LandscapeManager { get; }
 
         void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
-
+        byte isCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate);
         bool IsInitialLoadCompleted { get; set;}
 
         /// <summary>

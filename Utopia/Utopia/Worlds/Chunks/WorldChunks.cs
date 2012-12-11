@@ -31,6 +31,7 @@ using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Ninject;
+using Utopia.Shared.Configuration;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -414,6 +415,26 @@ namespace Utopia.Worlds.Chunks
         }
 
         bool _isOnGround;
+
+
+        /// <summary>
+        /// "Simple" collision detection check against landscape, send back the cube being collided
+        /// </summary>
+        /// <param name="newPosition2Evaluate"></param>
+        /// <param name="previousPosition"></param>
+        public byte isCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate)
+        {
+            TerraCubeWithPosition _collidingCube;
+
+            BoundingBox boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), localEntityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+            if (_cubesHolder.IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            {
+                return _collidingCube.Cube.Id;
+            }
+
+            return WorldConfiguration.CubeId.Air;
+        }
+
         /// <summary>
         /// Validate player move against surrounding landscape, if move not possible, it will be "rollbacked"
         /// It's used by the physic engine
