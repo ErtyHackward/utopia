@@ -11,7 +11,7 @@ namespace S33M3CoreComponents.Particules.ParticulesCol
     {
         public Vector3 Velocity;
         public Vector2 Size;
-        public Vector3D Position;
+        public FTSValue<Vector3D> Position;
         public float Age;
     }
 }

@@ -46,7 +46,7 @@ struct VS_IN
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
 	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
-	float2 BiomeData     : BIOMEINFO; //X = Temperature, Y = Moisture
+	float2 BiomeData     : BIOMEINFO; //X = Moisture, Y = Temperature
 	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome, Y SideOffset multiplier
 };
 

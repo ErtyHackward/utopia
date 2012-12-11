@@ -143,7 +143,7 @@ namespace S33M3CoreComponents.Particules.Emitters
             if (_particules.Count == 0) return;
             RefreshExistingParticules(elapsedTime);
 
-            List<BaseParticule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position, ParentParticuleEngine.CameraPosition)).ToList();
+            List<BaseParticule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position.Value, ParentParticuleEngine.CameraPosition)).ToList();
             _particules = sortedList;
         }
 
@@ -157,7 +157,7 @@ namespace S33M3CoreComponents.Particules.Emitters
             for (int i = 0; i < _particules.Count; i++)
             {
                 p = _particules[i];
-                Vector3 position = p.Position.AsVector3();
+                Vector3 position = p.Position.Value.AsVector3();
                 ByteColor white = Color.White;
                 _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref white, 0);
             }
@@ -188,7 +188,7 @@ namespace S33M3CoreComponents.Particules.Emitters
                 finalVelocity.Y += (((float)_rnd.NextDouble() * 2) - 1) * _velocityRndPower.Y;
                 finalVelocity.Z += (((float)_rnd.NextDouble() * 2) - 1) * _velocityRndPower.Z;
 
-                _particules.Add(new BaseParticule() { Position = _initialPosition, Velocity = finalVelocity, Age = 0, Size = _initialSize });
+                _particules.Add(new BaseParticule() { Position = new FTSValue<Vector3D>(_initialPosition), Velocity = finalVelocity, Age = 0, Size = _initialSize });
                 nbr--;
             }
         }
@@ -205,7 +205,7 @@ namespace S33M3CoreComponents.Particules.Emitters
                 p = _particules[i];
                 p.Age += elapsedTime / 1000.0f; //Age in Seconds
                 
-                p.Position = ((0.5 * p.Age * p.Age) * _forceOnEmittedParticules)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity) = Acceleration Force
+                p.Position.Value = ((0.5 * p.Age * p.Age) * _forceOnEmittedParticules)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity) = Acceleration Force
                               + (p.Age * p.Velocity)                                 //New position based on time and move vector
                               + _initialPosition;                                    //Initial Position
             }

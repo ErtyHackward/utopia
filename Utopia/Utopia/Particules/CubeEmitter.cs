@@ -21,6 +21,7 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
 using Color = SharpDX.Color;
+using Utopia.Shared.Chunks;
 
 namespace Utopia.Particules
 {
@@ -34,12 +35,18 @@ namespace Utopia.Particules
         private List<ColoredParticule> _particules;
         private static Vector3D GravityForce = new Vector3D(0.0, -9.81, 0.0);
 
+        private Bitmap[] _colorsBiome;
+
         private Random _rnd;
         private string _cubeTexturePath;
         private string _fileNamePatern;
+        private string _biomeColorFilePath;
+        private string _foliageBiomeColorFilePath;
+
         private Dictionary<int, Color[]> _cubeColorSampled;
         private VisualWorldParameters _visualWorldParameters;
         private IWorldChunks _worldChunk;
+        private BoundingBox _cubeBB;
 
         private Sprite3DRenderer<Sprite3DColorBillBoardProc> _particuleRenderer;
         #endregion
@@ -61,7 +68,8 @@ namespace Utopia.Particules
         #endregion
 
         public CubeEmitter(string cubeTexturePath, 
-                           string fileNamePatern, 
+                           string fileNamePatern,
+                           string biomeColorFilePath,
                            float maximumAge,
                            VisualWorldParameters visualWorldParameters,
                            IWorldChunks worldChunk)
@@ -70,18 +78,24 @@ namespace Utopia.Particules
             _fileNamePatern = fileNamePatern;
             _cubeTexturePath = cubeTexturePath;
             _visualWorldParameters = visualWorldParameters;
+            _biomeColorFilePath = biomeColorFilePath;
+
             _worldChunk = worldChunk;
             _isStopped = false;
             _maximumAge = maximumAge;
             _particules = new List<ColoredParticule>();
 
+            _colorsBiome = new Bitmap[2];
             _rnd = new Random();
+
+            _cubeBB = new BoundingBox(new Vector3(-0.1f, -0.1f, -0.1f), new Vector3(0.1f, 0.1f, 0.1f));
         }
 
         #region Public Methods
         public void Initialize(DeviceContext context, iCBuffer sharedFrameBuffer)
         {
             CreateColorsSetPerCubeTexture();
+            LoadBiomeColorsTexture();
 
             //Create the processor that will be used by the Sprite3DRenderer
             Sprite3DColorBillBoardProc processor = ToDispose(new Sprite3DColorBillBoardProc(ToDispose(new DefaultIncludeHandler()), sharedFrameBuffer));
@@ -96,6 +110,15 @@ namespace Utopia.Particules
 
         public void EmitParticule(int nbr, byte cubeId, Vector3I CubeLocation)
         {
+            //GetCube Profile
+            VisualChunk chunk = null;
+            var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeId];
+            //Get Chunk in case if the block is subject to BiomeColoring
+            if (profile.BiomeColorArrayTexture <= 1)
+            {
+                chunk = _worldChunk.GetChunk(CubeLocation.X, CubeLocation.Z);
+            }
+
             //Get Cube color palette
             Color[] palette = _cubeColorSampled[cubeId];
 
@@ -109,12 +132,20 @@ namespace Utopia.Particules
 
                 Vector3D CubeCenteredPosition = new Vector3D(CubeLocation.X + 0.5, CubeLocation.Y + 0.5, CubeLocation.Z + 0.5);
 
+                //Get Color
+                var color = palette[_rnd.Next(24)];
+                if (color.A < 255 && profile.BiomeColorArrayTexture <= 1)
+                {
+                    ApplyBiomeColor(ref color, profile.BiomeColorArrayTexture, chunk.BlockData.GetColumnInfo(CubeLocation.X - chunk.ChunkPositionBlockUnit.X, CubeLocation.Z - chunk.ChunkPositionBlockUnit.Y));
+                }
+
                 _particules.Add(new ColoredParticule()
                 {
                     Age = 0,
+                    computationAge = 0,
                     InitialPosition = CubeCenteredPosition,
-                    ParticuleColor = palette[_rnd.Next(24)],
-                    Position = CubeCenteredPosition,
+                    ParticuleColor = color,
+                    Position = new FTSValue<Vector3D>(CubeCenteredPosition),
                     Size = new Vector2(0.2f,0.2f),
                     Velocity = finalVelocity
                 });
@@ -135,6 +166,7 @@ namespace Utopia.Particules
 
             RefreshExistingParticules(timeSpend.ElapsedGameTimeInS_LD);
             //Do Collision against landscape test using _worldChunk
+            CollisionCheck();
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -151,7 +183,7 @@ namespace Utopia.Particules
             for (int i = 0; i < _particules.Count; i++)
             {
                 p = _particules[i];
-                Vector3 position = p.Position.AsVector3();
+                Vector3 position = p.Position.Value.AsVector3();
                 ByteColor color = p.ParticuleColor;
                 _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref color);
             }
@@ -161,6 +193,35 @@ namespace Utopia.Particules
         #endregion
 
         #region Private Methods
+        private void LoadBiomeColorsTexture()
+        {
+            //Load GrassColor
+            var grassColorBiomePath = Directory.GetFiles(_biomeColorFilePath, "01*.png")[0];
+            _colorsBiome[0] = (Bitmap)ToDispose(Bitmap.FromFile(grassColorBiomePath));
+
+            //Load FoliageColor
+            var foliageColorBiomePath = Directory.GetFiles(_biomeColorFilePath, "02*.png")[0];
+            _colorsBiome[1] = (Bitmap)ToDispose(Bitmap.FromFile(grassColorBiomePath));
+        }
+
+        private void ApplyBiomeColor(ref Color baseColor, byte biomeColorId, ChunkColumnInfo ci)
+        {
+            //X = Moisture
+            int moisture = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Width - 1, 0.0, 255.0, ci.Moisture);
+            //Y = Temperature
+            int temp = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Height - 1, 0.0, 255.0, ci.Temperature);
+
+            var sampledColor = _colorsBiome[biomeColorId].GetPixel(moisture, temp);
+
+            int red = (int)MathHelper.FullLerp(0.0, (double)sampledColor.R, 0.0, 255.0, (double)baseColor.R, true);
+            int green = (int)MathHelper.FullLerp(0.0, (double)sampledColor.G, 0.0, 255.0, (double)baseColor.G, true);
+            int blue = (int)MathHelper.FullLerp(0.0, (double)sampledColor.B, 0.0, 255.0, (double)baseColor.B, true);
+
+            baseColor.R = (byte)red;
+            baseColor.G = (byte)green;
+            baseColor.B = (byte)blue;
+        }
+
         private void CreateColorsSetPerCubeTexture()
         {
             Dictionary<int, Color[]> perBitmapColorSampling = new Dictionary<int, Color[]>(); ;
@@ -210,10 +271,36 @@ namespace Utopia.Particules
                 // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
                 p = _particules[i];
                 p.Age += elapsedTime; //Age in Seconds
+                p.computationAge += elapsedTime;
 
-                p.Position = ((0.5 * p.Age * p.Age) * CubeEmitter.GravityForce)    //Acceleration force
-                               + (p.Age * p.Velocity)                              //Constant force
+                if (p.isFrozen) continue;
+                p.Position.BackUpValue();
+                p.Position.Value = ((0.5 * p.computationAge * p.computationAge) * CubeEmitter.GravityForce)    //Acceleration force
+                               + (p.computationAge * p.Velocity)                              //Constant force
                                + p.InitialPosition;                                //Initial position of the particule
+            }
+        }
+
+        private void CollisionCheck()
+        {
+            ColoredParticule p;
+            for (int i = 0; i < _particules.Count; i++)
+            {
+                p = _particules[i];
+                if (_worldChunk.isCollidingWithTerrain(ref _cubeBB, ref p.Position.Value) > 0)
+                {
+                    if (p.wasColliding)
+                    {
+                        p.isFrozen = true;
+                        continue;
+                    }
+                    //Colliding with landscape !
+                    //p.computationAge = 0;
+                    p.Velocity *= -1f;
+                    p.InitialPosition = p.Position.ValuePrev;
+                    p.Position.Value = p.Position.ValuePrev;
+                    p.wasColliding = true;
+                }
             }
         }
         #endregion
