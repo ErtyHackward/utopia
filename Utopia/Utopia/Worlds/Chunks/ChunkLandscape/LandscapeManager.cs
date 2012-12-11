@@ -132,6 +132,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             networkChunk.Decompress(message.Data);
 
                             chunk.Consume(networkChunk); //Set the data into the "Big Array"
+                            EntityFactory.PrepareEntities(chunk.Entities);
 
                             _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             //CreateVisualEntities(chunk, chunk);
@@ -183,6 +184,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 //Data are present !
                                 chunk.Decompress(data.CubeData); //Set the data into the "Big Array"
                                 _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
+                                EntityFactory.PrepareEntities(chunk.Entities);
 
                                 //CreateVisualEntities(chunk, chunk);
 
