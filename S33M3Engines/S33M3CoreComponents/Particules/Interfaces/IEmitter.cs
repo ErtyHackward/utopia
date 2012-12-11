@@ -30,7 +30,5 @@ namespace S33M3CoreComponents.Particules.Interfaces
         /// Will stop this particules emmiter and all its particules will be removed
         /// </summary>
         void Stop();
-
-        void EmmitParticule(int nbr = 1);
     }
 }

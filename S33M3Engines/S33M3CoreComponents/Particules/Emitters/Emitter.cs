@@ -15,7 +15,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
 
-namespace S33M3CoreComponents.Particules
+namespace S33M3CoreComponents.Particules.Emitters
 {
     public class Emitter : BaseComponent, IEmitter
     {
