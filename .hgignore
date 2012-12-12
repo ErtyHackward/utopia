@@ -33,3 +33,4 @@ _ReSharper*/
 *.[Pp]ublish.xml
 *.resharper
 *.ReSharper
+Setup/Output/*
