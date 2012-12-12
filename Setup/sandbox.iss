@@ -31,6 +31,12 @@ SetupIconFile=Utopia.ico
 WizardImageFile=setupTitle.bmp
 WizardSmallImageFile=setupSmall.bmp
 
+[Icons]
+Name: {group}\Utopia Sandbox; Filename: {app}\Sandbox.exe
+
+[Run]
+Filename: {app}\Sandbox.exe; Description: {cm:LaunchProgram,Utopia Sandbox}; Flags: nowait postinstall skipifsilent
+
 [Code]
 function InitializeSetup(): Boolean;
 begin
