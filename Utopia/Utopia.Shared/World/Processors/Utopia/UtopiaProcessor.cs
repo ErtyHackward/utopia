@@ -71,8 +71,6 @@ namespace Utopia.Shared.World.Processors.Utopia
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
-                logger.Debug("Chunk at position {0}, using Seed : {1}", chunk.Position, _worldParameters.Seed + chunk.Position.GetHashCode());
-
                 //Create a byte array that will receive the landscape generated
                 byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
                 //Create an array that wll receive the ColumnChunk Informations

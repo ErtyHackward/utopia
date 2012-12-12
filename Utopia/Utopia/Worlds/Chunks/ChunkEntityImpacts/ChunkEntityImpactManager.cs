@@ -54,8 +54,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         private void OnBlockReplaced(LandscapeBlockReplacedEventArgs e)
         {
-            var handler = BlockReplaced;
-            if (handler != null) handler(this, e);
+            if (BlockReplaced != null) BlockReplaced(this, e);
         }
 
         public ChunkEntityImpactManager()
@@ -176,7 +175,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             ThreadsManager.RunAsync(() => CheckImpact(cube, impactedChunk), ThreadsManager.ThreadTaskPriority.High);
 
             // Raise event for sound
-            OnBlockReplaced(new LandscapeBlockReplacedEventArgs { IsLocalPLayerAction = !isNetworkChanged, Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube.Id });
+            OnBlockReplaced(new LandscapeBlockReplacedEventArgs { IsLocalPLayerAction = !isNetworkChanged, Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube });
 
             // Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
             // Is it Worth ????
@@ -329,7 +328,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
     {
         public Vector3I Position { get; set; }
         public byte NewBlockType { get; set; }
-        public byte PreviousBlock { get; set; }
+        public TerraCube PreviousBlock { get; set; }
         public bool IsLocalPLayerAction { get; set; }
     }
 }

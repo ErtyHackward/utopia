@@ -232,11 +232,11 @@ namespace Utopia.Components
         private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
             CubeProfile NewBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.NewBlockType];
-            CubeProfile PreviousBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.PreviousBlock];
+            CubeProfile PreviousBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.PreviousBlock.Id];
 
             if (e.NewBlockType == WorldConfiguration.CubeId.Air && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
                 return;
-            if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && e.PreviousBlock == WorldConfiguration.CubeId.Air)
+            if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && e.PreviousBlock.Id == WorldConfiguration.CubeId.Air)
                 return;
             if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
                 return;
