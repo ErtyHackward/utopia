@@ -137,9 +137,6 @@ begin
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
-var
-	path: string;
-	WindowsVersion: TWindowsVersion;
 begin
 	Result := true;
 
@@ -156,16 +153,6 @@ begin
      if isxdl_DownloadFiles(StrToInt(ExpandConstant('{wizardhwnd}'))) = 0 then
 				Result := false;
 		end;
-	end;
-	
-	GetWindowsVersionEx(WindowsVersion);
-	
-	if (CurPageID = wpSelectDir) and (WindowsVersion.Major > 5) then begin
-		path := ExpandConstant('{app}');
-		if path <> 'C:\OGO2' then
-		  if MsgBox('Рекомендуется устанавливать программу в C:\OGO2. При установке программы в выбранную вами директорию возможны проблемы при загрузке файлов, если отсутствует разрешение на создание файлов. Продолжить?', mbInformation, mb_YesNo) = idNo then begin
-			 Result := false;
-		  end;	
 	end;
 	
 end;
