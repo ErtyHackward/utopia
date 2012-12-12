@@ -71,6 +71,7 @@ namespace Utopia.Particules
                            string fileNamePatern,
                            string biomeColorFilePath,
                            float maximumAge,
+                           float size,
                            VisualWorldParameters visualWorldParameters,
                            IWorldChunks worldChunk)
         {
@@ -88,7 +89,7 @@ namespace Utopia.Particules
             _colorsBiome = new Bitmap[2];
             _rnd = new FastRandom();
 
-            _cubeBB = new BoundingBox(new Vector3(-0.1f, -0.1f, -0.1f), new Vector3(0.1f, 0.1f, 0.1f));
+            _cubeBB = new BoundingBox(new Vector3(-size / 2.0f, -size / 2.0f, -size / 2.0f), new Vector3(size / 2.0f, size / 2.0f, size / 2.0f));
         }
 
         #region Public Methods
@@ -135,10 +136,10 @@ namespace Utopia.Particules
                 //Randomize the Velocity
                 Vector3 finalVelocity = new Vector3(0, 1 ,0);
                 finalVelocity.X += (float)_rnd.NextDouble(-1.0, 1.0) * 1.5f;
-                finalVelocity.Y += (float)_rnd.NextDouble() * 2.5f;
+                finalVelocity.Y += (float)_rnd.NextDouble() * 3f;
                 finalVelocity.Z += (float)_rnd.NextDouble(-1.0, 1.0) * 1.5f;
 
-                Vector3D CubeCenteredPosition = new Vector3D(CubeLocation.X + _rnd.NextDouble(), CubeLocation.Y + _rnd.NextDouble(), CubeLocation.Z + _rnd.NextDouble());
+                Vector3D CubeCenteredPosition = new Vector3D(CubeLocation.X + _rnd.NextDouble(0.2, 0.8), CubeLocation.Y + _rnd.NextDouble(0.2, 0.8), CubeLocation.Z + _rnd.NextDouble(0.2, 0.8));
 
                 //Get Color
                 var color = palette[_rnd.Next(24)];
@@ -154,7 +155,7 @@ namespace Utopia.Particules
                     InitialPosition = CubeCenteredPosition,
                     ParticuleColor = color,
                     Position = new FTSValue<Vector3D>(CubeCenteredPosition),
-                    Size = new Vector2(0.15f,0.15f),
+                    Size = new Vector2(0.1f,0.1f),
                     Velocity = finalVelocity,
                     ColorReceived = blockAvgColorReceived
                 });
@@ -316,14 +317,14 @@ namespace Utopia.Particules
                     }
                     //Colliding with landscape !
                     p.computationAge = 0;
-                    p.Velocity *= (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * 0.5).AsVector3();
+                    p.Velocity = (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * 0.75).AsVector3();
                     p.InitialPosition = p.Position.ValuePrev;
                     p.Position.Value = p.Position.ValuePrev;
                     p.wasColliding = true;
                 }
                 else
                 {
-                    p.wasColliding = false;
+                    //p.wasColliding = false;
                 }
             }
         }
