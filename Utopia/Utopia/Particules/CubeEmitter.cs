@@ -134,11 +134,11 @@ namespace Utopia.Particules
             {
                 //Randomize the Velocity
                 Vector3 finalVelocity = new Vector3(0, 1 ,0);
-                finalVelocity.X += (((float)_rnd.NextDouble() * 2) - 1) * 1.5f;
-                finalVelocity.Y += (float)_rnd.NextDouble() * 3;
-                finalVelocity.Z += (((float)_rnd.NextDouble() * 2) - 1) * 1.5f;
+                finalVelocity.X += (float)_rnd.NextDouble(-1.0, 1.0) * 1.5f;
+                finalVelocity.Y += (float)_rnd.NextDouble() * 2.5f;
+                finalVelocity.Z += (float)_rnd.NextDouble(-1.0, 1.0) * 1.5f;
 
-                Vector3D CubeCenteredPosition = new Vector3D(CubeLocation.X + 0.5, CubeLocation.Y + 0.5, CubeLocation.Z + 0.5);
+                Vector3D CubeCenteredPosition = new Vector3D(CubeLocation.X + _rnd.NextDouble(), CubeLocation.Y + _rnd.NextDouble(), CubeLocation.Z + _rnd.NextDouble());
 
                 //Get Color
                 var color = palette[_rnd.Next(24)];
@@ -154,7 +154,7 @@ namespace Utopia.Particules
                     InitialPosition = CubeCenteredPosition,
                     ParticuleColor = color,
                     Position = new FTSValue<Vector3D>(CubeCenteredPosition),
-                    Size = new Vector2(0.1f,0.1f),
+                    Size = new Vector2(0.15f,0.15f),
                     Velocity = finalVelocity,
                     ColorReceived = blockAvgColorReceived
                 });
