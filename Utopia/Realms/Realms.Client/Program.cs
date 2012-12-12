@@ -11,7 +11,7 @@ namespace Realms.Client
 
         /// <summary>
         /// Indicates whether the debug should be shown
-        /// </summary>S
+        /// </summary>
         public static bool ShowDebug;
 
         /// <summary>
