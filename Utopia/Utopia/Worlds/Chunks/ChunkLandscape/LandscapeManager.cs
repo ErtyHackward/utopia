@@ -28,6 +28,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private variable
+        private readonly object _syncRoot = new object();
         private WorldGenerator _worldGenerator;
         private ServerComponent _server;
         private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
@@ -93,11 +94,12 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             //logger.Debug("Chunk received from server id : {0}; Position : {1}, Flag :{2}", chunkId, e.Message.Position, e.Message.Flag);
 #endif
 
-            //Bufferize the Data here
-            
-            if (_receivedServerChunks.ContainsKey(chunkId)) 
-                _receivedServerChunks.Remove(chunkId);
-            _receivedServerChunks.Add(chunkId, e.Message);
+            //Bufferize the Data here   
+            lock (_syncRoot)
+            {
+                if (_receivedServerChunks.ContainsKey(chunkId)) _receivedServerChunks.Remove(chunkId);
+                _receivedServerChunks.Add(chunkId, e.Message);
+            }
         }
 
         //Perform Maintenance task every 10 seconds
@@ -108,7 +110,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         private void ChunkBufferCleanup()
         {
-            try
+            lock (_syncRoot)
             {
                 //Remove Data received from the Server that have not been processed for 1 minutes !
                 var expiredIndex = _receivedServerChunks.Where(x => DateTime.Now.Subtract(x.Value.MessageRecTime).TotalSeconds > 60).ToList();
@@ -118,22 +120,19 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     _receivedServerChunks.Remove(expiredIndex[i].Key);
                     logger.Warn("Data received from server never used for 60 seconds, was cleaned up !");
                 }
-
-                //Check for chunk that are waiting for server data for more than 30 seconds.
-                foreach (var chunk in WorldChunks.Chunks.Where(x => x.IsServerRequested))
-                {
-                    if (DateTime.Now.Subtract(chunk.ServerRequestTime).Seconds > 30)
-                    {
-                        //Request the chunk again to the server !!
-                        chunk.IsServerRequested = false;
-                        logger.Warn("Requested Chunk {0} did not received server data for 30s. Requesting it again !", chunk.ChunkID);
-                    }
-                }
-
             }
-            catch (Exception)
+
+            //Check for chunk that are waiting for server data for more than 30 seconds.
+            foreach (var chunk in WorldChunks.Chunks.Where(x => x.IsServerRequested))
             {
+                if (DateTime.Now.Subtract(chunk.ServerRequestTime).Seconds > 30)
+                {
+                    //Request the chunk again to the server !!
+                    chunk.IsServerRequested = false;
+                    logger.Warn("Requested Chunk {0} did not received server data for 30s. Requesting it again !", chunk.ChunkID);
+                }
             }
+
         }
 
         private void CheckServerReceivedData(VisualChunk chunk)

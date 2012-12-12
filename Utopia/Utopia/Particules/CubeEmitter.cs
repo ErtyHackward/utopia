@@ -180,6 +180,12 @@ namespace Utopia.Particules
 
         public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
         {
+            ColoredParticule p;
+            for (int i = 0; i < _particules.Count; i++)
+            {
+                p = _particules[i];
+                Vector3D.Lerp(ref p.Position.ValuePrev,ref p.Position.Value, interpolationHd, out p.Position.ValueInterp);
+            }
         }
 
         public void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
@@ -192,7 +198,7 @@ namespace Utopia.Particules
             for (int i = 0; i < _particules.Count; i++)
             {
                 p = _particules[i];
-                Vector3 position = p.Position.Value.AsVector3();
+                Vector3 position = p.Position.ValueInterp.AsVector3();
                 ByteColor color = p.ParticuleColor;
                 _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref color, ref p.ColorReceived);
             }
@@ -304,6 +310,7 @@ namespace Utopia.Particules
                 {
                     if (p.wasColliding)
                     {
+                        p.Position.Value = p.Position.ValuePrev;
                         p.isFrozen = true;
                         continue;
                     }
