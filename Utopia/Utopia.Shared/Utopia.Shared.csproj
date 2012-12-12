@@ -315,6 +315,7 @@
       <DependentUpon>ContainerEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\ContainerSetSelector.cs" />
+    <Compile Include="Tools\ExceptionHandler.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
     <Compile Include="Tools\ModelStateSelector.cs" />
     <Compile Include="Tools\SoundSelector.cs" />
