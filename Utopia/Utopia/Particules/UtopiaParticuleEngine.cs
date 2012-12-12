@@ -78,7 +78,7 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, _worldParameters, _worldChunks);
+            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f,_worldParameters, _worldChunks);
             AddEmitter(_cubeEmitter);
 
             base.Initialize();
@@ -86,7 +86,6 @@ namespace Utopia.Particules
 
         public override void LoadContent(DeviceContext context)
         {
-
             base.LoadContent(context);
         }
 
