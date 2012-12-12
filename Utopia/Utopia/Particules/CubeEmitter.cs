@@ -134,9 +134,9 @@ namespace Utopia.Particules
             {
                 //Randomize the Velocity
                 Vector3 finalVelocity = new Vector3(0, 1 ,0);
-                finalVelocity.X += (((float)_rnd.NextDouble() * 2) - 1) * 2;
-                finalVelocity.Y += (((float)_rnd.NextDouble() * 2) - 1) * 5;
-                finalVelocity.Z += (((float)_rnd.NextDouble() * 2) - 1) * 2;
+                finalVelocity.X += (((float)_rnd.NextDouble() * 2) - 1) * 1.5f;
+                finalVelocity.Y += (float)_rnd.NextDouble() * 3;
+                finalVelocity.Z += (((float)_rnd.NextDouble() * 2) - 1) * 1.5f;
 
                 Vector3D CubeCenteredPosition = new Vector3D(CubeLocation.X + 0.5, CubeLocation.Y + 0.5, CubeLocation.Z + 0.5);
 
