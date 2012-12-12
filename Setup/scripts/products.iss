@@ -78,6 +78,7 @@ begin
 			DependencyPage.SetText(FmtMessage(CustomMessage('depinstall_status'), [products[i].Title]), '');
 			DependencyPage.SetProgress(i, productCount);
 			
+			
 			if Exec(products[i].File, products[i].Parameters, '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then begin
 				//success; ResultCode contains the exit code
 				if ResultCode = 0 then
@@ -140,7 +141,7 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 begin
 	Result := true;
 
-	if CurPageID = wpSelectTasks then begin
+	if CurPageID = wpReady then begin
 
 		if downloadMemo <> '' then begin
 			//change isxdl language only if it is not english because isxdl default language is already english
