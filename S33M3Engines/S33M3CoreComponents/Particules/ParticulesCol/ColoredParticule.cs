@@ -13,6 +13,7 @@ namespace S33M3CoreComponents.Particules.ParticulesCol
         public float computationAge;
         public bool wasColliding;
         public Color ParticuleColor;
+        public ByteColor ColorReceived;
         public Vector3D InitialPosition;
     }
 }

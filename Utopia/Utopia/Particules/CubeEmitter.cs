@@ -22,6 +22,7 @@ using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
 using Color = SharpDX.Color;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Particules
 {
@@ -37,11 +38,10 @@ namespace Utopia.Particules
 
         private Bitmap[] _colorsBiome;
 
-        private Random _rnd;
+        private FastRandom _rnd;
         private string _cubeTexturePath;
         private string _fileNamePatern;
         private string _biomeColorFilePath;
-        private string _foliageBiomeColorFilePath;
 
         private Dictionary<int, Color[]> _cubeColorSampled;
         private VisualWorldParameters _visualWorldParameters;
@@ -86,7 +86,7 @@ namespace Utopia.Particules
             _particules = new List<ColoredParticule>();
 
             _colorsBiome = new Bitmap[2];
-            _rnd = new Random();
+            _rnd = new FastRandom();
 
             _cubeBB = new BoundingBox(new Vector3(-0.1f, -0.1f, -0.1f), new Vector3(0.1f, 0.1f, 0.1f));
         }
@@ -108,19 +108,27 @@ namespace Utopia.Particules
                                                                                             context));
         }
 
-        public void EmitParticule(int nbr, byte cubeId, Vector3I CubeLocation)
+        public void EmitParticule(int nbr, TerraCube cube, Vector3I CubeLocation)
         {
             //GetCube Profile
             VisualChunk chunk = null;
-            var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeId];
+            var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
             //Get Chunk in case if the block is subject to BiomeColoring
-            if (profile.BiomeColorArrayTexture <= 1)
+            chunk = _worldChunk.GetChunk(CubeLocation.X, CubeLocation.Z);
+
+            //Foreach Surrending Cube
+            ByteColor blockAvgColorReceived = new ByteColor();
+            foreach (var surrendingCube in chunk.BlockData.ChunkCubes.GetSurroundingBlocksIndex(ref CubeLocation))
             {
-                chunk = _worldChunk.GetChunk(CubeLocation.X, CubeLocation.Z);
+                var cubeColor = chunk.BlockData.ChunkCubes.Cubes[surrendingCube.Index].EmissiveColor;
+                blockAvgColorReceived.A = Math.Max(blockAvgColorReceived.A, cubeColor.A);
+                blockAvgColorReceived.R = Math.Max(blockAvgColorReceived.R, cubeColor.R);
+                blockAvgColorReceived.G = Math.Max(blockAvgColorReceived.G, cubeColor.G);
+                blockAvgColorReceived.B = Math.Max(blockAvgColorReceived.B, cubeColor.B);
             }
 
             //Get Cube color palette
-            Color[] palette = _cubeColorSampled[cubeId];
+            Color[] palette = _cubeColorSampled[cube.Id];
 
             while (nbr > 0)
             {
@@ -141,15 +149,16 @@ namespace Utopia.Particules
 
                 _particules.Add(new ColoredParticule()
                 {
-                    Age = 0,
+                    Age = 0 + (float)_rnd.NextDouble(0,2.0),
                     computationAge = 0,
                     InitialPosition = CubeCenteredPosition,
                     ParticuleColor = color,
                     Position = new FTSValue<Vector3D>(CubeCenteredPosition),
-                    Size = new Vector2(0.2f,0.2f),
-                    Velocity = finalVelocity
+                    Size = new Vector2(0.1f,0.1f),
+                    Velocity = finalVelocity,
+                    ColorReceived = blockAvgColorReceived
                 });
-                
+
                 nbr--;
             }
         }
@@ -185,7 +194,7 @@ namespace Utopia.Particules
                 p = _particules[i];
                 Vector3 position = p.Position.Value.AsVector3();
                 ByteColor color = p.ParticuleColor;
-                _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref color);
+                _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref color, ref p.ColorReceived);
             }
             _particuleRenderer.End(context);
         }
@@ -240,8 +249,12 @@ namespace Utopia.Particules
                     Color[] colorArray = new Color[4];
                     for (int i = 0; i < 4; i++)
                     {
-                        var color = image.GetPixel(_rnd.Next(image.Width), _rnd.Next(image.Height));
-                        colorArray[i] = new Color(color.R, color.G, color.B, color.A);
+                        System.Drawing.Color color = System.Drawing.Color.FromArgb(0, 0, 0, 0);
+                        while (color.A == 0)
+                        {
+                            color = image.GetPixel(_rnd.Next(image.Width), _rnd.Next(image.Height));
+                            colorArray[i] = new Color(color.R, color.G, color.B, color.A);
+                        }
                     }
                     perBitmapColorSampling.Add(id, colorArray);
                 }
@@ -296,10 +309,14 @@ namespace Utopia.Particules
                     }
                     //Colliding with landscape !
                     p.computationAge = 0;
-                    p.Velocity *= -1.0f;
+                    p.Velocity *= (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * 0.5).AsVector3();
                     p.InitialPosition = p.Position.ValuePrev;
                     p.Position.Value = p.Position.ValuePrev;
                     p.wasColliding = true;
+                }
+                else
+                {
+                    p.wasColliding = false;
                 }
             }
         }

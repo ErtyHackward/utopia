@@ -123,6 +123,7 @@
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Vector3D.cs" />
     <Compile Include="Structs\Vector3I.cs" />
+    <Compile Include="VertexFormats\VertexPointSprite3DExt1.cs" />
     <Compile Include="VertexFormats\VertexPointSprite3DTexCoord.cs" />
     <Compile Include="VertexFormats\Interfaces\IVertexType.cs" />
     <Compile Include="VertexFormats\VertexColumnChart.cs" />
