@@ -20,8 +20,8 @@ namespace S33M3CoreComponents.Sprites3D.Processors
     public class Sprite3DColorBillBoardProc : BaseComponent, ISprite3DProcessor
     {
         #region Private Variables
-        private List<VertexPointSprite3D> _spritesCollection;
-        private VertexBuffer<VertexPointSprite3D> _vb;
+        private List<VertexPointSprite3DExt1> _spritesCollection;
+        private VertexBuffer<VertexPointSprite3DExt1> _vb;
         private bool _isCollectionDirty;
         private HLSLPointSpriteColor3DBillBoard _effect;
         private Include _sharedCBIncludeHandler;
@@ -39,10 +39,10 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
-            _effect = ToDispose(new HLSLPointSpriteColor3DBillBoard(context.Device, @"Effects\Sprites\PointSpriteColor3DBillBoard.hlsl", VertexPointSprite3D.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
+            _effect = ToDispose(new HLSLPointSpriteColor3DBillBoard(context.Device, @"Effects\Sprites\PointSpriteColor3DBillBoard.hlsl", VertexPointSprite3DExt1.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
-            _spritesCollection = new List<VertexPointSprite3D>();
-            _vb = new VertexBuffer<VertexPointSprite3D>(context.Device, 16, VertexPointSprite3D.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DColorBillBoardProcessor", usage, 10);
+            _spritesCollection = new List<VertexPointSprite3DExt1>();
+            _vb = new VertexBuffer<VertexPointSprite3DExt1>(context.Device, 16, VertexPointSprite3DExt1.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DColorBillBoardProcessor", usage, 10);
             _isCollectionDirty = false;
         }
 
@@ -72,9 +72,9 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             context.Draw(_vb.VertexCount, 0);
         }
 
-        public void Draw(ref Vector3 worldPosition, ref Vector2 size, ref ByteColor color)
+        public void Draw(ref Vector3 worldPosition, ref Vector2 size, ref ByteColor color, ref ByteColor colorReceived)
         {
-            _spritesCollection.Add(new VertexPointSprite3D(new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, 0), color, size));
+            _spritesCollection.Add(new VertexPointSprite3DExt1(new Vector4(worldPosition.X, worldPosition.Y, worldPosition.Z, 0), color, colorReceived, size));
             _isCollectionDirty = true;
         }
 
