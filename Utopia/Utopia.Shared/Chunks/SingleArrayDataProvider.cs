@@ -130,7 +130,6 @@ namespace Utopia.Shared.Chunks
         /// <param name="tag"></param>
         public override void SetBlock(Vector3I worldPosition, byte blockValue, BlockTag tag = null)
         {
-            TerraCube newCube = new TerraCube(blockValue);
             int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
             ChunkCubes.Cubes[index] = new TerraCube(blockValue);
 

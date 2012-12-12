@@ -8,7 +8,8 @@
 //Vertex shader Input
 struct VSInput {
 	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
-	float4 Color				: COLOR;
+	float4 Color				: COLOR0;
+	float4 ColorReceived		: COLOR1;
 	float2 Size					: SIZE;       //XY : Size
 };
 
@@ -16,7 +17,8 @@ struct VSInput {
 //Geometry shader Input
 struct GSInput {
 	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
-	float4 Color				: COLOR;
+	float4 Color				: COLOR0;
+	float4 ColorReceived		: COLOR1;
 	float2 Size					: SIZE;       //XY : Size
 };
 
@@ -24,6 +26,7 @@ struct GSInput {
 struct PSInput {
 	float4 Position	 			: SV_POSITION;
 	float4 Color				: COLOR;
+	float3 ColorReceived		: LIGHT0;
 };
 
 
@@ -70,6 +73,7 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 
 		Output.Position = WorldPosition;
 		Output.Color = Input.Color;
+		Output.ColorReceived = saturate(Input.ColorReceived.rgb +  SunColor * Input.ColorReceived.a);
 
 		//Transform point in screen space
 		TriStream.Append( Output );
@@ -85,6 +89,8 @@ float4 PS(PSInput IN) : SV_Target
 	float4 color = IN.Color;
 
 	clip(color.a < 0.01f ? -1:1 ); //Remove the pixel if alpha < 0.1
+
+	color *= float4(IN.ColorReceived, 1);
 
 	return color;
 }
