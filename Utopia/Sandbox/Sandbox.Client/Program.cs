@@ -2,6 +2,7 @@
 using System;
 using S33M3CoreComponents.Config;
 using System.IO;
+using Utopia.Shared.Tools;
 
 namespace Sandbox.Client
 {
@@ -29,6 +30,8 @@ namespace Sandbox.Client
 #if DEBUG
             ShowDebug = true;     
 #endif
+
+            ExceptionHandler.SaveCrashReportsToFile();
 
             using (var main = new GameClient())
             {
