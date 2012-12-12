@@ -1,5 +1,8 @@
 #include "scripts\products.iss"
-#include "scripts\dotnetfx40.iss"
+#include "scripts\products\dotnetfx40.iss"
+#include "scripts\products\winversion.iss"
+#include "scripts\products\fileversion.iss"
+
 
 [Languages]
 Name: ru; MessagesFile: compiler:Languages\Russian.isl
@@ -27,3 +30,10 @@ DefaultDirName={pf}\Utopia Sandbox\
 SetupIconFile=Utopia.ico
 WizardImageFile=setupTitle.bmp
 WizardSmallImageFile=setupSmall.bmp
+
+[Code]
+function InitializeSetup(): Boolean;
+begin
+	dotnetfx40();
+	Result := true;
+end;
