@@ -18,9 +18,9 @@ namespace S33M3Resources.Structs.Vertex
     public struct VertexCubeColor : IVertexType
     {
 
-        public Vector4 Position; //Cube Local Position
-        public Matrix Tranform;  //Cube Transformation (Scale, Rotation, Translation to World coord)
+        public Vector3 Position; //Cube Local Position
         public ByteColor Color;  //Cube Color
+        public Matrix Tranform;  //Cube Transformation (Scale, Rotation, Translation to World coord)
         public ByteColor AmbiantColor; //Color from environments
 
         public static readonly VertexDeclaration VertexDeclaration;
@@ -29,18 +29,18 @@ namespace S33M3Resources.Structs.Vertex
         static VertexCubeColor()
         {
             InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), 
+                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float, InputElement.AppendAligned, 0), 
+                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row0
                                                             new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row1
                                                             new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row2
                                                             new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row3
-                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("COLOR", 1, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0)
                                                             };
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeColor(ref Vector4 position, ref ByteColor color, ref ByteColor ambiantColor, ref Matrix tranform)
+        public VertexCubeColor(ref Vector3 position, ref ByteColor color, ref ByteColor ambiantColor, ref Matrix tranform)
         {
             this.Position = position;
             this.Color = color;

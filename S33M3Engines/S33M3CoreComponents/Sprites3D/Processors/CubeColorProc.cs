@@ -95,10 +95,9 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             int vertexOffset = _spritesvertexCollection.Count;
 
             //Create the 24 vertex + 36 Index data par cube !
-            foreach (var vertex in vbCube)
+            for (int i = 0; i < vbCube.Length; i++)
             {
-                Vector4 posi = new Vector4(vertex.X, vertex.Y, vertex.Z, 1);
-                _spritesvertexCollection.Add(new VertexCubeColor(ref posi, ref color, ref ambiantColor, ref tranform));
+                _spritesvertexCollection.Add(new VertexCubeColor(ref vbCube[i], ref color, ref ambiantColor, ref tranform));
             }
 
             foreach (var index in ibCube)
