@@ -123,7 +123,11 @@ namespace S33M3DXEngine
             this.RenderResolution = renderResolution;
             this.CurrentMSAASampling = samplingMode;
 
-            Initialize();
+            string errorInit;
+            if (Initialize(out errorInit) == false)
+            {
+                throw new Exception(errorInit);
+            }
 
             //Init State repo
             RenderStatesRepo.Initialize(this);
@@ -189,8 +193,10 @@ namespace S33M3DXEngine
         #endregion
 
         #region Public Methods
-        public void Initialize()
+        public bool Initialize(out string errorMsg)
         {
+            errorMsg = null;
+
             List<ModeDescription> adapterModes = new List<ModeDescription>();
             _dx11factory = new Factory1();
 
@@ -210,6 +216,14 @@ namespace S33M3DXEngine
                     //GetResource Level            
                     FeatureLevel maxSupportLevel = Device.GetSupportedFeatureLevel(adapter);
                     logger.Info("Maximum supported DirectX11 level = {0}", maxSupportLevel.ToString());
+
+                    if (maxSupportLevel == FeatureLevel.Level_9_1 || 
+                        maxSupportLevel == FeatureLevel.Level_9_2 || 
+                        maxSupportLevel == FeatureLevel.Level_9_3)
+                    {
+                        errorMsg = "Your graphical card doesn't support at minimum DirectX 10 feature, current feature : " + maxSupportLevel.ToString();
+                        return false;
+                    }
 
                     int DedicatedGPU = adapter.Description.DedicatedVideoMemory / (1024 * 1024);
                     if (DedicatedGPU < 0) DedicatedGPU = 0;
@@ -243,13 +257,13 @@ namespace S33M3DXEngine
             _renderForm.LostFocus += GameWindow_LostFocus;
             _renderForm.GotFocus += GameWindow_GotFocus;
 
-            
-
             _renderForm.Show();
             _renderForm.Focus();
             _renderForm.TopMost = true;
             HasFocus = true;
             _renderForm.TopMost = false;
+
+            return true;
         }
 
         public void SetRenderTargets()
