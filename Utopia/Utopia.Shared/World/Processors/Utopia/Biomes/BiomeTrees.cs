@@ -16,7 +16,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private TreeTemplates.TreeType[] _treeTypeDistribution = new TreeTemplates.TreeType[100];
 
         #region Public properties
-        [ProtoMember(1)]
+        [ProtoMember(1, IsRequired=true)]
         public int Small
         {
             get { return _small; }
@@ -27,7 +27,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        [ProtoMember(2)]
+        [ProtoMember(2, IsRequired = true)]
         public int Medium
         {
             get { return _medium; }
@@ -38,7 +38,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        [ProtoMember(3)]
+        [ProtoMember(3, IsRequired = true)]
         public int Big
         {
             get { return _big; }
@@ -49,7 +49,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        [ProtoMember(4)]
+        [ProtoMember(4, IsRequired = true)]
         public int Cactus
         {
             get { return _cactus; }

@@ -23,6 +23,7 @@ using Utopia.Worlds.Chunks;
 using Color = SharpDX.Color;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs.Landscape;
+using System.Threading.Tasks;
 
 namespace Utopia.Particules
 {
@@ -175,8 +176,6 @@ namespace Utopia.Particules
             _particules.RemoveAll(x => x.Age > _maximumAge);
 
             RefreshExistingParticules(timeSpend.ElapsedGameTimeInS_LD);
-            //Do Collision against landscape test using _worldChunk
-            CollisionCheck();
         }
 
         public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
@@ -203,7 +202,6 @@ namespace Utopia.Particules
                 ByteColor color = p.ParticuleColor;
 
                 //Add a new Particule
-
                 Matrix result;
                 Matrix scaling = Matrix.Scaling(p.Size.X, p.Size.Y, p.Size.Y);
                 Matrix rotation = Matrix.Identity; //Identity rotation
@@ -294,48 +292,40 @@ namespace Utopia.Particules
 
         private void RefreshExistingParticules(float elapsedTime)
         {
-            ColoredParticule p;
-            for (int i = 0; i < _particules.Count; i++)
-            {
-                //Computation of the new dimension, its a simple deterministic computation using this formula :
-                // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
-                p = _particules[i];
-                p.Age += elapsedTime; //Age in Seconds
-                p.computationAge += elapsedTime;
+            Parallel.ForEach(_particules, p =>
+                {
+                    //Computation of the new dimension, its a simple deterministic computation using this formula :
+                    // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
+                    p.Age += elapsedTime; //Age in Seconds
+                    p.computationAge += elapsedTime;
 
-                if (p.isFrozen) continue;
-                p.Position.BackUpValue();
-                p.Position.Value = ((0.5 * p.computationAge * p.computationAge) * CubeEmitter.GravityForce)    //Acceleration force
-                               + (p.computationAge * p.Velocity)                              //Constant force
-                               + p.InitialPosition;                                //Initial position of the particule
-            }
+                    if (p.isFrozen) return;
+                    p.Position.BackUpValue();
+                    p.Position.Value = ((0.5 * p.computationAge * p.computationAge) * CubeEmitter.GravityForce)    //Acceleration force
+                                   + (p.computationAge * p.Velocity)                              //Constant force
+                                   + p.InitialPosition;                                //Initial position of the particule
+
+
+                    CollisionCheck(p);
+                });
         }
 
-        private void CollisionCheck()
+        private void CollisionCheck(ColoredParticule p)
         {
-            ColoredParticule p;
-            for (int i = 0; i < _particules.Count; i++)
+            if (_worldChunk.isCollidingWithTerrain(ref _cubeBB, ref p.Position.Value) > 0)
             {
-                p = _particules[i];
-                if (_worldChunk.isCollidingWithTerrain(ref _cubeBB, ref p.Position.Value) > 0)
+                if (p.wasColliding)
                 {
-                    if (p.wasColliding)
-                    {
-                        p.Position.Value = p.Position.ValuePrev;
-                        p.isFrozen = true;
-                        continue;
-                    }
-                    //Colliding with landscape !
-                    p.computationAge = 0;
-                    p.Velocity = (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * 0.75).AsVector3();
-                    p.InitialPosition = p.Position.ValuePrev;
                     p.Position.Value = p.Position.ValuePrev;
-                    p.wasColliding = true;
+                    p.isFrozen = true;
+                    return;
                 }
-                else
-                {
-                    //p.wasColliding = false;
-                }
+                //Colliding with landscape !
+                p.computationAge = 0;
+                p.Velocity = (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * 0.75).AsVector3();
+                p.InitialPosition = p.Position.ValuePrev;
+                p.Position.Value = p.Position.ValuePrev;
+                p.wasColliding = true;
             }
         }
         #endregion
