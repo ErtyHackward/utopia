@@ -28,6 +28,7 @@ namespace S33M3Resources.Effects.Sprites
         EntryPoints _shadersEntryPoint = new EntryPoints()
         {
             VertexShader_EntryPoint = "VS",
+            GeometryShader_EntryPoint = "GS",
             PixelShader_EntryPoint = "PS"
         };
         #endregion

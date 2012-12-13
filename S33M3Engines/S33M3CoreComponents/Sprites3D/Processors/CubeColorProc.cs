@@ -30,7 +30,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         private Include _sharedCBIncludeHandler;
         private iCBuffer _frameSharedCB;
 
-        private Generator.CubeWithFaceStruct[] vbCube;
+        private Vector3[] vbCube;
         private short[] ibCube;
         #endregion
 
@@ -46,8 +46,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
             //Get primitive data
-            Generator.CubeWithFace(1.0f, out vbCube, out ibCube);
-
+            Generator.Cube(1.0f, out vbCube, out ibCube);
 
             _effect = ToDispose(new HLSLCubeColorParticule(context.Device, @"Effects\Sprites\CubeColorParticule.hlsl", VertexCubeColor.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
@@ -98,7 +97,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             //Create the 24 vertex + 36 Index data par cube !
             foreach (var vertex in vbCube)
             {
-                Vector4 posi = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, (float)vertex.CubeFace);
+                Vector4 posi = new Vector4(vertex.X, vertex.Y, vertex.Z, 1);
                 _spritesvertexCollection.Add(new VertexCubeColor(ref posi, ref color, ref ambiantColor, ref tranform));
             }
 

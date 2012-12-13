@@ -29,7 +29,7 @@ namespace S33M3Resources.Structs.Vertex
         static VertexCubeColor()
         {
             InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0), 
+                                                            new InputElement("POSITION", 0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), 
                                                             new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row0
                                                             new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row1
                                                             new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row2
