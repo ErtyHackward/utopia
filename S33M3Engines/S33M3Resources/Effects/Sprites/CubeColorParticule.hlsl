@@ -4,6 +4,8 @@
 
 #include <SharedFrameCB.hlsl>
 
+static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
+
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
@@ -27,10 +29,12 @@ PSInput VS (VSInput input)
 {
 	PSInput output;
 	
-	output.Position = mul(input.Position, input.Tranform); //Apply transformation to the cube vertex (scale, rotation, WorldTranslation)
+	float4 newPosition = {input.Position.xyz, 1.0f};
+	output.Position = mul(newPosition, input.Tranform); //Apply transformation to the cube vertex (scale, rotation, WorldTranslation)
 	output.Position = mul( output.Position, ViewProjection ); //World => Camera => Screen space
 	output.Color = input.Color;
-	output.AmbiantColor = saturate(Input.AmbiantColor.rgb +  SunColor * Input.AmbiantColor.a);
+	output.AmbiantColor = saturate(input.AmbiantColor.rgb +  SunColor * input.AmbiantColor.a);
+	output.AmbiantColor *= faceshades[input.Position.w];
 	
 	return output;
 }
