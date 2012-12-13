@@ -3,27 +3,41 @@
 [CustomMessages]
 DependenciesDir=MyProgramDependencies
 
+en.depdownload_msg=The following applications are required before setup can continue:%n%n%1%nDownload and install now?
+en.depdownload_memo_title=Download dependencies
+en.depinstall_memo_title=Install dependencies
+en.depinstall_title=Installing dependencies
+en.depinstall_description=Please wait while Setup installs dependencies on your computer.
+en.depinstall_status=Installing %1...
+en.depinstall_missing=%1 must be installed before setup can continue. Please install %1 and run Setup again.
+en.depinstall_error=An error occured while installing the dependencies. Please restart the computer and run the setup again or install the following dependencies manually:%n
+en.isxdl_langfile=english.ini
+
+fr.depdownload_msg=The following applications are required before setup can continue:%n%n%1%nDownload and install now?
+fr.depdownload_memo_title=Download dependencies
+fr.depinstall_memo_title=Install dependencies
+fr.depinstall_title=Installing dependencies
+fr.depinstall_description=Please wait while Setup installs dependencies on your computer.
+fr.depinstall_status=Installing %1...
+fr.depinstall_missing=%1 must be installed before setup can continue. Please install %1 and run Setup again.
+fr.depinstall_error=An error occured while installing the dependencies. Please restart the computer and run the setup again or install the following dependencies manually:%n
+fr.isxdl_langfile=french.ini
+
 ru.depdownload_msg=Следующие компоненты необходимы для установки:%n%n%1%nУстановить?
-
 ru.depdownload_memo_title=Загрузка зависимостей
-
 ru.depinstall_memo_title=Установка зависимостей
-
 ru.depinstall_title=Устанавливаются зависимости
-
 ru.depinstall_description=Подождите пока идет установка необходимых компонентов.
-
 ru.depinstall_status=Установка %1...
-
 ru.depinstall_missing=%1 должен быть установлен. Пожалуйста установите %1 и запустите установку заново.
-
 ru.depinstall_error=Во время установки зависимостей произошла ошибка. Перезагрузите компьютер и запустите установку заново, либо установите следующие компоненты вручную:%n
-
 ru.isxdl_langfile=russian.ini
 
 
 [Files]
+Source: "scripts\isxdl\english.ini"; Flags: dontcopy
 Source: "scripts\isxdl\russian.ini"; Flags: dontcopy
+Source: "scripts\isxdl\french.ini"; Flags: dontcopy
 
 [Code]
 type
