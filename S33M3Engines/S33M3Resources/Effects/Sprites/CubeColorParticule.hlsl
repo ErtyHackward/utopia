@@ -15,6 +15,12 @@ struct VSInput {
 	float4 AmbiantColor			: COLOR1;     //XY : Size
 };
 
+struct GSInput {
+	float4 Position	 			: POSITION;
+	float4 Color				: COLOR;
+	float3 AmbiantColor			: LIGHT0;
+};
+
 //Pixel shader Input
 struct PSInput {
 	float4 Position	 			: SV_POSITION;
@@ -25,20 +31,30 @@ struct PSInput {
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-PSInput VS (VSInput input)
+GSInput VS (VSInput input)
 {
-	PSInput output;
+	GSInput output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
 	output.Position = mul(newPosition, input.Tranform); //Apply transformation to the cube vertex (scale, rotation, WorldTranslation)
 	output.Position = mul( output.Position, ViewProjection ); //World => Camera => Screen space
 	output.Color = input.Color;
 	output.AmbiantColor = saturate(input.AmbiantColor.rgb +  SunColor * input.AmbiantColor.a);
-	output.AmbiantColor *= faceshades[input.Position.w];
 	
 	return output;
 }
 
+[maxvertexcount(3)]
+void GS(triangle GSInput Inputs[3], uint primID : SV_PrimitiveID, inout TriangleStream<PSInput> TriStream)
+{
+	Inputs[0].AmbiantColor *= faceshades[(primID % 12) / 2];
+	Inputs[1].AmbiantColor = Inputs[0].AmbiantColor;
+	Inputs[2].AmbiantColor = Inputs[0].AmbiantColor;
+
+	TriStream.Append(Inputs[0]);
+	TriStream.Append(Inputs[1]);
+	TriStream.Append(Inputs[2]);
+}
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
