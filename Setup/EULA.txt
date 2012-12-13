@@ -1,1 +1,20 @@
-Please write the EULA...
+License for use and distribution
+
+All copyrights to game are owned by the Fabian Ceressia and Vladislav Pozdnyakov called as "authors".
+
+No person or company may charge a fee for the distribution of game without written permission from the copyright holder. The game may not be bundled or distributed with any other package without written permission of the copyright holder.
+
+The game IS DISTRIBUTED "AS IS." NO WARRANTY OF ANY KIND IS EXPRESSED OR IMPLIED. YOU USE IT AT YOUR OWN RISK. THE AUTHORS WILL NOT BE LIABLE FOR DATA LOSS, DAMAGES, LOSS OF PROFITS OR ANY OTHER KIND OF LOSS WHILE USING OR MISUSING THIS SOFTWARE.
+
+You may not use, copy, emulate, clone, rent, lease, sell, modify, decompile, disassemble, otherwise reverse engineer or transfer the program, or any subset of the licensed program, except as provided for in this agreement. Any such unauthorized use shall result in immediate and automatic termination of this license and may result in criminal and/or civil prosecution.
+
+Authors reserve the right to change this agreement at any time with or without notice, with immediate and/or retroactive effect.
+
+All rights not expressly granted here are reserved by authors.
+Installing and using game signifies acceptance of these terms and conditions of the license.
+
+If you do not agree with the terms of this license, you must remove game files from your storage devices and cease to use the product.
+
+Fabian Ceressia, Vladislav Pozdnyakov
+WWW: http://utopiarealms.com
+EMail: support@utopiarealms.com
