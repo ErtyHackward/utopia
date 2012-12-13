@@ -163,21 +163,22 @@ namespace S33M3Resources.Primitives
             //    2 ----- 3
 
             //Front
-            vertices[0] = new Vector3(-size,size,-size);
-            vertices[1] = new Vector3(size,size,-size);
-            vertices[2] = new Vector3(-size,size,size);
-            vertices[3] = new Vector3(size,size,size);
-            vertices[4] = new Vector3(-size,-size, -size);
-            vertices[5] = new Vector3(size,-size,- size);
-            vertices[6] = new Vector3(-size,-size,size);
+            vertices[0] = new Vector3(-size, size,-size);
+            vertices[1] = new Vector3(size, size,-size);
+            vertices[2] = new Vector3(-size, -size, -size);
+            vertices[3] = new Vector3(size, -size, -size);
+            vertices[4] = new Vector3(-size, size, size);
+            vertices[5] = new Vector3(size, size, size);
+            vertices[6] = new Vector3(-size, -size, size);
             vertices[7] = new Vector3(size, -size, size);
-           
-            indices = new short[] { 1, 0, 2, 2, 3, 1, 
-                                    5, 4, 0, 0, 1, 5,
-                                    4, 5, 7, 7, 6, 4,
-                                    5, 1, 3, 3, 7, 5,
-                                    0, 4, 6, 6, 2, 0,
-                                    3, 2, 6, 6, 7, 3};
+
+            indices = new short[] { 7, 5, 4,4, 6, 7,
+                                    2, 0, 1,1, 3, 2, 
+                                    6, 2, 4,4, 7, 6,
+                                    0, 4, 5, 5, 1, 0,
+                                    6, 4, 0, 0, 2, 6,
+                                    3, 1, 5, 5, 7, 3
+                                    };
         }
 
     }
