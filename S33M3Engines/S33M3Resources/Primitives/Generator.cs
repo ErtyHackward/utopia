@@ -172,9 +172,9 @@ namespace S33M3Resources.Primitives
             vertices[6] = new Vector3(-size, -size, size);
             vertices[7] = new Vector3(size, -size, size);
 
-            indices = new short[] { 7, 5, 4,4, 6, 7,
-                                    2, 0, 1,1, 3, 2, 
-                                    6, 2, 4,4, 7, 6,
+            indices = new short[] { 7, 5, 4, 4, 6, 7,
+                                    2, 0, 1, 1, 3, 2, 
+                                    6, 2, 3, 3, 7, 6,
                                     0, 4, 5, 5, 1, 0,
                                     6, 4, 0, 0, 2, 6,
                                     3, 1, 5, 5, 7, 3
