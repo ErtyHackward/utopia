@@ -5,6 +5,7 @@
 
 
 [Languages]
+Name: en; MessagesFile: compiler:Default.isl
 Name: ru; MessagesFile: compiler:Languages\Russian.isl
 Name: fr; MessagesFile: compiler:Languages\French.isl
 
