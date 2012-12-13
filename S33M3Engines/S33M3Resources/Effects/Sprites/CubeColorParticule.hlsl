@@ -9,9 +9,8 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	float3 Position				: POSITION;   //XYZ world location, W = texture array indice
-	float4 Color				: COLOR0;
 	matrix Tranform				: TRANSFORM;
+	float4 Color				: COLOR0;
 	float4 AmbiantColor			: COLOR1;     //XY : Size
 };
 
@@ -35,7 +34,10 @@ GSInput VS (VSInput input)
 {
 	GSInput output;
 	
-	float4 newPosition = {input.Position.xyz, 1.0f};
+	float4 newPosition = {input.Tranform._14, input.Tranform._24, input.Tranform._34, 1.0 };
+	
+    input.Tranform._14 = input.Tranform._24 = input.Tranform._34 = 0;
+
 	output.Position = mul(newPosition, input.Tranform); //Apply transformation to the cube vertex (scale, rotation, WorldTranslation)
 	output.Position = mul( output.Position, ViewProjection ); //World => Camera => Screen space
 	output.Color = input.Color;
