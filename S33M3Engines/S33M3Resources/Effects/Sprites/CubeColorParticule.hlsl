@@ -9,9 +9,9 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	float4 Position				: POSITION;   //XYZ world location, W = texture array indice
-	matrix Tranform				: TRANSFORM;
+	float3 Position				: POSITION;   //XYZ world location, W = texture array indice
 	float4 Color				: COLOR0;
+	matrix Tranform				: TRANSFORM;
 	float4 AmbiantColor			: COLOR1;     //XY : Size
 };
 
@@ -47,6 +47,9 @@ GSInput VS (VSInput input)
 [maxvertexcount(3)]
 void GS(triangle GSInput Inputs[3], uint primID : SV_PrimitiveID, inout TriangleStream<PSInput> TriStream)
 {
+	//Compute the Face ID.
+	// Modulo 12 give back the triangle ID (cube being composed of 12 triangles)
+	// /2 Give back the face Id ! Easy !
 	Inputs[0].AmbiantColor *= faceshades[(primID % 12) / 2];
 	Inputs[1].AmbiantColor = Inputs[0].AmbiantColor;
 	Inputs[2].AmbiantColor = Inputs[0].AmbiantColor;
