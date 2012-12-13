@@ -13,14 +13,14 @@ en.depinstall_missing=%1 must be installed before setup can continue. Please ins
 en.depinstall_error=An error occured while installing the dependencies. Please restart the computer and run the setup again or install the following dependencies manually:%n
 en.isxdl_langfile=english.ini
 
-fr.depdownload_msg=The following applications are required before setup can continue:%n%n%1%nDownload and install now?
-fr.depdownload_memo_title=Download dependencies
-fr.depinstall_memo_title=Install dependencies
-fr.depinstall_title=Installing dependencies
-fr.depinstall_description=Please wait while Setup installs dependencies on your computer.
-fr.depinstall_status=Installing %1...
-fr.depinstall_missing=%1 must be installed before setup can continue. Please install %1 and run Setup again.
-fr.depinstall_error=An error occured while installing the dependencies. Please restart the computer and run the setup again or install the following dependencies manually:%n
+fr.depdownload_msg=Les applications suivantes sont nécessaires pour pouvoir continuer:%n%n%1%nTélécharger et installer maintenant?
+fr.depdownload_memo_title=Téléchargement des applications nécessaires
+fr.depinstall_memo_title=Installation des applications nécessaires
+fr.depinstall_title=Installation en cours des applications nécessaires
+fr.depinstall_description=Patientez pendant l'installation des applications sur votre ordinateur.
+fr.depinstall_status=Installation %1...
+fr.depinstall_missing=%1 doit être installé pour pouvoir continuer. Installer %1 et recommencer l'installation.
+fr.depinstall_error=Une erreur d'est produite pendant l'installation des applications. Pouvez-vous redémarrer votre ordinateur et recommencer l'installation ou bien installer ce(s) programme manuellement : %n
 fr.isxdl_langfile=french.ini
 
 ru.depdownload_msg=Ñëåäóşùèå êîìïîíåíòû íåîáõîäèìû äëÿ óñòàíîâêè:%n%n%1%nÓñòàíîâèòü?
