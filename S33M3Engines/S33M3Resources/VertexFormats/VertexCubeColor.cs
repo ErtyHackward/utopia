@@ -40,10 +40,12 @@ namespace S33M3Resources.Structs.Vertex
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeColor(Vector4 position, ByteColor color)
+        public VertexCubeColor(Vector4 position, ByteColor color, ByteColor ambiantColor, ref Matrix tranform)
         {
             this.Position = position;
             this.Color = color;
+            this.AmbiantColor = ambiantColor;
+            this.Tranform = tranform;
         }
     }
 
