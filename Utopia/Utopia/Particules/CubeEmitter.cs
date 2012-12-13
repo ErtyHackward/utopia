@@ -48,7 +48,7 @@ namespace Utopia.Particules
         private IWorldChunks _worldChunk;
         private BoundingBox _cubeBB;
 
-        private Sprite3DRenderer<Sprite3DColorBillBoardProc> _particuleRenderer;
+        private Sprite3DRenderer<CubeColorProc> _particuleRenderer;
         #endregion
 
         #region Public Properties
@@ -99,10 +99,10 @@ namespace Utopia.Particules
             LoadBiomeColorsTexture();
 
             //Create the processor that will be used by the Sprite3DRenderer
-            Sprite3DColorBillBoardProc processor = ToDispose(new Sprite3DColorBillBoardProc(ToDispose(new DefaultIncludeHandler()), sharedFrameBuffer));
+            CubeColorProc processor = ToDispose(new CubeColorProc(ToDispose(new DefaultIncludeHandler()), sharedFrameBuffer));
 
             //Create a sprite3Drenderer that will use the previously created processor to accumulate text data for drawing.
-            _particuleRenderer = ToDispose(new Sprite3DRenderer<Sprite3DColorBillBoardProc>(processor,
+            _particuleRenderer = ToDispose(new Sprite3DRenderer<CubeColorProc>(processor,
                                                                                             DXStates.Rasters.Default,
                                                                                             DXStates.Blenders.Disabled,
                                                                                             DXStates.DepthStencils.DepthReadEnabled,
@@ -201,7 +201,17 @@ namespace Utopia.Particules
                 p = _particules[i];
                 Vector3 position = p.Position.ValueInterp.AsVector3();
                 ByteColor color = p.ParticuleColor;
-                _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref color, ref p.ColorReceived);
+
+                //Add a new Particule
+
+                Matrix result;
+                Matrix scaling = Matrix.Scaling(p.Size.X, p.Size.Y, p.Size.Y);
+                Matrix rotation = Matrix.Identity; //Identity rotation
+                Matrix translation = Matrix.Translation(position);
+
+                result = scaling * rotation * translation;
+
+                _particuleRenderer.Processor.Draw(ref color, ref p.ColorReceived, ref result);
             }
             _particuleRenderer.End(context);
         }

@@ -86,6 +86,7 @@
     <Compile Include="Effects\Debug\DebugEffect.cs" />
     <Compile Include="Effects\Debug\HLSLColumnChart.cs" />
     <Compile Include="Effects\DefaultIncludeHandler.cs" />
+    <Compile Include="Effects\Sprites\HLSLCubeColorParticule.cs" />
     <Compile Include="Effects\Sprites\HLSLPointSpriteColor3DBillBoard.cs" />
     <Compile Include="Effects\Sprites\HLSLPointSprite3DBillBoard.cs" />
     <Compile Include="Effects\Sprites\HLSLPointSprite3DImpostor.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Structs\Vector2I.cs" />
     <Compile Include="Structs\Vector3D.cs" />
     <Compile Include="Structs\Vector3I.cs" />
+    <Compile Include="VertexFormats\VertexCubeColor.cs" />
     <Compile Include="VertexFormats\VertexPointSprite3DExt1.cs" />
     <Compile Include="VertexFormats\VertexPointSprite3DTexCoord.cs" />
     <Compile Include="VertexFormats\Interfaces\IVertexType.cs" />
@@ -217,6 +219,9 @@
     <Content Include="Effects\Sprites\Blur.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Effects\Sprites\CubeColorParticule.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\Sprites\PointSpriteColor3DBillBoard.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -278,6 +278,7 @@
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="Sound\SoundVoice.cs" />
     <Compile Include="Sprites3D\Interfaces\ISprite3DProcessor.cs" />
+    <Compile Include="Sprites3D\Processors\CubeColorProc.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DColorBillBoardProc.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DBillBoardProc.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DImpostorProc.cs" />

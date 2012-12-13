@@ -34,18 +34,18 @@ namespace S33M3Resources.Structs.Vertex
                                                             new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row1
                                                             new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row2
                                                             new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0), //Transform Matrix Row3
-                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0),
-                                                            new InputElement("COLOR", 1, Format.R8G8B8A8_UNorm, 16, 0)
+                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
+                                                            new InputElement("COLOR", 1, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0)
                                                             };
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeColor(Vector4 position, ByteColor color, ByteColor ambiantColor, ref Matrix tranform)
+        public VertexCubeColor(ref Vector4 position, ref ByteColor color, ref ByteColor ambiantColor, ref Matrix tranform)
         {
             this.Position = position;
             this.Color = color;
             this.AmbiantColor = ambiantColor;
-            this.Tranform = tranform;
+            this.Tranform = Matrix.Transpose(tranform);
         }
     }
 
