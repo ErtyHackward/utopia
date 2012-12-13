@@ -17,7 +17,7 @@ struct VSInput {
 struct PSInput {
 	float4 Position	 			: SV_POSITION;
 	float4 Color				: COLOR;
-	float3 AmbiantColor		: LIGHT0;
+	float3 AmbiantColor			: LIGHT0;
 };
 
 //--------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ PSInput VS (VSInput input)
 	output.Position = mul(input.Position, input.Tranform); //Apply transformation to the cube vertex (scale, rotation, WorldTranslation)
 	output.Position = mul( output.Position, ViewProjection ); //World => Camera => Screen space
 	output.Color = input.Color;
-	output.AmbiantColor = input.AmbiantColor;
+	output.AmbiantColor = saturate(Input.AmbiantColor.rgb +  SunColor * Input.AmbiantColor.a);
 	
 	return output;
 }
@@ -44,9 +44,7 @@ float4 PS(PSInput IN) : SV_Target
 	//Texture Sampling
 	float4 color = IN.Color;
 
-	clip(color.a < 0.01f ? -1:1 ); //Remove the pixel if alpha < 0.1
-
-	color *= float4(IN.ColorReceived, 1);
+	color *= float4(IN.AmbiantColor, 1);
 
 	return color;
 }
