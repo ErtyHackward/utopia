@@ -155,7 +155,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             chunk.Consume(networkChunk); //Set the data into the "Big Array"
                             EntityFactory.PrepareEntities(chunk.Entities);
 
-                            _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
+                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                             //CreateVisualEntities(chunk, chunk);
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
@@ -189,7 +189,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
                             CreateLandscapeFromGenerator(chunk);
-                            _receivedServerChunks.Remove(chunk.ChunkID);
+                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.ChunkID);
                             if (chunk.StorageRequestTicket != 0)
                             {
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
@@ -204,7 +204,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             {
                                 //Data are present !
                                 chunk.Decompress(data.CubeData); //Set the data into the "Big Array"
-                                _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
+                                lock (_syncRoot) _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
                                 EntityFactory.PrepareEntities(chunk.Entities);
 
                                 //CreateVisualEntities(chunk, chunk);
