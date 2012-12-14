@@ -15,7 +15,6 @@ namespace Utopia.Shared.Entities
     public abstract class Entity : IEntity
     {
         private string _name = "No name";
-        private List<EntityParticule> _particules = new List<EntityParticule>();
 
         public enum EntityCollisionType : byte
         {
@@ -99,11 +98,7 @@ namespace Utopia.Shared.Entities
 
         [Description("Define particules emiting behaviours")]
         [ProtoMember(11)]
-        public List<EntityParticule> Particules
-        {
-            get { return _particules; }
-            set { _particules = value; }
-        }
+        public EntityParticule Particule { get; set; }
 
         /// <summary>
         /// Gets entity class id

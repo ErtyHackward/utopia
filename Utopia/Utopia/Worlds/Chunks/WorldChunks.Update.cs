@@ -223,7 +223,7 @@ namespace Utopia.Worlds.Chunks
 
             //Sort by this distance
             int index = 0;
-            foreach (var chunk in Chunks.AsParallel().OrderBy(x => x.DistanceFromPlayer))
+            foreach (var chunk in Chunks.OrderBy(x => x.DistanceFromPlayer))
             {
                 SortedChunks[index] = chunk;
                 index++;
