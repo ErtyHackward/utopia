@@ -100,6 +100,9 @@
     <Compile Include="ModelComp\Interfaces.cs" />
     <Compile Include="ModelComp\Line3d.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sprites\ColoredParticule.cs" />
+    <Compile Include="Sprites\Sprite3DBillBoardProc.cs" />
+    <Compile Include="Sprites\SpriteParticule.cs" />
     <Compile Include="Sprites\CubeColorProc.cs" />
     <Compile Include="Sprites\Sprite3DTextProc.cs" />
     <Compile Include="VertexFormats\VertexCubeLiquid.cs" />

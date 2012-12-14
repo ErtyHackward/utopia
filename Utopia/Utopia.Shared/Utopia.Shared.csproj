@@ -132,6 +132,7 @@
     <Compile Include="Configuration\UtopiaWorldConfiguration.cs" />
     <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
+    <Compile Include="Entities\EntityParticule.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
     <Compile Include="Entities\ResourcesCollector.cs" />
     <Compile Include="Entities\Concrete\Container.cs" />

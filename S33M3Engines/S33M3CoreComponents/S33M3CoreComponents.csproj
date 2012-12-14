@@ -264,7 +264,6 @@
     <Compile Include="Particules\Interfaces\IEmitter.cs" />
     <Compile Include="Particules\ParticuleEngine.cs" />
     <Compile Include="Particules\ParticuleGenerationMode.cs" />
-    <Compile Include="Particules\ParticulesCol\ColoredParticule.cs" />
     <Compile Include="Physics\Euler\EulerSimulator.cs" />
     <Compile Include="Physics\Impulse.cs" />
     <Compile Include="Physics\SimulatorCst.cs" />

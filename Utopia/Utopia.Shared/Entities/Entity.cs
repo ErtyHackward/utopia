@@ -4,6 +4,7 @@ using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.Entities
 {
@@ -14,6 +15,7 @@ namespace Utopia.Shared.Entities
     public abstract class Entity : IEntity
     {
         private string _name = "No name";
+        private List<EntityParticule> _particules = new List<EntityParticule>();
 
         public enum EntityCollisionType : byte
         {
@@ -93,6 +95,14 @@ namespace Utopia.Shared.Entities
         {
             get { return _name; }
             set { _name = value; }
+        }
+
+        [Description("Define particules emiting behaviours")]
+        [ProtoMember(11)]
+        public List<EntityParticule> Particules
+        {
+            get { return _particules; }
+            set { _particules = value; }
         }
 
         /// <summary>
