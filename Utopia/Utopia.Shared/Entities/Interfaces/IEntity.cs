@@ -4,6 +4,7 @@ using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -86,5 +87,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <returns></returns>
         EntityLink GetLink();
+
+        List<EntityParticule> Particules { get; set; }
     }
 }

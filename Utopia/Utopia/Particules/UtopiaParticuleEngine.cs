@@ -22,6 +22,8 @@ using Utopia.Shared.World;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Shared.Configuration;
 using Utopia.Worlds.Chunks;
+using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Voxel;
 
 namespace Utopia.Particules
 {
@@ -37,11 +39,14 @@ namespace Utopia.Particules
         private InputsManager _inputsManager;
         private VisualWorldParameters _worldParameters;
 
+        private ShaderResourceView _particulesSpritesResource;
+
         //Small Cube emitter, will emit on cube Change ! 
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private CubeEmitter _cubeEmitter;
         private IWorldChunks _worldChunks;
 
+        private SpriteEmitter _staticEntityEmitter;
         #endregion
 
         #region Public Properties
@@ -79,7 +84,7 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, 32);
+            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, 32));
             AddEmitter(_cubeEmitter);
 
             base.Initialize();
@@ -87,16 +92,26 @@ namespace Utopia.Particules
 
         public override void LoadContent(DeviceContext context)
         {
+            //Create the Static Entity billboard Particules Emitter
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Particules/", @"*.png", FilterFlags.Point, "ArrayTexture_Particules", out _particulesSpritesResource);
+            ToDispose(_particulesSpritesResource);
+
+            _staticEntityEmitter = new SpriteEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
+            AddEmitter(_staticEntityEmitter);
+
             base.LoadContent(context);
         }
 
         public override void Update(S33M3DXEngine.Main.GameTime timeSpent)
         {
+            StaticEntityEmiters();
             base.Update(timeSpent);
         }
         #endregion
 
         #region Private Methods
+
+        //Adding cube particule on cube destroyed !
         private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
             //Cube has been destroyed
@@ -105,6 +120,39 @@ namespace Utopia.Particules
                 //Emit Colored particules
                 _cubeEmitter.EmitParticuleForCubeDestruction(40, e.PreviousBlock, e.Position, ref _cameraManager.ActiveCamera.WorldPosition.Value);
             }
+        }
+
+        public void StaticEntityEmiters()
+        {
+            if (_worldChunks.Chunks == null) return;
+
+            //foreach (var chunk in _worldChunks.Chunks)
+            //{
+            //    if (chunk.isFrustumCulled == false && chunk.DistanceFromPlayer < _worldChunks.StaticEntityViewRange)
+            //    {
+            //        foreach (var entityType in chunk.VisualVoxelEntities)
+            //        {
+            //            foreach (var visualEntity in entityType.Value.Where(x => x.Entity.Particules.Count > 0))
+            //            {
+            //                VisualVoxelEntity entity = visualEntity; //
+
+            //                for (int i = 0; i < entity.Entity.Particules.Count; i++)
+            //                {
+            //                    var p = entity.Entity.Particules[i];
+            //                    var totsecond = (DateTime.Now - p.LastEmitedParticuleTime).TotalSeconds;
+            //                    if (totsecond > 2)
+            //                    {
+            //                        _staticEntityEmitter.EmitParticule(1, 5, p.EmitVelocity, p.AccelerationForces, entity.Entity.Position);
+            //                        p.LastEmitedParticuleTime = DateTime.Now;
+            //                    }
+
+            //                }
+
+            //            }
+            //        }
+            //    }
+            //}
+
         }
         #endregion
     }

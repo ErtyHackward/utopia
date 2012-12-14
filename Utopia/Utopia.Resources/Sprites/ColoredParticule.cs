@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3CoreComponents.Particules.ParticulesCol;
 using S33M3Resources.Structs;
 using SharpDX;
 
-namespace S33M3CoreComponents.Particules.ParticulesCol
+namespace Utopia.Resources.Sprites
 {
     public class ColoredParticule : BaseParticule
     {
