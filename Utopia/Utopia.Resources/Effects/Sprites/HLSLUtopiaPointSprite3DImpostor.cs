@@ -12,15 +12,17 @@ using SharpDX.D3DCompiler;
 
 namespace Utopia.Resources.Effects.Sprites
 {
-    public class HLSLPointSpriteColor3DBillBoard : HLSLShaderWrap
+    public class HLSLUtopiaPointSprite3DImpostor : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         #endregion
 
         #region Resources
+        public ShaderResource DiffuseTexture;
         #endregion
 
         #region Sampler
+        public ShaderSampler SamplerDiffuse;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -33,11 +35,19 @@ namespace Utopia.Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLPointSpriteColor3DBillBoard(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
+        public HLSLUtopiaPointSprite3DImpostor(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration, includeHandler)
         {
             //Create Constant Buffers interfaces ==================================================
             CBuffers.Add(CBPerFrame.Clone());
+
+            //Create the resource interfaces ==================================================
+            DiffuseTexture = new ShaderResource("DiffuseTexture");
+            ShaderResources.Add(DiffuseTexture);
+
+            //Create the Sampler interface ==================================================
+            SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
+            ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);

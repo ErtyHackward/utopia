@@ -86,10 +86,10 @@
     <Compile Include="Effects\Entities\HLSLVoxelModel.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModelInstanced.cs" />
     <Compile Include="Effects\Particules\HLSLCubeColorParticule.cs" />
-    <Compile Include="Effects\Sprites\HLSLPointSprite3DBillBoard.cs" />
-    <Compile Include="Effects\Sprites\HLSLPointSprite3DImpostor.cs" />
-    <Compile Include="Effects\Sprites\HLSLPointSprite3DText.cs" />
-    <Compile Include="Effects\Sprites\HLSLPointSpriteColor3DBillBoard.cs" />
+    <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DBillBoard.cs" />
+    <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DImpostor.cs" />
+    <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DText.cs" />
+    <Compile Include="Effects\Sprites\HLSLUtopiaPointSpriteColor3DBillBoard.cs" />
     <Compile Include="Effects\UtopiaIncludeHandler.cs" />
     <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />
