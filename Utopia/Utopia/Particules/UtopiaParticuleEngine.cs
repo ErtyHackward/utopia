@@ -41,6 +41,7 @@ namespace Utopia.Particules
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private CubeEmitter _cubeEmitter;
         private IWorldChunks _worldChunks;
+
         #endregion
 
         #region Public Properties
@@ -78,7 +79,7 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f,_worldParameters, _worldChunks);
+            _cubeEmitter = new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, 32);
             AddEmitter(_cubeEmitter);
 
             base.Initialize();
@@ -98,13 +99,11 @@ namespace Utopia.Particules
         #region Private Methods
         private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            //Happening when a block is replaced !
-
             //Cube has been destroyed
             if (e.NewBlockType == WorldConfiguration.CubeId.Air)
             {
                 //Emit Colored particules
-                _cubeEmitter.EmitParticule(40, e.PreviousBlock, e.Position);
+                _cubeEmitter.EmitParticule(40, e.PreviousBlock, e.Position, ref _cameraManager.ActiveCamera.WorldPosition.Value);
             }
         }
         #endregion

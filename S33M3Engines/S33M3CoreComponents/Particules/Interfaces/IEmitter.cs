@@ -28,5 +28,7 @@ namespace S33M3CoreComponents.Particules.Interfaces
         /// Will stop this particules emmiter and all its particules will be removed
         /// </summary>
         void Stop();
+
+        double MaxRenderingDistance { get; set; }
     }
 }

@@ -49,10 +49,20 @@ namespace Utopia.Particules
         private IWorldChunks _worldChunk;
         private BoundingBox _cubeBB;
 
+        private double _maxRenderingDistanceSquared;
+        private double _maxRenderingDistance;
+
         private Sprite3DRenderer<CubeColorProc> _particuleRenderer;
+
         #endregion
 
         #region Public Properties
+        public double MaxRenderingDistance
+        {
+            get { return _maxRenderingDistance; }
+            set { _maxRenderingDistance = value; _maxRenderingDistanceSquared = value * value; }
+        }
+
         public ParticuleEngine ParentParticuleEngine { get; set; }
 
         public bool isStopped
@@ -74,7 +84,8 @@ namespace Utopia.Particules
                            float maximumAge,
                            float size,
                            VisualWorldParameters visualWorldParameters,
-                           IWorldChunks worldChunk)
+                           IWorldChunks worldChunk,
+                           double maxRenderingDistance)
         {
             _cubeColorSampled = new Dictionary<int, Color[]>();
             _fileNamePatern = fileNamePatern;
@@ -82,6 +93,7 @@ namespace Utopia.Particules
             _visualWorldParameters = visualWorldParameters;
             _biomeColorFilePath = biomeColorFilePath;
 
+            MaxRenderingDistance = maxRenderingDistance;
             _worldChunk = worldChunk;
             _isStopped = false;
             _maximumAge = maximumAge;
@@ -110,8 +122,11 @@ namespace Utopia.Particules
                                                                                             context));
         }
 
-        public void EmitParticule(int nbr, TerraCube cube, Vector3I CubeLocation)
+        public void EmitParticule(int nbr, TerraCube cube, Vector3I CubeLocation, ref Vector3D cameraLocation)
         {
+            //Check distance to emit
+            if (MaxRenderingDistance > 0 && Vector3D.DistanceSquared(cameraLocation, new Vector3D(CubeLocation)) > _maxRenderingDistanceSquared) return;
+
             //GetCube Profile
             VisualChunk chunk = null;
             var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];

@@ -128,6 +128,13 @@ namespace S33M3Resources.Structs
             this.Z = floatVector3.Z;
         }
 
+        public Vector3D(Vector3I vector3)
+        {
+            this.X = vector3.X;
+            this.Y = vector3.Y;
+            this.Z = vector3.Z;
+        }
+
 
         public double Length()
         {
