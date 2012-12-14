@@ -25,7 +25,7 @@ namespace Utopia.Resources.Sprites
         private VertexBuffer<VertexPointSprite3DTexCoord> _vb;
         private bool _isCollectionDirty;
         private SpriteFont _spriteFont;
-        private HLSLPointSprite3DText _effect;
+        private HLSLUtopiaPointSprite3DText _effect;
         private SamplerState _spriteSampler;
         private Include _sharedCBIncludeHandler;
         private iCBuffer _frameSharedCB;
@@ -46,7 +46,7 @@ namespace Utopia.Resources.Sprites
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
-            _effect = ToDispose(new HLSLPointSprite3DText(context.Device, _effectFilePath, VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
+            _effect = ToDispose(new HLSLUtopiaPointSprite3DText(context.Device, _effectFilePath, VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             //Set the Texture
             _effect.DiffuseTexture.Value = _spriteFont.SpriteTexture.Texture;

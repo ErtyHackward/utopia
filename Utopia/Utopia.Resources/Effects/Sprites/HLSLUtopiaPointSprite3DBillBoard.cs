@@ -12,7 +12,7 @@ using SharpDX.D3DCompiler;
 
 namespace Utopia.Resources.Effects.Sprites
 {
-    public class HLSLPointSprite3DBillBoard : HLSLShaderWrap
+    public class HLSLUtopiaPointSprite3DBillBoard : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         #endregion
@@ -35,7 +35,7 @@ namespace Utopia.Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLPointSprite3DBillBoard(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
+        public HLSLUtopiaPointSprite3DBillBoard(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration, includeHandler)
         {
             //Create Constant Buffers interfaces ==================================================
