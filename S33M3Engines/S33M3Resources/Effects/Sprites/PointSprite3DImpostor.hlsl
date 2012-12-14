@@ -2,7 +2,11 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-#include <SharedFrameCB.hlsl>
+cbuffer PerFrame
+{
+	matrix ViewProjection;         //Normal ViewProjection
+	float3 CameraWorldPosition;    //The camera in world position coordinate
+}
 
 //--------------------------------------------------------------------------------------
 // Texture Samplers

@@ -5,7 +5,7 @@ using SharpDX.Direct3D11;
 using S33M3DXEngine.VertexFormat;
 using S33M3Resources.Structs;
 
-namespace UtopiaContent.Effects.Entities
+namespace Utopia.Resources.Effects.Entities
 {
     public class HLSLVoxelModel : HLSLShaderWrap
     {

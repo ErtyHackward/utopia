@@ -24,6 +24,7 @@ using Color = SharpDX.Color;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs.Landscape;
 using System.Threading.Tasks;
+using Utopia.Resources.Sprites;
 
 namespace Utopia.Particules
 {
@@ -122,7 +123,7 @@ namespace Utopia.Particules
                                                                                             context));
         }
 
-        public void EmitParticule(int nbr, TerraCube cube, Vector3I CubeLocation, ref Vector3D cameraLocation)
+        public void EmitParticuleForCubeDestruction(int nbr, TerraCube cube, Vector3I CubeLocation, ref Vector3D cameraLocation)
         {
             //Check distance to emit
             if (MaxRenderingDistance > 0 && Vector3D.DistanceSquared(cameraLocation, new Vector3D(CubeLocation)) > _maxRenderingDistanceSquared) return;

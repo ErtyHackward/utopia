@@ -21,10 +21,10 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
-using UtopiaContent.Effects.Weather;
 using S33M3DXEngine.Threading;
 using System.Threading.Tasks;
 using Ninject;
+using Utopia.Resources.Effects.Weather;
 
 namespace Utopia.Worlds.SkyDomes.SharedComp
 {

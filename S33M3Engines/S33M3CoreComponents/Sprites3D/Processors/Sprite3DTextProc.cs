@@ -29,22 +29,24 @@ namespace S33M3CoreComponents.Sprites3D.Processors
         private SamplerState _spriteSampler;
         private Include _sharedCBIncludeHandler;
         private iCBuffer _frameSharedCB;
+        private string _effectFilePath;
         #endregion
 
         #region Public Properties
         #endregion
-        public Sprite3DTextProc(SpriteFont spriteFont, SamplerState SpriteSampler, Include sharedCBIncludeHandler, iCBuffer frameSharedCB)
+        public Sprite3DTextProc(SpriteFont spriteFont, SamplerState SpriteSampler, Include sharedCBIncludeHandler, iCBuffer frameSharedCB, string EffectFilePath)
         {
             _spriteFont = spriteFont;
             _spriteSampler = SpriteSampler;
             _sharedCBIncludeHandler = sharedCBIncludeHandler;
             _frameSharedCB = frameSharedCB;
+            _effectFilePath = EffectFilePath;
         }
 
         #region Public Methods
         public void Init(DeviceContext context, ResourceUsage usage = ResourceUsage.Dynamic)
         {
-            _effect = ToDispose(new HLSLPointSprite3DText(context.Device, @"Effects\Sprites\PointSprite3DText.hlsl", VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
+            _effect = ToDispose(new HLSLPointSprite3DText(context.Device, _effectFilePath, VertexPointSprite3DTexCoord.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             //Set the Texture
             _effect.DiffuseTexture.Value = _spriteFont.SpriteTexture.Texture;

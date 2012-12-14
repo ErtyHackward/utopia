@@ -119,6 +119,21 @@
     <Content Include="EffectsPacks\Default\Entities\LoadingCube.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="EffectsPacks\Default\Particules\CubeColorParticule.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EffectsPacks\Default\Sprites\PointSpriteColor3DBillBoard.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EffectsPacks\Default\Sprites\PointSprite3DBillBoard.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EffectsPacks\Default\Sprites\PointSprite3DImpostor.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EffectsPacks\Default\Sprites\PointSprite3DText.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="GUI\Skins\SandBox\SandBox.skin.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

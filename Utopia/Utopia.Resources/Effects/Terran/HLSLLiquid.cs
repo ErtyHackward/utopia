@@ -8,7 +8,6 @@ using S33M3DXEngine.VertexFormat;
 using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
-using UtopiaContent.Effects;
 
 namespace Utopia.Resources.Effects.Terran
 {

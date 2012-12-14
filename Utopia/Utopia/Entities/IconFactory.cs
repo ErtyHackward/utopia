@@ -9,7 +9,6 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using UtopiaContent.Effects.Entities;
 using System.Collections.Generic;
 using SharpDX.DXGI;
 using Utopia.Shared.Settings;
@@ -30,6 +29,7 @@ using Resource = SharpDX.Direct3D11.Resource;
 using Utopia.Shared.Configuration;
 using System.Linq;
 using Utopia.Shared.World;
+using Utopia.Resources.Effects.Entities;
 
 namespace Utopia.Entities
 {

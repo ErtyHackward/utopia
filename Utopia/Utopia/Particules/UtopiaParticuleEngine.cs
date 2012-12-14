@@ -103,7 +103,7 @@ namespace Utopia.Particules
             if (e.NewBlockType == WorldConfiguration.CubeId.Air)
             {
                 //Emit Colored particules
-                _cubeEmitter.EmitParticule(40, e.PreviousBlock, e.Position, ref _cameraManager.ActiveCamera.WorldPosition.Value);
+                _cubeEmitter.EmitParticuleForCubeDestruction(40, e.PreviousBlock, e.Position, ref _cameraManager.ActiveCamera.WorldPosition.Value);
             }
         }
         #endregion

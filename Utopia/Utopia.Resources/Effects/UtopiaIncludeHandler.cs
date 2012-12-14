@@ -7,7 +7,7 @@ using S33m3Engines.Effects;
 using SharpDX.D3DCompiler;
 using Utopia.Shared.Settings;
 
-namespace UtopiaContent.Effects
+namespace Utopia.Resources.Effects
 {
     public class UtopiaIncludeHandler : DefaultIncludeHandler
     {

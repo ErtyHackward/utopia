@@ -12,7 +12,6 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
-using UtopiaContent.Effects.Entities;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Sprites2D;
@@ -27,6 +26,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Utopia.Resources.Effects.Entities;
 
 namespace Utopia.Components
 {

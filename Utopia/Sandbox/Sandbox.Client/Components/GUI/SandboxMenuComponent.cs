@@ -9,7 +9,6 @@ using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
-using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Meshes;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs.Vertex;
@@ -20,6 +19,7 @@ using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Color = SharpDX.Color;
+using Utopia.Resources.Effects.Entities;
 
 namespace Sandbox.Client.Components.GUI
 {

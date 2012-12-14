@@ -2,7 +2,10 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-#include <SharedFrameCB.hlsl>
+cbuffer PerFrame
+{
+	matrix ViewProjection;         //Normal ViewProjection
+}
 
 //--------------------------------------------------------------------------------------
 // Texture Samplers

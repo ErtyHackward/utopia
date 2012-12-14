@@ -14,7 +14,6 @@ using S33M3Resources.Structs.Vertex;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
-using UtopiaContent.Effects.Entities;
 using Utopia.Resources.VertexFormats;
 
 namespace Utopia.Worlds.Chunks
