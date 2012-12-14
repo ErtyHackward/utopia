@@ -53,6 +53,8 @@ namespace S33M3CoreComponents.Particules.Emitters
 
         #region Public Properties
 
+        public double MaxRenderingDistance { get; set; }
+
         public ParticuleEngine ParentParticuleEngine { get; set; }
 
         public List<BaseParticule> Particules
