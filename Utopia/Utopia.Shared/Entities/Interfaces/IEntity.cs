@@ -88,6 +88,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <returns></returns>
         EntityLink GetLink();
 
-        List<EntityParticule> Particules { get; set; }
+        EntityParticule Particule { get; set; }
     }
 }
