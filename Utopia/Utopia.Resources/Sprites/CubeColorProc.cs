@@ -15,8 +15,10 @@ using SharpDX;
 using SharpDX.D3DCompiler;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
+using Utopia.Resources.Effects.Particules;
+using Utopia.Shared.Settings;
 
-namespace S33M3CoreComponents.Sprites3D.Processors
+namespace Utopia.Resources.Sprites
 {
     public class CubeColorProc : BaseComponent, ISprite3DProcessor
     {
@@ -48,7 +50,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             //Get primitive data
             Generator.Cube(1.0f, out vbCube, out ibCube);
 
-            _effect = ToDispose(new HLSLCubeColorParticule(context.Device, @"Effects\Sprites\CubeColorParticule.hlsl", VertexCubeColor.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
+            _effect = ToDispose(new HLSLCubeColorParticule(context.Device, ClientSettings.EffectPack + @"Particules/CubeColorParticule.hlsl", VertexCubeColor.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             _spritesvertexCollection = new List<VertexCubeColor>();
             _vb = ToDispose(new VertexBuffer<VertexCubeColor>(context.Device, 16, VertexCubeColor.VertexDeclaration, PrimitiveTopology.TriangleList, "VB Sprite3DColorBillBoardProcessor", usage, 10));

@@ -10,17 +10,19 @@ using S33M3DXEngine.VertexFormat;
 using SharpDX.Direct3D11;
 using SharpDX.D3DCompiler;
 
-namespace S33M3Resources.Effects.Sprites
+namespace Utopia.Resources.Effects.Sprites
 {
-    public class HLSLCubeColorParticule : HLSLShaderWrap
+    public class HLSLPointSprite3DBillBoard : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         #endregion
 
         #region Resources
+        public ShaderResource DiffuseTexture;
         #endregion
 
         #region Sampler
+        public ShaderSampler SamplerDiffuse;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -33,11 +35,19 @@ namespace S33M3Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLCubeColorParticule(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
+        public HLSLPointSprite3DBillBoard(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame, Include includeHandler, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration, includeHandler)
         {
             //Create Constant Buffers interfaces ==================================================
             CBuffers.Add(CBPerFrame.Clone());
+
+            //Create the resource interfaces ==================================================
+            DiffuseTexture = new ShaderResource("DiffuseTexture");
+            ShaderResources.Add(DiffuseTexture);
+
+            //Create the Sampler interface ==================================================
+            SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
+            ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
