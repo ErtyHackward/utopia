@@ -106,7 +106,7 @@ namespace Utopia.Particules
             _particuleRenderer = ToDispose(new Sprite3DRenderer<CubeColorProc>(processor,
                                                                                             DXStates.Rasters.Default,
                                                                                             DXStates.Blenders.Disabled,
-                                                                                            DXStates.DepthStencils.DepthReadEnabled,
+                                                                                            DXStates.DepthStencils.DepthReadWriteEnabled,
                                                                                             context));
         }
 
@@ -158,7 +158,11 @@ namespace Utopia.Particules
                     Position = new FTSValue<Vector3D>(CubeCenteredPosition),
                     Size = new Vector2(0.1f,0.1f),
                     Velocity = finalVelocity,
-                    ColorReceived = blockAvgColorReceived
+                    ColorReceived = blockAvgColorReceived,
+                    SpinningRotation = Quaternion.RotationAxis(Vector3.UnitY, _rnd.NextFloat(-MathHelper.Pi / 8, MathHelper.Pi / 8)) *
+                                       Quaternion.RotationAxis(Vector3.UnitX, _rnd.NextFloat(-MathHelper.Pi / 16, MathHelper.Pi / 16)) *
+                                       Quaternion.RotationAxis(Vector3.UnitZ, _rnd.NextFloat(-MathHelper.Pi / 16, MathHelper.Pi / 16)),
+                    RotationAngles = new FTSValue<Quaternion>(Quaternion.Identity)
                 });
 
                 nbr--;
@@ -184,7 +188,11 @@ namespace Utopia.Particules
             for (int i = 0; i < _particules.Count; i++)
             {
                 p = _particules[i];
-                Vector3D.Lerp(ref p.Position.ValuePrev,ref p.Position.Value, interpolationHd, out p.Position.ValueInterp);
+                if (!p.isFrozen)
+                {
+                    Vector3D.Lerp(ref p.Position.ValuePrev, ref p.Position.Value, interpolationHd, out p.Position.ValueInterp);
+                    Quaternion.Slerp(ref p.RotationAngles.ValuePrev, ref p.RotationAngles.Value, interpolationLd, out p.RotationAngles.ValueInterp);
+                }
             }
         }
 
@@ -204,7 +212,7 @@ namespace Utopia.Particules
                 //Add a new Particule
                 Matrix result;
                 Matrix scaling = Matrix.Scaling(p.Size.X, p.Size.Y, p.Size.Y);
-                Matrix rotation = Matrix.Identity; //Identity rotation
+                Matrix rotation = Matrix.RotationQuaternion(p.RotationAngles.ValueInterp); //Identity rotation
                 Matrix translation = Matrix.Translation(position);
 
                 result = scaling * rotation * translation;
@@ -299,12 +307,16 @@ namespace Utopia.Particules
                     p.Age += elapsedTime; //Age in Seconds
                     p.computationAge += elapsedTime;
 
-                    if (p.isFrozen) return;
-                    p.Position.BackUpValue();
-                    p.Position.Value = ((0.5 * p.computationAge * p.computationAge) * CubeEmitter.GravityForce)    //Acceleration force
-                                   + (p.computationAge * p.Velocity)                              //Constant force
-                                   + p.InitialPosition;                                //Initial position of the particule
+                    if (!p.isFrozen)
+                    {
+                        p.Position.BackUpValue();
+                        p.Position.Value = ((0.5 * p.computationAge * p.computationAge) * CubeEmitter.GravityForce)    //Acceleration force
+                                       + (p.computationAge * p.Velocity)                              //Constant force
+                                       + p.InitialPosition;                                //Initial position of the particule
 
+                        p.RotationAngles.BackUpValue();
+                        p.RotationAngles.Value *= p.SpinningRotation;
+                    }
 
                     CollisionCheck(p);
                 });
@@ -312,21 +324,38 @@ namespace Utopia.Particules
 
         private void CollisionCheck(ColoredParticule p)
         {
+
             if (_worldChunk.isCollidingWithTerrain(ref _cubeBB, ref p.Position.Value) > 0)
             {
-                if (p.wasColliding)
+                if (!p.isFrozen)
                 {
+                    if (p.wasColliding)
+                    {
+                        p.isFrozen = true;
+                        return;
+                    }
+                    //Colliding with landscape !
+                    p.computationAge = 0;
+                    p.Velocity = (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * _rnd.NextDouble(0.5, 0.9)).AsVector3();
+                    p.InitialPosition = p.Position.ValuePrev;
                     p.Position.Value = p.Position.ValuePrev;
-                    p.isFrozen = true;
-                    return;
+                    p.wasColliding = true;
                 }
-                //Colliding with landscape !
-                p.computationAge = 0;
-                p.Velocity = (Vector3D.Normalize((p.Position.ValuePrev - p.Position.Value)) * 0.75).AsVector3();
-                p.InitialPosition = p.Position.ValuePrev;
-                p.Position.Value = p.Position.ValuePrev;
-                p.wasColliding = true;
             }
+            else
+            {
+                //If frozen and not colliding !
+                if (p.isFrozen)
+                {
+                    //Colliding with landscape !
+                    p.computationAge = 0;
+                    p.InitialPosition = p.Position.Value;
+                    p.Position.ValuePrev = p.Position.Value;
+                    p.isFrozen = false;
+                    p.wasColliding = false;
+                }
+            }
+
         }
         #endregion
     }

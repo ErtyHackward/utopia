@@ -187,9 +187,19 @@ namespace S33M3CoreComponents.Maths
                 return (REAL_UNIT_INT * (int)(0x7FFFFFFF & (w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)))));
             }
 
+            public float NextFloat()
+            {
+                return (float)NextDouble();
+            }
+
             public double NextDouble(double minimum, double maximum)
             {
                 return minimum + NextDouble() * (maximum - minimum);
+            }
+
+            public float NextFloat(float minimum, float maximum)
+            {
+                return (float)NextDouble(minimum, maximum);
             }
 
             /// <summary>
