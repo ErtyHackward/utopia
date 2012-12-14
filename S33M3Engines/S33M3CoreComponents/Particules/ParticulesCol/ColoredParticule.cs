@@ -15,5 +15,7 @@ namespace S33M3CoreComponents.Particules.ParticulesCol
         public Color ParticuleColor;
         public ByteColor ColorReceived;
         public Vector3D InitialPosition;
+        public Quaternion SpinningRotation;
+        public FTSValue<Quaternion> RotationAngles;
     }
 }
