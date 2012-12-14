@@ -8,10 +8,10 @@ using SharpDX.Direct3D11;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
-using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Settings;
 using Color = SharpDX.Color;
+using Utopia.Resources.Effects.Entities;
 
 namespace Sandbox.Client.Components.GUI
 {

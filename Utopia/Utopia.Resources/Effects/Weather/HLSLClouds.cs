@@ -5,7 +5,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3Resources.VertexFormats;
 
-namespace UtopiaContent.Effects.Weather
+namespace Utopia.Resources.Effects.Weather
 {
     public class HLSLClouds : HLSLShaderWrap
     {

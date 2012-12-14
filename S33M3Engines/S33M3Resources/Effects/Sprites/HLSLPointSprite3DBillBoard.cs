@@ -15,6 +15,15 @@ namespace S33M3Resources.Effects.Sprites
     public class HLSLPointSprite3DBillBoard : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
+        [StructLayout(LayoutKind.Explicit, Size = 128)]
+        public struct CBPerFrame_Struct
+        {
+            [FieldOffset(0)]
+            public Matrix ViewProjection;
+            [FieldOffset(64)]
+            public Matrix InvertedOrientation;
+        }
+        public CBuffer<CBPerFrame_Struct> PerFrame;
         #endregion
 
         #region Resources
@@ -40,6 +49,9 @@ namespace S33M3Resources.Effects.Sprites
         {
             //Create Constant Buffers interfaces ==================================================
             CBuffers.Add(CBPerFrame.Clone());
+
+            PerFrame = ToDispose(new CBuffer<CBPerFrame_Struct>(device, "PerFrame"));
+            CBuffers.Add(PerFrame);
 
             //Create the resource interfaces ==================================================
             DiffuseTexture = new ShaderResource("DiffuseTexture");

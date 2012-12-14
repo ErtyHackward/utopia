@@ -23,7 +23,6 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World;
 using Utopia.Worlds.SkyDomes;
-using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Entities.Concrete;
 using S33M3CoreComponents.Meshes;
@@ -34,9 +33,10 @@ using S33M3Resources.Structs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
-using S33M3CoreComponents.Sprites3D.Processors;
 using Utopia.Components;
-using UtopiaContent.Effects;
+using Utopia.Resources.Effects.Entities;
+using Utopia.Resources.Effects;
+using Utopia.Resources.Sprites;
 
 namespace Utopia.Entities.Managers
 {
@@ -201,9 +201,9 @@ namespace Utopia.Entities.Managers
             //Create the font to base use by the sprite3dText Processor
             _dynamicEntityNameFont = ToDispose(new SpriteFont());
             _dynamicEntityNameFont.Initialize("Lucida Console", 32f, System.Drawing.FontStyle.Regular, true, context.Device, false);
-
+            
             //Create the processor that will be used by the Sprite3DRenderer
-            Sprite3DTextProc textProcessor = ToDispose(new Sprite3DTextProc(_dynamicEntityNameFont, RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text), ToDispose(new UtopiaIncludeHandler()), _sharedFrameCB.CBPerFrame));
+            Sprite3DTextProc textProcessor = ToDispose(new Sprite3DTextProc(_dynamicEntityNameFont, RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_Text), ToDispose(new UtopiaIncludeHandler()), _sharedFrameCB.CBPerFrame, ClientSettings.EffectPack + @"Sprites\PointSprite3DText.hlsl"));
 
             //Create a sprite3Drenderer that will use the previously created processor to accumulate text data for drawing.
             _dynamicEntityNameRenderer = ToDispose(new Sprite3DRenderer<Sprite3DTextProc>(textProcessor, 

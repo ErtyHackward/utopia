@@ -7,7 +7,6 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Models;
 using Utopia.Worlds.SkyDomes;
-using UtopiaContent.Effects.Entities;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3CoreComponents.Meshes;
 using S33M3DXEngine.Buffers;
@@ -27,6 +26,7 @@ using Utopia.Shared.Entities.Dynamic;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.World;
+using Utopia.Resources.Effects.Entities;
 
 namespace Utopia.Entities.Renderer
 {

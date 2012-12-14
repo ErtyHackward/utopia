@@ -11,8 +11,8 @@ using SharpDX.Direct3D11;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
-using UtopiaContent.Effects.Entities;
 using System.Linq;
+using Utopia.Resources.Effects.Entities;
 
 namespace Utopia.Entities
 {
