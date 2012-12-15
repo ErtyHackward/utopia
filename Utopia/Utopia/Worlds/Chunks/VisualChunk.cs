@@ -26,6 +26,8 @@ using Utopia.Resources.VertexFormats;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Entities.Events;
+using Utopia.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -99,8 +101,6 @@ namespace Utopia.Worlds.Chunks
         private bool _isServerRequested;
         private DateTime _serverRequestTime;
 
-
-
         public VisualChunk[] SurroundingChunks;
         /// <summary>
         /// Whenever the chunk mesh are ready to be rendered to screen
@@ -148,6 +148,8 @@ namespace Utopia.Worlds.Chunks
         }
 
         public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
+
+        public List<EntityMetaData> EmitterStaticEntities;
 
         public int StorageRequestTicket { get; set; }
 
@@ -234,6 +236,7 @@ namespace Utopia.Worlds.Chunks
             _singleArrayContainer = singleArrayContainer;
             _voxelModelManager = voxelModelManager;
             VisualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
+            EmitterStaticEntities = new List<EntityMetaData>();
             CubeRange = cubeRange;
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
@@ -403,26 +406,13 @@ namespace Utopia.Worlds.Chunks
             }
             
             VisualVoxelEntities.Clear();
+            EmitterStaticEntities.Clear();
         }
 
         void Entities_EntityRemoved(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
         {
-            //Remove the entity from Visual Model
-            foreach (var pair in VisualVoxelEntities)
-            {
-                pair.Value.RemoveAll(x => x.Entity == e.Entity);
-            }
-
-            ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
-            if (e.AtChunkCreationTime == false && lightEntity != null)
-            {
-                //Get the Cube where is located the entity
-                Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
-                Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
-                                                            MathHelper.Fastfloor(entityWorldPosition.Y),
-                                                            MathHelper.Fastfloor(entityWorldPosition.Z));
-                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
-            }
+            RemoveVoxelEntity(e);
+            RemoveParticuleEmitterEntity(e);
         }
 
         /// <summary>
@@ -430,15 +420,20 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Entities_EntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
+        private void Entities_EntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
         {
-            IVoxelEntity voxelEntity = e.Entity as IVoxelEntity;
+            AddVoxelEntity(e);
+            AddParticuleEmitterEntity(e);
+        }
 
+        private void AddVoxelEntity(EntityCollectionEventArgs e)
+        {
+            var voxelEntity = e.Entity as IVoxelEntity;
             if (voxelEntity == null) return; //My static entity is not a Voxel Entity => Not possible to render it so !!!
 
             //Create the Voxel Model Instance for the Item
-            VisualVoxelModel model= null;
-            if (!string.IsNullOrEmpty(voxelEntity.ModelName))  model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+            VisualVoxelModel model = null;
+            if (!string.IsNullOrEmpty(voxelEntity.ModelName)) model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
 
             if (model != null && voxelEntity.ModelInstance == null) //The model blueprint is existing, and I need to create an instance of it !
             {
@@ -457,7 +452,7 @@ namespace Utopia.Worlds.Chunks
                 else if (voxelEntity is IItem)
                 {
                     var item = voxelEntity as IItem;
-                    instanceRotation = item.Rotation;                
+                    instanceRotation = item.Rotation;
                 }
 
                 //Apply special scaling to created entity (By default all blue print are 16 times too big.
@@ -478,7 +473,7 @@ namespace Utopia.Worlds.Chunks
                     visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position).EmissiveColor;
                 }
 
-                
+
                 if (visualVoxelEntity.VisualVoxelModel.Initialized == false)
                 {
                     visualVoxelEntity.VisualVoxelModel.BuildMesh();
@@ -510,6 +505,37 @@ namespace Utopia.Worlds.Chunks
                     _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
                 }
             }
+        }
+        private void RemoveVoxelEntity(EntityCollectionEventArgs e)
+        {
+            //Remove the entity from Visual Model
+            foreach (var pair in VisualVoxelEntities)
+            {
+                pair.Value.RemoveAll(x => x.Entity == e.Entity);
+            }
+
+            ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
+            if (e.AtChunkCreationTime == false && lightEntity != null)
+            {
+                //Get the Cube where is located the entity
+                Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
+                Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
+                                                            MathHelper.Fastfloor(entityWorldPosition.Y),
+                                                            MathHelper.Fastfloor(entityWorldPosition.Z));
+                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
+            }
+        }
+
+        private void AddParticuleEmitterEntity(EntityCollectionEventArgs e)
+        {
+            if (e.Entity.Particule.ParticuleType == EntityParticuleType.None) return;
+            EmitterStaticEntities.Add(new EntityMetaData() { Entity = e.Entity, EntityLastEmitTime = DateTime.Now });
+        }
+
+        private void RemoveParticuleEmitterEntity(EntityCollectionEventArgs e)
+        {
+            if (e.Entity.Particule.ParticuleType == EntityParticuleType.None) return;
+            EmitterStaticEntities.Remove(EmitterStaticEntities.Find(x => x.Entity == e.Entity));
         }
 
         #endregion
@@ -563,7 +589,7 @@ namespace Utopia.Worlds.Chunks
             RefreshWorldMatrix();
 
             VisualVoxelEntities.Clear();
-
+            EmitterStaticEntities.Clear();
         }
 
         #endregion

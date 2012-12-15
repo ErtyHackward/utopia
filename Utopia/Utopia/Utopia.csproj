@@ -137,6 +137,7 @@
     <Compile Include="Editor\EntityEditorUI.cs" />
     <Compile Include="Editor\Spawn.cs" />
     <Compile Include="Components\SharedFrameCB.cs" />
+    <Compile Include="Entities\EntityMetaData.cs" />
     <Compile Include="Entities\EntityMovement\EntityRotations.cs" />
     <Compile Include="Entities\FileModelStorage.cs" />
     <Compile Include="Entities\IconFactory.cs" />
