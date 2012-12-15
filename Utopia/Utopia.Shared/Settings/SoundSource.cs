@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Settings
 {
@@ -8,6 +9,7 @@ namespace Utopia.Shared.Settings
     {
         [Description("Sound file path, can be relative one"), Category("General")]
         [ProtoMember(1)]
+        [TypeConverter(typeof(SoundSelector))]
         public string SoundFilePath { get; set; }
 
         [Description("Sound alias name"), Category("General")]
