@@ -127,14 +127,25 @@ namespace Utopia.Particules
 
         public void StaticEntityEmiters()
         {
-            //if (_worldChunks.Chunks == null) return;
-            //foreach (VisualChunk chunk in _worldChunks.Chunks.Where(x => x.isFrustumCulled == false && x.DistanceFromPlayer < _worldChunks.StaticEntityViewRange))
-            //{
-            //    foreach (var entity in chunk.Entities.Entities.Where(x => x.Value.Particule.ParticuleType == EntityParticuleType.Billboard))
-            //    {
-            //        _staticEntityEmitter.EmitParticule(1, 5, entity.Value.Particule.EmitVelocity, entity.Value.Particule.AccelerationForces, entity.Value.Position);
-            //    }
-            //}
+            if (_worldChunks.Chunks == null) return;
+            foreach (VisualChunk chunk in _worldChunks.Chunks.Where(x => x.isFrustumCulled == false && x.DistanceFromPlayer < _worldChunks.StaticEntityViewRange))
+            {
+                foreach (var entityWithMeta in chunk.EmitterStaticEntities)
+                {
+                    switch (entityWithMeta.Entity.Particule.ParticuleType)
+                    {
+                        case EntityParticuleType.Billboard:
+                            if ((DateTime.Now - entityWithMeta.EntityLastEmitTime).TotalSeconds > 5)
+                            {
+                                _staticEntityEmitter.EmitParticule(1, 5, entityWithMeta.Entity.Particule.EmitVelocity, entityWithMeta.Entity.Particule.AccelerationForces, entityWithMeta.Entity.Position);
+                                entityWithMeta.EntityLastEmitTime = DateTime.Now;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
         #endregion
     }
