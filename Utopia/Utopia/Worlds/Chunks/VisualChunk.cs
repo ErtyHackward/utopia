@@ -598,7 +598,7 @@ namespace Utopia.Worlds.Chunks
 
         protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
         {
-            State = ChunkState.LandscapeCreated;
+            //State = ChunkState.LandscapeCreated; Don't raise it here !
             base.BlockBufferChanged(sender, e);
         }
 

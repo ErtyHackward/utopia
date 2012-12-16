@@ -228,7 +228,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             VisualChunk NeightBorChunk;
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -237,7 +237,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -246,7 +246,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -255,7 +255,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -264,7 +264,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -273,7 +273,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -282,7 +282,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
@@ -291,7 +291,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
-            if (NeightBorChunk.ChunkID != mainChunkId)
+            if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
