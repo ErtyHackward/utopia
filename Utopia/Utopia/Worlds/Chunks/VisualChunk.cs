@@ -94,6 +94,8 @@ namespace Utopia.Worlds.Chunks
         
         public bool IsOutsideLightSourcePropagated { get; set; }
         public ThreadsManager.ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
+        public string ThreadLockedBy { get; set; }
+
         public int UpdateOrder { get; set; }              // Variable for sync drawing at rebuild time.
         public bool IsBorderChunk { get; set; }               // Set to true if the chunk is located at the border of the visible world !
         private bool _ready2Draw;

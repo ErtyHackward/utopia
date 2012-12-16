@@ -107,6 +107,9 @@ namespace Utopia.Worlds.Chunks
                 VisualChunk localChunk = chunk;
                 //Start chunk creation process in a threaded way !
                 localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
+#if DEBUG
+                localChunk.ThreadLockedBy = "CreateNewChunk";
+#endif
                 //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
                 S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(localChunk));
             }
@@ -147,6 +150,9 @@ namespace Utopia.Worlds.Chunks
                 {
                     //Check if the surrounding chunk from this chunk are in the correct state = ChunkState.InnerLightsSourcePropagated
                     localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
+#if DEBUG
+                    localChunk.ThreadLockedBy = "PropagateOuterChunkLights";
+#endif
                     //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
                     S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(localChunk));
                 }
@@ -172,7 +178,10 @@ namespace Utopia.Worlds.Chunks
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
                 if (localChunk.SurroundingChunksMinimumState(ChunkState.OuterLightSourcesProcessed))
                 {
-                    localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked; 
+                    localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;
+#if DEBUG
+                    localChunk.ThreadLockedBy = "CreateChunkMeshes";
+#endif
                     //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
                     S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk));
                 }
