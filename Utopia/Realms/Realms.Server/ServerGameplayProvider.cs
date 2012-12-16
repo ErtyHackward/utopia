@@ -52,7 +52,7 @@ namespace Realms.Server
             }
 
             //Add coins + Torch
-            var torch = _server.EntityFactory.CreateEntity<SideLightSource>();
+            var torch = _server.EntityFactory.CreateEntity<LightSource>();
             dEntity.Inventory.PutItem(torch);
 
             //var item = (IItem)EntityFactory.Instance.CreateEntity((SandboxEntityClassId.Shovel));

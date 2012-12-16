@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities
         public const ushort Chair = 1001;
         public const ushort Door = 1002;
         public const ushort Bed = 1003;
-        public const ushort SideLightSource = 1004;
+        public const ushort LightSource = 1004;
         public const ushort OrientedBlockLinkedItem = 1005;
         public const ushort OrientedBlockItem = 1006;
 

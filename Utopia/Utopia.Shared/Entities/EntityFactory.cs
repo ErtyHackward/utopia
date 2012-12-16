@@ -100,7 +100,7 @@ namespace Utopia.Shared.Entities
 
             blockLinkedItem.AddSubType(100, typeof(OrientedBlockLinkedItem));
             blockLinkedItem.AddSubType(101, typeof(Plant));
-            blockLinkedItem.AddSubType(102, typeof(SideLightSource));
+            blockLinkedItem.AddSubType(102, typeof(LightSource));
 
             orientedBlockLinkedItem.AddSubType(100, typeof(Container));
 
@@ -282,8 +282,8 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.CubeResource:
                         entity = new CubeResource();
                         break;
-                    case EntityClassId.SideLightSource:
-                        entity = new SideLightSource();
+                    case EntityClassId.LightSource:
+                        entity = new LightSource();
                         break;
                     case EntityClassId.OrientedBlockLinkedItem:
                         entity = new OrientedBlockLinkedItem();
