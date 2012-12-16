@@ -149,9 +149,13 @@ namespace Utopia.Shared.Entities
                 {
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
-                    OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = 0, AtChunkCreationTime = atChunkCreationTime });
                 }
                 _initialisation = false;
+            }
+
+            foreach (var entity in entityCollection.EnumerateFast())
+            {
+                OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = 0, AtChunkCreationTime = atChunkCreationTime });
             }
         }
 
