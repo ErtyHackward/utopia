@@ -137,23 +137,33 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         private void ServerConnection_MessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            ////Only take into account static entity
-            //if (e.Message.EntityType == Shared.Entities.EntityType.Static)
-            //{
-            //    //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
-            //    ThreadsManager.RunAsync(() => EntityChange(e.Message.Link.), singleConcurrencyRun: true);
-            //}
+            //Only take into account static entity
+            if (e.Message.EntityType == Shared.Entities.EntityType.Static)
+            {
+                //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
+                ThreadsManager.RunAsync(() => RemoveEntity(e.Message.Link, e.Message.Link.DynamicEntityId), singleConcurrencyRun: true);
+            }
         }
 
         private void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
-            ////Only take into account static entity
-            //if (e.Message.Entity.Type == Shared.Entities.EntityType.Static)
-            //{
-            //    ThreadsManager.RunAsync(() => EntityChange((IStaticEntity)e.Message.Entity, false), singleConcurrencyRun: true);
-            //}
+            //Only take into account static entity
+            if (e.Message.Entity.Type == Shared.Entities.EntityType.Static)
+            {
+                ThreadsManager.RunAsync(() => AddEntity((IStaticEntity)e.Message.Entity, e.Message.SourceEntityId), singleConcurrencyRun: true);
+            }
         }
 
+        private void SendChunkForBuffering(VisualChunk impactedChunk)
+        {
+            // Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
+            // Is it Worth ????
+            impactedChunk.CompressedDirty = true;
+            Md5Hash chunkHash = impactedChunk.GetMd5Hash();
+            byte[] chunkDataCompressed = impactedChunk.Compress();
+            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
+
+        }
         #endregion
 
         #region Public methods
@@ -170,20 +180,21 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 entityBlockPosition = (Vector3I)entity.Position;
             }
 
-            var chunk = GetChunk(entityBlockPosition);
-            chunk.Entities.Add(entity, sourceDynamicId);
+            var impactedChunk = (VisualChunk)GetChunk(entityBlockPosition);
+            impactedChunk.Entities.Add(entity, sourceDynamicId);
 
-
-
+            // Save the modified Chunk in local buffer DB
+            SendChunkForBuffering(impactedChunk);
         }
 
         public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
         {
             IStaticEntity entityRemoved;
-            IChunkLayout2D chunk = GetChunk(entity.ChunkPosition);
-            chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
+            var impactedChunk = (VisualChunk)GetChunk(entity.ChunkPosition);
+            impactedChunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
 
-
+            // Save the modified Chunk in local buffer DB
+            SendChunkForBuffering(impactedChunk);
 
             return entityRemoved;
         }
@@ -236,12 +247,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             // Raise event for sound
             OnBlockReplaced(new LandscapeBlockReplacedEventArgs { IsLocalPLayerAction = !isNetworkChanged, Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube });
 
-            // Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
-            // Is it Worth ????
-            impactedChunk.CompressedDirty = true;
-            Md5Hash chunkHash = impactedChunk.GetMd5Hash();
-            byte[] chunkDataCompressed = impactedChunk.Compress();
-            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
+            // Save the modified Chunk in local buffer DB
+            SendChunkForBuffering(impactedChunk);
 
             return true;
         }
