@@ -5,6 +5,7 @@ using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks
 {
@@ -294,6 +295,22 @@ namespace Utopia.Shared.Chunks
             var entityChunk = _manager.GetChunk(entityBlockPosition);
 
             entityChunk.Entities.Add(entity, sourceDynamicId);
+        }
+
+
+        /// <summary>
+        /// Remove a static entity from the world
+        /// </summary>
+        /// <param name="entity">The Entity chunk linke</param>
+        /// <param name="sourceDynamicId">The owner the event</param>
+        /// <returns>Removed entity</returns>
+        public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
+        {
+            IStaticEntity entityRemoved;
+            IChunkLayout2D chunk = _manager.GetChunk(entity.ChunkPosition);
+            chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
+
+            return entityRemoved;
         }
 
         /// <summary>

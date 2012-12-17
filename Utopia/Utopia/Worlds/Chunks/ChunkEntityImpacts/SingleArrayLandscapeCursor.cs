@@ -6,6 +6,7 @@ using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -154,19 +155,18 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         public void AddEntity(StaticEntity entity, uint sourceDynamicId = 0)
         {
-            Vector3I entityBlockPosition;
-            //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.
-            if (entity is IBlockLinkedEntity)
-            {
-                entityBlockPosition = ((IBlockLinkedEntity)entity).LinkedCube;
-            }
-            else
-            {
-                entityBlockPosition = (Vector3I)entity.Position;
-            }
+            _landscapeManager.AddEntity(entity, sourceDynamicId);
+        }
 
-            var chunk = _landscapeManager.GetChunk(entityBlockPosition);
-            chunk.Entities.Add(entity, sourceDynamicId);
+        /// <summary>
+        /// Remove a static entity from the world
+        /// </summary>
+        /// <param name="entity">The Entity chunk linke</param>
+        /// <param name="sourceDynamicId">The owner the event</param>
+        /// <returns>Removed entity</returns>
+        public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
+        {
+            return _landscapeManager.RemoveEntity(entity, sourceDynamicId);
         }
 
     }
