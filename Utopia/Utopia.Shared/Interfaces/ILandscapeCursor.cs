@@ -4,6 +4,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Interfaces
 {
@@ -92,6 +93,14 @@ namespace Utopia.Shared.Interfaces
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         void AddEntity(StaticEntity entity, uint sourceDynamicId = 0);
+
+        /// <summary>
+        /// Remove static entity from the world
+        /// </summary>
+        /// <param name="entity">The chunk entity link</param>
+        /// <param name="sourceDynamicId">Parent entity that issues adding</param>
+        /// <returns></returns>
+        IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0);
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs

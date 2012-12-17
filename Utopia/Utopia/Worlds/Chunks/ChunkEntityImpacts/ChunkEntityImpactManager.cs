@@ -15,6 +15,8 @@ using S33M3DXEngine.Threading;
 using System.Collections.Generic;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.World;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -74,6 +76,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _worldChunks = worldChunks;
             _chunkStorageManager = chunkStorageManager;
             _server.MessageBlockChange += ServerConnection_MessageBlockChange;
+            _server.MessageEntityIn += ServerConnection_MessageEntityIn;
+            _server.MessageEntityOut += ServerConnection_MessageEntityOut;
+
             _cubesHolder = cubesHolder;
             _visualWorldParameters = visualWorldParameters;
 
@@ -85,6 +90,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (_initialized)
             {
                 _server.MessageBlockChange -= ServerConnection_MessageBlockChange;
+                _server.MessageEntityIn -= ServerConnection_MessageEntityIn;
+                _server.MessageEntityOut -= ServerConnection_MessageEntityOut;
             }
         }
 
@@ -127,9 +134,61 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 }
             }
         }
+
+        private void ServerConnection_MessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
+        {
+            ////Only take into account static entity
+            //if (e.Message.EntityType == Shared.Entities.EntityType.Static)
+            //{
+            //    //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
+            //    ThreadsManager.RunAsync(() => EntityChange(e.Message.Link.), singleConcurrencyRun: true);
+            //}
+        }
+
+        private void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
+        {
+            ////Only take into account static entity
+            //if (e.Message.Entity.Type == Shared.Entities.EntityType.Static)
+            //{
+            //    ThreadsManager.RunAsync(() => EntityChange((IStaticEntity)e.Message.Entity, false), singleConcurrencyRun: true);
+            //}
+        }
+
         #endregion
 
         #region Public methods
+        public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
+        {
+            Vector3I entityBlockPosition;
+            //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.
+            if (entity is IBlockLinkedEntity)
+            {
+                entityBlockPosition = ((IBlockLinkedEntity)entity).LinkedCube;
+            }
+            else
+            {
+                entityBlockPosition = (Vector3I)entity.Position;
+            }
+
+            var chunk = GetChunk(entityBlockPosition);
+            chunk.Entities.Add(entity, sourceDynamicId);
+
+
+
+        }
+
+        public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
+        {
+            IStaticEntity entityRemoved;
+            IChunkLayout2D chunk = GetChunk(entity.ChunkPosition);
+            chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
+
+
+
+            return entityRemoved;
+        }
+
+
         public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
         {
             return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);

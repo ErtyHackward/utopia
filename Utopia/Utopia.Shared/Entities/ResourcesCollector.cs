@@ -74,13 +74,11 @@ namespace Utopia.Shared.Entities
         {
             var impact = new ToolImpact { Success = false };
 
-            EntityLink entity = owner.EntityState.PickedEntityLink;
-            IChunkLayout2D chunk = LandscapeManager.GetChunk(entity.ChunkPosition);
-            IStaticEntity entityRemoved;
+            var cursor = LandscapeManager.GetCursor(owner.EntityState.NewBlockPosition);
 
-            //Remove the entity from chunk
-            chunk.Entities.RemoveById(entity.Tail[0], owner.DynamicId, out entityRemoved);
+            IStaticEntity entityRemoved = cursor.RemoveEntity(owner.EntityState.PickedEntityLink, owner.DynamicId);
 
+            //Insert removed static entity inside Inventory.
             var character = owner as CharacterEntity;
             if (character != null && entityRemoved != null)
             {
@@ -88,6 +86,7 @@ namespace Utopia.Shared.Entities
                 var adder = (Item)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);
                 character.Inventory.PutItem(adder);
             }
+
             return impact;
         }
         #endregion
