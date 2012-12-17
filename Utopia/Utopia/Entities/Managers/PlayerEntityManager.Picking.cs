@@ -21,14 +21,36 @@ namespace Utopia.Entities.Managers
             if (MousepickDisabled || _inputsManager.MouseManager.MouseCapture)
             {
                 Vector3D pickingPointInLine = _worldPosition + _entityEyeOffset;
-                newpicking = RefreshPicking(ref pickingPointInLine, _entityRotations.LookAt, 1);
+                newpicking = RefreshPicking(ref pickingPointInLine, _entityRotations.LookAt, 10.0f);
             }
             else
             {
                 Vector3D mouseWorldPosition;
                 Vector3D mouseLookAtPosition;
                 _inputsManager.MouseManager.UnprojectMouseCursor(_cameraManager.ActiveCamera, out mouseWorldPosition, out mouseLookAtPosition);
-                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), 2);
+
+                //Pythagore
+                var playerCameraDistance = mouseWorldPosition - _worldPosition;
+                playerCameraDistance.X = Math.Abs(playerCameraDistance.X);
+                playerCameraDistance.Y = Math.Abs(playerCameraDistance.Y);
+                playerCameraDistance.Z = Math.Abs(playerCameraDistance.Z);
+
+                var dist = Math.Sqrt(100 - ((playerCameraDistance.X * playerCameraDistance.X) - (playerCameraDistance.Y * playerCameraDistance.Y)));
+                var distance = Vector3D.Distance(mouseWorldPosition,_worldPosition);
+
+                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), (float)(dist + distance));
+
+                if (newpicking)
+                {
+                    if(Player.EntityState.IsBlockPicked)
+                    {
+                        //if 
+                        if (Vector3D.Distance(_worldPosition + _entityEyeOffset, new Vector3D(Player.EntityState.PickedBlockPosition)) > 10.0)
+                        {
+                            Player.EntityState.IsBlockPicked = false;
+                        }
+                    }
+                }
             }
 
             if (newpicking)
@@ -48,7 +70,7 @@ namespace Utopia.Entities.Managers
         }
 
         //Will return true if a new Item has been picked up !
-        private bool RefreshPicking(ref Vector3D pickingWorldPosition, Vector3 pickingLookAt, int rounding)
+        private bool RefreshPicking(ref Vector3D pickingWorldPosition, Vector3 pickingLookAt, float blockPickingDistance)
         {
             Player.EntityState.IsBlockPicked = false;
 
@@ -64,10 +86,11 @@ namespace Utopia.Entities.Managers
                 return true;
             }
 
+            int NbrPointToSample = (int)(blockPickingDistance / 0.02);
 
             //Check for Cube Picking
             //Sample 500 points in the view direction vector
-            for (int ptNbr = 0; ptNbr < 500; ptNbr++)
+            for (int ptNbr = 0; ptNbr < NbrPointToSample; ptNbr++)
             {
                 pickingWorldPosition += new Vector3D(pickingLookAt * 0.02f);
 
