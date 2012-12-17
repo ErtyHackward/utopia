@@ -147,7 +147,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return this;
         }
 
-
         /// <summary>
         /// Adds static entity to the world
         /// </summary>
