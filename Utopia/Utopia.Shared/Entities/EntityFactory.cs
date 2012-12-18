@@ -141,6 +141,10 @@ namespace Utopia.Shared.Entities
             vector4.AddField(3, "Z");
             vector4.AddField(4, "W");
 
+            var vector2 = protoTypeModel.Add(typeof(Vector2), true);
+            vector2.AddField(1, "X");
+            vector2.AddField(2, "Y");
+
             var matrix = protoTypeModel.Add(typeof(Matrix), true);
             matrix.AddField(1, "Row1");
             matrix.AddField(2, "Row2");
