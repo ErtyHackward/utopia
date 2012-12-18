@@ -84,6 +84,7 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 
 		Output.Position = WorldPosition;
 		Output.Color = Input.Color;
+		Output.Color.a = 1;
 		Output.UVW = float3( texcoord[i].x, 
 							 texcoord[i].y,
 							 Input.Position.w);
@@ -103,7 +104,6 @@ float4 PS(PSInput IN) : SV_Target
 
 	clip( color.a < 0.01f ? -1:1 ); //Remove the pixel if alpha < 0.1
 	
-	IN.Color.a = 1;
 	color = saturate(color * IN.Color);
 	
 	return color;
