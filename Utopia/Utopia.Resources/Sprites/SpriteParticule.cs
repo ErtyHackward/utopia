@@ -11,7 +11,10 @@ namespace Utopia.Resources.Sprites
     public class SpriteParticule : BaseParticule
     {
         public float maxAge;
+        public float SizeGrowSpeed;
+        public ByteColor ColorModifier;
         public Vector3D InitialPosition;
         public Vector3D AccelerationForce;
+        public int ParticuleId;
     }
 }

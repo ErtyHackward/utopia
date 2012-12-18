@@ -16,6 +16,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Resources.Sprites;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
 
 namespace Utopia.Particules
@@ -128,40 +129,52 @@ namespace Utopia.Particules
         {
             if (_particules.Count == 0) return;
             //Accumulate particules here for this emitters, and render them
-            BaseParticule p;
+            SpriteParticule p;
 
             _particuleRenderer.Begin(true);
             for (int i = 0; i < _particules.Count; i++)
             {
                 p = _particules[i];
                 Vector3 position = p.Position.Value.AsVector3();
-                ByteColor white = Color.White;
-                _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref white, 0);
+                _particuleRenderer.Processor.Draw(ref position, ref p.Size, ref p.ColorModifier, p.ParticuleId);
             }
             _particuleRenderer.End(context);
 
         }
 
-        public void EmitParticule(int nbr,
-                                   float maximumAge,
-                                   Vector3 velocity,
-                                   Vector3 accelerationForce,
-                                   Vector3D emittedPosition)
+        public void EmitParticule(EntityParticule particuleMetaData,
+                                  Vector3D EmittedPosition)
         {
+            int nbr = particuleMetaData.EmittedParticulesAmount;
+
+            Vector3D startUpPosition = EmittedPosition + particuleMetaData.PositionOffset;
+
             while (nbr > 0)
             {
-                //Randomize the Velocity here
-                Vector3 velocityRndAmount = velocity / 10;
-                velocity.X += _rnd.NextFloat(-velocityRndAmount.X, velocityRndAmount.X);
-                velocity.X += _rnd.NextFloat(-velocityRndAmount.Y, velocityRndAmount.Y);
-                velocity.X += _rnd.NextFloat(-velocityRndAmount.Z, velocityRndAmount.Z);
+                //Randomize the Velocity here (+- 10%)
+                Vector3 velocity = particuleMetaData.EmitVelocity / 10;
 
-                _particules.Add(new SpriteParticule() { Position = new FTSValue<Vector3D>(emittedPosition),
-                                                        Velocity = velocity,
-                                                        maxAge = maximumAge,
-                                                        Size = Vector2.One,
-                                                        AccelerationForce = new Vector3D(accelerationForce),
-                                                        InitialPosition = emittedPosition
+                if (velocity.X == 0) velocity.X = _rnd.NextFloat(-0.1f, 0.1f);
+                if (velocity.Z == 0) velocity.Z = _rnd.NextFloat(-0.1f, 0.1f);
+
+                velocity.X = particuleMetaData.EmitVelocity.X + _rnd.NextFloat(-velocity.X, velocity.X);
+                velocity.Y = particuleMetaData.EmitVelocity.Y + _rnd.NextFloat(-velocity.Y, velocity.Y);
+                velocity.Z = particuleMetaData.EmitVelocity.Z + _rnd.NextFloat(-velocity.Z, velocity.Z);
+
+                //(+- 10%)
+                float lifetime = particuleMetaData.ParticuleLifeTime + _rnd.NextFloat(-particuleMetaData.ParticuleLifeTime / 10, particuleMetaData.ParticuleLifeTime / 10);
+
+                _particules.Add(new SpriteParticule()
+                {
+                    AccelerationForce = new Vector3D(particuleMetaData.AccelerationForces),
+                    ColorModifier = particuleMetaData.ParticuleColor,
+                    InitialPosition = startUpPosition,
+                    maxAge = lifetime,
+                    ParticuleId = particuleMetaData.ParticuleId,
+                    Position = new FTSValue<Vector3D>(startUpPosition),
+                    Size = particuleMetaData.Size,
+                    SizeGrowSpeed = particuleMetaData.SizeGrowSpeed,
+                    Velocity = velocity
                 });                 
                 nbr--;
             }

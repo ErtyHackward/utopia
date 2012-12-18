@@ -24,7 +24,7 @@ namespace Utopia.Shared.Entities
 
             public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
             {
-                return TypeDescriptor.GetProperties(typeof(EntityParticule), attributes).Sort(new string[] { "ParticuleType", "ParticuleId", "EmitVelocity", "AccelerationForces", "PositionOffset" });
+                return TypeDescriptor.GetProperties(typeof(EntityParticule), attributes).Sort(new string[] { "ParticuleType", "ParticuleId", "EmitVelocity", "AccelerationForces", "PositionOffset", "ApplyWindForce", "Size", "SizeGrowSpeed", "Color", "ParticuleLifeTime", "EmittedParticuleRate", "EmittedParticulesAmount" });
             }
 
             public override bool GetPropertiesSupported(ITypeDescriptorContext context)
@@ -44,6 +44,13 @@ namespace Utopia.Shared.Entities
                                                EmitVelocity = (Vector3)propertyValues["EmitVelocity"],
                                                AccelerationForces = (Vector3)propertyValues["AccelerationForces"],
                                                PositionOffset = (Vector3)propertyValues["PositionOffset"],
+                                               ApplyWindForce = (bool)propertyValues["ApplyWindForce"],
+                                               Size = (Vector2)propertyValues["Size"],
+                                               SizeGrowSpeed = (float)propertyValues["SizeGrowSpeed"],
+                                               Color = (System.Drawing.Color)propertyValues["Color"],
+                                               ParticuleLifeTime = (float)propertyValues["ParticuleLifeTime"],
+                                               EmittedParticuleRate = (float)propertyValues["EmittedParticuleRate"],
+                                               EmittedParticulesAmount = (int)propertyValues["EmittedParticulesAmount"]
                                              };
             }
 

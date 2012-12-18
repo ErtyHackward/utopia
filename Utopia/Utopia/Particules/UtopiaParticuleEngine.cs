@@ -135,9 +135,12 @@ namespace Utopia.Particules
                     switch (entityWithMeta.Entity.Particule.ParticuleType)
                     {
                         case EntityParticuleType.Billboard:
-                            if ((DateTime.Now - entityWithMeta.EntityLastEmitTime).TotalSeconds > 5)
+                            if ((DateTime.Now - entityWithMeta.EntityLastEmitTime).TotalSeconds > entityWithMeta.Entity.Particule.EmittedParticuleRate)
                             {
-                                _staticEntityEmitter.EmitParticule(1, 5, entityWithMeta.Entity.Particule.EmitVelocity, entityWithMeta.Entity.Particule.AccelerationForces, entityWithMeta.Entity.Position);
+                                _staticEntityEmitter.EmitParticule(
+                                                                   entityWithMeta.Entity.Particule,
+                                                                   entityWithMeta.Entity.Position
+                                                                   );
                                 entityWithMeta.EntityLastEmitTime = DateTime.Now;
                             }
                             break;

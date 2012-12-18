@@ -102,7 +102,10 @@ float4 PS(PSInput IN) : SV_Target
 	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
 
 	clip( color.a < 0.01f ? -1:1 ); //Remove the pixel if alpha < 0.1
-
+	
+	IN.Color.a = 1;
+	color = saturate(color * IN.Color);
+	
 	return color;
 }
 

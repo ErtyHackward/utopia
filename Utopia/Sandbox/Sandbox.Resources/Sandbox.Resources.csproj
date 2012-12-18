@@ -493,7 +493,7 @@
     <None Include="Sounds\Moods\peaceful.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="TexturesPacks\Default\Particules\001_fog.png">
+    <Content Include="TexturesPacks\Default\Particules\000_fog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\Default\AnimatedTextures\001_caustic.png">
@@ -766,6 +766,9 @@
     <None Include="TexturesPacks\Default\TexturePackConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TexturesPacks\Default\Particules\001_circle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Sprites\0001_0_Flower1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities.Concrete
     [ProtoContract]
     public class LightSource : BlockLinkedItem, ILightEmitterEntity
     {
-        private ByteColor _emittedLightColor = new ByteColor(255, 190, 94); //Fixed light color ?
+        private ByteColor _emittedLightColor = new ByteColor(255, 190, 94);
 
         [ProtoMember(1)]
         [Browsable(false)]
