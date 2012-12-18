@@ -25,6 +25,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs.Landscape;
 using System.Threading.Tasks;
 using Utopia.Resources.Sprites;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Particules
 {
@@ -275,7 +276,7 @@ namespace Utopia.Particules
             Dictionary<int, Color[]> perBitmapColorSampling = new Dictionary<int, Color[]>(); ;
 
             //Sample each cubeTextures bmp
-            foreach (var file in Directory.GetFiles(_cubeTexturePath, _fileNamePatern))
+            foreach (var file in Directory.GetFiles( _cubeTexturePath, _fileNamePatern))
             {
                 //Get Texture ID.
                 string fileName = Path.GetFileName(file);

@@ -120,7 +120,7 @@ namespace Utopia.Particules
             if (_particules.Count == 0) return;
             RefreshExistingParticules(elapsedTime);
 
-            List<SpriteParticule> sortedList = _particules.AsParallel().OrderByDescending(x => Vector3D.DistanceSquared(x.Position.Value, ParentParticuleEngine.CameraPosition)).ToList();
+            List<SpriteParticule> sortedList = _particules.OrderByDescending(x => Vector3D.DistanceSquared(x.Position.Value, ParentParticuleEngine.CameraPosition)).ToList();
             _particules = sortedList;
         }
 

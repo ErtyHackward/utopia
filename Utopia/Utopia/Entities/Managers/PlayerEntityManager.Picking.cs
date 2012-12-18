@@ -29,16 +29,9 @@ namespace Utopia.Entities.Managers
                 Vector3D mouseLookAtPosition;
                 _inputsManager.MouseManager.UnprojectMouseCursor(_cameraManager.ActiveCamera, out mouseWorldPosition, out mouseLookAtPosition);
 
-                //Pythagore
-                var playerCameraDistance = mouseWorldPosition - _worldPosition;
-                playerCameraDistance.X = Math.Abs(playerCameraDistance.X);
-                playerCameraDistance.Y = Math.Abs(playerCameraDistance.Y);
-                playerCameraDistance.Z = Math.Abs(playerCameraDistance.Z);
-
-                var dist = Math.Sqrt(100 - ((playerCameraDistance.X * playerCameraDistance.X) - (playerCameraDistance.Y * playerCameraDistance.Y)));
                 var distance = Vector3D.Distance(mouseWorldPosition,_worldPosition);
 
-                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), (float)(dist + distance));
+                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), (float)(10.0f + distance));
 
                 if (newpicking)
                 {
