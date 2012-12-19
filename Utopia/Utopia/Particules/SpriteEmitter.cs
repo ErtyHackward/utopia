@@ -152,17 +152,14 @@ namespace Utopia.Particules
             while (nbr > 0)
             {
                 //Randomize the Velocity here (+- 10%)
-                Vector3 velocity = particuleMetaData.EmitVelocity / 10;
+                Vector3 velocity = particuleMetaData.EmitVelocity;
 
-                if (velocity.X == 0) velocity.X = _rnd.NextFloat(-0.1f, 0.1f);
-                if (velocity.Z == 0) velocity.Z = _rnd.NextFloat(-0.1f, 0.1f);
-
-                velocity.X = particuleMetaData.EmitVelocity.X + _rnd.NextFloat(-velocity.X, velocity.X);
-                velocity.Y = particuleMetaData.EmitVelocity.Y + _rnd.NextFloat(-velocity.Y, velocity.Y);
-                velocity.Z = particuleMetaData.EmitVelocity.Z + _rnd.NextFloat(-velocity.Z, velocity.Z);
+                velocity.X = particuleMetaData.EmitVelocity.X + _rnd.NextFloat(particuleMetaData.EmitVelocityRandomness.X);
+                velocity.Y = particuleMetaData.EmitVelocity.Y + _rnd.NextFloat(particuleMetaData.EmitVelocityRandomness.Y);
+                velocity.Z = particuleMetaData.EmitVelocity.Z + _rnd.NextFloat(particuleMetaData.EmitVelocityRandomness.Z);
 
                 //(+- 10%)
-                float lifetime = particuleMetaData.ParticuleLifeTime + _rnd.NextFloat(-particuleMetaData.ParticuleLifeTime / 10, particuleMetaData.ParticuleLifeTime / 10);
+                float lifetime = particuleMetaData.ParticuleLifeTime + _rnd.NextFloat(particuleMetaData.ParticuleLifeTimeRandomness);
 
                 _particules.Add(new SpriteParticule()
                 {

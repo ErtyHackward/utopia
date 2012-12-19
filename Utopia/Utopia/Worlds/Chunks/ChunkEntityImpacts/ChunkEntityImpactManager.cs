@@ -76,8 +76,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _worldChunks = worldChunks;
             _chunkStorageManager = chunkStorageManager;
             _server.MessageBlockChange += ServerConnection_MessageBlockChange;
-            _server.MessageEntityIn += ServerConnection_MessageEntityIn;
-            _server.MessageEntityOut += ServerConnection_MessageEntityOut;
 
             _cubesHolder = cubesHolder;
             _visualWorldParameters = visualWorldParameters;
@@ -90,8 +88,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (_initialized)
             {
                 _server.MessageBlockChange -= ServerConnection_MessageBlockChange;
-                _server.MessageEntityIn -= ServerConnection_MessageEntityIn;
-                _server.MessageEntityOut -= ServerConnection_MessageEntityOut;
             }
         }
 
@@ -135,7 +131,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
         }
 
-        private void ServerConnection_MessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
+        public void ProcessMessageEntityOut(ProtocolMessageEventArgs<EntityOutMessage> e)
         {
             //Only take into account static entity
             if (e.Message.EntityType == Shared.Entities.EntityType.Static)
@@ -145,7 +141,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
         }
 
-        private void ServerConnection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
+        public void ProcessMessageEntityIn(ProtocolMessageEventArgs<EntityInMessage> e)
         {
             //Only take into account static entity
             if (e.Message.Entity.Type == Shared.Entities.EntityType.Static)
