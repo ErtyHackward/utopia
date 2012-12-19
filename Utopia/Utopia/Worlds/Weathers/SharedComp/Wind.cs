@@ -27,6 +27,8 @@ namespace Utopia.Worlds.Weather
 
         #region Public Variables
         public Vector3 WindFlow { get; set; }
+        public Vector3 WindFlowFlat { get; set; }
+
         public Vector3 FlatWindFlowNormalizedWithNoise
         {
             get { return _flatWindFlowNormalizedWithNoise.ValueInterp; }
@@ -59,6 +61,8 @@ namespace Utopia.Worlds.Weather
             _flatWindFlowNormalizedWithNoise.Value = Vector3.Normalize(new Vector3(WindFlow.X, 0, WindFlow.Z));
             _flatWindFlowNormalizedWithNoise.ValuePrev = _flatWindFlowNormalizedWithNoise.Value;
 
+            WindFlowFlat = Vector3.Normalize(new Vector3(WindFlow.X, 0, WindFlow.Z));
+
             _rnd = new FastRandom();
         }
 
@@ -81,6 +85,7 @@ namespace Utopia.Worlds.Weather
             {
                 WindFlow = new Vector3(GetFlowRnd(), GetFlowRnd(), GetFlowRnd());
                 FlatWindFlowNormalizedWithNoise = Vector3.Normalize(new Vector3(WindFlow.X, 0, WindFlow.Z));
+                WindFlowFlat = FlatWindFlowNormalizedWithNoise;
             }
         }
 

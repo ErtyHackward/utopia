@@ -25,6 +25,7 @@ using Utopia.Worlds.Chunks;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Particules
 {
@@ -50,6 +51,7 @@ namespace Utopia.Particules
         private IWorldChunks _worldChunks;
 
         private SpriteEmitter _staticEntityEmitter;
+        private IWeather _weather;
         #endregion
 
         #region Public Properties
@@ -65,7 +67,8 @@ namespace Utopia.Particules
                              InputsManager inputsManager,
                              VisualWorldParameters worldParameters,
                              IChunkEntityImpactManager chunkEntityImpactManager,
-                             IWorldChunks worldChunks)
+                             IWorldChunks worldChunks,
+                             IWeather weather)
             : base(d3dEngine, sharedFrameCB.CBPerFrame)
         {
             _sharedFrameCB = sharedFrameCB;
@@ -74,6 +77,7 @@ namespace Utopia.Particules
             _worldParameters = worldParameters;
             _chunkEntityImpactManager = chunkEntityImpactManager;
             _worldChunks = worldChunks;
+            _weather = weather;
 
             _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
         }
@@ -99,7 +103,7 @@ namespace Utopia.Particules
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Particules/", @"*.png", FilterFlags.Point, "ArrayTexture_Particules", out _particulesSpritesResource);
             ToDispose(_particulesSpritesResource);
 
-            _staticEntityEmitter = new SpriteEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
+            _staticEntityEmitter = new SpriteEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled, _weather);
             AddEmitter(_staticEntityEmitter);
 
             base.LoadContent(context);
@@ -132,13 +136,13 @@ namespace Utopia.Particules
             {
                 foreach (var entityWithMeta in chunk.EmitterStaticEntities)
                 {
-                    switch (entityWithMeta.Entity.Particule.ParticuleType)
+                    switch (entityWithMeta.Particule.ParticuleType)
                     {
                         case EntityParticuleType.Billboard:
-                            if ((DateTime.Now - entityWithMeta.EntityLastEmitTime).TotalSeconds > entityWithMeta.Entity.Particule.EmittedParticuleRate)
+                            if ((DateTime.Now - entityWithMeta.EntityLastEmitTime).TotalSeconds > entityWithMeta.Particule.EmittedParticuleRate)
                             {
                                 _staticEntityEmitter.EmitParticule(
-                                                                   entityWithMeta.Entity.Particule,
+                                                                   entityWithMeta.Particule,
                                                                    entityWithMeta.Entity.Position
                                                                    );
                                 entityWithMeta.EntityLastEmitTime = DateTime.Now;

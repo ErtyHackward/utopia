@@ -530,14 +530,17 @@ namespace Utopia.Worlds.Chunks
 
         private void AddParticuleEmitterEntity(EntityCollectionEventArgs e)
         {
-            if (e.Entity.Particule.ParticuleType == EntityParticuleType.None) return;
-            EmitterStaticEntities.Add(new EntityMetaData() { Entity = e.Entity, EntityLastEmitTime = DateTime.Now });
+            if (e.Entity.Particules == null) return;
+            foreach (var entityParticules in e.Entity.Particules)
+            {
+                EmitterStaticEntities.Add(new EntityMetaData() { Entity = e.Entity, Particule = entityParticules, EntityLastEmitTime = DateTime.Now });
+            }
         }
 
         private void RemoveParticuleEmitterEntity(EntityCollectionEventArgs e)
         {
-            if (e.Entity.Particule.ParticuleType == EntityParticuleType.None) return;
-            EmitterStaticEntities.Remove(EmitterStaticEntities.Find(x => x.Entity == e.Entity));
+            if (e.Entity.Particules == null) return;
+            EmitterStaticEntities.RemoveAll(x => x.Entity == e.Entity);
         }
 
         #endregion

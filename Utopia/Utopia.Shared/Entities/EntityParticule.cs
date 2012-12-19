@@ -13,18 +13,16 @@ namespace Utopia.Shared.Entities
 {
     public enum EntityParticuleType
     {
-        None,
         Billboard
     }
 
     /// <summary>
     /// Class that will store data in case of an entity can emit particules
     /// </summary>
-    [TypeConverter(typeof(EntityParticuleConverter))]
     [ProtoContract]
-    public partial struct EntityParticule
+    public class EntityParticule
     {
-        private ByteColor _particuleColor; // = new ByteColor(255, 255, 255);
+        private ByteColor _particuleColor = new ByteColor(255, 255, 255);
 
         [ProtoMember(1)]
         [Description("Particule Type")]
@@ -86,5 +84,8 @@ namespace Utopia.Shared.Entities
         [ProtoMember(14)]
         [Description("Amount of randomness for to the particule lifetime (+/-)")]
         public float ParticuleLifeTimeRandomness { get; set; }
+        [ProtoMember(15)]
+        [Description("Amount of randomness for to startup position of the particules (+/-)")]
+        public Vector3 PositionRandomness { get; set; }
     }
 }
