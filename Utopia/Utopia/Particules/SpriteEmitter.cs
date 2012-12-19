@@ -151,14 +151,13 @@ namespace Utopia.Particules
 
             while (nbr > 0)
             {
-                //Randomize the Velocity here (+- 10%)
+                //Randomize the Velocity
                 Vector3 velocity = particuleMetaData.EmitVelocity;
 
                 velocity.X = particuleMetaData.EmitVelocity.X + _rnd.NextFloat(particuleMetaData.EmitVelocityRandomness.X);
                 velocity.Y = particuleMetaData.EmitVelocity.Y + _rnd.NextFloat(particuleMetaData.EmitVelocityRandomness.Y);
                 velocity.Z = particuleMetaData.EmitVelocity.Z + _rnd.NextFloat(particuleMetaData.EmitVelocityRandomness.Z);
 
-                //(+- 10%)
                 float lifetime = particuleMetaData.ParticuleLifeTime + _rnd.NextFloat(particuleMetaData.ParticuleLifeTimeRandomness);
 
                 _particules.Add(new SpriteParticule()
@@ -197,7 +196,10 @@ namespace Utopia.Particules
                 // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
                 p = _particules[i];
                 p.Age += elapsedTime / 1000.0f; //Age in Seconds
-                
+                float growsize = (elapsedTime / 1000.0f) * p.SizeGrowSpeed;
+                p.Size.X += growsize;
+                p.Size.Y += growsize;
+
                 p.Position.Value = ((0.5 * p.Age * p.Age) * p.AccelerationForce)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity) = Acceleration Force
                               + (p.Age * p.Velocity)                                 //New position based on time and move vector
                               + p.InitialPosition;                                    //Initial Position
