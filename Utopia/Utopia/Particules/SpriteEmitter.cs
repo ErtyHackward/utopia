@@ -18,6 +18,7 @@ using SharpDX.Direct3D11;
 using Utopia.Resources.Sprites;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Particules
 {
@@ -39,6 +40,7 @@ namespace Utopia.Particules
         private int _stateRasterId;
         private int _stateBlenderId;
         private int _stateDepthId;
+        private IWeather _weather;
         #endregion
 
         #region Public Properties
@@ -76,13 +78,14 @@ namespace Utopia.Particules
         }
         #endregion
         
-        public SpriteEmitter(
+        public SpriteEmitter(                   
                         ParticuleEngine parentParticuleEngine,                        
                         int textureSamplerId,
                         ShaderResourceView textureParticules,
                         int StateRasterId,
                         int StateBlenderId,
-                        int StateDepthId)
+                        int StateDepthId,
+                        IWeather weather)
         {
             _particules = new List<SpriteParticule>();
             _rnd = new FastRandom();
@@ -93,7 +96,7 @@ namespace Utopia.Particules
             _stateBlenderId = StateBlenderId;
             _stateDepthId = StateDepthId;
             _parentParticuleEngine = parentParticuleEngine;
-
+            _weather = weather;
         }
         #region Public Methods
 
@@ -160,14 +163,25 @@ namespace Utopia.Particules
 
                 float lifetime = particuleMetaData.ParticuleLifeTime + _rnd.NextFloat(particuleMetaData.ParticuleLifeTimeRandomness);
 
+                Vector3D finalPosition;
+                finalPosition.X = startUpPosition.X + _rnd.NextFloat(particuleMetaData.PositionRandomness.X);
+                finalPosition.Y = startUpPosition.Y + _rnd.NextFloat(particuleMetaData.PositionRandomness.X);
+                finalPosition.Z = startUpPosition.Z + _rnd.NextFloat(particuleMetaData.PositionRandomness.X);
+
+                Vector3 accelerationForce = particuleMetaData.AccelerationForces;
+                if (particuleMetaData.ApplyWindForce)
+                {
+                    accelerationForce += _weather.Wind.WindFlowFlat * 0.05f; 
+                }
+
                 _particules.Add(new SpriteParticule()
                 {
-                    AccelerationForce = new Vector3D(particuleMetaData.AccelerationForces),
+                    AccelerationForce = new Vector3D(accelerationForce),
                     ColorModifier = particuleMetaData.ParticuleColor,
-                    InitialPosition = startUpPosition,
+                    InitialPosition = finalPosition,
                     maxAge = lifetime,
                     ParticuleId = particuleMetaData.ParticuleId,
-                    Position = new FTSValue<Vector3D>(startUpPosition),
+                    Position = new FTSValue<Vector3D>(finalPosition),
                     Size = particuleMetaData.Size,
                     SizeGrowSpeed = particuleMetaData.SizeGrowSpeed,
                     Velocity = velocity

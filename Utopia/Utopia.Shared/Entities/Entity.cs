@@ -97,8 +97,8 @@ namespace Utopia.Shared.Entities
         }
 
         [Description("Define particules emiting behaviours")]
-        [ProtoMember(11)]
-        public EntityParticule Particule { get; set; }
+        [ProtoMember(11, OverwriteList=true)]
+        public EntityParticule[] Particules { get; set; }
 
         /// <summary>
         /// Gets entity class id

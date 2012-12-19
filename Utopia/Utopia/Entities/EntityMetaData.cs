@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Entities
@@ -9,8 +10,9 @@ namespace Utopia.Entities
     public class EntityMetaData
     {
         public IEntity Entity;
-
+        
         //Particule MetaData Information.
+        public EntityParticule Particule;
         public DateTime EntityLastEmitTime;
     }
 }
