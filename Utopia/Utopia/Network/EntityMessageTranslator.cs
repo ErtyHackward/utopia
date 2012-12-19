@@ -6,6 +6,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 
 namespace Utopia.Network
 {
@@ -18,7 +19,7 @@ namespace Utopia.Network
 
         private readonly ServerComponent _server;
         private readonly IDynamicEntityManager _dynamicEntityManager;
-        private readonly ILandscapeManager2D _landscapeManager;
+        private readonly IChunkEntityImpactManager _landscapeManager;
         private IDynamicEntity _playerEntity;
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace Utopia.Network
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
         /// <param name="landscapeManager"> </param>
-        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, ILandscapeManager2D landscapeManager)
+        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IChunkEntityImpactManager landscapeManager)
         {
             _server = server;
 
@@ -120,9 +121,10 @@ namespace Utopia.Network
                 case EntityType.Block:
                     break;
                 case EntityType.Static:
-                    var cpos = e.Message.Link.ChunkPosition;
-                    var chunk = _landscapeManager.GetChunk(cpos);
-                    chunk.Entities.RemoveById(e.Message.EntityId);
+                    if (e.Message.Link.DynamicEntityId != PlayerEntity.DynamicId)
+                    {
+                        _landscapeManager.ProcessMessageEntityOut(e);
+                    }
                     break;
                 case EntityType.Dynamic:
                     _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
@@ -139,13 +141,10 @@ namespace Utopia.Network
                 case EntityType.Block:
                     break;
                 case EntityType.Static:
-                    var cpos = e.Message.Link.ChunkPosition;
-                    var chunk = _landscapeManager.GetChunk(cpos);
-                    
                     // skip the message if the source is our entity (because we already have added the entity)
                     if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
                     {
-                        chunk.Entities.Add((StaticEntity)e.Message.Entity, e.Message.SourceEntityId);
+                        _landscapeManager.ProcessMessageEntityIn(e);
                     }
 
                     break;

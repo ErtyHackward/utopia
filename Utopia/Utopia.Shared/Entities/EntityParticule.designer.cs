@@ -24,7 +24,7 @@ namespace Utopia.Shared.Entities
 
             public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
             {
-                return TypeDescriptor.GetProperties(typeof(EntityParticule), attributes).Sort(new string[] { "ParticuleType", "ParticuleId", "EmitVelocity", "AccelerationForces", "PositionOffset", "ApplyWindForce", "Size", "SizeGrowSpeed", "Color", "ParticuleLifeTime", "EmittedParticuleRate", "EmittedParticulesAmount" });
+                return TypeDescriptor.GetProperties(typeof(EntityParticule), attributes).Sort(new string[] { "ParticuleType", "ParticuleId", "EmitVelocity", "AccelerationForces", "PositionOffset", "ApplyWindForce", "Size", "SizeGrowSpeed", "Color", "ParticuleLifeTime", "EmittedParticuleRate", "EmittedParticulesAmount", "EmitVelocityRandomness", "ParticuleLifeTimeRandomness" });
             }
 
             public override bool GetPropertiesSupported(ITypeDescriptorContext context)
@@ -50,7 +50,9 @@ namespace Utopia.Shared.Entities
                                                Color = (System.Drawing.Color)propertyValues["Color"],
                                                ParticuleLifeTime = (float)propertyValues["ParticuleLifeTime"],
                                                EmittedParticuleRate = (float)propertyValues["EmittedParticuleRate"],
-                                               EmittedParticulesAmount = (int)propertyValues["EmittedParticulesAmount"]
+                                               EmittedParticulesAmount = (int)propertyValues["EmittedParticulesAmount"],
+                                               EmitVelocityRandomness = (Vector3)propertyValues["EmitVelocityRandomness"],
+                                               ParticuleLifeTimeRandomness = (float)propertyValues["ParticuleLifeTimeRandomness"]
                                              };
             }
 

@@ -80,5 +80,11 @@ namespace Utopia.Shared.Entities
         [Description("Amount of particules emitted at once")]
         [ProtoMember(12)]
         public int EmittedParticulesAmount { get; set; }
+        [ProtoMember(13)]
+        [Description("Amount of randomness for to the velocity (+/-)")]
+        public Vector3 EmitVelocityRandomness { get; set; }
+        [ProtoMember(14)]
+        [Description("Amount of randomness for to the particule lifetime (+/-)")]
+        public float ParticuleLifeTimeRandomness { get; set; }
     }
 }

@@ -8,6 +8,8 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -27,5 +29,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);
         IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0);
+
+        void ProcessMessageEntityOut(ProtocolMessageEventArgs<EntityOutMessage> e);
+        void ProcessMessageEntityIn(ProtocolMessageEventArgs<EntityInMessage> e);
     }
 }

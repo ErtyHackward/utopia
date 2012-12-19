@@ -202,6 +202,11 @@ namespace S33M3CoreComponents.Maths
                 return (float)NextDouble(minimum, maximum);
             }
 
+            public float NextFloat(float MinMaxLimit)
+            {
+                return (float)NextDouble(-MinMaxLimit, MinMaxLimit);
+            }
+
             /// <summary>
             /// Fills the provided byte array with random bytes.
             /// This method is functionally equivalent to System.Random.NextBytes(). 
