@@ -84,7 +84,6 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 
 		Output.Position = WorldPosition;
 		Output.Color = Input.Color;
-		Output.Color.a = 1;
 		Output.UVW = float3( texcoord[i].x, 
 							 texcoord[i].y,
 							 Input.Position.w);
@@ -100,13 +99,11 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling
-	float4 color = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
+	float4 texColor = DiffuseTexture.Sample(SamplerDiffuse, IN.UVW);
 
-	clip( color.a < 0.01f ? -1:1 ); //Remove the pixel if alpha < 0.1
+	float4 finalColor = {saturate(texColor.rgb * IN.Color.rgb), max(texColor.a - IN.Color.a, 0.0f)};
 	
-	color = saturate(color * IN.Color);
-	
-	return color;
+	return finalColor;
 }
 
 //--------------------------------------------------------------------------------------
