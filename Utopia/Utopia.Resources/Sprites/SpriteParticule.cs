@@ -10,6 +10,8 @@ namespace Utopia.Resources.Sprites
 {
     public class SpriteParticule : BaseParticule
     {
+        public bool alphaInverted;
+        public double alphaFadingPowBase;
         public float maxAge;
         public float SizeGrowSpeed;
         public ByteColor ColorModifier;

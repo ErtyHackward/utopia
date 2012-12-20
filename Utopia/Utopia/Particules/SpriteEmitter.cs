@@ -177,14 +177,16 @@ namespace Utopia.Particules
                 _particules.Add(new SpriteParticule()
                 {
                     AccelerationForce = new Vector3D(accelerationForce),
-                    ColorModifier = particuleMetaData.ParticuleColor,
+                    ColorModifier = new ByteColor(particuleMetaData.ParticuleColor.R, particuleMetaData.ParticuleColor.G, particuleMetaData.ParticuleColor.B, (byte)0),
                     InitialPosition = finalPosition,
                     maxAge = lifetime,
                     ParticuleId = particuleMetaData.ParticuleId,
                     Position = new FTSValue<Vector3D>(finalPosition),
                     Size = particuleMetaData.Size,
                     SizeGrowSpeed = particuleMetaData.SizeGrowSpeed,
-                    Velocity = velocity
+                    Velocity = velocity,
+                    alphaFadingPowBase = Math.Abs(particuleMetaData.AlphaFadingPowBase),
+                    alphaInverted = particuleMetaData.AlphaFadingPowBase < 0
                 });                 
                 nbr--;
             }
@@ -210,9 +212,20 @@ namespace Utopia.Particules
                 // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
                 p = _particules[i];
                 p.Age += elapsedTime / 1000.0f; //Age in Seconds
-                float growsize = (elapsedTime / 1000.0f) * p.SizeGrowSpeed;
-                p.Size.X += growsize;
-                p.Size.Y += growsize;
+
+                if (p.SizeGrowSpeed != 0) //Size
+                {
+                    float growsize = (elapsedTime / 1000.0f) * p.SizeGrowSpeed;
+                    p.Size.X += growsize;
+                    p.Size.Y += growsize;
+                }
+
+                if (p.alphaFadingPowBase != 0)
+                {
+                    double alpha = Math.Pow(MathHelper.FullLerp(0.0f, 1.0f, 0, p.maxAge, p.Age, true), p.alphaFadingPowBase);
+                    if (p.alphaInverted) alpha = 1 - alpha;
+                    p.ColorModifier.A = (byte)(alpha * 255);
+                }
 
                 p.Position.Value = ((0.5 * p.Age * p.Age) * p.AccelerationForce)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity) = Acceleration Force
                               + (p.Age * p.Velocity)                                 //New position based on time and move vector
