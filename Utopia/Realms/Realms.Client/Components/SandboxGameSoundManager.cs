@@ -66,5 +66,6 @@ namespace Realms.Client.Components
         {
             SoundEngine.StartPlay3D("Take", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
+
     }
 }

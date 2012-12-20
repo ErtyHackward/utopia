@@ -52,6 +52,8 @@ using Sandbox.Client.Components.GUI;
 using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
+using S33M3CoreComponents.Particules;
+using Utopia.Particules;
 using Sandbox.Client.Components.GUI.SinglePlayer;
 
 namespace Sandbox.Client
@@ -218,6 +220,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<ToolBarUi>().To<SandboxToolBar>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<FadeComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<AdminConsole>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<UtopiaParticuleEngine>().ToSelf().InScope(x => GameScope.CurrentGameScope);
         }
     }
 }
