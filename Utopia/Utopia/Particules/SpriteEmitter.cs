@@ -185,8 +185,7 @@ namespace Utopia.Particules
                     Size = particuleMetaData.Size,
                     SizeGrowSpeed = particuleMetaData.SizeGrowSpeed,
                     Velocity = velocity,
-                    alphaFadingPowBase = Math.Abs(particuleMetaData.AlphaFadingPowBase),
-                    alphaInverted = particuleMetaData.AlphaFadingPowBase < 0
+                    alphaFadingPowBase = particuleMetaData.AlphaFadingPowBase
                 });                 
                 nbr--;
             }
@@ -223,7 +222,10 @@ namespace Utopia.Particules
                 if (p.alphaFadingPowBase != 0)
                 {
                     double alpha = Math.Pow(MathHelper.FullLerp(0.0f, 1.0f, 0, p.maxAge, p.Age, true), p.alphaFadingPowBase);
-                    if (p.alphaInverted) alpha = 1 - alpha;
+                    double alphaInverted = Math.Pow(MathHelper.FullLerp(1.0f, 0.0f, 0, p.maxAge, p.Age), p.alphaFadingPowBase);
+
+                    alpha = Math.Max(alpha, alphaInverted);
+
                     p.ColorModifier.A = (byte)(alpha * 255);
                 }
 
