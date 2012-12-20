@@ -88,7 +88,7 @@ namespace Utopia.Shared.Entities
         [Description("Amount of randomness for to startup position of the particules (+/-)")]
         public Vector3 PositionRandomness { get; set; }
         [ProtoMember(16)]
-        [Description("Fading base on particule life time. 0 = No fading, Negative value will invert the fading. The value is the Power base value. (1 = Linear)")]
+        [Description("Fading base on particule life time. 0 = No fading. The value is the Power base value. (1 = Linear)")]
         public double AlphaFadingPowBase { get; set; }
     }
 }
