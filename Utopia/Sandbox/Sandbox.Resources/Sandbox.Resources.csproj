@@ -490,9 +490,6 @@
     <None Include="Sounds\Ambiance\Ocean.adpcm.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Sounds\Moods\peaceful.adpcm.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Include="TexturesPacks\Default\Particules\000_fog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
