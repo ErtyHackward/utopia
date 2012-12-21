@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using UpdateMaker.Properties;
+using Utopia.Shared.Structs;
 
 namespace UpdateMaker
 {
@@ -63,7 +64,14 @@ namespace UpdateMaker
                 var filePath = file.Remove(0, Path.GetDirectoryName(Settings.Default.BaseFile).Length + 1);
 
                 if (!_ignoredFiles.Contains(filePath))
-                    listView1.Items.Add(filePath);
+                {
+                    Md5Hash hash;
+                    using (var fs = File.OpenRead(file))
+                    {
+                        hash = Md5Hash.Calculate(fs);
+                    }
+                    dataGridView1.Rows.Add(filePath,hash.ToString());
+                }
             }
 
             foreach (var directory in Directory.EnumerateDirectories(path))
@@ -80,16 +88,16 @@ namespace UpdateMaker
 
         private void button2_Click(object sender, EventArgs e)
         {
-            listView1.Items.Clear();
+            dataGridView1.Rows.Clear();
             LoadFiles(Path.GetDirectoryName(Settings.Default.BaseFile));
         }
 
         private void ingoreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
-                _ignoredFiles.Add(item.Text);
-                listView1.Items.Remove(item);
+                _ignoredFiles.Add((string)row.Cells[0].Value);
+                dataGridView1.Rows.Remove(row);
             }
 
             File.WriteAllLines(IgnoreListPath, _ignoredFiles);

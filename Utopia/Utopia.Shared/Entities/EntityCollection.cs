@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using ProtoBuf;
 using Utopia.Shared.Chunks;
@@ -15,6 +14,8 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     public class EntityCollection : IStaticContainer
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
         private bool _initialisation;
@@ -138,6 +139,7 @@ namespace Utopia.Shared.Entities
         /// Must be used if we want to copy the entities from another collection to this one
         /// </summary>
         /// <param name="entityCollection">The new entities collection</param>
+        /// <param name="atChunkCreationTime"></param>
         public void Import(EntityCollection entityCollection, bool atChunkCreationTime = false)
         {
             lock (_syncRoot)
@@ -186,6 +188,7 @@ namespace Utopia.Shared.Entities
                 entity.Container = this;
                 _entities.Add(entity.StaticId, entity);
             }
+            
             IsDirty = true;
             OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = sourceDynamicId, AtChunkCreationTime = atChunkCreationTime });
             OnCollectionDirty();
@@ -206,6 +209,7 @@ namespace Utopia.Shared.Entities
         /// <param name="entity">Entity object to add</param>
         /// <param name="sourceDynamicId"></param>
         /// <param name="timeout">Number of milliseconds to wait for lock</param>
+        /// <param name="atChunkCreationTime"></param>
         /// <returns>True if succeed otherwise False</returns>
         public bool TryAdd(IStaticEntity entity, uint sourceDynamicId = 0, int timeout = 0, bool atChunkCreationTime = false)
         {
