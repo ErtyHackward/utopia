@@ -7,6 +7,7 @@ using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.Unsafe;
+using SharpDX;
 
 namespace Sandbox.Client.Components.GUI.Settings
 {
@@ -33,7 +34,7 @@ namespace Sandbox.Client.Components.GUI.Settings
             InitializeComponent();
         }
 
-        void engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBuffer)
+        void engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             Resize();
         }

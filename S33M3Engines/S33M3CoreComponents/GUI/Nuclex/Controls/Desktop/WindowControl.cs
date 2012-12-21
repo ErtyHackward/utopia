@@ -80,7 +80,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         /// </summary>
         /// <param name="screen"></param>
         /// <param name="viewport"></param>
-        public void Show(MainScreen screen, SharpDX.Direct3D11.Viewport viewport)
+        public void Show(MainScreen screen, SharpDX.ViewportF viewport)
         {
             Bounds.Location.X = (viewport.Width - Bounds.Size.X.Offset) / 2;
             Bounds.Location.Y = (viewport.Height - Bounds.Size.Y.Offset) / 2;

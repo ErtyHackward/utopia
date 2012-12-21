@@ -7,6 +7,7 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.GUI.Nuclex;
+using SharpDX;
 
 namespace Sandbox.Client.Components.GUI.SinglePlayer
 {
@@ -66,7 +67,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             btSavedGame();
         }
 
-        protected override void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        protected override void UpdateLayout(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             base.UpdateLayout(viewport, newBackBufferDescr);
 

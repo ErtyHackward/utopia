@@ -122,7 +122,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         }
 
         //Resize, place the components depending of the viewport size
-        protected override void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        protected override void UpdateLayout(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             base.UpdateLayout(viewport, newBackBufferDescr);
 

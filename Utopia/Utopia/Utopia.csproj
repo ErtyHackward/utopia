@@ -75,25 +75,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.0.0.602, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\protobuf-net.2.0.0.602\lib\net40\protobuf-net.dll</HintPath>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.612\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.4.1\lib\net40\SharpDX.dll</HintPath>
+      <HintPath>..\packages\SharpDX.2.4.2\lib\net40\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.1\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.2\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D11, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.Direct3D11.2.4.1\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>..\packages\SharpDX.Direct3D11.2.4.2\lib\net40\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.DXGI, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.DXGI.2.4.1\lib\net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>..\packages\SharpDX.DXGI.2.4.2\lib\net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

@@ -22,7 +22,7 @@ namespace S33M3DXEngine.Textures
         private ShaderResourceView _colorMapSRV;
         private DepthStencilView _depthMapDSV;
         private ShaderResourceView _depthMapSRV;
-        private Viewport _viewport;
+        private ViewportF _viewport;
         private Color4 _whiteColor = new Color4(0, 0, 0, 1);
         private Texture2DDescription _colorMaptexDesc;
         private Texture2DDescription _depthMapDesc;
@@ -65,8 +65,8 @@ namespace S33M3DXEngine.Textures
 
             _viewport.Height = height;
             _viewport.Width = width;
-            _viewport.TopLeftX = 0;
-            _viewport.TopLeftY = 0;
+            _viewport.X = 0;
+            _viewport.Y = 0;
             _viewport.MinDepth = 0.0f;
             _viewport.MaxDepth = 1.0f;
         }

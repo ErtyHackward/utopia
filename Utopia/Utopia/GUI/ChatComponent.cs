@@ -113,7 +113,7 @@ namespace Utopia.GUI
             _refreshDisplay = true;
         }
 
-        private void LocateChat(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void LocateChat(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             _windowHeight = viewport.Height;
             _refreshDisplay = true;

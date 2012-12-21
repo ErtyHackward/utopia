@@ -6,6 +6,7 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using SharpDX.Direct3D11;
+using SharpDX;
 
 namespace Sandbox.Client.Components.GUI
 {
@@ -128,13 +129,13 @@ namespace Sandbox.Client.Components.GUI
             _stError            = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\Login\\error.png"));
         }
 
-        protected override void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
+        protected override void EngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             base.EngineViewPortUpdated(viewport, newBackBuffer);
             Resize(viewport);
         }
 
-        private void Resize(Viewport viewport)
+        private void Resize(ViewportF viewport)
         {
             _regButton.Bounds = new UniRectangle((viewport.Width - 562) / 2 + 408, _headerHeight + 72, 88, 83);
             _authenticationLabel.Bounds = new UniRectangle((viewport.Width - 444) / 2+ 12, _headerHeight + 133, 126, 49);

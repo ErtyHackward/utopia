@@ -80,7 +80,7 @@ namespace Utopia.Components
         #endregion
 
         #region Private methods
-        private void engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBuffer)
+        private void engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             CreateSolidBackBuffer(newBackBuffer);
 

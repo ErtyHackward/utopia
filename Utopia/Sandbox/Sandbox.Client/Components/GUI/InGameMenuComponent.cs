@@ -6,6 +6,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using Utopia.GUI.Inventory;
+using SharpDX;
 
 namespace Sandbox.Client.Components.GUI
 {
@@ -136,7 +137,7 @@ namespace Sandbox.Client.Components.GUI
             base.DisableComponent();
         }
 
-        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void UpdateLayout(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             _buttonsGroup.Bounds.Location = new UniVector((_engine.ViewPort.Width - _buttonsGroup.Bounds.Size.X.Offset) / 2, (_engine.ViewPort.Height - _buttonsGroup.Bounds.Size.Y.Offset) / 2);
         }

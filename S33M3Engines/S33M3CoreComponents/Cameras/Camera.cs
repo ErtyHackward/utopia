@@ -32,7 +32,7 @@ namespace S33M3CoreComponents.Cameras
         #endregion
 
         #region Private Variable
-        protected Viewport? _viewport;
+        protected ViewportF? _viewport;
         protected Vector3 _cameraUpVector = VectorsCst.Up3;
 
         protected float _nearPlane = 0.5f;
@@ -64,7 +64,7 @@ namespace S33M3CoreComponents.Cameras
             get { return _frustum; }
         }
 
-        public Viewport Viewport
+        public ViewportF Viewport
         {
             get
             {
@@ -72,7 +72,7 @@ namespace S33M3CoreComponents.Cameras
                 {
                     _viewport = _d3dEngine.ViewPort;
                 }
-                return ((Viewport)_viewport);
+                return ((ViewportF)_viewport);
             }
             set
             {
@@ -210,7 +210,7 @@ namespace S33M3CoreComponents.Cameras
             if (CameraUpdateOrderChanged != null) CameraUpdateOrderChanged(this, _cameraPlugin.CameraUpdateOrder);
         }
 
-        private void D3dEngine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void D3dEngine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             Viewport = viewport;
         }

@@ -5,6 +5,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using SharpDX;
 
 namespace Sandbox.Client.Components.GUI
 {
@@ -66,7 +67,7 @@ namespace Sandbox.Client.Components.GUI
             base.OnUpdatableChanged(sender, args);
         }
 
-        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void UpdateLayout(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             if (Updatable)
             {
