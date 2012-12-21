@@ -110,7 +110,7 @@ namespace Utopia.Shared.Structs
             }
         }
 
-        public static Md5Hash Calculate(MemoryStream ms)
+        public static Md5Hash Calculate(Stream ms)
         {
             using (var provider = new MD5CryptoServiceProvider())
             {
