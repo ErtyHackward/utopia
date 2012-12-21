@@ -173,22 +173,43 @@ namespace S33M3CoreComponents.Cameras
             {
                 way = 1;
             }
-            
-            float _validatedOffsetDistance = _offsetDistance;
+
+            //float _validatedOffsetDistance = _offsetDistance;
+            //Vector3 cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
+            //Vector3D evaluatedCameraWorldPosition;
+            //bool isCameraPositionCorrect = false;
+            //while (isCameraPositionCorrect == false && _validatedOffsetDistance > 0)
+            //{
+            //    isCameraPositionCorrect = true;
+            //    foreach (CheckCameraPosition fct in CheckCamera.GetInvocationList())
+            //    {
+            //        evaluatedCameraWorldPosition = _worldPosition.ValueInterp + cameraFocusedPosition;
+            //        isCameraPositionCorrect = fct(ref evaluatedCameraWorldPosition);
+            //        if (isCameraPositionCorrect == false) break;
+            //    }
+            //    _validatedOffsetDistance -= 0.01f;
+            //    if (_validatedOffsetDistance < 0) _validatedOffsetDistance = 0;
+            //    cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
+            //}
+
+            float _validatedOffsetDistance = 0; // _offsetDistance;
             Vector3 cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
             Vector3D evaluatedCameraWorldPosition;
-            bool isCameraPositionCorrect = false;
-            while (isCameraPositionCorrect == false && _validatedOffsetDistance > 0)
+            bool isCameraPositionCorrect = true;
+            while (isCameraPositionCorrect == true && _validatedOffsetDistance < _offsetDistance)
             {
                 isCameraPositionCorrect = true;
                 foreach (CheckCameraPosition fct in CheckCamera.GetInvocationList())
                 {
                     evaluatedCameraWorldPosition = _worldPosition.ValueInterp + cameraFocusedPosition;
                     isCameraPositionCorrect = fct(ref evaluatedCameraWorldPosition);
-                    if (isCameraPositionCorrect == false) break;
+                    if (isCameraPositionCorrect == false)
+                        _validatedOffsetDistance -= 0.03f;
+                        break;
                 }
-                _validatedOffsetDistance -= 0.01f;
-                if (_validatedOffsetDistance < 0) _validatedOffsetDistance = 0;
+
+                _validatedOffsetDistance += 0.01f;
+                if (_validatedOffsetDistance > _offsetDistance) _validatedOffsetDistance = _offsetDistance;
                 cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
             }
 
