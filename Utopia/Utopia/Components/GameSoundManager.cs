@@ -398,7 +398,7 @@ namespace Utopia.Components
 
                     if (_currentlyPLayingAmbiantSound.PlayingDataSource.SoundAlias == "Fear" && _currentlyPlayingMoodSound == null)
                     {
-                        _currentlyPlayingMoodSound = SoundEngine.StartPlay2D("Peaceful", true, 5000);
+                        //_currentlyPlayingMoodSound = SoundEngine.StartPlay2D("Peaceful", true, 5000);
                     }
                     _currentlyPLayingAmbiantSound.Stop(1000);
                     _currentlyPLayingAmbiantSound = null;
