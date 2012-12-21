@@ -97,7 +97,7 @@ namespace Realms.Client.Components.GUI
         }
 
         //Resize, place the components depending of the viewport size
-        private void UpdateLayoutInternal(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void UpdateLayoutInternal(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             if (Updatable)
             {
@@ -117,7 +117,7 @@ namespace Realms.Client.Components.GUI
             UpdateLayout(viewport, newBackBufferDescr);
         }
 
-        protected virtual void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        protected virtual void UpdateLayout(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
 
         }

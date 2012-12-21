@@ -20,7 +20,7 @@ namespace S33M3CoreComponents.Cameras.Interfaces
         FTSValue<Vector3D> WorldPosition { get; }
         FTSValue<Quaternion> Orientation { get; }
         FTSValue<Quaternion> YAxisOrientation { get; }
-        Viewport Viewport { get; set; }
+        ViewportF Viewport { get; set; }
         SimpleBoundingFrustum Frustum { get; }
         ICameraPlugin CameraPlugin { get; set; }
         CameraType CameraType { get; set; }

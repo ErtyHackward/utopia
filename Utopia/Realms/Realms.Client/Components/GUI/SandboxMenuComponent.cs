@@ -175,7 +175,7 @@ namespace Realms.Client.Components.GUI
             _engine.ViewPort_Updated -= EngineViewPortUpdated;
         }
 
-        protected virtual void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
+        protected virtual void EngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             Resize(viewport);
         }
@@ -202,7 +202,7 @@ namespace Realms.Client.Components.GUI
             base.DisableComponent();
         }
 
-        private void Resize(SharpDX.Direct3D11.Viewport viewport)
+        private void Resize(SharpDX.ViewportF viewport)
         {
             if (viewport.Height >= 620)
                 _headerHeight = (int)(viewport.Height * 0.3f);

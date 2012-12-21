@@ -96,16 +96,16 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             int clipBottom = clipY + (int)clipRegion.Height;
 
             // Calculate the viewport's right and bottom coordinates
-            Viewport viewport = _d3dEngine.ViewPort;
-            int viewportRight = (int)(viewport.TopLeftX + viewport.Width);
-            int viewportBottom = (int)(viewport.TopLeftY + viewport.Height);
+            ViewportF viewport = _d3dEngine.ViewPort;
+            int viewportRight = (int)(viewport.X + viewport.Width);
+            int viewportBottom = (int)(viewport.Y + viewport.Height);
 
             // Extract the part of the clipping region that lies within the viewport
             Rectangle scissorRegion = new Rectangle(
-                                                Math.Max(clipX, (int)viewport.TopLeftX),
-                                                Math.Max(clipY, (int)viewport.TopLeftY),
-                                                Math.Max(clipX, (int)viewport.TopLeftX) + (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.TopLeftX)),
-                                                Math.Max(clipY, (int)viewport.TopLeftY) + (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.TopLeftY))
+                                                Math.Max(clipX, (int)viewport.X),
+                                                Math.Max(clipY, (int)viewport.Y),
+                                                Math.Max(clipX, (int)viewport.X) + (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.X)),
+                                                Math.Max(clipY, (int)viewport.Y) + (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.Y))
                                             );
             //scissorRegion.Width += clipX - scissorRegion.X;
             //scissorRegion.Height += clipY - scissorRegion.Y;

@@ -39,7 +39,7 @@ namespace S33M3DXEngine
         private SwapChain _swapChain;
         private RenderTargetView _renderTarget;
         private DepthStencilView _depthStencil;
-        private Viewport _viewPort;
+        private ViewportF _viewPort;
         private Factory1 _dx11factory;
 
 #if DEBUG
@@ -52,10 +52,10 @@ namespace S33M3DXEngine
         #region Public properties
         public Device Device;
 
-        public delegate void ViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer);
+        public delegate void ViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer);
         public event ViewPortUpdated ViewPort_Updated;
 
-        public Viewport ViewPort { get { return _viewPort; } set { _viewPort = value; } }
+        public ViewportF ViewPort { get { return _viewPort; } set { _viewPort = value; } }
         public RenderForm GameWindow { get { return _renderForm; } }
         public SwapChain SwapChain { get { return _swapChain; } }
 
@@ -485,7 +485,7 @@ namespace S33M3DXEngine
         private void CreateViewPort()
         {
             //Create ViewPort
-            _viewPort = new Viewport(0, 0, BackBufferTex.Description.Width, BackBufferTex.Description.Height, 0, 1);
+            _viewPort = new ViewportF(0, 0, BackBufferTex.Description.Width, BackBufferTex.Description.Height, 0, 1);
             BackBufferSize = new Vector2(_viewPort.Width, _viewPort.Height);
 
             //Refresh the Projection2D Matrix (Doesn't a camera to set it up !)

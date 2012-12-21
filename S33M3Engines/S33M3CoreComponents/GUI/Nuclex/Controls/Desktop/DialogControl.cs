@@ -188,7 +188,7 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
         /// <param name="screen"> </param>
         /// <param name="title"> </param>
         /// <param name="okAction"> </param>
-        public void ShowDialog(MainScreen screen, Viewport port, T t, string title, Action<T> okAction)
+        public void ShowDialog(MainScreen screen, ViewportF port, T t, string title, Action<T> okAction)
         {
             Title = title;
 

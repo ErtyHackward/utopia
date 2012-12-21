@@ -106,12 +106,12 @@ namespace Utopia.Components
         #endregion
 
         #region Private methods
-        private void _engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBuffer)
+        private void _engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             ResizeSlideDim(viewport);
         }
 
-        private void ResizeSlideDim(Viewport viewport)
+        private void ResizeSlideDim(ViewportF viewport)
         {
             _slideDimension = new Rectangle(0, 0, (int)viewport.Width, (int)viewport.Height);
         }

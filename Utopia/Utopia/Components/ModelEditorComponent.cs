@@ -460,7 +460,7 @@ namespace Utopia.Components
             _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
         }
 
-        private void ViewportUpdated(Viewport port, Texture2DDescription newBackBufferDescr)
+        private void ViewportUpdated(ViewportF port, Texture2DDescription newBackBufferDescr)
         {
             //Update The projection matrix
             var aspect = port.Width / port.Height;

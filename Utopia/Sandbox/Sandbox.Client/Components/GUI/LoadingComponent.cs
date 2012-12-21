@@ -111,14 +111,14 @@ namespace Sandbox.Client.Components.GUI
             base.DisableComponent();
         }
 
-        protected override void EngineViewPortUpdated(Viewport viewport, Texture2DDescription newBackBuffer)
+        protected override void EngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             base.EngineViewPortUpdated(viewport, newBackBuffer);
 
             Resize(viewport);
         }
 
-        private void Resize(Viewport viewport)
+        private void Resize(ViewportF viewport)
         {
             _loadingLabel.Bounds        = new UniRectangle((viewport.Width - 168) / 2 + 70, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight - 10, 148, 58);
             _pleaseWaitLabel.Bounds     = new UniRectangle((viewport.Width - 168) / 2 + 70, (viewport.Height - _headerHeight - 58) / 2 + _headerHeight + 40, 148, 58);

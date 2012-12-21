@@ -31,7 +31,7 @@ namespace S33M3CoreComponents.Textures
         #endregion
 
         #region Public variables
-        public Viewport Viewport;
+        public ViewportF Viewport;
         public Matrix Projection2D;
         public Texture2D RenderTargetTexture;
         public ShaderResourceView ShaderResourceView;
@@ -63,8 +63,8 @@ namespace S33M3CoreComponents.Textures
             //ViewPort Initialization
             Viewport.Height = _textureHeight;
             Viewport.Width = _textureWidth;
-            Viewport.TopLeftX = 0;
-            Viewport.TopLeftY = 0;
+            Viewport.X = 0;
+            Viewport.Y = 0;
             Viewport.MinDepth = 0.0f;
             Viewport.MaxDepth = 1.0f;
 

@@ -35,7 +35,7 @@ namespace S33M3CoreComponents.Sprites2D
         /// <param name="currentViewPort"></param>
         public SpriteTexture(Device device, string texturePath,
                              D3DEngine d3dEngine,
-                             Viewport currentViewPort)
+                             ViewportF currentViewPort)
         {
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
             CreateResource(device, tex,
@@ -51,7 +51,7 @@ namespace S33M3CoreComponents.Sprites2D
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        private void D3dEngine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void D3dEngine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), (int)(viewport.Width / 2) - (Width / 2) + Width, (int)(viewport.Height / 2) - (Height / 2) + Height);
         }

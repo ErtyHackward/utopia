@@ -7,6 +7,8 @@ using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using SharpDX;
+using Color = System.Drawing.Color;
 
 namespace Realms.Client.Components.GUI
 {
@@ -240,7 +242,7 @@ namespace Realms.Client.Components.GUI
             base.DisableComponent();
         }
 
-        private void UpdateLayout(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void UpdateLayout(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             _helloLabel.Bounds    = new UniRectangle((_engine.ViewPort.Width - 212) / 2 - 250, _headerHeight + 90, 50, 40);
             _nicknameLabel.Bounds = new UniRectangle((_engine.ViewPort.Width - 212) / 2 - 195, _headerHeight + 90, 200, 40);

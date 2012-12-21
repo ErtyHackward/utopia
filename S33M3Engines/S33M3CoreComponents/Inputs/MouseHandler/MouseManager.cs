@@ -141,12 +141,12 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
             ResetMouseCursor();
         }
 
-        private void ComputeCenterViewport(Viewport viewport)
+        private void ComputeCenterViewport(ViewportF viewport)
         {
             _centerViewPort = new Vector2I((int)viewport.Width / 2, (int)viewport.Height / 2);
         }
 
-        private void _engine_ViewPort_Updated(Viewport viewport, Texture2DDescription newBackBufferDescr)
+        private void _engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             ComputeCenterViewport(viewport);
         }
@@ -191,8 +191,8 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
 
             Vector3 UnprojecNearClipVector;
             Vector3.Unproject(ref nearClipVector,
-                              _engine.ViewPort.TopLeftX,
-                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.X,
+                              _engine.ViewPort.Y,
                               _engine.ViewPort.Width,
                               _engine.ViewPort.Height,
                               _engine.ViewPort.MinDepth,
@@ -202,8 +202,8 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
 
             Vector3 UnprojecFarClipVector;
             Vector3.Unproject(ref farClipVector,
-                              _engine.ViewPort.TopLeftX,
-                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.X,
+                              _engine.ViewPort.Y,
                               _engine.ViewPort.Width,
                               _engine.ViewPort.Height,
                               _engine.ViewPort.MinDepth,
@@ -230,8 +230,8 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
 
             Vector3D unprojecNearClipVector;
             Vector3D.Unproject(ref nearClipVector,
-                              _engine.ViewPort.TopLeftX,
-                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.X,
+                              _engine.ViewPort.Y,
                               _engine.ViewPort.Width,
                               _engine.ViewPort.Height,
                               _engine.ViewPort.MinDepth,
@@ -241,8 +241,8 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
 
             Vector3D unprojecFarClipVector;
             Vector3D.Unproject(ref farClipVector,
-                              _engine.ViewPort.TopLeftX,
-                              _engine.ViewPort.TopLeftY,
+                              _engine.ViewPort.X,
+                              _engine.ViewPort.Y,
                               _engine.ViewPort.Width,
                               _engine.ViewPort.Height,
                               _engine.ViewPort.MinDepth,

@@ -38,7 +38,7 @@ namespace S33M3DXEngine.RenderStates
         public static int AddRasterStates(RasterizerStateDescription RasterDescr)
         {
             Array.Resize<RasterizerState>(ref _rasterStates, _rasterStates.Length + 1);
-            _rasterStates[_rasterStates.Length - 1] = new RasterizerState(_engine.Device, ref RasterDescr);
+            _rasterStates[_rasterStates.Length - 1] = new RasterizerState(_engine.Device, RasterDescr);
             return _rasterStates.Length - 1;
         }
 
@@ -55,7 +55,7 @@ namespace S33M3DXEngine.RenderStates
         public static int AddBlendStates(BlendStateDescription BlendStateDescr)
         {
             Array.Resize<BlendState>(ref _blendStates, _blendStates.Length + 1);
-            _blendStates[_blendStates.Length - 1] = new BlendState(_engine.Device, ref BlendStateDescr);
+            _blendStates[_blendStates.Length - 1] = new BlendState(_engine.Device, BlendStateDescr);
             return _blendStates.Length - 1;
         }
 
@@ -71,7 +71,7 @@ namespace S33M3DXEngine.RenderStates
         public static int AddDepthStencilStates(DepthStencilStateDescription DepthStencilStateDescr)
         {
             Array.Resize<DepthStencilState>(ref _depthStencilStates, _depthStencilStates.Length + 1);
-            _depthStencilStates[_depthStencilStates.Length - 1] = new DepthStencilState(_engine.Device, ref DepthStencilStateDescr);
+            _depthStencilStates[_depthStencilStates.Length - 1] = new DepthStencilState(_engine.Device, DepthStencilStateDescr);
             return _depthStencilStates.Length - 1;
         }
 
