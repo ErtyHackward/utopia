@@ -453,7 +453,7 @@ namespace Utopia.Components
         void worldChunk_LoadComplete(object sender, EventArgs e)
         {
             //Start playing main "Moods" music
-            _currentlyPlayingMoodSound = SoundEngine.StartPlay2D("Peaceful", true, 5000);
+            //_currentlyPlayingMoodSound = SoundEngine.StartPlay2D("Peaceful", true, 5000);
         }
         #endregion
 
