@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using ProtoBuf;
 using UpdateMaker.Properties;
 using Utopia.Shared.Structs;
 using Utopia.Updater;
@@ -143,12 +142,17 @@ namespace UpdateMaker
             }
 
             var ms = new MemoryStream();
-            Serializer.Serialize(ms, updateFile.Files);
+            var writer = new BinaryWriter(ms);
+            foreach (var fileInfo in updateFile.Files)
+            {
+                fileInfo.Save(writer);
+            }
             ms.Position = 0;
             var hash = Md5Hash.Calculate(ms);
             updateFile.UpdateToken = hash.ToString();
 
-            updateFile.Files = updateFile.GetChangedFiles(_previousFile);
+            if (_previousFile != null)
+                updateFile.Files = updateFile.GetChangedFiles(_previousFile);
 
             if (updateFile.Files.Count == 0)
             {
@@ -215,7 +219,7 @@ namespace UpdateMaker
             // upload files
             foreach (var updateFileInfo in updateFile.Files)
             {
-                var url = "ftp://utopiarealms.com/files/" + updateFileInfo.SystemPath.Replace('\\', '/');
+                var url = "ftp://update.utopiarealms.com/files/" + updateFileInfo.SystemPath.Replace('\\', '/');
                 file = updateFileInfo.SystemPath;
                 progress = (float)index / updateFile.Files.Count;
                 using (var fs = File.OpenRead(Path.Combine(baseFolderPath, updateFileInfo.SystemPath)))
@@ -226,12 +230,21 @@ namespace UpdateMaker
             }
 
             // upload index file
-            this.file = "index file...";
-            MemoryStream ms = new MemoryStream();
-            Serializer.Serialize(ms, updateFile);
+            file = "index file...";
+            var ms = new MemoryStream();
+            var bwriter = new BinaryWriter(ms);
+            updateFile.Save(bwriter);
             ms.Position = 0;
-            UploadFile("ftp://utopiarealms.com/index.update", ms);
+            UploadFile("ftp://update.utopiarealms.com/index.update", ms);
+            ms.SetLength(0);
 
+            using (var writer = new StreamWriter(ms, Encoding.UTF8))
+            {
+                writer.Write(updateFile.UpdateToken);
+                writer.Flush();
+                UploadFile("ftp://update.utopiarealms.com/token", ms);
+            }
+            
             finished = true;
         }
 
@@ -245,6 +258,7 @@ namespace UpdateMaker
 
             ftpReq.ContentLength = filestream.Length;
 
+            filestream.Position = 0;
             var stream = ftpReq.GetRequestStream();
             filestream.CopyTo(stream);
             stream.Close();
@@ -258,16 +272,26 @@ namespace UpdateMaker
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            var req = (HttpWebRequest)WebRequest.Create("http://update.utopiarealms.com/index.update");
-
-            using (var resp = req.GetResponse())
+            try
             {
-                var stream = resp.GetResponseStream();
-                _previousFile = Serializer.Deserialize<UpdateFile>(stream);
-            }
+                var req = (HttpWebRequest)WebRequest.Create("http://update.utopiarealms.com/index.update");
 
-            label4.Text = _previousFile.Version + " " + _previousFile.UpdateToken;
-            textBox1.Text = _previousFile.Message;
+                using (var resp = req.GetResponse())
+                {
+                    var stream = resp.GetResponseStream();
+                    var reader = new BinaryReader(stream);
+                    _previousFile = new UpdateFile();
+                    _previousFile.Load(reader);
+                }
+
+                label4.Text = _previousFile.Version + " " + _previousFile.UpdateToken;
+                textBox1.Text = _previousFile.Message;
+            }
+            catch (Exception)
+            {
+
+
+            }
         }
 
     }
