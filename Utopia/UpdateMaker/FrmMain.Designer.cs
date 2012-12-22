@@ -93,6 +93,7 @@
             this.button1.TabIndex = 3;
             this.button1.Text = "Publish";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // linkLabel2
             // 
@@ -226,6 +227,7 @@
             this.Controls.Add(this.label1);
             this.Name = "FrmMain";
             this.Text = "Utopia update maker";
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this.contextMenuStrip1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
