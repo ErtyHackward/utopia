@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Utopia.Updater
 {
     [ProtoContract]
-    public class FileInfo
+    public class UpdateFileInfo
     {
         /// <summary>
         /// Relative path of the file, including file name

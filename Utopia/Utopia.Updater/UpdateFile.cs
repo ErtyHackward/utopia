@@ -37,6 +37,27 @@ namespace Utopia.Updater
         /// Gets or sets list of files 
         /// </summary>
         [ProtoMember(5)]
-        public List<FileInfo> Files { get; set; }
+        public List<UpdateFileInfo> Files { get; set; }
+
+        public UpdateFile()
+        {
+            Files = new List<UpdateFileInfo>();
+        }
+
+        public List<UpdateFileInfo> GetChangedFiles(UpdateFile previousVersion)
+        {
+            List<UpdateFileInfo> changedFiles = new List<UpdateFileInfo>();
+            foreach (var updateFileInfo in Files)
+            {
+                var file = previousVersion.Files.Find(uf => uf.SystemPath == updateFileInfo.SystemPath);
+                
+                if (file != null && file.Md5Hash == updateFileInfo.Md5Hash)
+                    continue;
+                
+                changedFiles.Add(updateFileInfo);
+            }
+
+            return changedFiles;
+        }
     }
 }
