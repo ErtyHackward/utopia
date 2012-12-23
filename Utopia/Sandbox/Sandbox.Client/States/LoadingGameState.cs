@@ -105,7 +105,7 @@ namespace Sandbox.Client.States
             {
                 var wp = _ioc.Get<WorldParameters>();
 
-                var configuration = WorldConfiguration.LoadFromFile("Config\\Island.realm");
+                var configuration = WorldConfiguration.LoadFromFile("Config\\Sandbox.realm");
 
                 wp.Configuration = configuration;
                 //wp not initialized ==> We are in "SandBox" mode, load from the "Utopia SandBox" Default WorldParameters

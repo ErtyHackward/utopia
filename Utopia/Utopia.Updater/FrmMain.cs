@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Utopia.Shared.Structs;
@@ -106,9 +103,12 @@ namespace Utopia.Updater
             Status("Load update info...");
             // get update index
             var req = WebRequest.Create("http://update.utopiarealms.com/index.update");
+
             using (var response = req.GetResponse())
+            using (var stream = response.GetResponseStream())
+            using (var zs = new GZipStream(stream, CompressionMode.Decompress))
             {
-                var reader = new BinaryReader(response.GetResponseStream());
+                var reader = new BinaryReader(zs);
                 _updateFile = new UpdateFile();
                 _updateFile.Load(reader);
             }
@@ -153,7 +153,19 @@ namespace Utopia.Updater
                         fs.SetLength(0);
                         using (var stream = response.GetResponseStream())
                         {
-                            stream.CopyTo(fs);
+                            if (file.Compressed)
+                            {
+                                using (var zip = new GZipStream(stream, CompressionMode.Decompress))
+                                {
+                                    zip.CopyTo(fs);
+                                }
+                            }
+                            else
+                            {
+                                stream.CopyTo(fs);    
+                            }
+
+                            
                         }
                     }
                 }
