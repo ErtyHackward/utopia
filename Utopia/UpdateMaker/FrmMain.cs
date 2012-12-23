@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -231,20 +232,26 @@ namespace UpdateMaker
 
             // upload index file
             file = "index file...";
-            var ms = new MemoryStream();
-            var bwriter = new BinaryWriter(ms);
-            updateFile.Save(bwriter);
-            ms.Position = 0;
-            UploadFile("ftp://update.utopiarealms.com/index.update", ms);
-            ms.SetLength(0);
-
-            using (var writer = new StreamWriter(ms, Encoding.UTF8))
+            using (var ms = new MemoryStream())
             {
-                writer.Write(updateFile.UpdateToken);
-                writer.Flush();
-                UploadFile("ftp://update.utopiarealms.com/token", ms);
+                using (var zs = new GZipStream(ms, CompressionMode.Compress))
+                {
+                    var bwriter = new BinaryWriter(zs);
+                    updateFile.Save(bwriter);
+                }
+                ms.Position = 0;
+                UploadFile("ftp://update.utopiarealms.com/index.update", ms);
             }
-            
+
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new StreamWriter(ms, Encoding.UTF8))
+                {
+                    writer.Write(updateFile.UpdateToken);
+                    writer.Flush();
+                    UploadFile("ftp://update.utopiarealms.com/token", ms);
+                }
+            }
             finished = true;
         }
 
@@ -279,9 +286,12 @@ namespace UpdateMaker
                 using (var resp = req.GetResponse())
                 {
                     var stream = resp.GetResponseStream();
-                    var reader = new BinaryReader(stream);
-                    _previousFile = new UpdateFile();
-                    _previousFile.Load(reader);
+                    using (var zs = new GZipStream(stream, CompressionMode.Decompress))
+                    {
+                        var reader = new BinaryReader(zs);
+                        _previousFile = new UpdateFile();
+                        _previousFile.Load(reader);
+                    }
                 }
 
                 label4.Text = _previousFile.Version + " " + _previousFile.UpdateToken;

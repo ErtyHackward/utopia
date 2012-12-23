@@ -225,6 +225,12 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = false
             };
 
+            if (CubeProfiles.Length <= newProfileId)
+            {
+                var array = CubeProfiles;
+                Array.Resize(ref array, newProfileId + 1);
+                CubeProfiles = array;
+            }
             CubeProfiles[newProfileId] = newCubeProfile;
 
             return newCubeProfile;
