@@ -10,6 +10,7 @@ Name: ru; MessagesFile: compiler:Languages\Russian.isl
 Name: fr; MessagesFile: compiler:Languages\French.isl
 
 [Files]
+Source: Deps\dxwebsetup.exe; Flags: dontcopy
 Source: ..\Utopia\Realms\Realms.Client\bin\Release\*; DestDir: {app}; Excludes: *.pdb; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Setup]
