@@ -239,8 +239,8 @@ namespace UpdateMaker
                     var bwriter = new BinaryWriter(zs);
                     updateFile.Save(bwriter);
                 }
-                ms.Position = 0;
-                UploadFile("ftp://update.utopiarealms.com/index.update", ms);
+                var ms2 = new MemoryStream(ms.ToArray());
+                UploadFile("ftp://update.utopiarealms.com/index.update", ms2);
             }
 
             using (var ms = new MemoryStream())
