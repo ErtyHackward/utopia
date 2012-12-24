@@ -1,5 +1,6 @@
 #include "scripts\products.iss"
 #include "scripts\products\dotnetfx40.iss"
+#include "scripts\products\dxredist.iss"
 #include "scripts\products\winversion.iss"
 #include "scripts\products\fileversion.iss"
 
@@ -21,7 +22,8 @@ VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2012
 VersionInfoProductName=Utopia sandbox
 MinVersion=0,6.0.6000
 AppName=Utopia: Sandbox
-AppVerName=1.0.0
+AppVerName=Utopia: Sandbox, 1.0.0
+AppPublisher=April32
 AppPublisherURL=http://utopiarealms.com
 AppSupportURL=http://utopiarealms.com
 AppUpdatesURL=http://utopiarealms.com
@@ -42,6 +44,9 @@ Filename: {app}\Sandbox.exe; Description: {cm:LaunchProgram,Utopia Sandbox}; Fla
 [Code]
 function InitializeSetup(): Boolean;
 begin
+
 	dotnetfx40();
+	ExtractTemporaryFile('dxwebsetup.exe');
+	dxredist();
 	Result := true;
 end;

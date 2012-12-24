@@ -1,5 +1,6 @@
 #include "scripts\products.iss"
 #include "scripts\products\dotnetfx40.iss"
+#include "scripts\products\dxredist.iss"
 #include "scripts\products\winversion.iss"
 #include "scripts\products\fileversion.iss"
 
@@ -21,7 +22,8 @@ VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2012
 VersionInfoProductName=Utopia realms
 MinVersion=0,6.0.6000
 AppName=Utopia: Realms
-AppVerName=1.0.0
+AppVerName=Utopia: Realms, 1.0.0
+AppPublisher=April32
 AppPublisherURL=http://utopiarealms.com
 AppSupportURL=http://utopiarealms.com
 AppUpdatesURL=http://utopiarealms.com
@@ -43,5 +45,7 @@ Filename: {app}\Launcher.exe; Description: {cm:LaunchProgram,Utopia Realms}; Fla
 function InitializeSetup(): Boolean;
 begin
 	dotnetfx40();
+	ExtractTemporaryFile('dxwebsetup.exe');
+	dxredist();
 	Result := true;
 end;
