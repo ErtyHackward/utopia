@@ -60,7 +60,7 @@ var
 begin
 	installMemo := installMemo + '%1' + Title + #13;
 	
-	path := ExpandConstant('{src}{\}') + CustomMessage('DependenciesDir') + '\' + FileName;
+	path := ExpandConstant('{tmp}{\}') + FileName;
 	if not FileExists(path) then begin
 		path := ExpandConstant('{tmp}{\}') + FileName;
 		
@@ -122,7 +122,6 @@ function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
 	i: Integer;
 	s: string;
-	InstallerResult: integer;
 begin
 	if not InstallProducts() then begin
 		s := CustomMessage('depinstall_error');
@@ -133,26 +132,6 @@ begin
 		
 		Result := s;
 	end;
-		
-	ExtractTemporaryFile('dxwebsetup.exe');
-	if Exec(ExpandConstant('{tmp}\dxwebsetup.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, InstallerResult) then begin
-	  case InstallerResult of
-		0: begin
-		  //It installed successfully (Or already was), we can continue
-		end;
-		-1442840576: begin
-			// no need to install
-		end;
-		else begin
-		  //Some other error
-		  result := 'DirectX installation failed. Exit code ' + IntToStr(InstallerResult);
-		end;
-	  end;
-	end else begin
-	  result := 'DirectX installation failed. ' + SysErrorMessage(InstallerResult);
-	end;
-    
-	
 end;
 
 function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String;
