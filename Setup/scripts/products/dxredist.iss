@@ -8,9 +8,10 @@ var
 	version: cardinal;
 	
 begin
-	AddProduct('dxwebsetup.exe',
-		'/q',
-		CustomMessage('dxredist_title'),
-		CustomMessage('dxredist_size'),
-		'http://google.com');
+	if not FileExists(ExpandConstant('{sys}\D3DX11d_43.dll')) then
+		AddProduct('dxwebsetup.exe',
+			'/q',
+			CustomMessage('dxredist_title'),
+			CustomMessage('dxredist_size'),
+			'http://google.com');
 end;
