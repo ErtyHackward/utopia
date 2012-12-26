@@ -154,7 +154,7 @@ namespace Utopia.GUI
         {
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson)
             {
-                _spriteRender.Begin(false);
+                _spriteRender.Begin(false, context);
                 _spriteRender.Draw(_crosshair, ref _crosshair.ScreenPosition, ref _crosshair.ColorModifier);
                 _spriteRender.End(context);
             }

@@ -36,7 +36,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <summary>Needs to be called before the GUI drawing process begins</summary>
         public void BeginDrawing()
         {
-            spriteRenderer.Begin(true);
+            spriteRenderer.Begin(true, _d3dEngine.ImmediateContext);
 
             DrawCalls = 0;
             DrawItems = 0;

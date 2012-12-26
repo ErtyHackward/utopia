@@ -47,7 +47,7 @@ namespace S33M3CoreComponents.Sprites2D
                 if (_isScissorMode != value)
                 {
                     _isScissorMode = value;
-                    SetRenderStates(_isScissorMode);
+                    SetRenderStates(_isScissorMode, _d3DEngine.ImmediateContext);
                 }
             }
         }
@@ -71,13 +71,13 @@ namespace S33M3CoreComponents.Sprites2D
 
         #region Public methods
 
-        public void Begin(bool withDepth)
+        public void Begin(bool withDepth, DeviceContext context)
         {
             DrawCalls = 0;
             SpritesDraw = 0;
             _withDepth = withDepth;
             _spriteBuffer.Reset(withDepth);
-            SetRenderStates(false);
+            SetRenderStates(false, context);
         }
 
         public void Restart()
@@ -89,7 +89,7 @@ namespace S33M3CoreComponents.Sprites2D
 
         public void ReplayLast(DeviceContext context)
         {
-            SetRenderStates(false);
+            SetRenderStates(false, context);
             End(context);
         }
 
@@ -292,9 +292,9 @@ namespace S33M3CoreComponents.Sprites2D
             currentLineWidth = 0;
         }
 
-        private void SetRenderStates(bool scissorMode)
+        private void SetRenderStates(bool scissorMode, DeviceContext context)
         {
-            RenderStatesRepo.ApplyStates(scissorMode ? _rasterStateWithScissorId : _rasterStateWithoutScissorId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
+            RenderStatesRepo.ApplyStates(scissorMode ? _rasterStateWithScissorId : _rasterStateWithoutScissorId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId, context);
         }
 
         private void Initialize()

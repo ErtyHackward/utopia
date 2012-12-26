@@ -109,7 +109,7 @@ namespace S33M3CoreComponents.Components.Debug
         public override void Draw(DeviceContext context, int index)
         {
             //Afficher la console, ou bien les infos !
-            _spriteRender.Begin(false);
+            _spriteRender.Begin(false, context);
             _spriteRender.DrawText(_font, _sb.ToString(), ref _textPosition, ref _fontColor, -1, -1, SpriteRenderer.TextFontPosition.RelativeToFontUp);
             _spriteRender.End(context);
         }

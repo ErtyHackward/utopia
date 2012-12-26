@@ -42,13 +42,13 @@ namespace S33M3DXEngine.RenderStates
             return _rasterStates.Length - 1;
         }
 
-        public static void ApplyRaster(int id)
+        public static void ApplyRaster(int id, DeviceContext context = null)
         {
             if (id == _rasterApplied) return;
             _rasterApplied = id;
-            _engine.ImmediateContext.Rasterizer.State = _rasterStates[id];
+            if(context == null) _engine.ImmediateContext.Rasterizer.State = _rasterStates[id];
+            else context.Rasterizer.State = _rasterStates[id];
         }
-
 
         //Blend States Management ======================================================================
         private static int _blendApplied = -1;
@@ -59,11 +59,12 @@ namespace S33M3DXEngine.RenderStates
             return _blendStates.Length - 1;
         }
 
-        public static void ApplyBlend(int id)
+        public static void ApplyBlend(int id, DeviceContext context = null)
         {
             if (id == _blendApplied) return;
             _blendApplied = id;
-            _engine.ImmediateContext.OutputMerger.BlendState = _blendStates[id];
+            if(context == null) _engine.ImmediateContext.OutputMerger.BlendState = _blendStates[id];
+            else context.OutputMerger.BlendState = _blendStates[id];
         }
 
         //Blend States Management ==========================================================================
@@ -75,11 +76,12 @@ namespace S33M3DXEngine.RenderStates
             return _depthStencilStates.Length - 1;
         }
 
-        public static void ApplyDepthStencil(int id)
+        public static void ApplyDepthStencil(int id, DeviceContext context = null)
         {
             if (id == _depthStencilApplied) return;
             _depthStencilApplied = id;
-            _engine.ImmediateContext.OutputMerger.DepthStencilState = _depthStencilStates[id];
+            if(context == null) _engine.ImmediateContext.OutputMerger.DepthStencilState = _depthStencilStates[id];
+            else context.OutputMerger.DepthStencilState = _depthStencilStates[id];
         }
 
         public static int AddSamplerStates(SamplerStateDescription SamplerDescr)
@@ -94,11 +96,11 @@ namespace S33M3DXEngine.RenderStates
             return _samplerStates[id];
         }
 
-        public static void ApplyStates(int RasterId = -1, int BlendId = -1, int DepthId = -1)
+        public static void ApplyStates(int RasterId = -1, int BlendId = -1, int DepthId = -1, DeviceContext context = null)
         {
-            if (RasterId != -1) ApplyRaster(RasterId);
-            if (BlendId != -1) ApplyBlend(BlendId);
-            if (DepthId != -1) ApplyDepthStencil(DepthId);
+            if (RasterId != -1) ApplyRaster(RasterId, context);
+            if (BlendId != -1) ApplyBlend(BlendId, context);
+            if (DepthId != -1) ApplyDepthStencil(DepthId, context);
         }
 
     }

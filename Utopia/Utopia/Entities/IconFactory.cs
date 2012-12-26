@@ -77,6 +77,8 @@ namespace Utopia.Entities
             _d3DEngine = d3DEngine;
             _modelManager = modelManager;
             _visualWorldParameters = visualWorldParameters;
+
+            this.IsDefferedLoadContent = true;
         }
 
         public override void LoadContent(DeviceContext context)
@@ -106,7 +108,7 @@ namespace Utopia.Entities
 
             if (_visualWorldParameters.WorldParameters != null && _visualWorldParameters.WorldParameters.Configuration != null)
             {
-                List<Texture2D> icons;
+                List<Texture2D> icons = new List<Texture2D>();
                 ShaderResourceView cubeTextureView;
                 ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
                                                       Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
@@ -216,7 +218,7 @@ namespace Utopia.Entities
             Matrix.PerspectiveFovLH(fov, aspectRatio, 0.5f, 100f, out projection);
             Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
 
-            texture.Begin();
+            texture.Begin(context);
 
             RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
@@ -246,14 +248,14 @@ namespace Utopia.Entities
 
             visualVoxelModel.Draw(context, _voxelEffect, instance);
 
-            texture.End(false);
+            texture.End(context, false);
 
 
-            var tex2D = texture.CloneTexture(ResourceUsage.Default);
+            var tex2D = texture.CloneTexture(context, ResourceUsage.Default);
 
             tex2D = DrawOuterShadow(context, texture, tex2D);
 
-            _d3DEngine.SetRenderTargetsAndViewPort();
+            _d3DEngine.SetRenderTargetsAndViewPort(context);
 
             return tex2D;
             
@@ -278,9 +280,9 @@ namespace Utopia.Entities
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
                 System.Threading.Thread.Sleep(0);
-                texture.Begin();
+                texture.Begin(context);
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled, context);
 
                 _voxelEffect.Begin(context);
 
@@ -305,13 +307,13 @@ namespace Utopia.Entities
 
                 visualVoxelModel.Draw(context, _voxelEffect, instance);
 
-                texture.End(false);
+                texture.End(context, false);
 
 
-                var tex2D = texture.CloneTexture(ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
+                var tex2D = texture.CloneTexture(context, ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
 
                 //Create shadow around icon
-                tex2D = DrawOuterShadow(context, texture, tex2D);
+                //tex2D = DrawOuterShadow(context, texture, tex2D);
                 
                 //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
 
@@ -319,7 +321,7 @@ namespace Utopia.Entities
             }
 
             //Reset device Default render target
-            _d3DEngine.SetRenderTargetsAndViewPort();
+            _d3DEngine.SetRenderTargetsAndViewPort(context);
         }
 
         private Texture2D DrawOuterShadow(DeviceContext context, RenderedTexture2D texture, Texture2D tex2D, int size = 0)
@@ -327,7 +329,7 @@ namespace Utopia.Entities
             if (size == 0)
                 size = IconSize;
 
-            var clampSampler = ToDispose(new SamplerState(_d3DEngine.Device,
+            var clampSampler = ToDispose(new SamplerState(context.Device,
                             new SamplerStateDescription
                             {
                                 AddressU = TextureAddressMode.Clamp,
@@ -339,12 +341,12 @@ namespace Utopia.Entities
                             }));
 
             SpriteRenderer spriteRenderer = new SpriteRenderer(_d3DEngine, Path.Combine(ClientSettings.PathRoot, @"Effects\Sprites\Sprites2.hlsl"));
-            texture.Begin();
+            texture.Begin(context);
 
             var voxelIconSpriteTexture = new SpriteTexture(tex2D);
 
             // draw black overlay
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled, context);
 
             _overlayEffect.Begin(context);
             _overlayEffect.SpriteTexture.Value = voxelIconSpriteTexture.Texture;
@@ -358,12 +360,12 @@ namespace Utopia.Entities
 
             context.DrawIndexed(6, 0, 0);
 
-            texture.End(false);
+            texture.End(context, false);
 
-            var tex2DOverlayed = texture.CloneTexture(ResourceUsage.Default);
+            var tex2DOverlayed = texture.CloneTexture(context, ResourceUsage.Default);
 
             // blur horisontal
-            texture.Begin();
+            texture.Begin(context);
 
             _blurHorisontalEffect.Begin(context);
             _blurHorisontalEffect.SpriteTexture.Value = new SpriteTexture(tex2DOverlayed).Texture;
@@ -374,12 +376,12 @@ namespace Utopia.Entities
 
             context.DrawIndexed(6, 0, 0);
 
-            texture.End(false);
+            texture.End(context, false);
 
-            var tex2DHorisontalBlurred = texture.CloneTexture(ResourceUsage.Default);
+            var tex2DHorisontalBlurred = texture.CloneTexture(context, ResourceUsage.Default);
 
             // blur vertical
-            texture.Begin();
+            texture.Begin(context);
 
             _blurVerticalEffect.Begin(context);
             _blurVerticalEffect.SpriteTexture.Value = new SpriteTexture(tex2DHorisontalBlurred).Texture;
@@ -390,22 +392,22 @@ namespace Utopia.Entities
 
             context.DrawIndexed(6, 0, 0);
 
-            texture.End(false);
+            texture.End(context, false);
 
-            var tex2DBlurred = texture.CloneTexture(ResourceUsage.Default);
+            var tex2DBlurred = texture.CloneTexture(context, ResourceUsage.Default);
 
             //Resource.ToFile(context, tex2DBlurred, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + "-blur.png");
 
-            texture.Begin();
-            spriteRenderer.Begin(false);
+            texture.Begin(context);
+            spriteRenderer.Begin(false, context);
             ByteColor color = new ByteColor(255, 255, 255, 255);
             var spriteTexture = new SpriteTexture(tex2DBlurred);
             spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, ref color);
             spriteRenderer.Draw(voxelIconSpriteTexture, ref voxelIconSpriteTexture.ScreenPosition, ref color);
             spriteRenderer.EndWithCustomProjection(context, ref texture.Projection2D);
-            texture.End(false);
+            texture.End(context, false);
 
-            return texture.CloneTexture(ResourceUsage.Default);
+            return texture.CloneTexture(context, ResourceUsage.Default);
         }
 
         public List<Texture2D> Get3DBlockIcons(DeviceContext context, DrawingSize iconSize, ShaderResourceView cubeTextureView)
@@ -485,6 +487,7 @@ namespace Utopia.Entities
             MaterialChangeMapping.Add(4, 0); //Change the Left Texture Id
             MaterialChangeMapping.Add(5, 0); //Change the Right Texture Id
 
+
             //Create a texture for each cubes existing !
             foreach (CubeProfile profile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
@@ -514,9 +517,9 @@ namespace Utopia.Entities
                 ib.SetData(context, mesh.Indices);
 
                 //Begin Drawing
-                texture.Begin();
+                texture.Begin(context);
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled, context);
 
                 //Set sampler
                 shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
@@ -553,16 +556,16 @@ namespace Utopia.Entities
                 //Draw a sprite for lighting block
                 if (profile.IsEmissiveColorLightSource)
                 {
-                    spriteRenderer.Begin(true);
+                    spriteRenderer.Begin(true, context);
                     ByteColor color = new ByteColor(profile.EmissiveColor.R, profile.EmissiveColor.G, profile.EmissiveColor.B, (byte)127);
                     spriteRenderer.Draw(spriteTexture, ref spriteTexture.ScreenPosition, ref color);
                     spriteRenderer.EndWithCustomProjection(context, ref texture.Projection2D);
                 }
                 
                 //End Drawing
-                texture.End(false);
+                texture.End(context, false);
 
-                var tex2d = texture.CloneTexture(ResourceUsage.Default);
+                var tex2d = texture.CloneTexture(context, ResourceUsage.Default);
 
                 //Create Shadow around Icon object displayed
                 if (!profile.IsEmissiveColorLightSource)
@@ -574,7 +577,7 @@ namespace Utopia.Entities
             }
 
             //Reset device Default render target
-            _d3DEngine.SetRenderTargetsAndViewPort();
+            _d3DEngine.SetRenderTargetsAndViewPort(context);
 
             //Dispose temp resource.
             spriteTexture.Dispose();
