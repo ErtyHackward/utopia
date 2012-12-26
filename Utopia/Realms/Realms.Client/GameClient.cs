@@ -33,7 +33,7 @@ namespace Realms.Client
             LoadClientsSettings();
 
             //Bings all components
-            IocBinding("Utopia Realms", new System.Drawing.Size(1024, 640));
+            IocBinding("Utopia Realms", new System.Drawing.Size(1280, 720));
             
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Resources.Utopia;
