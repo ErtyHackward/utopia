@@ -89,7 +89,7 @@ namespace Utopia.Components
 
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
         {
-            _spriteRenderer.Begin(false);
+            _spriteRenderer.Begin(false, context);
 
             _spriteRenderer.Draw(_slides[_renderedSlideId], ref _slideDimension, ref _color);
 

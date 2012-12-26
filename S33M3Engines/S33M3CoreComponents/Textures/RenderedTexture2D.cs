@@ -145,33 +145,33 @@ namespace S33M3CoreComponents.Textures
         #endregion
 
         #region Public methods
-        public void Begin()
+        public void Begin(DeviceContext context)
         {
-            _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
+            context.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
             //Set the viewport associated to the Texture renderer
-            _d3dEngine.ImmediateContext.Rasterizer.SetViewports(Viewport);
+            context.Rasterizer.SetViewports(Viewport);
 
             // Clear the back buffer.
-            _d3dEngine.ImmediateContext.ClearRenderTargetView(_renderTargetView, _backGroundColor);
+            context.ClearRenderTargetView(_renderTargetView, _backGroundColor);
 
             // Clear the depth buffer.
-            _d3dEngine.ImmediateContext.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
+            context.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
         }
 
-        public void End(bool releaseDrawingResources, bool generateMips = false)
+        public void End(DeviceContext context, bool releaseDrawingResources, bool generateMips = false)
         {
-            if (generateMips) _d3dEngine.ImmediateContext.GenerateMips(ShaderResourceView);
+            if (generateMips) context.GenerateMips(ShaderResourceView);
             if (releaseDrawingResources) ReleaseDrawingResources();
         }
 
-        public SpriteTexture CloneToSpriteTexture()
+        public SpriteTexture CloneToSpriteTexture(DeviceContext context)
         {
-            Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, _textureDesc);
-            _d3dEngine.ImmediateContext.CopyResource(RenderTargetTexture, clonedTexture);
-            return new SpriteTexture(_d3dEngine.Device, clonedTexture, Vector2I.Zero);
+            Texture2D clonedTexture = new Texture2D(context.Device, _textureDesc);
+            context.CopyResource(RenderTargetTexture, clonedTexture);
+            return new SpriteTexture(context.Device, clonedTexture, Vector2I.Zero);
         }
 
-        public Texture2D CloneTexture(ResourceUsage defaultResourceUsage)
+        public Texture2D CloneTexture(DeviceContext context, ResourceUsage defaultResourceUsage)
         {
             // Setup the render target texture description.
             Texture2DDescription clonetextureDesc = new Texture2DDescription()
@@ -197,9 +197,9 @@ namespace S33M3CoreComponents.Textures
                 clonetextureDesc.CpuAccessFlags = CpuAccessFlags.None;
             }
 
-            Texture2D clonedTexture = new Texture2D(_d3dEngine.Device, clonetextureDesc);
+            Texture2D clonedTexture = new Texture2D(context.Device, clonetextureDesc);
 
-            _d3dEngine.ImmediateContext.CopyResource(RenderTargetTexture, clonedTexture);
+            context.CopyResource(RenderTargetTexture, clonedTexture);
             return clonedTexture;
         }
         #endregion

@@ -236,7 +236,7 @@ namespace Utopia.GUI
                 builder.Append(string.Format("{0} {1}", ">", input));
             }
 
-            _spriteRender.Begin(false);
+            _spriteRender.Begin(false, context);
             _textPosition = new Vector2(5, _windowHeight - (100 + _messages.Count * _font.CharHeight));
             _spriteRender.DrawText(_font, builder.ToString(), ref _textPosition, ref _fontColor, -1, showCaret);
             _spriteRender.End(context);

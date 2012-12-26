@@ -266,16 +266,16 @@ namespace S33M3DXEngine
             return true;
         }
 
-        public void SetRenderTargets()
+        public void SetRenderTargets(DeviceContext context)
         {
-            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+            context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
         }
 
-        public void SetRenderTargetsAndViewPort()
+        public void SetRenderTargetsAndViewPort(DeviceContext context)
         {
-            SetRenderTargets();
-            ImmediateContext.OutputMerger.SetTargets(_depthStencil, _renderTarget);
-            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+            SetRenderTargets(context);
+            context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+            context.Rasterizer.SetViewports(_viewPort);
         }
 
         public SharpDX.Rectangle[] ScissorRectangles
@@ -529,7 +529,7 @@ namespace S33M3DXEngine
             CreateDepthStencil();
             CreateViewPort();
 
-            SetRenderTargets();
+            SetRenderTargets(Device.ImmediateContext);
 
             logger.Debug("SwapChain, RenderTarget, DepthStencil, StaggingBackBuffer and viewport recreated");
         }
