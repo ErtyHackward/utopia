@@ -15,6 +15,13 @@ namespace Utopia
     public partial class UtopiaRender : Game
     {
         /// <summary>
+        /// Defined several lvl of LoadContant Deffered Mode
+        /// 0 = Default configuration
+        /// 1 = Deffered LoadContent for IconFactory disabled
+        /// </summary>
+        public static int LCDefferedModeLvl = 0;
+
+        /// <summary>
         /// Gets an action manager
         /// </summary>
         private InputsManager _inputManager;
