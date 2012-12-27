@@ -113,6 +113,8 @@ namespace Utopia.Entities.Renderer
             _animationRotation = Quaternion.Identity;
 
             DrawOrders.UpdateIndex(0, 5000);
+
+            this.IsDefferedLoadContent = true;
         }
 
         void _player_Use(object sender, Shared.Entities.Events.EntityUseEventArgs e)
@@ -203,23 +205,24 @@ namespace Utopia.Entities.Renderer
         #region Private Methods
         public override void Initialize()
         {
+
         }
 
         public override void LoadContent(DeviceContext context)
         {
             //Prepare Textured Block rendering when equiped ==============================================================
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, _d3dEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
+            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
             //Create Vertex/Index Buffer to store the loaded cube mesh.
-            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(_d3dEngine.Device, _cubeMeshBluePrint.Vertices.Length, VertexMesh.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
-            _cubeIb = ToDispose(new IndexBuffer<ushort>(_d3dEngine.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
+            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, VertexMesh.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
+            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
 
-            _cubeToolEffect = ToDispose(new HLSLCubeTool(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
+            _cubeToolEffect = ToDispose(new HLSLCubeTool(context.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
             _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
             _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
 
-            _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
+            _voxelModelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
 
             Tool = _player.Equipment.RightTool;
 
@@ -242,7 +245,6 @@ namespace Utopia.Entities.Renderer
                     _handVisualVoxelModel = _playerModel.VisualVoxelFrames[armPartIndex];
                 }
             }
-
         }
 
         private void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)

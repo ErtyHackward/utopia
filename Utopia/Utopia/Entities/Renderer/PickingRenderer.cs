@@ -53,6 +53,8 @@ namespace Utopia.Entities.Renderer
             _camManager = camManager;
             //Change default Draw order to 10000
             this.DrawOrders.UpdateIndex(0, 1020);
+
+            this.IsDefferedLoadContent = true;
         }
 
         public override void BeforeDispose()

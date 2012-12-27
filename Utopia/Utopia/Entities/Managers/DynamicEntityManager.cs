@@ -148,6 +148,8 @@ namespace Utopia.Entities.Managers
 
             DrawOrders.UpdateIndex(VOXEL_DRAW, 99, "VOXEL_DRAW");
             SPRITENAME_DRAW = DrawOrders.AddIndex(1060, "NAME_DRAW");
+
+            this.IsDefferedLoadContent = true;
         }
 
         public override void BeforeDispose()
@@ -169,6 +171,10 @@ namespace Utopia.Entities.Managers
             {
                 _staticEntityViewRange = ClientSettings.Current.Settings.GraphicalParameters.StaticEntityViewSize * 16;
             }
+
+            _milkShapeMeshfactory = new MilkShape3DMeshFactory();
+            //Prepare Textured Block rendering when equiped ==============================================================
+            _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
         }
 
 
@@ -181,9 +187,6 @@ namespace Utopia.Entities.Managers
 
         public override void LoadContent(DeviceContext context)
         {
-            _milkShapeMeshfactory = new MilkShape3DMeshFactory();
-            //Prepare Textured Block rendering when equiped ==============================================================
-            _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
             ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
             //Create Vertex/Index Buffer to store the loaded cube mesh.
@@ -194,8 +197,8 @@ namespace Utopia.Entities.Managers
             _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
             _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
 
-            _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
-            _voxelToolEffect = ToDispose(new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
+            _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
+            _voxelToolEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _materialChangeMapping = new Dictionary<int, int>();
 
             //Create the font to base use by the sprite3dText Processor
