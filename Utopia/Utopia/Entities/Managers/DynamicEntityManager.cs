@@ -279,7 +279,7 @@ namespace Utopia.Entities.Managers
         private void VoxelDraw(DeviceContext context)
         {
             //Applying Correct Render States
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _voxelModelEffect.Begin(context);
             _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
@@ -345,7 +345,7 @@ namespace Utopia.Entities.Managers
 
         private void DrawEntitiesName(DeviceContext context)
         {
-            _dynamicEntityNameRenderer.Begin(true);
+            _dynamicEntityNameRenderer.Begin(context, true);
 
             foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance != null && x.ModelInstance.World != Matrix.Zero))
             {

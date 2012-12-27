@@ -294,7 +294,7 @@ namespace S33M3CoreComponents.Sprites2D
 
         private void SetRenderStates(bool scissorMode, DeviceContext context)
         {
-            RenderStatesRepo.ApplyStates(scissorMode ? _rasterStateWithScissorId : _rasterStateWithoutScissorId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId, context);
+            RenderStatesRepo.ApplyStates(context, scissorMode ? _rasterStateWithScissorId : _rasterStateWithoutScissorId, _blendStateId, _withDepth ? _depthStateWithDepthId : _depthStateWithoutDepthId);
         }
 
         private void Initialize()

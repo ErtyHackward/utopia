@@ -266,7 +266,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public override void Draw(DeviceContext context, int index)
         {
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _effect.Begin(_d3DEngine.ImmediateContext);
 
 

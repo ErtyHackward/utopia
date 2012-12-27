@@ -220,7 +220,7 @@ namespace Utopia.Entities
 
             texture.Begin(context);
 
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             _voxelEffect.Begin(context);
 
@@ -282,7 +282,7 @@ namespace Utopia.Entities
                 System.Threading.Thread.Sleep(0);
                 texture.Begin(context);
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled, context);
+                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
                 _voxelEffect.Begin(context);
 
@@ -346,7 +346,7 @@ namespace Utopia.Entities
             var voxelIconSpriteTexture = new SpriteTexture(tex2D);
 
             // draw black overlay
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled, context);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
 
             _overlayEffect.Begin(context);
             _overlayEffect.SpriteTexture.Value = voxelIconSpriteTexture.Texture;
@@ -519,7 +519,7 @@ namespace Utopia.Entities
                 //Begin Drawing
                 texture.Begin(context);
 
-                RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled, context);
+                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
 
                 //Set sampler
                 shader.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
