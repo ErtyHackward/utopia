@@ -191,7 +191,7 @@ namespace Utopia.Particules
             throw new NotImplementedException();
         }
 
-        public void Update(GameTime timeSpend)
+        public void FTSUpdate(GameTime timeSpend)
         {
             if (_particules.Count == 0) return;
             _particules.RemoveAll(x => x.Age > _maximumAge);
@@ -199,7 +199,7 @@ namespace Utopia.Particules
             RefreshExistingParticules(timeSpend.ElapsedGameTimeInS_LD);
         }
 
-        public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             ColoredParticule p;
             for (int i = 0; i < _particules.Count; i++)

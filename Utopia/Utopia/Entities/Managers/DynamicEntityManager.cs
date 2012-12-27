@@ -224,7 +224,7 @@ namespace Utopia.Entities.Managers
             IsInitialized = false;
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
@@ -232,7 +232,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {

@@ -134,13 +134,13 @@ namespace S33M3CoreComponents.Particules.Emitters
 
         }
 
-        public void Update(GameTime timeSpend)
+        public void FTSUpdate(GameTime timeSpend)
         {
             if (_particules.Count == 0) return;
             _particules.RemoveAll(x => x.Age > _maximumAge);
         }
 
-        public void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             if (_particules.Count == 0) return;
             RefreshExistingParticules(elapsedTime);

@@ -134,11 +134,11 @@ namespace Utopia.Entities.Renderer
 
 
         #region Public Methods
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             // update model color, get the cube where model is
             var block = _chunkContainer.GetCube(_player.Position);

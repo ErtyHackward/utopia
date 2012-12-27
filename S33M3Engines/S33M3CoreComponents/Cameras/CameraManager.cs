@@ -59,19 +59,19 @@ namespace S33M3CoreComponents.Cameras
 
         #region Public methods
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             if (_inputManager != null && _inputManager.ActionsManager.isTriggered(Actions.ChangeCameraType))
             {
                 MoveToNextActiveCamera();
             }
 
-            ActiveCamera.Update(timeSpend);
+            ActiveCamera.FTSUpdate(timeSpend);
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            ActiveCamera.Interpolation(interpolationHd, interpolationLd, elapsedTime);
+            ActiveCamera.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         public void RegisterNewCamera(TCamType camera)

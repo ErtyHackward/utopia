@@ -67,12 +67,12 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _skyStarVB.Dispose();
         }
 
-        public override void Update( GameTime timeSpend)
+        public override void FTSUpdate( GameTime timeSpend)
         {
         }
 
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
         }
 

@@ -225,7 +225,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             FormClouds();
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             _brightness = _worldclock.ClockTime.SmartTimeInterpolation(0.2f);
 
@@ -254,7 +254,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.X, (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.Z);
             _smallOffset += _cameraPrevious - cameraCurrent;

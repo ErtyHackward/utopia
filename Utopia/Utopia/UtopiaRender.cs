@@ -61,17 +61,17 @@ namespace Utopia
             }
         }
 
-        public override void Update(GameTime TimeSpend)
+        public override void FTSUpdate(GameTime TimeSpend)
         {
-            base.Update(TimeSpend);
+            base.FTSUpdate(TimeSpend);
 
             //After all update are done, Check against "System" keys like Exit, ...
             InputHandling();
         }
 
-        public override void Interpolation(double interpolation_hd, float interpolation_ld, long timePassed)
+        public override void VTSUpdate(double interpolation_hd, float interpolation_ld, long timePassed)
         {
-            base.Interpolation(interpolation_hd, interpolation_ld, timePassed);
+            base.VTSUpdate(interpolation_hd, interpolation_ld, timePassed);
         }
 
         private void InputHandling()

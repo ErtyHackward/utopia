@@ -35,12 +35,12 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
             _currentWorldParameter = currentWorldParameter;
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             if (_savedGamePanel.NeedShowResults)
                 _savedGamePanel.ShowResults();
 
-            base.Update(timeSpent);
+            base.FTSUpdate(timeSpent);
         }
 
     }

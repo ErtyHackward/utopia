@@ -115,11 +115,11 @@ namespace Utopia.Worlds.GameClocks
         }
 
         //Dispose resources
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
             float recomputedClock = _clockTime.Value;
             if (_clockTime.Value < _clockTime.ValuePrev)

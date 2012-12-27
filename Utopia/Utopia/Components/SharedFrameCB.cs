@@ -111,7 +111,7 @@ namespace Utopia.Components
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             _animationValue += (_animationSpeed * elapsedTime);
             while(_animationValue >= 1.0) _animationValue -= 1.0f;

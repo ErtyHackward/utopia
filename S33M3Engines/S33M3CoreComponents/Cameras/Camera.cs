@@ -157,11 +157,11 @@ namespace S33M3CoreComponents.Cameras
             CameraInitialize();
         }
 
-        public virtual void Update(GameTime timeSpend)
+        public virtual void FTSUpdate(GameTime timeSpend)
         {
         }
 
-        public virtual void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
         }
 

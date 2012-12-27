@@ -127,7 +127,7 @@ namespace Realms.Client.Components.GUI
 
         FTSValue<float> YRotation = new FTSValue<float>();
         FTSValue<float> XRotation = new FTSValue<float>();
-        public override void Update(S33M3DXEngine.Main.GameTime timeSpent)
+        public override void FTSUpdate(S33M3DXEngine.Main.GameTime timeSpent)
         {
             _loadingCube.Update();
 
@@ -139,14 +139,14 @@ namespace Realms.Client.Components.GUI
                 _dotsUpdate = DateTime.Now;
             }
             
-            base.Update(timeSpent);
+            base.FTSUpdate(timeSpent);
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             _loadingCube.Interpolation(interpolationLd);
 
-            base.Interpolation(interpolationHd, interpolationLd, elapsedTime);
+            base.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         public override void Draw(DeviceContext context, int index)

@@ -94,7 +94,7 @@ namespace S33M3CoreComponents.Components.Debug
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         /// 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             _sb.Clear();
             for (int CompIndex = 0; CompIndex < _components.Count; CompIndex++)
