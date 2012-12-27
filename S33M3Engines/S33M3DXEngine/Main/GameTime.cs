@@ -18,6 +18,7 @@ namespace S33M3DXEngine.Main
         public readonly double ElapsedGameTimeInS_HD;
         public readonly float ElapsedGameTimeInS_LD;
         public readonly double TickPerMS;
+        public readonly long FTSSafeGuard = Stopwatch.Frequency * 10;
 
         public GameTime(int TargetedGameUpdatePerSecond = 40)
         {

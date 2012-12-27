@@ -165,18 +165,19 @@ namespace S33M3DXEngine.Main
                     Engine.ShuttingDownProcess();
                     if (Engine.IsShuttingDownSafe) CloseWinform();
                 }
-#if DEBUG
+
                 //In case, if too much time has passed, Skip the update for this time period
                 //(Help in case of a break point placed in inline working)
-                //Default is a "pause of more then 1 seconde".
-                if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > Stopwatch.Frequency)
+                //Default is a "pause of more then 10 seconde".
+                if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > _gameTime.FTSSafeGuard)
                 {
                     ResetTimers();
                 }
-#endif
+
                 _updateWithoutrenderingCount = 0;
                 while (Stopwatch.GetTimestamp() > _nextGameUpdateTime && _updateWithoutrenderingCount < _maxRenderFrameSkip)
                 {
+#if DEBUG
                     if (_updateWithoutrenderingCount == 1 && ComponentsPerfMonitor.Updatable)
                     {
                         logger.Debug("Frame skipped because too late for : {0:0.000}, Updt maximum Delta {1:0.000}", _gameTime.Tick2Ms(Stopwatch.GetTimestamp() - _nextGameUpdateTime), _gameTime.Tick2Ms(_gameTime.GameUpdateDelta));
@@ -189,6 +190,18 @@ namespace S33M3DXEngine.Main
                         }
                         logger.Debug("=================================================================================");
 
+                    }
+#endif
+                    if (_updateWithoutrenderingCount > 0)
+                    {
+                        //In case, if too much time has passed, Skip the update for this time period
+                        //(Help in case of a break point placed in inline working)
+                        //Default is a "pause of more then 10 seconde".
+                        if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > _gameTime.FTSSafeGuard)
+                        {
+                            logger.Info("SafeGuard for FTS triggered");
+                            ResetTimers();
+                        }
                     }
 
                     FTSUpdate(_gameTime);
@@ -206,6 +219,7 @@ namespace S33M3DXEngine.Main
 
         private void ResetTimers()
         {
+            //Reset the fixed time step to avoid flickering
             _nextGameUpdateTime = Stopwatch.GetTimestamp();
             _gameTime.ResetElapsedTimeCounter();
         }
@@ -248,6 +262,10 @@ namespace S33M3DXEngine.Main
             }
         }
 
+        /// <summary>
+        /// Fixed Time Step Update
+        /// </summary>
+        /// <param name="TimeSpend">The fixed amount of time between 2 FTSUpdate call</param>
         public virtual void FTSUpdate(GameTime TimeSpend)
         {
             _currentlyUpdatingComponents.Clear();
@@ -274,6 +292,12 @@ namespace S33M3DXEngine.Main
             }
         }
 
+        /// <summary>
+        /// The Variable Time Step Update
+        /// </summary>
+        /// <param name="interpolationHd">FTSUpdate interpolation variables</param>
+        /// <param name="interpolationLd">FTSUpdate interpolation variables</param>
+        /// <param name="elapsedTime">Amount if time elpased since last call in ms</param>
         public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
