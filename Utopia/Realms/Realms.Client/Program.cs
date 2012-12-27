@@ -20,14 +20,14 @@ namespace Realms.Client
         [STAThread]
         static void Main(string[] args)
         {            
-            foreach (string arg in args)
-            {
-            }
-            
             foreach (var arg in args)
             {
                 if (arg.ToLower() == "-showdebug") ShowDebug = true;
                 if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
+                if (arg.ToLower().StartsWith("-lcdefferedmodelvl"))
+                {
+                    Utopia.UtopiaRender.LCDefferedModeLvl = int.Parse(arg.ToLower().Replace("-lcdefferedmodelvl", ""));
+                }
             }
 
 #if DEBUG

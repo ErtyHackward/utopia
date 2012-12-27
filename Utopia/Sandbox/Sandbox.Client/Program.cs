@@ -25,6 +25,10 @@ namespace Sandbox.Client
             {
                 if (arg.ToLower() == "-showdebug") ShowDebug = true;
                 if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
+                if (arg.ToLower().StartsWith("-lcdefferedmodelvl"))
+                {
+                    Utopia.UtopiaRender.LCDefferedModeLvl = int.Parse(arg.ToLower().Replace("-lcdefferedmodelvl", ""));
+                }
             }
 
 #if DEBUG
