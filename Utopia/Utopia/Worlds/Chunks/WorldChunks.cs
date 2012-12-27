@@ -201,12 +201,16 @@ namespace Utopia.Worlds.Chunks
             DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
             ENTITIES_DRAW = DrawOrders.AddIndex(101, "ENTITIES_DRAW");
+
+            this.IsDefferedLoadContent = true;
         }
 
         #region Public methods
 
         public override void Initialize()
         {
+            S33M3DXEngine.Threading.ThreadsManager.IsBoostMode = true;
+
             IsInitialLoadCompleted = false;
             _readyToDrawCount = 0;
 
@@ -225,8 +229,6 @@ namespace Utopia.Worlds.Chunks
 
         public override void LoadContent(DeviceContext context)
         {
-            S33M3DXEngine.Threading.ThreadsManager.IsBoostMode = true;
-
             IntilializeUpdateble();
             InitDrawComponents(context);
         }

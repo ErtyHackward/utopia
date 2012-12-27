@@ -80,6 +80,8 @@ namespace Utopia.Particules
             _weather = weather;
 
             _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
+
+            this.IsDefferedLoadContent = true;
         }
 
         public override void BeforeDispose()
@@ -92,7 +94,7 @@ namespace Utopia.Particules
         {
             //Create the Cube Emitter
             _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, 32));
-            AddEmitter(_cubeEmitter);
+            AddEmitter(_d3dEngine.ImmediateContext, _cubeEmitter);
 
             base.Initialize();
         }
@@ -104,7 +106,7 @@ namespace Utopia.Particules
             ToDispose(_particulesSpritesResource);
 
             _staticEntityEmitter = new SpriteEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled, _weather);
-            AddEmitter(_staticEntityEmitter);
+            AddEmitter(context, _staticEntityEmitter);
 
             base.LoadContent(context);
         }

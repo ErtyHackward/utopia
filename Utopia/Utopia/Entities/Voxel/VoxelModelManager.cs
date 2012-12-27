@@ -34,7 +34,6 @@ namespace Utopia.Entities.Voxel
             if (handler != null) handler(this, e);
         }
 
-
         public VoxelModelManager(IVoxelModelStorage storage, ServerComponent server, VoxelMeshFactory voxelMeshFactory)
         {
             if (storage == null) throw new ArgumentNullException("storage");

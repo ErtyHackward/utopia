@@ -63,11 +63,11 @@ namespace S33M3CoreComponents.Particules
             foreach (var emitter in _liveEmitter) emitter.Draw(context, index);
         }
 
-        public void AddEmitter(IEmitter emitter)
+        public void AddEmitter(DeviceContext context, IEmitter emitter)
         {
             //bind the Emitter with this PArticuleEngine for rendering
             emitter.ParentParticuleEngine = this;
-            emitter.Initialize(_d3dEngine.ImmediateContext, _sharedFrameBuffer);
+            emitter.Initialize(context, _sharedFrameBuffer);
 
             _liveEmitter.Add(emitter);
         }
