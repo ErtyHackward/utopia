@@ -14,11 +14,14 @@ namespace Utopia.Worlds.GameClocks
 {
     public class WorldClock : Clock
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variables
         private float _deltaTime;
         private bool _frozenTime;
         private InputsManager _input;
         private ServerComponent _server;
+        private Game _game;
         #endregion
 
         #region Public variable/properties
@@ -31,19 +34,22 @@ namespace Utopia.Worlds.GameClocks
         /// <param name="game">Base tools class</param>
         /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
         /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(InputsManager input, ServerComponent server)
+        public WorldClock(Game game, InputsManager input, ServerComponent server)
         {
             if (server == null) throw new ArgumentNullException("server");
             _server = server;
             _input = input;
-            AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
+            _game = game;
 
+            AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
             _server.MessageDateTime += ServerConnection_MessageDateTime;
+            _game.OnRenderLoopFrozen += Game_OnRenderLoopFrozen;
         }
 
         public override void BeforeDispose()
         {
             _server.MessageDateTime -= ServerConnection_MessageDateTime;
+            _game.OnRenderLoopFrozen -= Game_OnRenderLoopFrozen;
         }
 
         #region Public methods
@@ -55,8 +61,6 @@ namespace Utopia.Worlds.GameClocks
 
         public override void FTSUpdate(GameTime timeSpend)
         {
-            InputHandler();
-
             if (_frozenTime) return;
 
             _deltaTime = TimeFactor * timeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 43200.0f;
@@ -82,14 +86,17 @@ namespace Utopia.Worlds.GameClocks
         #endregion
 
         #region Private methods
-        private void InputHandler()
+        //A freeze did occurded in the client rendering loop, ask server current datetime for syncing.
+        private void Game_OnRenderLoopFrozen(long frozenTime)
         {
+            _server.ServerConnection.Send(new RequestDateTimeSyncMessage());
         }
 
         //Synchronize hour with server
         private void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
         {
             AssignTimeAndFactor(e.Message.TimeFactor, e.Message.DateTime);
+            logger.Info("Received Server date time for syncing : {0}", e.Message.DateTime);
         }
 
         private void AssignTimeAndFactor(double timeFactor, DateTime worldDatetime)

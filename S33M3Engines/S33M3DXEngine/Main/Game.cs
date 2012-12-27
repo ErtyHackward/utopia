@@ -22,6 +22,9 @@ namespace S33M3DXEngine.Main
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        public delegate void RenderLoopFrozen(long frozenTime);
+        public event RenderLoopFrozen OnRenderLoopFrozen;
+
         #region Public Properties
 
         //protected D3DEngine _d3dEngine;
@@ -91,6 +94,7 @@ namespace S33M3DXEngine.Main
         private Color4 _backBufferColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
         private GameTime _gameTime = new GameTime();
         private int _vSync = 1;
+
         #endregion
 
         //Constructed Engine
@@ -200,6 +204,7 @@ namespace S33M3DXEngine.Main
                         if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > _gameTime.FTSSafeGuard)
                         {
                             logger.Info("SafeGuard for FTS triggered");
+                            if (OnRenderLoopFrozen != null) OnRenderLoopFrozen(_gameTime.QueryElapsedTime());
                             ResetTimers();
                         }
                     }
@@ -428,6 +433,15 @@ namespace S33M3DXEngine.Main
                 {
                     d.DrawOrderChanged -= DrawableDrawOrderChanged;
                     d.VisibleChanged -= DrawableVisibleChanged;
+                }
+            }
+
+            if (OnRenderLoopFrozen != null)
+            {
+                //Remove all Events associated (That haven't been unsubscribed !)
+                foreach (Delegate d in OnRenderLoopFrozen.GetInvocationList())
+                {
+                    OnRenderLoopFrozen -= (RenderLoopFrozen)d;
                 }
             }
 

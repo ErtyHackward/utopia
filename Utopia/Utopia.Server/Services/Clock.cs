@@ -1,4 +1,5 @@
 ﻿using System;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Services
 {
@@ -7,6 +8,7 @@ namespace Utopia.Server.Services
     /// </summary>
     public class Clock
     {
+        private Server _server;
         private DateTime _clockStartTime;
         private DateTime _gameStartTime;
         private double _timeFactor;
@@ -62,9 +64,23 @@ namespace Utopia.Server.Services
             return TimeSpan.FromSeconds(gameSpan.TotalSeconds / _timeFactor);
         }
 
-        protected Clock()
+        protected Clock(Server server)
         {
+            _server = server;
             _clockStartTime = DateTime.Now;
+
+            _server.ConnectionManager.ConnectionAdded +=ConnectionManager_ConnectionAdded;
+            _server.ConnectionManager.ConnectionRemoved += ConnectionManager_ConnectionRemoved;
+        }
+
+        void ConnectionManager_ConnectionAdded(object sender, ConnectionEventArgs e)
+        {
+            e.Connection.MessageRequestDateTimeSync += Connection_MessageRequestDateTimeSync;
+        }
+
+        void ConnectionManager_ConnectionRemoved(object sender, ConnectionEventArgs e)
+        {
+            e.Connection.MessageRequestDateTimeSync -= Connection_MessageRequestDateTimeSync;
         }
 
         /// <summary>
@@ -72,7 +88,8 @@ namespace Utopia.Server.Services
         /// </summary>
         /// <param name="startGameTime"></param>
         /// <param name="dayLength"></param>
-        public Clock(DateTime startGameTime, TimeSpan dayLength) : this()
+        public Clock(Server server, DateTime startGameTime, TimeSpan dayLength)
+            : this(server)
         {
             _gameStartTime = startGameTime;
             DayLength = dayLength;
@@ -90,5 +107,11 @@ namespace Utopia.Server.Services
             _clockStartTime = DateTime.Now;
         }
 
+        //New date time requested by client
+        private void Connection_MessageRequestDateTimeSync(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<Shared.Net.Messages.RequestDateTimeSyncMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            connection.Send(new DateTimeMessage { DateTime = Now, TimeFactor = TimeFactor });
+        }
     }
 }

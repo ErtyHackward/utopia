@@ -341,7 +341,6 @@ namespace Utopia.Network
         {
             if (MessageVoxelModelData != null) MessageVoxelModelData(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
         }
-
         #endregion
 
         #region Private Methods

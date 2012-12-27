@@ -104,6 +104,10 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Contains requested voxel model
         /// </summary>
-        VoxelModelData = 25
+        VoxelModelData = 25,
+        /// <summary>
+        /// Client request server DateTime for syncing server <-> Client time
+        /// </summary>
+        RequestDateTimeSync = 26
     }
 }
