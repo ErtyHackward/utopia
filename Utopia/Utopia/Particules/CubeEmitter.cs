@@ -219,7 +219,7 @@ namespace Utopia.Particules
             //Accumulate particules here for this emitters, and render them
             ColoredParticule p;
 
-            _particuleRenderer.Begin(true);
+            _particuleRenderer.Begin(context, true);
             for (int i = 0; i < _particules.Count; i++)
             {
                 p = _particules[i];

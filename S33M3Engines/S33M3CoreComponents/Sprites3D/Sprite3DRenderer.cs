@@ -53,16 +53,16 @@ namespace S33M3CoreComponents.Sprites3D
         }
 
         #region Public Methods
-        public void Begin(bool ApplyRenderStates = true)
+        public void Begin(DeviceContext context, bool ApplyRenderStates = true)
         {
             _processor.Begin();   //Call processor Begin();
-            if(ApplyRenderStates) SetRenderStates();
+            if (ApplyRenderStates) SetRenderStates(context);
         }
 
         public void ReplayLast(DeviceContext context, 
                                bool ApplyRenderStates = true)
         {
-            if (ApplyRenderStates) SetRenderStates();
+            if (ApplyRenderStates) SetRenderStates(context);
             End(context);
         }
 
@@ -80,9 +80,9 @@ namespace S33M3CoreComponents.Sprites3D
             _processor.Init(context, ResourceUsage.Dynamic);
         }
 
-        private void SetRenderStates()
+        private void SetRenderStates(DeviceContext context)
         {
-            RenderStatesRepo.ApplyStates(_rasterStateId, _blendStateId, _depthStateId);
+            RenderStatesRepo.ApplyStates(context, _rasterStateId, _blendStateId, _depthStateId);
         }
         #endregion
     }

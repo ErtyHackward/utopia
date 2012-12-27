@@ -134,7 +134,7 @@ namespace Utopia.Components
 
         public override void Draw(DeviceContext context, int index)
         {
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.CullNone, DXStates.Blenders.Enabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.CullNone, DXStates.Blenders.Enabled);
 
             _vBuffer.SetToDevice(context, 0);
             _iBuffer.SetToDevice(context, 0);

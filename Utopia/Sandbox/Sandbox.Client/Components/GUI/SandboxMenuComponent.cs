@@ -147,7 +147,7 @@ namespace Sandbox.Client.Components.GUI
 
         public override void Draw(DeviceContext context, int index)
         {
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
 
             _cubeShader.Begin(context);
             _cubeShader.CBPerFrame.Values.View = Matrix.Transpose(_view);

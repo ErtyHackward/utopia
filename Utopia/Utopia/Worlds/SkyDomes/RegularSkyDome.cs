@@ -336,7 +336,7 @@ namespace Utopia.Worlds.SkyDomes
             _worldFocusManager.CenterTranslationMatrixOnFocus(ref World, ref World);
 
             //Set States.
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             _skyDomeEffect.Begin(context);
             _skyDomeEffect.CBPerDraw.Values.ViewProj = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);
@@ -379,7 +379,7 @@ namespace Utopia.Worlds.SkyDomes
         {
             float alpha = (float)Math.Abs(Math.Sin(_clock.ClockTime.Time + (float)Math.PI / 2.0f));
             //Set States.
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled);
 
             Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
                             Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *

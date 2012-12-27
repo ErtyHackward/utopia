@@ -314,7 +314,7 @@ namespace Utopia.Entities.Renderer
         private void DrawingTool(DeviceContext context)
         {
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             float scale;
             if (_renderingType == ToolRenderingType.Cube)
@@ -366,7 +366,7 @@ namespace Utopia.Entities.Renderer
         {
             //Prepare DirectX rendering pipeline
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
             //Compute a "world matrix" for displaying the Arm
             var screenPosition = 

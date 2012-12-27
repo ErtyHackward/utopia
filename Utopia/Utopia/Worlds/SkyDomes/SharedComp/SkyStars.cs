@@ -78,7 +78,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public override void Draw(DeviceContext context, int index)
         {
-            RenderStatesRepo.ApplyStates(DXStates.Rasters.Default, DXStates.Blenders.Enabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled);
 
             _effectStars.Begin(context);
             _effectStars.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D_focused);

@@ -57,7 +57,7 @@ namespace S33M3CoreComponents.Debug.Components
         {
             if (dataPerInstance.Length == 0) return;
 
-            RenderStatesRepo.ApplyStates(_rasterStateId, _blendStateId, _depthStateId);
+            RenderStatesRepo.ApplyStates(_engine.ImmediateContext, _rasterStateId, _blendStateId, _depthStateId);
 
             _effect.Begin(context);
             _effect.CBPerDraw.Values.ViewportSize = new Vector2(_engine.ViewPort.Width, _engine.ViewPort.Height);
