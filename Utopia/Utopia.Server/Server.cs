@@ -98,6 +98,11 @@ namespace Utopia.Server
         /// </summary>
         public EntityFactory EntityFactory { get; private set; }
 
+        /// <summary>
+        /// Gets Weather and time Manager
+        /// </summary>
+        public WeatherManager Weather { get; private set; }
+
         public WorldParameters WorldParameters { get; private set; }
 
         #endregion
@@ -127,10 +132,9 @@ namespace Utopia.Server
 
             var settings = SettingsManager.Settings;
 
-
-            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
-
             ConnectionManager = new ConnectionManager(SettingsManager.Settings.ServerPort);
+
+            Clock = new Clock(this, DateTime.Now, TimeSpan.FromMinutes(20));
 
             Scheduler = new ScheduleManager(Clock);
 
@@ -150,7 +154,7 @@ namespace Utopia.Server
 
             ChatManager = new ChatManager(this);
 
-            
+            Weather = new WeatherManager(this);
             
             LoginManager = new LoginManager(this, EntityFactory);
         }

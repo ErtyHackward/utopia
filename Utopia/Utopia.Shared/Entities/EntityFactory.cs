@@ -219,6 +219,7 @@ namespace Utopia.Shared.Entities
             iBinaryMessage.AddSubType(120, typeof(EntityLockMessage));
             iBinaryMessage.AddSubType(121, typeof(EntityLockResultMessage));
             iBinaryMessage.AddSubType(122, typeof(UseFeedbackMessage));
+            iBinaryMessage.AddSubType(123, typeof(RequestDateTimeSyncMessage));
             #endregion
         }
 

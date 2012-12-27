@@ -226,6 +226,7 @@
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
     <Compile Include="Net\Messages\ITimeStampedMsg.cs" />
+    <Compile Include="Net\Messages\RequestDateTimeSyncMessage.cs" />
     <Compile Include="Net\Web\ClientWebApi.cs" />
     <Compile Include="Net\Web\Responses\ServerListResponse.cs" />
     <Compile Include="Net\Web\Responses\TokenResponse.cs" />

@@ -218,6 +218,16 @@ namespace Utopia.Server
             if (handler != null) handler(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
         }
 
+        /// <summary>
+        /// Occurs when RequestDateTimeSync is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<RequestDateTimeSyncMessage>> MessageRequestDateTimeSync;
+
+        protected void OnMessageRequestDateTimeSync(RequestDateTimeSyncMessage ea)
+        {
+            var handler = MessageRequestDateTimeSync;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<RequestDateTimeSyncMessage> { Message = ea });
+        }
         #endregion
         
         /// <summary>
@@ -278,6 +288,9 @@ namespace Utopia.Server
                     break;
                 case MessageTypes.VoxelModelData:
                     OnMessageVoxelModelData((VoxelModelDataMessage)message);
+                    break;
+                case MessageTypes.RequestDateTimeSync:
+                    OnMessageRequestDateTimeSync((RequestDateTimeSyncMessage)message);
                     break;
                 default:
                     throw new ArgumentException("Invalid message id");
