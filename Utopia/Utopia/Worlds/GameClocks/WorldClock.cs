@@ -96,7 +96,7 @@ namespace Utopia.Worlds.GameClocks
         private void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
         {
             AssignTimeAndFactor(e.Message.TimeFactor, e.Message.DateTime);
-            logger.Info("Received Server date time for syncing : {0}", e.Message.DateTime);
+            logger.Info("Received Server date time for syncing : {0}, local time was : {1}", e.Message.DateTime, _visualClockTime.ToString());
         }
 
         private void AssignTimeAndFactor(double timeFactor, DateTime worldDatetime)
