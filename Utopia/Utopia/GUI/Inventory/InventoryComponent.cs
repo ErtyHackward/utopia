@@ -423,7 +423,7 @@ namespace Utopia.GUI.Inventory
             _dragControl.Slot = null;
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             var mouseState = _inputManager.MouseManager.CurMouseState;
             _dragControl.Bounds.Location = new UniVector(new UniScalar(mouseState.X - _dragOffset.X), new UniScalar(mouseState.Y - _dragOffset.Y));

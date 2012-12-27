@@ -116,7 +116,7 @@ namespace S33M3CoreComponents.Debug
             _chart.LoadContent(context);
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             //Show GUI debug interface
             if (_inputManager.ActionsManager.isTriggered(Actions.EngineShowDebugUI, CatchExclusiveActions))
@@ -136,12 +136,12 @@ namespace S33M3CoreComponents.Debug
             }
 
             //Relay Debug Component Update
-            if (_displayInfo.Updatable) _displayInfo.Update(timeSpent);
-            if (_fps.Updatable) _fps.Update(timeSpent);
+            if (_displayInfo.Updatable) _displayInfo.FTSUpdate(timeSpent);
+            if (_fps.Updatable) _fps.FTSUpdate(timeSpent);
             if (_game.ComponentsPerfMonitor.Updatable && _mainControl.DebugWindow.Children[0] == _mainControl.Dpc)
             {
                 _chart.AddValue((float)_mainControl.Dpc.UpdateData());
-                _chart.Update(timeSpent);
+                _chart.FTSUpdate(timeSpent);
             }
         }
 

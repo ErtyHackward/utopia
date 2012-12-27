@@ -129,7 +129,7 @@ namespace Sandbox.Client.Components.GUI
             _staticBlockIB.SetData(context, _meshBluePrint.Indices);
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             foreach (RotationCube cube in _rotatingCubes)
             {
@@ -137,7 +137,7 @@ namespace Sandbox.Client.Components.GUI
             }
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             foreach (RotationCube cube in _rotatingCubes)
             {

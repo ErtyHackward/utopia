@@ -202,7 +202,7 @@ namespace Utopia.Components
             _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power });
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             _listenerPosition = _cameraManager.ActiveCamera.WorldPosition.Value.AsVector3();
             //Set current camera Position

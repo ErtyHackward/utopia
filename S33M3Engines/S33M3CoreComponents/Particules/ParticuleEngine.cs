@@ -44,18 +44,18 @@ namespace S33M3CoreComponents.Particules
         {
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             //Remove stopped Emitters
             _liveEmitter.RemoveAll(x => x.isStopped);
 
             //Update live emitters
-            foreach (var emitter in _liveEmitter) emitter.Update(timeSpent);
+            foreach (var emitter in _liveEmitter) emitter.FTSUpdate(timeSpent);
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            foreach (var emitter in _liveEmitter) emitter.Interpolation(interpolationHd, interpolationLd, elapsedTime);
+            foreach (var emitter in _liveEmitter) emitter.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)

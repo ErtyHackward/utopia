@@ -197,7 +197,7 @@ namespace Utopia.Network
         }
 
         S33M3_DXEngine.Debug.StopWatchWrapping time = new S33M3_DXEngine.Debug.StopWatchWrapping(1000) { isEnabled = false };
-        public override void Update( GameTime timeSpend)
+        public override void FTSUpdate( GameTime timeSpend)
         {
             if (ServerConnection != null)
             {

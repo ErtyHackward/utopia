@@ -231,7 +231,7 @@ namespace S33M3CoreComponents.States
 
         #region Public methods
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             //For each Pending Initizalion running
             for (int i = AsyncStateInitResults.Count - 1; i >= 0; i--)

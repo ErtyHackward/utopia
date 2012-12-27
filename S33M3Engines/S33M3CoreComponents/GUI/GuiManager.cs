@@ -210,7 +210,7 @@ namespace S33M3CoreComponents.GUI
                 _screen.InjectCharacter(e.KeyChar);
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             //Check for Mouse Overing states on the gui
             if (_screen.IsMouseOverGui == true && this.CatchExclusiveActions == false)

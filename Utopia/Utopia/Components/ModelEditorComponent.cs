@@ -1346,7 +1346,7 @@ namespace Utopia.Components
 
         #endregion
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
             if (timePassed == 0)
                 timePassed = 1;
@@ -1450,7 +1450,7 @@ namespace Utopia.Components
         /// Allows the game component to update itself.
         /// </summary>
         /// <param name="timeSpent">Provides a snapshot of timing values.</param>
-        public override void Update( GameTime timeSpent)
+        public override void FTSUpdate( GameTime timeSpent)
         {
             if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null || GuiManager.DialogClosed ) return;
 
@@ -1757,7 +1757,7 @@ namespace Utopia.Components
                     throw new ArgumentOutOfRangeException();
             }
             
-            base.Update(timeSpent);
+            base.FTSUpdate(timeSpent);
         }
 
         private void ColorFill(VoxelFrame frame, Vector3I vector3I, byte fillIndex, byte newIndex)

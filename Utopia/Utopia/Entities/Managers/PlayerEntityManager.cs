@@ -342,7 +342,7 @@ namespace Utopia.Entities.Managers
             IsInitialized = false;
         }
 
-        public override void Update( GameTime timeSpend)
+        public override void FTSUpdate( GameTime timeSpend)
         {
             if (_landscapeInitiazed == false) return;
 
@@ -363,7 +363,7 @@ namespace Utopia.Entities.Managers
         }
 
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
             CheckHeadUnderWater();      //Under water head test
         }

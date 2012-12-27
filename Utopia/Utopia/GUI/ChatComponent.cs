@@ -143,7 +143,7 @@ namespace Utopia.GUI
             }
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
 
             if (Stopwatch.GetTimestamp() > _lastUpdateTime + _hideChatInTick)

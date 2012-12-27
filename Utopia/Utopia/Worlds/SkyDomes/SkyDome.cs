@@ -42,14 +42,14 @@ namespace Utopia.Worlds.SkyDomes
             _lightDirection = new FTSValue<Vector3>() { Value = new Vector3(100.0f, 100.0f, 100.0f) };
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             _lightDirection.BackUpValue();
             _lightDirection.Value = this.GetDirection();
             _lightDirection.Value.Normalize();
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
             _lightDirection.ValueInterp = Vector3.Lerp(_lightDirection.ValuePrev, _lightDirection.Value, interpolationLd);
             _lightDirection.ValueInterp.Normalize();

@@ -42,14 +42,14 @@ namespace Utopia.Worlds.Weather
             Wind.Initialize();
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
-            Wind.Update(timeSpend);
+            Wind.FTSUpdate(timeSpend);
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
-            Wind.Interpolation(interpolationHd, interpolationLd, timePassed);
+            Wind.VTSUpdate(interpolationHd, interpolationLd, timePassed);
         }
         #endregion 
 

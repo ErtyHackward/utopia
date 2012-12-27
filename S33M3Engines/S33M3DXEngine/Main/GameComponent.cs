@@ -133,11 +133,11 @@ namespace S33M3DXEngine.Main
         {
         }
 
-        public virtual void Update(GameTime timeSpent)
+        public virtual void FTSUpdate(GameTime timeSpent)
         {
         }
 
-        public virtual void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
         }
 

@@ -23,7 +23,7 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         #region public methods
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             PlayerDisplacementChunkEvents();
 
@@ -36,7 +36,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             ChunkVisibilityTest();
 

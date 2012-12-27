@@ -138,17 +138,17 @@ namespace Utopia.Worlds.SkyDomes
             _glowTex_View.Dispose();
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
-            _clouds.Update(timeSpend);
+            _clouds.FTSUpdate(timeSpend);
             RefreshSunColor();
-            base.Update(timeSpend);
+            base.FTSUpdate(timeSpend);
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
         {
-            _clouds.Interpolation(interpolationHd, interpolationLd, timePassed);
-            base.Interpolation(interpolationHd, interpolationLd, timePassed);
+            _clouds.VTSUpdate(interpolationHd, interpolationLd, timePassed);
+            base.VTSUpdate(interpolationHd, interpolationLd, timePassed);
         }
 
         public override void Draw(DeviceContext context, int index)

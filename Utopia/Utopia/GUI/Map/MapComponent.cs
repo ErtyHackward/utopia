@@ -82,7 +82,7 @@ namespace Utopia.GUI.Map
         }
 
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             if (_mapImage == null) return;
 

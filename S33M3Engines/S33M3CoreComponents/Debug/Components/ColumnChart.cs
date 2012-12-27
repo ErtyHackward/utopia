@@ -134,7 +134,7 @@ namespace S33M3CoreComponents.Debug.Components
             base.LoadContent(context);
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             //Refresh the Graphique by creation of the VertexColumnChart collection
             _lines.Clear();

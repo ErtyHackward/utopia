@@ -75,7 +75,7 @@ namespace S33M3CoreComponents.Debug.Components
             _freeRam = "-";
         }
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             if (_inputsManager.MouseManager.CurMouseState.middleButton == Inputs.MouseHandler.ButtonState.Pressed)
             {

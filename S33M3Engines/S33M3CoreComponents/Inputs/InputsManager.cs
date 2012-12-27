@@ -55,7 +55,7 @@ namespace S33M3CoreComponents.Inputs
 
         #region Public Methods
 
-        public override void Update(GameTime timeSpent)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             ActionsManager.FetchInputs();
             ActionsManager.Update();
@@ -63,7 +63,7 @@ namespace S33M3CoreComponents.Inputs
             KeyboardManager.Update();
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             ActionsManager.FetchInputs();
         }

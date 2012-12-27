@@ -191,7 +191,7 @@ namespace S33M3DXEngine.Main
 
                     }
 
-                    Update(_gameTime);
+                    FTSUpdate(_gameTime);
 
                     _nextGameUpdateTime += _gameTime.GameUpdateDelta;
                     _updateWithoutrenderingCount++;
@@ -199,7 +199,7 @@ namespace S33M3DXEngine.Main
 
                 _interpolation_hd = (double)(Stopwatch.GetTimestamp() + _gameTime.GameUpdateDelta - _nextGameUpdateTime) / _gameTime.GameUpdateDelta;
                 _interpolation_ld = (float)_interpolation_hd;
-                Interpolation(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
+                VTSUpdate(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
                 Draw();
             });
         }
@@ -248,7 +248,7 @@ namespace S33M3DXEngine.Main
             }
         }
 
-        public virtual void Update(GameTime TimeSpend)
+        public virtual void FTSUpdate(GameTime TimeSpend)
         {
             _currentlyUpdatingComponents.Clear();
             for (int i = 0; i < _enabledUpdatable.Count; i++) _currentlyUpdatingComponents.Add(_enabledUpdatable[i]);
@@ -264,21 +264,21 @@ namespace S33M3DXEngine.Main
                 if (ComponentsPerfMonitor.Updatable)
                 {
                     ComponentsPerfMonitor.StartMesure(_currentlyUpdatingComponents[i], "Update");
-                    _currentlyUpdatingComponents[i].Update(TimeSpend);
+                    _currentlyUpdatingComponents[i].FTSUpdate(TimeSpend);
                     ComponentsPerfMonitor.StopMesure(_currentlyUpdatingComponents[i], "Update");
                 }
                 else
                 {
-                    _currentlyUpdatingComponents[i].Update(TimeSpend);
+                    _currentlyUpdatingComponents[i].FTSUpdate(TimeSpend);
                 }
             }
         }
 
-        public virtual void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {
-                _currentlyUpdatingComponents[i].Interpolation(interpolationHd, interpolationLd, elapsedTime);
+                _currentlyUpdatingComponents[i].VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
             }
         }
 

@@ -112,7 +112,7 @@ namespace Utopia.GUI
 
         private int _lastSlot = 9;//TODO dynamic / configurable amount of toolbar slots
                 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             //Process pressed keys by "event"
             foreach(var keyPressed in _inputManager.KeyboardManager.GetPressedChars())

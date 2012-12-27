@@ -73,7 +73,7 @@ namespace S33M3CoreComponents.Cameras
         }
 
         #region Public Methods
-        public override void Update(S33M3DXEngine.Main.GameTime timeSpend)
+        public override void FTSUpdate(S33M3DXEngine.Main.GameTime timeSpend)
         {
             if (_inputManager.KeyboardManager.CurKeyboardState.IsKeyDown(Keys.LControlKey))
             {
@@ -116,7 +116,7 @@ namespace S33M3CoreComponents.Cameras
             _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);
         }
 
-        public override void Interpolation(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             if (_zoomingPower != 0.0f)
             {

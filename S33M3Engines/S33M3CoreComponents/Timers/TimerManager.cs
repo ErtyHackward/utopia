@@ -42,7 +42,7 @@ namespace S33M3CoreComponents.Timers
             Timers.Remove(timer);
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             for (int i = 0; i < Timers.Count; i++)
             {

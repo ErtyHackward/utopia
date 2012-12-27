@@ -53,7 +53,7 @@ namespace Utopia.Worlds.GameClocks
             base.Initialize();
         }
 
-        public override void Update(GameTime timeSpend)
+        public override void FTSUpdate(GameTime timeSpend)
         {
             InputHandler();
 

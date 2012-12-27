@@ -111,10 +111,10 @@ namespace Utopia.Particules
             base.LoadContent(context);
         }
 
-        public override void Update(S33M3DXEngine.Main.GameTime timeSpent)
+        public override void FTSUpdate(S33M3DXEngine.Main.GameTime timeSpent)
         {
             StaticEntityEmiters();
-            base.Update(timeSpent);
+            base.FTSUpdate(timeSpent);
         }
         #endregion
 
