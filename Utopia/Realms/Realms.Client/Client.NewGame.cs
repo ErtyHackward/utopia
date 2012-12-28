@@ -265,9 +265,9 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.OpenMap,
+                ActionId = UtopiaActions.Toggle_Interface,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
-                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Map
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.ToggleInterface
             }, rebindSettingsBasedAction);
         }
     }
