@@ -50,7 +50,7 @@ namespace Utopia.GUI
         }
 
         public int ChatLineLimit { get; set; }
-        
+        public bool IsHided { get; set; }
         public bool Activated
         {
             get { return _activated; }
@@ -78,6 +78,7 @@ namespace Utopia.GUI
             _d3dEngine.ViewPort_Updated += LocateChat;
 
             LocateChat(_d3dEngine.ViewPort, _d3dEngine.BackBufferTex.Description);
+            IsHided = false;
 
             // make it drawn on top
             DrawOrders.UpdateIndex(0, 10000);
@@ -208,8 +209,17 @@ namespace Utopia.GUI
             _textInput.Refresh();
         }
 
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
+            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
+            {
+                IsHided = !IsHided;
+            }
+        }
+
         public override void Draw(DeviceContext context, int index)
         {
+            if (IsHided) return;
             if (!Activated && _refreshDisplay == false)
             {
                 _spriteRender.ReplayLast(context);

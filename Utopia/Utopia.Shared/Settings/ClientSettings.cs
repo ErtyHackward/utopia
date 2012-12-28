@@ -216,7 +216,7 @@ namespace Utopia.Shared.Settings
         public KeyWithModifier Use;
         public KeyWithModifier Throw;
         public KeyWithModifier Inventory;
-        public KeyWithModifier Map;
+        public KeyWithModifier ToggleInterface;
     }
 
     /// <summary>
@@ -231,12 +231,12 @@ namespace Utopia.Shared.Settings
         public MoveBindingKeys Move { get; set; }
 
         /// <summary>
-        /// Move Binding section
+        /// Game Binding section
         /// </summary>
         public GameBindingKeys Game { get; set; }
 
         /// <summary>
-        /// Move Binding section
+        /// System Binding section
         /// </summary>
         public SystemBindingKeys System { get; set; }
     }
@@ -345,7 +345,7 @@ namespace Utopia.Shared.Settings
                             Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
                             Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
                             Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
-                            Map = new KeyWithModifier { MainKey = Keys.M, Modifier = Keys.None, Info = "Open/close the map" }
+                            ToggleInterface = new KeyWithModifier { MainKey = Keys.Z, Modifier = Keys.Alt, Info = "Toggle Interface" }
                         },
                         System = new SystemBindingKeys()
                         {
@@ -373,6 +373,7 @@ namespace Utopia.Shared.Settings
                 config.KeyboardMapping.Move.Forward = Keys.Z;
                 config.KeyboardMapping.Move.Backward = Keys.S;
                 config.KeyboardMapping.Move.StrafeLeft = Keys.Q;
+                config.KeyboardMapping.Game.ToggleInterface = new KeyWithModifier { MainKey = Keys.W, Modifier = Keys.Alt, Info = "Toggle Interface" };
 
                 return config;
             }
