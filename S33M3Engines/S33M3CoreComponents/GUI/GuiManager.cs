@@ -206,7 +206,7 @@ namespace S33M3CoreComponents.GUI
 
         private void GameWindowKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsLetterOrDigit(e.KeyChar) || char.IsPunctuation(e.KeyChar) || char.IsWhiteSpace(e.KeyChar))
+            if (char.IsLetterOrDigit(e.KeyChar) || char.IsPunctuation(e.KeyChar) || char.IsWhiteSpace(e.KeyChar) || char.IsSeparator(e.KeyChar) || char.IsSymbol(e.KeyChar))
                 _screen.InjectCharacter(e.KeyChar);
         }
 
