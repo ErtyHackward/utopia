@@ -32,6 +32,17 @@ namespace Utopia.Shared.Entities.Models
         private string _switchStateTarget;
         #endregion
 
+        /// <summary>
+        /// Occurs when model instance finished to change its state
+        /// </summary>
+        public event EventHandler StateChanged;
+
+        protected virtual void OnStateChanged()
+        {
+            var handler = StateChanged;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         #region Public Properties
         /// <summary>
         /// Instance light color
@@ -161,6 +172,8 @@ namespace Utopia.Shared.Entities.Models
             // create a copy because we can to change its values
             // inside the instance
             _internalState = new VoxelModelState(state);
+
+            OnStateChanged();
         }
 
         /// <summary>

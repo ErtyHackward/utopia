@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using ProtoBuf;
 using S33M3CoreComponents.Sound;
 using Utopia.Shared.Entities.Interfaces;
@@ -33,7 +34,14 @@ namespace Utopia.Shared.Entities.Concrete
         [Description("Sound of the door opening/closing")]
         [TypeConverter(typeof(SoundSelector))]
         [ProtoMember(4)]
-        public string SwitchSound { get; set; }
+        public string StartSound { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound of the door impact on close/open")]
+        [TypeConverter(typeof(SoundSelector))]
+        [ProtoMember(5)]
+        public string FinishSound { get; set; }
+
 
         private ISoundEngine _soundEngine;
 
@@ -58,6 +66,17 @@ namespace Utopia.Shared.Entities.Concrete
                 var newState = IsOpen ? OpenedState : ClosedState;
                 if (!string.IsNullOrEmpty(newState))
                     ModelInstance.SetState(newState);
+
+                ModelInstance.StateChanged += ModelInstanceOnStateChanged;
+
+            }
+        }
+
+        private void ModelInstanceOnStateChanged(object sender, EventArgs eventArgs)
+        {
+            if (!string.IsNullOrEmpty(FinishSound) && SoundEngine != null)
+            {
+                SoundEngine.StartPlay3D(FinishSound, StartSound, Position.AsVector3());
             }
         }
 
@@ -72,9 +91,9 @@ namespace Utopia.Shared.Entities.Concrete
                     ModelInstance.SwitchState(newState);
             }
 
-            if (!string.IsNullOrEmpty(SwitchSound) && SoundEngine != null)
+            if (!string.IsNullOrEmpty(StartSound) && SoundEngine != null)
             {
-                SoundEngine.StartPlay3D(SwitchSound, SwitchSound, Position.AsVector3());
+                SoundEngine.StartPlay3D(StartSound, StartSound, Position.AsVector3());
             }
 
             NotifyParentContainerChange();
