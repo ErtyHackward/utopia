@@ -78,7 +78,7 @@ namespace Utopia.Entities
             _modelManager = modelManager;
             _visualWorldParameters = visualWorldParameters;
 
-            if(Utopia.UtopiaRender.LCDefferedModeLvl !=1) this.IsDefferedLoadContent = true;
+            //if(Utopia.UtopiaRender.LCDefferedModeLvl !=1) this.IsDefferedLoadContent = true;
         }
 
         public override void LoadContent(DeviceContext context)
