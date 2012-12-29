@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using ProtoBuf;
@@ -42,7 +43,16 @@ namespace Utopia.Shared.Entities.Inventory
         public VoxelModelInstance ModelInstance
         {
             get { return _modelInstance; }
-            set { 
+            set
+            {
+                // note:
+                // if you want to make possible to change model instance
+                // you need to change method OnInstanceChanged and provide
+                // previous instance to dispose it properly
+
+                if (_modelInstance != null)
+                    throw new InvalidOperationException("Unable to change model instance, you can set it only once");
+                
                 _modelInstance = value;
                 OnInstanceChanged();
             }
