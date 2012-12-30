@@ -155,6 +155,7 @@ namespace Utopia.Entities.Voxel
 
             effect.CBPerModel.Values.World = Matrix.Transpose(instance.World);
             effect.CBPerModel.Values.LightColor = instance.LightColor;
+            effect.CBPerModel.Values.Alpha = instance.Alpha;
             effect.CBPerModel.IsDirty = true;
 
             // draw each part of the model

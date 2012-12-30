@@ -14,6 +14,7 @@ cbuffer VoxelModel
 	float4 colorMapping[64];
 	matrix World;
 	float3 LightColor;			// Diffuse lighting color
+	float Alpha;				// model transparency
 }
 
 cbuffer VoxelModelPerPart
@@ -107,7 +108,7 @@ PS_OUT PS(PS_IN input)
 
 	float3 color = colorMapping[input.colorIndex].rgb * input.EmissiveLight * LightColor * intensity;
 	
-	output.Color = float4(color,1);
+	output.Color = float4(color, Alpha);
 
     return output;
 }

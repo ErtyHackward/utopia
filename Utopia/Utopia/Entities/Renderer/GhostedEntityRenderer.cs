@@ -2,6 +2,7 @@
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main;
+using S33M3DXEngine.RenderStates;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using Utopia.Entities.Voxel;
@@ -9,6 +10,7 @@ using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
+using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Renderer
@@ -22,6 +24,8 @@ namespace Utopia.Entities.Renderer
         private PlayerCharacter _player;
         private VisualVoxelModel _toolVoxelModel;
         private VoxelModelInstance _toolVoxelInstance;
+        private float _alpha = 0.4f;
+        private bool _alphaRaise = false;
 
         public ITool Tool { get; set; }
 
@@ -57,6 +61,8 @@ namespace Utopia.Entities.Renderer
         {
             Transform = Matrix.Identity;
             Display = true;
+
+            DrawOrders.UpdateIndex(0, 5001);
         }
 
         void Equipment_ItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
@@ -72,6 +78,13 @@ namespace Utopia.Entities.Renderer
             // prepare voxel model to render
 
             var voxelEntity = (IVoxelEntity)Tool;
+
+            if (string.IsNullOrEmpty(voxelEntity.ModelName))
+            {
+                _toolVoxelModel = null;
+                return;
+            }
+
             _toolVoxelModel = VoxelModelManager.GetModel(voxelEntity.ModelName);
 
             if (_toolVoxelModel != null)
@@ -91,15 +104,31 @@ namespace Utopia.Entities.Renderer
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
         }
 
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
+            _alpha += ( _alphaRaise ? 0.0004f : -0.0004f ) * elapsedTime;
+
+            if (_alpha < 0.2f)
+                _alphaRaise = true;
+            if (_alpha > 0.5f)
+                _alphaRaise = false;
+        }
+
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
         {
             if (Display && _toolVoxelModel != null)
             {
+                Transform = Matrix.Translation(Player.EntityState.PickPoint);
+
+                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+
                 _voxelModelEffect.Begin(context);
-                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(CameraManager.ActiveCamera.ViewProjection3D_focused);
+                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(CameraManager.ActiveCamera.ViewProjection3D);
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
-                _toolVoxelInstance.World = Matrix.Scaling(1f / 16) * Transform;
-                _toolVoxelInstance.LightColor = new Color3(1, 1, 1);
+
+                _toolVoxelInstance.World = Matrix.Scaling(1f / 16) * Transform; 
+                _toolVoxelInstance.LightColor = new Color3(0, 0, 1);
+                _toolVoxelInstance.Alpha = _alpha;
 
                 _toolVoxelModel.Draw(context, _voxelModelEffect, _toolVoxelInstance);
             }

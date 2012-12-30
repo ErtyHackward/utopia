@@ -39,6 +39,8 @@ namespace Utopia.Resources.Effects.Entities
             public Matrix World;
             [FieldOffset(1088)]
             public Color3 LightColor;
+            [FieldOffset(1100)]
+            public float Alpha;
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 64)]

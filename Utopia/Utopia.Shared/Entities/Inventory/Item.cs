@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using ProtoBuf;
+using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Tools;
@@ -83,6 +84,21 @@ namespace Utopia.Shared.Entities.Inventory
         {
             AllowedSlots = EquipmentSlotType.Hand;
             MaxStackSize = 1;
+        }
+
+        /// <summary>
+        /// Returns new entity position for the player
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        public virtual EntityPosition GetPosition(IDynamicEntity owner)
+        {
+            EntityPosition position;
+
+            position.Position = owner.EntityState.PickPoint;
+            position.Rotation = Quaternion.Identity;
+
+            return position;
         }
     }
 }
