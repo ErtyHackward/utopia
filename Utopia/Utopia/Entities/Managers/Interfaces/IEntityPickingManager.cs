@@ -16,7 +16,7 @@ namespace Utopia.Entities.Managers.Interfaces
         bool isDirty { get; set; }
         PlayerEntityManager Player { get; set; }
         IWorldChunks WorldChunks { get; set; }
-        bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity);
+        bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity, out Vector3 pickPoint, out Vector3 pickNormale);
         void isCollidingWithEntity(VerletSimulator physicSimu,ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
     }
 }

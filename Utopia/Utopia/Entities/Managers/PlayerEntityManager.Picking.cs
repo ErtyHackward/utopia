@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3Resources.Structs;
+﻿using S33M3Resources.Structs;
 using SharpDX;
-using Utopia.Shared.Configuration;
-using Utopia.Shared.Settings;
 
 namespace Utopia.Entities.Managers
 {
@@ -67,9 +61,12 @@ namespace Utopia.Entities.Managers
         {
             Player.EntityState.IsBlockPicked = false;
 
+            Vector3 pickPoint;
+            Vector3 pickNormal;
+
             //Check the Ray against all entity first
-            Ray pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
-            if (EntityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity))
+            var pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
+            if (EntityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity, out pickPoint, out pickNormal))
             {
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
                 Player.EntityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;

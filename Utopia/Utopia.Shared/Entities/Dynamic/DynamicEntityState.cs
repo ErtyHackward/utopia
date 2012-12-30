@@ -44,6 +44,16 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         public EntityLink PickedEntityLink;
 
+        /// <summary>
+        /// Gets or sets block/entity intersection point
+        /// </summary>
+        public Vector3 PickPoint;
+
+        /// <summary>
+        /// Gets or sets block/entity normale from the point
+        /// </summary>
+        public Vector3 PickPointNormal;
+
     }
 
 }

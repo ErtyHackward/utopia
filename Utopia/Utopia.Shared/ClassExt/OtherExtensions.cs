@@ -57,6 +57,47 @@ namespace S33M3Resources.Structs
         }
 
         /// <summary>
+        /// Calculates normal vector from given surface point
+        /// </summary>
+        /// <param name="box"></param>
+        /// <param name="surfacePoint"></param>
+        /// <param name="epsilon"></param>
+        /// <returns></returns>
+        public static Vector3 GetPointNormal(this BoundingBox box, Vector3 surfacePoint, float epsilon = 0.001f)
+        {
+            var normal = new Vector3();
+
+            if (Math.Abs(surfacePoint.X - box.Minimum.X) < epsilon)
+            {
+                normal.X = -1;
+            }
+            if (Math.Abs(surfacePoint.X - box.Maximum.X) < epsilon)
+            {
+                normal.X = 1;
+            }
+
+            if (Math.Abs(surfacePoint.Y - box.Minimum.Y) < epsilon)
+            {
+                normal.Y = -1;
+            }
+            if (Math.Abs(surfacePoint.Y - box.Maximum.Y) < epsilon)
+            {
+                normal.Y = 1;
+            }
+
+            if (Math.Abs(surfacePoint.Z - box.Minimum.Z) < epsilon)
+            {
+                normal.Z = -1;
+            }
+            if (Math.Abs(surfacePoint.Z - box.Maximum.Z) < epsilon)
+            {
+                normal.Z = 1;
+            }
+
+            return normal;
+        }
+
+        /// <summary>
         /// Transforms all corners of the bounding box and produces a new box containing all corners
         /// </summary>
         /// <param name="box"></param>
@@ -77,5 +118,19 @@ namespace S33M3Resources.Structs
 
             return new BoundingBox(min, max);
         }
+
+        /// <summary>
+        /// Transforms a ray using a matrix
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <param name="transform"></param>
+        /// <returns></returns>
+        public static Ray Transform(this Ray ray, Matrix transform)
+        {
+            Vector3.TransformCoordinate(ref ray.Position, ref transform, out ray.Position);
+            Vector3.TransformNormal(ref ray.Direction, ref transform, out ray.Direction);
+            return ray;
+        }
+
     }
 }
