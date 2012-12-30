@@ -97,6 +97,7 @@ namespace Realms.Client.States
             var adminConsole = _ioc.Get<AdminConsole>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
+            var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -121,6 +122,7 @@ namespace Realms.Client.States
             AddComponent(voxelModelManager);
             AddComponent(toolRenderer);
             AddComponent(particuleEngine);
+            AddComponent(ghostedRenderer);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

@@ -76,7 +76,7 @@ namespace Utopia.Shared.Entities.Concrete
         {
             if (!string.IsNullOrEmpty(FinishSound) && SoundEngine != null)
             {
-                SoundEngine.StartPlay3D(FinishSound, StartSound, Position.AsVector3());
+                SoundEngine.StartPlay3D(FinishSound, FinishSound, Position.AsVector3());
             }
         }
 

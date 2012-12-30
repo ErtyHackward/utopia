@@ -147,7 +147,8 @@ namespace Utopia.Entities.Managers
         #region public methods
         public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity)
         {
-            if (isDirty) _timer_OnTimerRaised();
+            if (isDirty) 
+                _timer_OnTimerRaised();
 
             VisualEntity entity;
             float currentDistance;
@@ -178,10 +179,11 @@ namespace Utopia.Entities.Managers
                     }
                 }
             }
+            
             if (pickedEntity == null) 
                 return false;
-            else 
-                return true;
+            
+            return true;
         }
 
         public void Update()

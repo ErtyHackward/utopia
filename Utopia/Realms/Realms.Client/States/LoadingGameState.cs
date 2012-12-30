@@ -239,6 +239,7 @@ namespace Realms.Client.States
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
+            var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -273,6 +274,7 @@ namespace Realms.Client.States
             AddComponent(toolRenderer);
             AddComponent(fadeComponent);
             AddComponent(particuleEngine);
+            AddComponent(ghostedRenderer);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           
