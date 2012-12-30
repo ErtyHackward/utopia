@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -144,7 +143,7 @@ namespace Utopia.Shared.Net.Connections
             }
         }
 
-        [DebuggerStepThrough()]
+        [DebuggerStepThrough]
         private void SendThread()
         {
             try
