@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Events;

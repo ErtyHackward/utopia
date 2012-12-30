@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Ninject;
 using Utopia.Entities.Managers.Interfaces;
 using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Network;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
 using S33M3CoreComponents.Timers;
-using S33M3CoreComponents.Inputs.Actions;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Maths;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Models;
 using S33M3CoreComponents.Physics;
@@ -145,13 +143,15 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region public methods
-        public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity)
+        public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity, out Vector3 pickPoint, out Vector3 pickNormal)
         {
             if (isDirty) 
                 _timer_OnTimerRaised();
 
+            pickPoint = new Vector3();
+            pickNormal = new Vector3();
+
             VisualEntity entity;
-            float currentDistance;
             float pickedEntityDistance = float.MaxValue;
             pickedEntity = null;
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
@@ -160,7 +160,7 @@ namespace Utopia.Entities.Managers
                 if (entity.Entity.IsPickable)
                 {
                     //Refresh entity bounding box world
-                    if (entity.Entity.CollisionType == Shared.Entities.Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
+                    if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
                         BoundingBox localStaticEntityBB = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
                         localStaticEntityBB = localStaticEntityBB.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
@@ -168,11 +168,23 @@ namespace Utopia.Entities.Managers
                         entity.SetEntityVoxelBB(localStaticEntityBB); //Will automaticaly apply a 1/16 scaling on the boundingbox
                     }
 
-                    Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out currentDistance);
-                    if (currentDistance > 0)
+                    float currentDistance;
+                    if (Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out currentDistance))
                     {
                         if (currentDistance < pickedEntityDistance)
                         {
+                            if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model)
+                            {
+                                if (!ModelRayIntersection(entity, pickingRay, out pickPoint, out pickNormal))
+                                    continue;
+                            }
+                            else
+                            {
+                                Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out pickPoint);
+                                pickNormal = entity.WorldBBox.GetPointNormal(pickPoint);
+                            }
+
+
                             pickedEntityDistance = currentDistance;
                             pickedEntity = entity;
                         }
@@ -325,15 +337,109 @@ namespace Utopia.Entities.Managers
                 var forceDirection = playerBoundingBox2Evaluate.GetCenter() - entityTesting.WorldBBox.GetCenter();
                 forceDirection.Normalize();
 
-                physicSimu.Impulses.Add(new Impulse() { ForceApplied = forceDirection * 3 });
+                physicSimu.Impulses.Add(new Impulse { ForceApplied = forceDirection * 3 });
                 entityTesting.SkipOneCollisionTest = true;
             }
+        }
+
+        private bool ModelRayIntersection(VisualEntity entity, Ray pickRay, out Vector3 intersectionPoint, out Vector3 normal)
+        {
+            intersectionPoint = new Vector3();
+            normal = new Vector3();
+            
+            var visualVoxelEntity = entity as VisualVoxelEntity;
+            if (visualVoxelEntity == null) 
+                return false;
+
+            var instance = visualVoxelEntity.VoxelEntity.ModelInstance;
+
+            int index;
+            bool collisionDetected = false;
+            //Check Against all existing "Sub-Cube" model
+
+            //Get current Active state = A model can have multiple "State" (Like open, close, mid open, ...)
+            var activeModelState = instance.State;
+
+            var visualModel = visualVoxelEntity.VisualVoxelModel;
+
+            // current distance, we need to find smallest
+            float dist = float.MaxValue;
+
+            //For each Part in the model (A model can be composed of several parts)
+            for (int partId = 0; partId < visualModel.VoxelModel.Parts.Count; partId++)
+            {
+                VoxelModelPartState partState = activeModelState.PartsStates[partId];
+
+                // it is possible that there is no frame, so no need to check it
+                if (partState.ActiveFrame == byte.MaxValue)
+                    continue;
+
+                VoxelModelPart part = visualModel.VoxelModel.Parts[partId];
+                BoundingBox frameBoundingBox = visualModel.VisualVoxelFrames[partState.ActiveFrame].BoundingBox;
+
+                //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
+                var activeframe = visualModel.VoxelModel.Frames[partState.ActiveFrame]; //one active at a time
+
+                Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation) * instance.World;
+                invertedEntityWorldMatrix.Invert();
+
+                // convert ray to entity space
+                var ray = pickRay.Transform(invertedEntityWorldMatrix);
+
+                float partDistance;
+                // if we don't intersect part BB then there is no reason to check each block BB
+                if (!Collision.RayIntersectsBox(ref ray, ref frameBoundingBox, out partDistance))
+                    continue;
+                
+                // don't check part that is far than already found intersection
+                if (partDistance >= dist)
+                    continue;
+                
+                //Check each frame Body part
+                Vector3I chunkSize = activeframe.BlockData.ChunkSize;
+                byte[] data = activeframe.BlockData.BlockBytes;
+
+                index = -1;
+                //Get all sub block not empty
+                for (var z = 0; z < chunkSize.Z; z++)
+                {
+                    for (var x = 0; x < chunkSize.X; x++)
+                    {
+                        for (var y = 0; y < chunkSize.Y; y++)
+                        {
+                            index++;
+
+                            //Get cube
+                            if (data[index] > 0)
+                            {
+                                //Collision checking against this ray
+                                var box = new BoundingBox(new Vector3(x, y, z), new Vector3(x + 1, y + 1, z + 1));
+
+                                float blockDist;
+                                if (Collision.RayIntersectsBox(ref ray, ref box, out blockDist) && blockDist < dist)
+                                {
+                                    dist = blockDist;
+                                    Collision.RayIntersectsBox(ref ray, ref box, out intersectionPoint);
+                                    normal = box.GetPointNormal(intersectionPoint);
+
+                                    collisionDetected = true;
+                                }
+
+                                
+                            }
+                        }
+                    }
+                }
+            }
+
+            return collisionDetected;
         }
 
         private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
         {
             var visualVoxelEntity = entityTesting as VisualVoxelEntity;
-            if (visualVoxelEntity == null) return false;
+            if (visualVoxelEntity == null) 
+                return false;
 
             var instance = visualVoxelEntity.VoxelEntity.ModelInstance;
 
