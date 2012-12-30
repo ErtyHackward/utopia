@@ -50,6 +50,11 @@ namespace Utopia.Shared.Entities.Models
         public Color3 LightColor { get; set; }
 
         /// <summary>
+        /// Gets or sets instance alpha transparency
+        /// </summary>
+        public float Alpha { get; set; }
+
+        /// <summary>
         /// Instance world position (with scaling incorporated)
         /// </summary>
         public Matrix World { get; set; }
@@ -148,6 +153,7 @@ namespace Utopia.Shared.Entities.Models
             World = Matrix.Identity;
 
             _animationIndex = -1;
+            Alpha = 1;
             LightColor = new Color3(1, 1, 1);
             SetParentModel(model);
         }

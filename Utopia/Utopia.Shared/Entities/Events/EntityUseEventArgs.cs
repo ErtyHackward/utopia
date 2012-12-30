@@ -50,6 +50,10 @@ namespace Utopia.Shared.Entities.Events
 
         public bool IsEntityPicked { get; set; }
 
+        public Vector3 PickPosition { get; set; }
+
+        public Vector3 PickNormal { get; set; }
+
         /// <summary>
         /// Creates event args from entity state
         /// </summary>
@@ -65,7 +69,9 @@ namespace Utopia.Shared.Entities.Events
                             IsBlockPicked = state.IsBlockPicked,
                             IsEntityPicked = state.IsEntityPicked,
                             PickedEntityLink = state.PickedEntityLink,
-                            PickedBlockFaceOffset = state.PickedBlockFaceOffset
+                            PickedBlockFaceOffset = state.PickedBlockFaceOffset,
+                            PickPosition = state.PickPoint,
+                            PickNormal = state.PickPointNormal
                         };
 
             return e;

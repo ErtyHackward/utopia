@@ -177,6 +177,7 @@ namespace Utopia.Entities.Managers
                             {
                                 if (!ModelRayIntersection(entity, pickingRay, out pickPoint, out pickNormal))
                                     continue;
+
                             }
                             else
                             {
@@ -381,6 +382,7 @@ namespace Utopia.Entities.Managers
                 var activeframe = visualModel.VoxelModel.Frames[partState.ActiveFrame]; //one active at a time
 
                 Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation) * instance.World;
+                Matrix entityWorldMatrix = invertedEntityWorldMatrix;
                 invertedEntityWorldMatrix.Invert();
 
                 // convert ray to entity space
@@ -421,6 +423,8 @@ namespace Utopia.Entities.Managers
                                     dist = blockDist;
                                     Collision.RayIntersectsBox(ref ray, ref box, out intersectionPoint);
                                     normal = box.GetPointNormal(intersectionPoint);
+
+                                    intersectionPoint = Vector3.TransformCoordinate(intersectionPoint, entityWorldMatrix);
 
                                     collisionDetected = true;
                                 }

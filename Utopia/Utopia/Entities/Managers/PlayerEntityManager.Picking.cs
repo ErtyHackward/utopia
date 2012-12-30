@@ -61,12 +61,9 @@ namespace Utopia.Entities.Managers
         {
             Player.EntityState.IsBlockPicked = false;
 
-            Vector3 pickPoint;
-            Vector3 pickNormal;
-
             //Check the Ray against all entity first
             var pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
-            if (EntityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity, out pickPoint, out pickNormal))
+            if (EntityPickingManager.CheckEntityPicking(ref pickingRay, out _pickedUpEntity, out Player.EntityState.PickPoint, out Player.EntityState.PickPointNormal))
             {
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
                 Player.EntityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
@@ -91,11 +88,13 @@ namespace Utopia.Entities.Managers
                     Player.EntityState.PickedBlockPosition = PickedCube.Position;
 
                     //Get the clicked point on face.
-                    BoundingBox cubeBB = new BoundingBox(PickedCube.Position, PickedCube.Position += 1);
+                    var cubeBB = new BoundingBox(PickedCube.Position, PickedCube.Position += 1);
                     Vector3 faceInteresection;
                     if (cubeBB.Intersects(ref pickingRay, out faceInteresection))
                     {
                         Player.EntityState.PickedBlockFaceOffset = Vector3.One - (PickedCube.Position - faceInteresection);
+                        Player.EntityState.PickPoint = faceInteresection;
+                        Player.EntityState.PickPointNormal = cubeBB.GetPointNormal(faceInteresection);
                     }
 
                     bool newPlacechanged = false;
