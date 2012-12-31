@@ -130,26 +130,39 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.VertexShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler))
+                    ShaderBytecode byteCode;
+                    //Check if existance of precompiled file
+                    FileInfo fi = new FileInfo(_filePathName);
+                    string precompiledFileName = string.Concat(fi.DirectoryName, @"\", Path.GetFileNameWithoutExtension(fi.Name), "_", _shaderEntryPoint.VertexShader_EntryPoint, ".chlsl");
+                    if (File.Exists(precompiledFileName))
                     {
-                        //Log Compilation Warning
-                        if (bytecode.Message != null) logger.Warn("Vertex Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
-
-                        //Get the VS Input signature from the Vertex Shader
-                        _signature = ToDispose(ShaderSignature.GetInputSignature(bytecode));
-                        //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
-                        _inputLayout = ToDispose(new InputLayout(device, _signature, _vertexDeclaration.Elements));
-
-                        _vs = ToDispose(new VertexShader(device, bytecode));
-#if DEBUG
-                        //Set resource Name, will only be done at debug time.
-                        _vs.DebugName = "VertexShader from " + _fileName;
-#endif
-                        using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
-                        {
-                            ShaderReflection(Shaders.VS, ShaderIDs.VS, shaderMetaData);
-                        }
+                        //Load precompiled Blob
+                        byteCode = ShaderBytecode.FromFile(precompiledFileName);
                     }
+                    else
+                    {
+                        //Live compiling
+                        CompilationResult result = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.VertexShader_EntryPoint, VSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler);
+                        //Log Compilation Warning
+                        if (result.Message != null) logger.Warn("Vertex Shader [{0}] compilation message returned :\n{1}", _fileName, result.Message);
+                        byteCode = result.Bytecode;
+                    }
+
+                    //Get the VS Input signature from the Vertex Shader
+                    _signature = ToDispose(ShaderSignature.GetInputSignature(byteCode));
+                    //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
+                    _inputLayout = ToDispose(new InputLayout(device, _signature, _vertexDeclaration.Elements));
+
+                    _vs = ToDispose(new VertexShader(device, byteCode));
+#if DEBUG
+                    //Set resource Name, will only be done at debug time.
+                    _vs.DebugName = "VertexShader from " + _fileName;
+#endif
+                    using (ShaderReflection shaderMetaData = new ShaderReflection(byteCode))
+                    {
+                        ShaderReflection(Shaders.VS, ShaderIDs.VS, shaderMetaData);
+                    }
+                    byteCode.Dispose();
                 }
             }
             catch (Exception e)
@@ -165,22 +178,34 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.GeometryShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler))
+                    ShaderBytecode byteCode;
+                    //Check if existance of precompiled file
+                    FileInfo fi = new FileInfo(_filePathName);
+                    string precompiledFileName = string.Concat(fi.DirectoryName, @"\", Path.GetFileNameWithoutExtension(fi.Name), "_", _shaderEntryPoint.GeometryShader_EntryPoint, ".chlsl");
+                    if (File.Exists(precompiledFileName))
                     {
-                        //Log Compilation Warning
-                        if (bytecode.Message != null) logger.Warn("Geometry Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
-
-                        _gs = ToDispose(new GeometryShader(device, bytecode));
-#if DEBUG
-                        //Set resource Name, will only be done at debug time.
-                        _gs.DebugName = "GeometryShader from " + _fileName;
-#endif
-                        using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
-                        {
-                            ShaderReflection(Shaders.GS, ShaderIDs.GS, shaderMetaData);
-                        }
-
+                        //Load precompiled Blob
+                        byteCode = ShaderBytecode.FromFile(precompiledFileName);
                     }
+                    else
+                    {
+                        //Live compiling
+                        CompilationResult result = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.GeometryShader_EntryPoint, GSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler);
+                        //Log Compilation Warning
+                        if (result.Message != null) logger.Warn("Geometry Shader [{0}] compilation message returned :\n{1}", _fileName, result.Message);
+                        byteCode = result.Bytecode;
+                    }
+
+                    _gs = ToDispose(new GeometryShader(device, byteCode));
+#if DEBUG
+                    //Set resource Name, will only be done at debug time.
+                    _gs.DebugName = "GeometryShader from " + _fileName;
+#endif
+                    using (ShaderReflection shaderMetaData = new ShaderReflection(byteCode))
+                    {
+                        ShaderReflection(Shaders.GS, ShaderIDs.GS, shaderMetaData);
+                    }
+                    byteCode.Dispose();
                 }
             }
             catch (Exception e)
@@ -196,21 +221,34 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             {
                 if (_shaderEntryPoint.PixelShader_EntryPoint != null)
                 {
-                    using (var bytecode = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler))
+                    ShaderBytecode byteCode;
+                    //Check if existance of precompiled file
+                    FileInfo fi = new FileInfo(_filePathName);
+                    string precompiledFileName = string.Concat(fi.DirectoryName, @"\", Path.GetFileNameWithoutExtension(fi.Name), "_", _shaderEntryPoint.PixelShader_EntryPoint, ".chlsl");
+                    if (File.Exists(precompiledFileName))
                     {
-                        //Log Compilation Warning
-                        if (bytecode.Message != null) logger.Warn("Pixel Shader [{0}] compilation message returned :\n{1}", _fileName, bytecode.Message);
-
-                        _ps = ToDispose(new PixelShader(device, bytecode));
-#if DEBUG
-                        //Set resource Name, will only be done at debug time.
-                        _ps.DebugName = "PixelShadder from " + _fileName;
-#endif
-                        using (ShaderReflection shaderMetaData = new ShaderReflection(bytecode))
-                        {
-                            ShaderReflection(Shaders.PS, ShaderIDs.PS, shaderMetaData);
-                        }
+                        //Load precompiled Blob
+                        byteCode = ShaderBytecode.FromFile(precompiledFileName);
                     }
+                    else
+                    {
+                        //Live compiling
+                        CompilationResult result = ShaderBytecode.CompileFromFile(_filePathName, _shaderEntryPoint.PixelShader_EntryPoint, PSProfiles.DirectX10Profile, D3DEngine.ShaderFlags, EffectFlags.None, null, _includeHandler);
+                        //Log Compilation Warning
+                        if (result.Message != null) logger.Warn("Pixel Shader [{0}] compilation message returned :\n{1}", _fileName, result.Message);
+                        byteCode = result.Bytecode;
+                    }
+
+                    _ps = ToDispose(new PixelShader(device, byteCode));
+#if DEBUG
+                    //Set resource Name, will only be done at debug time.
+                    _ps.DebugName = "PixelShader from " + _fileName;
+#endif
+                    using (ShaderReflection shaderMetaData = new ShaderReflection(byteCode))
+                    {
+                        ShaderReflection(Shaders.PS, ShaderIDs.PS, shaderMetaData);
+                    }
+                    byteCode.Dispose();
                 }
             }
             catch (Exception e)
