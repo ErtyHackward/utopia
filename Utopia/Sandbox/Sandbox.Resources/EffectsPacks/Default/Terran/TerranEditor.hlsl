@@ -58,7 +58,7 @@ struct PS_IN
 //--------------------------------------------------------------------------------------
 // Vertex Shaders
 //--------------------------------------------------------------------------------------
-
+//[VS ENTRY POINT]
 PS_IN VS(VS_IN input)
 {
     PS_IN output;
@@ -108,6 +108,7 @@ PS_IN VS(VS_IN input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 float4 PS(PS_IN input) : SV_Target
 {
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW) * float4(input.EmissiveLight, 1);

@@ -56,11 +56,13 @@ static const float2 texcoord[4] = {
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//[VS ENTRY POINT]
 GSInput VS (VSInput input)
 {
 	return input;
 }
 
+//[GS ENTRY POINT]
 [maxvertexcount(4)]
 void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStream)
 {
@@ -100,6 +102,7 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling

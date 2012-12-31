@@ -175,7 +175,6 @@
     <None Include="Effects\Basics\VertexPositionTexture.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Effects\Basics\VertexPositionTextureArrays.fx" />
     <None Include="Effects\Sprites\Sprites2.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

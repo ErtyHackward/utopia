@@ -43,11 +43,13 @@ struct PS_OUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//[VS ENTRY POINT]
 GSInput VS (VSInput input)
 {
 	return input;
 }
 
+//[GS ENTRY POINT]
 [maxvertexcount(4)]
 void GS( point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStream )
 {
@@ -75,6 +77,7 @@ void GS( point GSInput Input[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 PS_OUT PS(PSInput IN)
 {	
 	PS_OUT output;
