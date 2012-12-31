@@ -59,6 +59,7 @@ static const float3 billboardCorners[5] = {
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//[VS ENTRY POINT]
 PSInput VS (VSInput input)
 {
 	PSInput output;
@@ -97,6 +98,7 @@ PSInput VS (VSInput input)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 PS_OUT PS(PSInput IN)
 {	
    //Don't Display at all entity if in the fog

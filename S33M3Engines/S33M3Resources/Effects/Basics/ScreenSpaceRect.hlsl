@@ -23,6 +23,7 @@ struct VSOutput
 //======================================================================================
 // Vertex Shader, non-instanced
 //======================================================================================
+//[VS ENTRY POINT]
 VSOutput VS(in VSInput input)
 {
 	VSOutput output;
@@ -37,6 +38,7 @@ VSOutput VS(in VSInput input)
 //======================================================================================
 // Pixel Shader
 //======================================================================================
+//[PS ENTRY POINT]
 float4 PS(in VSOutput input) : SV_Target
 {
 	return input.Color;

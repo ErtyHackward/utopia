@@ -30,6 +30,7 @@ struct PSInput {
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//[VS ENTRY POINT]
 GSInput VS (VSInput input)
 {
 	GSInput output;
@@ -46,6 +47,7 @@ GSInput VS (VSInput input)
 	return output;
 }
 
+//[GS ENTRY POINT]
 [maxvertexcount(3)]
 void GS(triangle GSInput Inputs[3], uint primID : SV_PrimitiveID, inout TriangleStream<PSInput> TriStream)
 {
@@ -64,6 +66,7 @@ void GS(triangle GSInput Inputs[3], uint primID : SV_PrimitiveID, inout Triangle
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling

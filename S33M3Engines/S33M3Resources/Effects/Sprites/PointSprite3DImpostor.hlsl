@@ -44,11 +44,13 @@ static const float3 upVector = {0.0f, 1.0f, 0.0f };
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//[VS ENTRY POINT]
 GSInput VS (VSInput input)
 {
 	return input;
 }
 
+//[GS ENTRY POINT]
 [maxvertexcount(4)]
 void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStream)
 {
@@ -96,6 +98,7 @@ void GS(point GSInput Inputs[1]: POSITION0, inout TriangleStream<PSInput> TriStr
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 float4 PS(PSInput IN) : SV_Target
 {	
 	//Texture Sampling

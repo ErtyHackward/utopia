@@ -91,6 +91,7 @@ VSOutput SpriteVSCommon(float2 position,
 //======================================================================================
 // Vertex Shader, non-instanced
 //======================================================================================
+//[VS ENTRY POINT]
 VSOutput SpriteVS(in VSInput input)
 {
     return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect, TexIndex);
@@ -99,6 +100,7 @@ VSOutput SpriteVS(in VSInput input)
 //======================================================================================
 // Vertex Shader, instanced
 //======================================================================================
+//[VS ENTRY POINT]
 VSOutput SpriteInstancedVS(in VSInputInstanced input)
 {
     return SpriteVSCommon(input.Position, input.TexCoord, 
@@ -108,6 +110,7 @@ VSOutput SpriteInstancedVS(in VSInputInstanced input)
 //======================================================================================
 // Pixel Shader
 //======================================================================================
+//[PS ENTRY POINT]
 float4 SpritePS(in VSOutput input) : SV_Target
 {
     float4 texColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);    

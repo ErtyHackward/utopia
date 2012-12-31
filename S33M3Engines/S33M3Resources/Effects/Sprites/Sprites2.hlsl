@@ -33,6 +33,7 @@ struct PSInput
 //======================================================================================
 // Vertex Shader, non-instanced
 //======================================================================================
+//[VS ENTRY POINT]
 PSInput SpriteVS(in VSInput input)
 {
 	PSInput output;
@@ -49,6 +50,7 @@ PSInput SpriteVS(in VSInput input)
 //======================================================================================
 // Pixel Shader
 //======================================================================================
+//[PS ENTRY POINT]
 float4 SpritePS(in PSInput input) : SV_Target
 {
     float4 texColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);    

@@ -36,6 +36,7 @@ struct PS_IN
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//[VS ENTRY POINT]
 PS_IN VS( VS_IN input )
 {
 	PS_IN output;
@@ -51,6 +52,7 @@ PS_IN VS( VS_IN input )
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 float4 PSColoredCube( PS_IN input ) : SV_Target
 {
 	return Color;
@@ -59,6 +61,7 @@ float4 PSColoredCube( PS_IN input ) : SV_Target
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+//[PS ENTRY POINT]
 float4 PSColoredCubeWithLight( PS_IN input ) : SV_Target
 {
 	// Sample our texture at the specified texture coordinates to get the texture color
