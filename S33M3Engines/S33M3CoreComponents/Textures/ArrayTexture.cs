@@ -63,6 +63,28 @@ namespace S33M3DXEngine.Textures
 
         public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, string resourceName, out ShaderResourceView textureArrayView)
         {
+
+            //if (resourceName == "ArrayTexture_WorldChunk")
+            //{
+            //    Texture2D test = Texture2D.FromFile<Texture2D>(context.Device, @"E:\Perso\UTOPIA\HG Repositories\Utopia\Utopia\Realms\Realms.Client\bin\Release\TexturesPacks\Default\Terran\ArrayTerran.dds");
+            //    //Create Resource view to texture array
+            //    var viewDesc2 = new ShaderResourceViewDescription
+            //    {
+            //        Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+            //        Dimension = ShaderResourceViewDimension.Texture2DArray,
+            //        Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource
+            //        {
+            //            MostDetailedMip = 0,
+            //            MipLevels = texturesCollection[0].Description.MipLevels,
+            //            FirstArraySlice = 0,
+            //            ArraySize = texturesCollection.Length
+            //        }
+            //    };
+
+            //    textureArrayView = new ShaderResourceView(context.Device, test, viewDesc2);
+            //    return;
+            //}
+
             //Create TextureArray object
             var imagesdesc = texturesCollection[0].Description;
             var texArrayDesc = new Texture2DDescription
@@ -191,6 +213,7 @@ namespace S33M3DXEngine.Textures
         /// <param name="ArrayTextureView">The create textureArray view that can directly be used inside shaders</param>
         public static void CreateTexture2DFromFiles(Device device, DeviceContext context, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView)
         {
+
             int inputImagesCount = FileNames.Length;
 
             //1 First loading the textures from files
