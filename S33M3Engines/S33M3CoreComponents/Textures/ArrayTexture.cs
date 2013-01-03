@@ -11,80 +11,41 @@ namespace S33M3DXEngine.Textures
 {
     public static class ArrayTexture
     {
-        /// <summary>
-        /// Create A shaderViewresource on a TextureArray object created from image files
-        /// </summary>
-        /// <param name="device">The graphic device</param>
-        /// <param name="directories">where to look</param>
-        /// <param name="fileNames">The files names that will be used to create the array, this filename can use * or ?, ... the file name will be sorted by name for the array index</param>
-        /// <param name="miPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
-        /// <param name="textureArrayView">The created textureArray view that can directly be used inside shaders</param>       
-        public static void CreateTexture2DFromFiles(Device device, DeviceContext context, string[] directories, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out ShaderResourceView textureArrayView)
+        public static void CreateTexture2DFromFiles(Device device, DeviceContext context , string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out ShaderResourceView textureArrayView, SharpDX.DXGI.Format InMemoryArrayFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
+        {
+            ShaderResourceView srv = LoadPreComputedArray(device, directory);
+            if (srv != null)
+            {
+                textureArrayView = srv;
+                return;
+            }
+
+            List<string> fileCollection = new List<string>();
+            DirectoryInfo dinfo = new DirectoryInfo(directory);
+
+            foreach (FileInfo fi in dinfo.GetFiles(fileNames).OrderBy(x => x.Name))
+            {
+                fileCollection.Add(directory + fi.Name);
+            }
+
+            CreateTexture2DFromFiles(device, context, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView, InMemoryArrayFormat);
+        }
+
+        public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out Texture2D[] textureArrayView, int MaxMipLevels = 0, SharpDX.DXGI.Format InMemoryArrayFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
         {
             List<string> fileCollection = new List<string>();
-            foreach (var dir in directories)
+            DirectoryInfo dinfo = new DirectoryInfo(directory);
+
+            foreach (FileInfo fi in dinfo.GetFiles(fileNames).OrderBy(x => x.Name))
             {
-                DirectoryInfo dinfo = new DirectoryInfo(dir);
-
-                foreach (FileInfo fi in dinfo.GetFiles(fileNames).OrderBy(x => x.Name))
-                {
-                    fileCollection.Add(dir + fi.Name);
-                }
-
+                fileCollection.Add(directory + fi.Name);
             }
-            CreateTexture2DFromFiles(device, context, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView);
+
+            CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView, MaxMipLevels, InMemoryArrayFormat);
         }
 
-        public static void CreateTexture2DFromFiles(Device device, string[] directories, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out Texture2D[] textureArrayView, int MaxMipLevels = 0)
+        public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, string resourceName, out ShaderResourceView textureArrayView, SharpDX.DXGI.Format InMemoryArrayFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
         {
-            List<string> fileCollection = new List<string>();
-            foreach (var dir in directories)
-            {
-                DirectoryInfo dinfo = new DirectoryInfo(dir);
-
-                foreach (FileInfo fi in dinfo.GetFiles(fileNames).OrderBy(x => x.Name))
-                {
-                    fileCollection.Add(dir + fi.Name);
-                }
-
-            }
-            CreateTexture2DFromFiles(device, fileCollection.ToArray(), miPfilterFlag, ResourceName, out textureArrayView, MaxMipLevels);
-        }
-
-        public static void CreateTexture2DFromFiles(Device device,DeviceContext context , string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out ShaderResourceView textureArrayView)
-        {
-            CreateTexture2DFromFiles(device,context, new string[] { directory }, fileNames, miPfilterFlag, ResourceName, out textureArrayView);
-        }
-
-        public static void CreateTexture2DFromFiles(Device device, string directory, string fileNames, FilterFlags miPfilterFlag, string ResourceName, out Texture2D[] textureArray, int MaxMipLevels = 0)
-        {
-            CreateTexture2DFromFiles(device, new string[] { directory }, fileNames, miPfilterFlag, ResourceName, out textureArray, MaxMipLevels);
-        }
-
-        public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, string resourceName, out ShaderResourceView textureArrayView)
-        {
-
-            //if (resourceName == "ArrayTexture_WorldChunk")
-            //{
-            //    Texture2D test = Texture2D.FromFile<Texture2D>(context.Device, @"E:\Perso\UTOPIA\HG Repositories\Utopia\Utopia\Realms\Realms.Client\bin\Release\TexturesPacks\Default\Terran\ArrayTerran.dds");
-            //    //Create Resource view to texture array
-            //    var viewDesc2 = new ShaderResourceViewDescription
-            //    {
-            //        Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
-            //        Dimension = ShaderResourceViewDimension.Texture2DArray,
-            //        Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource
-            //        {
-            //            MostDetailedMip = 0,
-            //            MipLevels = texturesCollection[0].Description.MipLevels,
-            //            FirstArraySlice = 0,
-            //            ArraySize = texturesCollection.Length
-            //        }
-            //    };
-
-            //    textureArrayView = new ShaderResourceView(context.Device, test, viewDesc2);
-            //    return;
-            //}
-
             //Create TextureArray object
             var imagesdesc = texturesCollection[0].Description;
             var texArrayDesc = new Texture2DDescription
@@ -93,7 +54,7 @@ namespace S33M3DXEngine.Textures
                                        Height = imagesdesc.Height,
                                        MipLevels = imagesdesc.MipLevels,
                                        ArraySize = texturesCollection.Length,
-                                       Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                                       Format = InMemoryArrayFormat,
                                        SampleDescription = new SharpDX.DXGI.SampleDescription { Count = 1, Quality = 0 },
                                        Usage = ResourceUsage.Default,
                                        BindFlags = BindFlags.ShaderResource,
@@ -138,7 +99,7 @@ namespace S33M3DXEngine.Textures
             texArray.Dispose();
         }
 
-        public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, out Texture2D textureArray)
+        public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, out Texture2D textureArray, SharpDX.DXGI.Format InMemoryArrayFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
         {
             //Create TextureArray object
             var imagesdesc = texturesCollection[0].Description;
@@ -148,7 +109,7 @@ namespace S33M3DXEngine.Textures
                 Height = imagesdesc.Height,
                 MipLevels = imagesdesc.MipLevels,
                 ArraySize = texturesCollection.Length,
-                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                Format = InMemoryArrayFormat,
                 SampleDescription = new SharpDX.DXGI.SampleDescription { Count = 1, Quality = 0 },
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ShaderResource,
@@ -170,7 +131,7 @@ namespace S33M3DXEngine.Textures
 
         }
 
-        public static Texture2D CreateImageArrayFromFiles(DeviceContext context, string[] FileNames, FilterFlags MIPfilterFlag)
+        public static Texture2D CreateImageArrayFromFiles(DeviceContext context, string[] FileNames, FilterFlags MIPfilterFlag, SharpDX.DXGI.Format Fileformat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
         {
             int inputImagesCount = FileNames.Length;
 
@@ -184,7 +145,7 @@ namespace S33M3DXEngine.Textures
                 BindFlags = BindFlags.None,
                 CpuAccessFlags = CpuAccessFlags.Write | CpuAccessFlags.Read,
                 OptionFlags = ResourceOptionFlags.None,
-                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                Format = Fileformat,
                 Filter = FilterFlags.None,
                 MipFilter = MIPfilterFlag
             };
@@ -196,7 +157,7 @@ namespace S33M3DXEngine.Textures
 
             Texture2D textureArray;
             //2 Creation of the TextureArray resource
-            CreateTexture2D(context, srcTex, out textureArray);
+            CreateTexture2D(context, srcTex, out textureArray, Fileformat);
 
             //Disposing resources used to create the texture array
             foreach (Texture2D tex in srcTex) tex.Dispose();
@@ -211,7 +172,7 @@ namespace S33M3DXEngine.Textures
         /// <param name="FileNames">The files names that will be used to create the array, the array's index will be based on the order of the file inside this collection</param>
         /// <param name="MIPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
         /// <param name="ArrayTextureView">The create textureArray view that can directly be used inside shaders</param>
-        public static void CreateTexture2DFromFiles(Device device, DeviceContext context, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView)
+        public static void CreateTexture2DFromFiles(Device device, DeviceContext context, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out ShaderResourceView TextureArrayView, SharpDX.DXGI.Format InMemoryArrayFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
         {
 
             int inputImagesCount = FileNames.Length;
@@ -226,7 +187,7 @@ namespace S33M3DXEngine.Textures
                 BindFlags = BindFlags.None,
                 CpuAccessFlags = CpuAccessFlags.Write | CpuAccessFlags.Read,
                 OptionFlags = ResourceOptionFlags.None,
-                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                Format = InMemoryArrayFormat,
                 Filter = FilterFlags.None,
                 MipFilter = MIPfilterFlag
             };
@@ -238,7 +199,7 @@ namespace S33M3DXEngine.Textures
 
             //2 Creation of the TextureArray resource
 
-            CreateTexture2D(context, srcTex, ResourceName, out TextureArrayView);
+            CreateTexture2D(context, srcTex, ResourceName, out TextureArrayView, InMemoryArrayFormat);
 
             //Disposing resources used to create the texture array
             foreach (Texture2D tex in srcTex) tex.Dispose();
@@ -251,7 +212,7 @@ namespace S33M3DXEngine.Textures
         /// <param name="FileNames">The files names that will be used to create the array, the array's index will be based on the order of the file inside this collection</param>
         /// <param name="MIPfilterFlag">Filter used to create the mipmap lvl from the loaded images</param>
         /// <param name="ArrayTextureView">The create textureArray view that can directly be used inside shaders</param>
-        public static void CreateTexture2DFromFiles(Device device, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out Texture2D[] TextureArray, int MaxMipLevels)
+        public static void CreateTexture2DFromFiles(Device device, string[] FileNames, FilterFlags MIPfilterFlag, string ResourceName, out Texture2D[] TextureArray, int MaxMipLevels, SharpDX.DXGI.Format InMemoryArrayFormat = SharpDX.DXGI.Format.R8G8B8A8_UNorm)
         {
             int inputImagesCount = FileNames.Length;
 
@@ -266,7 +227,7 @@ namespace S33M3DXEngine.Textures
                 BindFlags = BindFlags.None,
                 CpuAccessFlags = CpuAccessFlags.Write | CpuAccessFlags.Read,
                 OptionFlags = ResourceOptionFlags.None,
-                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                Format = InMemoryArrayFormat,
                 Filter = FilterFlags.None,
                 MipFilter = MIPfilterFlag
             };
@@ -276,6 +237,30 @@ namespace S33M3DXEngine.Textures
                 TextureArray[imgInd] = Texture2D.FromFile<Texture2D>(device, FileNames[imgInd], ImageInfo);
             }
 
+        }
+
+        private static ShaderResourceView LoadPreComputedArray(Device device, string DirectoryPath)
+        {
+            foreach (var file in Directory.GetFiles(DirectoryPath, "Array*.dds"))
+            {
+                using (Texture2D arrayTexture = Texture2D.FromFile<Texture2D>(device, file))
+                {
+                    var viewDesc = new ShaderResourceViewDescription
+                    {
+                        Format = arrayTexture.Description.Format,
+                        Dimension = ShaderResourceViewDimension.Texture2DArray,
+                        Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource
+                        {
+                            MostDetailedMip = 0,
+                            MipLevels = arrayTexture.Description.MipLevels,
+                            FirstArraySlice = 0,
+                            ArraySize = arrayTexture.Description.ArraySize
+                        }
+                    };
+                    return new ShaderResourceView(device, arrayTexture, viewDesc);
+                }
+            }
+            return null;
         }
 
     }

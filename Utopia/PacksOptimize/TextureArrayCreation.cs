@@ -12,25 +12,30 @@ namespace PacksOptimize
 {
     public class TextureArrayCreation : IDisposable
     {
-        #region Private Variables
-        private List<string> PackTextureArrayDirectories = new List<string>() 
+        private struct TextureArrayMetaData
         {
-            @"AnimatedTextures\*.png",
-            @"BiomesColors\*.png",
-            @"Particules\*.png",
-            @"Terran\*.png"
+            public string DirectoryPath;
+            public string FileFilters;
+            public SharpDX.DXGI.Format ArrayTextureCompressionMode;
+        }
+
+        #region Private Variables
+        private List<TextureArrayMetaData> PackTextureArrayDirectoriesInfo = new List<TextureArrayMetaData>() 
+        {
+            new TextureArrayMetaData() { DirectoryPath = "AnimatedTextures", FileFilters = "*.png", ArrayTextureCompressionMode = SharpDX.DXGI.Format.BC4_UNorm },
+            new TextureArrayMetaData() { DirectoryPath = "BiomesColors", FileFilters = "*.png", ArrayTextureCompressionMode = SharpDX.DXGI.Format.BC1_UNorm },
+            new TextureArrayMetaData() { DirectoryPath = "Particules", FileFilters = "*.png", ArrayTextureCompressionMode = SharpDX.DXGI.Format.R8G8B8A8_UNorm },
+            new TextureArrayMetaData() { DirectoryPath = "Terran", FileFilters = "*.png", ArrayTextureCompressionMode = SharpDX.DXGI.Format.R8G8B8A8_UNorm }
         };
         private string _texturePackPath;
         private D3DEngine _engine;
-        private string _DDSConverterPath;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public TextureArrayCreation(string texturePackPath, string DDSConverterPath)
+        public TextureArrayCreation(string texturePackPath)
         {
-            _DDSConverterPath = DDSConverterPath;
             _texturePackPath = texturePackPath;
             _engine = new D3DEngine();
         }
@@ -54,41 +59,21 @@ namespace PacksOptimize
         #region Private Methods
         private void PackArrayCreation(string PackPath)
         {
-            foreach (var directory in PackTextureArrayDirectories)
+            foreach (var data in PackTextureArrayDirectoriesInfo)
             {
-                string[] split = directory.Split('\\');
-                CreateTextureArray(split[0], Path.Combine(PackPath, split[0]), split[1]);
+                CreateTextureArray(data.DirectoryPath, Path.Combine(PackPath, data.DirectoryPath), data.FileFilters, data.ArrayTextureCompressionMode);
             }
         }
 
-        private void CreateTextureArray(string directoryName, string path, string fileFilters)
+        private void CreateTextureArray(string directoryName, string path, string fileFilters, SharpDX.DXGI.Format ArrayTextureCompressionMode)
         {
-            List<string> files2Process = new List<string>();
-
-            foreach (var file in Directory.GetFiles(path, fileFilters))
-            {
-                
-                //Create DDS files !
-                string FileName = "\"" + file + "\"";
-                ProcessStartInfo p = new ProcessStartInfo(_DDSConverterPath + @"\nvcompress.exe", "-alpha -nocuda -bc3 " + FileName);
-                p.WindowStyle = ProcessWindowStyle.Hidden;
-                var process = Process.Start(p);
-                process.WaitForExit();
-                files2Process.Add(file);
-            }
-
             //Get File names from Directory
-            Texture2D textureArray = ArrayTexture.CreateImageArrayFromFiles(_engine.ImmediateContext, files2Process.ToArray(), FilterFlags.Point);
-
+            Texture2D textureArray = ArrayTexture.CreateImageArrayFromFiles(_engine.ImmediateContext, Directory.GetFiles(path, fileFilters), FilterFlags.Point, ArrayTextureCompressionMode);
             Texture2D.ToFile(_engine.ImmediateContext, textureArray, ImageFileFormat.Dds, path + @"\Array" + directoryName + ".dds");
 
             textureArray.Dispose();
         }
         #endregion
-
-
-
-
 
     }
 }
