@@ -11,15 +11,16 @@ namespace PacksOptimize
     {
         private static string rootPath;
         private static ShaderFlags compilationFlag;
+        private static string includeHandlerPath;
          
         static void Main(string[] args)
         {
 
             //First agument = Pack Root Path
-            if (args.Length != 2)
+            if (args.Length != 3)
             {
                 Console.WriteLine("Utopia Pack Optimizer");
-                Console.WriteLine("Syntax : PackOptimize path='rootPath' debugcompil=0");
+                Console.WriteLine("Syntax : PackOptimize path=\"rootPath\" includePath=\"includePath\" debugcompil=0");
                 return;
             }
             else
@@ -31,7 +32,10 @@ namespace PacksOptimize
                     switch (paramData[0])
                     {
                         case "path":
-                            rootPath = paramData[1].Replace("\'", "");
+                            rootPath = paramData[1].Replace("\"", "");
+                            break;
+                        case "includePath":
+                            includeHandlerPath = paramData[1].Replace("\"", "");
                             break;
                         case "debugcompil":
                             if (paramData[1] == "1")
@@ -54,7 +58,7 @@ namespace PacksOptimize
         private static void StartPackOptimazing()
         {
             //Will Compile all effect files from a given Directory
-            EffectCompiler effectCompiler = new EffectCompiler(compilationFlag);
+            EffectCompiler effectCompiler = new EffectCompiler(compilationFlag, includeHandlerPath);
             effectCompiler.ProcessDirectory(rootPath);
 
         }
