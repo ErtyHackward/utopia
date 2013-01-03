@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,13 +22,15 @@ namespace PacksOptimize
         };
         private string _texturePackPath;
         private D3DEngine _engine;
+        private string _DDSConverterPath;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public TextureArrayCreation(string texturePackPath)
+        public TextureArrayCreation(string texturePackPath, string DDSConverterPath)
         {
+            _DDSConverterPath = DDSConverterPath;
             _texturePackPath = texturePackPath;
             _engine = new D3DEngine();
         }
@@ -60,8 +63,22 @@ namespace PacksOptimize
 
         private void CreateTextureArray(string directoryName, string path, string fileFilters)
         {
+            List<string> files2Process = new List<string>();
+
+            foreach (var file in Directory.GetFiles(path, fileFilters))
+            {
+                
+                //Create DDS files !
+                string FileName = "\"" + file + "\"";
+                ProcessStartInfo p = new ProcessStartInfo(_DDSConverterPath + @"\nvcompress.exe", "-alpha -nocuda -bc3 " + FileName);
+                p.WindowStyle = ProcessWindowStyle.Hidden;
+                var process = Process.Start(p);
+                process.WaitForExit();
+                files2Process.Add(file);
+            }
+
             //Get File names from Directory
-            Texture2D textureArray = ArrayTexture.CreateImageArrayFromFiles(_engine.ImmediateContext, Directory.GetFiles(path, fileFilters), FilterFlags.Point);
+            Texture2D textureArray = ArrayTexture.CreateImageArrayFromFiles(_engine.ImmediateContext, files2Process.ToArray(), FilterFlags.Point);
 
             Texture2D.ToFile(_engine.ImmediateContext, textureArray, ImageFileFormat.Dds, path + @"\Array" + directoryName + ".dds");
 

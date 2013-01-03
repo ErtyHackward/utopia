@@ -12,6 +12,7 @@ namespace PacksOptimize
         private static string rootPath = null;
         private static ShaderFlags compilationFlag;
         private static string includeHandlerPath = null;
+        private static string DDSConverterPath = null;
         private static string action = null;
          
         static void Main(string[] args)
@@ -27,7 +28,7 @@ namespace PacksOptimize
             {
                 Console.WriteLine("Utopia Pack Optimizer");
                 Console.WriteLine("Syntax : PackOptimize action=Compilation path=\"rootPath\" includePath=\"includePath\" debugcompil=0");
-                Console.WriteLine("Syntax : PackOptimize action=CreateTextureArray path=\"rootPath\" ");
+                Console.WriteLine("Syntax : PackOptimize action=CreateTextureArray path=\"rootPath\" ddsconverterpath=\"Path\" ");
                 return;
             }
             else
@@ -60,6 +61,9 @@ namespace PacksOptimize
                                 compilationFlag = ShaderFlags.OptimizationLevel3;
                             }
                             break;
+                        case "ddsconverterpath":
+                            DDSConverterPath = paramData[1];
+                            break;
                         default:
                             break;
                     }
@@ -84,7 +88,12 @@ namespace PacksOptimize
                     break;
                 case "createtexturearray":
 
-                    TextureArrayCreation textureArrays = new TextureArrayCreation(rootPath);
+                    if (rootPath == null || DDSConverterPath == null)
+                    {
+                        Console.WriteLine("Missing parameters for Array texture creation");
+                        return;
+                    }
+                    TextureArrayCreation textureArrays = new TextureArrayCreation(rootPath, DDSConverterPath);
                     textureArrays.CreateTextureArrays();
                     textureArrays.Dispose();
 
