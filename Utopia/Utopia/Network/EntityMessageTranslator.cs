@@ -3,7 +3,6 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -174,17 +173,7 @@ namespace Utopia.Network
         //These are player event subscribing
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
-            _server.ServerConnection.Send(new EntityUseMessage
-            {
-                IsEntityPicked = e.IsEntityPicked,
-                IsBlockPicked = e.IsBlockPicked,
-                DynamicEntityId = _playerEntity.DynamicId,
-                NewBlockPosition = e.NewBlockPosition,
-                PickedBlockPosition = e.PickedBlockPosition,
-                PickedEntityLink = e.PickedEntityLink,
-                PickedBlockFaceOffset = e.PickedBlockFaceOffset,
-                ToolId = e.Tool == null ? 0 : e.Tool.StaticId
-            });
+            _server.ServerConnection.Send(new EntityUseMessage(e));
         }
 
         private void PlayerEntityViewChanged(object sender, EntityViewEventArgs e)

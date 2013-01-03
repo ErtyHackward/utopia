@@ -6,9 +6,13 @@ using System;
 using System.ComponentModel;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Concrete
 {
+    /// <summary>
+    /// A block item that is rotated according to current player rotation
+    /// </summary>
     [ProtoContract]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {
@@ -22,7 +26,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         [Browsable(false)]
         [ProtoMember(1)]
-        public OrientedItem Orientation { get; set; }
+        public ItemOrientation Orientation { get; set; }
         
         /// <summary>
         /// Gets or sets value indicating if entity can climb on this entity by the angle of 45 degree
@@ -38,16 +42,30 @@ namespace Utopia.Shared.Entities.Concrete
             IsPickable = true;
         }
 
-        #region Public Methods
-        protected override bool SetNewItemPlace(BlockItem cubeEntity, IDynamicEntity owner)
+        public override void SetPosition(EntityPosition pos, IItem item)
         {
-            var playerRotation = owner.HeadRotation.GetLookAtVector();
-            OrientedBlockItem entity = (OrientedBlockItem)cubeEntity;
+            base.SetPosition(pos, item);
 
+            var blockItem = item as OrientedBlockItem;
+            if (blockItem != null)
+            {
+                blockItem.Orientation = pos.Orientation;
+            }
+        }
+
+        public override EntityPosition GetPosition(IDynamicEntity owner)
+        {
+            var pos = new EntityPosition();
+
+            if (!owner.EntityState.IsBlockPicked)
+                return pos;
+            
+            var playerRotation = owner.HeadRotation.GetLookAtVector();
+            
             // locate the entity, set translation in World space
-            cubeEntity.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
-                                               owner.EntityState.NewBlockPosition.Y,
-                                               owner.EntityState.NewBlockPosition.Z + 0.5f);
+            pos.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
+                                        owner.EntityState.NewBlockPosition.Y,
+                                        owner.EntityState.NewBlockPosition.Z + 0.5f);
 
             //Set Orientation
             double entityRotation;
@@ -56,12 +74,12 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.Z < 0)
                 {
                     entityRotation = MathHelper.Pi;
-                    entity.Orientation = OrientedItem.North;
+                    pos.Orientation = ItemOrientation.North;
                 }
                 else
                 {
                     entityRotation = 0;
-                    entity.Orientation = OrientedItem.South;
+                    pos.Orientation = ItemOrientation.South;
                 }
             }
             else
@@ -69,22 +87,21 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.X < 0)
                 {
                     entityRotation = MathHelper.PiOver2;
-                    entity.Orientation = OrientedItem.East;
+                    pos.Orientation = ItemOrientation.East;
                 }
                 else
                 {
                     entityRotation = -MathHelper.PiOver2;
-                    entity.Orientation = OrientedItem.West;
+                    pos.Orientation = ItemOrientation.West;
                 }
             }
 
             //Specific Item Rotation for this instance
-            cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
+            pos.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
+            pos.Valid = true;
 
-            return true;
+            return pos;
         }
-        #endregion
-
 
     }
 }

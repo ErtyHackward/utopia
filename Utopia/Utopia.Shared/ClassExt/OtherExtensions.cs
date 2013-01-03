@@ -63,9 +63,9 @@ namespace S33M3Resources.Structs
         /// <param name="surfacePoint"></param>
         /// <param name="epsilon"></param>
         /// <returns></returns>
-        public static Vector3 GetPointNormal(this BoundingBox box, Vector3 surfacePoint, float epsilon = 0.001f)
+        public static Vector3I GetPointNormal(this BoundingBox box, Vector3 surfacePoint, float epsilon = 0.001f)
         {
-            var normal = new Vector3();
+            var normal = new Vector3I();
 
             if (Math.Abs(surfacePoint.X - box.Minimum.X) < epsilon)
             {

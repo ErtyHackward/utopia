@@ -2,7 +2,10 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using ProtoBuf;
+using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Tools;
@@ -13,7 +16,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     [ProtoContract]
-    public abstract class Item : StaticEntity, IItem, IVoxelEntity
+    public abstract class Item : StaticEntity, IItem, IVoxelEntity, ITool, IWorldIntercatingEntity
     {
         private VoxelModelInstance _modelInstance;
 
@@ -87,18 +90,89 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Returns new entity position for the player
+        /// Returns new entity position correspoding to the player
         /// </summary>
-        /// <param name="owner"></param>
+        /// <param name="owner">An entity wich trying to put the entity</param>
         /// <returns></returns>
         public virtual EntityPosition GetPosition(IDynamicEntity owner)
         {
             EntityPosition position;
 
-            position.Position = owner.EntityState.PickPoint;
-            position.Rotation = Quaternion.Identity;
+            position.Valid       = true;
+            position.Position    = new Vector3D(owner.EntityState.PickPoint);
+            position.Rotation    = Quaternion.Identity;
+            position.Orientation = ItemOrientation.East;
 
             return position;
         }
+
+        public virtual void SetPosition(EntityPosition pos, IItem item)
+        {
+            item.Position = pos.Position;
+            item.Rotation = pos.Rotation;
+        }
+
+        /// <summary>
+        /// Handles item drop to world
+        /// Puts an item in the world and removes one from the inventory
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="runOnServer"></param>
+        /// <returns></returns>
+        public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        {
+            // by default all items can only be dropped to some position
+            var impact = new ToolImpact { Success = false };
+
+            var blockPicked = owner.EntityState.IsBlockPicked;
+            var entityPicked = owner.EntityState.IsEntityPicked;
+
+            // allow to put the item only if user picks something
+            if (!blockPicked && !entityPicked)
+                return impact;
+
+            var pos = GetPosition(owner);
+            
+            if (!pos.Valid)
+                return impact;
+
+            var cursor = LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
+
+            var entity = (Item)Clone();
+
+            SetPosition(pos, entity);
+
+            // put entity into the world
+            cursor.AddEntity(entity, owner.DynamicId);
+
+            // take entity from the inventory
+            var charEntity = owner as CharacterEntity;
+            if (charEntity != null)
+            {
+                var slot = charEntity.Inventory.Find(s => s.Item.StackType == entity.StackType);
+
+                if (slot == null)
+                {
+                    // we have no more items in the inventory, remove from the hand
+                    slot = charEntity.Equipment[EquipmentSlotType.Hand];
+                    charEntity.Equipment.TakeItem(slot.GridPosition);
+                }
+                else
+                {
+                    charEntity.Inventory.TakeItem(slot.GridPosition);
+                }
+            }
+
+            return impact;
+        }
+
+        public virtual void Rollback(IToolImpact impact)
+        {
+            throw new NotImplementedException();
+        }
+
+        public EntityFactory entityFactory { get; set; }
+
+        public Shared.Interfaces.ILandscapeManager2D LandscapeManager { get; set; }
     }
 }

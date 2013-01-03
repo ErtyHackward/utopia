@@ -93,6 +93,7 @@ namespace Utopia.Shared.Entities
             itemType.AddSubType(101, typeof(BlockLinkedItem));
             itemType.AddSubType(102, typeof(ResourcesCollector));
             itemType.AddSubType(103, typeof(CubeResource));
+            itemType.AddSubType(104, typeof(Food));
 
             blockItem.AddSubType(100, typeof(OrientedBlockItem));
 

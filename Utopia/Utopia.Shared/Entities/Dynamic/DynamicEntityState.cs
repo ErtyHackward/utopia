@@ -52,7 +52,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets or sets block/entity normale from the point
         /// </summary>
-        public Vector3 PickPointNormal;
+        public Vector3I PickPointNormal;
 
     }
 

@@ -1,11 +1,10 @@
 ﻿using ProtoBuf;
 using S33M3Resources.Structs;
-using System;
 using System.ComponentModel;
+using SharpDX;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities
 {
@@ -14,20 +13,8 @@ namespace Utopia.Shared.Entities
     /// This entity cannot be placed on a block where another entity is placed.
     /// </summary>
     [ProtoContract]
-    public abstract class BlockItem : Item, ITool, IWorldIntercatingEntity, IBlockLocationRoot
+    public abstract class BlockItem : Item, IBlockLocationRoot
     {
-        /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
-        [Browsable(false)]
-        public ILandscapeManager2D LandscapeManager { get; set; }
-
-        /// <summary>
-        /// Gets entityFactory, this field is injected automagically by entityfactory
-        /// </summary>
-        [Browsable(false)]
-        public EntityFactory entityFactory { get; set; }
-
         /// <summary>
         /// The cube where the entity root belongs to.
         /// </summary>
@@ -37,7 +24,7 @@ namespace Utopia.Shared.Entities
 
 
         #region Public Methods
-        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
         {
             var impact = new ToolImpact { Success = false };
 
@@ -65,7 +52,12 @@ namespace Utopia.Shared.Entities
                 // Do the Chunk on chunk Next to this one ==> TO DO
 
                 // If was not possible to set Item Place do nothing
-                if (!SetNewItemPlace(cubeEntity, owner)) return impact;
+                var position = GetPosition(owner);
+
+                if (!position.Valid)
+                    return impact;
+
+                SetPosition(position, cubeEntity);
 
                 cursor.AddEntity(cubeEntity, owner.DynamicId);
 
@@ -75,18 +67,21 @@ namespace Utopia.Shared.Entities
             return impact;
         }
 
-        protected virtual bool SetNewItemPlace(BlockItem cubeEntity, IDynamicEntity owner)
+        public override EntityPosition GetPosition(IDynamicEntity owner)
         {
-            // Center the Entity on the newlockPosition
-            cubeEntity.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
-                                               owner.EntityState.NewBlockPosition.Y,
-                                               owner.EntityState.NewBlockPosition.Z + 0.5f);
-            return true;
-        }
+            var pos = new EntityPosition();
 
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
+            if (!owner.EntityState.IsBlockPicked)
+                return pos;
+
+            pos.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
+                                        owner.EntityState.NewBlockPosition.Y,
+                                        owner.EntityState.NewBlockPosition.Z + 0.5f);
+
+            pos.Rotation = Quaternion.Identity;
+            pos.Valid = true;
+
+            return pos;
         }
 
         #endregion

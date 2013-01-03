@@ -1,4 +1,5 @@
 using ProtoBuf;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -58,11 +59,42 @@ namespace Utopia.Shared.Net.Messages
         public int Token { get; set; }
 
         /// <summary>
+        /// Surface point of an entity or a block where user point to
+        /// </summary>
+        [ProtoMember(11)]
+        public Vector3 PickPoint { get; set; }
+
+        /// <summary>
+        /// Normal vector at the pick point
+        /// </summary>
+        [ProtoMember(12)]
+        public Vector3 PickNormal { get; set; }
+
+        /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)
         /// </summary>
         public byte MessageId
         {
             get { return (byte)MessageTypes.EntityUse; }
+        }
+
+        public EntityUseMessage()
+        {
+            
+        }
+
+        public EntityUseMessage(EntityUseEventArgs e)
+        {
+            IsEntityPicked = e.IsEntityPicked;
+            IsBlockPicked = e.IsBlockPicked;
+            DynamicEntityId = e.Entity.DynamicId;
+            NewBlockPosition = e.NewBlockPosition;
+            PickedBlockPosition = e.PickedBlockPosition;
+            PickedEntityLink = e.PickedEntityLink;
+            PickedBlockFaceOffset = e.PickedBlockFaceOffset;
+            ToolId = e.Tool == null ? 0 : e.Tool.StaticId;
+            PickPoint = e.PickPosition;
+            PickNormal = e.PickNormal;
         }
     }
 }

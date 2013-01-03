@@ -30,5 +30,6 @@ namespace Utopia.Shared.Entities
         public const ushort Zombie = 3002;
 
         public const ushort Plant = 4000;
+        public const ushort Food = 4001;
     }
 }

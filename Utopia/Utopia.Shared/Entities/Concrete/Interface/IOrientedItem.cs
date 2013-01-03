@@ -7,6 +7,6 @@ namespace Utopia.Shared.Entities.Concrete.Interface
 {
     public interface IOrientedItem
     {
-        OrientedItem Orientation { get; set; }
+        ItemOrientation Orientation { get; set; }
     }
 }

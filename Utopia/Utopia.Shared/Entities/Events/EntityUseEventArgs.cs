@@ -58,8 +58,9 @@ namespace Utopia.Shared.Entities.Events
         /// Creates event args from entity state
         /// </summary>
         /// <param name="state"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        public static EntityUseEventArgs FromState(DynamicEntityState state)
+        public static EntityUseEventArgs FromState(DynamicEntityState state, IDynamicEntity owner)
         {
             var e = new EntityUseEventArgs
                         {
@@ -71,7 +72,8 @@ namespace Utopia.Shared.Entities.Events
                             PickedEntityLink = state.PickedEntityLink,
                             PickedBlockFaceOffset = state.PickedBlockFaceOffset,
                             PickPosition = state.PickPoint,
-                            PickNormal = state.PickPointNormal
+                            PickNormal = state.PickPointNormal,
+                            Entity = owner
                         };
 
             return e;

@@ -130,15 +130,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.Send(new EntityUseMessage 
-                {
-                    DynamicEntityId = e.Entity.DynamicId, 
-                    NewBlockPosition = e.NewBlockPosition, 
-                    PickedBlockPosition = e.PickedBlockPosition,
-                    PickedEntityPosition = e.PickedEntityPosition,
-                    PickedBlockFaceOffset = e.PickedBlockFaceOffset,
-                    ToolId = e.Tool.StaticId
-                });
+                Connection.Send(new EntityUseMessage (e));
             }
         }
 

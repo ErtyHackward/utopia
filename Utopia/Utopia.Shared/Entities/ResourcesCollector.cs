@@ -1,11 +1,8 @@
-﻿using System;
-using ProtoBuf;
+﻿using ProtoBuf;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities
 {
@@ -13,19 +10,8 @@ namespace Utopia.Shared.Entities
     /// The base class use to collect things in the world (= Removed them and put them in the inventory)
     /// </summary>
     [ProtoContract]
-    public abstract class ResourcesCollector : Item, ITool, IWorldIntercatingEntity
+    public abstract class ResourcesCollector : Item
     {
-        /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
-        public ILandscapeManager2D LandscapeManager { get; set; }
-
-        /// <summary>
-        /// Gets entityFactory, this field is injected
-        /// </summary>
-        public EntityFactory entityFactory { get; set; }
-
-        #region Private methods
         private IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
         {
             var entity = owner;
@@ -89,11 +75,9 @@ namespace Utopia.Shared.Entities
 
             return impact;
         }
-        #endregion
 
-        #region Public methods
         //Using a Collector type Tool Item will remove then selected entities (or block) from world an place it into own bag.
-        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
         {
             if (owner.EntityState.IsBlockPicked)
             {
@@ -108,11 +92,5 @@ namespace Utopia.Shared.Entities
             impact.Message = "No target selected for use";
             return impact;
         }
-
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
     }
 }
