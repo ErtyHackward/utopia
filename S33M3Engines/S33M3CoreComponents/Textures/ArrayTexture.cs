@@ -61,7 +61,7 @@ namespace S33M3DXEngine.Textures
             CreateTexture2DFromFiles(device, new string[] { directory }, fileNames, miPfilterFlag, ResourceName, out textureArray, MaxMipLevels);
         }
 
-        public static void CreateTexture2D(Device device ,DeviceContext context, Texture2D[] texturesCollection, FilterFlags miPfilterFlag, string resourceName, out ShaderResourceView textureArrayView)
+        public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, string resourceName, out ShaderResourceView textureArrayView)
         {
             //Create TextureArray object
             var imagesdesc = texturesCollection[0].Description;
@@ -79,7 +79,7 @@ namespace S33M3DXEngine.Textures
                                        OptionFlags = ResourceOptionFlags.None
                                    };
 
-            var texArray = new Texture2D(device, texArrayDesc);
+            var texArray = new Texture2D(context.Device, texArrayDesc);
 
             //Foreach Texture
             for (var arraySlice = 0; arraySlice < texturesCollection.Length; arraySlice++)
@@ -105,7 +105,7 @@ namespace S33M3DXEngine.Textures
                                                         }
                                };
 
-            textureArrayView = new ShaderResourceView(device, texArray, viewDesc);
+            textureArrayView = new ShaderResourceView(context.Device, texArray, viewDesc);
 
             //Set resource Name, will only be done at debug time.
 #if DEBUG
@@ -114,6 +114,72 @@ namespace S33M3DXEngine.Textures
 
             //Disposing resources used to create the texture array
             texArray.Dispose();
+        }
+
+        public static void CreateTexture2D(DeviceContext context, Texture2D[] texturesCollection, out Texture2D textureArray)
+        {
+            //Create TextureArray object
+            var imagesdesc = texturesCollection[0].Description;
+            var texArrayDesc = new Texture2DDescription
+            {
+                Width = imagesdesc.Width,
+                Height = imagesdesc.Height,
+                MipLevels = imagesdesc.MipLevels,
+                ArraySize = texturesCollection.Length,
+                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                SampleDescription = new SharpDX.DXGI.SampleDescription { Count = 1, Quality = 0 },
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.ShaderResource,
+                CpuAccessFlags = CpuAccessFlags.None,
+                OptionFlags = ResourceOptionFlags.None
+            };
+
+            textureArray = new Texture2D(context.Device, texArrayDesc);
+
+            //Foreach Texture
+            for (var arraySlice = 0; arraySlice < texturesCollection.Length; arraySlice++)
+            {
+                //Foreach mipmap level
+                for (var mipSlice = 0; mipSlice < imagesdesc.MipLevels; mipSlice++)
+                {
+                    context.CopySubresourceRegion(texturesCollection[arraySlice], mipSlice, null, textureArray, Resource.CalculateSubResourceIndex(mipSlice, arraySlice, imagesdesc.MipLevels));
+                }
+            }
+
+        }
+
+        public static Texture2D CreateImageArrayFromFiles(DeviceContext context, string[] FileNames, FilterFlags MIPfilterFlag)
+        {
+            int inputImagesCount = FileNames.Length;
+
+            //1 First loading the textures from files
+            Texture2D[] srcTex = new Texture2D[inputImagesCount];
+
+            ImageLoadInformation ImageInfo = new ImageLoadInformation()
+            {
+                FirstMipLevel = 0,
+                Usage = ResourceUsage.Staging,
+                BindFlags = BindFlags.None,
+                CpuAccessFlags = CpuAccessFlags.Write | CpuAccessFlags.Read,
+                OptionFlags = ResourceOptionFlags.None,
+                Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                Filter = FilterFlags.None,
+                MipFilter = MIPfilterFlag
+            };
+
+            for (int imgInd = 0; imgInd < inputImagesCount; imgInd++)
+            {
+                srcTex[imgInd] = Texture2D.FromFile<Texture2D>(context.Device, FileNames[imgInd], ImageInfo);
+            }
+
+            Texture2D textureArray;
+            //2 Creation of the TextureArray resource
+            CreateTexture2D(context, srcTex, out textureArray);
+
+            //Disposing resources used to create the texture array
+            foreach (Texture2D tex in srcTex) tex.Dispose();
+
+            return textureArray;
         }
 
         /// <summary>
@@ -149,7 +215,7 @@ namespace S33M3DXEngine.Textures
 
             //2 Creation of the TextureArray resource
 
-            CreateTexture2D(device,context, srcTex, MIPfilterFlag, ResourceName, out TextureArrayView);
+            CreateTexture2D(context, srcTex, ResourceName, out TextureArrayView);
 
             //Disposing resources used to create the texture array
             foreach (Texture2D tex in srcTex) tex.Dispose();

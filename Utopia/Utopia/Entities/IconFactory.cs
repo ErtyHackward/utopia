@@ -195,7 +195,7 @@ namespace Utopia.Entities
         private void CreateTextureArray(DeviceContext context, List<Texture2D> textureArray)
         {
             //Create the Icon texture Array
-            ArrayTexture.CreateTexture2D(_d3DEngine.Device, context, textureArray.ToArray(), FilterFlags.Linear, "Icon's ArrayTexture", out _iconsTextureArray);
+            ArrayTexture.CreateTexture2D(context, textureArray.ToArray(), "Icon's ArrayTexture", out _iconsTextureArray);
             
             // indexes into array corresponds textures with modifier +1 (Air)
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
