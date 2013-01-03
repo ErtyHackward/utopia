@@ -15,7 +15,11 @@ namespace PacksOptimize
          
         static void Main(string[] args)
         {
-
+            Console.WriteLine("PacksOptimize starting ...");
+            foreach (string param in args)
+            {
+                Console.WriteLine("Arguments received : {0}", param);
+            }
             //First agument = Pack Root Path
             if (args.Length != 3)
             {
@@ -27,7 +31,10 @@ namespace PacksOptimize
             {
                 foreach (string param in args)
                 {
-                    string[] paramData = param.Split('=');
+                    string p;
+                    p = param.Replace("\"", "");
+                    p = p.Replace("\'", "");
+                    string[] paramData = p.Split('=');
                     if(paramData.Length != 2) return;
                     switch (paramData[0])
                     {

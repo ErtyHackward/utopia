@@ -217,9 +217,7 @@
     <Content Include="Effects\Sprites\Blur.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Effects\Sprites\PointSpriteColor3DBillBoard.hlsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Effects\Sprites\PointSpriteColor3DBillBoard.hlsl" />
     <None Include="Effects\Sprites\PointSprite3DBillBoard.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

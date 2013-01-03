@@ -23,6 +23,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Realms.Server", "Realms\Realms.Server\Realms.Server.csproj", "{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox.Client", "Sandbox\Sandbox.Client\Sandbox.Client.csproj", "{B2B7381A-86E2-4897-B04D-14EF79BE34C3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A0AEF662-59FC-4E0C-BFB9-4CF1E31752B3} = {A0AEF662-59FC-4E0C-BFB9-4CF1E31752B3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox.Resources", "Sandbox\Sandbox.Resources\Sandbox.Resources.csproj", "{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}"
 EndProject
@@ -35,6 +38,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3CoreComponents", "..\S33M3Engines\S33M3CoreComponents\S33M3CoreComponents.csproj", "{D0C4DB7F-547E-4A40-A5CA-41391A310938}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Realms.Client", "Realms\Realms.Client\Realms.Client.csproj", "{6DF982CF-DAE8-4994-9ADE-E30FD3E13723}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A0AEF662-59FC-4E0C-BFB9-4CF1E31752B3} = {A0AEF662-59FC-4E0C-BFB9-4CF1E31752B3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Editor", "Utopia.Editor\Utopia.Editor.csproj", "{0742CD16-90C3-4FF9-914D-0F65C311F78B}"
 EndProject
