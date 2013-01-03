@@ -47,7 +47,7 @@ PS_IN VS( VS_IN input )
 	output.Pos = mul( output.Pos, World );
 	output.Pos = mul( output.Pos, View );
 	output.Pos = mul( output.Pos, Projection );
-	output.UV = input.UV;
+	output.UV = input.UV.xy;
 	
 	return output;
 }

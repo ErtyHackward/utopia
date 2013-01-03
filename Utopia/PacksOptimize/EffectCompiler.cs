@@ -48,10 +48,10 @@ namespace PacksOptimize
         private DefaultIncludeHandler _include;
         #endregion
 
-        public EffectCompiler(ShaderFlags shaderFlags)
+        public EffectCompiler(ShaderFlags shaderFlags, string includeHandlerPath)
         {
             _shaderFlags = shaderFlags;
-            _include = new DefaultIncludeHandler();
+            _include = new PackOptimizeIncludeHandler(includeHandlerPath);
         }
 
         #region Public Properties
