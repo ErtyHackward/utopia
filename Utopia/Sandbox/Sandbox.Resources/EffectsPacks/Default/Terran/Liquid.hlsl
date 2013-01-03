@@ -147,7 +147,7 @@ PS_OUT PS(PS_IN input)
 	//Add overlay only when needed
 	if(input.causticPower < 1)
 	{
-		color.rgb += ((AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).rgb * (1 - input.causticPower)) * color.rgb) * 2;
+		color.rgb += ((AnimatedTextures.Sample(SamplerOverlay, input.AnimationUVW.xyz).r * (1 - input.causticPower)) * color.rgb) * 2;
 	}
 
 	//To execute only when Fog is present !

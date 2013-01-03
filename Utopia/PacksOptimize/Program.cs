@@ -12,7 +12,6 @@ namespace PacksOptimize
         private static string rootPath = null;
         private static ShaderFlags compilationFlag;
         private static string includeHandlerPath = null;
-        private static string DDSConverterPath = null;
         private static string action = null;
          
         static void Main(string[] args)
@@ -28,7 +27,7 @@ namespace PacksOptimize
             {
                 Console.WriteLine("Utopia Pack Optimizer");
                 Console.WriteLine("Syntax : PackOptimize action=Compilation path=\"rootPath\" includePath=\"includePath\" debugcompil=0");
-                Console.WriteLine("Syntax : PackOptimize action=CreateTextureArray path=\"rootPath\" ddsconverterpath=\"Path\" ");
+                Console.WriteLine("Syntax : PackOptimize action=CreateTextureArray path=\"rootPath\" ");
                 return;
             }
             else
@@ -61,9 +60,6 @@ namespace PacksOptimize
                                 compilationFlag = ShaderFlags.OptimizationLevel3;
                             }
                             break;
-                        case "ddsconverterpath":
-                            DDSConverterPath = paramData[1];
-                            break;
                         default:
                             break;
                     }
@@ -88,12 +84,12 @@ namespace PacksOptimize
                     break;
                 case "createtexturearray":
 
-                    if (rootPath == null || DDSConverterPath == null)
+                    if (rootPath == null)
                     {
                         Console.WriteLine("Missing parameters for Array texture creation");
                         return;
                     }
-                    TextureArrayCreation textureArrays = new TextureArrayCreation(rootPath, DDSConverterPath);
+                    TextureArrayCreation textureArrays = new TextureArrayCreation(rootPath);
                     textureArrays.CreateTextureArrays();
                     textureArrays.Dispose();
 
