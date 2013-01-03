@@ -61,8 +61,8 @@ struct vertexOutput {
 	float3 WorldNormal	    	: TEXCOORD1;
 	float3 WorldEyeDirection	: TEXCOORD2;
   	float2 UV					: TEXCOORD5;
-  	half Fog 					: TEXCOORD6;
-  	half2 Altitudes 			: TEXCOORD7; 
+  	float Fog 					: TEXCOORD6;
+  	float2 Altitudes 			: TEXCOORD7; 
 };
 
 //--------------------------------------------------------------------------------------

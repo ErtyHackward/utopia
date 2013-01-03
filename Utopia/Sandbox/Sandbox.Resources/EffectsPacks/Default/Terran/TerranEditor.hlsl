@@ -87,7 +87,7 @@ PS_IN VS(VS_IN input)
 	output.fogPower = 0; //clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1);
 
 	float3 normal = float3(normalsX[facetype],normalsY[facetype],normalsZ[facetype]);
-		
+	output.normal = normal;
 	float3 lightDirection = float3(0,1,1);
 	
 	//emmissiveLight from terran.hlsl : bug, removes the color when a = 1 
