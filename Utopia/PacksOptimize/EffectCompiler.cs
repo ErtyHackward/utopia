@@ -60,14 +60,21 @@ namespace PacksOptimize
         #region Public Methods
         public void ProcessDirectory(string path)
         {
+            int nbr = 0;
             //Get All Effects file
             List<FileInfo> files = new List<FileInfo>();
             GetAllEffectsFiles(path, files);
 
             foreach (var file in files)
             {
-                CompiledEffect(file);
+                if (CompiledEffect(file))
+                {
+                    nbr++;
+                    file.Delete();
+                }
             }
+
+            Console.WriteLine("Compiled shadder files: {0}", nbr);
         }
 
         #endregion
@@ -87,7 +94,7 @@ namespace PacksOptimize
             }
         }
 
-        private void CompiledEffect(FileInfo effectFile)
+        private bool CompiledEffect(FileInfo effectFile)
         {
             List<EP> entryPoints = new List<EP>();
             string rootPath = effectFile.DirectoryName;
@@ -129,6 +136,7 @@ namespace PacksOptimize
                     }
                     
                 }
+
             }
 
             //Do compilation
@@ -137,6 +145,7 @@ namespace PacksOptimize
                 CompileEffect(effectFile, entryPoint);
             }
 
+            return entryPoints.Count > 0;
         }
 
         private string CheckForEntryPoint(string line)

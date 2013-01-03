@@ -98,7 +98,7 @@ namespace Utopia.Updater
             new ThreadStart(Update).BeginInvoke(null, null);
         }
 
-        private void Update()
+        private new void Update()
         {
             Status("Load update info...");
             // get update index
