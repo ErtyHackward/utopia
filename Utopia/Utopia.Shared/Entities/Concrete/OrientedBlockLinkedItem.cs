@@ -6,6 +6,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -18,7 +19,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         [Browsable(false)]
         [ProtoMember(1)]
-        public OrientedItem Orientation { get; set; }
+        public ItemOrientation Orientation { get; set; }
 
         /// <summary>
         /// Gets landscape manager, this field is injected
@@ -40,29 +41,45 @@ namespace Utopia.Shared.Entities.Concrete
             IsPickable = true;
         }
 
-        protected override bool SetNewItemPlace(BlockLinkedItem cubeEntity, IDynamicEntity owner, Vector3I vector)
+        public override void SetPosition(EntityPosition pos, IItem item)
         {
+            base.SetPosition(pos, item);
+
+            var blockItem = item as OrientedBlockLinkedItem;
+            if (blockItem != null)
+            {
+                blockItem.Orientation = pos.Orientation;
+            }
+        }
+
+        public override EntityPosition GetPosition(IDynamicEntity owner)
+        {
+            var pos = new EntityPosition();
+
+            if (!owner.EntityState.IsBlockPicked)
+                return pos;
+
             Vector3 faceOffset = BlockFaceCentered ? new Vector3(0.5f, 0.5f, 0.5f) : owner.EntityState.PickedBlockFaceOffset;
 
             var playerRotation = owner.HeadRotation.GetLookAtVector();
-            var entity = (OrientedBlockLinkedItem)cubeEntity;
+            
             // locate the entity
-            if (vector.Y == 1) // = Put on TOP 
+            if (owner.EntityState.PickPointNormal.Y == 1) // = Put on TOP 
             {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
+                pos.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
                                                    owner.EntityState.PickedBlockPosition.Y + 1f,
                                                    owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
-                
+
             }
-            else if (vector.Y == -1) // PUT on cube Bottom = (Ceiling)
+            else if (owner.EntityState.PickPointNormal.Y == -1) // PUT on cube Bottom = (Ceiling)
             {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
+                pos.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
                                                    owner.EntityState.PickedBlockPosition.Y - 1f,
                                                    owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
             }
-            else // Put on a side not possible.
+            else // Put on a side is not possible.
             {
-                return false;
+                return pos;
             }
 
             double entityRotation;
@@ -71,12 +88,12 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.Z < 0)
                 {
                     entityRotation = MathHelper.Pi;
-                    entity.Orientation = OrientedItem.North;
+                    pos.Orientation = ItemOrientation.North;
                 }
                 else
                 {
                     entityRotation = 0;
-                    entity.Orientation = OrientedItem.South;
+                    pos.Orientation = ItemOrientation.South;
                 }
             }
             else
@@ -84,19 +101,20 @@ namespace Utopia.Shared.Entities.Concrete
                 if (playerRotation.X < 0)
                 {
                     entityRotation = MathHelper.PiOver2;
-                    entity.Orientation = OrientedItem.East;
+                    pos.Orientation = ItemOrientation.East;
                 }
                 else
                 {
                     entityRotation = -MathHelper.PiOver2;
-                    entity.Orientation = OrientedItem.West;
+                    pos.Orientation = ItemOrientation.West;
                 }
             }
 
             // Specific Item Rotation for this instance
-            cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
+            pos.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)entityRotation);
+            pos.Valid = true;
 
-            return true;
+            return pos;
         }
     }
 }

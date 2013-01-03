@@ -6,6 +6,7 @@ using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Network;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
@@ -143,13 +144,13 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region public methods
-        public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity, out Vector3 pickPoint, out Vector3 pickNormal)
+        public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity, out Vector3 pickPoint, out Vector3I pickNormal)
         {
             if (isDirty) 
                 _timer_OnTimerRaised();
 
             pickPoint = new Vector3();
-            pickNormal = new Vector3();
+            pickNormal = new Vector3I();
 
             VisualEntity entity;
             float pickedEntityDistance = float.MaxValue;
@@ -343,10 +344,10 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool ModelRayIntersection(VisualEntity entity, Ray pickRay, out Vector3 intersectionPoint, out Vector3 normal)
+        private bool ModelRayIntersection(VisualEntity entity, Ray pickRay, out Vector3 intersectionPoint, out Vector3I normal)
         {
             intersectionPoint = new Vector3();
-            normal = new Vector3();
+            normal = new Vector3I();
             
             var visualVoxelEntity = entity as VisualVoxelEntity;
             if (visualVoxelEntity == null) 
@@ -520,7 +521,7 @@ namespace Utopia.Entities.Managers
         }
 
 
-        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedItem slopeOrientation)
+        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation)
         {
 
             if (IsSlopeCollisionDetection(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, slopeOrientation))
@@ -546,7 +547,7 @@ namespace Utopia.Entities.Managers
 
         }
 
-        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, OrientedItem slopeOrientation)
+        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation)
         {
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
             float posi = 0.0f;
@@ -556,19 +557,19 @@ namespace Utopia.Entities.Managers
 
             switch (slopeOrientation)
             {
-                case OrientedItem.North:
+                case ItemOrientation.North:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     posi = (entityPosition.Z + playerBoundingBox.Maximum.Z) - entityTesting.WorldBBox.Minimum.Z;
                     break;
-                case OrientedItem.South:
+                case ItemOrientation.South:
                     L = entityTesting.WorldBBox.Maximum.Z - entityTesting.WorldBBox.Minimum.Z;
                     posi = entityTesting.WorldBBox.Maximum.Z - (entityPosition.Z + playerBoundingBox.Minimum.Z);
                     break;
-                case OrientedItem.East:
+                case ItemOrientation.East:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
                     posi = entityTesting.WorldBBox.Maximum.X - (entityPosition.X + playerBoundingBox.Minimum.X);
                     break;
-                case OrientedItem.West:
+                case ItemOrientation.West:
                     L = entityTesting.WorldBBox.Maximum.X - entityTesting.WorldBBox.Minimum.X;
                     posi = (entityPosition.X + playerBoundingBox.Maximum.X) - entityTesting.WorldBBox.Minimum.X;
                     break;

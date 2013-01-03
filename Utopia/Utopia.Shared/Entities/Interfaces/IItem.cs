@@ -23,5 +23,12 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets an item description
         /// </summary>
         string Description { get; }
+
+        /// <summary>
+        /// Returns new entity position correspoding to the player
+        /// </summary>
+        /// <param name="owner">An entity wich trying to put the entity</param>
+        /// <returns></returns>
+        EntityPosition GetPosition(IDynamicEntity owner);
     }
 }

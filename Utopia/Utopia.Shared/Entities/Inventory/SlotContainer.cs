@@ -545,6 +545,16 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
+        /// Performs search for an entity
+        /// </summary>
+        /// <param name="pred"></param>
+        /// <returns></returns>
+        public T Find(Predicate<T> pred)
+        {
+            return this.FirstOrDefault(slot => pred(slot));
+        }
+
+        /// <summary>
         /// This method is not supported. Use PutItem instead.
         /// </summary>
         /// <param name="entity"></param>

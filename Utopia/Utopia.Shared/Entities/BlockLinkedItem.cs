@@ -16,20 +16,8 @@ namespace Utopia.Shared.Entities
     /// A Cube placeable Item will be by default a centered cube position, and can only be placed in a cube where no other CubePlaceableItem is present.
     /// </summary>
     [ProtoContract]
-    public abstract class BlockLinkedItem : Item, ITool, IWorldIntercatingEntity, IBlockLinkedEntity, IBlockLocationRoot
+    public abstract class BlockLinkedItem : Item, IBlockLinkedEntity, IBlockLocationRoot
     {
-        /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
-        [Browsable(false)]
-        public ILandscapeManager2D LandscapeManager { get; set; }
-
-        /// <summary>
-        /// Gets entityFactory, this field is injected automagically by entityfactory
-        /// </summary>
-        [Browsable(false)]
-        public EntityFactory entityFactory { get; set; }
-
         /// <summary>
         /// The cube where the entity root belongs to.
         /// </summary>
@@ -57,7 +45,7 @@ namespace Utopia.Shared.Entities
         public bool BlockEmptyRequired { get; set; }
         
         // tool logic
-        public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer)
+        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer)
         {
             var impact = new ToolImpact { Success = false };
 
@@ -109,7 +97,15 @@ namespace Utopia.Shared.Entities
                 //cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
 
                 //If was not possible to set Item Place do nothing
-                if (!SetNewItemPlace(cubeEntity, owner, moveVector)) return impact;
+                //if (!SetNewItemPlace(cubeEntity, owner, moveVector)) return impact;
+
+                var pos = GetPosition(owner);
+
+                if (!pos.Valid)
+                    return impact;
+
+                cubeEntity.Position = pos.Position;
+                cubeEntity.Rotation = pos.Rotation;
 
                 cursor.AddEntity(cubeEntity, owner.DynamicId);
                     
@@ -118,21 +114,26 @@ namespace Utopia.Shared.Entities
             return impact;
         }
 
-        protected virtual bool SetNewItemPlace(BlockLinkedItem cubeEntity, IDynamicEntity owner, Vector3I vector)
+        public override EntityPosition GetPosition(IDynamicEntity owner)
         {
+            var pos = new EntityPosition();
+
+            if (!owner.EntityState.IsBlockPicked)
+                return pos;
+            
             Vector3 faceOffset = owner.EntityState.PickedBlockFaceOffset;
 
             // locate the entity
-            if (vector.Y == 1) // = Put on TOP 
+            if (owner.EntityState.PickPointNormal.Y == 1) // = Put on TOP 
             {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
+                pos.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
                                                    owner.EntityState.PickedBlockPosition.Y + 1f,
                                                    owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
 
             }
-            else if (vector.Y == -1) //PUT on cube Bottom = (Ceiling)
+            else if (owner.EntityState.PickPointNormal.Y == -1) //PUT on cube Bottom = (Ceiling)
             {
-                cubeEntity.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
+                pos.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
                                                    owner.EntityState.PickedBlockPosition.Y - 1f,
                                                    owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
             }
@@ -142,35 +143,32 @@ namespace Utopia.Shared.Entities
                 if (BlockFaceCentered == false)
                 {
                     newBlockPos = owner.EntityState.PickedBlockPosition;
-                    cubeEntity.Position = new Vector3D(newBlockPos + faceOffset);
+                    pos.Position = new Vector3D(newBlockPos + faceOffset);
                 }
                 else
                 {
                     newBlockPos = owner.EntityState.NewBlockPosition;
-                    cubeEntity.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)vector.X / 2, 0.5f, 0.5f - (float)vector.Z / 2));
+                    pos.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)owner.EntityState.PickPointNormal.X / 2, 0.5f, 0.5f - (float)owner.EntityState.PickPointNormal.Z / 2));
                 }
 
-                cubeEntity.Position += new Vector3D(vector.X == -1 ? -0.01 : 0, 
-                                                    0, 
-                                                    vector.Z == -1 ? -0.01 : 0);
+                pos.Position += new Vector3D(owner.EntityState.PickPointNormal.X == -1 ? -0.01 : 0,
+                                                    0,
+                                                    owner.EntityState.PickPointNormal.Z == -1 ? -0.01 : 0);
 
 
                 var slope = 0d;
 
-                if (vector.X == -1) slope = -Math.PI / 2;
-                if (vector.X == 1) slope = Math.PI / 2; // ok
-                if (vector.Z == -1) slope = Math.PI; // ok
-                if (vector.Z == 1) slope = 0;
+                if (owner.EntityState.PickPointNormal.X == -1) slope = -Math.PI / 2;
+                if (owner.EntityState.PickPointNormal.X == 1) slope = Math.PI / 2; // ok
+                if (owner.EntityState.PickPointNormal.Z == -1) slope = Math.PI; // ok
+                if (owner.EntityState.PickPointNormal.Z == 1) slope = 0;
 
-                cubeEntity.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
+                pos.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
             }
 
-            return true;
-        }
+            pos.Valid = true;
 
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
+            return pos;
         }
     }
 }

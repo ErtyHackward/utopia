@@ -3,7 +3,6 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 using System;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
@@ -11,18 +10,8 @@ using Utopia.Shared.Configuration;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
-    public class CubeResource : Item, ITool, IWorldIntercatingEntity
+    public class CubeResource : Item
     {
-        /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
-        public ILandscapeManager2D LandscapeManager { get; set; }
-
-        /// <summary>
-        /// Gets entityFactory, this field is injected
-        /// </summary>
-        public EntityFactory entityFactory { get; set; }
-
         [ProtoMember(1)]
         public byte CubeId { get; private set; }
     
@@ -41,7 +30,7 @@ namespace Utopia.Shared.Entities.Concrete
             Name = cubeName;
         }
 
-        public IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
         {
             if (owner.EntityState.IsBlockPicked)
             {
@@ -71,11 +60,6 @@ namespace Utopia.Shared.Entities.Concrete
             }
             impact.Message = "Pick a cube to use this tool";
             return impact;
-        }
-
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
         }
     }
 
