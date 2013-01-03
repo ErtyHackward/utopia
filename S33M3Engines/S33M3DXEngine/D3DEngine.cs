@@ -553,18 +553,21 @@ namespace S33M3DXEngine
             //Dispo State repo
             RenderStatesRepo.Dispose();
 
-            _renderForm.ResizeBegin -= _renderForm_ResizeBegin;
-            _renderForm.ResizeEnd -= _renderForm_ResizeEnd;
-            _renderForm.Resize -= _renderForm_Resize;
-            _renderForm.LostFocus -= GameWindow_LostFocus;
-            _renderForm.GotFocus -= GameWindow_GotFocus;
+            if (_renderForm != null)
+            {
+                _renderForm.ResizeBegin -= _renderForm_ResizeBegin;
+                _renderForm.ResizeEnd -= _renderForm_ResizeEnd;
+                _renderForm.Resize -= _renderForm_Resize;
+                _renderForm.LostFocus -= GameWindow_LostFocus;
+                _renderForm.GotFocus -= GameWindow_GotFocus;
+            }
 
-            ////Dispose the created states
-            BackBufferTex.Dispose();
-            _dx11factory.Dispose();
-            _depthStencil.Dispose();
-            _renderTarget.Dispose();
-            _swapChain.Dispose();
+            //Dispose the created states
+            if(BackBufferTex != null) BackBufferTex.Dispose();
+            if (_dx11factory != null) _dx11factory.Dispose();
+            if (_depthStencil != null) _depthStencil.Dispose();
+            if (_renderTarget != null) _renderTarget.Dispose();
+            if (_swapChain != null) _swapChain.Dispose();
 
             //ImmediateContext.ClearState();
             //ImmediateContext.Flush();

@@ -688,34 +688,16 @@
     <Content Include="TexturesPacks\Default\BiomesColors\03_WaterColors.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\Default\Editor\ct00.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Editor\ct01.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Editor\ct02.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="TexturesPacks\Default\Gui\Crosshair.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="TexturesPacks\Default\Gui\Pointer.bmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="TexturesPacks\Default\SkyDome\moon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TexturesPacks\Default\SkyDome\moonglow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\SkyDome\skyFog.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TexturesPacks\Default\SkyDome\skyText.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Sprites\0000_0_Grass1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TexturesPacks\Default\Terran\ct01_Stone.png">
@@ -772,15 +754,6 @@
     <Content Include="TexturesPacks\Default\Particules\001_circle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0001_0_Flower1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0002_0_Flower2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Sprites\0003_0_Flower3.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="TexturesPacks\Default\Terran\ct00_Grass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -801,9 +774,6 @@
     </Content>
     <Content Include="TexturesPacks\Default\Terran\ct22_CactusSlide.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Weather\clouds.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="EffectsPacks\Default\Entities\DynamicEntity.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
