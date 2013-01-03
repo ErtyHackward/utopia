@@ -176,8 +176,14 @@ namespace Utopia.Entities.Managers
                         {
                             if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model)
                             {
-                                if (!ModelRayIntersection(entity, pickingRay, out pickPoint, out pickNormal))
+                                Vector3 tmpPickPoint;
+                                Vector3I tmpPickNormal;
+
+                                if (!ModelRayIntersection(entity, pickingRay, out tmpPickPoint, out tmpPickNormal, out currentDistance))
                                     continue;
+
+                                pickPoint = tmpPickPoint;
+                                pickNormal = tmpPickNormal;
 
                             }
                             else
@@ -344,11 +350,12 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool ModelRayIntersection(VisualEntity entity, Ray pickRay, out Vector3 intersectionPoint, out Vector3I normal)
+        private bool ModelRayIntersection(VisualEntity entity, Ray pickRay, out Vector3 intersectionPoint, out Vector3I normal, out float dist)
         {
             intersectionPoint = new Vector3();
             normal = new Vector3I();
-            
+            dist = float.MaxValue;
+
             var visualVoxelEntity = entity as VisualVoxelEntity;
             if (visualVoxelEntity == null) 
                 return false;
@@ -363,9 +370,6 @@ namespace Utopia.Entities.Managers
             var activeModelState = instance.State;
 
             var visualModel = visualVoxelEntity.VisualVoxelModel;
-
-            // current distance, we need to find smallest
-            float dist = float.MaxValue;
 
             //For each Part in the model (A model can be composed of several parts)
             for (int partId = 0; partId < visualModel.VoxelModel.Parts.Count; partId++)

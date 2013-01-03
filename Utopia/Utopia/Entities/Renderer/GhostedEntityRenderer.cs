@@ -25,7 +25,7 @@ namespace Utopia.Entities.Renderer
         private VisualVoxelModel _toolVoxelModel;
         private VoxelModelInstance _toolVoxelInstance;
         private float _alpha = 0.4f;
-        private bool _alphaRaise = false;
+        private bool _alphaRaise;
 
         public ITool Tool { get; set; }
 
@@ -62,7 +62,7 @@ namespace Utopia.Entities.Renderer
             Transform = Matrix.Identity;
             Display = true;
 
-            DrawOrders.UpdateIndex(0, 5001);
+            DrawOrders.UpdateIndex(0, 1070);
         }
 
         void Equipment_ItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
@@ -70,6 +70,7 @@ namespace Utopia.Entities.Renderer
             if (e.EquippedItem == null)
             {
                 Tool = null;
+                _toolVoxelModel = null;
                 return;
             }
 
@@ -132,7 +133,7 @@ namespace Utopia.Entities.Renderer
         {
             if (Display && Transform.HasValue && _toolVoxelModel != null)
             {
-                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
 
                 _voxelModelEffect.Begin(context);
                 _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(CameraManager.ActiveCamera.ViewProjection3D);
