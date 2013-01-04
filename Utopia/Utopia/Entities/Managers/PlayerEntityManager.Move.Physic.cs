@@ -33,6 +33,9 @@ namespace Utopia.Entities.Managers
             {
                 case EntityDisplacementModes.Flying:
                     _physicSimu.Friction = 0f;
+#if !DEBUG
+                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
+#endif
                     break;
                 case EntityDisplacementModes.Swiming:
                     _physicSimu.Friction = 0.3f;
@@ -80,7 +83,6 @@ namespace Utopia.Entities.Managers
             BlockOffset = _groundCubeProgile.YBlockOffset;
             _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
             PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;
-
 
             _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
             _worldPosition = newWorldPosition;
