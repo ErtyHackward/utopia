@@ -39,6 +39,13 @@ namespace S33M3CoreComponents.Sprites2D
         #endregion
 
         #region Public variables
+
+        public SamplerState SpriteSamplerClamp
+        {
+            get { return _spriteSamplerClamp; }
+            set { _spriteSamplerClamp = value; }
+        }
+
         public bool IsScissorMode
         {
             get { return _isScissorMode; }

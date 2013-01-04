@@ -11,6 +11,7 @@ en.depinstall_description=Please wait while Setup installs dependencies on your 
 en.depinstall_status=Installing %1...
 en.depinstall_missing=%1 must be installed before setup can continue. Please install %1 and run Setup again.
 en.depinstall_error=An error occured while installing the dependencies. Please restart the computer and run the setup again or install the following dependencies manually:%n
+en.postprocess=Preparing game files...
 en.isxdl_langfile=english.ini
 
 fr.depdownload_msg=Les applications suivantes sont nйcessaires pour pouvoir continuer:%n%n%1%nTйlйcharger et installer maintenant?
@@ -21,6 +22,7 @@ fr.depinstall_description=Patientez pendant l'installation des applications sur 
 fr.depinstall_status=Installation %1...
 fr.depinstall_missing=%1 doit кtre installй pour pouvoir continuer. Installer %1 et recommencer l'installation.
 fr.depinstall_error=Une erreur d'est produite pendant l'installation des applications. Pouvez-vous redйmarrer votre ordinateur et recommencer l'installation ou bien installer ce(s) programme manuellement : %n
+fr.postprocess=Preparation des fichiers de jeux...
 fr.isxdl_langfile=french.ini
 
 ru.depdownload_msg=Следующие компоненты необходимы для установки:%n%n%1%nУстановить?
@@ -31,6 +33,7 @@ ru.depinstall_description=Подождите пока идет установка необходимых компонентов.
 ru.depinstall_status=Установка %1...
 ru.depinstall_missing=%1 должен быть установлен. Пожалуйста установите %1 и запустите установку заново.
 ru.depinstall_error=Во время установки зависимостей произошла ошибка. Перезагрузите компьютер и запустите установку заново, либо установите следующие компоненты вручную:%n
+ru.postprocess=Подготовка файлов игры...
 ru.isxdl_langfile=russian.ini
 
 
@@ -51,7 +54,6 @@ var
 	installMemo, downloadMemo, downloadMessage: string;
 	products: array of TProduct;
 	DependencyPage: TOutputProgressWizardPage;
-
   
 procedure AddProduct(FileName, Parameters, Title, Size, URL: string);
 var
@@ -168,8 +170,7 @@ begin
      if isxdl_DownloadFiles(StrToInt(ExpandConstant('{wizardhwnd}'))) = 0 then
 				Result := false;
 		end;
-	end;
-	
+	end;	
 end;
 
 function IsX64: Boolean;

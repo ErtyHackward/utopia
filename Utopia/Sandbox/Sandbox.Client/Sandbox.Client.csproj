@@ -178,9 +178,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\WelcomeScreen.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\S33M3Engines\S33M3CoreComponents\S33M3CoreComponents.csproj">
       <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
       <Name>S33M3CoreComponents</Name>
