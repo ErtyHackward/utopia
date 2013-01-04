@@ -51,6 +51,7 @@ namespace Utopia.Shared.Entities.Concrete
             {
                 //Add new block
                 var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
+
                 if (cursor.Read() == WorldConfiguration.CubeId.Air)
                 {
                     cursor.Write(CubeId);
