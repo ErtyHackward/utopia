@@ -1,0 +1,7 @@
+All sounds file used are all licensed under : Creative Commons: By Attribution 3.0
+
+Music's listing and authors references.
+/Moods/01_peace_day.adpcm.wav		"Easy Lemon" by Kevin MacLeod (incompetech.com)
+/Moods/02_peace_day.adpcm.wav		"Windswept" by Kevin MacLeod (incompetech.com)
+/Moods/03_peace_night.adpcm.wav		"Night Cave" by Kevin MacLeod (incompetech.com)
+/Moods/04_peace_night.adpcm.wav		"Lone Harvest" by Kevin MacLeod (incompetech.com)

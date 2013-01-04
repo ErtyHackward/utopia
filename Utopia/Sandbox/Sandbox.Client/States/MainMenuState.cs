@@ -5,6 +5,7 @@ using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Sandbox.Client.Components.GUI;
 using Utopia.Components;
+using Utopia.Sounds;
 
 namespace Sandbox.Client.States
 {

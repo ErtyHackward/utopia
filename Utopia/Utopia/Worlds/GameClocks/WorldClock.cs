@@ -44,6 +44,8 @@ namespace Utopia.Worlds.GameClocks
             AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
             _server.MessageDateTime += ServerConnection_MessageDateTime;
             _game.OnRenderLoopFrozen += Game_OnRenderLoopFrozen;
+
+            this.UpdateOrder = 9;
         }
 
         public override void BeforeDispose()

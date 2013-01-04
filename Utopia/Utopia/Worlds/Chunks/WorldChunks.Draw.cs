@@ -156,8 +156,6 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin(context);
 
-            
-
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
