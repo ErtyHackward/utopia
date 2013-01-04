@@ -4,6 +4,7 @@ using S33M3CoreComponents.States;
 using Ninject;
 using Utopia.Components;
 using System.IO;
+using S33M3CoreComponents.Inputs;
 
 namespace Sandbox.Client.States
 {
@@ -36,6 +37,9 @@ namespace Sandbox.Client.States
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
             var startUpComponent = _iocContainer.Get<StartUpComponent>();
+            var inputsManager = _iocContainer.Get<InputsManager>();
+
+            inputsManager.KeyboardManager.IsRunning = true;
 
             //Get the list of Slides
             List<FileInfo> slides = new List<FileInfo>();
@@ -55,6 +59,7 @@ namespace Sandbox.Client.States
             StatesManager.PrepareStateAsync(systemComponentState);
 
             AddComponent(startUpComponent);
+            AddComponent(inputsManager);
             base.Initialize(context);
         }
         #endregion

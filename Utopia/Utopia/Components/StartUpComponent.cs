@@ -12,6 +12,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Color = SharpDX.Color;
 using Rectangle = SharpDX.Rectangle;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.Components
 {
@@ -29,6 +30,7 @@ namespace Utopia.Components
         private Rectangle _slideDimension;
         private ByteColor _color = Color.White;
         private DateTime _slideSwitch = DateTime.Now;
+        private InputsManager _inputsManager;
         #endregion
 
         #region Public variables/Properties
@@ -37,9 +39,11 @@ namespace Utopia.Components
         #region Event
         public event EventHandler SlideShowFinished;
         #endregion
-        public StartUpComponent(D3DEngine engine)
+        public StartUpComponent(D3DEngine engine,
+                                InputsManager inputsManager)
         {
             _engine = engine;
+            _inputsManager = inputsManager;
             _engine.ViewPort_Updated += _engine_ViewPort_Updated;
             ResizeSlideDim(_engine.ViewPort);
         }
@@ -90,7 +94,12 @@ namespace Utopia.Components
         {
             if (_slidShowFinished) return;
 
-            // swap carret display
+            if (_inputsManager.KeyboardManager.PrevKeyboardState.IsKeyDown(System.Windows.Forms.Keys.Escape) &&
+                _inputsManager.KeyboardManager.CurKeyboardState.IsKeyUp(System.Windows.Forms.Keys.Escape))
+            {
+                _slideSwitch = _slideSwitch.AddMilliseconds(-_slideShowDelayInMS);
+            }
+
             if ((DateTime.Now - _slideSwitch).TotalMilliseconds > _slideShowDelayInMS)
             {
                 _slideSwitch = DateTime.Now;
