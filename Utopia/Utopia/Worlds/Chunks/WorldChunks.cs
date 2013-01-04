@@ -89,6 +89,7 @@ namespace Utopia.Worlds.Chunks
         private readonly object _counterLock = new object();
         private VoxelModelManager _voxelModelManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
+        private UtopiaProcessorParams _utopiaProcessorParam;
 
         /// <summary>
         /// List of chunks that still _slowly_ appearing
@@ -189,6 +190,11 @@ namespace Utopia.Worlds.Chunks
             _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
 
             DrawStaticInstanced = true;
+
+            if (visualWorldParameters.WorldParameters.Configuration is UtopiaWorldConfiguration)
+            {
+                _utopiaProcessorParam = ((UtopiaWorldConfiguration)visualWorldParameters.WorldParameters.Configuration).ProcessorParam;
+            }
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
@@ -736,15 +742,19 @@ namespace Utopia.Worlds.Chunks
                     }
                     if (chunk.SolidCubeIB != null) BprimitiveCount += chunk.SolidCubeIB.IndicesCount;
                     if (chunk.LiquidCubeIB != null) BprimitiveCount += chunk.LiquidCubeIB.IndicesCount;
-
                 }
 
                 var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount);
-
                 var line1 = string.Format("Static entity draw calls {2}: {0}, time {1}", _staticEntityDrawCalls, _staticEntityDrawTime, DrawStaticInstanced ? "[INSTANCED]" : "");
-                var line2 = string.Format("MetaData : Temperature {0:0.00}, Moisture {1:0.00}, ColumnMaxHeight : {2}, ChunkID : {3}", columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, columnInfo.MaxHeight, c.ChunkID);
+                var line2 = string.Format("Biomes MetaData : Temperature {0:0.00}, Moisture {1:0.00}, ColumnMaxHeight : {2}, ChunkID : {3}", columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, columnInfo.MaxHeight, c.ChunkID);
+                string line3 = string.Empty;
+                if (_utopiaProcessorParam != null)
+                {
+                    line3 = string.Format("Biomes MetaData : Chunk Biome Type {0}, Column Biome Type {1}", _utopiaProcessorParam.Biomes[c.BlockData.ChunkMetaData.ChunkMasterBiomeType].Name, _utopiaProcessorParam.Biomes[columnInfo.Biome].Name);
+                }
+                
 
-                return string.Join("\r\n", line0, line1, line2);
+                return string.Join("\r\n", line0, line1, line2, line3);
             }
             else
             {

@@ -27,9 +27,19 @@ namespace S33M3CoreComponents.Sound
         private float _fadingVolumeCoef;
         private float _voiceVolume;
         private Stopwatch _fadingTimer = new Stopwatch();
+        private bool _isPlaying;
         #endregion
 
         #region Public Properties
+        public bool IsPlaying
+        {
+            get
+            {
+                if (_isPlaying && _voice.State.BuffersQueued == 0) _isPlaying = false;
+                return _isPlaying;
+            }
+            private set { _isPlaying = value; }
+        }
         public Emitter Emitter { get; set; }
         public bool is3DSound { get; set; }
         public ISoundDataSource PlayingDataSource
@@ -114,6 +124,7 @@ namespace S33M3CoreComponents.Sound
             RefreshVoices();
 
             _voice.Start();
+            IsPlaying = true;
         }
 
         public void Start(uint fadeIn = 0)            
@@ -129,7 +140,6 @@ namespace S33M3CoreComponents.Sound
                 _fadingStepThreeshold = 1.0f / fadeOut * -1;
                 _fadingVolumeCoef = 1.0f;
                 _fadingTimer.Restart();
-
                 _soundEngine.LookAtSound(this);
             }
             else
@@ -139,6 +149,8 @@ namespace S33M3CoreComponents.Sound
                 _voice.Stop();
                 _voice.FlushSourceBuffers();
             }
+
+            IsPlaying = false;
         }
 
         public void SetVolume(float volume, int operationSet)

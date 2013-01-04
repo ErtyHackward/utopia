@@ -236,6 +236,8 @@
     <Compile Include="Net\Web\ServerWebApi.cs" />
     <Compile Include="Net\Web\UtopiaWebApiBase.cs" />
     <Compile Include="Net\Web\WebEventArgs.cs" />
+    <Compile Include="Sounds\IUtopiaSoundSource.cs" />
+    <Compile Include="Sounds\TimeOfDaySound.cs" />
     <Compile Include="Tools\BinarySerializer\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
