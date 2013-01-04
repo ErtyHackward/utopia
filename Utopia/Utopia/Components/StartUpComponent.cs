@@ -54,6 +54,17 @@ namespace Utopia.Components
         {
             _spriteRenderer = ToDispose(new SpriteRenderer(_engine));
 
+            _spriteRenderer.SpriteSamplerClamp = ToDispose(new SamplerState(_engine.Device,
+                new SamplerStateDescription
+                {
+                    AddressU = TextureAddressMode.Clamp,
+                    AddressV = TextureAddressMode.Clamp,
+                    AddressW = TextureAddressMode.Clamp,
+                    Filter = Filter.MinMagMipLinear,
+                    MaximumLod = float.MaxValue,
+                    MinimumLod = 0
+                }));
+            
             //Create the Slides textures
             foreach (var slidePath in _imagesSlideShowPath)
             {
@@ -69,9 +80,15 @@ namespace Utopia.Components
         {
         }
 
+        public override void EnableComponent(bool forced = false)
+        {
+            base.EnableComponent(forced);
+            _slideSwitch = DateTime.Now;
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            if (_slidShowFinished == true) return;
+            if (_slidShowFinished) return;
 
             // swap carret display
             if ((DateTime.Now - _slideSwitch).TotalMilliseconds > _slideShowDelayInMS)
@@ -80,7 +97,8 @@ namespace Utopia.Components
                 _renderedSlideId++;
                 if (_renderedSlideId > _maxSlideId)
                 {
-                    if (SlideShowFinished != null) SlideShowFinished(this, null);
+                    if (SlideShowFinished != null) 
+                        SlideShowFinished(this, null);
                     _slidShowFinished = true;
                     _renderedSlideId = _maxSlideId;
                 }
