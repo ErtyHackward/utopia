@@ -21,6 +21,14 @@ namespace Utopia.Shared.Entities
             var character = owner as CharacterEntity;
 
             var cursor = LandscapeManager.GetCursor(entity.EntityState.PickedBlockPosition);
+
+            if (cursor.PeekProfile().Hardness == 0)
+            {
+                //Indestrutible cube, cannot be remove !
+                impact.Message = "Indestructible cube !";
+                return impact;
+            }
+
             var cube = cursor.Read();
             if (cube != WorldConfiguration.CubeId.Air)
             {

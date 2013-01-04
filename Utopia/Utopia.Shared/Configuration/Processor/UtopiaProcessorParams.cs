@@ -230,7 +230,8 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true
+                IsSystemCube = true,
+                Hardness = 100
             });
 
             //Dirt Block
@@ -251,7 +252,8 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true
+                IsSystemCube = true,
+                Hardness = 50
             });
 
             //Grass Block
@@ -273,7 +275,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 0
+                BiomeColorArrayTexture = 0,
+                Hardness = 50
             });
 
             //StillWater Block
@@ -295,7 +298,8 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.3f,
                 IsSystemCube = true,
                 BiomeColorArrayTexture = 2,
-                YBlockOffset = 0.1
+                YBlockOffset = 0.1,
+                Hardness = 0
             });
 
             //DynamicWater Block
@@ -317,7 +321,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 2
+                BiomeColorArrayTexture = 2,
+                Hardness = 0
             });
 
             //LightWhite Block
@@ -343,7 +348,8 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
                 EmissiveColorG = 255,
-                EmissiveColorB = 255
+                EmissiveColorB = 255,
+                Hardness = 100
             });
 
             //Rock Block
@@ -365,7 +371,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
-                SlidingValue = 0.05f
+                SlidingValue = 0.05f,
+                Hardness = 0
             });
 
             //Sand Block
@@ -387,6 +394,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.3f,
                 IsSystemCube = true,
+                Hardness = 40
             });
 
             //Gravel Block
@@ -408,6 +416,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
+                Hardness = 100
             });
 
             //Trunk Block
@@ -429,6 +438,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
+                Hardness = 80
             });
 
             //GoldOre Block
@@ -450,6 +460,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
+                Hardness = 1000
             });
 
             //CoalOre Block
@@ -471,6 +482,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
+                Hardness = 150
             });
 
             //MoonStone Block
@@ -496,7 +508,8 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorA = 255,
                 EmissiveColorR = 86,
                 EmissiveColorG = 143,
-                EmissiveColorB = 255
+                EmissiveColorB = 255,
+                Hardness = 2000
             });
 
             //Foliage Block
@@ -519,7 +532,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 1
+                BiomeColorArrayTexture = 1,
+                Hardness = 20
             });
 
             //Snow Block
@@ -540,7 +554,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 YBlockOffset = 0.9,
                 Friction = 0.35f,
-                IsSystemCube = true
+                IsSystemCube = true,
+                Hardness = 10
             });
 
             //Ice Block
@@ -562,7 +577,8 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true
+                IsSystemCube = true,
+                Hardness = 100
             });
 
             //StillLava Block
@@ -589,7 +605,8 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
                 EmissiveColorG = 161,
-                EmissiveColorB = 38
+                EmissiveColorB = 38,
+                Hardness = 200
             });
 
             //DynamicLava Block
@@ -617,7 +634,8 @@ namespace Utopia.Shared.Configuration
                 EmissiveColorR = 255,
                 EmissiveColorG = 161,
                 EmissiveColorB = 38,
-                IsTaggable = true
+                IsTaggable = true,
+                Hardness = 200
             });
 
             //Cactus Block
@@ -640,7 +658,8 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.25f,
                 SlidingValue = 0.0f,
                 IsSystemCube = true,
-                SideOffsetMultiplier = 1
+                SideOffsetMultiplier = 1,
+                Hardness = 50
             });
 
             //CactusTop Block
@@ -663,7 +682,8 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.25f,
                 SlidingValue = 0.0f,
                 IsSystemCube = true,
-                SideOffsetMultiplier = 1
+                SideOffsetMultiplier = 1,
+                Hardness = 50
             });
         }
 

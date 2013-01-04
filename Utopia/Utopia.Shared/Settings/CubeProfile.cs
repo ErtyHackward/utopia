@@ -82,7 +82,6 @@ namespace Utopia.Shared.Settings
         public byte EmissiveColorB { get { return EmissiveColor.B; } set { EmissiveColor.B = value; } }
 
         
-
         [Description("Low friction value will make the move on it easier = faster"), Category("Physics")]
         [ProtoMember(17)]
         public float Friction { get; set; }
@@ -121,6 +120,10 @@ namespace Utopia.Shared.Settings
         [Description("Sound played when entity walk over a this cube"), Category("Sound")]
         [ProtoMember(21)]
         public List<SoundSource> WalkingOverSound { get { return _walkingOverSound; } set { _walkingOverSound = value; } }
+
+        [Description("Block hardness value, 0 = undestructible"), Category("General")]
+        [ProtoMember(22)]
+        public uint Hardness { get; set; }
 
         [ProtoBeforeDeserialization]
         public void BeforeDeserialize()
