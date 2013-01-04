@@ -120,13 +120,13 @@
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
-    <Compile Include="Components\GeneralSoundManager.cs" />
+    <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
     <Compile Include="Components\ModelEditorComponent.Designer.cs">
       <DependentUpon>ModelEditorComponent.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\GameSoundManager.cs" />
+    <Compile Include="Sounds\GameSoundManager.cs" />
     <Compile Include="Components\StaggingBackBuffer.cs" />
     <Compile Include="Components\StartUpComponent.cs" />
     <Compile Include="Components\ViewParameters.cs" />
@@ -189,6 +189,7 @@
     <Compile Include="Particules\CubeEmitter.cs" />
     <Compile Include="Particules\SpriteEmitter.cs" />
     <Compile Include="Particules\UtopiaParticuleEngine.cs" />
+    <Compile Include="Sounds\MoodsSound.cs" />
     <Compile Include="UtopiaRender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\ChunkEntityImpactManager.cs" />
