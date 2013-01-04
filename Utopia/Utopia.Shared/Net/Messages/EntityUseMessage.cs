@@ -68,7 +68,7 @@ namespace Utopia.Shared.Net.Messages
         /// Normal vector at the pick point
         /// </summary>
         [ProtoMember(12)]
-        public Vector3 PickNormal { get; set; }
+        public Vector3I PickNormal { get; set; }
 
         /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)

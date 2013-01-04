@@ -1,3 +1,4 @@
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -54,6 +55,18 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         public Vector3I PickPointNormal;
 
+        public DynamicEntityState(EntityUseMessage entityUseMessage)
+        {
+            IsBlockPicked = entityUseMessage.IsBlockPicked;
+            IsEntityPicked = entityUseMessage.IsEntityPicked;
+            NewBlockPosition = entityUseMessage.NewBlockPosition;
+            PickedBlockPosition = entityUseMessage.PickedBlockPosition;
+            PickedEntityLink = entityUseMessage.PickedEntityLink;
+            PickedBlockFaceOffset = entityUseMessage.PickedBlockFaceOffset;
+            PickPoint = entityUseMessage.PickPoint;
+            PickPointNormal = entityUseMessage.PickNormal;
+            PickedEntityPosition = entityUseMessage.PickedEntityPosition;
+        }
     }
 
 }

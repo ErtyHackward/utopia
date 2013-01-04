@@ -145,15 +145,7 @@ namespace Utopia.Server.Structs
         public virtual void Use(EntityUseMessage entityUseMessage)
         {
             // update entity state
-            var state = new DynamicEntityState
-            {
-                IsBlockPicked = entityUseMessage.IsBlockPicked,
-                IsEntityPicked = entityUseMessage.IsEntityPicked,
-                NewBlockPosition = entityUseMessage.NewBlockPosition,
-                PickedBlockPosition = entityUseMessage.PickedBlockPosition,
-                PickedEntityLink = entityUseMessage.PickedEntityLink,
-                PickedBlockFaceOffset = entityUseMessage.PickedBlockFaceOffset
-            };
+            var state = new DynamicEntityState(entityUseMessage);
             DynamicEntity.EntityState = state;
         }
 

@@ -52,7 +52,7 @@ namespace Utopia.Shared.Entities.Events
 
         public Vector3 PickPosition { get; set; }
 
-        public Vector3 PickNormal { get; set; }
+        public Vector3I PickNormal { get; set; }
 
         /// <summary>
         /// Creates event args from entity state
