@@ -12,6 +12,7 @@ using S33M3DXEngine;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
+using System.Reflection;
 
 namespace Realms.Client
 {
@@ -33,7 +34,7 @@ namespace Realms.Client
             LoadClientsSettings();
 
             //Bings all components
-            IocBinding("Utopia Realms", new System.Drawing.Size(1280, 720));
+            IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version, Program.StartUpResolution);
             
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Resources.Utopia;

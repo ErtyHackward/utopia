@@ -13,6 +13,7 @@ namespace Realms.Client
         /// Indicates whether the debug should be shown
         /// </summary>
         public static bool ShowDebug;
+        public static System.Drawing.Size StartUpResolution = new System.Drawing.Size(1280, 720);
 
         /// <summary>
         /// The main entry point for the application.
@@ -24,6 +25,9 @@ namespace Realms.Client
             {
                 if (arg.ToLower() == "-showdebug") ShowDebug = true;
                 if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
+                if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
+                if (arg.ToLower() == "-640p") StartUpResolution = new System.Drawing.Size(1024, 640);
+                if (arg.ToLower() == "-720p") StartUpResolution = new System.Drawing.Size(1280, 720);
                 if (arg.ToLower().StartsWith("-lcdefferedmodelvl"))
                 {
                     Utopia.UtopiaRender.LCDefferedModeLvl = int.Parse(arg.ToLower().Replace("-lcdefferedmodelvl", ""));

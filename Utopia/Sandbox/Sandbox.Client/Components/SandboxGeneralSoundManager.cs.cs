@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Components;
+using Utopia.Sounds;
 
 namespace Sandbox.Client.Components
 {

@@ -55,6 +55,7 @@ using Utopia.Shared.Net.Messages;
 using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Sandbox.Client.Components.GUI.SinglePlayer;
+using Utopia.Sounds;
 
 namespace Sandbox.Client
 {
