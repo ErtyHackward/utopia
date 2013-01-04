@@ -34,6 +34,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         public List<Impulse> Impulses { get { return _impulses; } }
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
+        public bool ConstraintOnlyMode { get; set; }
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
         public bool AllowJumping { get; set; }
 
@@ -41,7 +42,11 @@ namespace S33M3CoreComponents.Physics.Verlet
         public float Friction { get; set; }
         public float AirFriction { get; set; }
 
-        public Vector3D CurPosition { get { return _curPosition; } set { _curPosition = value; } }
+        public Vector3D CurPosition
+        {
+            get { return _curPosition; }
+            set { _curPosition = value; }
+        }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
 
         public delegate void CheckConstraintFct(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
@@ -79,9 +84,15 @@ namespace S33M3CoreComponents.Physics.Verlet
             if (_isRunning)
             {
                 AllowJumping = false;
-
-                AccumulateForce(ref dt);                                //Add the force currently applied
-                Verlet(ref dt, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
+                if (ConstraintOnlyMode == false)
+                {
+                    AccumulateForce(ref dt);                                //Add the force currently applied
+                    Verlet(ref dt, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
+                }
+                else
+                {
+                    newPosition = _curPosition;
+                }
                 SatisfyConstraints(ref newPosition, ref _prevPosition); //Validate the new location based in constraint (Collision, ...)
             }
             else

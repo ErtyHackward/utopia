@@ -139,17 +139,17 @@ namespace Utopia.Entities.Managers
 
         private void FreeFirstPersonMove()
         {
-            
-
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) &&
-                (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
+               (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
             {
-                _worldPosition += _entityRotations.EntityMoveVector * _moveDelta * 2;
+                _worldPosition += _entityRotations.EntityMoveVector * _moveDelta * 1.5f;
             }
             else
             {
                 _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
             }
+            _physicSimu.PrevPosition = _physicSimu.CurPosition;
+            _physicSimu.CurPosition = _worldPosition;
         }
 
         private void WalkingFirstPersonOnGround(ref GameTime timeSpent)
