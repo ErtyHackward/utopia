@@ -77,6 +77,8 @@ begin
 		
 		Exec(ExpandConstant('{app}\PacksOptimize.exe'), ExpandConstant('action=createtexturearray path="{app}\TexturesPacks"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 		
+		Exec('netsh', ExpandConstant('advfirewall firewall add rule name="Utopia Realms" dir=in action=allow program="{app}\Realms.exe" enable=yes'),'', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+		
 		ProcessMsgPage.Hide;
   end;
 end;
