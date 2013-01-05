@@ -76,7 +76,7 @@ namespace Utopia.Shared.Entities
                     return impact;
 
                 // create a new version of the item, and put it into the world
-                var cubeEntity = (BlockLinkedItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                var cubeEntity = (BlockLinkedItem)EntityFactory.CreateFromBluePrint(BluePrintId);
                 cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
                 cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
 

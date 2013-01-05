@@ -73,11 +73,13 @@ namespace Utopia.Shared.Net.Web
                     var ea = new T();
                     try
                     {
-                        using (var responce = request.EndGetResponse(result))
-                        using (var respStream = responce.GetResponseStream())
+                        using (var response = request.EndGetResponse(result))
+                        using (var respStream = response.GetResponseStream())
                         using (var streamReader = new StreamReader(respStream))
                         {
-                            ea = JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                            var respString = streamReader.ReadToEnd();
+
+                            ea = JsonConvert.DeserializeObject<T>(respString);
                         }
                     }
                     catch (Exception x)
@@ -112,8 +114,8 @@ namespace Utopia.Shared.Net.Web
             using (var requestStream = request.GetRequestStream())
                 requestStream.Write(postBytes, 0, postBytes.Length);
 
-            using (var responce = request.GetResponse())
-            using (var respStream = responce.GetResponseStream())
+            using (var response = request.GetResponse())
+            using (var respStream = response.GetResponseStream())
             using (var streamReader = new StreamReader(respStream))
             {
                 return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());

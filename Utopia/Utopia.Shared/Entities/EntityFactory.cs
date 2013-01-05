@@ -359,7 +359,7 @@ namespace Utopia.Shared.Entities
             {
                 var item = entity as IWorldIntercatingEntity;
                 item.LandscapeManager = LandscapeManager;
-                item.entityFactory = this;
+                item.EntityFactory = this;
             }
 
             if (entity is ISoundEmitterEntity)

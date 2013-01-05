@@ -42,7 +42,7 @@ namespace Utopia.Shared.Entities
                         if (cubeBlockLinkedEntity != null && cubeBlockLinkedEntity.LinkedCube == owner.EntityState.PickedBlockPosition)
                         {
                             //Insert in the inventory the entity that will be removed !
-                            var adder = (Item)entityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
+                            var adder = (Item)EntityFactory.CreateFromBluePrint(chunkEntity.BluePrintId);
                             character.Inventory.PutItem(adder);
                         }
                     }
@@ -77,7 +77,7 @@ namespace Utopia.Shared.Entities
             if (character != null && entityRemoved != null)
             {
                 //Create a new entity of the same clicked one and place it into the inventory
-                var adder = (Item)entityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);
+                var adder = (Item)EntityFactory.CreateFromBluePrint(entityRemoved.BluePrintId);
                 character.Inventory.PutItem(adder);
             }
 
