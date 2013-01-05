@@ -270,6 +270,13 @@ namespace Sandbox.Client
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.ToggleInterface
             }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
+            {
+                ActionId = UtopiaActions.Drop_Mode,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Throw
+            }, rebindSettingsBasedAction);
         }
     }
 }

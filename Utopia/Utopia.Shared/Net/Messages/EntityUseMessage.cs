@@ -71,6 +71,12 @@ namespace Utopia.Shared.Net.Messages
         public Vector3I PickNormal { get; set; }
 
         /// <summary>
+        /// Gets the use type (put, or use)
+        /// </summary>
+        [ProtoMember(13)]
+        public UseType UseType { get; set; }
+
+        /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)
         /// </summary>
         public byte MessageId
@@ -95,6 +101,7 @@ namespace Utopia.Shared.Net.Messages
             ToolId = e.Tool == null ? 0 : e.Tool.StaticId;
             PickPoint = e.PickPosition;
             PickNormal = e.PickNormal;
+            UseType = e.UseType;
         }
     }
 }

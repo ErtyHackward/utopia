@@ -170,22 +170,34 @@ namespace Utopia.Server.Structs
 
                 if (tool != null)
                 {
-                    var toolImpact = tool.Use(playerCharacter, true);
-
-                    // returning tool feedback
-                    Connection.Send(new UseFeedbackMessage
-                                             {
-                                                 Token = entityUseMessage.Token,
-                                                 EntityImpactBytes = toolImpact.Serialize()
-                                             });
+                    if (entityUseMessage.UseType == UseType.Use)
+                    {
+                        var toolImpact = tool.Use(playerCharacter, true);
+                        // returning tool feedback
+                        Connection.Send(new UseFeedbackMessage
+                            {
+                                Token = entityUseMessage.Token,
+                                EntityImpactBytes = toolImpact.Serialize()
+                            });
+                    }
+                    if (entityUseMessage.UseType == UseType.Put)
+                    {
+                        var toolImpact = tool.Put(playerCharacter);
+                        // returning tool feedback
+                        Connection.Send(new UseFeedbackMessage
+                            {
+                                Token = entityUseMessage.Token,
+                                EntityImpactBytes = toolImpact.Serialize()
+                            });
+                    }
                 }
                 else
                 {
                     Connection.Send(new ChatMessage
-                                             {
-                                                 DisplayName = "toolsystem",
-                                                 Message = "Invalid toolid provided. Can not use the tool"
-                                             });
+                        {
+                            DisplayName = "toolsystem",
+                            Message = "Invalid toolid provided. Can not use the tool"
+                        });
                 }
             }
             else

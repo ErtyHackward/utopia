@@ -1,17 +1,8 @@
 ﻿using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using Utopia.Shared.Entities;
-using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3CoreComponents.Cameras;
-using S33M3CoreComponents.Particules.Interfaces;
-using S33M3CoreComponents.Particules;
-using S33M3Resources.Structs;
-using Utopia.Shared.GameDXStates;
-using S33M3DXEngine.Textures;
-using Utopia.Shared.Settings;
-using SharpDX.Direct3D11;
-using S33M3DXEngine.RenderStates;
 
 namespace Utopia.Entities.Managers
 {
@@ -36,17 +27,49 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (!HasMouseFocus) return; //the editor(s) can acquire the mouseFocus
+            if (!HasMouseFocus) 
+                return; //the editor(s) can acquire the mouseFocus
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Drop_Mode, CatchExclusiveAction))
+            {
+                // switch the drop mode if possible
+                var tool = Player.Equipment.RightTool;
+                if (tool != null && tool.CanUse)
+                {
+                    PutMode = !PutMode;
+                }
+            }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left, CatchExclusiveAction))
             {
-                if ((Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked) && Player.Equipment.RightTool != null)
+                if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
-                    //sends the client server event that does tool.use on server
-                    Player.ToolUse();
 
-                    //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
-                    Player.Equipment.RightTool.Use(Player);
+                    var tool = Player.Equipment.RightTool;
+
+                    if (tool == null)
+                        tool = _handTool;
+
+                    if (_putMode)
+                    {
+                        // can't put the hand!
+                        if (tool == _handTool)
+                            return;
+
+                        // send put message to the server
+                        Player.PutUse();
+
+                        // client sync
+                        tool.Put(Player);
+                    }
+                    else
+                    {
+                        //sends the client server event that does tool.use on server
+                        Player.ToolUse();
+
+                        //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
+                        tool.Use(Player);
+                    }
                 }
             }
 
@@ -61,14 +84,6 @@ namespace Utopia.Entities.Managers
                     _inputsManager.MouseManager.MouseCapture = false;
                 }
             }
-            //else
-            //{
-            //    if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Right, CatchExclusiveAction))
-            //    {
-                    
-            //    }
-            //}
-
             
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {

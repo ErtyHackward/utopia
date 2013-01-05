@@ -6,7 +6,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Performs tool business logic
         /// </summary>
         /// <param name="owner"></param>
-        /// <param name="useMode"></param>
         /// <param name="runOnServer">Indicates if tool is run on the server</param>
         /// <returns></returns>
         IToolImpact Use(IDynamicEntity owner, bool runOnServer = false);
