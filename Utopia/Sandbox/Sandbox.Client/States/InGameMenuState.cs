@@ -7,6 +7,7 @@ using S33M3CoreComponents.GUI;
 using Utopia.Components;
 using S33M3CoreComponents.Sound;
 using Sandbox.Client.Components.GUI;
+using Utopia.GUI.Inventory;
 
 namespace Sandbox.Client.States
 {
@@ -80,6 +81,9 @@ namespace Sandbox.Client.States
             _captureMouse = inputManager.MouseManager.MouseCapture;
             inputManager.MouseManager.MouseCapture = false;
 
+            var inventory = _iocContainer.Get<InventoryComponent>();
+            inventory.DisableComponent();
+
             base.OnEnabled(previousState);
         }
 
@@ -95,6 +99,11 @@ namespace Sandbox.Client.States
                 //Create a new Scope
                 GameScope.CreateNewScope();
                 _isGameExited = false;
+            }
+            else
+            {
+                var inventory = _iocContainer.Get<InventoryComponent>();
+                inventory.EnableComponent();
             }
         }
 
