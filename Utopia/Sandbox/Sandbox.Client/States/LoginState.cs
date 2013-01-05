@@ -118,7 +118,7 @@ namespace Sandbox.Client.States
             login.Locked = true;
 
             // request our server for authorization
-            _webApi.UserLoginAsync(login.Email, login.Password); //.GetSHA1Hash()
+            _webApi.UserLoginAsync(login.Email, (login.Password.GetSHA1Hash() + login.Email.ToLower()).GetSHA1Hash());
         }
     }
 }
