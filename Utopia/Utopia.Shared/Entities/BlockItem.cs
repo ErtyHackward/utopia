@@ -36,7 +36,7 @@ namespace Utopia.Shared.Entities
                 if (cursor.PeekProfile().IsSolidToEntity) return impact;
 
                 // create a new version of the item, and put it into the world
-                var cubeEntity = (BlockItem)entityFactory.CreateFromBluePrint(BluePrintId);
+                var cubeEntity = (BlockItem)EntityFactory.CreateFromBluePrint(BluePrintId);
                 cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
                 // Get the chunk where the entity will be added and check if another entity is present inside this block
                 var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);

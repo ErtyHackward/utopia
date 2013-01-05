@@ -7,7 +7,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
-        EntityFactory entityFactory { get; set; }
+        EntityFactory EntityFactory { get; set; }
 
         /// <summary>
         /// Gets landscape manager, this field is injected

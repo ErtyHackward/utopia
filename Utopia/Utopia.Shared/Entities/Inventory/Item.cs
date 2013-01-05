@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Globalization;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -8,6 +9,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Inventory
@@ -16,7 +18,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     [ProtoContract]
-    public abstract class Item : StaticEntity, IItem, IVoxelEntity, ITool, IWorldIntercatingEntity
+    public abstract class Item : StaticEntity, IVoxelEntity, ITool, IWorldIntercatingEntity
     {
         private VoxelModelInstance _modelInstance;
 
@@ -67,7 +69,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public virtual string StackType
         {
-            get { return BluePrintId.ToString(); }            
+            get { return BluePrintId.ToString(CultureInfo.InvariantCulture); }            
         }
 
         /// <summary>
@@ -106,6 +108,11 @@ namespace Utopia.Shared.Entities.Inventory
             return position;
         }
 
+        /// <summary>
+        /// Sets item position
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="item"></param>
         public virtual void SetPosition(EntityPosition pos, IItem item)
         {
             item.Position = pos.Position;
@@ -171,8 +178,34 @@ namespace Utopia.Shared.Entities.Inventory
             throw new NotImplementedException();
         }
 
-        public EntityFactory entityFactory { get; set; }
+        /// <summary>
+        /// Gets entityFactory, this field is injected
+        /// </summary>
+        public EntityFactory EntityFactory { get; set; }
 
-        public Shared.Interfaces.ILandscapeManager2D LandscapeManager { get; set; }
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        public ILandscapeManager2D LandscapeManager { get; set; }
+
+        /// <summary>
+        /// Defines tool pick behaviour for the blocks
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
+        public virtual PickType CanPickBlock(byte blockId)
+        {
+            return PickType.Pick;
+        }
+
+        /// <summary>
+        /// Defines tool pick behaviour for the entities
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual PickType CanPickEntity(IEntity entity)
+        {
+            return PickType.Pick;
+        }
     }
 }
