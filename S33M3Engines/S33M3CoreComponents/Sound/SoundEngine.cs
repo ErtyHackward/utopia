@@ -431,26 +431,38 @@ namespace S33M3CoreComponents.Sound
         //Voice end sound reading call back
         private void Voice_BufferEnd(IntPtr obj)
         {
-            if(!_stopThreading) _syncro.Set();
+            try
+            {
+                if (!_stopThreading) _syncro.Set();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         //Function that is running its own thread responsible to do background stuff concerning sound
         private void DataSoundPocessingAsync()
         {
-            while (!IsDisposed && !_stopThreading && !_d3dEngine.IsShuttingDownRequested)
+            try
             {
-                LoopingSoundRefresh();
-                //Reset only if no more fading sound in processing Voice List
-                if (_soundProcessingQueue.Count(x => x.IsFadingMode == true) == 0)
+                while (!IsDisposed && !_stopThreading && !_d3dEngine.IsShuttingDownRequested)
                 {
-                    _syncro.Reset();
+                    LoopingSoundRefresh();
+                    //Reset only if no more fading sound in processing Voice List
+                    if (_soundProcessingQueue.Count(x => x.IsFadingMode == true) == 0)
+                    {
+                        _syncro.Reset();
+                    }
+
+                    _syncro.WaitOne();
+
+                    Thread.Sleep(10);
                 }
-
-                _syncro.WaitOne();
-
-                Thread.Sleep(10);
+                _d3dEngine.RunningThreadedWork.Remove("SoundEngine");
             }
-            _d3dEngine.RunningThreadedWork.Remove("SoundEngine");
+            catch (Exception)
+            {
+            }
         }
 
         private void d3dEngine_OnShuttingDown(object sender, EventArgs e)
