@@ -2,7 +2,7 @@ using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
-    public interface IItem : IStaticEntity
+    public interface IItem : IStaticEntity, IVoxelEntity
     {
         /// <summary>
         /// Gets possible slot types where the item can be put to
@@ -30,5 +30,19 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="owner">An entity wich trying to put the entity</param>
         /// <returns></returns>
         EntityPosition GetPosition(IDynamicEntity owner);
+
+        /// <summary>
+        /// Defines tool pick behaviour for the blocks
+        /// </summary>
+        /// <param name="blockId"></param>
+        /// <returns></returns>
+        PickType CanPickBlock(byte blockId);
+
+        /// <summary>
+        /// Defines tool pick behaviour for the entities
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        PickType CanPickEntity(IEntity entity);
     }
 }
