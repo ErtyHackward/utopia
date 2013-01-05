@@ -25,6 +25,11 @@ namespace Utopia.Shared.Entities.Interfaces
         string Description { get; }
 
         /// <summary>
+        /// Indicates if the tool have special use logic (like resource collectors, guns etc)
+        /// </summary>
+        bool CanUse { get; }
+
+        /// <summary>
         /// Returns new entity position correspoding to the player
         /// </summary>
         /// <param name="owner">An entity wich trying to put the entity</param>
@@ -44,5 +49,14 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="entity"></param>
         /// <returns></returns>
         PickType CanPickEntity(IEntity entity);
+
+        /// <summary>
+        /// Executes put operation
+        /// Removes one item from the inventory and puts it into 
+        /// the world
+        /// </summary>
+        /// <param name="owner">entity that runs the operation</param>
+        /// <returns></returns>
+        IToolImpact Put(IDynamicEntity owner);
     }
 }

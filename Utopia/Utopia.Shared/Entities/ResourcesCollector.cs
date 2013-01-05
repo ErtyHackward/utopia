@@ -12,6 +12,8 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     public abstract class ResourcesCollector : Item
     {
+        public override bool CanUse { get { return true; } }
+
         private IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
         {
             var entity = owner;
@@ -24,7 +26,7 @@ namespace Utopia.Shared.Entities
 
             if (cursor.PeekProfile().Hardness == 0)
             {
-                //Indestrutible cube, cannot be remove !
+                //Indestrutible cube, cannot be removed !
                 impact.Message = "Indestructible cube !";
                 return impact;
             }

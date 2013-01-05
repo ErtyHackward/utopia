@@ -44,6 +44,11 @@ namespace Utopia.Shared.Entities.Events
         /// </summary>
         public EntityLink PickedEntityLink { get; set; }
 
+        /// <summary>
+        /// Gets the use type (put, or use)
+        /// </summary>
+        public UseType UseType { get; set; }
+
         public Vector3 PickedBlockFaceOffset;
 
         public bool IsBlockPicked { get; set; }

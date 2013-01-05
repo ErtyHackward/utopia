@@ -1,6 +1,7 @@
 ﻿using System;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.Inventory;
 using Utopia.Network;
@@ -9,6 +10,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
@@ -45,6 +47,8 @@ namespace Utopia.Entities.Managers
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private bool _putMode;
+        
         private IEntity _lockedEntity;
 
         #region Private variables
@@ -94,7 +98,7 @@ namespace Utopia.Entities.Managers
         private EntityRotations _entityRotations;
         private InventoryComponent _inventoryComponent;
 
-        private ITool _handTool = new HandTool();
+        private readonly ITool _handTool = new HandTool();
         #endregion
 
         #region Public variables/properties
@@ -178,6 +182,25 @@ namespace Utopia.Entities.Managers
             get { return _cubesHolder; }
         }
 
+        /// <summary>
+        /// if put mode is active Put method will be executed instead of use
+        /// and ghosted item will appear in the world poining the future place 
+        /// of the item
+        /// </summary>
+        public bool PutMode
+        {
+            get { return _putMode; }
+            set
+            {
+                _putMode = value;
+
+                GhostedEntityRenderer.Display = _putMode;
+            }
+        }
+
+        #endregion
+
+        #region Dependenices
         [Inject]
         public IEntityPickingManager EntityPickingManager
         {
@@ -188,13 +211,13 @@ namespace Utopia.Entities.Managers
                 _entityPickingManager.Player = this;
             }
         }
-
-
+        
         [Inject]
         public ItemMessageTranslator EntityMessageTranslator
         {
             get { return _itemMessageTranslator; }
-            set {
+            set
+            {
                 if (_itemMessageTranslator != null)
                     throw new InvalidOperationException("Already initialized");
 
@@ -212,11 +235,15 @@ namespace Utopia.Entities.Managers
         public InventoryComponent InventoryComponent
         {
             get { return _inventoryComponent; }
-            set { 
+            set
+            {
                 _inventoryComponent = value;
                 _inventoryComponent.SwitchInventory += InventoryComponentSwitchInventory;
             }
         }
+
+        [Inject]
+        public GhostedEntityRenderer GhostedEntityRenderer { get; set; }
 
         #endregion
 
@@ -249,6 +276,9 @@ namespace Utopia.Entities.Managers
             _landscapeManager = landscapeManager;
 
             Player = player;
+
+            Player.Equipment.ItemEquipped += Equipment_ItemEquipped;
+
             
             ShowDebugInfo = true;
 
@@ -258,6 +288,20 @@ namespace Utopia.Entities.Managers
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
+        }
+
+        void Equipment_ItemEquipped(object sender, CharacterEquipmentEventArgs e)
+        {
+            if (e.Slot == EquipmentSlotType.Hand && e.EquippedItem != null)
+            {
+                var item = e.EquippedItem.Item;
+
+                if (item != null)
+                {
+                    PutMode = !item.CanUse;
+                }
+                else PutMode = false;
+            }
         }
         
         void InventoryComponentSwitchInventory(object sender, InventorySwitchEventArgs e)

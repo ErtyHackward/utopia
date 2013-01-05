@@ -76,7 +76,17 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets possible slot types where the item can be put to
         /// </summary>
         public EquipmentSlotType AllowedSlots { get; set; }
-        
+
+        /// <summary>
+        /// Indicates if the tool have special use logic (like resource collectors, guns etc)
+        /// </summary>
+        public virtual bool CanUse {
+            get { 
+                // generally items can only be put
+                return false; 
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -120,13 +130,13 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Handles item drop to world
-        /// Puts an item in the world and removes one from the inventory
+        /// Executes put operation
+        /// Removes one item from the inventory and puts it into 
+        /// the world
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="runOnServer"></param>
+        /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public IToolImpact Put(IDynamicEntity owner)
         {
             // by default all items can only be dropped to some position
             var impact = new ToolImpact { Success = false };
@@ -139,7 +149,7 @@ namespace Utopia.Shared.Entities.Inventory
                 return impact;
 
             var pos = GetPosition(owner);
-            
+
             if (!pos.Valid)
                 return impact;
 
@@ -171,6 +181,18 @@ namespace Utopia.Shared.Entities.Inventory
             }
 
             return impact;
+        }
+
+        /// <summary>
+        /// Handles item drop to world
+        /// Puts an item in the world and removes one from the inventory
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="runOnServer"></param>
+        /// <returns></returns>
+        public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        {
+            return new ToolImpact { Message  = "This operation is not supported! Sorry!" };
         }
 
         public virtual void Rollback(IToolImpact impact)
