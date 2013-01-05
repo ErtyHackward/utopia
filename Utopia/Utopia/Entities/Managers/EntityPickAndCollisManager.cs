@@ -8,6 +8,7 @@ using Utopia.Network;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
 using S33M3CoreComponents.Timers;
@@ -42,6 +43,8 @@ namespace Utopia.Entities.Managers
         private IWorldChunks _worldChunks;
         private PlayerEntityManager _playerManager;
         private bool? _onEntityTop = null;
+        private ITool _handTool = new HandTool();
+
         #endregion
 
         #region public variables
@@ -144,29 +147,32 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region public methods
-        public bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity, out Vector3 pickPoint, out Vector3I pickNormal)
+        
+        public EntityPickResult CheckEntityPicking(Ray pickingRay)
         {
             if (isDirty) 
                 _timer_OnTimerRaised();
 
-            pickPoint = new Vector3();
-            pickNormal = new Vector3I();
+            var result = new EntityPickResult();
+            result.Distance = float.MaxValue;
 
-            VisualEntity entity;
-            float pickedEntityDistance = float.MaxValue;
-            pickedEntity = null;
-            for (int i = 0; i < _entitiesNearPlayer.Count; i++)
+            var tool = Player.Player.Equipment.RightTool;
+
+            if (tool == null)
+                tool = _handTool;
+
+            var pickedEntityDistance = float.MaxValue;
+            foreach (var entity in _entitiesNearPlayer)
             {
-                entity = _entitiesNearPlayer[i];
-                if (entity.Entity.IsPickable)
+                if (tool.CanPickEntity(entity.Entity) == PickType.Pick)
                 {
                     //Refresh entity bounding box world
                     if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
-                        BoundingBox localStaticEntityBB = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
-                        localStaticEntityBB = localStaticEntityBB.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
+                        var localStaticEntityBb = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
+                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
                         //Recompute the World bounding box of the entity based on a new Entity BoundingBox
-                        entity.SetEntityVoxelBB(localStaticEntityBB); //Will automaticaly apply a 1/16 scaling on the boundingbox
+                        entity.SetEntityVoxelBB(localStaticEntityBb); //Will automaticaly apply a 1/16 scaling on the boundingbox
                     }
 
                     float currentDistance;
@@ -182,28 +188,28 @@ namespace Utopia.Entities.Managers
                                 if (!ModelRayIntersection(entity, pickingRay, out tmpPickPoint, out tmpPickNormal, out currentDistance))
                                     continue;
 
-                                pickPoint = tmpPickPoint;
-                                pickNormal = tmpPickNormal;
+                                result.PickPoint = tmpPickPoint;
+                                result.PickNormal = tmpPickNormal;
 
                             }
                             else
                             {
-                                Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out pickPoint);
-                                pickNormal = entity.WorldBBox.GetPointNormal(pickPoint);
+                                Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out result.PickPoint);
+                                result.PickNormal = entity.WorldBBox.GetPointNormal(result.PickPoint);
                             }
 
 
                             pickedEntityDistance = currentDistance;
-                            pickedEntity = entity;
+                            result.PickedEntity = entity;
+                            result.Found = true;
                         }
                     }
                 }
             }
-            
-            if (pickedEntity == null) 
-                return false;
-            
-            return true;
+
+            result.Distance = pickedEntityDistance;
+
+            return result;
         }
 
         public void Update()

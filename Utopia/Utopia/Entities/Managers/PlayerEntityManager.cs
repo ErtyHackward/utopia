@@ -93,6 +93,8 @@ namespace Utopia.Entities.Managers
         // Will be used to compute entity rotation movements
         private EntityRotations _entityRotations;
         private InventoryComponent _inventoryComponent;
+
+        private ITool _handTool = new HandTool();
         #endregion
 
         #region Public variables/properties

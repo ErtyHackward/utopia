@@ -11,7 +11,14 @@ namespace Utopia.Entities.Managers.Interfaces
         bool isDirty { get; set; }
         PlayerEntityManager Player { get; set; }
         IWorldChunks WorldChunks { get; set; }
-        bool CheckEntityPicking(ref Ray pickingRay, out VisualEntity pickedEntity, out Vector3 pickPoint, out Vector3I pickNormal);
+
+        /// <summary>
+        /// Checks nearby entities intersection with the pickingRay
+        /// </summary>
+        /// <param name="pickingRay">Ray to check intersection</param>
+        /// <returns></returns>
+        EntityPickResult CheckEntityPicking(Ray pickingRay);
+
         void isCollidingWithEntity(VerletSimulator physicSimu,ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
     }
 }

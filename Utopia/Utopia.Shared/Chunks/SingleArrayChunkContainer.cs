@@ -72,6 +72,11 @@ namespace Utopia.Shared.Chunks
         public readonly int MoveZ; // + = Move North, - = Move South
         public readonly int MoveY; // + = Move Up, - = Move Bellow
 
+        public WorldConfiguration Config
+        {
+            get { return _config; }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
