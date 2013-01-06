@@ -75,6 +75,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Utopia\packages\SharpDX.DXGI.2.4.2\lib\net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.MediaFoundation">
+      <HintPath>..\..\Utopia\packages\SharpDX.MediaFoundation.2.4.2\lib\net40\SharpDX.MediaFoundation.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

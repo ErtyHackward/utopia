@@ -11,6 +11,7 @@ using SharpDX;
 using SharpDX.Multimedia;
 using SharpDX.X3DAudio;
 using SharpDX.XAudio2;
+using SharpDX.MediaFoundation;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -171,10 +172,19 @@ namespace S33M3CoreComponents.Sound
 
             if (_soundDataSources.TryGetValue(soundAlias, out soundDataSource) == false)
             {
+                FileInfo fi = new FileInfo(FilePath);
+
                 //Check File
                 if (File.Exists(FilePath) == false)
                 {
                     logger.Error("Cannot find the sound file {0}", FilePath);
+                    return null;
+                }
+
+                string ext = fi.Extension.ToLower();
+                if (ext != ".wav" && ext != ".wma")
+                {
+                    logger.Error("Cannot play the sound file format {0}", FilePath);
                     return null;
                 }
 
@@ -188,19 +198,61 @@ namespace S33M3CoreComponents.Sound
 
                 if (!streamedSound)
                 {
-                    //Load the sound and bufferize it
-                    SoundStream soundstream = new SoundStream(File.OpenRead(FilePath));
-                    soundDataSource.WaveFormat = soundstream.Format;
-
-                    soundDataSource.AudioBuffer = new AudioBuffer()
+                    SoundStream soundstream;
+                    switch (ext)
                     {
-                        Stream = soundstream.ToDataStream(),
-                        AudioBytes = (int)soundstream.Length,
-                        Flags = BufferFlags.EndOfStream
-                    };
+                        case ".wav":
+                            //Load the sound and bufferize it
+                            soundstream = new SoundStream(File.OpenRead(FilePath));
+                            soundDataSource.WaveFormat = soundstream.Format;
 
-                    soundstream.Close();
-                    soundstream.Dispose();
+                            soundDataSource.AudioBuffer = new AudioBuffer()
+                            {
+                                Stream = soundstream.ToDataStream(),
+                                AudioBytes = (int)soundstream.Length,
+                                Flags = BufferFlags.EndOfStream
+                            };
+
+                            soundstream.Close();
+                            soundstream.Dispose();
+                            break;
+                        case ".wma": // NOT good idea this can be HUGE buffer, better streaming a WMA file !
+                            //New data stream
+                            using (FileStream fileStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                            {
+                                var audioDecoder = new AudioDecoder(fileStream);
+                                var outputWavStream = new MemoryStream();
+
+                                var wavWriter = new WavWriter(outputWavStream);
+
+                                // Write the WAV file
+                                wavWriter.Begin(audioDecoder.WaveFormat);
+                                // Decode the samples from the input file and output PCM raw data to the WAV stream.
+                                wavWriter.AppendData(audioDecoder.GetSamples());
+                                // Close the wav writer.
+                                wavWriter.End();
+
+                                outputWavStream.Position = 0;
+                                soundstream = new SoundStream(outputWavStream);
+
+                                soundDataSource.WaveFormat = soundstream.Format;
+                                soundDataSource.AudioBuffer = new AudioBuffer()
+                                {
+                                    Stream = soundstream.ToDataStream(),
+                                    AudioBytes = (int)soundstream.Length,
+                                    Flags = BufferFlags.EndOfStream
+                                };
+
+                                soundstream.Close();
+                                soundstream.Dispose();
+                                outputWavStream.Dispose();
+                                audioDecoder.Dispose();                                
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
                 //Add DataSound into collection
