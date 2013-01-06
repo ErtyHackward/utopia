@@ -22,6 +22,8 @@ namespace Utopia.Server.Structs
 
         private readonly Server _server;
 
+        private HandTool _handTool = new HandTool();
+
         public ClientConnection Connection { get; private set; }
 
         /// <summary>
@@ -32,10 +34,15 @@ namespace Utopia.Server.Structs
         /// <param name="server"></param>
         public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(entity)
         {
-            if (connection == null) throw new ArgumentNullException("connection");
-            if (entity == null) throw new ArgumentNullException("entity");
+            if (connection == null) 
+                throw new ArgumentNullException("connection");
+            if (entity == null) 
+                throw new ArgumentNullException("entity");
+
             Connection = connection;
             _server = server;
+
+            _handTool.LandscapeManager = _server.LandscapeManager;
         }
 
         public override void AddArea(MapArea area)
@@ -172,7 +179,7 @@ namespace Utopia.Server.Structs
                 {
                     if (entityUseMessage.UseType == UseType.Use)
                     {
-                        var toolImpact = tool.Use(playerCharacter, true);
+                        var toolImpact = tool.Use(playerCharacter);
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
                             {
@@ -210,6 +217,16 @@ namespace Utopia.Server.Structs
                 {
                     var usableEntity = (IUsableEntity)entity;
                     usableEntity.Use();
+                }
+                else
+                {
+                    var toolImpact = _handTool.Use(playerCharacter);
+                    // returning tool feedback
+                    Connection.Send(new UseFeedbackMessage
+                    {
+                        Token = entityUseMessage.Token,
+                        EntityImpactBytes = toolImpact.Serialize()
+                    });
                 }
             }
         }

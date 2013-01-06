@@ -1,4 +1,7 @@
+using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -28,6 +31,11 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Indicates if the tool have special use logic (like resource collectors, guns etc)
         /// </summary>
         bool CanUse { get; }
+
+        [Category("Sound")]
+        [Description("Sound of item put")]
+        [TypeConverter(typeof(SoundSelector))]
+        string PutSound { get; set; }
 
         /// <summary>
         /// Returns new entity position correspoding to the player

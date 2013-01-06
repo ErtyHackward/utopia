@@ -9,6 +9,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
 using S33M3CoreComponents.Timers;
@@ -43,7 +44,7 @@ namespace Utopia.Entities.Managers
         private IWorldChunks _worldChunks;
         private PlayerEntityManager _playerManager;
         private bool? _onEntityTop = null;
-        private ITool _handTool = new HandTool();
+        private HandTool _handTool = new HandTool();
 
         #endregion
 
@@ -69,6 +70,16 @@ namespace Utopia.Entities.Managers
             set { _dynamicEntityManager = value; }
         }
 
+        [Inject]
+        public ILandscapeManager2D LandscapeManager
+        {
+            get { return _landscapeManager; }
+            set { 
+                _landscapeManager = value;
+                _handTool.LandscapeManager = _landscapeManager;
+            }
+        }
+
         #endregion
 
         public EntityPickAndCollisManager(TimerManager timerManager,
@@ -81,6 +92,7 @@ namespace Utopia.Entities.Managers
             _input = input;
             _server = server;
             _playerManager = playerManager;
+            
         }
 
         public void Dispose()
@@ -269,6 +281,8 @@ namespace Utopia.Entities.Managers
         }
 
         bool _isOnGround;
+        private ILandscapeManager2D _landscapeManager;
+
         private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (entityTesting.SkipOneCollisionTest)
