@@ -73,7 +73,13 @@ namespace S33M3CoreComponents.Sound
         #region Public Methods
         public void Dispose()
         {
-            if (_voice != null && _voice.IsDisposed == false) _voice.Dispose();
+            if (_voice != null && _voice.IsDisposed == false)
+            {
+                _voice.Stop();
+                _voice.FlushSourceBuffers();
+                _voice.DestroyVoice();
+                _voice.Dispose();
+            }
         }
 
         public void RefreshVoices()
