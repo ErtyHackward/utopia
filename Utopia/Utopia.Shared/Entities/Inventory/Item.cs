@@ -42,6 +42,18 @@ namespace Utopia.Shared.Entities.Inventory
         [ProtoMember(3)]
         public int MaxStackSize { get; set; }
 
+        [Category("Sound")]
+        [Description("Sound of item put")]
+        [TypeConverter(typeof(SoundSelector))]
+        [ProtoMember(4)]
+        public string PutSound { get; set; }
+
+        [Category("Sound")]
+        [Description("Ambient sound of an item")]
+        [TypeConverter(typeof(SoundSelector))]
+        [ProtoMember(5)]
+        public string AmbientSound { get; set; }
+
         /// <summary>
         /// Gets or sets voxel model instance
         /// </summary>

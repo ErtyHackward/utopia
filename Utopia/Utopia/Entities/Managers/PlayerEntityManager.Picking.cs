@@ -33,7 +33,6 @@ namespace Utopia.Entities.Managers
                 {
                     if(Player.EntityState.IsBlockPicked)
                     {
-                        //if 
                         if (Vector3D.Distance(_worldPosition + _entityEyeOffset, new Vector3D(Player.EntityState.PickedBlockPosition)) > 10.0)
                         {
                             Player.EntityState.IsBlockPicked = false;
@@ -89,7 +88,12 @@ namespace Utopia.Entities.Managers
                 var pickType = tool.CanPickBlock(cube.Id);
 
                 if (pickType == PickType.Stop)
+                {
+                    // we found a block that is closer than entity (if any)
+                    // don't allow to pick the entity in this case
+                    epr.Found = false;
                     break;
+                }
 
                 if (pickType == PickType.Pick)
                 {
