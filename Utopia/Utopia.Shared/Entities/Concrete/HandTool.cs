@@ -47,7 +47,12 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (charEntity != null)
             {
-                if (charEntity.Inventory.PutItem((IItem)entity))
+                var item = (IItem)entity;
+
+                // entity should lose its voxel intance if put into the inventory
+                item.ModelInstance = null;
+
+                if (charEntity.Inventory.PutItem(item))
                 {
                     cursor.RemoveEntity(owner.EntityState.PickedEntityLink, owner.DynamicId);
                     impact.Success = true;

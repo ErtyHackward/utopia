@@ -2,6 +2,7 @@
 using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Concrete
@@ -91,7 +92,7 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
 
-        protected override void OnInstanceChanged()
+        protected override void OnInstanceChanged(VoxelModelInstance prev)
         {
             if (ModelInstance != null)
             {
@@ -106,8 +107,6 @@ namespace Utopia.Shared.Entities.Concrete
                         ModelInstance.SetState(ClosedState);
                 }
             }
-
-            base.OnInstanceChanged();
         }
 
         void ContentItemsChanged(object sender, EntityContainerEventArgs<ContainedSlot> e)

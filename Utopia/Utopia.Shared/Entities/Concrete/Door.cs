@@ -3,6 +3,7 @@ using System.ComponentModel;
 using ProtoBuf;
 using S33M3CoreComponents.Sound;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Concrete
@@ -59,8 +60,13 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
 
-        protected override void OnInstanceChanged()
+        protected override void OnInstanceChanged(VoxelModelInstance prev)
         {
+            if (prev != null)
+            {
+                prev.StateChanged -= ModelInstanceOnStateChanged;
+            }
+
             if (ModelInstance != null)
             {
                 var newState = IsOpen ? OpenedState : ClosedState;
@@ -68,7 +74,6 @@ namespace Utopia.Shared.Entities.Concrete
                     ModelInstance.SetState(newState);
 
                 ModelInstance.StateChanged += ModelInstanceOnStateChanged;
-
             }
         }
 

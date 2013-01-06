@@ -417,10 +417,13 @@ namespace Utopia.Worlds.Chunks
             EmitterStaticEntities.Clear();
         }
 
-        void Entities_EntityRemoved(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
+        void Entities_EntityRemoved(object sender, EntityCollectionEventArgs e)
         {
             RemoveVoxelEntity(e);
             RemoveParticuleEmitterEntity(e);
+
+            var takeSound = "Sounds\\Events\\take.wav";
+            SoundEngine.StartPlay3D(takeSound, takeSound, e.Entity.Position.AsVector3());
         }
 
         /// <summary>
