@@ -6,6 +6,7 @@ using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Utopia.Components;
 using S33M3CoreComponents.Sound;
+using Utopia.GUI.Inventory;
 
 namespace Realms.Client.States
 {
@@ -79,6 +80,9 @@ namespace Realms.Client.States
             _captureMouse = inputManager.MouseManager.MouseCapture;
             inputManager.MouseManager.MouseCapture = false;
 
+            var inventory = _iocContainer.Get<InventoryComponent>();
+            inventory.DisableComponent();
+
             base.OnEnabled(previousState);
         }
 
@@ -94,6 +98,11 @@ namespace Realms.Client.States
                 //Create a new Scope
                 GameScope.CreateNewScope();
                 _isGameExited = false;
+            }
+            else
+            {
+                var inventory = _iocContainer.Get<InventoryComponent>();
+                inventory.EnableComponent();
             }
         }
 
