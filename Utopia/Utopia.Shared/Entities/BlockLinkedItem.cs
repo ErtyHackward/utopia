@@ -45,7 +45,7 @@ namespace Utopia.Shared.Entities
         public bool BlockEmptyRequired { get; set; }
         
         // tool logic
-        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer)
+        public override IToolImpact Use(IDynamicEntity owner)
         {
             var impact = new ToolImpact { Success = false };
 

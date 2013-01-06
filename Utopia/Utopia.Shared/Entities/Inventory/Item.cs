@@ -200,9 +200,8 @@ namespace Utopia.Shared.Entities.Inventory
         /// Puts an item in the world and removes one from the inventory
         /// </summary>
         /// <param name="owner"></param>
-        /// <param name="runOnServer"></param>
         /// <returns></returns>
-        public virtual IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public virtual IToolImpact Use(IDynamicEntity owner)
         {
             return new ToolImpact { Message  = "This operation is not supported! Sorry!" };
         }

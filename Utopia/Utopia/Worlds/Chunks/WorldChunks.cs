@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using S33M3CoreComponents.Sound;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
@@ -141,6 +142,9 @@ namespace Utopia.Worlds.Chunks
             _playerManager.LandscapeInitiazed = true;
         }
         public bool IsInitialLoadCompleted { get; set; }
+
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
 
         public WorldChunks(D3DEngine d3dEngine,
                            CameraManager<ICameraFocused> camManager,
@@ -624,6 +628,7 @@ namespace Utopia.Worlds.Chunks
 
                     //Create the new VisualChunk
                     chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
+                    chunk.SoundEngine = SoundEngine;
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);

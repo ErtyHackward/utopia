@@ -14,7 +14,7 @@ namespace Utopia.Shared.Entities
     {
         public override bool CanUse { get { return true; } }
 
-        private IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
+        private IToolImpact BlockImpact(IDynamicEntity owner)
         {
             var entity = owner;
             var impact = new ToolImpact { Success = false };
@@ -66,7 +66,7 @@ namespace Utopia.Shared.Entities
             return impact;
         }
 
-        private IToolImpact EntityImpact(IDynamicEntity owner, bool runOnServer = false)
+        private IToolImpact EntityImpact(IDynamicEntity owner)
         {
             var impact = new ToolImpact { Success = false };
 
@@ -87,15 +87,15 @@ namespace Utopia.Shared.Entities
         }
 
         //Using a Collector type Tool Item will remove then selected entities (or block) from world an place it into own bag.
-        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public override IToolImpact Use(IDynamicEntity owner)
         {
             if (owner.EntityState.IsBlockPicked)
             {
-                return BlockImpact(owner, runOnServer);
+                return BlockImpact(owner);
             }
             else if (owner.EntityState.IsEntityPicked)
             {
-                return EntityImpact(owner, runOnServer);
+                return EntityImpact(owner);
             }
 
             var impact = new ToolImpact { Success = false };

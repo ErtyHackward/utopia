@@ -98,7 +98,7 @@ namespace Utopia.Entities.Managers
         private EntityRotations _entityRotations;
         private InventoryComponent _inventoryComponent;
 
-        private readonly ITool _handTool = new HandTool();
+        private readonly HandTool _handTool = new HandTool();
         #endregion
 
         #region Public variables/properties
@@ -274,6 +274,7 @@ namespace Utopia.Entities.Managers
             _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
             _landscapeManager = landscapeManager;
+            _handTool.LandscapeManager = landscapeManager;
 
             Player = player;
 

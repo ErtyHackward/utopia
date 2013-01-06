@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Ninject;
+using S33M3CoreComponents.Sound;
 using S33M3DXEngine;
 using Utopia.Action;
 using Utopia.Entities;
@@ -47,6 +48,9 @@ namespace Utopia.GUI.Inventory
 
         [Inject]
         public PlayerEntityManager PlayerManager { get; set; }
+
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
 
         /// <summary>
         /// Indicates if inventory is active now
@@ -138,6 +142,21 @@ namespace Utopia.GUI.Inventory
             _itemMessageTranslator.Enabled = false;
 
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
+        }
+
+        private void OnSlotTaken(ContainedSlot slot)
+        {
+
+        }
+
+        private void OnSlotPut(ContainedSlot slot)
+        {
+            var putSound = slot.Item.PutSound;
+
+            if (!string.IsNullOrEmpty(putSound))
+            {
+                SoundEngine.StartPlay2D(putSound, putSound);
+            }
         }
 
         void _toolBar_SlotLeave(object sender, InventoryWindowCellMouseEventArgs e)
@@ -323,6 +342,9 @@ namespace Utopia.GUI.Inventory
                     BeginDrag(slot);
 
                     _sourceContainer = e.Container;
+
+                    OnSlotTaken(slot);
+
                 }
             }
         }
@@ -362,6 +384,9 @@ namespace Utopia.GUI.Inventory
                     ContainedSlot slotTaken;
                     if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
                         throw new InvalidOperationException();
+
+                    OnSlotPut(_dragControl.Slot);
+
                     slotTaken.GridPosition = prevPosition;
                     UpdateDrag(slotTaken);
                     CancelDrag();
@@ -383,6 +408,8 @@ namespace Utopia.GUI.Inventory
 
                     if (!e.Container.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, itemsCount))
                         throw new InvalidOperationException();
+
+                    OnSlotPut(_dragControl.Slot);
 
                     _dragControl.Slot.ItemsCount -= itemsCount;
                     if (_dragControl.Slot.ItemsCount == 0)

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ninject;
+using S33M3CoreComponents.Sound;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using SharpDX;
@@ -181,6 +184,9 @@ namespace Utopia.Worlds.Chunks
                 throw new NotImplementedException();
             }
         }
+
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
 
         //Use to display bounding box around chunk in debug mode only (Quite slow and not optimized)
 #if DEBUG
@@ -426,6 +432,17 @@ namespace Utopia.Worlds.Chunks
         {
             AddVoxelEntity(e);
             AddParticuleEmitterEntity(e);
+
+            if (e.Entity is Item)
+            {
+                var item = e.Entity as Item;
+                var putSound = item.PutSound;
+
+                if (!string.IsNullOrEmpty(putSound))
+                {
+                    SoundEngine.StartPlay3D(putSound, putSound, e.Entity.Position.AsVector3());
+                }
+            }
         }
 
         private void AddVoxelEntity(EntityCollectionEventArgs e)

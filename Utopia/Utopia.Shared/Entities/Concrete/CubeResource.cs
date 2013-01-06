@@ -30,11 +30,11 @@ namespace Utopia.Shared.Entities.Concrete
             Name = cubeName;
         }
 
-        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public override IToolImpact Use(IDynamicEntity owner)
         {
             if (owner.EntityState.IsBlockPicked)
             {
-                return BlockImpact(owner, runOnServer);
+                return BlockImpact(owner);
             }
 
             var impact = new ToolImpact { Success = false };

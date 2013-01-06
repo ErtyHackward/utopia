@@ -24,7 +24,7 @@ namespace Utopia.Shared.Entities
 
 
         #region Public Methods
-        public override IToolImpact Use(IDynamicEntity owner, bool runOnServer = false)
+        public override IToolImpact Use(IDynamicEntity owner)
         {
             var impact = new ToolImpact { Success = false };
 
