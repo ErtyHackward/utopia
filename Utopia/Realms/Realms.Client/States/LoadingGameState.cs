@@ -114,7 +114,7 @@ namespace Realms.Client.States
                 }
 
                 //Create a local server for single player purpose
-                if (_vars.LocalServer == null) 
+                if (_vars.LocalServer == null || _vars.LocalServer.IsDisposed) 
                     _vars.LocalServer = _ioc.Get<LocalServer>();
 
                 //Passed the WorldParameters to the server for single use purpose mode

@@ -34,6 +34,12 @@ namespace Realms.Client.Components
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
 
+        public bool IsDisposed
+        {
+            get { return _server == null; }
+        }
+
+
         public LocalServer(RuntimeVariables vars)
         {
             _vars = vars;
