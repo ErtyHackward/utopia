@@ -63,16 +63,9 @@ namespace Utopia.Shared.Entities.Inventory
             get { return _modelInstance; }
             set
             {
-                // note:
-                // if you want to make possible to change model instance
-                // you need to change method OnInstanceChanged and provide
-                // previous instance to dispose it properly
-
-                if (_modelInstance != null)
-                    throw new InvalidOperationException("Unable to change model instance, you can set it only once");
-                
+                var previous = _modelInstance;
                 _modelInstance = value;
-                OnInstanceChanged();
+                OnInstanceChanged(previous);
             }
         }
 
@@ -105,7 +98,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// Executed when the model instance is changed
         /// Allows to initialize the instance
         /// </summary>
-        protected virtual void OnInstanceChanged() { }
+        protected virtual void OnInstanceChanged(VoxelModelInstance previousInstance) { }
 
         protected Item()
         {

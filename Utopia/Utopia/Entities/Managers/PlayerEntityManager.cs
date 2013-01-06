@@ -303,6 +303,10 @@ namespace Utopia.Entities.Managers
                 }
                 else PutMode = false;
             }
+            else
+            {
+                PutMode = false;
+            }
         }
         
         void InventoryComponentSwitchInventory(object sender, InventorySwitchEventArgs e)
