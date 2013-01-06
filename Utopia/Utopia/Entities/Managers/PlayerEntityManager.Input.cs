@@ -123,15 +123,26 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-                        // send use message to the server
-                        Player.EntityUse();
+
                         
                         if (!link.IsDynamic)
                         {
                             if (entity is IUsableEntity)
                             {
+                                // send use message to the server
+                                Player.EntityUse();
+
                                 var usableEntity = entity as IUsableEntity;
                                 usableEntity.Use();
+                            }
+                            else
+                            {
+                                // hand use
+                                //sends the client server event that does tool.use on server
+                                Player.ToolUse(true);
+
+                                //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
+                                _handTool.Use(Player);
                             }
                         }
                     }
