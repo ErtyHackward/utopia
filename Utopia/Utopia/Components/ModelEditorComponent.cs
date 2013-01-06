@@ -1220,6 +1220,99 @@ namespace Utopia.Components
             }
         }
 
+        private void OnCylinderPresetPressed()
+        {
+            if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
+            {
+                // fill the frame 
+                var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
+
+                // clear everything
+                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+
+                Vector3 center;
+
+                Range3I range;
+                if (_selectionStart.HasValue && _selectionEnd.HasValue)
+                {
+                    var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                    var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                    var selectionSize = max - min + Vector3I.One;
+                    range = new Range3I(min, selectionSize);
+                    center = (Vector3)selectionSize / 2;
+                }
+                else
+                {
+                    range = new Range3I { Size = frame.ChunkSize };
+                    center = (Vector3)frame.ChunkSize / 2;
+                }
+
+                var radius = Math.Min(Math.Min(center.X, center.Y), center.Z);
+
+                foreach (var position in range)
+                {
+                    var point = position + new Vector3(0.5f, 0.5f, 0.5f);
+                    center.Y = point.Y;
+                    if (Vector3.Distance(point, center + range.Position) <= radius)
+                        frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
+                }
+
+                RebuildFrameVertices();
+            }
+        }
+
+        private void OnEllipsoidPresetPressed()
+        {
+            if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)
+            {
+                // fill the frame 
+                var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
+
+                // clear everything
+                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+
+                Vector3 center;
+
+                Range3I range;
+                if (_selectionStart.HasValue && _selectionEnd.HasValue)
+                {
+                    var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
+                    var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
+                    var selectionSize = max - min + Vector3I.One;
+                    range = new Range3I(min, selectionSize);
+                    center = (Vector3)selectionSize / 2;
+                }
+                else
+                {
+                    range = new Range3I { Size = frame.ChunkSize };
+                    center = (Vector3)frame.ChunkSize / 2;
+                }
+
+                var radius = frame.ChunkSize / 2;
+
+                foreach (var position in range)
+                {
+                    var point = position + new Vector3(0.5f, 0.5f, 0.5f);
+                    
+                    if (IsInsideEllipsoid(center, radius, point ))
+                        frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
+                }
+
+                RebuildFrameVertices();
+            }
+        }
+
+        private bool IsInsideEllipsoid(Vector3 center, Vector3 radius, Vector3 point)
+        {
+            var dx = point.X - center.X;
+            var dy = point.Y - center.Y;
+            var dz = point.Z - center.Z;
+
+            return dx * dx / ( radius.X * radius.X ) + 
+                   dy * dy / ( radius.Y * radius.Y ) +
+                   dz * dz / ( radius.Z * radius.Z ) <= 1;
+        }
+
         private void OnSpherePresetPressed()
         {
             if (_visualVoxelModel != null && SelectedPartIndex != -1 && SelectedFrameIndex != -1)

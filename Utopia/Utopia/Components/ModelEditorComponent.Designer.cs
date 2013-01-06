@@ -496,7 +496,7 @@ namespace Utopia.Components
 
             #region Preset Tool properties
 
-            _tpPreset = new Control { Bounds = new UniRectangle(0, 0, 180, 40), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _tpPreset = new Control { Bounds = new UniRectangle(0, 0, 180, 60), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _tpPreset.Children.Add(new LabelControl { Text = "Presets:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
@@ -505,13 +505,21 @@ namespace Utopia.Components
             
             var spherePresetButton = new ButtonControl { Text = "Sphere", Bounds = new UniRectangle(0, 0, 50, 20) };
             spherePresetButton.Pressed += delegate { OnSpherePresetPressed(); };
+
+            var cylinderPresetButton = new ButtonControl { Text = "Cylinder", Bounds = new UniRectangle(0, 0, 50, 20) };
+            cylinderPresetButton.Pressed += delegate { OnCylinderPresetPressed(); };
             
             var outlinePresetButton = new ButtonControl { Text = "Outline", Bounds = new UniRectangle(0, 0, 50, 20) };
             outlinePresetButton.Pressed += delegate { OnOutlinePresetPressed(); };
 
+            var ellipsoidPresetButton = new ButtonControl { Text = "Ellipsoid", Bounds = new UniRectangle(0, 0, 50, 20) };
+            ellipsoidPresetButton.Pressed += delegate { OnEllipsoidPresetPressed(); };
+
             _tpPreset.Children.Add(fillPresetButton);
             _tpPreset.Children.Add(spherePresetButton);
+            _tpPreset.Children.Add(cylinderPresetButton);
             _tpPreset.Children.Add(outlinePresetButton);
+            _tpPreset.Children.Add(ellipsoidPresetButton);
             _tpPreset.UpdateLayout();
 
             #endregion
