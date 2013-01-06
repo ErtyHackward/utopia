@@ -38,6 +38,11 @@ namespace Sandbox.Client.Components
             _vars = vars;
         }
 
+        public bool IsDisposed
+        {
+            get { return _server == null; }
+        }
+
         public void InitSinglePlayerServer(WorldParameters worldParam)
         {
             if (_server != null)
