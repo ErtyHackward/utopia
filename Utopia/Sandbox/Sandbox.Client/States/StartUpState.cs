@@ -92,7 +92,7 @@ namespace Sandbox.Client.States
 
                     StatesManager.DeactivateSwitchComponent = false;
 
-#if !SINGLEPLAYERSTART
+#if DEBUG
                     // first state will be the login state
                     var vars = _iocContainer.Get<RuntimeVariables>();
                     vars.SinglePlayer = true;
