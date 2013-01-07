@@ -27,7 +27,7 @@ namespace Utopia.Entities.Renderer
         private float _alpha = 0.4f;
         private bool _alphaRaise;
 
-        public ITool Tool { get; set; }
+        public IItem Tool { get; set; }
 
         /// <summary>
         /// Gets or sets value indicating if we need to draw ghosted item
@@ -74,7 +74,7 @@ namespace Utopia.Entities.Renderer
                 return;
             }
 
-            Tool = (ITool)e.EquippedItem.Item;
+            Tool = e.EquippedItem.Item;
 
             // prepare voxel model to render
 

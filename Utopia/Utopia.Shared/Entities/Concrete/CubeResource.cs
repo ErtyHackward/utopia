@@ -10,15 +10,10 @@ using Utopia.Shared.Configuration;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
-    public class CubeResource : Item
+    public class CubeResource : Item, ITool
     {
         [ProtoMember(1)]
         public byte CubeId { get; private set; }
-
-        public override bool CanUse
-        {
-            get { return true; }
-        }
 
         public override ushort ClassId
         {
@@ -41,7 +36,7 @@ namespace Utopia.Shared.Entities.Concrete
             return new ToolImpact();
         }
 
-        public override IToolImpact Use(IDynamicEntity owner)
+        public IToolImpact Use(IDynamicEntity owner)
         {
             if (owner.EntityState.IsBlockPicked)
             {
@@ -72,6 +67,12 @@ namespace Utopia.Shared.Entities.Concrete
             }
             impact.Message = "Pick a cube to use this tool";
             return impact;
+        }
+
+
+        public void Rollback(IToolImpact impact)
+        {
+            throw new NotImplementedException();
         }
     }
 

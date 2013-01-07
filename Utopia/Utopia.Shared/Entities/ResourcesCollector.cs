@@ -10,10 +10,8 @@ namespace Utopia.Shared.Entities
     /// The base class use to collect things in the world (= Removed them and put them in the inventory)
     /// </summary>
     [ProtoContract]
-    public abstract class ResourcesCollector : Item
+    public abstract class ResourcesCollector : Item, ITool
     {
-        public override bool CanUse { get { return true; } }
-
         private IToolImpact BlockImpact(IDynamicEntity owner)
         {
             var entity = owner;
@@ -87,7 +85,7 @@ namespace Utopia.Shared.Entities
         }
 
         //Using a Collector type Tool Item will remove then selected entities (or block) from world an place it into own bag.
-        public override IToolImpact Use(IDynamicEntity owner)
+        public IToolImpact Use(IDynamicEntity owner)
         {
             if (owner.EntityState.IsBlockPicked)
             {
@@ -101,6 +99,11 @@ namespace Utopia.Shared.Entities
             var impact = new ToolImpact { Success = false };
             impact.Message = "No target selected for use";
             return impact;
+        }
+
+        public void Rollback(IToolImpact impact)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Utopia.Entities.Managers
             {
                 // switch the drop mode if possible
                 var tool = Player.Equipment.RightTool;
-                if (tool != null && tool.CanUse)
+                if (tool != null && tool is ITool)
                 {
                     PutMode = !PutMode;
                 }
@@ -45,25 +45,27 @@ namespace Utopia.Entities.Managers
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
 
-                    var tool = Player.Equipment.RightTool;
+                    var item = Player.Equipment.RightTool;
 
-                    if (tool == null)
-                        tool = _handTool;
+                    if (item == null)
+                        item = _handTool;
 
                     if (_putMode)
                     {
                         // can't put the hand!
-                        if (tool == _handTool)
+                        if (item == _handTool)
                             return;
 
                         // send put message to the server
                         Player.PutUse();
 
                         // client sync
-                        tool.Put(Player);
+                        item.Put(Player);
                     }
                     else
                     {
+                        var tool = (ITool)item;
+
                         //sends the client server event that does tool.use on server
                         Player.ToolUse();
 

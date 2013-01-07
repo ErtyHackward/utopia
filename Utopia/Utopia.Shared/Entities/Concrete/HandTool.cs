@@ -1,5 +1,4 @@
-﻿using S33M3Resources.Structs;
-using Utopia.Shared.Entities.Dynamic;
+﻿using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
@@ -8,16 +7,11 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Special tool used when no tool is set
     /// </summary>
-    public class HandTool : Item
+    public class HandTool : Item, ITool
     {
         public override ushort ClassId
         {
             get { return EntityClassId.Hand; }
-        }
-
-        public override bool CanUse
-        {
-            get { return true; }
         }
 
         public override PickType CanPickBlock(byte blockId)
@@ -29,7 +23,7 @@ namespace Utopia.Shared.Entities.Concrete
             return PickType.Stop;
         }
 
-        public override IToolImpact Use(IDynamicEntity owner)
+        public IToolImpact Use(IDynamicEntity owner)
         {
             var impact = new ToolImpact();
 
@@ -60,6 +54,12 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             return impact;
+        }
+
+
+        public void Rollback(IToolImpact impact)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

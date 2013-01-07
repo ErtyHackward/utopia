@@ -172,13 +172,15 @@ namespace Utopia.Server.Structs
             // detect use type, if 0 then it is entity use, otherwise it is tool use
             if (entityUseMessage.ToolId != 0)
             {
-                // find tool
-                var tool = playerCharacter.FindToolById(entityUseMessage.ToolId);
+                // find item
+                var item = playerCharacter.FindItemById(entityUseMessage.ToolId);
 
-                if (tool != null)
+                if (item != null)
                 {
                     if (entityUseMessage.UseType == UseType.Use)
                     {
+                        var tool = (ITool)item;
+
                         var toolImpact = tool.Use(playerCharacter);
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
@@ -189,7 +191,7 @@ namespace Utopia.Server.Structs
                     }
                     if (entityUseMessage.UseType == UseType.Put)
                     {
-                        var toolImpact = tool.Put(playerCharacter);
+                        var toolImpact = item.Put(playerCharacter);
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
                             {

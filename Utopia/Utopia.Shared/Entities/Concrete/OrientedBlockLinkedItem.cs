@@ -41,9 +41,9 @@ namespace Utopia.Shared.Entities.Concrete
             IsPickable = true;
         }
 
-        public override void SetPosition(EntityPosition pos, IItem item)
+        public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
         {
-            base.SetPosition(pos, item);
+            base.SetPosition(pos, item, owner);
 
             var blockItem = item as OrientedBlockLinkedItem;
             if (blockItem != null)

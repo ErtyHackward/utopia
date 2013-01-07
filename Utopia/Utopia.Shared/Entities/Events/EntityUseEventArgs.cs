@@ -17,7 +17,7 @@ namespace Utopia.Shared.Entities.Events
         /// <summary>
         /// Gets or sets the tool was used (maybe null)
         /// </summary>
-        public ITool Tool { get; set; }
+        public IItem Tool { get; set; }
 
         /// <summary>
         /// Gets character view vector at using moment
