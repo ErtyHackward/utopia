@@ -540,40 +540,49 @@ namespace S33M3DXEngine
 
         public void Dispose()
         {
-            //Clean Up event Delegates
-            if (ViewPort_Updated != null)
+            try
             {
-                //Remove all Events associated to this control (That haven't been unsubscribed !)
-                foreach (Delegate d in ViewPort_Updated.GetInvocationList())
+
+
+                //Clean Up event Delegates
+                if (ViewPort_Updated != null)
                 {
-                    ViewPort_Updated -= (ViewPortUpdated)d;
+                    //Remove all Events associated to this control (That haven't been unsubscribed !)
+                    foreach (Delegate d in ViewPort_Updated.GetInvocationList())
+                    {
+                        ViewPort_Updated -= (ViewPortUpdated)d;
+                    }
                 }
+
+                //Dispo State repo
+                RenderStatesRepo.Dispose();
+
+                if (_renderForm != null)
+                {
+                    _renderForm.ResizeBegin -= _renderForm_ResizeBegin;
+                    _renderForm.ResizeEnd -= _renderForm_ResizeEnd;
+                    _renderForm.Resize -= _renderForm_Resize;
+                    _renderForm.LostFocus -= GameWindow_LostFocus;
+                    _renderForm.GotFocus -= GameWindow_GotFocus;
+                }
+
+                //Dispose the created states
+                if (BackBufferTex != null) BackBufferTex.Dispose();
+                if (_dx11factory != null) _dx11factory.Dispose();
+                if (_depthStencil != null) _depthStencil.Dispose();
+                if (_renderTarget != null) _renderTarget.Dispose();
+                if (_swapChain != null) _swapChain.Dispose();
+
+                //ImmediateContext.ClearState();
+                //ImmediateContext.Flush();
+
+                //The Context is automaticaly disposed by the Device
+                Device.Dispose();
             }
-
-            //Dispo State repo
-            RenderStatesRepo.Dispose();
-
-            if (_renderForm != null)
+            catch (Exception e)
             {
-                _renderForm.ResizeBegin -= _renderForm_ResizeBegin;
-                _renderForm.ResizeEnd -= _renderForm_ResizeEnd;
-                _renderForm.Resize -= _renderForm_Resize;
-                _renderForm.LostFocus -= GameWindow_LostFocus;
-                _renderForm.GotFocus -= GameWindow_GotFocus;
+                logger.Error("Error logged at Engine disposal time {0}", e.Message);
             }
-
-            //Dispose the created states
-            if(BackBufferTex != null) BackBufferTex.Dispose();
-            if (_dx11factory != null) _dx11factory.Dispose();
-            if (_depthStencil != null) _depthStencil.Dispose();
-            if (_renderTarget != null) _renderTarget.Dispose();
-            if (_swapChain != null) _swapChain.Dispose();
-
-            //ImmediateContext.ClearState();
-            //ImmediateContext.Flush();
-
-            //The Context is automaticaly disposed by the Device
-            Device.Dispose();
         }
 
         #endregion

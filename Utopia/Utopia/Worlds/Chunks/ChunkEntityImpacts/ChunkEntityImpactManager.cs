@@ -259,7 +259,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
         {
             Int64 mainChunkId;
-            List<VisualChunk> impactedChunks = new List<VisualChunk>(9);
 
             //Compute the Range impacted by the cube change
             Range3I cubeRange = new Range3I()
@@ -284,18 +283,15 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             cubeChunk.State = ChunkState.OuterLightSourcesProcessed;
             cubeChunk.UpdateOrder = !profile.IsBlockingLight ? 1 : 2;
             mainChunkId = cubeChunk.ChunkID;
+            //Console.WriteLine(cubeChunk.ChunkID + " => " + cubeChunk.UpdateOrder);
 
-            impactedChunks.Add(cubeChunk);
-
-            //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
             VisualChunk NeightBorChunk;
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
             if (NeightBorChunk.ChunkID != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
@@ -303,8 +299,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
@@ -312,8 +307,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
@@ -321,8 +315,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
@@ -330,8 +323,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
@@ -339,8 +331,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
@@ -348,8 +339,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
 
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
@@ -357,8 +347,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UserChangeOrder);
-                impactedChunks.Add(NeightBorChunk);
+                //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
         }
 
