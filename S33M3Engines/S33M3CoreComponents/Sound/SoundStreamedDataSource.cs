@@ -17,13 +17,14 @@ namespace S33M3CoreComponents.Sound
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private Variables
+        private static int bufferRing = 8;
         private DataPointer[] _memBuffers;
         private AudioBuffer[] _audioBuffersRing;
         private MemoryStream _bufferedCompressedFile;
         private AudioDecoder _audioDecoder;
         private AutoResetEvent _sleep;
         private ISoundVoice _linkedVoice;
-        private bool _disposing;
+        private bool _stopThread;
         private Task _fetchingThread;
         #endregion
 
@@ -50,9 +51,9 @@ namespace S33M3CoreComponents.Sound
             }
 
             //Pre allocate buffers
-            _audioBuffersRing = new AudioBuffer[3];
-            _memBuffers = new DataPointer[_audioBuffersRing.Length];
-            for (int i = 0; i < _audioBuffersRing.Length; i++)
+            _audioBuffersRing = new AudioBuffer[bufferRing];
+            _memBuffers = new DataPointer[bufferRing];
+            for (int i = 0; i < bufferRing; i++)
             {
                 _audioBuffersRing[i] = new AudioBuffer();
                 _memBuffers[i].Size = 32 * 1024; // default size 32Kb
@@ -69,10 +70,10 @@ namespace S33M3CoreComponents.Sound
 
         public void Dispose()
         {
-            _disposing = true;
-            _fetchingThread.Wait();
+            _stopThread = true;
+            if(_fetchingThread!=null) _fetchingThread.Wait();
             _bufferedCompressedFile.Dispose();
-            foreach (var buffer in _audioBuffersRing) buffer.Stream.Dispose();
+            foreach (var buffer in _audioBuffersRing) if(buffer.Stream != null) buffer.Stream.Dispose();
             foreach (var buffer in _memBuffers) Utilities.FreeMemory(buffer.Pointer);
             _audioDecoder.Dispose();
         }
@@ -87,11 +88,14 @@ namespace S33M3CoreComponents.Sound
         {
             if (_linkedVoice != null)
             {
-                logger.Error("Cannot stream the same resource as streaming source for 2 differents voices !!");
-                throw new Exception();
+                logger.Warn("Cannot stream the same resource as streaming source for 2 differents voices !! Previously playing sound will be stopped");
+                _linkedVoice.Stop();
+                _stopThread = true;
+                _sleep.Set();
+                _fetchingThread.Wait();
             }
             _linkedVoice = voice;
-
+            _linkedVoice.IsPlaying = true;
             //Start voice Fetching with data !
             _fetchingThread = Task.Factory.StartNew(asyncVoiceFetching, TaskCreationOptions.LongRunning);
         }
@@ -102,8 +106,8 @@ namespace S33M3CoreComponents.Sound
         private void asyncVoiceFetching()
         {
             int nextBuffer = 0;
-
-            while (!_disposing && _linkedVoice != null && _linkedVoice.IsPlaying)
+            _stopThread = false;
+            while (!_stopThread && _linkedVoice != null && _linkedVoice.IsPlaying)
             {
                 // Get the decoded samples from the specified starting position.
                 var sampleIterator = _audioDecoder.GetSamples().GetEnumerator();
@@ -112,11 +116,11 @@ namespace S33M3CoreComponents.Sound
                 while (true)
                 {
                     // If ring buffer queued is full, wait for the end of a buffer.
-                    while (_linkedVoice.State.BuffersQueued == _audioBuffersRing.Length && !_disposing && _linkedVoice.IsPlaying)
+                    while (_linkedVoice.State.BuffersQueued == bufferRing && !_stopThread && _linkedVoice.IsPlaying)
                         _sleep.WaitOne(1);
 
                     // If the player is stopped or disposed, then break of this loop
-                    if (_disposing || !_linkedVoice.IsPlaying)
+                    if (_stopThread || !_linkedVoice.IsPlaying)
                     {
                         break;
                     }
@@ -151,7 +155,7 @@ namespace S33M3CoreComponents.Sound
                     _linkedVoice.Voice.SubmitSourceBuffer(_audioBuffersRing[nextBuffer], null);
 
                     // Go to next entry in the ringg audio buffer
-                    nextBuffer = ++nextBuffer % _audioBuffersRing.Length;
+                    nextBuffer = ++nextBuffer % bufferRing;
                 }
 
                 // If the song is not looping go out the while

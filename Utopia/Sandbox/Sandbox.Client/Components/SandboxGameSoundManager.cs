@@ -60,11 +60,11 @@ namespace Sandbox.Client.Components
             PreLoadSound("WaterDrop", @"Sounds\Events\waterdrop.wav", 1.0f, 16.0f);
 
             //Load and prefetch Mood sounds
-            foreach (var moodSoundFile in Directory.GetFiles(@"Sounds\Moods", "*_*.adpcm.wav"))
+            foreach (var moodSoundFile in Directory.GetFiles(@"Sounds\Moods", "*_*.wma"))
             {
                 TimeOfDaySound time;
                 MoodType type;
-                string[] fileMetaData = moodSoundFile.Replace(".adpcm.wav", "").Split('_');
+                string[] fileMetaData = moodSoundFile.Replace(".wma", "").Split('_');
                 if (fileMetaData.Length < 3) time = TimeOfDaySound.FullDay;
                 else
                 {

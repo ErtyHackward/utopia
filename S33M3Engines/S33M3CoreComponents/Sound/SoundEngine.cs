@@ -167,7 +167,7 @@ namespace S33M3CoreComponents.Sound
             _3DSoundEntitiesPositionsChanged = false;
         }
 
-        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false, float soundPower = 16)
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool? streamedSound = null, float soundPower = 16)
         {
             ISoundDataSource soundDataSource;
 
@@ -189,7 +189,19 @@ namespace S33M3CoreComponents.Sound
                     return null;
                 }
 
-                if (!streamedSound)
+                //By default wma files will be streamed, wav file will be buffered.
+                bool isStream = false;
+                if (streamedSound == null)
+                {
+                    if (ext == ".wav" && streamedSound == null) isStream = false;
+                    else if (ext == ".wma" && streamedSound == null) isStream = true;
+                }
+                else
+                {
+                    isStream = (bool)streamedSound;
+                }
+
+                if (!isStream)
                 {
                     soundDataSource = new SoundBufferedDataSource(fi);
                 }
