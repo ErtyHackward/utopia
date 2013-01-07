@@ -5,6 +5,7 @@ using S33M3DXEngine.Threading;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
+using System;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -101,6 +102,7 @@ namespace Utopia.Worlds.Chunks
             foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 VisualChunk localChunk = chunk;
+
                 //Start chunk creation process in a threaded way !
                 localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
 #if DEBUG
@@ -179,7 +181,7 @@ namespace Utopia.Worlds.Chunks
                     localChunk.ThreadLockedBy = "CreateChunkMeshes";
 #endif
                     //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk));
+                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk), localChunk.UpdateOrder > 0 ? ThreadsManager.ThreadTaskPriority.High : ThreadsManager.ThreadTaskPriority.Normal);
                 }
             }
         }
@@ -199,6 +201,7 @@ namespace Utopia.Worlds.Chunks
         {
             int nbrchunksSend2GC = 0;
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
+
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged &&
                                                              x.ThreadStatus == ThreadsManager.ThreadStatus.Idle &&
