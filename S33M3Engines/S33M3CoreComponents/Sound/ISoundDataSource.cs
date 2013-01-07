@@ -7,15 +7,17 @@ using SharpDX.XAudio2;
 
 namespace S33M3CoreComponents.Sound
 {
-    public interface ISoundDataSource
+    public interface ISoundDataSource : IDisposable
     {
         string SoundAlias { get; set; }
 
         float SoundVolume { get; set; }
         float SoundPower { get; set; }
 
+        DataSourcePlayMode PlayMode { get; }
+
         WaveFormat WaveFormat { get; set; }
-        AudioBuffer AudioBuffer { get; set; }
+        AudioBuffer AudioBuffer { get; }
 
         int GetSoundFormatCategory();
     }

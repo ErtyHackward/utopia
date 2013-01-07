@@ -273,11 +273,13 @@
     <Compile Include="Physics\States\EntityState.cs" />
     <Compile Include="Physics\Verlet\VerletSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sound\DataSourcePlayMode.cs" />
     <Compile Include="Sound\ISoundVoice.cs" />
     <Compile Include="Sound\ISoundEngine.cs" />
     <Compile Include="Sound\ISoundDataSource.cs" />
     <Compile Include="Sound\SoundBufferedDataSource.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
+    <Compile Include="Sound\SoundStreamedDataSource.cs" />
     <Compile Include="Sound\SoundVoice.cs" />
     <Compile Include="Sprites3D\Interfaces\ISprite3DProcessor.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DColorBillBoardProc.cs" />
