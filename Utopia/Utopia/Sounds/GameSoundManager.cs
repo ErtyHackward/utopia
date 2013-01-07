@@ -149,16 +149,22 @@ namespace Utopia.Sounds
                 foreach (var sound in pair.Value)
                 {
                     ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias);
-                    dataSource.SoundVolume = sound.Volume;
-                    dataSource.SoundPower = sound.Power;
+                    if (dataSource != null)
+                    {
+                        dataSource.SoundVolume = sound.Volume;
+                        dataSource.SoundPower = sound.Power;
+                    }
                 }
             }
 
             foreach (var data in _preLoad)
             {
                 ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias);
-                dataSource.SoundVolume = data.Volume;
-                dataSource.SoundPower = data.Power;
+                if (dataSource != null)
+                {
+                    dataSource.SoundVolume = data.Volume;
+                    dataSource.SoundPower = data.Power;
+                }
             }
 
             //Prepare Sound for biomes
@@ -169,7 +175,10 @@ namespace Utopia.Sounds
                     foreach (var biomeSound in biome.AmbientSound)
                     {
                         ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias);
-                        dataSource.SoundVolume = biomeSound.DefaultVolume;
+                        if (dataSource != null)
+                        {
+                            dataSource.SoundVolume = biomeSound.DefaultVolume;
+                        }
                     }
                 }
             }
