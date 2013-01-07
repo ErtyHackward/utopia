@@ -171,6 +171,8 @@ namespace S33M3CoreComponents.Sound
         {
             ISoundDataSource soundDataSource;
 
+            if (string.IsNullOrEmpty(soundAlias)) soundAlias = FilePath;
+
             if (_soundDataSources.TryGetValue(soundAlias, out soundDataSource) == false)
             {
                 FileInfo fi = new FileInfo(FilePath);
