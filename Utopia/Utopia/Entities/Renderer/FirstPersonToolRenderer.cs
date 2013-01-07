@@ -141,13 +141,13 @@ namespace Utopia.Entities.Renderer
         public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             // update model color, get the cube where model is
-            var block = _chunkContainer.GetCube(_player.Position);
-            if (block.Id == 0)
+            var result = _chunkContainer.GetCube(_player.Position);
+            if (result.isValid && result.Cube.Id == WorldConfiguration.CubeId.Air)
             {
                 // we take the max color
-                var sunPart = (float)block.EmissiveColor.A / 255;
+                var sunPart = (float)result.Cube.EmissiveColor.A / 255;
                 var sunColor = _skyDome.SunColor * sunPart;
-                var resultColor = Color3.Max(block.EmissiveColor.ToColor3(), sunColor);
+                var resultColor = Color3.Max(result.Cube.EmissiveColor.ToColor3(), sunColor);
 
                 _lightColor.Value = resultColor;
 

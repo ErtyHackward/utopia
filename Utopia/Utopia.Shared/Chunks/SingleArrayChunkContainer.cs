@@ -656,14 +656,15 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public TerraCube GetCube(Vector3I pos, bool withYCheck = true)
+        public TerraCubeResult GetCube(Vector3I pos, bool withYCheck = true)
         {
+            TerraCubeResult result = new TerraCubeResult();
             int cubeIndex;
             if (withYCheck)
             {
                 if (!IndexSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
                 {
-                    return new TerraCube(255);
+                    return result;
                 }
             }
             else
@@ -671,9 +672,9 @@ namespace Utopia.Shared.Chunks
                 cubeIndex = Index(pos.X, pos.Y, pos.Z);
             }
 
-            var cube = Cubes[cubeIndex];
+            result.Cube = Cubes[cubeIndex];
 
-            var offset = _config.CubeProfiles[cube.Id].YBlockOffset;
+            var offset = _config.CubeProfiles[result.Cube.Id].YBlockOffset;
 
             if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
             {
@@ -682,11 +683,12 @@ namespace Utopia.Shared.Chunks
                 if (pos.Y < AbstractChunk.ChunkSize.Y)
                 {
                     cubeIndex++; //Going Up one block
-                    cube = Cubes[cubeIndex];
+                    result.Cube = Cubes[cubeIndex];
                 }
             }
 
-            return cube;
+            result.isValid = true;
+            return result;
         }
 
         /// <summary>
@@ -694,8 +696,9 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public TerraCube GetCube(Vector3D pos, bool withYCheck = true)
+        public TerraCubeResult GetCube(Vector3D pos, bool withYCheck = true)
         {
+            TerraCubeResult result = new TerraCubeResult();
             var cubePos = pos.ToCubePosition();
 
             int cubeIndex;
@@ -703,7 +706,7 @@ namespace Utopia.Shared.Chunks
             {
                 if (!IndexSafe(cubePos.X, cubePos.Y, cubePos.Z, out cubeIndex))
                 {
-                    return new TerraCube(255);
+                    return result;
                 }
             }
             else
@@ -711,9 +714,9 @@ namespace Utopia.Shared.Chunks
                 cubeIndex = Index(cubePos.X, cubePos.Y, cubePos.Z);
             }
 
-            var cube = Cubes[cubeIndex];
+            result.Cube = Cubes[cubeIndex];
 
-            var offset = _config.CubeProfiles[cube.Id].YBlockOffset;
+            var offset = _config.CubeProfiles[result.Cube.Id].YBlockOffset;
 
             if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
             {
@@ -722,11 +725,24 @@ namespace Utopia.Shared.Chunks
                 if (cubePos.Y < AbstractChunk.ChunkSize.Y)
                 {
                     cubeIndex++; //Going Up one block
-                    cube = Cubes[cubeIndex];
+                    result.Cube = Cubes[cubeIndex];
                 }
             }
 
-            return cube;
+            result.isValid = true;
+            return result;
+        }
+
+        public bool CheckCube(Vector3D pos, byte cubeId ,bool withYCheck = true)
+        {
+            TerraCubeResult result = this.GetCube(pos, withYCheck);
+            return (result.isValid && result.Cube.Id == cubeId);
+        }
+
+        public bool CheckCube(Vector3I pos, byte cubeId, bool withYCheck = true)
+        {
+            TerraCubeResult result = this.GetCube(pos, withYCheck);
+            return (result.isValid && result.Cube.Id == cubeId);
         }
 
     }

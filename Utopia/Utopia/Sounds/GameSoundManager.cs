@@ -287,9 +287,9 @@ namespace Utopia.Sounds
 
                 Vector3D underTheFeets = entity.Position;
                 underTheFeets.Y -= 0.01f;
-                byte cube = _singleArray.GetCube(underTheFeets).Id;
-                if (cube > 254) return;
-                CubeProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube]; 
+                var result = _singleArray.GetCube(underTheFeets);
+                if (result.isValid == false) return;
+                CubeProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[result.Cube.Id]; 
 
                 // no need to play step if the entity is in air or not in walking displacement mode
                 if (cubeUnderFeet.Id == WorldConfiguration.CubeId.Air ||
@@ -304,35 +304,36 @@ namespace Utopia.Sounds
                 Vector3D prevUnderTheFeets = entityTrack.Position; //Containing the previous DynamicEntity Position
                 prevUnderTheFeets.Y -= 0.01f;
 
-                TerraCube prevCube = _singleArray.GetCube(prevUnderTheFeets);
-
                 //Compute the distance between the previous and current position, set to
                 double distance = Vector3D.Distance(entityTrack.Position, entity.Position);
 
                 // do we need to play the step sound?
                 //Trigger only if the difference between previous memorize position and current is > 1.5 meters
                 //Or if the previous position was in the air
-                if (distance >= 1.5f || prevCube.Id == WorldConfiguration.CubeId.Air)
+                if (distance >= 1.5f || _singleArray.CheckCube(prevUnderTheFeets, WorldConfiguration.CubeId.Air))
                 {
                     byte soundIndex = 0;
-                    CubeProfile currentCube = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_singleArray.GetCube(entity.Position).Id];
+                    var cubeResult = _singleArray.GetCube(entity.Position);
+                    if (cubeResult.isValid) //Valid cube retrieved
+                    {
+                        CubeProfile currentCube = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeResult.Cube.Id];
 
-                    //If walking on the ground, but with Feets and legs inside water block
-                    if (currentCube.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && cubeUnderFeet.IsSolidToEntity)
-                    {
-                        //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
-                        TerraCube headCube = _singleArray.GetCube(entity.Position + new Vector3I(0, entity.DefaultSize.Y, 0));
-                        if (headCube.Id == WorldConfiguration.CubeId.Air)
+                        //If walking on the ground, but with Feets and legs inside water block
+                        if (currentCube.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && cubeUnderFeet.IsSolidToEntity)
                         {
-                            soundIndex = PlayWalkingSound(currentCube.Id, entityTrack);
+                            //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
+                            if (_singleArray.CheckCube(entity.Position + new Vector3I(0, entity.DefaultSize.Y, 0), WorldConfiguration.CubeId.Air))
+                            {
+                                soundIndex = PlayWalkingSound(currentCube.Id, entityTrack);
+                            }
                         }
-                    }
-                    else
-                    {
-                        //Play a foot step sound only if the block under feet is solid to entity. (No water, no air, ...)
-                        if (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeUnderFeet.Id].IsSolidToEntity)
+                        else
                         {
-                            soundIndex = PlayWalkingSound(cubeUnderFeet.Id, entityTrack);
+                            //Play a foot step sound only if the block under feet is solid to entity. (No water, no air, ...)
+                            if (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeUnderFeet.Id].IsSolidToEntity)
+                            {
+                                soundIndex = PlayWalkingSound(cubeUnderFeet.Id, entityTrack);
+                            }
                         }
                     }
 

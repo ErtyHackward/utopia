@@ -82,10 +82,12 @@ namespace Utopia.Entities.Managers
                 pickingWorldPosition += new Vector3D(pickingLookAt * 0.02f);
 
                 //Check if a block is picked up !
-                var cube = _cubesHolder.GetCube(pickingWorldPosition);
-                var yOffset = _cubesHolder.Config.CubeProfiles[cube.Id].YBlockOffset;
+                var result = _cubesHolder.GetCube(pickingWorldPosition);
+                if (result.isValid) break;
 
-                var pickType = tool.CanPickBlock(cube.Id);
+                var yOffset = _cubesHolder.Config.CubeProfiles[result.Cube.Id].YBlockOffset;
+
+                var pickType = tool.CanPickBlock(result.Cube.Id);
 
                 if (pickType == PickType.Stop)
                 {
