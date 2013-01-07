@@ -390,9 +390,6 @@
     <None Include="Sounds\Blocks\put.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Sounds\Moods\05_fear.adpcm.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Sounds\Events\hurt.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -538,16 +535,19 @@
     <None Include="Sounds\Ambiance\Ocean.adpcm.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Sounds\Moods\01_peace_day.adpcm.wav">
+    <Content Include="Sounds\Moods\01_peace_day.wma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Moods\03_peace_night.adpcm.wav">
+    <Content Include="Sounds\Moods\02_peace_day.wma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Moods\02_peace_day.adpcm.wav">
+    <Content Include="Sounds\Moods\03_peace_night.wma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Moods\04_peace_night.adpcm.wav">
+    <Content Include="Sounds\Moods\04_peace_night.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\Moods\05_fear.wma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Sounds\MusicLicenses.txt">

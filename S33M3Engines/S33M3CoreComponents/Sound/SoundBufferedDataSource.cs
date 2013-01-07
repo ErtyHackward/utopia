@@ -43,7 +43,7 @@ namespace S33M3CoreComponents.Sound
             {
                 case ".wav":
                     //Load the sound and bufferize it
-                    soundstream = new SoundStream(File.OpenRead(FileName.Name));
+                    soundstream = new SoundStream(File.OpenRead(FileName.FullName));
                     WaveFormat = soundstream.Format;
                     AudioBuffer = new AudioBuffer()
                     {
