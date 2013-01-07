@@ -17,7 +17,7 @@ namespace Sandbox.Client.Components
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
-            SetGuiButtonSound(@"Sounds\Interface\button_press.wav");
+            SetGuiButtonSound(@"Sounds\Interface\button_press.adpcm.wav");
             base.LoadContent(context);
 
             //Add specific Channel Mapping matrix, it will overide default mapping

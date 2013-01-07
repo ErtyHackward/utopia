@@ -285,20 +285,29 @@
     <Content Include="Images\version.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Ambiance\forest.adpcm.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Sounds\Ambiance\forest.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Ambiance\bonfire.adpcm.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Sounds\Ambiance\lava.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Ambiance\lava.adpcm.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Sounds\Ambiance\night_forest.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Ambiance\night_forest.adpcm.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Sounds\Ambiance\Ocean.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\Ambiance\plain.adpcm.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Sounds\Ambiance\plain.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\Blocks\put.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\Blocks\take.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Sounds\Entities\bonfire.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Models\Apple.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -384,34 +393,28 @@
     <None Include="Models\Watermelon.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Sounds\Blocks\take.wav">
+    <Content Include="Sounds\Events\door_closed.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Blocks\put.wav">
+    </Content>
+    <Content Include="Sounds\Events\door_open.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\hurt.wav">
+    </Content>
+    <Content Include="Sounds\Events\gulp.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\waterdrop.wav">
+    </Content>
+    <Content Include="Sounds\Events\hurt.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\door_closed.wav">
+    </Content>
+    <Content Include="Sounds\Events\put_apple.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\door_open.wav">
+    </Content>
+    <Content Include="Sounds\Events\put_bottle.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\gulp.wav">
+    </Content>
+    <Content Include="Sounds\Events\put_heavy.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\put_apple.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Sounds\Events\put_bottle.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="Sounds\Events\take.wav">
+    </Content>
+    <Content Include="Sounds\Events\take.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Sounds\Footsteps\footsteps_dirt01.adpcm.wav">
@@ -468,9 +471,6 @@
     <Content Include="Sounds\Footsteps\footsteps_water01.adpcm.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Sounds\Interface\button_press.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Models\Cactus.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -532,9 +532,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="Sounds\Ambiance\Ocean.adpcm.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Content Include="Sounds\Interface\button_press.adpcm.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Sounds\Moods\01_peace_day.wma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -551,9 +551,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Sounds\MusicLicenses.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Sounds\Events\put_heavy.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\Default\Particules\000_fog.png">
