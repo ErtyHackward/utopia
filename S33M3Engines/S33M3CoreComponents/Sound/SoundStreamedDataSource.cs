@@ -17,6 +17,7 @@ namespace S33M3CoreComponents.Sound
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private Variables
+        private readonly object _syncRoot = new object();
         private static int bufferRing = 8;
         private DataPointer[] _memBuffers;
         private AudioBuffer[] _audioBuffersRing;
@@ -86,11 +87,15 @@ namespace S33M3CoreComponents.Sound
 
         public void StartVoiceDataFetching(ISoundVoice voice)
         {
-            if (_linkedVoice != null)
+            if (_fetchingThread != null &&
+                _fetchingThread.Status == TaskStatus.Running
+                )
             {
                 logger.Warn("Cannot stream the same resource as streaming source for 2 differents voices !! Previously playing sound will be stopped");
-                _linkedVoice.Stop();
-                _stopThread = true;
+                lock (_syncRoot)
+                {
+                    if(_linkedVoice != null) _linkedVoice.Stop();
+                }
                 _sleep.Set();
                 _fetchingThread.Wait();
             }
@@ -106,7 +111,6 @@ namespace S33M3CoreComponents.Sound
         private void asyncVoiceFetching()
         {
             int nextBuffer = 0;
-            _stopThread = false;
             while (!_stopThread && _linkedVoice != null && _linkedVoice.IsPlaying)
             {
                 // Get the decoded samples from the specified starting position.
@@ -165,8 +169,11 @@ namespace S33M3CoreComponents.Sound
                 }
             }
 
-            _linkedVoice.IsPlaying = false;
-            _linkedVoice = null;
+            lock (_syncRoot)
+            {
+                _linkedVoice.Stop();
+                _linkedVoice = null;
+            }
         }
 
         #endregion
