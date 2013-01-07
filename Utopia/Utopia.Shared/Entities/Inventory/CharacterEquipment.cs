@@ -106,13 +106,13 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Return equiped tool (ITool) to the Right Hand
         /// </summary>
-        public ITool RightTool
+        public IItem RightTool
         {
             get
             {
                 var tool = PeekSlot(new Vector2I(0, (int)EquipmentSlotType.Hand));
                 if (tool != null)
-                    return (ITool)tool.Item;
+                    return tool.Item;
                 return null;
             }
         }
@@ -121,7 +121,7 @@ namespace Utopia.Shared.Entities.Inventory
         {
             switch ((EquipmentSlotType)position.Y)
             {
-                case EquipmentSlotType.Hand: return item is ITool;
+                case EquipmentSlotType.Hand: return item is IItem;
                 case EquipmentSlotType.Head: return item is IHeadArmor;
                 case EquipmentSlotType.Torso: return item is ITorsoArmor;
                 case EquipmentSlotType.Legs: return item is ILegsArmor;

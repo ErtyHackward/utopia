@@ -49,7 +49,7 @@ namespace Utopia.Entities.Renderer
         private readonly D3DEngine _d3dEngine;
         private CameraManager<ICameraFocused> _camManager;
         private ToolRenderingType _renderingType;
-        private ITool _tool;
+        private IItem _tool;
         //Use to draw textured cubes
         private HLSLCubeTool _cubeToolEffect;
         private IMeshFactory _milkShapeMeshfactory;
@@ -83,7 +83,7 @@ namespace Utopia.Entities.Renderer
         #endregion
 
         #region Public Properties
-        public ITool Tool
+        public IItem Tool
         {
             get { return _tool; }
             set { _tool = value; ToolChange(); }
@@ -250,7 +250,7 @@ namespace Utopia.Entities.Renderer
         private void EquipmentItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
         {
             if (e.EquippedItem != null) 
-                Tool = e.EquippedItem.Item as ITool;
+                Tool = e.EquippedItem.Item;
             else 
                 Tool = null;
         }

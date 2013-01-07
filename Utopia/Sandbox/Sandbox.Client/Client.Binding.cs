@@ -216,6 +216,7 @@ namespace Sandbox.Client
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
             _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode
+            _iocContainer.Bind<GhostedEntityRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draws a blue semi-transparent model
             //=============================================================
             _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ToolBarUi>().To<SandboxToolBar>().InScope(x => GameScope.CurrentGameScope);

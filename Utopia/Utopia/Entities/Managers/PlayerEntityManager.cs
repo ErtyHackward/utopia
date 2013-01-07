@@ -299,7 +299,7 @@ namespace Utopia.Entities.Managers
 
                 if (item != null)
                 {
-                    PutMode = !item.CanUse;
+                    PutMode = !(item is ITool);
                 }
                 else PutMode = false;
             }

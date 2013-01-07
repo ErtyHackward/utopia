@@ -4,7 +4,6 @@ using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 using System.Linq;
 using Utopia.Shared.Entities.Concrete.Interface;
@@ -43,75 +42,16 @@ namespace Utopia.Shared.Entities
         [Description("The entity cannot be added if the block where it will be placed contain another entity")]
         [ProtoMember(5)]
         public bool BlockEmptyRequired { get; set; }
-        
-        // tool logic
-        public override IToolImpact Use(IDynamicEntity owner)
+
+        public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
         {
-            var impact = new ToolImpact { Success = false };
+            base.SetPosition(pos, item, owner);
 
-            if (owner.EntityState.IsBlockPicked)
-            {
-                ILandscapeCursor cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
-                    
-                var moveVector = owner.EntityState.NewBlockPosition - owner.EntityState.PickedBlockPosition;
+            var cubeEntity = (BlockLinkedItem)item;
 
-                // check if entity can be put there
-                if (moveVector.Y == 1 && !MountPoint.HasFlag(BlockFace.Top))
-                    return impact;
+            cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
+            cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
 
-                if (moveVector.Y == -1 && !MountPoint.HasFlag(BlockFace.Bottom))
-                    return impact;
-
-                if ((Math.Abs(moveVector.X) == 1 || Math.Abs(moveVector.Z) == 1) && !MountPoint.HasFlag(BlockFace.Sides))
-                    return impact;
-
-                // check if the place is free
-                if (MountPoint.HasFlag(BlockFace.Top) && moveVector.Y == 1 && cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
-                    return impact;
-
-                if (MountPoint.HasFlag(BlockFace.Sides) && (moveVector.Y == 0) && cursor.PeekProfile(moveVector).IsSolidToEntity)
-                    return impact;
-
-                if (MountPoint.HasFlag(BlockFace.Bottom) && moveVector.Y == -1 && cursor.PeekProfile(Vector3I.Down).IsSolidToEntity) 
-                    return impact;
-
-                // create a new version of the item, and put it into the world
-                var cubeEntity = (BlockLinkedItem)EntityFactory.CreateFromBluePrint(BluePrintId);
-                cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
-                cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
-
-                if (BlockEmptyRequired)
-                {
-                    //Get the chunk where the entity will be added and check if another entity is not present at the destination root block !
-                    var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
-                    foreach (BlockLinkedItem entity in workingchunk.Entities.Entities.Values.Where(x => x is BlockLinkedItem && ((IBlockLinkedEntity)x).LinkedCube == owner.EntityState.PickedBlockPosition))
-                    {
-                        if (entity.BlockLocationRoot == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)
-                        {
-                            //CubePlaced Entity already present at this location
-                            return impact;
-                        }
-                    }
-                }
-
-                //cursor.GlobalPosition = owner.EntityState.PickedBlockPosition;
-
-                //If was not possible to set Item Place do nothing
-                //if (!SetNewItemPlace(cubeEntity, owner, moveVector)) return impact;
-
-                var pos = GetPosition(owner);
-
-                if (!pos.Valid)
-                    return impact;
-
-                cubeEntity.Position = pos.Position;
-                cubeEntity.Rotation = pos.Rotation;
-
-                cursor.AddEntity(cubeEntity, owner.DynamicId);
-                    
-                impact.Success = true;
-            }
-            return impact;
         }
 
         public override EntityPosition GetPosition(IDynamicEntity owner)
@@ -120,34 +60,58 @@ namespace Utopia.Shared.Entities
 
             if (!owner.EntityState.IsBlockPicked)
                 return pos;
-            
+
+            if (!MountPoint.HasFlag(BlockFace.Top) && owner.EntityState.PickPointNormal.Y == 1)
+            {
+                return pos;
+            }
+
+            if (!MountPoint.HasFlag(BlockFace.Bottom) && owner.EntityState.PickPointNormal.Y == -1)
+            {
+                return pos;
+            }
+
+            if (!MountPoint.HasFlag(BlockFace.Sides) && (owner.EntityState.PickPointNormal.X != 0 || owner.EntityState.PickPointNormal.Z != 0))
+            {
+                return pos;
+            }
+
+            if (BlockEmptyRequired)
+            {
+                //Get the chunk where the entity will be added and check if another entity is not present at the destination root block !
+                var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                foreach (BlockLinkedItem entity in workingchunk.Entities.Entities.Values.Where(x => x is BlockLinkedItem && ((IBlockLinkedEntity)x).LinkedCube == owner.EntityState.PickedBlockPosition))
+                {
+                    if (entity.BlockLocationRoot == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)
+                    {
+                        //CubePlaced Entity already present at this location
+                        return pos;
+                    }
+                }
+            }
+
             Vector3 faceOffset = owner.EntityState.PickedBlockFaceOffset;
 
             // locate the entity
             if (owner.EntityState.PickPointNormal.Y == 1) // = Put on TOP 
             {
-                pos.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
-                                                   owner.EntityState.PickedBlockPosition.Y + 1f,
-                                                   owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
+                pos.Position = new Vector3D(owner.EntityState.PickPoint);
 
             }
             else if (owner.EntityState.PickPointNormal.Y == -1) //PUT on cube Bottom = (Ceiling)
             {
-                pos.Position = new Vector3D(owner.EntityState.PickedBlockPosition.X + faceOffset.X,
-                                                   owner.EntityState.PickedBlockPosition.Y - 1f,
-                                                   owner.EntityState.PickedBlockPosition.Z + faceOffset.Z);
+                pos.Position = new Vector3D(owner.EntityState.PickPoint);
+                pos.Position.Y -= DefaultSize.Y;
             }
             else //Put on a side
             {
-                Vector3I newBlockPos;
                 if (BlockFaceCentered == false)
                 {
-                    newBlockPos = owner.EntityState.PickedBlockPosition;
-                    pos.Position = new Vector3D(newBlockPos + faceOffset);
+                    pos.Position = new Vector3D(owner.EntityState.PickPoint);
                 }
                 else
                 {
-                    newBlockPos = owner.EntityState.NewBlockPosition;
+                    Vector3I newBlockPos = owner.EntityState.NewBlockPosition;
                     pos.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)owner.EntityState.PickPointNormal.X / 2, 0.5f, 0.5f - (float)owner.EntityState.PickPointNormal.Z / 2));
                 }
 
@@ -159,9 +123,9 @@ namespace Utopia.Shared.Entities
                 var slope = 0d;
 
                 if (owner.EntityState.PickPointNormal.X == -1) slope = -Math.PI / 2;
-                if (owner.EntityState.PickPointNormal.X == 1) slope = Math.PI / 2; // ok
-                if (owner.EntityState.PickPointNormal.Z == -1) slope = Math.PI; // ok
-                if (owner.EntityState.PickPointNormal.Z == 1) slope = 0;
+                if (owner.EntityState.PickPointNormal.X ==  1) slope =  Math.PI / 2; // ok
+                if (owner.EntityState.PickPointNormal.Z == -1) slope =  Math.PI; // ok
+                if (owner.EntityState.PickPointNormal.Z ==  1) slope =  0;
 
                 pos.Rotation = Quaternion.RotationAxis(new Vector3(0, 1, 0), (float)slope);
             }

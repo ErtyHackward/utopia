@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Globalization;
@@ -18,7 +17,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     [ProtoContract]
-    public abstract class Item : StaticEntity, ITool, IWorldIntercatingEntity
+    public abstract class Item : StaticEntity, IItem, IWorldIntercatingEntity
     {
         private VoxelModelInstance _modelInstance;
 
@@ -82,16 +81,6 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public EquipmentSlotType AllowedSlots { get; set; }
 
-        /// <summary>
-        /// Indicates if the tool have special use logic (like resource collectors, guns etc)
-        /// </summary>
-        public virtual bool CanUse {
-            get { 
-                // generally items can only be put
-                return false; 
-            }
-        }
-
         #endregion
 
         /// <summary>
@@ -128,7 +117,8 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="item"></param>
-        public virtual void SetPosition(EntityPosition pos, IItem item)
+        /// <param name="owner"></param>
+        public virtual void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
         {
             item.Position = pos.Position;
             item.Rotation = pos.Rotation;
@@ -162,7 +152,7 @@ namespace Utopia.Shared.Entities.Inventory
 
             var entity = (Item)Clone();
 
-            SetPosition(pos, entity);
+            SetPosition(pos, entity, owner);
 
             // put entity into the world
             cursor.AddEntity(entity, owner.DynamicId);
@@ -186,22 +176,6 @@ namespace Utopia.Shared.Entities.Inventory
             }
 
             return impact;
-        }
-
-        /// <summary>
-        /// Handles item drop to world
-        /// Puts an item in the world and removes one from the inventory
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <returns></returns>
-        public virtual IToolImpact Use(IDynamicEntity owner)
-        {
-            return new ToolImpact { Message  = "This operation is not supported! Sorry!" };
-        }
-
-        public virtual void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>

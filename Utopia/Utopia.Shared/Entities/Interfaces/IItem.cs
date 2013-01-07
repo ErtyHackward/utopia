@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using ProtoBuf;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Tools;
 
@@ -26,11 +25,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets an item description
         /// </summary>
         string Description { get; }
-
-        /// <summary>
-        /// Indicates if the tool have special use logic (like resource collectors, guns etc)
-        /// </summary>
-        bool CanUse { get; }
 
         [Category("Sound")]
         [Description("Sound of item put")]

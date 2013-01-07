@@ -21,50 +21,15 @@ namespace Utopia.Shared.Entities
         [Browsable(false)]
         [ProtoMember(1)]
         public Vector3I BlockLocationRoot { get; set; }
-
-
+        
         #region Public Methods
-        public override IToolImpact Use(IDynamicEntity owner)
+
+        public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
         {
-            var impact = new ToolImpact { Success = false };
+            base.SetPosition(pos, item, owner);
 
-            if (owner.EntityState.IsBlockPicked)
-            {
-                var cursor = LandscapeManager.GetCursor(owner.EntityState.NewBlockPosition);
-                    
-                // check if the place is free for te entity "Root"
-                if (cursor.PeekProfile().IsSolidToEntity) return impact;
-
-                // create a new version of the item, and put it into the world
-                var cubeEntity = (BlockItem)EntityFactory.CreateFromBluePrint(BluePrintId);
-                cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
-                // Get the chunk where the entity will be added and check if another entity is present inside this block
-                var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
-                foreach (IBlockLocationRoot entity in workingchunk.Entities.Entities.Values)
-                {
-                    if (entity.BlockLocationRoot == cubeEntity.BlockLocationRoot)
-                    {
-                        // IBlockLocationRoot Entity already present at this location
-                        return impact;
-                    }
-                }
-
-                // Do the Chunk on chunk Next to this one ==> TO DO
-
-                // If was not possible to set Item Place do nothing
-                var position = GetPosition(owner);
-
-                if (!position.Valid)
-                    return impact;
-
-                SetPosition(position, cubeEntity);
-
-                cursor.AddEntity(cubeEntity, owner.DynamicId);
-
-                impact.Success = true;
-            }
-
-            return impact;
+            var cubeEntity = (BlockItem)item;
+            cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
         }
 
         public override EntityPosition GetPosition(IDynamicEntity owner)
@@ -73,6 +38,17 @@ namespace Utopia.Shared.Entities
 
             if (!owner.EntityState.IsBlockPicked)
                 return pos;
+
+            // Get the chunk where the entity will be added and check if another entity is present inside this block
+            var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
+            foreach (IBlockLocationRoot entity in workingchunk.Entities.Entities.Values)
+            {
+                if (entity.BlockLocationRoot == BlockLocationRoot)
+                {
+                    // IBlockLocationRoot Entity already present at this location
+                    return pos;
+                }
+            }
 
             pos.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
                                         owner.EntityState.NewBlockPosition.Y,
