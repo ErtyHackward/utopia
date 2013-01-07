@@ -14,7 +14,12 @@ namespace Utopia.Shared.Entities.Concrete
     {
         [ProtoMember(1)]
         public byte CubeId { get; private set; }
-    
+
+        public override bool CanUse
+        {
+            get { return true; }
+        }
+
         public override ushort ClassId
         {
             get { return EntityClassId.CubeResource; }
@@ -28,6 +33,12 @@ namespace Utopia.Shared.Entities.Concrete
         {
             CubeId = cubeId;
             Name = cubeName;
+        }
+
+        public override IToolImpact Put(IDynamicEntity owner)
+        {
+            // don't allow to put out the cube resource
+            return new ToolImpact();
         }
 
         public override IToolImpact Use(IDynamicEntity owner)
