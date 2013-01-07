@@ -31,6 +31,7 @@ using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Entities.Events;
 using Utopia.Entities;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -485,14 +486,24 @@ namespace Utopia.Worlds.Chunks
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceScaling * instanceTranslation;
                 visualVoxelEntity.VoxelEntity.ModelInstance.Rotation = instanceRotation;
 
+                TerraCubeResult result;
                 if (visualVoxelEntity.Entity is BlockLinkedItem)
                 {
-                    visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(((BlockLinkedItem)visualVoxelEntity.Entity).BlockLocationRoot).EmissiveColor;
+                    result = _singleArrayContainer.GetCube(((BlockLinkedItem)visualVoxelEntity.Entity).BlockLocationRoot);
                 }
                 else
                 {
                     //Find the Cube where the entity is placed, and assign its color to the entity
-                    visualVoxelEntity.BlockLight = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position).EmissiveColor;
+                    result = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position);
+                }
+
+                if (result.isValid)
+                {
+                    visualVoxelEntity.BlockLight = result.Cube.EmissiveColor;
+                }
+                else
+                {
+                    visualVoxelEntity.BlockLight = new ByteColor(255, 255, 255, 255);
                 }
 
 
