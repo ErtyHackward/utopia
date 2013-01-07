@@ -13,6 +13,7 @@ namespace Utopia.Shared.Settings
         public string SoundFilePath { get; set; }
 
         [Description("Sound alias name"), Category("General")]
+        [Browsable(false)]
         [ProtoMember(2)]
         public string SoundAlias { get; set; }
 

@@ -423,7 +423,7 @@ namespace Utopia.Worlds.Chunks
             RemoveVoxelEntity(e);
             RemoveParticuleEmitterEntity(e);
 
-            var takeSound = "Sounds\\Events\\take.wav";
+            var takeSound = "Sounds\\Events\\take.adpcm.wav";
             SoundEngine.StartPlay3D(takeSound, takeSound, e.Entity.Position.AsVector3());
         }
 
