@@ -83,7 +83,7 @@ namespace Utopia.Entities.Managers
 
                 //Check if a block is picked up !
                 var result = _cubesHolder.GetCube(pickingWorldPosition);
-                if (result.isValid) break;
+                if (result.isValid == false) break;
 
                 var yOffset = _cubesHolder.Config.CubeProfiles[result.Cube.Id].YBlockOffset;
 
