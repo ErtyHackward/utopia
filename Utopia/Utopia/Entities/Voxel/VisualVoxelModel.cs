@@ -163,8 +163,6 @@ namespace Utopia.Entities.Voxel
             {
                 var voxelModelPartState = state.PartsStates[i];
 
-                if (i >= _visualFrames.Length || _visualFrames[i] == null) continue;
-
                 if (voxelModelPartState.ActiveFrame == byte.MaxValue)
                     continue;
 

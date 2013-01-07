@@ -141,7 +141,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        public IToolImpact Put(IDynamicEntity owner)
+        public virtual IToolImpact Put(IDynamicEntity owner)
         {
             // by default all items can only be dropped to some position
             var impact = new ToolImpact { Success = false };
