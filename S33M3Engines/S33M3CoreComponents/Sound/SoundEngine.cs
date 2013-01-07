@@ -99,6 +99,7 @@ namespace S33M3CoreComponents.Sound
             _stopThreading = true;
             _syncro.Set();
             while (_thread.IsAlive) { }
+            foreach (var dataSources in _soundDataSources.Values) dataSources.Dispose();
             _syncro.Dispose();
         }
 
@@ -166,9 +167,11 @@ namespace S33M3CoreComponents.Sound
             _3DSoundEntitiesPositionsChanged = false;
         }
 
-        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false, float soundPower = 16)
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool? streamedSound = null, float soundPower = 16)
         {
             ISoundDataSource soundDataSource;
+
+            if (string.IsNullOrEmpty(soundAlias)) soundAlias = FilePath;
 
             if (_soundDataSources.TryGetValue(soundAlias, out soundDataSource) == false)
             {
@@ -188,72 +191,29 @@ namespace S33M3CoreComponents.Sound
                     return null;
                 }
 
-                //Creating the source, was not existing
-                soundDataSource = new SoundBufferedDataSource()
+                //By default wma files will be streamed, wav file will be buffered.
+                bool isStream = false;
+                if (streamedSound == null)
                 {
-                    SoundAlias = soundAlias,
-                    SoundVolume = 1.0f,
-                    SoundPower = soundPower
-                };
-
-                if (!streamedSound)
-                {
-                    SoundStream soundstream;
-                    switch (ext)
-                    {
-                        case ".wav":
-                            //Load the sound and bufferize it
-                            soundstream = new SoundStream(File.OpenRead(FilePath));
-                            soundDataSource.WaveFormat = soundstream.Format;
-
-                            soundDataSource.AudioBuffer = new AudioBuffer()
-                            {
-                                Stream = soundstream.ToDataStream(),
-                                AudioBytes = (int)soundstream.Length,
-                                Flags = BufferFlags.EndOfStream
-                            };
-
-                            soundstream.Close();
-                            soundstream.Dispose();
-                            break;
-                        case ".wma": // NOT good idea this can be HUGE buffer, better streaming a WMA file !
-                            //New data stream
-                            using (FileStream fileStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
-                            {
-                                var audioDecoder = new AudioDecoder(fileStream);
-                                var outputWavStream = new MemoryStream();
-
-                                var wavWriter = new WavWriter(outputWavStream);
-
-                                // Write the WAV file
-                                wavWriter.Begin(audioDecoder.WaveFormat);
-                                // Decode the samples from the input file and output PCM raw data to the WAV stream.
-                                wavWriter.AppendData(audioDecoder.GetSamples());
-                                // Close the wav writer.
-                                wavWriter.End();
-
-                                outputWavStream.Position = 0;
-                                soundstream = new SoundStream(outputWavStream);
-
-                                soundDataSource.WaveFormat = soundstream.Format;
-                                soundDataSource.AudioBuffer = new AudioBuffer()
-                                {
-                                    Stream = soundstream.ToDataStream(),
-                                    AudioBytes = (int)soundstream.Length,
-                                    Flags = BufferFlags.EndOfStream
-                                };
-
-                                soundstream.Close();
-                                soundstream.Dispose();
-                                outputWavStream.Dispose();
-                                audioDecoder.Dispose();                                
-                            }
-
-                            break;
-                        default:
-                            break;
-                    }
+                    if (ext == ".wav" && streamedSound == null) isStream = false;
+                    else if (ext == ".wma" && streamedSound == null) isStream = true;
                 }
+                else
+                {
+                    isStream = (bool)streamedSound;
+                }
+
+                if (!isStream)
+                {
+                    soundDataSource = new SoundBufferedDataSource(fi);
+                }
+                else
+                {
+                    soundDataSource = new SoundStreamedDataSource(fi);
+                }
+
+                soundDataSource.SoundAlias = soundAlias;
+                soundDataSource.SoundPower = soundPower;
 
                 //Add DataSound into collection
                 _soundDataSources.Add(soundAlias, soundDataSource);
@@ -284,6 +244,7 @@ namespace S33M3CoreComponents.Sound
             if (soundSource == null) throw new ArgumentNullException();
 
             ISoundVoice soundVoice = null;
+            //Get an Idle voice ready to play a buffer
             if (GetVoice(soundSource, out soundVoice))
             {
                 soundVoice.is3DSound = false;
@@ -443,8 +404,6 @@ namespace S33M3CoreComponents.Sound
             _xaudio2.StartEngine();
         }
 
-
-
         private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
             //Get the soundqueue following SoundFormatCategory
@@ -454,6 +413,7 @@ namespace S33M3CoreComponents.Sound
                 _soundVoices.Add(dataSource2Bplayed.GetSoundFormatCategory(), voiceQueue = new ISoundVoice[_maxVoicePoolPerFileType]);
             }
 
+            //Check for a voice IDLE in the voice pool for this type of sound file.
             for (int i = 0; i < _maxVoicePoolPerFileType; i++)
             {
                 soundVoice = voiceQueue[i];

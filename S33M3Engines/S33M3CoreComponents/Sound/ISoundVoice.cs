@@ -10,12 +10,13 @@ namespace S33M3CoreComponents.Sound
 {
     public interface ISoundVoice : IDisposable
     {
-        bool IsPlaying { get; }
+        bool IsPlaying { get; set; }
         bool IsLooping { get; set; }
         bool IsFadingMode { get; set; }
         ISoundDataSource PlayingDataSource { get; set; }
         Emitter Emitter { get; set; }
         Vector3 Position { get; set; }
+        SourceVoice Voice { get; set; }
         bool is3DSound { get; set; }
         VoiceState State { get; }
         void RefreshVoices();

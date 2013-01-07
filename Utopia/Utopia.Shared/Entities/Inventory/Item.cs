@@ -48,10 +48,10 @@ namespace Utopia.Shared.Entities.Inventory
         public string PutSound { get; set; }
 
         [Category("Sound")]
-        [Description("Ambient sound of an item")]
+        [Description("EmittedSound sound of an item")]
         [TypeConverter(typeof(SoundSelector))]
         [ProtoMember(5)]
-        public string AmbientSound { get; set; }
+        public string EmittedSound { get; set; }
 
         /// <summary>
         /// Gets or sets voxel model instance
@@ -181,11 +181,13 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
+        [Browsable(false)]
         public EntityFactory EntityFactory { get; set; }
 
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
+        [Browsable(false)]
         public ILandscapeManager2D LandscapeManager { get; set; }
 
         /// <summary>

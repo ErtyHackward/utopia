@@ -106,7 +106,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="streamedSound">Will the sound be played in stream mode or not (Stream = less heavy on memory needed)</param>
         /// <param name="soundPower">The maximum distance at wich the sound can be propagated : its "power", value in World unit</param>
         /// <returns>The soundDataSource object</returns>
-        ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool streamedSound = false, float soundPower = 16);
+        ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool? streamedSound = null, float soundPower = 16);
         /// <summary>
         /// Get a sound source via its alias
         /// </summary>

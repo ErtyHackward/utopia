@@ -31,15 +31,23 @@ namespace S33M3CoreComponents.Sound
         #endregion
 
         #region Public Properties
+
+        public SourceVoice Voice
+        {
+            get { return _voice; }
+            set { _voice = value; }
+        }
+
         public bool IsPlaying
         {
             get
             {
-                if (_isPlaying && _voice.State.BuffersQueued == 0) _isPlaying = false;
+                if (_isPlaying && _voice.State.BuffersQueued == 0 && _playingDataSource.PlayMode == DataSourcePlayMode.Buffered) _isPlaying = false;
                 return _isPlaying;
             }
-            private set { _isPlaying = value; }
+            set { _isPlaying = value; }
         }
+
         public Emitter Emitter { get; set; }
         public bool is3DSound { get; set; }
         public ISoundDataSource PlayingDataSource
@@ -99,7 +107,14 @@ namespace S33M3CoreComponents.Sound
         //Enqueue the currently linked datasource buffer for playing
         public void PushDataSourceForPlaying()
         {
-            _voice.SubmitSourceBuffer(_playingDataSource.AudioBuffer, null);
+            if (_playingDataSource is SoundStreamedDataSource)
+            {
+                ((SoundStreamedDataSource)_playingDataSource).StartVoiceDataFetching(this);
+            }
+            else
+            {
+                _voice.SubmitSourceBuffer(_playingDataSource.AudioBuffer, null);
+            }
 
             if (is3DSound)
             {

@@ -54,17 +54,16 @@ namespace Sandbox.Client.Components
             }
 
 
-            PreLoadSound("Put", @"Sounds\Blocks\put.wav", 0.3f, 12.0f);
-            PreLoadSound("Take", @"Sounds\Blocks\take.wav", 0.3f, 12.0f);
-            PreLoadSound("Hurt", @"Sounds\Events\hurt.wav", 0.3f, 16.0f);
-            PreLoadSound("WaterDrop", @"Sounds\Events\waterdrop.wav", 1.0f, 16.0f);
+            PreLoadSound("Put", @"Sounds\Blocks\put.adpcm.wav", 0.3f, 12.0f);
+            PreLoadSound("Take", @"Sounds\Blocks\take.adpcm.wav", 0.3f, 12.0f);
+            PreLoadSound("Hurt", @"Sounds\Events\hurt.adpcm.wav", 0.3f, 16.0f);
 
             //Load and prefetch Mood sounds
-            foreach (var moodSoundFile in Directory.GetFiles(@"Sounds\Moods", "*_*.adpcm.wav"))
+            foreach (var moodSoundFile in Directory.GetFiles(@"Sounds\Moods", "*_*.wma"))
             {
                 TimeOfDaySound time;
                 MoodType type;
-                string[] fileMetaData = moodSoundFile.Replace(".adpcm.wav", "").Split('_');
+                string[] fileMetaData = moodSoundFile.Replace(".wma", "").Split('_');
                 if (fileMetaData.Length < 3) time = TimeOfDaySound.FullDay;
                 else
                 {
