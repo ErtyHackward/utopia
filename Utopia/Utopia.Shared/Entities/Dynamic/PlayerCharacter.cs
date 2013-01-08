@@ -15,8 +15,12 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public static float DefaultMoveSpeed = 5f;
         
+        /// <summary>
+        /// List of player toolbar 
+        /// Each items represents the BlueprintId of an item
+        /// </summary>
         [ProtoMember(1, OverwriteList = true)]
-        public List<uint> Toolbar { get; set; }
+        public List<ushort> Toolbar { get; set; }
         
         public override ushort ClassId
         {
@@ -26,7 +30,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public PlayerCharacter()
         {
             //Define the default PlayerCharacter ToolBar
-            Toolbar = new List<uint>();
+            Toolbar = new List<ushort>();
             for (int i = 0; i < 10; i++)
             {
                 Toolbar.Add(0);
@@ -41,7 +45,7 @@ namespace Utopia.Shared.Entities.Dynamic
             ModelName = "Girl";
             Name = "Player";
         }
-
+        
         public void ToolUse(bool handUse = false)
         {
             var args = EntityUseEventArgs.FromState(EntityState, this);
@@ -76,7 +80,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public IItem LookupItem(uint itemId)
         {
-            if (itemId==0) return null;
+            if (itemId == 0) return null;
             foreach (var slot in Inventory)
             {
                 if (slot.Item.StaticId == itemId) return slot.Item;

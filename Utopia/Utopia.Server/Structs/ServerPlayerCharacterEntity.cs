@@ -451,7 +451,9 @@ namespace Utopia.Server.Structs
                 // set toolbar slot
                 var playerCharacter = (PlayerCharacter)DynamicEntity;
 
-                playerCharacter.Toolbar[itm.SourceContainerSlot.Y] = itm.ItemEntityId;
+                var item = playerCharacter.FindItemById(itm.ItemEntityId);
+
+                playerCharacter.Toolbar[itm.SourceContainerSlot.Y] = item.BluePrintId;
                 return;
             }
 
