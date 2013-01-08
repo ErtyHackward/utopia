@@ -93,6 +93,27 @@ namespace S33M3CoreComponents.States
         {
         }
 
+        public GameStatesManager(D3DEngine engine, Game game, ISwitchComponent switchComponent, int allocatedThreadPool = 3):
+            base("GameStatesManager")
+        {
+            if (game == null)
+            {
+                logger.Error("game value is nullin constructor");
+                throw new ArgumentNullException("Game is null");
+            }
+
+            IsSystemComponent = true;
+            _engine = engine;
+            _game = game;
+            SwitchComponent = switchComponent;
+            _loadContext = _engine.CreateDeviceContext();
+#if DEBUG
+            _loadContext.DebugName = "GameState Deffered Context";
+#endif
+            //Activate this component
+            this.EnableComponent();
+        }
+
         //Will search trhough all registered States, and remove the Disposed components inside them
         //To give the possibility to release not used resources
         public void GameStatesCleanUp()
@@ -107,25 +128,8 @@ namespace S33M3CoreComponents.States
             }
         }
 
-        public GameStatesManager(D3DEngine engine, Game game, ISwitchComponent switchComponent, int allocatedThreadPool = 3)
-        {
-            if (game == null)
-            {
-                logger.Error("game value is nullin constructor");
-                throw new ArgumentNullException("Game is null");
-            }
 
-            IsSystemComponent = true;
-            _engine = engine;
-            _game = game;
-            SwitchComponent = switchComponent;
-            _loadContext = new DeviceContext(_engine.Device);
-#if DEBUG
-            _loadContext.DebugName = "GameState Deffered Context";
-#endif
-            //Activate this component
-            this.EnableComponent();
-        }
+
         #region Private methods
 
         //End of activation process where the new state is pushed for rendering

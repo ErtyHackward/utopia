@@ -106,7 +106,7 @@ namespace Sandbox.Client.Components.GUI.Settings
         /// <param name="context"></param>
         protected void LoadContentComponent(DeviceContext context)
         {
-            _transparentBackGroundTexture = ToDispose(new SpriteTexture(1,1, TextureCreator.GenerateColoredTexture(_engine.Device, context, new ByteColor(100,100,100, 200), true), new Vector2(0,0)));
+            _transparentBackGroundTexture = ToDispose(new SpriteTexture(1,1, ToDispose(TextureCreator.GenerateColoredTexture(_engine.Device, context, new ByteColor(100,100,100, 200), true)), new Vector2(0,0)));
             if (_backPanel != null)
             {
                 _backPanel.Dispose();

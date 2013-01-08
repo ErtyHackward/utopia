@@ -70,7 +70,6 @@ namespace S33M3CoreComponents.Textures
             texture.Dispose();
 
             return textureView;
-
         }
     }
 }

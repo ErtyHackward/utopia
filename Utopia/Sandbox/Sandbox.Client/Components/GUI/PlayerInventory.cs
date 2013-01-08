@@ -32,11 +32,11 @@ namespace Sandbox.Client.Components.GUI
             base(character, iconFactory, new Point(200,120), new Point(270,50), inputManager)
         {
             _commonResources = commonResources;
-            _stInventoryWindow              = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window.png");
-            _stInventoryCloseButton         = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close.png");
-            _stInventoryCloseButtonHover    = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_hover.png");
-            _stInventoryCloseButtonDown     = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_down.png");
-            _stInventoryCloseButtonLabel    = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_label.png");
+            _stInventoryWindow              = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window.png"));
+            _stInventoryCloseButton         = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close.png"));
+            _stInventoryCloseButtonHover    = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_hover.png"));
+            _stInventoryCloseButtonDown     = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_down.png"));
+            _stInventoryCloseButtonLabel    = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_label.png"));
 
             CustomWindowImage = _stInventoryWindow;
             Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(674, 388);

@@ -531,7 +531,14 @@ namespace S33M3DXEngine.Main
             if (Configuration.EnableObjectTracking)
             {
                 string info = SharpDX.Diagnostics.ObjectTracker.ReportActiveObjects();
-                logger.Info("SharpDX Object Tracking result : {0}", string.IsNullOrEmpty(info) ? "Nothing, all directX COM components have been disposed" : info);
+                if (logger.IsEnabled(NLog.LogLevel.Info))
+                {
+                    logger.Info("SharpDX Object Tracking result : {0}", string.IsNullOrEmpty(info) ? "Nothing, all directX COM components have been disposed" : info);
+                }
+                else
+                {
+                    Console.WriteLine("SharpDX Object Tracking result : {0}", string.IsNullOrEmpty(info) ? "Nothing, all directX COM components have been disposed" : info);
+                }
             }
 #endif
         } 

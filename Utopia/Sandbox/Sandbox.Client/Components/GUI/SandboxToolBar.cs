@@ -19,9 +19,9 @@ namespace Sandbox.Client.Components.GUI
         public SandboxToolBar(D3DEngine engine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, EntityFactory factory) : 
             base(player, iconFactory, inputManager, factory)
         {
-            _stBackground       = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_bg.png");
-            _stToolbarSlot      = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot.png");
-            _stToolbatSlotHover = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot_active.png");
+            _stBackground       = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_bg.png"));
+            _stToolbarSlot      = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot.png"));
+            _stToolbatSlotHover = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot_active.png"));
 
             background = _stBackground;
 

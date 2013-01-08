@@ -18,7 +18,7 @@ namespace Realms.Client.Components.GUI
             base(null, iconFactory, new Point(20,20), new Point(20,20), inputManager)
         {
             _commonResources = commonResources;
-            _stInventoryWindow = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window_container.png");
+            _stInventoryWindow = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window_container.png"));
 
             CustomWindowImage = _stInventoryWindow;
             Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
