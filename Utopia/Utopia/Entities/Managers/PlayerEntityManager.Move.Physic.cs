@@ -79,7 +79,7 @@ namespace Utopia.Entities.Managers
 
             _cubesHolder.GetNextSolidBlockToPlayer(ref VisualVoxelEntity.WorldBBox, ref GroundDirection, out _groundCube);
             //Half cube below me ??
-            _groundCubeProgile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_groundCube.Cube.Id];
+            _groundCubeProgile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id];
             BlockOffset = _groundCubeProgile.YBlockOffset;
             _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
             PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;

@@ -476,9 +476,9 @@ namespace Utopia.Worlds.Chunks
                 //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
 
                 newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                if (_collidingCube.BlockProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
-                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
+                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
                     if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
@@ -497,9 +497,9 @@ namespace Utopia.Worlds.Chunks
                 //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
 
                 newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.CubeProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                if (_collidingCube.BlockProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
                 {
-                    float offsetValue = (float)((1 - _collidingCube.CubeProfile.YBlockOffset));
+                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
                     if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
@@ -527,9 +527,9 @@ namespace Utopia.Worlds.Chunks
                     else
                     {
                         //Raise Up until the Ground, next the previous position
-                        if (_collidingCube.CubeProfile.YBlockOffset > 0)
+                        if (_collidingCube.BlockProfile.YBlockOffset > 0)
                         {
-                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.CubeProfile.YBlockOffset;
+                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
                         }
                         else
                         {

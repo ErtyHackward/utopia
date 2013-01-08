@@ -95,7 +95,7 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [Browsable(false)]
         [ProtoMember(9, OverwriteList = true)]
-        public CubeProfile[] CubeProfiles { get; set; }
+        public BlockProfile[] BlockProfiles { get; set; }
 
         /// <summary>
         /// Holds a server services list with parameters
@@ -200,13 +200,13 @@ namespace Utopia.Shared.Configuration
             //We keep the id from 0 to 100 for "System" cubes
             //101 to 254 for Custom created cubes
             byte newProfileId;
-            if (CubeProfiles.Where(x => x != null).Count(x => x.Id > 100) > 1)
+            if (BlockProfiles.Where(x => x != null).Count(x => x.Id > 100) > 1)
             {
-                newProfileId = CubeProfiles.Where(x => x.Id > 100).Select(y => y.Id).Max();
+                newProfileId = BlockProfiles.Where(x => x.Id > 100).Select(y => y.Id).Max();
             }
             else newProfileId = 100;
 
-            CubeProfile newCubeProfile = new CubeProfile()
+            BlockProfile newCubeProfile = new BlockProfile()
             {
                 Name = "NewCustomCube",
                 Id = newProfileId,
@@ -225,13 +225,13 @@ namespace Utopia.Shared.Configuration
                 IsSystemCube = false
             };
 
-            if (CubeProfiles.Length <= newProfileId)
+            if (BlockProfiles.Length <= newProfileId)
             {
-                var array = CubeProfiles;
+                var array = BlockProfiles;
                 Array.Resize(ref array, newProfileId + 1);
-                CubeProfiles = array;
+                BlockProfiles = array;
             }
-            CubeProfiles[newProfileId] = newCubeProfile;
+            BlockProfiles[newProfileId] = newCubeProfile;
 
             return newCubeProfile;
         }
@@ -244,9 +244,9 @@ namespace Utopia.Shared.Configuration
             return instance;
         }
 
-        public IEnumerable<CubeProfile> GetAllCubesProfiles()
+        public IEnumerable<BlockProfile> GetAllCubesProfiles()
         {
-            foreach (var profile in CubeProfiles.Where(x => x != null && x.Name != "System Reserved"))
+            foreach (var profile in BlockProfiles.Where(x => x != null && x.Name != "System Reserved"))
             {
                 yield return profile;
             }
@@ -264,7 +264,7 @@ namespace Utopia.Shared.Configuration
         private void InitCollections()
         {
             BluePrints = new Dictionary<ushort, Entity>();
-            CubeProfiles = new CubeProfile[255];
+            BlockProfiles = new BlockProfile[255];
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
         }
@@ -301,9 +301,9 @@ namespace Utopia.Shared.Configuration
         private void FilledUpReservedCubeInArray()
         {
             //Field up to 100 included for Reserved Cube ID
-            for (byte currentCubeId = (byte)(CubeProfiles.Where(x => x != null && x.Id < 100).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
+            for (byte currentCubeId = (byte)(BlockProfiles.Where(x => x != null && x.Id < 100).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
             {
-                CubeProfiles[currentCubeId] = new CubeProfile { Name = "System Reserved", Id = currentCubeId };
+                BlockProfiles[currentCubeId] = new BlockProfile { Name = "System Reserved", Id = currentCubeId };
             }
         }
 

@@ -420,7 +420,7 @@ namespace Utopia.Shared.Chunks
             {
                 cube = Cubes[cubeIndex];
                 // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == RealmConfiguration.CubeId.Air) cube = new TerraCube(CubeId.Error);
-                return _config.CubeProfiles[cube.Id].IsPickable;
+                return _config.BlockProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -436,7 +436,7 @@ namespace Utopia.Shared.Chunks
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return _config.CubeProfiles[cube.Id].IsPickable;
+                return _config.BlockProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -452,7 +452,7 @@ namespace Utopia.Shared.Chunks
             if (cubePosition.Y  < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex], _config);
-                return _config.CubeProfiles[cubewithPosition.Cube.Id].IsPickable;
+                return _config.BlockProfiles[cubewithPosition.Cube.Id].IsPickable;
             }
 
             cubewithPosition = new TerraCubeWithPosition();
@@ -468,7 +468,7 @@ namespace Utopia.Shared.Chunks
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
-                return _config.CubeProfiles[cube.Id].IsPickable;
+                return _config.BlockProfiles[cube.Id].IsPickable;
             }
 
             cube = new TerraCube();
@@ -484,7 +484,7 @@ namespace Utopia.Shared.Chunks
 
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
-                return _config.CubeProfiles[Cubes[cubeIndex].Id].IsPickable;
+                return _config.BlockProfiles[Cubes[cubeIndex].Id].IsPickable;
             }
 
             return false;
@@ -496,7 +496,7 @@ namespace Utopia.Shared.Chunks
             if (IndexSafe(MathHelper.Fastfloor(worldPosition.X), MathHelper.Fastfloor(worldPosition.Y), MathHelper.Fastfloor(worldPosition.Z), out index))
             {
                 TerraCube cube = Cubes[index];
-                return _config.CubeProfiles[cube.Id].IsSolidToEntity;
+                return _config.BlockProfiles[cube.Id].IsSolidToEntity;
             }
 
             return true;
@@ -522,7 +522,7 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            if (_config.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
+                            if (_config.BlockProfiles[Cubes[index].Id].IsSolidToEntity)
                             {
                                 return true;
                             }
@@ -537,7 +537,7 @@ namespace Utopia.Shared.Chunks
         public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount,out TerraCubeWithPosition collidingcube)
         {
             int index;
-            CubeProfile profile;
+            BlockProfile profile;
 
             //Get ground surface 4 blocks below the Bounding box
             int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
@@ -556,12 +556,12 @@ namespace Utopia.Shared.Chunks
                     {
                         if (IndexSafe(x, y, z, out index))
                         {
-                            profile = _config.CubeProfiles[Cubes[index].Id];
+                            profile = _config.BlockProfiles[Cubes[index].Id];
                             if (profile.IsSolidToEntity)
                             {
                                 collidingcube.Cube = Cubes[index];
                                 collidingcube.Position = new Vector3I(x, y, z);
-                                collidingcube.CubeProfile = profile;
+                                collidingcube.BlockProfile = profile;
 
                                 //Block with Offset case
                                 if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
@@ -580,7 +580,7 @@ namespace Utopia.Shared.Chunks
                                     {
                                         //check the head when On a Offseted Block
                                         IndexSafe(x, MathHelper.Fastfloor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
-                                        profile = _config.CubeProfiles[Cubes[index].Id];
+                                        profile = _config.BlockProfiles[Cubes[index].Id];
                                         if (profile.IsSolidToEntity) return true;
                                     }
                                 }
@@ -610,11 +610,11 @@ namespace Utopia.Shared.Chunks
 
             if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
 
-            while (!_config.CubeProfiles[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
+            while (!_config.BlockProfiles[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
             {
                 if (IndexSafe(X, Y, Z, out index))
                 {
-                    if (_config.CubeProfiles[Cubes[index].Id].IsSolidToEntity)
+                    if (_config.BlockProfiles[Cubes[index].Id].IsSolidToEntity)
                     {
                         cubeWithPosition.Cube = Cubes[index];
                         break;
@@ -674,7 +674,7 @@ namespace Utopia.Shared.Chunks
 
             result.Cube = Cubes[cubeIndex];
 
-            var offset = _config.CubeProfiles[result.Cube.Id].YBlockOffset;
+            var offset = _config.BlockProfiles[result.Cube.Id].YBlockOffset;
 
             if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
             {
@@ -716,7 +716,7 @@ namespace Utopia.Shared.Chunks
 
             result.Cube = Cubes[cubeIndex];
 
-            var offset = _config.CubeProfiles[result.Cube.Id].YBlockOffset;
+            var offset = _config.BlockProfiles[result.Cube.Id].YBlockOffset;
 
             if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
             {

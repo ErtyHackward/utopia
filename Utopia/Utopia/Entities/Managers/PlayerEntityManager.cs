@@ -92,7 +92,7 @@ namespace Utopia.Entities.Managers
         private double _fallMaxHeight;
 
         private TerraCubeWithPosition _groundCube;
-        private CubeProfile _groundCubeProgile;
+        private BlockProfile _groundCubeProgile;
 
         // Will be used to compute entity rotation movements
         private EntityRotations _entityRotations;

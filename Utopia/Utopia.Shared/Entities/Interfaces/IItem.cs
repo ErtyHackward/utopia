@@ -49,7 +49,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <param name="blockId"></param>
         /// <returns></returns>
-        PickType CanPickBlock(CubeProfile cubeProfile);
+        PickType CanPickBlock(BlockProfile blockProfile);
 
         /// <summary>
         /// Defines tool pick behaviour for the entities

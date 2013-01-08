@@ -10,7 +10,7 @@ namespace Utopia.Shared.Configuration
     public interface IProcessorParams
     {
         WorldConfiguration Config { get; set; }
-        IEnumerable<CubeProfile> InjectDefaultCubeProfiles();
+        IEnumerable<BlockProfile> InjectDefaultCubeProfiles();
         IEnumerable<IEntity> InjectDefaultEntities();
         void CreateDefaultValues();
     }

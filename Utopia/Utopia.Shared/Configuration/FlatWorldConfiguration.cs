@@ -47,10 +47,10 @@ namespace Utopia.Shared.Configuration
 
         protected override void CreateDefaultCubeProfiles()
         {
-            CubeProfiles = new CubeProfile[255];
+            BlockProfiles = new BlockProfile[255];
             int id = 0;
             //Air Block
-            CubeProfiles[id] = (new CubeProfile()
+            BlockProfiles[id] = (new BlockProfile()
             {
                 Name = "Air",
                 Description = "A cube",
@@ -70,7 +70,7 @@ namespace Utopia.Shared.Configuration
             foreach (var processorInjectedCube in ProcessorParam.InjectDefaultCubeProfiles())
             {
                 id++;
-                CubeProfiles[id] = processorInjectedCube;
+                BlockProfiles[id] = processorInjectedCube;
             }
 
             base.CreateDefaultCubeProfiles();

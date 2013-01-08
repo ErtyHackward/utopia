@@ -267,12 +267,12 @@ namespace Utopia.Editor.Forms
             //Clear all the Cube node items
             var cubesRootNode = tvMainCategories.Nodes["Cubes"];
             cubesRootNode.Nodes.Clear();
-            for (var i = 0; i < _configuration.CubeProfiles.Where(x => x != null).Count(); i++)
+            for (var i = 0; i < _configuration.BlockProfiles.Where(x => x != null).Count(); i++)
             {
-                var cubeProfile = _configuration.CubeProfiles[i];
-                if (cubeProfile.Name == "System Reserved") continue;
+                var blockProfile = _configuration.BlockProfiles[i];
+                if (blockProfile.Name == "System Reserved") continue;
 
-                AddSubNode(cubesRootNode, cubeProfile.Name, cubeProfile, "CubeResource_" + cubeProfile.Name);
+                AddSubNode(cubesRootNode, blockProfile.Name, blockProfile, "CubeResource_" + blockProfile.Name);
             }
 
             #region Sets
@@ -462,9 +462,9 @@ namespace Utopia.Editor.Forms
                     // show property grid of this object
                     ShowMainControl(pgDetails);
                     pgDetails.Visible = true;
-                    if (selectedObject is CubeProfile)
+                    if (selectedObject is BlockProfile)
                     {
-                        pgDetails.Enabled = !((CubeProfile) tvMainCategories.SelectedNode.Tag).IsSystemCube;
+                        pgDetails.Enabled = !((BlockProfile) tvMainCategories.SelectedNode.Tag).IsSystemCube;
                     }
                     else
                     {

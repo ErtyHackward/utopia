@@ -9,20 +9,20 @@ namespace Utopia.Shared.Structs
     {
         public TerraCube Cube;
         public Vector3I Position;
-        public CubeProfile CubeProfile;
+        public BlockProfile BlockProfile;
 
         public static TerraCubeWithPosition DefaultValue = default(TerraCubeWithPosition);
 
         public TerraCubeWithPosition(Vector3I pos, TerraCube cube, WorldConfiguration configuration)
         {
-            CubeProfile = configuration.CubeProfiles[cube.Id];
+            BlockProfile = configuration.BlockProfiles[cube.Id];
             Position = pos;
             Cube = cube;
         }
 
         public TerraCubeWithPosition(Vector3I pos, byte cubeId, WorldConfiguration configuration)
         {
-            CubeProfile = configuration.CubeProfiles[cubeId];
+            BlockProfile = configuration.BlockProfiles[cubeId];
             Position = pos;
             Cube = new TerraCube(cubeId);
         }

@@ -16,9 +16,9 @@ namespace Utopia.Shared.Entities.Concrete
             get { return EntityClassId.Hand; }
         }
 
-        public override PickType CanPickBlock(CubeProfile cubeProfile)
+        public override PickType CanPickBlock(BlockProfile blockProfile)
         {
-            if (cubeProfile.Id == WorldConfiguration.CubeId.Air)
+            if (blockProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
             
             // don't allow to pick blocks by hand

@@ -412,15 +412,15 @@ namespace Utopia.Entities.Managers
         private void DrawCube(DeviceContext context, CubeResource cube, CharacterEntity charEntity)
         {
             //Get the cube profile.
-            var cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.CubeId];
+            var blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.CubeId];
 
             //Prapare to creation a new mesh with the correct texture mapping ID
-            _materialChangeMapping[0] = cubeProfile.Tex_Back;    //Change the Back Texture Id
-            _materialChangeMapping[1] = cubeProfile.Tex_Front;   //Change the Front Texture Id
-            _materialChangeMapping[2] = cubeProfile.Tex_Bottom;  //Change the Bottom Texture Id
-            _materialChangeMapping[3] = cubeProfile.Tex_Top;     //Change the Top Texture Id
-            _materialChangeMapping[4] = cubeProfile.Tex_Left;    //Change the Left Texture Id
-            _materialChangeMapping[5] = cubeProfile.Tex_Right;   //Change the Right Texture Id
+            _materialChangeMapping[0] = blockProfile.Tex_Back;    //Change the Back Texture Id
+            _materialChangeMapping[1] = blockProfile.Tex_Front;   //Change the Front Texture Id
+            _materialChangeMapping[2] = blockProfile.Tex_Bottom;  //Change the Bottom Texture Id
+            _materialChangeMapping[3] = blockProfile.Tex_Top;     //Change the Top Texture Id
+            _materialChangeMapping[4] = blockProfile.Tex_Left;    //Change the Left Texture Id
+            _materialChangeMapping[5] = blockProfile.Tex_Right;   //Change the Right Texture Id
 
             //Create the cube Mesh from the blue Print one
             _cubeMesh = _cubeMeshBluePrint.Clone(_materialChangeMapping);

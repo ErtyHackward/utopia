@@ -131,7 +131,7 @@ namespace Utopia.Particules
 
             //GetCube Profile
             VisualChunk chunk = null;
-            var profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
+            var profile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
             //Get Chunk in case if the block is subject to BiomeColoring
             chunk = _worldChunk.GetChunk(CubeLocation.X, CubeLocation.Z);
 
@@ -301,16 +301,16 @@ namespace Utopia.Particules
             }
             
             //for each define cubes profiles, merge 6 faces color sampled to give a collections a sampled color per Cube (24 colors)
-            foreach (var cubeprofile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
+            foreach (var blockProfile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
                 List<Color> colorArray = new List<Color>();
-                colorArray.AddRange(perBitmapColorSampling[cubeprofile.Tex_Back]);
-                colorArray.AddRange(perBitmapColorSampling[cubeprofile.Tex_Front]);
-                colorArray.AddRange(perBitmapColorSampling[cubeprofile.Tex_Left]);
-                colorArray.AddRange(perBitmapColorSampling[cubeprofile.Tex_Right]);
-                colorArray.AddRange(perBitmapColorSampling[cubeprofile.Tex_Top]);
-                colorArray.AddRange(perBitmapColorSampling[cubeprofile.Tex_Bottom]);
-                _cubeColorSampled.Add(cubeprofile.Id, colorArray.ToArray());
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom]);
+                _cubeColorSampled.Add(blockProfile.Id, colorArray.ToArray());
             }
 
         }

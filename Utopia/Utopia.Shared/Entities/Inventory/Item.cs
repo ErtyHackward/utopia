@@ -197,9 +197,9 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="blockId"></param>
         /// <returns></returns>
-        public virtual PickType CanPickBlock(CubeProfile cubeProfile)
+        public virtual PickType CanPickBlock(BlockProfile blockProfile)
         {
-            if (cubeProfile.Id == WorldConfiguration.CubeId.Air)
+            if (blockProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
 
             //Default Block Behaviours here
