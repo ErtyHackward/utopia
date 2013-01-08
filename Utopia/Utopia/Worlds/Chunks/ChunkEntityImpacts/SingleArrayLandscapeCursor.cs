@@ -105,14 +105,14 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return _landscapeManager.CubesHolder.Cubes[peekIndex].Id;
         }
 
-        public CubeProfile PeekProfile(Vector3I moveVector)
+        public BlockProfile PeekProfile(Vector3I moveVector)
         {
-            return _config.CubeProfiles[PeekValue(moveVector)];
+            return _config.BlockProfiles[PeekValue(moveVector)];
         }
 
-        public CubeProfile PeekProfile()
+        public BlockProfile PeekProfile()
         {
-            return _config.CubeProfiles[Read()];
+            return _config.BlockProfiles[Read()];
         }
 
         public byte PeekValue<T>(Vector3I moveVector, out T tag) where T : BlockTag

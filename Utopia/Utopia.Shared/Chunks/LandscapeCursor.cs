@@ -220,14 +220,14 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
-        public CubeProfile PeekProfile(Vector3I moveVector)
+        public BlockProfile PeekProfile(Vector3I moveVector)
         {
-            return _wp.Configuration.CubeProfiles[PeekValue(moveVector)];
+            return _wp.Configuration.BlockProfiles[PeekValue(moveVector)];
         }
 
-        public CubeProfile PeekProfile()
+        public BlockProfile PeekProfile()
         {
-            return _wp.Configuration.CubeProfiles[Read()];
+            return _wp.Configuration.BlockProfiles[Read()];
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public bool IsSolid()
         {
-            return _wp.Configuration.CubeProfiles[Read()].IsSolidToEntity;
+            return _wp.Configuration.BlockProfiles[Read()].IsSolidToEntity;
         }
 
     }

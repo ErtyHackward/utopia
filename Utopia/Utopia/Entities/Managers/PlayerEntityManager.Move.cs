@@ -256,7 +256,7 @@ namespace Utopia.Entities.Managers
                             handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
                         }
 #if DEBUG
-                        logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_groundCube.Cube.Id].Name);
+                        logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
 #endif
                     }
                     _fallMaxHeight = int.MinValue;
@@ -276,8 +276,8 @@ namespace Utopia.Entities.Managers
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
                 TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Fastfloor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
 
-                if (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
-                   (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
+                if (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
+                   (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
                 {
                     if (DisplacementMode == EntityDisplacementModes.Walking)
                     {
@@ -290,7 +290,7 @@ namespace Utopia.Entities.Managers
                 }
 
                 //Eyes under water (Used to change view Color)
-                CubeProfile headCubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_headCube.Id];
+                BlockProfile headCubeProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id];
                 if (headCubeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
                 {
                     int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
@@ -298,7 +298,7 @@ namespace Utopia.Entities.Managers
                     {
                         //Check the offset of the water
                         var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
-                        if (Offset >= 1 - _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_headCube.Id].YBlockOffset)
+                        if (Offset >= 1 - _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].YBlockOffset)
                         {
                             IsHeadInsideWater = false;
                             return;

@@ -210,13 +210,13 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             // Get Cube Profile
-            CubeProfile cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[replacementCubeId];
+            BlockProfile blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[replacementCubeId];
 
             // Check if the cube is not already the same ? ! ?
             TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
             if (existingCube.Id == replacementCubeId)
             {
-                if (cubeProfile.IsTaggable)
+                if (blockProfile.IsTaggable)
                 {
                     BlockTag ExistingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
                     if (ExistingTag == blockTag)
@@ -231,7 +231,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             impactedChunk.BlockData.SetBlock(cubeCoordinates, replacementCubeId);
 
             // Update chunk tag collection if needed
-            if (cubeProfile.IsTaggable)
+            if (blockProfile.IsTaggable)
             {
                 impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
             }
@@ -277,7 +277,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             //Propagate the light, we add one cube around the previous Range !! <= !!
             _lightManager.PropagateLightSources(ref cubeRange, true, true);
 
-            CubeProfile profile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Cube.Id];
+            BlockProfile profile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Cube.Id];
 
             //Find the chunks that have been impacted around the 8 surrounding chunks
             cubeChunk.State = ChunkState.OuterLightSourcesProcessed;

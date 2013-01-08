@@ -17,12 +17,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return EditorConfigHelper.Config.CubeProfiles.First(x => x.Id == CubeId).Name;
+                return EditorConfigHelper.Config.BlockProfiles.First(x => x.Id == CubeId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                CubeId = EditorConfigHelper.Config.CubeProfiles.First(x => x.Name == value).Id;
+                CubeId = EditorConfigHelper.Config.BlockProfiles.First(x => x.Name == value).Id;
             }
         }
 
@@ -43,7 +43,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(EditorConfigHelper.Config.CubeProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
+                return new StandardValuesCollection(EditorConfigHelper.Config.BlockProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
             }
         }
     }

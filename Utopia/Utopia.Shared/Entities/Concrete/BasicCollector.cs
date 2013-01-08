@@ -19,13 +19,13 @@ namespace Utopia.Shared.Entities.Concrete
         }
 
         //By default Basic collector use Block configuration for Picking
-        public override Inventory.PickType CanPickBlock(CubeProfile cubeProfile)
+        public override Inventory.PickType CanPickBlock(BlockProfile blockProfile)
         {
-            if (cubeProfile.Id == WorldConfiguration.CubeId.Air)
+            if (blockProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
 
             //Default Block Behaviours here
-            return cubeProfile.IsPickable ? PickType.Pick : PickType.Stop;
+            return blockProfile.IsPickable ? PickType.Pick : PickType.Stop;
         }
     }
 }

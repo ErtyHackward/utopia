@@ -489,7 +489,7 @@ namespace Utopia.Entities
 
 
             //Create a texture for each cubes existing !
-            foreach (CubeProfile profile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
+            foreach (BlockProfile profile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
                 //Don't create "Air" cube
                 if (profile.Id == WorldConfiguration.CubeId.Air) continue;

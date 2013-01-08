@@ -158,7 +158,7 @@ namespace Utopia.Shared.Tools
 
                     if (blueprintSlot.BlueprintId < 256)
                     {
-                        var profile = Configuration.CubeProfiles[blueprintSlot.BlueprintId];
+                        var profile = Configuration.BlockProfiles[blueprintSlot.BlueprintId];
                         if (profile != null)
                             Icons.TryGetValue("CubeResource_" + profile.Name, out icon);
                     }

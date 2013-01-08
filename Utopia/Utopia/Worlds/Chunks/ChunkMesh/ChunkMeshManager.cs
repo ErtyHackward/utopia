@@ -76,7 +76,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)
         {
             TerraCube currentCube, neightborCube, topCube;
-            CubeProfile cubeProfile, neightborCubeProfile;
+            BlockProfile blockProfile, neightborCubeProfile;
 
             Vector4B cubePosiInChunk;
             Vector3I cubePosiInWorld;
@@ -137,7 +137,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         if (currentCube.Id == WorldConfiguration.CubeId.Air) continue;
 
                         //The Cube profile contain the value that are fixed for a block type.
-                        cubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[currentCube.Id];
+                        blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[currentCube.Id];
 
                         cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
                         cubePosiInChunk = new Vector4B(x, y, z);
@@ -196,11 +196,11 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                             neightborCube = new TerraCube(WorldConfiguration.CubeId.Air);
                         }
 
-                        neightborCubeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[neightborCube.Id];
+                        neightborCubeProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[neightborCube.Id];
 
                         //Check if a tag is present and ICubeYOffsetModifier is implementad by the tag;
-                        float cubeYOffset = (float)cubeProfile.YBlockOffset;    //Natural YOffset of the Cube
-                        if (cubeProfile.IsTaggable)                             
+                        float cubeYOffset = (float)blockProfile.YBlockOffset;    //Natural YOffset of the Cube
+                        if (blockProfile.IsTaggable)                             
                         {
                             BlockTag tag = chunk.BlockData.GetTag(new Vector3I(x, y, z));
                             ICubeYOffsetModifier tagOffset = tag as ICubeYOffsetModifier;   //If block is taggle then it will overide the natural UOffset
@@ -227,7 +227,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 
                         bool yOffsetDiff = (cubeYOffset < neightborcubeYOffset && cubeFace != CubeFaces.Top) || (cubeYOffset > 0 && cubeFace == CubeFaces.Top); // && neightborCube.Id != currentCube.Id);
 
-                        switch (cubeProfile.CubeFamilly)
+                        switch (blockProfile.CubeFamilly)
                         {
                             case enuCubeFamilly.Solid:
                                 //Default linked to : CubeMeshFactory.GenSolidCubeFace;

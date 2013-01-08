@@ -291,7 +291,7 @@
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
-    <Compile Include="Settings\CubeProfile.cs" />
+    <Compile Include="Settings\BlockProfile.cs" />
     <Compile Include="Settings\LocalWorlds.cs" />
     <Compile Include="Settings\ParamRow.cs" />
     <Compile Include="Settings\ParamValue.cs" />

@@ -186,7 +186,7 @@ namespace Utopia.Editor
     //            for (int y = 0; y < rows; y++)
     //            {
     //                if (cubeProfileIndex == filtered.Count) break;
-    //                CubeProfile profile = filtered[cubeProfileIndex];
+    //                blockProfile profile = filtered[cubeProfileIndex];
 
     //                PaletteButtonControl btn = new PaletteButtonControl();
     //                btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);

@@ -34,14 +34,14 @@ namespace Realms.Server
             ContainedSlot outItem;
             //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
 
-            byte equipedCubeId = _config.CubeProfiles.Where(x => x.IsSolidToEntity).First().Id;
+            byte equipedCubeId = _config.BlockProfiles.Where(x => x.IsSolidToEntity).First().Id;
             var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(equipedCubeId, _config.CubeProfiles[equipedCubeId].Name);
+            adder.SetCube(equipedCubeId, _config.BlockProfiles[equipedCubeId].Name);
 
             dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
 
             //Add Items in inventory, every cubes
-            foreach (CubeProfile profile in _config.GetAllCubesProfiles())
+            foreach (BlockProfile profile in _config.GetAllCubesProfiles())
             {
                 if (profile.Id == WorldConfiguration.CubeId.Air)
                     continue;

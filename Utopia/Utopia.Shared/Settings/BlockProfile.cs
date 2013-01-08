@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace Utopia.Shared.Settings
 {
     [ProtoContract]
-    public class CubeProfile
+    public class BlockProfile
     {
         [Browsable(false)]
         [ProtoMember(1)]

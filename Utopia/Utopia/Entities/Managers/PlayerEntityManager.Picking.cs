@@ -46,7 +46,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
@@ -86,10 +86,10 @@ namespace Utopia.Entities.Managers
                 if (!result.isValid) 
                     break;
 
-                var cubeProfile = _cubesHolder.Config.CubeProfiles[result.Cube.Id];
-                var yOffset = cubeProfile.YBlockOffset;
+                var blockProfile = _cubesHolder.Config.BlockProfiles[result.Cube.Id];
+                var yOffset = blockProfile.YBlockOffset;
 
-                var pickType = tool.CanPickBlock(cubeProfile);
+                var pickType = tool.CanPickBlock(blockProfile);
 
                 if (pickType == PickType.Stop)
                 {

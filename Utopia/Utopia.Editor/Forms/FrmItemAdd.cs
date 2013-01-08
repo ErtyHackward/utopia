@@ -41,9 +41,9 @@ namespace Utopia.Editor.Forms
             {
                 var obj = cbEntityType.SelectedItem;
 
-                if (obj is CubeProfile)
+                if (obj is BlockProfile)
                 {
-                    var profile = (CubeProfile)obj;
+                    var profile = (BlockProfile)obj;
                     return profile.Id;
                 }
 

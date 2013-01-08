@@ -210,10 +210,10 @@ namespace Utopia.Shared.Configuration
             return newBiome;
         }
 
-        public IEnumerable<CubeProfile> InjectDefaultCubeProfiles()
+        public IEnumerable<BlockProfile> InjectDefaultCubeProfiles()
         {
             //Stone Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Stone",
                 Description = "A cube",
@@ -235,7 +235,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Dirt Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Dirt",
                 Description = "A cube",
@@ -257,7 +257,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Grass Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Grass",
                 Description = "A cube",
@@ -280,7 +280,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //StillWater Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "StillWater",
                 Description = "A cube",
@@ -303,7 +303,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //DynamicWater Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "DynamicWater",
                 Description = "A cube",
@@ -326,7 +326,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //LightWhite Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "LightWhite",
                 Description = "A cube",
@@ -353,7 +353,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Rock Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Rock",
                 Description = "A cube",
@@ -376,7 +376,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Sand Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Sand",
                 Description = "A cube",
@@ -398,7 +398,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Gravel Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Gravel",
                 Description = "A cube",
@@ -420,7 +420,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Trunk Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Trunk",
                 Description = "A cube",
@@ -442,7 +442,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //GoldOre Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "GoldOre",
                 Description = "A cube",
@@ -464,7 +464,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //CoalOre Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "CoalOre",
                 Description = "A cube",
@@ -486,7 +486,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //MoonStone Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "MoonStone",
                 Description = "A cube",
@@ -513,7 +513,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Foliage Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Foliage",
                 Description = "A cube",
@@ -537,7 +537,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Snow Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Snow",
                 Description = "A cube",
@@ -559,7 +559,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Ice Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Ice",
                 Description = "A cube",
@@ -582,7 +582,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //StillLava Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "StillLava",
                 Description = "A cube",
@@ -610,7 +610,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //DynamicLava Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "DynamicLava",
                 Description = "A cube",
@@ -639,7 +639,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //Cactus Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Cactus",
                 Description = "A cube",
@@ -663,7 +663,7 @@ namespace Utopia.Shared.Configuration
             });
 
             //CactusTop Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "CactusTop",
                 Description = "A cube",

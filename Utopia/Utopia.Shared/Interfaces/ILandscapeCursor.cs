@@ -71,14 +71,14 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
-        CubeProfile PeekProfile();
+        BlockProfile PeekProfile();
 
         /// <summary>
         /// Return Cube profile
         /// </summary>
         /// <param name="moveVector"></param>
         /// <returns></returns>
-        CubeProfile PeekProfile(Vector3I moveVector);
+        BlockProfile PeekProfile(Vector3I moveVector);
 
         /// <summary>
         /// Moves current cursor and returns itself (Fluent interface)

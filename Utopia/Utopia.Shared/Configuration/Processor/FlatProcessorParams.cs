@@ -20,10 +20,10 @@ namespace Utopia.Shared.Configuration
         #endregion
 
         #region Public Methods
-        public IEnumerable<CubeProfile> InjectDefaultCubeProfiles()
+        public IEnumerable<BlockProfile> InjectDefaultCubeProfiles()
         {
             //Stone Block
-            yield return (new CubeProfile()
+            yield return (new BlockProfile()
             {
                 Name = "Ground",
                 Description = "A ground cube",

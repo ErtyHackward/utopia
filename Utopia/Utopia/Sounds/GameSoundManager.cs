@@ -365,7 +365,7 @@ namespace Utopia.Sounds
                 underTheFeets.Y -= 0.01f;
                 var result = _singleArray.GetCube(underTheFeets);
                 if (result.isValid == false) return;
-                CubeProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[result.Cube.Id]; 
+                BlockProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[result.Cube.Id]; 
 
                 // no need to play step if the entity is in air or not in walking displacement mode
                 if (cubeUnderFeet.Id == WorldConfiguration.CubeId.Air ||
@@ -392,7 +392,7 @@ namespace Utopia.Sounds
                     var cubeResult = _singleArray.GetCube(entity.Position);
                     if (cubeResult.isValid) //Valid cube retrieved
                     {
-                        CubeProfile currentCube = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeResult.Cube.Id];
+                        BlockProfile currentCube = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cubeResult.Cube.Id];
 
                         //If walking on the ground, but with Feets and legs inside water block
                         if (currentCube.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && cubeUnderFeet.IsSolidToEntity)
@@ -406,7 +406,7 @@ namespace Utopia.Sounds
                         else
                         {
                             //Play a foot step sound only if the block under feet is solid to entity. (No water, no air, ...)
-                            if (_visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cubeUnderFeet.Id].IsSolidToEntity)
+                            if (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cubeUnderFeet.Id].IsSolidToEntity)
                             {
                                 soundIndex = PlayWalkingSound(cubeUnderFeet.Id, entityTrack);
                             }
@@ -574,8 +574,8 @@ namespace Utopia.Sounds
         //Handle Cube removed / added sound
         private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            CubeProfile NewBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.NewBlockType];
-            CubeProfile PreviousBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.PreviousBlock.Id];
+            BlockProfile NewBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[e.NewBlockType];
+            BlockProfile PreviousBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[e.PreviousBlock.Id];
 
             if (e.NewBlockType == WorldConfiguration.CubeId.Air && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
                 return;

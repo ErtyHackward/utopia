@@ -100,7 +100,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             int index;
             bool blockLight = false;
             int SunLight;
-            CubeProfile cubeprofile;
+            BlockProfile blockProfile;
 
             int maxheight = maxHeight == 0 ? cubeRange.Max.Y - 1 : maxHeight;
 
@@ -115,11 +115,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         //Create SunLight LightSources from AIR blocs
-                        cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id];
-                        if ((!blockLight && cubeprofile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
+                        blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_cubesHolder.Cubes[index].Id];
+                        if ((!blockLight && blockProfile.IsBlockingLight)) blockLight = true; //If my block is blocking light, stop sunlight propagation !
                         if (!blockLight)
                         {
-                            SunLight -= cubeprofile.LightAbsorbed;
+                            SunLight -= blockProfile.LightAbsorbed;
                             if (SunLight < 0)
                             {
                                 SunLight = 0;
@@ -139,11 +139,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                         }
 
 
-                        if (cubeprofile.IsEmissiveColorLightSource)
+                        if (blockProfile.IsEmissiveColorLightSource)
                         {
-                            _cubesHolder.Cubes[index].EmissiveColor.R = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.R;
-                            _cubesHolder.Cubes[index].EmissiveColor.G = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.G;
-                            _cubesHolder.Cubes[index].EmissiveColor.B = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.B;
+                            _cubesHolder.Cubes[index].EmissiveColor.R = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.R;
+                            _cubesHolder.Cubes[index].EmissiveColor.G = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.G;
+                            _cubesHolder.Cubes[index].EmissiveColor.B = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_cubesHolder.Cubes[index].Id].EmissiveColor.B;
                         }
                         else
                         {
@@ -213,12 +213,12 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Will force lighting from cubes passed, even if not Alpha is not 255 = borderAsLightSource = true
         private void PropagateLightSourcesForced(Vector3I cubePosition, VisualChunk chunk)
         {
-            CubeProfile cubeprofile;
+            BlockProfile blockProfile;
             int index = _cubesHolder.Index(ref cubePosition);
             TerraCube cube = _cubesHolder.Cubes[index];
 
-            cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
-            if (cubeprofile.IsBlockingLight && !cubeprofile.IsEmissiveColorLightSource) return;
+            blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
+            if (blockProfile.IsBlockingLight && !blockProfile.IsEmissiveColorLightSource) return;
             PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
 
             if (cube.EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
@@ -229,7 +229,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Can only be done if surrounding chunks have their landscape initialized !
         public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false, byte maxHeight = 0)
         {
-            CubeProfile cubeprofile;
+            BlockProfile blockProfile;
             int index;
 
             TerraCube cube;
@@ -246,7 +246,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         cube = _cubesHolder.Cubes[index];
-                        cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
+                        blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
 
                         if (cube.IsSunLightSource || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
@@ -268,7 +268,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
 
-            CubeProfile cubeprofile;
+            BlockProfile blockProfile;
             TerraCube cube;
 
             if (!isLightSource)
@@ -285,8 +285,8 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
                 //End propagation ?
                 cube = _cubesHolder.Cubes[index];
-                cubeprofile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[cube.Id];
-                if (cubeprofile.IsBlockingLight) return;      // Do nothing if my block don't let the light pass !
+                blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
+                if (blockProfile.IsBlockingLight) return;      // Do nothing if my block don't let the light pass !
                 switch (lightComp)
                 {
                     case LightComponent.SunLight:

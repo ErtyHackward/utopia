@@ -47,9 +47,9 @@ namespace Utopia.Server.Services
             //If no water block define, stop the Water services !
 
             //Get Id of FIRST Liquid and Still cube from collection
-            _stillWater = _server.WorldParameters.Configuration.CubeProfiles.Where(x => x.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && x.IsTaggable == false).First().Id;
+            _stillWater = _server.WorldParameters.Configuration.BlockProfiles.Where(x => x.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && x.IsTaggable == false).First().Id;
             //Get Id of FIRST Liquid and Dynamic cube from collection
-            _dynamicWater = _server.WorldParameters.Configuration.CubeProfiles.Where(x => x.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && x.IsTaggable == true).First().Id;
+            _dynamicWater = _server.WorldParameters.Configuration.BlockProfiles.Where(x => x.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && x.IsTaggable == true).First().Id;
         }
 
         private void Update()
