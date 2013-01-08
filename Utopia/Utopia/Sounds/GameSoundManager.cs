@@ -129,6 +129,8 @@ namespace Utopia.Sounds
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
             _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
+            _chunkEntityImpactManager.StaticEntityAdd += StaticEntityAdd;
+            _chunkEntityImpactManager.StaticEntityRemoved += StaticEntityRemoved;
 
             _rnd = new FastRandom();
             MoodsSounds = new Dictionary<MoodSoundKey, List<IUtopiaSoundSource>>();
@@ -142,6 +144,8 @@ namespace Utopia.Sounds
             _dynamicEntityManager.EntityAdded -= DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved -= DynamicEntityManagerEntityRemoved;
             _chunkEntityImpactManager.BlockReplaced -= _chunkEntityImpactManager_BlockReplaced;
+            _chunkEntityImpactManager.StaticEntityAdd -= StaticEntityAdd;
+            _chunkEntityImpactManager.StaticEntityRemoved -= StaticEntityRemoved;
         }
 
         #region Public Methods
@@ -599,6 +603,9 @@ namespace Utopia.Sounds
         {
             _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = e.Entity, Position = e.Entity.Position, isLocalSound = false });
         }
+
+        protected virtual void StaticEntityRemoved(object sender, StaticEventArgs e) { }
+        protected virtual void StaticEntityAdd(object sender, StaticEventArgs e) { }
 
         protected virtual void PlayBlockPut(Vector3I blockPos){}
         protected virtual void PlayBlockTake(Vector3I blockPos){}

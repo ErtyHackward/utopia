@@ -19,6 +19,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// Occurs when a single block at the landscape is changed
         /// </summary>
         event EventHandler<LandscapeBlockReplacedEventArgs> BlockReplaced;
+        event EventHandler<StaticEventArgs> StaticEntityAdd;
+        event EventHandler<StaticEventArgs> StaticEntityRemoved;
 
         SingleArrayChunkContainer CubesHolder { get; set; }
         IWorldChunks WorldChunks { get; set; }

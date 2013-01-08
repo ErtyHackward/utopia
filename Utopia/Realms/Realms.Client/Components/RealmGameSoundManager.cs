@@ -19,6 +19,7 @@ using System.IO;
 using Utopia.Shared.Sounds;
 using System.Collections.Generic;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Realms.Client.Components
 {
@@ -67,6 +68,24 @@ namespace Realms.Client.Components
                     SoundEngine.StartPlay2D("Hurt", 1.0f);
                 }
             }
+        }
+
+        protected override void StaticEntityAdd(object sender, StaticEventArgs e)
+        {
+            if (e.Entity is IItem)
+            {
+                var item = e.Entity as IItem;
+                var putSound = item.PutSound;
+                if (!string.IsNullOrEmpty(putSound))
+                {
+                    SoundEngine.StartPlay3D(putSound, putSound, e.Entity.Position.AsVector3());
+                }
+            }
+        }
+
+        protected override void StaticEntityRemoved(object sender, StaticEventArgs e)
+        {
+            SoundEngine.StartPlay3D("Take", e.Entity.Position.AsVector3());
         }
 
         #endregion

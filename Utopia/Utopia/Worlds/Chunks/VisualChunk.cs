@@ -426,9 +426,6 @@ namespace Utopia.Worlds.Chunks
             RemoveVoxelEntity(e);
             RemoveParticuleEmitterEntity(e);
             RemoveSoundEntity(e);
-
-            var takeSound = "Sounds\\Events\\take.adpcm.wav";
-            SoundEngine.StartPlay3D(takeSound, takeSound, e.Entity.Position.AsVector3());
         }
 
         /// <summary>
@@ -441,17 +438,6 @@ namespace Utopia.Worlds.Chunks
             AddVoxelEntity(e);
             AddParticuleEmitterEntity(e);
             AddSoundEntity(e);
-
-            if (e.Entity is Item)
-            {
-                var item = e.Entity as Item;
-                var putSound = item.PutSound;
-
-                if (!string.IsNullOrEmpty(putSound))
-                {
-                    SoundEngine.StartPlay3D(putSound, putSound, e.Entity.Position.AsVector3());
-                }
-            }
         }
 
         private void AddVoxelEntity(EntityCollectionEventArgs e)
