@@ -86,9 +86,10 @@ namespace Utopia.Entities.Managers
                 if (!result.isValid) 
                     break;
 
-                var yOffset = _cubesHolder.Config.CubeProfiles[result.Cube.Id].YBlockOffset;
+                var cubeProfile = _cubesHolder.Config.CubeProfiles[result.Cube.Id];
+                var yOffset = cubeProfile.YBlockOffset;
 
-                var pickType = tool.CanPickBlock(result.Cube.Id);
+                var pickType = tool.CanPickBlock(cubeProfile);
 
                 if (pickType == PickType.Stop)
                 {

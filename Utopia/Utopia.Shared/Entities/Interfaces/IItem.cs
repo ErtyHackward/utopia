@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Interfaces
@@ -48,7 +49,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <param name="blockId"></param>
         /// <returns></returns>
-        PickType CanPickBlock(byte blockId);
+        PickType CanPickBlock(CubeProfile cubeProfile);
 
         /// <summary>
         /// Defines tool pick behaviour for the entities
