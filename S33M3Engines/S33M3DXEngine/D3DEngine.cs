@@ -42,6 +42,8 @@ namespace S33M3DXEngine
         private ViewportF _viewPort;
         private Factory1 _dx11factory;
 
+        private List<DeviceContext> _registeredDC = new List<DeviceContext>();
+
 #if DEBUG
         public static readonly ShaderFlags ShaderFlags = ShaderFlags.Debug | ShaderFlags.SkipOptimization;
 #else
@@ -157,6 +159,13 @@ namespace S33M3DXEngine
 
             //Create the threaded contexts
             ImmediateContext = Device.ImmediateContext;
+        }
+
+        public DeviceContext CreateDeviceContext()
+        {
+            DeviceContext dc = new DeviceContext(this.Device);
+            _registeredDC.Add(dc);
+            return dc;
         }
 
         //Check if the shuttingDownCan be done safely
@@ -542,8 +551,6 @@ namespace S33M3DXEngine
         {
             try
             {
-
-
                 //Clean Up event Delegates
                 if (ViewPort_Updated != null)
                 {
@@ -573,10 +580,9 @@ namespace S33M3DXEngine
                 if (_renderTarget != null) _renderTarget.Dispose();
                 if (_swapChain != null) _swapChain.Dispose();
 
-                //ImmediateContext.ClearState();
-                //ImmediateContext.Flush();
+                foreach (var dc in _registeredDC) dc.Dispose();
 
-                //The Context is automaticaly disposed by the Device
+                //The ImmediatContext is automaticaly disposed by the Device
                 Device.Dispose();
             }
             catch (Exception e)

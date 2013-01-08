@@ -215,7 +215,7 @@ namespace S33M3CoreComponents.Sprites2D
                 }
             };
 
-            Texture = new ShaderResourceView(device, texture, viewDesc);
+            Texture = ToDispose(new ShaderResourceView(device, texture, viewDesc));
             Width = texture.Description.Width;
             Height = texture.Description.Height;
 
@@ -224,7 +224,6 @@ namespace S33M3CoreComponents.Sprites2D
 
         public override void BeforeDispose()
         {
-            Texture.Dispose();
             if (_d3dEngine != null) _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
         }
     }

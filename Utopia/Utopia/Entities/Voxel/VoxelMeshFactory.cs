@@ -8,13 +8,14 @@ using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
+using S33M3_DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
 {
     /// <summary>
     /// Creates meshes for voxel models
     /// </summary>
-    public class VoxelMeshFactory
+    public class VoxelMeshFactory : BaseComponent
     {
         private readonly D3DEngine _d3DEngine;
 
@@ -827,7 +828,8 @@ namespace Utopia.Entities.Voxel
 
         public InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData> InitBuffer(List<VertexVoxelInstanced> vertice)
         {
-            var vb = new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>(_d3DEngine.Device, VertexVoxelInstanced.VertexDeclaration, PrimitiveTopology.TriangleList, "VoxelMeshFactory");
+            
+            var vb = ToDispose(new InstancedVertexBuffer<VertexVoxelInstanced, VoxelInstanceData>(_d3DEngine.Device, VertexVoxelInstanced.VertexDeclaration, PrimitiveTopology.TriangleList, "VoxelMeshFactory"));
             if(vertice.Count > 0)
                 vb.SetFixedData(vertice.ToArray());
             return vb;
@@ -835,7 +837,7 @@ namespace Utopia.Entities.Voxel
 
         public IndexBuffer<ushort> InitBuffer(List<ushort> indices)
         {
-            var ib = new IndexBuffer<ushort>(_d3DEngine.Device, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB");
+            var ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, indices.Count, SharpDX.DXGI.Format.R16_UInt, "VoxelMeshFactory_IB"));
 
             if(indices.Count > 0)
                 ib.SetData(_d3DEngine.ImmediateContext, indices.ToArray());
