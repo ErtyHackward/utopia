@@ -69,6 +69,24 @@ namespace Sandbox.Client.Components
             }
         }
 
+        protected override void StaticEntityAdd(object sender, StaticEventArgs e)
+        {
+            if (e.Entity is IItem)
+            {
+                var item = e.Entity as IItem;
+                var putSound = item.PutSound;
+                if (!string.IsNullOrEmpty(putSound))
+                {
+                    SoundEngine.StartPlay3D(putSound, putSound, e.Entity.Position.AsVector3());
+                }
+            }
+        }
+
+        protected override void StaticEntityRemoved(object sender, StaticEventArgs e)
+        {
+            SoundEngine.StartPlay3D("Take", e.Entity.Position.AsVector3());
+        }
+
         #endregion
 
     }
