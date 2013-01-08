@@ -196,17 +196,14 @@ namespace Utopia.Network
             }
         }
 
-        S33M3_DXEngine.Debug.StopWatchWrapping time = new S33M3_DXEngine.Debug.StopWatchWrapping(1000) { isEnabled = false };
-        public override void FTSUpdate( GameTime timeSpend)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             if (ServerConnection != null)
             {
-                //time.StartMeasure(ServerConnection.QueueSize > 0, ServerConnection.QueueSize.ToString());
-                foreach(IBinaryMessage data in ServerConnection.FetchPendingMessages())
+                foreach (IBinaryMessage data in ServerConnection.FetchPendingMessages())
                 {
                     InvokeEventForNetworkDataReceived(data);
                 }
-                //time.StopMeasure();
             }
         }
         #endregion
