@@ -12,7 +12,7 @@ Name: fr; MessagesFile: compiler:Languages\French.isl
 
 [Files]
 Source: Deps\dxwebsetup.exe; Flags: dontcopy
-Source: ..\Utopia\Sandbox\Sandbox.Client\bin\Release\*; DestDir: {app}; Excludes: *.dds,*.pdb,*.vshost.*,*.exe.config,Newtonsoft.Json.xml,Ninject.xml,NLog.xml,protobuf-net.xml,SharpDX.D3DCompiler.xml,SharpDX.Direct3D11.xml,SharpDX.DXGI.xml,SharpDX.XAudio2.xml,SharpDX.xml; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Utopia\Sandbox\Sandbox.Client\bin\Release\*; DestDir: {app}; Excludes: *.dds,*.pdb,*.vshost.*,*.exe.config,Newtonsoft.Json.xml,Ninject.xml,NLog.xml,protobuf-net.xml,SharpDX.*.xml,SharpDX.xml; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Setup]
 VersionInfoVersion=1.0.0
