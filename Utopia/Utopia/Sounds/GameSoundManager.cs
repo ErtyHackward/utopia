@@ -24,6 +24,8 @@ using Utopia.Worlds.GameClocks;
 using Utopia.Entities.Managers;
 using Utopia.Shared.World;
 using Utopia.Shared.Sounds;
+using System.IO;
+using System.Linq;
 
 namespace Utopia.Sounds
 {
@@ -144,6 +146,36 @@ namespace Utopia.Sounds
         #region Public Methods
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
+
+            #region Load Derived classes sounds
+            foreach (var data in _preLoad)
+            {
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias);
+                if (dataSource != null)
+                {
+                    dataSource.SoundVolume = data.Volume;
+                    dataSource.SoundPower = data.Power;
+                }
+            }
+            #endregion
+
+            #region Load Steps sounds
+            //Buffer cube walking sound
+            foreach (var cube in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles().Where(x => x.WalkingOverSound.Count > 0))
+            {
+                foreach (var walkingSound in cube.WalkingOverSound)
+                {
+                    RegisterStepSound(cube.Id, new SoundMetaData()
+                    {
+                        Path = walkingSound.SoundFilePath,
+                        Alias = walkingSound.SoundAlias,
+                        Volume = walkingSound.DefaultVolume,
+                        Power = walkingSound.Power
+                    }
+                        );
+                }
+            }
+
             foreach (var pair in _stepsSounds)
             {
                 foreach (var sound in pair.Value)
@@ -157,17 +189,11 @@ namespace Utopia.Sounds
                 }
             }
 
-            foreach (var data in _preLoad)
-            {
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias);
-                if (dataSource != null)
-                {
-                    dataSource.SoundVolume = data.Volume;
-                    dataSource.SoundPower = data.Power;
-                }
-            }
+            #endregion
 
-            //Prepare Sound for biomes
+            #region Load biome Ambiant sound
+
+            //Prepare Sound for biomes ========================
             if (_biomesParams != null)
             {
                 foreach (var biome in _biomesParams.Biomes)
@@ -183,36 +209,73 @@ namespace Utopia.Sounds
                 }
             }
 
+            #endregion
+
+            #region Mood Sound
+            //Load and prefetch Mood sounds ========================
+            foreach (var moodSoundFile in Directory.GetFiles(@"Sounds\Moods", "*_*.adpcm.wav"))
+            {
+                TimeOfDaySound time;
+                MoodType type;
+                string[] fileMetaData = moodSoundFile.Replace(".adpcm.wav", "").Split('_');
+                if (fileMetaData.Length < 3) time = TimeOfDaySound.FullDay;
+                else
+                {
+                    switch (fileMetaData[2].ToLower())
+                    {
+                        case "day":
+                            time = TimeOfDaySound.Day;
+                            break;
+                        case "night":
+                            time = TimeOfDaySound.Night;
+                            break;
+                        default:
+                            time = TimeOfDaySound.FullDay;
+                            break;
+                    }
+                }
+
+                switch (fileMetaData[1].ToLower())
+                {
+                    case "fear":
+                        type = MoodType.Fear;
+                        break;
+                    case "peace":
+                        type = MoodType.Peace;
+                        break;
+                    default:
+                        continue;
+                }
+
+                MoodsSoundSource soundSource = new MoodsSoundSource()
+                {
+                    SoundAlias = "Mood" + fileMetaData[0],
+                    SoundFilePath = moodSoundFile,
+                    DefaultVolume = type == MoodType.Peace ? 0.1f : 0.4f
+                };
+
+                if (time == TimeOfDaySound.FullDay)
+                {
+                    InsertMoodSound(soundSource, TimeOfDaySound.Day, type);
+                    InsertMoodSound(soundSource, TimeOfDaySound.Night, type);
+                }
+                else
+                {
+                    InsertMoodSound(soundSource, time, type);
+                }
+
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(soundSource.SoundFilePath, soundSource.SoundAlias);
+                if (dataSource != null)
+                {
+                    dataSource.SoundVolume = soundSource.DefaultVolume;
+                    dataSource.SoundPower = soundSource.Power;
+                }
+            }
+            #endregion
 
             base.LoadContent(context);
         }
-
-        /// <summary>
-        /// Setup a step sound for a cube type
-        /// </summary>
-        /// <param name="cubeId"></param>
-        /// <param name="sound"></param>
-        public void RegisterStepSound(byte cubeId, SoundMetaData sound)
-        {
-            if (_stepsSounds.ContainsKey(cubeId))
-            {
-                _stepsSounds[cubeId].Add(sound);
-            }
-            else
-            {
-                _stepsSounds.Add(cubeId, new List<SoundMetaData> { sound });
-            }
-        }
-
-        public void PreLoadSound(SoundMetaData metaData)
-        {
-            _preLoad.Add(metaData);
-        }
-
-        public void PreLoadSound(string alias, string path, float volume, float power)
-        {
-            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power });
-        }
+        
 
         public override void FTSUpdate(GameTime timeSpent)
         {
@@ -246,41 +309,44 @@ namespace Utopia.Sounds
         #endregion
 
         #region Private Methods
-       
-        //Handle Cube removed / added sound
-        private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
+
+        private void InsertMoodSound(MoodsSoundSource sound, TimeOfDaySound timeofDay, MoodType type)
         {
-            CubeProfile NewBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.NewBlockType];
-            CubeProfile PreviousBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.PreviousBlock.Id];
+            MoodSoundKey key = new MoodSoundKey() { TimeOfDay = timeofDay, Type = type };
+            List<IUtopiaSoundSource> soundList;
+            if (this.MoodsSounds.TryGetValue(key, out soundList) == false)
+            {
+                soundList = new List<IUtopiaSoundSource>();
+                this.MoodsSounds.Add(key, soundList);
+            }
+            soundList.Add(sound);
+        }
 
-            if (e.NewBlockType == WorldConfiguration.CubeId.Air && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
-                return;
-            if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && e.PreviousBlock.Id == WorldConfiguration.CubeId.Air)
-                return;
-            if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
-                return;
-
-            if (e.NewBlockType == WorldConfiguration.CubeId.Air)
-                PlayBlockTake(e.Position);
+        /// <summary>
+        /// Setup a step sound for a cube type
+        /// </summary>
+        /// <param name="cubeId"></param>
+        /// <param name="sound"></param>
+        private void RegisterStepSound(byte cubeId, SoundMetaData sound)
+        {
+            if (_stepsSounds.ContainsKey(cubeId))
+            {
+                _stepsSounds[cubeId].Add(sound);
+            }
             else
-                PlayBlockPut(e.Position);
+            {
+                _stepsSounds.Add(cubeId, new List<SoundMetaData> { sound });
+            }
         }
 
-        private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        protected void PreLoadSound(SoundMetaData metaData)
         {
-            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
+            _preLoad.Add(metaData);
         }
 
-        private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        protected void PreLoadSound(string alias, string path, float volume, float power)
         {
-            _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = e.Entity, Position = e.Entity.Position, isLocalSound = false });
-        }
-
-        protected virtual void PlayBlockPut(Vector3I blockPos)
-        {
-        }
-        protected virtual void PlayBlockTake(Vector3I blockPos)
-        {
+            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power });
         }
 
         #region Walking Sound Processing
@@ -502,20 +568,40 @@ namespace Utopia.Sounds
         #endregion
 
         #region Sound on Events
-        void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube)
+
+
+        //Handle Cube removed / added sound
+        private void _chunkEntityImpactManager_BlockReplaced(object sender, LandscapeBlockReplacedEventArgs e)
         {
-            if (fallHeight > 3 && fallHeight <= 10)
-            {
-                SoundEngine.StartPlay2D("Hurt", 0.3f);
-            }
+            CubeProfile NewBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.NewBlockType];
+            CubeProfile PreviousBlockTypeProfile = _visualWorldParameters.WorldParameters.Configuration.CubeProfiles[e.PreviousBlock.Id];
+
+            if (e.NewBlockType == WorldConfiguration.CubeId.Air && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
+                return;
+            if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && e.PreviousBlock.Id == WorldConfiguration.CubeId.Air)
+                return;
+            if (NewBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && PreviousBlockTypeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
+                return;
+
+            if (e.NewBlockType == WorldConfiguration.CubeId.Air)
+                PlayBlockTake(e.Position);
             else
-            {
-                if (fallHeight > 10)
-                {
-                    SoundEngine.StartPlay2D("Hurt", 1.0f);
-                }
-            }
+                PlayBlockPut(e.Position);
         }
+
+        private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        {
+            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
+        }
+
+        private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
+        {
+            _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = e.Entity, Position = e.Entity.Position, isLocalSound = false });
+        }
+
+        protected virtual void PlayBlockPut(Vector3I blockPos){}
+        protected virtual void PlayBlockTake(Vector3I blockPos){}
+        protected virtual void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube){}
         #endregion
 
         #endregion

@@ -35,7 +35,7 @@ namespace Realms.Client.States
     public class GamePlayState : GameState
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private SandboxGameSoundManager _sandboxGameSoundManager;
+        private RealmGameSoundManager _sandboxGameSoundManager;
 
         private readonly IKernel _ioc;
 
@@ -90,7 +90,7 @@ namespace Realms.Client.States
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
-            _sandboxGameSoundManager = (SandboxGameSoundManager)_ioc.Get<GameSoundManager>();
+            _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
