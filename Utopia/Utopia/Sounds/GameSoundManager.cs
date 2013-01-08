@@ -439,7 +439,7 @@ namespace Utopia.Sounds
         {
             MoodSoundKey currentMood = new MoodSoundKey() { TimeOfDay = GetTimeofDay(), Type = GetMoodType(ref newPlayerPosition) };
 
-            //No sound was playing, start a new one !
+            //No sound was playing, or a new one needs to be played
             if (_currentlyPlayingMoodSound == null || 
                 _currentlyPlayingMoodSound.IsPlaying == false ||
                 _previousMood == null ||

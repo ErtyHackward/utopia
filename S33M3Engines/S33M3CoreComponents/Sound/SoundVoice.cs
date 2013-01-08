@@ -169,9 +169,9 @@ namespace S33M3CoreComponents.Sound
                 IsLooping = false;
                 _voice.Stop();
                 _voice.FlushSourceBuffers();
+                IsPlaying = false;
             }
 
-            IsPlaying = false;
         }
 
         public void SetVolume(float volume, int operationSet)
@@ -203,6 +203,7 @@ namespace S33M3CoreComponents.Sound
                         _fadingTimer.Reset();
                         Stop(0);
                         logger.Trace("Fading OUT of sound {0} finished", _playingDataSource.SoundAlias);
+                        IsPlaying = false;
                         return;
                     }
                 }
