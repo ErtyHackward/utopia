@@ -10,10 +10,10 @@ namespace S33M3CoreComponents.Maths
     {
         public static bool EqualsEpsilon(this Quaternion rotation, Quaternion other, float epsilon)
         {
-            if (Math.Abs(rotation.X - other.X) < epsilon &&
-                Math.Abs(rotation.Y - other.Y) < epsilon &&
-                Math.Abs(rotation.Z - other.Z) < epsilon && 
-                Math.Abs(rotation.W - other.W) < epsilon)
+            if (Math.Abs(Math.Abs(rotation.X) - Math.Abs(other.X)) < epsilon &&
+                Math.Abs(Math.Abs(rotation.Y) - Math.Abs(other.Y)) < epsilon &&
+                Math.Abs(Math.Abs(rotation.Z) - Math.Abs(other.Z)) < epsilon && 
+                Math.Abs(Math.Abs(rotation.W) - Math.Abs(other.W)) < epsilon)
                 return true;
             return false;
         }
