@@ -63,6 +63,7 @@ namespace Utopia.Sounds
         private PlayerEntityManager _playerEntityManager;
         private VisualWorldParameters _visualWorldParameters;
         private UtopiaProcessorParams _biomesParams;
+        private Dictionary<IItem, ISoundVoice> _staticEntityPlayingVoices = new Dictionary<IItem, ISoundVoice>();
 
         private FastRandom _rnd;
 
@@ -605,30 +606,30 @@ namespace Utopia.Sounds
         #endregion
 
         #region StaticEntities Processing
-        private IItem[] collectionEntities = new IItem[100];
-        private IItem[] nearestEntities = new IItem[20];
-        private IItem[] playingEntities = new IItem[20];
-        //private Tuple<IItem, ISoundVoice>[] staticEntityVoices = new Tuple<IItem, ISoundVoice>[20];
-        private Dictionary<IItem, ISoundVoice> staticEntityVoices = new Dictionary<IItem, ISoundVoice>();
+
         private void StaticEntitiesEmittedSoundProcessing()
         {
+            IItem[] collectedStaticItems = new IItem[100];
+            IItem[] nearestEntities = new IItem[20];
+            IItem[] entitiesSet = new IItem[20];
+
             int i = 0;
             //Collection surrending "Sound" entities (Max of 100) ===========================================
             foreach (VisualChunk chunk in _worldChunk.SortedChunks.Where(x => x.DistanceFromPlayer < _worldChunk.StaticEntityViewRange))
             {
                 foreach (var soundStaticEntities in chunk.SoundStaticEntities)
                 {
-                    collectionEntities[i] = soundStaticEntities;
+                    collectedStaticItems[i] = soundStaticEntities;
                     i++;
                     if(i >= 100) break;
                 }
                 if(i >= 100) break;
             }
-            for (; i < 100; i++) { collectionEntities[i] = null; }
+            for (; i < 100; i++) { collectedStaticItems[i] = null; }
 
             // Sorting array by distance from Player
             i = 0;
-            foreach (var entity in collectionEntities.Where(x => x != null).OrderBy(x => MVector3.DistanceSquared(x.Position, _playerEntityManager.CameraWorldPosition)))
+            foreach (var entity in collectedStaticItems.Where(x => x != null).OrderBy(x => MVector3.DistanceSquared(x.Position, _playerEntityManager.CameraWorldPosition)))
             {
                 nearestEntities[i] = entity;
                 i++;
@@ -636,30 +637,30 @@ namespace Utopia.Sounds
             }
             for (; i < 20; i++) { nearestEntities[i] = null; }
 
-            ISoundVoice voice;
             //Get entities remove from playing list.
-            foreach (var entities in playingEntities.Except(nearestEntities))
+            i = 0;
+            entitiesSet[0] = null;
+            foreach (var entities in _staticEntityPlayingVoices.Keys.Except(nearestEntities))
             {
-                //Stop voices sound playing
-                //Get from Dictionnary, stop voice, remove from dictionnay.
-                if (staticEntityVoices.TryGetValue(entities, out voice))
-                {
-                    voice.Stop(500);
-                    staticEntityVoices.Remove(entities);
-                }
+                entitiesSet[i] = entities;
+            }
+            for (; i >= 0; i--)
+            {
+                if (entitiesSet[i] == null) break;
+                _staticEntityPlayingVoices[entitiesSet[i]].Stop(500);
+                _staticEntityPlayingVoices.Remove(entitiesSet[i]);
             }
 
+            ISoundVoice voice;
             foreach (var entities in nearestEntities.Where(x => x!=null))
             {
-                if (staticEntityVoices.TryGetValue(entities, out voice) == false)
+                if (_staticEntityPlayingVoices.TryGetValue(entities, out voice) == false)
                 {
                     ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), true, 500);
-                    staticEntityVoices.Add(entities, playingVoice);
+                    _staticEntityPlayingVoices.Add(entities, playingVoice);
                 }
             }
 
-            //Add new Entities not registered in dictionnary, and start playing sound for thems
-            playingEntities = nearestEntities;
         }
         #endregion
 
