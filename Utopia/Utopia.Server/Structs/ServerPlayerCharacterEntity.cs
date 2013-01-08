@@ -94,7 +94,7 @@ namespace Utopia.Server.Structs
         
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
-            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = EntityType.Static, Link = e.Entity.GetLink() });
+            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = e.Entity.Type, Link = e.Entity.GetLink() });
         }
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
