@@ -6,6 +6,7 @@ using System.Text;
 using SharpDX.MediaFoundation;
 using SharpDX.Multimedia;
 using SharpDX.XAudio2;
+using AudioDecoder = S33M3CoreComponents.Sound.AudioDecoder;
 
 namespace S33M3CoreComponents.Sound
 {
