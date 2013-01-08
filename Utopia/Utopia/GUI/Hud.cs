@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Ninject;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.GUI.Inventory;
@@ -9,6 +11,7 @@ using S33M3CoreComponents.GUI.Nuclex;
 using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -44,6 +47,9 @@ namespace Utopia.GUI
             var handler = SlotClicked;
             if (handler != null) handler(this, e);
         }
+
+        [Inject]
+        public PlayerCharacter Player { get; set; }
 
         public Hud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager, CameraManager<ICameraFocused> camManager)
         {
@@ -138,14 +144,40 @@ namespace Utopia.GUI
 
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBar_SelectPrevious))
             {
-                var slot = _selectedSlot == 0 ?  _lastSlot : _selectedSlot-1;
-                SelectSlot(slot);
+                if (Player.Toolbar.Count(i => i != 0) < 2)
+                    return;
+
+                while (true)
+                {
+                    _selectedSlot--;
+
+                    if (_selectedSlot == -1)
+                        _selectedSlot = Player.Toolbar.Count-1;
+
+                    if (Player.Toolbar[_selectedSlot] != 0)
+                        break;
+                }
+
+                SelectSlot(_selectedSlot);
             }
 
             else if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBar_SelectNext))
             {
-                var slot = _selectedSlot == _lastSlot ? 0 : _selectedSlot + 1;
-                SelectSlot(slot);
+                if (Player.Toolbar.Count(i => i != 0) < 2)
+                    return;
+
+                while (true)
+                {
+                    _selectedSlot++;
+
+                    if (_selectedSlot == Player.Toolbar.Count)
+                        _selectedSlot = 0;
+
+                    if (Player.Toolbar[_selectedSlot] != 0)
+                        break;
+                }
+
+                SelectSlot(_selectedSlot);
             }
 
             _toolbarUi.Update(timeSpend);
