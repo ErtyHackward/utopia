@@ -156,6 +156,7 @@ namespace Utopia.Worlds.Chunks
         public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
 
         public List<EntityMetaData> EmitterStaticEntities;
+        public List<IItem> SoundStaticEntities;
 
         public int StorageRequestTicket { get; set; }
 
@@ -246,6 +247,7 @@ namespace Utopia.Worlds.Chunks
             _voxelModelManager = voxelModelManager;
             VisualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
             EmitterStaticEntities = new List<EntityMetaData>();
+            SoundStaticEntities = new List<IItem>();
             CubeRange = cubeRange;
             _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
@@ -416,12 +418,14 @@ namespace Utopia.Worlds.Chunks
             
             VisualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
+            SoundStaticEntities.Clear();
         }
 
         void Entities_EntityRemoved(object sender, EntityCollectionEventArgs e)
         {
             RemoveVoxelEntity(e);
             RemoveParticuleEmitterEntity(e);
+            RemoveSoundEntity(e);
 
             var takeSound = "Sounds\\Events\\take.adpcm.wav";
             SoundEngine.StartPlay3D(takeSound, takeSound, e.Entity.Position.AsVector3());
@@ -436,6 +440,7 @@ namespace Utopia.Worlds.Chunks
         {
             AddVoxelEntity(e);
             AddParticuleEmitterEntity(e);
+            AddSoundEntity(e);
 
             if (e.Entity is Item)
             {
@@ -559,6 +564,20 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        private void AddSoundEntity(EntityCollectionEventArgs e)
+        {
+            IItem item = e.Entity as IItem;
+            if (item == null || string.IsNullOrEmpty(item.EmittedSound)) return;
+            SoundStaticEntities.Add(item);
+        }
+
+        private void RemoveSoundEntity(EntityCollectionEventArgs e)
+        {
+            IItem item = e.Entity as IItem;
+            if (item == null || string.IsNullOrEmpty(item.EmittedSound)) return;
+            SoundStaticEntities.Remove(item);
+        }
+
         private void AddParticuleEmitterEntity(EntityCollectionEventArgs e)
         {
             if (e.Entity.Particules == null) return;
@@ -624,6 +643,7 @@ namespace Utopia.Worlds.Chunks
 
             RefreshWorldMatrix();
 
+            SoundStaticEntities.Clear();
             VisualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
         }

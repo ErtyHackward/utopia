@@ -31,6 +31,11 @@ namespace Utopia.Shared.Entities.Interfaces
         [TypeConverter(typeof(SoundSelector))]
         string PutSound { get; set; }
 
+        [Category("Sound")]
+        [Description("EmittedSound sound of an item")]
+        [TypeConverter(typeof(SoundSelector))]
+        string EmittedSound { get; set; }
+
         /// <summary>
         /// Returns new entity position correspoding to the player
         /// </summary>
