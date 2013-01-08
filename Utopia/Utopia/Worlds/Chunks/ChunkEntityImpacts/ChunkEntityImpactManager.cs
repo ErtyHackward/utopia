@@ -53,11 +53,23 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// Occurs when a single block at the landscape is changed
         /// </summary>
         public event EventHandler<LandscapeBlockReplacedEventArgs> BlockReplaced;
-
         private void OnBlockReplaced(LandscapeBlockReplacedEventArgs e)
         {
             if (BlockReplaced != null) BlockReplaced(this, e);
         }
+
+        public event EventHandler<StaticEventArgs> StaticEntityAdd;
+        private void OnStaticEntityAdd(StaticEventArgs e)
+        {
+            if (StaticEntityAdd != null) StaticEntityAdd(this, e);
+        }
+
+        public event EventHandler<StaticEventArgs> StaticEntityRemoved;
+        private void OnStaticEntityRemoved(StaticEventArgs e)
+        {
+            if (StaticEntityRemoved != null) StaticEntityRemoved(this, e);
+        }
+
 
         public ChunkEntityImpactManager()
         {
@@ -179,6 +191,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             var impactedChunk = (VisualChunk)GetChunk(entityBlockPosition);
             impactedChunk.Entities.Add(entity, sourceDynamicId);
 
+            //Raise event (Playing sound)
+            OnStaticEntityAdd(new StaticEventArgs() { Entity = entity });
+
             // Save the modified Chunk in local buffer DB
             SendChunkForBuffering(impactedChunk);
         }
@@ -189,12 +204,14 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             var impactedChunk = (VisualChunk)GetChunk(entity.ChunkPosition);
             impactedChunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
 
+            //Raise event (Playing sound)
+            OnStaticEntityRemoved(new StaticEventArgs() { Entity = entityRemoved });
+
             // Save the modified Chunk in local buffer DB
             SendChunkForBuffering(impactedChunk);
 
             return entityRemoved;
         }
-
 
         public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
         {
@@ -381,6 +398,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public byte NewBlockType { get; set; }
         public TerraCube PreviousBlock { get; set; }
         public bool IsLocalPLayerAction { get; set; }
+    }
+
+    public class StaticEventArgs : EventArgs
+    {
+        public IStaticEntity Entity { get; set; }
     }
 }
 

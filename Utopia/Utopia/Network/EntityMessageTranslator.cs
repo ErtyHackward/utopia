@@ -113,14 +113,15 @@ namespace Utopia.Network
 
         void ServerMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
+            logger.Debug("Entity Removed {0}", e.Message.EntityType);
+
             switch (e.Message.EntityType)
             {
-                case EntityType.Gear:
-                    break;
                 case EntityType.Block:
                     break;
+                case EntityType.Gear:
                 case EntityType.Static:
-                    if (e.Message.Link.DynamicEntityId != PlayerEntity.DynamicId)
+                    if (e.Message.TakerEntityId != PlayerEntity.DynamicId)
                     {
                         _landscapeManager.ProcessMessageEntityOut(e);
                     }
@@ -135,10 +136,9 @@ namespace Utopia.Network
         {
             switch (e.Message.Entity.Type)
             {
-                case EntityType.Gear:
-                    break;
                 case EntityType.Block:
                     break;
+                case EntityType.Gear:
                 case EntityType.Static:
                     // skip the message if the source is our entity (because we already have added the entity)
                     if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
