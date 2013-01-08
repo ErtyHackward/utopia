@@ -134,12 +134,12 @@
       <DependentUpon>SinglePlayerComponent.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\LocalServer.cs" />
-    <Compile Include="Components\SandboxGameSoundManager.cs" />
+    <Compile Include="Components\RealmGameSoundManager.cs" />
     <Compile Include="Components\GUI\ServerSelectionComponent.cs" />
     <Compile Include="Components\GUI\Settings\SettingsComponent.Designer.cs">
       <DependentUpon>SettingsComponent.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\SandboxGeneralSoundManager.cs.cs" />
+    <Compile Include="Components\RealmGeneralSoundManager.cs.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -20,11 +20,11 @@ using Utopia.Shared.Sounds;
 using System.Collections.Generic;
 using Utopia.Shared.Structs;
 
-namespace Sandbox.Client.Components
+namespace Realms.Client.Components
 {
-    public class SandboxGameSoundManager : GameSoundManager
+    public class RealmGameSoundManager : GameSoundManager
     {
-        public SandboxGameSoundManager( ISoundEngine soundEngine,
+        public RealmGameSoundManager( ISoundEngine soundEngine,
                                     CameraManager<ICameraFocused> cameraManager,
                                     SingleArrayChunkContainer singleArray,
                                     IDynamicEntityManager dynamicEntityManager,

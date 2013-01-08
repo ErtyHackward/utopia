@@ -134,7 +134,7 @@ namespace Realms.Client
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<ISoundEngine>().To<SoundEngine>().InSingletonScope();
-            _iocContainer.Bind<GeneralSoundManager>().To<SandboxGeneralSoundManager>().InSingletonScope();
+            _iocContainer.Bind<GeneralSoundManager>().To<RealmGeneralSoundManager>().InSingletonScope();
 
             //Debug Components ===========================================
             _iocContainer.Bind<DebugComponent>().ToSelf().InSingletonScope().WithConstructorArgument("LeftPanelColor", new ByteColor(44, 51, 59));             
@@ -217,7 +217,7 @@ namespace Realms.Client
             _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode
             _iocContainer.Bind<GhostedEntityRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draws a blue semi-transparent model
             //=============================================================
-            _iocContainer.Bind<GameSoundManager>().To<SandboxGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<GameSoundManager>().To<RealmGameSoundManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ToolBarUi>().To<SandboxToolBar>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<FadeComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<AdminConsole>().ToSelf().InScope(x => GameScope.CurrentGameScope);

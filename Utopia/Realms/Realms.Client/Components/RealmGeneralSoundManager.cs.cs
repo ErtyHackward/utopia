@@ -4,9 +4,9 @@ using Utopia.Sounds;
 
 namespace Realms.Client.Components
 {
-    public class SandboxGeneralSoundManager : GeneralSoundManager
+    public class RealmGeneralSoundManager : GeneralSoundManager
     {
-        public SandboxGeneralSoundManager(ISoundEngine soundEngine)
+        public RealmGeneralSoundManager(ISoundEngine soundEngine)
             : base(soundEngine)
         {
         }
