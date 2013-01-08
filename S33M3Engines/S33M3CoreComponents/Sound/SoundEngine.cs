@@ -325,7 +325,8 @@ namespace S33M3CoreComponents.Sound
 
         public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0)
         {
-            return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, fadeIn);
+            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, fadeIn);
+            return null;
         }
 
         public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint fadeIn = 0)

@@ -9,6 +9,7 @@ using SharpDX;
 using SharpDX.MediaFoundation;
 using SharpDX.Multimedia;
 using SharpDX.XAudio2;
+using AudioDecoder = S33M3CoreComponents.Sound.AudioDecoder;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -65,8 +66,6 @@ namespace S33M3CoreComponents.Sound
             //Get File metaData
             _audioDecoder = new AudioDecoder(_bufferedCompressedFile);
             WaveFormat = _audioDecoder.WaveFormat;
-            var enumemrator = _audioDecoder.GetSamples(_audioDecoder.Duration).GetEnumerator();
-            enumemrator.MoveNext();
 
             _sleep = new AutoResetEvent(false);
         }
