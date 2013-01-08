@@ -1,6 +1,8 @@
-﻿using Utopia.Shared.Entities.Dynamic;
+﻿using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -14,9 +16,9 @@ namespace Utopia.Shared.Entities.Concrete
             get { return EntityClassId.Hand; }
         }
 
-        public override PickType CanPickBlock(byte blockId)
+        public override PickType CanPickBlock(CubeProfile cubeProfile)
         {
-            if (blockId == 0)
+            if (cubeProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
             
             // don't allow to pick blocks by hand

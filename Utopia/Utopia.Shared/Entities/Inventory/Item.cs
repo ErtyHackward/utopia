@@ -4,11 +4,13 @@ using System.Globalization;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Inventory
@@ -195,11 +197,12 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="blockId"></param>
         /// <returns></returns>
-        public virtual PickType CanPickBlock(byte blockId)
+        public virtual PickType CanPickBlock(CubeProfile cubeProfile)
         {
-            if (blockId == 0)
+            if (cubeProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
 
+            //Default Block Behaviours here
             return PickType.Pick;
         }
 
