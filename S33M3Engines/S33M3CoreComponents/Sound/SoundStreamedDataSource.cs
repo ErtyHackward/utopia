@@ -65,6 +65,8 @@ namespace S33M3CoreComponents.Sound
             //Get File metaData
             _audioDecoder = new AudioDecoder(_bufferedCompressedFile);
             WaveFormat = _audioDecoder.WaveFormat;
+            var enumemrator = _audioDecoder.GetSamples(_audioDecoder.Duration).GetEnumerator();
+            enumemrator.MoveNext();
 
             _sleep = new AutoResetEvent(false);
         }

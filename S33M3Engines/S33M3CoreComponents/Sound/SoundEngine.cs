@@ -209,8 +209,8 @@ namespace S33M3CoreComponents.Sound
                 }
                 else
                 {
-                    soundDataSource = new SoundBufferedDataSource(fi);
-                    //soundDataSource = new SoundStreamedDataSource(fi);
+                    //soundDataSource = new SoundBufferedDataSource(fi);
+                    soundDataSource = new SoundStreamedDataSource(fi);
                 }
 
                 soundDataSource.SoundAlias = soundAlias;
