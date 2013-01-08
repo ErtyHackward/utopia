@@ -105,22 +105,19 @@ namespace Utopia.Entities.Renderer
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
         }
 
-        public override void FTSUpdate(GameTime timeSpent)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             if (Tool == null)
                 return;
 
             var pos = Tool.GetPosition(Player);
-            
+
             if (pos.Valid)
                 Transform = Matrix.RotationQuaternion(pos.Rotation) * Matrix.Translation(pos.Position.AsVector3());
             else
                 Transform = null;
-            
-        }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
-        {
+
             _alpha += ( _alphaRaise ? 0.0004f : -0.0004f ) * elapsedTime;
 
             if (_alpha < 0.2f)
