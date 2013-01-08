@@ -259,8 +259,7 @@ namespace Utopia.Shared.Entities.Inventory
                                    {
                                        if (!ValidateItem(item, s.GridPosition))
                                            return false;
-
-                                       s.ItemsCount += count;
+                                       _items[s.GridPosition.X, s.GridPosition.Y].ItemsCount += count;
 
                                        var t = new T {
                                            GridPosition = s.GridPosition,
@@ -492,7 +491,7 @@ namespace Utopia.Shared.Entities.Inventory
                 for (int y = 0; y < _gridSize.Y; y++)
                 {
                     if(_items[x,y] != null)
-                        yield return _items[x, y];
+                        yield return (T)_items[x, y].Clone();
                 }
             }
         }
@@ -543,17 +542,7 @@ namespace Utopia.Shared.Entities.Inventory
             }
             return null;
         }
-
-        /// <summary>
-        /// Performs search for an entity
-        /// </summary>
-        /// <param name="pred"></param>
-        /// <returns></returns>
-        public T Find(Predicate<T> pred)
-        {
-            return this.FirstOrDefault(slot => pred(slot));
-        }
-
+        
         /// <summary>
         /// This method is not supported. Use PutItem instead.
         /// </summary>

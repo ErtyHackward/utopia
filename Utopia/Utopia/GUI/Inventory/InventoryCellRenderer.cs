@@ -1,6 +1,7 @@
 ﻿using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.GUI.Nuclex;
+using S33M3Resources.Structs;
 
 namespace Utopia.GUI.Inventory
 {
@@ -83,7 +84,13 @@ namespace Utopia.GUI.Inventory
                         controlBounds.Width - innerBorder * 2, 
                         controlBounds.Height - innerBorder * 2
                         );
-                    graphics.DrawCustomTexture(tex, ref texBounds, textureArrayIndex, control.DrawIconsGroupId);
+
+                    ByteColor? color = null;
+
+                    if (control.IsDisabledCell)
+                        color = new ByteColor(255, 255, 255, 30);
+
+                    graphics.DrawCustomTexture(tex, ref texBounds, textureArrayIndex, control.DrawIconsGroupId, color);
                 }
                 else
                 {

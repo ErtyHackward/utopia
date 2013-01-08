@@ -249,27 +249,23 @@ namespace Utopia.GUI.Inventory
                 if (PlayerManager.Player.Toolbar[e.SlotIndex] != 0)
                 {
                     var player = PlayerManager.Player;
-                    var entityId = player.Toolbar[e.SlotIndex];
+                    var blueprintId = player.Toolbar[e.SlotIndex];
                     
                     // find the entity
-                    var slot = player.Inventory.Find(entityId);
+                    var slot = player.Inventory.FirstOrDefault(s => s.Item.BluePrintId == blueprintId);
 
                     if (slot == null)
                         return;
+                    
+                    ContainedSlot taken;
+                    player.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount);
+                    player.Equipment.Equip(EquipmentSlotType.Hand, slot, out taken);
 
-                    slot = player.Inventory.PeekSlot(slot.GridPosition);
-
-                    if (slot != null)
+                    if (taken != null)
                     {
-                        ContainedSlot taken;
-                        player.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount);
-                        player.Equipment.Equip(EquipmentSlotType.Hand, slot, out taken);
-
-                        if (taken != null)
-                        {
-                            player.Inventory.PutItem(taken.Item, slot.GridPosition, taken.ItemsCount);
-                        }
+                        player.Inventory.PutItem(taken.Item, slot.GridPosition, taken.ItemsCount);
                     }
+                    
                 }
             }
             finally
@@ -283,7 +279,7 @@ namespace Utopia.GUI.Inventory
             if (_dragControl.Slot == null)
                 return;
 
-            PlayerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.StaticId;
+            PlayerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.BluePrintId;
             _toolBar.SetSlot(e.Cell.InventoryPosition.Y, new ContainedSlot
                 {
                     Item = _dragControl.Slot.Item,

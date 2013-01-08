@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -68,6 +71,35 @@ namespace Utopia.Shared.Entities.Dynamic
             var slot = Inventory.Find(staticId);
 
             return slot != null ? slot.Item : null;
+        }
+
+        /// <summary>
+        /// Performs search in Inventory and Equipment
+        /// </summary>
+        /// <returns></returns>
+        public ContainedSlot FindSlot(Func<ContainedSlot, bool> pred)
+        {
+            var slot = Equipment.FirstOrDefault(pred);
+
+            if (slot != null)
+                return slot;
+
+            slot = Inventory.FirstOrDefault(pred);
+
+            return slot;
+        }
+
+        public IEnumerable<ContainedSlot> FindAll(Func<ContainedSlot, bool> pred)
+        {
+            foreach (var slot in Equipment.Where(pred))
+            {
+                yield return slot;
+            }
+
+            foreach (var slot in Inventory.Where(pred))
+            {
+                yield return slot;
+            }
         }
     }
 }

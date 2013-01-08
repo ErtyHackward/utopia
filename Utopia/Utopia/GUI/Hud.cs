@@ -118,8 +118,6 @@ namespace Utopia.GUI
             _d3DEngine.ViewPort_Updated -= D3DEngineViewPortUpdated;
         }
 
-        private int _lastSlot = 9;//TODO dynamic / configurable amount of toolbar slots
-                
         public override void FTSUpdate(GameTime timeSpend)
         {
             //Process pressed keys by "event"
@@ -213,7 +211,8 @@ namespace Utopia.GUI
 
         public override void EnableComponent(bool forced)
         {
-            if (!AutoStateEnabled && !forced) return;
+            if (!AutoStateEnabled && !forced) 
+                return;
 
             if (!_screen.Desktop.Children.Contains(ToolbarUi))
                 _screen.Desktop.Children.Add(ToolbarUi);
