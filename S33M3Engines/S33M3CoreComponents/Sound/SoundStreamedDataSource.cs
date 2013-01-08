@@ -91,7 +91,7 @@ namespace S33M3CoreComponents.Sound
                 _fetchingThread.Status == TaskStatus.Running
                 )
             {
-                logger.Warn("Cannot stream the same resource as streaming source for 2 differents voices !! Previously playing sound will be stopped");
+                //logger.Warn("Cannot stream the same resource as streaming source for 2 differents voices !! Previously playing sound will be stopped");
                 lock (_syncRoot)
                 {
                     if(_linkedVoice != null) _linkedVoice.Stop();

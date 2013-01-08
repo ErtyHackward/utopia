@@ -146,7 +146,6 @@ namespace Utopia.Sounds
         #region Public Methods
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
-
             #region Load Derived classes sounds
             foreach (var data in _preLoad)
             {
@@ -275,9 +274,8 @@ namespace Utopia.Sounds
 
             base.LoadContent(context);
         }
-        
 
-        public override void FTSUpdate(GameTime timeSpent)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
             _listenerPosition = _cameraManager.ActiveCamera.WorldPosition.Value.AsVector3();
             //Set current camera Position
@@ -300,6 +298,8 @@ namespace Utopia.Sounds
 
             //Walking step sound processing
             WalkingSoundProcessing();
+
+            StaticEntitiesEmittedSoundProcessing();
         }
 
         public string GetDebugInfo()
@@ -602,6 +602,65 @@ namespace Utopia.Sounds
         protected virtual void PlayBlockPut(Vector3I blockPos){}
         protected virtual void PlayBlockTake(Vector3I blockPos){}
         protected virtual void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube){}
+        #endregion
+
+        #region StaticEntities Processing
+        private IItem[] collectionEntities = new IItem[100];
+        private IItem[] nearestEntities = new IItem[20];
+        private IItem[] playingEntities = new IItem[20];
+        //private Tuple<IItem, ISoundVoice>[] staticEntityVoices = new Tuple<IItem, ISoundVoice>[20];
+        private Dictionary<IItem, ISoundVoice> staticEntityVoices = new Dictionary<IItem, ISoundVoice>();
+        private void StaticEntitiesEmittedSoundProcessing()
+        {
+            int i = 0;
+            //Collection surrending "Sound" entities (Max of 100) ===========================================
+            foreach (VisualChunk chunk in _worldChunk.SortedChunks.Where(x => x.DistanceFromPlayer < _worldChunk.StaticEntityViewRange))
+            {
+                foreach (var soundStaticEntities in chunk.SoundStaticEntities)
+                {
+                    collectionEntities[i] = soundStaticEntities;
+                    i++;
+                    if(i >= 100) break;
+                }
+                if(i >= 100) break;
+            }
+            for (; i < 100; i++) { collectionEntities[i] = null; }
+
+            // Sorting array by distance from Player
+            i = 0;
+            foreach (var entity in collectionEntities.Where(x => x != null).OrderBy(x => MVector3.DistanceSquared(x.Position, _playerEntityManager.CameraWorldPosition)))
+            {
+                nearestEntities[i] = entity;
+                i++;
+                if (i >= 20) break; //Maximum playing 10 closest static sound at the same time
+            }
+            for (; i < 20; i++) { nearestEntities[i] = null; }
+
+            ISoundVoice voice;
+            //Get entities remove from playing list.
+            foreach (var entities in playingEntities.Except(nearestEntities))
+            {
+                //Stop voices sound playing
+                //Get from Dictionnary, stop voice, remove from dictionnay.
+                if (staticEntityVoices.TryGetValue(entities, out voice))
+                {
+                    voice.Stop(500);
+                    staticEntityVoices.Remove(entities);
+                }
+            }
+
+            foreach (var entities in nearestEntities.Where(x => x!=null))
+            {
+                if (staticEntityVoices.TryGetValue(entities, out voice) == false)
+                {
+                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), true, 500);
+                    staticEntityVoices.Add(entities, playingVoice);
+                }
+            }
+
+            //Add new Entities not registered in dictionnary, and start playing sound for thems
+            playingEntities = nearestEntities;
+        }
         #endregion
 
         #endregion
