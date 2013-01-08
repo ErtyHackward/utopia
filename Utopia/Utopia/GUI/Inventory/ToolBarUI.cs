@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Ninject;
 using Utopia.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 using S33M3CoreComponents.GUI.Nuclex;
@@ -18,6 +22,7 @@ namespace Utopia.GUI.Inventory
     public class ToolBarUi : ContainerControl
     {
         private readonly PlayerCharacter _player;
+        private readonly EntityFactory _factory;
         const int ButtonSize = 46;
 
         protected readonly List<InventoryCell> _toolbarSlots;
@@ -58,13 +63,14 @@ namespace Utopia.GUI.Inventory
         }
 
 
-        public ToolBarUi(PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager)
+        public ToolBarUi(PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, EntityFactory factory)
         {
             _player = player;
- 
+            _factory = factory;
+
             Name = "Toolbar";
 
-            int nbrButton = 10;
+            int nbrButton = _player.Toolbar.Count;
             _toolbarSlots = new List<InventoryCell>(nbrButton);
 
             //float fromX = ((bounds.Right.Offset - bounds.Left.Offset) - (ButtonSize * (nbrButton))) / 2;
@@ -76,14 +82,21 @@ namespace Utopia.GUI.Inventory
                               {
                                   //Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
                               };
-                btn.MouseDown += BtnMouseDown;
-                btn.MouseUp += btn_MouseUp;
+                btn.MouseDown  += BtnMouseDown;
+                btn.MouseUp    += btn_MouseUp;
                 btn.MouseEnter += btn_MouseEnter;
                 btn.MouseLeave += btn_MouseLeave;
 
-                
+
                 if (_player.Toolbar[x] != 0)
-                    btn.Slot = new ContainedSlot { Item = (Item)_player.FindItemById(_player.Toolbar[x]) };
+                {
+                    btn.Slot = _player.FindSlot(s => s.Item.BluePrintId == _player.Toolbar[x]);
+
+                    if (btn.Slot == null)
+                    {
+                        btn.Slot = new ContainedSlot { Item = (IItem)_factory.CreateFromBluePrint(_player.Toolbar[x]) };
+                    }
+                }
 
                 _toolbarSlots.Add(btn);
 
@@ -132,14 +145,33 @@ namespace Utopia.GUI.Inventory
 
         public void Update(GameTime gameTime)
         {
+            // remove selection from every cell
+            for (int i = 0; i < _toolbarSlots.Count; i++)
+            {
+                _toolbarSlots[i].IsCellSelected = false;
+
+                if (_player.Toolbar[i] != 0)
+                {
+                    _toolbarSlots[i].IsDisabledCell =
+                        _player.FindSlot(s => s.Item.BluePrintId == _player.Toolbar[i]) == null;
+
+                    if (_toolbarSlots[i].IsDisabledCell)
+                        _toolbarSlots[i].Slot.ItemsCount = 1;
+                    else
+                        _toolbarSlots[i].Slot.ItemsCount = _player.FindAll(s => s.Item.BluePrintId == _player.Toolbar[i]).Sum(x => x.ItemsCount);
+                }
+            }
+
             if (_player.Equipment.RightTool == null)
+            {
                 return;
+            }
 
             for (int i = 0; i < _toolbarSlots.Count; i++)
             {
                 if (_player.Toolbar[i] != 0)
                 {
-                    _toolbarSlots[i].IsCellSelected = _player.Equipment.RightTool.StaticId == _player.Toolbar[i];
+                    _toolbarSlots[i].IsCellSelected = _player.Equipment.RightTool.BluePrintId == _player.Toolbar[i];
                 }
                 else
                     _toolbarSlots[i].IsCellSelected = false;

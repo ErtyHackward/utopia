@@ -72,6 +72,11 @@ namespace Utopia.GUI.Inventory
         public bool IsCellSelected { get; set; }
 
         /// <summary>
+        /// Disabled icons is drawn with transparency
+        /// </summary>
+        public bool IsDisabledCell { get; set; }
+
+        /// <summary>
         /// Allows to customize the apperance of the cell
         /// </summary>
         public SpriteTexture CustomBackground { get; set; }

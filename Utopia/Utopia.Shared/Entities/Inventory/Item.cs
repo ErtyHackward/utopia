@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Globalization;
+using System.Linq;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -163,7 +164,7 @@ namespace Utopia.Shared.Entities.Inventory
             var charEntity = owner as CharacterEntity;
             if (charEntity != null)
             {
-                var slot = charEntity.Inventory.Find(s => s.Item.StackType == entity.StackType);
+                var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == entity.StackType);
 
                 if (slot == null)
                 {
