@@ -62,7 +62,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// </remarks>
         void DrawElement(string frameName, ref RectangleF bounds, int groupId = 0);
 
-        void DrawCustomTexture(SpriteTexture custom, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0);
+        void DrawCustomTexture(SpriteTexture custom, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0, ByteColor? color = null);
 
         void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0);
 

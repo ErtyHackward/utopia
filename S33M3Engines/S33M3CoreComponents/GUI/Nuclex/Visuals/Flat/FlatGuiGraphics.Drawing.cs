@@ -157,15 +157,21 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         }
 
         //the 2 DrawCustomTexture! 
-        public void DrawCustomTexture(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0)
+        public void DrawCustomTexture(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0, ByteColor? color = null)
         {
 
             var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
             var destinationRegion = calculateDestinationRectangle(
               ref bounds, ref offset
             );
+
+            if (!color.HasValue)
+                color = _defaultColor;
+
+            ByteColor drawColor = color.Value;
+
             Rectangle srcRegion = new Rectangle(0, 0, customTex.Width, customTex.Height);
-            spriteRenderer.Draw(customTex, ref destinationRegion, ref srcRegion, ref _defaultColor, textureArrayIndex, true, groupId);
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref srcRegion, ref drawColor, textureArrayIndex, true, groupId);
         }
 
         public void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0)

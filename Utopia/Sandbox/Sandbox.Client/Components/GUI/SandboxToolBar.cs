@@ -5,6 +5,7 @@ using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
 using Utopia.GUI.Inventory;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 
 namespace Sandbox.Client.Components.GUI
@@ -14,9 +15,9 @@ namespace Sandbox.Client.Components.GUI
         readonly SpriteTexture _stBackground;
         readonly SpriteTexture _stToolbarSlot;
         readonly SpriteTexture _stToolbatSlotHover;
-        
-        public SandboxToolBar(D3DEngine engine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager) : 
-            base(player, iconFactory, inputManager)
+
+        public SandboxToolBar(D3DEngine engine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, EntityFactory factory) : 
+            base(player, iconFactory, inputManager, factory)
         {
             _stBackground       = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_bg.png");
             _stToolbarSlot      = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot.png");
