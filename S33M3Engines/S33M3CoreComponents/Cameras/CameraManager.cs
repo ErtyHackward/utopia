@@ -56,7 +56,6 @@ namespace S33M3CoreComponents.Cameras
             _worldFocusManager = worldFocusManager;
         }
 
-
         #region Public methods
 
         public override void FTSUpdate(GameTime timeSpend)

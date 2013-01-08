@@ -26,7 +26,7 @@ namespace Sandbox.Client
             {
                 if (arg.ToLower() == "-showdebug") ShowDebug = true;
                 if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
-                if (arg.ToLower() == "-640p") StartUpResolution = new System.Drawing.Size(1024, 640);
+                if (arg.ToLower() == "-640p") StartUpResolution = new System.Drawing.Size(1024, 576);
                 if (arg.ToLower() == "-720p") StartUpResolution = new System.Drawing.Size(1280, 720);
                 if (arg.ToLower().StartsWith("-lcdefferedmodelvl"))
                 {
