@@ -650,8 +650,9 @@ namespace Utopia.Sounds
             foreach (var entities in _staticEntityPlayingVoices.Keys.Except(nearestEntities))
             {
                 entitiesSet[i] = entities;
+                i++;
             }
-            for (; i >= 0; i--)
+            for (i--; i >= 0; i--)
             {
                 if (entitiesSet[i] == null) break;
                 _staticEntityPlayingVoices[entitiesSet[i]].Stop(500);
