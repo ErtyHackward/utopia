@@ -16,7 +16,7 @@ namespace Sandbox.Client
     {
         public UtopiaRender CreateNewGameEngine(IKernel iocContainer, bool VSync)
         {
-            var utopiaRenderer = new UtopiaRender(iocContainer.Get<D3DEngine>(), iocContainer.Get<InputsManager>(), true);
+            var utopiaRenderer = new UtopiaRender(iocContainer.Get<D3DEngine>(), iocContainer.Get<InputsManager>(), false);
 
             utopiaRenderer.VSync = VSync;
             
