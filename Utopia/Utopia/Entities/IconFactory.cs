@@ -317,7 +317,7 @@ namespace Utopia.Entities
                 
                 //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
 
-                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, new SpriteTexture(tex2D));
+                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, ToDispose(new SpriteTexture(tex2D)));
             }
 
             //Reset device Default render target
