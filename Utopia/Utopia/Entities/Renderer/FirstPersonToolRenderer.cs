@@ -134,9 +134,6 @@ namespace Utopia.Entities.Renderer
 
 
         #region Public Methods
-        public override void FTSUpdate(GameTime timeSpend)
-        {
-        }
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
