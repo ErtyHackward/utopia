@@ -6,11 +6,32 @@ using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using System;
+using System.Diagnostics;
 
 namespace Utopia.Worlds.Chunks
 {
+
+#if PERFTEST
+    public class Perf
+    {
+        public long cubeChunkID;
+        public bool Actif;
+        public Stopwatch sw = new Stopwatch();
+        public System.Collections.Generic.List<string> CollectedData = new System.Collections.Generic.List<string>();
+        public void AddData(string data)
+        {
+            if (Actif) CollectedData.Add(data + " " + sw.ElapsedMilliseconds);
+        }
+    }
+#endif
+
     public partial class WorldChunks : IWorldChunks
     {
+#if PERFTEST
+        public static Perf perf = new Perf();
+
+#endif
+
         #region Private variables
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
@@ -89,10 +110,14 @@ namespace Utopia.Worlds.Chunks
 
         private void ChunkUpdateManager()
         {
-            CreateNewChunk();
-            PropagateOuterChunkLights();
-            CreateChunkMeshes();
-            SendMeshesToGC();
+            int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
+            if (maximumUpdateOrderPossible == 0)
+            {
+                CreateNewChunk();
+                PropagateOuterChunkLights();
+            }
+            CreateChunkMeshes(maximumUpdateOrderPossible);
+            SendMeshesToGC(maximumUpdateOrderPossible);
         }
 
         //Will create new chunks based on chunks with state = Empty
@@ -117,6 +142,11 @@ namespace Utopia.Worlds.Chunks
         //The process done isnight this step is impacting only the chunk that need to be creation
         private void ChunkCreationThreadedSteps_Threaded(VisualChunk chunk)
         {
+
+#if PERFTEST
+            Utopia.Worlds.Chunks.WorldChunks.perf.AddData("ChunkCreationThreadedSteps_Threaded Started " + chunk.ChunkID);
+#endif
+
             //Create the landscape, by updating the "Big Array" area under the chunk
             if(chunk.State == ChunkState.Empty) _landscapeManager.CreateLandScape(chunk);
 
@@ -160,18 +190,23 @@ namespace Utopia.Worlds.Chunks
         //Will propagate light from chunk surrounding the current chunk
         private void ChunkOuterLightPropagation_Threaded(VisualChunk chunk)
         {
+#if PERFTEST
+            Utopia.Worlds.Chunks.WorldChunks.perf.AddData("ChunkOuterLightPropagation_Threaded Started " + chunk.ChunkID);
+#endif
+
             _lightingManager.PropagateOutsideChunkLightSources(chunk);
             chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
             //The state will always be OuterLightSourcesProcessed, but the logic could not be implementated if the chunk was a Border chunk. In this case its 
             //IsOutsideLightSourcePropagated will be False, it will be process as soon as the chunk isBorderChunk change to false !
         }
 
-        private void CreateChunkMeshes()
+        private void CreateChunkMeshes(int maximumUpdateOrderPossible)
         {
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.OuterLightSourcesProcessed && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 VisualChunk localChunk = chunk;
+                if (maximumUpdateOrderPossible > 0 && localChunk.UpdateOrder == 0) continue;
 
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
                 if (localChunk.SurroundingChunksMinimumState(ChunkState.OuterLightSourcesProcessed))
@@ -188,6 +223,10 @@ namespace Utopia.Worlds.Chunks
         //Will create the chunk buffer, ready to be sent to the GC
         private void CreateChunkMeshes_Threaded(VisualChunk chunk)
         {
+#if PERFTEST
+            Utopia.Worlds.Chunks.WorldChunks.perf.AddData("CreateChunkMeshes_Threaded Started  " + chunk.ChunkID);
+#endif
+
             //The chunk surrounding me must all have their landscape created !
             _chunkMeshManager.CreateChunkMesh(chunk);
             chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
@@ -196,10 +235,9 @@ namespace Utopia.Worlds.Chunks
         //Sending newly created Mesh to the GC, making the change visible, this is NOT threadsafe, the chunk must be done one by one.
         //This could lead to "lag" if too many chunks are sending their new mesh to the GC at the same time (during the same frame)
         //Maybe it will be worth to check is a limit of chunk by update must be placed (But this will slow down chunk creation time)
-        private void SendMeshesToGC()
+        private void SendMeshesToGC(int maximumUpdateOrderPossible)
         {
-            int nbrchunksSend2GC = 0;
-            int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
+            int nbrchunksSend2GC = 0;            
 
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged &&
@@ -209,6 +247,19 @@ namespace Utopia.Worlds.Chunks
                 chunk.UpdateOrder = 0;
                 chunk.SendCubeMeshesToBuffers();
                 nbrchunksSend2GC++;
+#if PERFTEST
+                if (chunk.ChunkID == Utopia.Worlds.Chunks.WorldChunks.perf.cubeChunkID)
+                {
+                    Utopia.Worlds.Chunks.WorldChunks.perf.AddData("FINISHED");
+                    Utopia.Worlds.Chunks.WorldChunks.perf.Actif = false;
+
+                    foreach (var data in Utopia.Worlds.Chunks.WorldChunks.perf.CollectedData)
+                    {
+                        Console.WriteLine(data);
+                    }
+                }
+                else Utopia.Worlds.Chunks.WorldChunks.perf.AddData("SendMeshesToGC Started  " + chunk.ChunkID);
+#endif
 
                 if (nbrchunksSend2GC > VisualWorldParameters.VisibleChunkInWorld.X) break;
             }

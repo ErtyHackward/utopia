@@ -255,6 +255,18 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
             // Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId, _visualWorldParameters.WorldParameters.Configuration);
+
+#if PERFTEST
+            if (Utopia.Worlds.Chunks.WorldChunks.perf.Actif == false)
+            {
+                Utopia.Worlds.Chunks.WorldChunks.perf.Actif = true;
+                Utopia.Worlds.Chunks.WorldChunks.perf.CollectedData = new List<string>();
+                Utopia.Worlds.Chunks.WorldChunks.perf.AddData("Started New User Action");
+                Utopia.Worlds.Chunks.WorldChunks.perf.sw.Restart();
+            }
+#endif
+
+            impactedChunk.UpdateOrder = 1;
             ThreadsManager.RunAsync(() => CheckImpact(cube, impactedChunk), ThreadsManager.ThreadTaskPriority.High);
 
             // Raise event for sound
@@ -276,6 +288,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
         {
             Int64 mainChunkId;
+
+#if PERFTEST
+            Utopia.Worlds.Chunks.WorldChunks.perf.AddData("CheckImpact BEGIN");
+#endif
 
             //Compute the Range impacted by the cube change
             Range3I cubeRange = new Range3I()
@@ -301,6 +317,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             cubeChunk.UpdateOrder = !profile.IsBlockingLight ? 1 : 2;
             mainChunkId = cubeChunk.ChunkID;
             //Console.WriteLine(cubeChunk.ChunkID + " => " + cubeChunk.UpdateOrder);
+
+#if PERFTEST
+            Utopia.Worlds.Chunks.WorldChunks.perf.cubeChunkID = mainChunkId;
+            Utopia.Worlds.Chunks.WorldChunks.perf.AddData("Modified chunk is : " + mainChunkId);
+#endif
 
             VisualChunk NeightBorChunk;
             NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
@@ -366,6 +387,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
                 //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
             }
+
+#if PERFTEST
+            Utopia.Worlds.Chunks.WorldChunks.perf.AddData("CheckImpact END");
+#endif
         }
 
         public IChunkLayout2D GetChunk(Vector2I chunkPosition)
