@@ -415,6 +415,7 @@ namespace Utopia.Shared.Entities
                     if (blueprintSlot.BlueprintId < 256)
                     {
                         var res = CreateEntity<CubeResource>();
+                        res.BluePrintId = blueprintSlot.BlueprintId;
                         //var res = new CubeResource();
                         var profile = Config.BlockProfiles[blueprintSlot.BlueprintId];
                         res.SetCube((byte)blueprintSlot.BlueprintId, profile.Name);

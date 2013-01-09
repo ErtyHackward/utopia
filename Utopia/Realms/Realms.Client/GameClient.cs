@@ -39,6 +39,9 @@ namespace Realms.Client
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Resources.Utopia;
 
+            var watermark = _iocContainer.Get<VersionWatermark>();
+            watermark.WatermarkText = "Utopia Realms " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
             System.Net.ServicePointManager.Expect100Continue = false;
 
             // Create the Rendering Main LOOP

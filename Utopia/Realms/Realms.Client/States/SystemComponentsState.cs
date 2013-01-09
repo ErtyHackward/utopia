@@ -45,6 +45,7 @@ namespace Realms.Client.States
             var guiManager = _iocContainer.Get<GuiManager>();
             var inputManager = _iocContainer.Get<InputsManager>();
             var generalSoundManager = _iocContainer.Get<GeneralSoundManager>();
+            var watermark = _iocContainer.Get<VersionWatermark>();
 
             DebugComponent debugComponent = null;
             if (Program.ShowDebug) debugComponent = _iocContainer.Get<DebugComponent>(new ConstructorArgument("withDisplayInfoActivated", true));
@@ -65,7 +66,8 @@ namespace Realms.Client.States
 
             var storage = (ModelSQLiteStorage)_iocContainer.Get<IVoxelModelStorage>();
             storage.ImportFromPath("Models");
-            
+
+            AddComponent(watermark);
             AddComponent(debugComponent);
             AddComponent(guiManager);
             AddComponent(inputManager);

@@ -120,6 +120,7 @@
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
+    <Compile Include="Components\VersionWatermark.cs" />
     <Compile Include="Entities\Managers\EntityPickResult.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />

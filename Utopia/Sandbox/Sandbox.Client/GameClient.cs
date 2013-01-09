@@ -38,6 +38,10 @@ namespace Sandbox.Client
 
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Sandbox.Client.Properties.Resources.Utopia;
+            
+            var watermark = _iocContainer.Get<VersionWatermark>();
+            watermark.WatermarkText = "Utopia Sandbox " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
