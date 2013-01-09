@@ -6,6 +6,7 @@ using Utopia.Shared.Tools;
 
 namespace Sandbox.Client
 {
+
     static class Program
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
