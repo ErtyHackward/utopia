@@ -147,6 +147,11 @@ namespace Utopia.GUI
         public override void FTSUpdate(GameTime timeSpend)
         {
 
+            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
+            {
+                IsHided = !IsHided;
+            }
+
             if (Stopwatch.GetTimestamp() > _lastUpdateTime + _hideChatInTick)
             {
                 SetFontAlphaColor(50);
@@ -207,14 +212,6 @@ namespace Utopia.GUI
             }
             
             _textInput.Refresh();
-        }
-
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
-        {
-            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
-            {
-                IsHided = !IsHided;
-            }
         }
 
         public override void Draw(DeviceContext context, int index)
