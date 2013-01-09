@@ -111,11 +111,8 @@ namespace Utopia.Worlds.Chunks
         private void ChunkUpdateManager()
         {
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
-            if (maximumUpdateOrderPossible == 0)
-            {
-                CreateNewChunk();
-                PropagateOuterChunkLights();
-            }
+            CreateNewChunk();
+            PropagateOuterChunkLights();
             CreateChunkMeshes(maximumUpdateOrderPossible);
             SendMeshesToGC(maximumUpdateOrderPossible);
         }

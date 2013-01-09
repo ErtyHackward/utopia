@@ -120,6 +120,19 @@ namespace Utopia.GUI
 
         public override void FTSUpdate(GameTime timeSpend)
         {
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
+            {
+                IsHided = !IsHided;
+                if (IsHided)
+                {
+                    _screen.HideAll();
+                }
+                else
+                {
+                    _screen.ShowAll();
+                }
+            }
+
             //Process pressed keys by "event"
             foreach(var keyPressed in _inputManager.KeyboardManager.GetPressedChars())
             {
@@ -179,22 +192,6 @@ namespace Utopia.GUI
             }
 
             _toolbarUi.Update(timeSpend);
-        }
-
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
-        {
-            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
-            {
-                IsHided = !IsHided;
-                if (IsHided)
-                {
-                    _screen.HideAll();
-                }
-                else
-                {
-                    _screen.ShowAll();
-                }
-            }
         }
 
         //Draw at 2d level ! (Last draw called)
