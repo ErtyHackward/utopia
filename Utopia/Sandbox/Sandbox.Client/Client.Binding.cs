@@ -130,7 +130,7 @@ namespace Sandbox.Client
                                                                         .WithConstructorArgument("plugInComponentAssemblies", componentsAssemblies);        //Gui base class
             _iocContainer.Bind<MainScreen>().ToSelf().InSingletonScope();
             //=============================================================
-
+            _iocContainer.Bind<VersionWatermark>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<ModelEditorComponent>().ToSelf().InSingletonScope();
             _iocContainer.Bind<BlackBgComponent>().ToSelf().InSingletonScope();
