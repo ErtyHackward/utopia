@@ -24,7 +24,7 @@ namespace S33M3CoreComponents.Sound
         private bool _3DSoundEntitiesPositionsChanged = false;
         private Listener _listener;
         private float _generalSoundVolume;
-        private int _maxVoicePoolPerFileType = 32; //Can play up to 32 differents song in parallel for each file type
+        private int _maxVoicePoolPerFileType = 8; //Can play up to 32 differents song in parallel for each file type
         private D3DEngine _d3dEngine;
 
         //XAudio2 variables
