@@ -613,26 +613,27 @@ namespace Utopia.Sounds
         #endregion
 
         #region StaticEntities Processing
-
+        private const int _qtPlayingSound = 8;
+        private const int _collectRange = 32;
         private void StaticEntitiesEmittedSoundProcessing()
         {
             IItem[] collectedStaticItems = new IItem[100];
-            IItem[] nearestEntities = new IItem[20];
-            IItem[] entitiesSet = new IItem[20];
+            IItem[] nearestEntities = new IItem[_qtPlayingSound];
+            IItem[] entitiesSet = new IItem[_qtPlayingSound];
 
             int i = 0;
             //Collection surrending "Sound" entities (Max of 100) ===========================================
-            foreach (VisualChunk chunk in _worldChunk.SortedChunks.Where(x => x.DistanceFromPlayer < _worldChunk.StaticEntityViewRange))
+            foreach (VisualChunk chunk in _worldChunk.SortedChunks.Where(x => x.DistanceFromPlayer < _collectRange))
             {
                 foreach (var soundStaticEntities in chunk.SoundStaticEntities)
                 {
                     collectedStaticItems[i] = soundStaticEntities;
                     i++;
-                    if(i >= 100) break;
+                    if (i >= collectedStaticItems.Length) break;
                 }
-                if(i >= 100) break;
+                if (i >= collectedStaticItems.Length) break;
             }
-            for (; i < 100; i++) { collectedStaticItems[i] = null; }
+            for (; i < collectedStaticItems.Length; i++) { collectedStaticItems[i] = null; }
 
             // Sorting array by distance from Player
             i = 0;
@@ -640,9 +641,9 @@ namespace Utopia.Sounds
             {
                 nearestEntities[i] = entity;
                 i++;
-                if (i >= 20) break; //Maximum playing 10 closest static sound at the same time
+                if (i >= _qtPlayingSound) break; //Maximum playing 10 closest static sound at the same time
             }
-            for (; i < 20; i++) { nearestEntities[i] = null; }
+            for (; i < _qtPlayingSound; i++) { nearestEntities[i] = null; }
 
             //Get entities remove from playing list.
             i = 0;
@@ -655,7 +656,10 @@ namespace Utopia.Sounds
             for (i--; i >= 0; i--)
             {
                 if (entitiesSet[i] == null) break;
-                _staticEntityPlayingVoices[entitiesSet[i]].Stop(500);
+                if (_staticEntityPlayingVoices[entitiesSet[i]] != null)
+                {
+                    _staticEntityPlayingVoices[entitiesSet[i]].Stop(500);
+                }
                 _staticEntityPlayingVoices.Remove(entitiesSet[i]);
             }
 
@@ -666,6 +670,14 @@ namespace Utopia.Sounds
                 {
                     ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), true, 500);
                     _staticEntityPlayingVoices.Add(entities, playingVoice);
+                }
+                else
+                {
+                    if (voice == null)
+                    {
+                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), true, 500);
+                        _staticEntityPlayingVoices[entities] = playingVoice;
+                    }
                 }
             }
 
