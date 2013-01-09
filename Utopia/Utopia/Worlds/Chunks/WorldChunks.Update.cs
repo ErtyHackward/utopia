@@ -180,8 +180,14 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
                     localChunk.ThreadLockedBy = "CreateChunkMeshes";
 #endif
-                    //SmartThread.ThreadPool.QueueWorkItem(CreateChunkMeshes_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk), localChunk.UpdateOrder > 0 ? ThreadsManager.ThreadTaskPriority.High : ThreadsManager.ThreadTaskPriority.Normal);
+                    if (localChunk.UpdateOrder == 0)
+                    {
+                        S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk), localChunk.UpdateOrder > 0 ? ThreadsManager.ThreadTaskPriority.High : ThreadsManager.ThreadTaskPriority.Normal);
+                    }
+                    else
+                    {
+                        CreateChunkMeshes_Threaded(localChunk
+                    }
                 }
             }
         }
