@@ -85,7 +85,7 @@ namespace Realms.Client.Components
 
         protected override void StaticEntityRemoved(object sender, StaticEventArgs e)
         {
-            SoundEngine.StartPlay3D("Take", e.Entity.Position.AsVector3());
+            if (e.Entity != null) SoundEngine.StartPlay3D("Take", e.Entity.Position.AsVector3());
         }
 
         #endregion
