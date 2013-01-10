@@ -54,7 +54,6 @@ namespace Utopia.Server.Managers
             // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
 
-
             TraceHelper.Write("{0} disconnected", e.Connection.RemoteAddress);
 
             if (e.Connection.Authorized)
