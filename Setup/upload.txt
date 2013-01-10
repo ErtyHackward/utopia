@@ -1,0 +1,6 @@
+open utopiarealms.com
+user update xe6ORAXoNO
+binary
+quote PASV
+send "Output\setup.exe" /setup.exe
+quit

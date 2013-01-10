@@ -146,7 +146,7 @@ namespace Realms.Client.Components.GUI
 
             _errorText.Bounds = _errorImage.Bounds;
             _errorText.Bounds.Location.X += 64;
-            _errorText.Bounds.Location.Y += 26;
+            _errorText.Bounds.Location.Y += 10;
             _errorText.Bounds.Size.X -= 75;
         }
 
@@ -158,7 +158,8 @@ namespace Realms.Client.Components.GUI
                     _screen.FocusedControl = _emailControl;
                 else if (string.IsNullOrEmpty(Password))
                     _screen.FocusedControl = _passwordControl;
-                else OnLogin();
+                else 
+                    OnLogin();
             }
         }
 
