@@ -34,6 +34,7 @@
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Recipes", 8, 8);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -222,12 +223,18 @@
             treeNode5.Name = "Container sets";
             treeNode5.SelectedImageIndex = 7;
             treeNode5.Text = "Container sets";
+            treeNode6.ContextMenuStrip = this.contextMenuCategories;
+            treeNode6.ImageIndex = 8;
+            treeNode6.Name = "Recipes";
+            treeNode6.SelectedImageIndex = 8;
+            treeNode6.Text = "Recipes";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
             treeNode4,
-            treeNode5});
+            treeNode5,
+            treeNode6});
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
             this.tvMainCategories.TabIndex = 5;
@@ -245,6 +252,7 @@
             this.imageList1.Images.SetKeyName(5, "world.png");
             this.imageList1.Images.SetKeyName(6, "wrench.png");
             this.imageList1.Images.SetKeyName(7, "chest.png");
+            this.imageList1.Images.SetKeyName(8, "script.png");
             // 
             // label1
             // 

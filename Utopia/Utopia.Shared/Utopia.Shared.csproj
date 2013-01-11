@@ -319,6 +319,7 @@
     <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
+    <Compile Include="Tools\BlueprintSelector.cs" />
     <Compile Include="Tools\ContainerEditor.cs">
       <SubType>Component</SubType>
     </Compile>

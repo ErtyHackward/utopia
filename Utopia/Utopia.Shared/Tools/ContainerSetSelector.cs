@@ -1,8 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.Drawing.Design;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.Tools

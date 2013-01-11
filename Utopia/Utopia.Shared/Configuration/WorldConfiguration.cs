@@ -125,12 +125,20 @@ namespace Utopia.Shared.Configuration
         [ProtoMember(12)]
         public string StartSet { get; set; }
 
+        /// <summary>
+        /// Gets or sets list of all possible recipes
+        /// </summary>
+        [ProtoMember(13)]
+        public List<Recipe> Recipes { get; set; }
+
         #endregion
 
         protected WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
         {
-            if (factory == null) factory = new EntityFactory(null);
-            if (withHelperAssignation) EditorConfigHelper.Config = this;
+            if (factory == null) 
+                factory = new EntityFactory(null);
+            if (withHelperAssignation) 
+                EditorConfigHelper.Config = this;
             
             factory.Config = this; //Inject itself into the factory
 
@@ -267,6 +275,7 @@ namespace Utopia.Shared.Configuration
             BlockProfiles = new BlockProfile[255];
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
+            Recipes = new List<Recipe>();
         }
 
         private void CreateDefaultValues()

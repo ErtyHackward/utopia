@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using ProtoBuf;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
 {
@@ -16,30 +18,48 @@ namespace Utopia.Shared.Entities
         public List<RecipeIngredient> Ingredients { get; set; }
 
         /// <summary>
-        /// Gets or sets recipe result item and count
+        /// Gets or sets recipe result item
         /// </summary>
         [ProtoMember(2)]
-        public RecipeIngredient Result { get; set; }
+        [TypeConverter(typeof(BlueprintSelector))]
+        public ushort ResultBlueprintId { get; set; }
+
+        /// <summary>
+        /// Gets or sets recipe result items count
+        /// </summary>
+        [ProtoMember(3)]
+        public int ResultCount { get; set; }
 
         /// <summary>
         /// Gets recipe display name
         /// </summary>
         public string Name { get; set; }
+
+        public Recipe()
+        {
+            Ingredients = new List<RecipeIngredient>();
+            ResultCount = 1;
+            Name = "Noname";
+        }
     }
 
     /// <summary>
     /// Describes items required 
     /// </summary>
+    [ProtoContract]
     public struct RecipeIngredient
     {
         /// <summary>
         /// Item blueprint id
         /// </summary>
+        [ProtoMember(1)]
+        [TypeConverter(typeof(BlueprintSelector))]
         public ushort BlueprintId { get; set; }
 
         /// <summary>
         /// Number of items required
         /// </summary>
+        [ProtoMember(2)]
         public int Count { get; set; }
     }
 }
