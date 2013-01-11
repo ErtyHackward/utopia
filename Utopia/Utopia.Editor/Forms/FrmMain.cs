@@ -522,7 +522,7 @@ namespace Utopia.Editor.Forms
                     // show entities in that category
                     entityListView.Groups.Clear();
                     entityListView.Items.Clear();
-                    foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GetType() == selectedObject))
+                    foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GetType() == (Type)selectedObject))
                     {
                         string imgKey = null;
 

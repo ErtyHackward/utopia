@@ -156,7 +156,7 @@ namespace S33M3CoreComponents.Sound
 
         public void Start(float soundVolume, uint fadeIn = 0, uint maxDefferedStart = 0)
         {
-            if (fadeIn > 0)
+            if (fadeIn > 0 && !is3DSound)
             {
                 IsFadingMode = true;
                 _fadingStepThreeshold = 1.0f / fadeIn;
@@ -184,7 +184,7 @@ namespace S33M3CoreComponents.Sound
 
         public void Stop(uint fadeOut = 0)
         {
-            if (fadeOut > 0)
+            if (fadeOut > 0 && !is3DSound)
             {
                 IsFadingMode = true;
                 _fadingStepThreeshold = 1.0f / fadeOut * -1;
