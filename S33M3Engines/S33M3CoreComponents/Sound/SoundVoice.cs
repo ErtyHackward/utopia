@@ -30,6 +30,7 @@ namespace S33M3CoreComponents.Sound
         private Stopwatch _deferredStartTimer = new Stopwatch();
         private uint _defferedStart;
         private uint _maxDefferedStart;
+        private bool _deferredPaused;
         private bool _isPlaying;
         private FastRandom _rnd = new FastRandom();
         #endregion
@@ -124,14 +125,16 @@ namespace S33M3CoreComponents.Sound
             //Do nothing, start will be deferred !
             if (_maxDefferedStart > 0)
             {
-                if (_defferedStart > _deferredStartTimer.ElapsedMilliseconds) return;
-
                 //Not playing the sound with Buffered start => Assign new rnd start
-                if (_voice.State.BuffersQueued == 0)
+                if (_voice.State.BuffersQueued == 0 && _deferredPaused == false)
                 {
                     AssignNewRndStart();
+                    _deferredPaused = true;
                     logger.Trace("AssignNewRndStart {0} {1}", this.Id, this.PlayingDataSource.SoundAlias);
                 }
+
+                if (_defferedStart > _deferredStartTimer.ElapsedMilliseconds) return;
+                _deferredPaused = false;
             }
 
             if (_playingDataSource is SoundStreamedDataSource)
@@ -169,6 +172,9 @@ namespace S33M3CoreComponents.Sound
             }
 
             _maxDefferedStart = maxDefferedStart;
+
+            if (_maxDefferedStart > 0) _deferredPaused = false;
+
             _voiceVolume = soundVolume;
             RefreshVoices();
 
