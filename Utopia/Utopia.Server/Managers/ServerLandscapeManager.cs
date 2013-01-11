@@ -305,6 +305,7 @@ namespace Utopia.Server.Managers
                         {
                             chunk = new ServerChunk { Position = position };
                             chunk.Decompress(data);
+                            EntityFactory.PrepareEntities(chunk.Entities);
                         }
 
                         _chunks.Add(position, chunk);
