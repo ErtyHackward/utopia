@@ -167,6 +167,25 @@ namespace S33M3CoreComponents.Sound
             _3DSoundEntitiesPositionsChanged = false;
         }
 
+        public void StopAllSounds()
+        {
+            foreach (var soundCatQueue in _soundVoices.Values)
+            {
+                foreach (var sound in soundCatQueue.Where(x => x != null && x.IsPlaying))
+                {
+                    sound.Stop();
+                }
+            }
+        }
+
+        public void AddSoundWatching(ISoundVoice voice)
+        {
+            _soundProcessingQueue.Add(voice);
+            _syncro.Set();
+        }
+
+        #region Sounds repository management - creation/buffering
+
         public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool? streamedSound = null, float soundPower = 16)
         {
             ISoundDataSource soundDataSource;
@@ -240,7 +259,11 @@ namespace S33M3CoreComponents.Sound
             _soundDataSources.Remove(soundAlias);
         }
 
-        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0)
+        #endregion
+
+        #region 2d Sound playing
+
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
@@ -251,12 +274,12 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.is3DSound = false;
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
-                soundVoice.PushDataSourceForPlaying();
+                if (rndDefferedStart == 0) soundVoice.PushDataSourceForPlaying();
                 soundVoice.RefreshVoices();
                 soundVoice.Start(volume, fadeIn);
-                if (playLooped || fadeIn > 0)
+                if (playLooped || fadeIn > 0 || rndDefferedStart > 0)
                 {
-                    LookAtSound(soundVoice);
+                    AddSoundWatching(soundVoice);
                 }
             }
             else
@@ -267,33 +290,31 @@ namespace S33M3CoreComponents.Sound
             return soundVoice;
         }
 
-        public void LookAtSound(ISoundVoice voice)
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            _soundProcessingQueue.Add(voice);
-            _syncro.Set();
+            return StartPlay2D(soundSource, soundSource.SoundVolume, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, float volume, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(soundSource, soundSource.SoundVolume, playLooped, fadeIn);
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), volume, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string soundAlias, float volume, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), volume, playLooped, fadeIn);
+            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias), playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias), playLooped, fadeIn);
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string soundAlias, bool playLooped = false, uint fadeIn = 0)
-        {
-            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), playLooped, fadeIn);
-        }
+        #endregion
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint fadeIn = 0)
+        #region 3d Sound playing
+
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
@@ -307,12 +328,12 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.is3DSound = true;
                 soundVoice.IsLooping = playLooped;
                 soundVoice.PlayingDataSource = soundSource;
-                soundVoice.PushDataSourceForPlaying();
+                if(rndDefferedStart == 0) soundVoice.PushDataSourceForPlaying();
                 soundVoice.RefreshVoices();
-                soundVoice.Start(volume, fadeIn);
-                if (playLooped || fadeIn > 0)
+                soundVoice.Start(volume, fadeIn, rndDefferedStart);
+                if (playLooped || fadeIn > 0 || rndDefferedStart > 0)
                 {
-                    LookAtSound(soundVoice);
+                    AddSoundWatching(soundVoice);
                 }
             }
             else
@@ -323,37 +344,28 @@ namespace S33M3CoreComponents.Sound
             return soundVoice;
         }
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, fadeIn);
+            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, fadeIn, rndDefferedStart);
             return null;
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, volume, playLooped, fadeIn);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, volume, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, playLooped, fadeIn);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0)
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias), position, playLooped, fadeIn);
+            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias), position, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public void StopAllSounds()
-        {
-            foreach (var soundCatQueue in _soundVoices.Values)
-            {
-                foreach (var sound in soundCatQueue.Where(x => x != null && x.State.BuffersQueued > 0))
-                {
-                    sound.Stop();
-                }
-            }
-        }
+        #endregion
 
         #endregion
 
@@ -406,6 +418,7 @@ namespace S33M3CoreComponents.Sound
             _xaudio2.StartEngine();
         }
 
+
         private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
             //Get the soundqueue following SoundFormatCategory
@@ -421,8 +434,9 @@ namespace S33M3CoreComponents.Sound
                 soundVoice = voiceQueue[i];
                 if (soundVoice == null)
                 {
-                    //logger.Info("NEW Voice Id : {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
+                    //logger.Info("NEW Voice Id : {0}, for queue {1} song playing {2}", i, dataSource2Bplayed.WaveFormat.ToString(), dataSource2Bplayed.SoundAlias);
                     soundVoice = voiceQueue[i] = ToDispose(new SoundVoice(this, dataSource2Bplayed.WaveFormat, Voice_BufferEnd));
+                    soundVoice.Id = i + "  dataSource2Bplayed.WaveFormat.ToString()";
                     soundVoice.Emitter = new Emitter()
                     {
                         ChannelCount = 1,
@@ -430,9 +444,9 @@ namespace S33M3CoreComponents.Sound
                     };
                     return true; //Return a newly created voice 
                 }
-                if (soundVoice.State.BuffersQueued == 0 && soundVoice.IsLooping == false)
+                if (soundVoice.IsPlaying == false)
                 {
-                    //logger.Info("Reuse Voice Id {0}, for queue {1}", i, dataSource2Bplayed.FormatType.ToString());
+                    //logger.Info("Reuse Voice Id {0}, for queue {1} song playing {2}", i, dataSource2Bplayed.WaveFormat.ToString(), dataSource2Bplayed.SoundAlias);
 
                     return true;  //Return an already created voice, that was waiting to play a sound
                 }
@@ -440,6 +454,12 @@ namespace S33M3CoreComponents.Sound
 
             soundVoice = null;
             return false;
+        }
+
+
+        private void d3dEngine_OnShuttingDown(object sender, EventArgs e)
+        {
+            _syncro.Set();
         }
 
         //Voice end sound reading call back
@@ -454,6 +474,9 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
+
+        //ASYNC called methods responsible to do actions against WatchSound added (looping, fadding) =======================================
+
         //Function that is running its own thread responsible to do background stuff concerning sound
         private void DataSoundPocessingAsync()
         {
@@ -461,9 +484,9 @@ namespace S33M3CoreComponents.Sound
             {
                 while (!IsDisposed && !_stopThreading && !_d3dEngine.IsShuttingDownRequested)
                 {
-                    LoopingSoundRefresh();
+                    WatchingSoundRefresh();
                     //Reset only if no more fading sound in processing Voice List
-                    if (_soundProcessingQueue.Count(x => x.IsFadingMode == true) == 0)
+                    if (_soundProcessingQueue.Count(x => x.IsFadingMode == true || x.IsLooping) == 0)
                     {
                         _syncro.Reset();
                     }
@@ -479,27 +502,18 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
-        private void d3dEngine_OnShuttingDown(object sender, EventArgs e)
-        {
-            _syncro.Set();
-        }
-
-        /// <summary>
-        /// Logic to implement "Looping" sound.
-        /// </summary>
-        /// <returns></returns>
-        private void LoopingSoundRefresh()
+        private void WatchingSoundRefresh()
         {
             ISoundVoice soundVoice;
             for (int i = _soundProcessingQueue.Count - 1; i >= 0; i--)
             {
                 soundVoice = _soundProcessingQueue[i];
 
-                if (soundVoice.IsLooping) processLoopingSoundState(soundVoice);
+                if (soundVoice.IsLooping || soundVoice.MaxDefferedStart > 0) processLoopingSoundState(soundVoice);
                 if (soundVoice.IsFadingMode) processFadingSoundState(soundVoice);
 
                 //CleanUp Queue if needed
-                if (soundVoice.IsLooping == false && soundVoice.IsFadingMode == false)
+                if (soundVoice.IsPlaying == false)
                 {
                     _soundProcessingQueue.RemoveAt(i);
                 }
@@ -520,8 +534,6 @@ namespace S33M3CoreComponents.Sound
         }
         
         #endregion
-
-
 
 
 
