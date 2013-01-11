@@ -18,6 +18,9 @@ namespace S33M3CoreComponents.Sound
         Vector3 Position { get; set; }
         SourceVoice Voice { get; set; }
         bool is3DSound { get; set; }
+        uint MaxDefferedStart { get; set; }
+        string Id { get; set; }
+
         VoiceState State { get; }
         void RefreshVoices();
 
@@ -31,13 +34,13 @@ namespace S33M3CoreComponents.Sound
         /// Start playing the sound.
         /// <param name="fadeIn">fadeIn time in ms, 0 = directly started at full volume</param>
         /// </summary>
-        void Start(uint fadeIn = 0);
+        void Start(uint fadeIn = 0, uint rndDefferedStart = 0);
         /// <summary>
         /// Start playing the sound with selected soundVolumne coef.
         /// </summary>
         /// <param name="fadeIn">fadeIn time in ms, 0 = directly started at full volume</param>
         /// <param name="soundVolume"></param>
-        void Start(float soundVolume, uint fadeIn = 0);
+        void Start(float soundVolume, uint fadeIn = 0, uint rndDefferedStart = 0);
 
         /// <summary>
         /// Stop the currently playing sound
