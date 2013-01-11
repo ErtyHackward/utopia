@@ -205,12 +205,12 @@ namespace Utopia.Shared.Configuration
         public object CreateNewCube()
         {
             //Get New Cube ID.
-            //We keep the id from 0 to 100 for "System" cubes
+            //We keep the id from 0 to 99 for "System" cubes
             //101 to 254 for Custom created cubes
             byte newProfileId;
-            if (BlockProfiles.Where(x => x != null).Count(x => x.Id > 100) > 1)
+            if (BlockProfiles.Where(x => x != null).Count(x => x.Id > 99) >= 1)
             {
-                newProfileId = BlockProfiles.Where(x => x.Id > 100).Select(y => y.Id).Max();
+                newProfileId = (byte)(BlockProfiles.Where(x => x.Id > 99).Select(y => y.Id).Max() + 1);
             }
             else newProfileId = 100;
 
@@ -242,6 +242,24 @@ namespace Utopia.Shared.Configuration
             BlockProfiles[newProfileId] = newCubeProfile;
 
             return newCubeProfile;
+        }
+
+        public bool DeleteBlockProfile(BlockProfile profile)
+        {
+            //Get cube profile id
+            int profileID = 0;
+            while(BlockProfiles[profileID] != profile) profileID++;
+            if (profileID <= 99) return false; //Don't remove system cube
+            //New Array
+            BlockProfile[] newArray = new BlockProfile[255];
+
+            //Copy until the ID from old to new
+            int i;
+            for (i = 0; i < profileID; i++) newArray[i] = BlockProfiles[i];
+            //Copy the Old array to the new one skipping the removed Block
+            for (; i < BlockProfiles.Length - 1; i++) newArray[i] = BlockProfiles[i + 1];
+            BlockProfiles = newArray;
+            return true;
         }
 
         public object CreateNewEntity(Type entityClassType)

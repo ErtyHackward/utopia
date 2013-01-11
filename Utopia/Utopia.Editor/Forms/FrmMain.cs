@@ -300,7 +300,9 @@ namespace Utopia.Editor.Forms
                 var blockProfile = _configuration.BlockProfiles[i];
                 if (blockProfile.Name == "System Reserved") continue;
 
-                AddSubNode(cubesRootNode, blockProfile.Name, blockProfile, "CubeResource_" + blockProfile.Name);
+                var node = AddSubNode(cubesRootNode, blockProfile.Name, blockProfile, "CubeResource_" + blockProfile.Name);
+                node.ContextMenuStrip = contextMenuEntity;
+                node.Tag = blockProfile;
             }
 
             #region Sets
@@ -408,7 +410,7 @@ namespace Utopia.Editor.Forms
         }
 
         #region GUI events Handling
-        //Called when the ADD button is cliques on a Main Category treeview
+        //Called when the ADD button is pushed on a Main Category treeview
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (tvMainCategories.SelectedNode == null) return;
@@ -445,12 +447,27 @@ namespace Utopia.Editor.Forms
             }
         }
 
+        //Called when the DELETE button is pushed on a Main Category treeview
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var entity = (Entity)tvMainCategories.SelectedNode.Tag;
-            _configuration.BluePrints.Remove(entity.BluePrintId);
-            tvMainCategories.SelectedNode.Remove();
+            if (tvMainCategories.SelectedNode.Tag is Entity)
+            {
+                var entity = (Entity)tvMainCategories.SelectedNode.Tag;
+                _configuration.BluePrints.Remove(entity.BluePrintId);
+                tvMainCategories.SelectedNode.Remove();
+            }
+            else if (tvMainCategories.SelectedNode.Tag is BlockProfile)
+            {
+                var blockProfile = (BlockProfile)tvMainCategories.SelectedNode.Tag;
+                if (_configuration.DeleteBlockProfile(blockProfile))
+                {
+                    tvMainCategories.SelectedNode.Remove();
+                }
+            }
+
         }
+
+        
 
         /// <summary>
         /// Event raised when a property change in the Details property grid.
@@ -677,7 +694,6 @@ namespace Utopia.Editor.Forms
                 tvMainCategories.SelectedNode = FindByTag(lvi.Tag);
             }
         }
-
 
 
     }
