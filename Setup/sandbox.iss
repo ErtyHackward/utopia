@@ -15,14 +15,14 @@ Source: Deps\dxwebsetup.exe; Flags: dontcopy
 Source: ..\Utopia\Sandbox\Sandbox.Client\bin\Release\*; DestDir: {app}; Excludes: *.dds,*.pdb,*.vshost.*,*.exe.config,Newtonsoft.Json.xml,Ninject.xml,NLog.xml,protobuf-net.xml,SharpDX.*.xml,SharpDX.xml; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Setup]
-VersionInfoVersion=1.0.1
+VersionInfoVersion=1.0.2
 VersionInfoCompany=Utopia
 VersionInfoDescription=Utopia
 VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2012-2013
 VersionInfoProductName=Utopia sandbox
 MinVersion=0,6.0.6000
 AppName=Utopia: Sandbox
-AppVerName=Utopia: Sandbox, 1.0.1
+AppVerName=Utopia: Sandbox, 1.0.2
 AppPublisher=April32
 AppPublisherURL=http://april32.com
 AppSupportURL=http://utopiarealms.com
