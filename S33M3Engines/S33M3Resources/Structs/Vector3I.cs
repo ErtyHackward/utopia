@@ -116,22 +116,12 @@ namespace S33M3Resources.Structs
 
         public static explicit operator Vector3I(Vector3 vec)
         {
-            return new Vector3I(Fastfloor(vec.X), Fastfloor(vec.Y), Fastfloor(vec.Z));
+            return new Vector3I(Math.Floor(vec.X), Math.Floor(vec.Y), Math.Floor(vec.Z));
         }
 
         public static explicit operator Vector3I(Vector3D vec)
         {
-            return new Vector3I(Fastfloor(vec.X), Fastfloor(vec.Y), Fastfloor(vec.Z));
-        }
-
-        private static int Fastfloor(double x)
-        {
-            return x > 0 ? (int)x : (int)x - 1;
-        }
-
-        private static int Fastfloor(float x)
-        {
-            return x > 0 ? (int)x : (int)x - 1;
+            return new Vector3I(Math.Floor(vec.X), Math.Floor(vec.Y), Math.Floor(vec.Z));
         }
 
         public static Vector3I operator *(Vector3I pos, int value)

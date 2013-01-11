@@ -50,7 +50,7 @@ namespace Utopia.Entities.Managers
                     if (item == null)
                         item = _handTool;
 
-                    if (_putMode)
+                    if (_putMode || !(item is ITool))
                     {
                         // can't put the hand!
                         if (item == _handTool)
