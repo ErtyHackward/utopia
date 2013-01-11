@@ -17,7 +17,8 @@ namespace Utopia.Server.Sample
     public class TestNpcService : Service
     {
         private Server _server;
-        private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
+        //private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
+        private string[] _names = new[] { "Katia", "Sveta", "Lena", "Dasha" };
 
         private List<TestNpc> _aliveNpc = new List<TestNpc>();
 
