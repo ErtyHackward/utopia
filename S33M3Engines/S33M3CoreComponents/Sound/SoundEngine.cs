@@ -314,7 +314,7 @@ namespace S33M3CoreComponents.Sound
 
         #region 3d Sound playing
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint rndDefferedStart = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
@@ -330,8 +330,8 @@ namespace S33M3CoreComponents.Sound
                 soundVoice.PlayingDataSource = soundSource;
                 if(rndDefferedStart == 0) soundVoice.PushDataSourceForPlaying();
                 soundVoice.RefreshVoices();
-                soundVoice.Start(volume, fadeIn, rndDefferedStart);
-                if (playLooped || fadeIn > 0 || rndDefferedStart > 0)
+                soundVoice.Start(volume, rndDefferedStart: rndDefferedStart);
+                if (playLooped || rndDefferedStart > 0)
                 {
                     AddSoundWatching(soundVoice);
                 }
@@ -344,25 +344,25 @@ namespace S33M3CoreComponents.Sound
             return soundVoice;
         }
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, fadeIn, rndDefferedStart);
+            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, rndDefferedStart);
             return null;
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, volume, playLooped, fadeIn, rndDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, volume, playLooped, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, playLooped, fadeIn, rndDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, playLooped, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias), position, playLooped, fadeIn, rndDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias), position, playLooped, rndDefferedStart);
         }
 
         #endregion
