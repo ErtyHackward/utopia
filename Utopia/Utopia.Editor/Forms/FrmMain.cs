@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Design.PluralizationServices;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
 using Utopia.Shared.Configuration;
@@ -22,6 +24,7 @@ namespace Utopia.Editor.Forms
         private WorldConfiguration _configuration;
         private UserControl _processorControl;
         private Dictionary<string, Image> _icons;
+        private PluralizationService _pluralization;
 
         #region Public Properties
         public WorldConfiguration Configuration
@@ -78,7 +81,10 @@ namespace Utopia.Editor.Forms
         private void UpdateImageList()
         {
             //Removes all image above _entitiesOffset
-            while (imageList1.Images.Count > _entitiesOffset) imageList1.Images.RemoveAt(imageList1.Images.Count - 1);
+            while (imageList1.Images.Count > _entitiesOffset) 
+                imageList1.Images.RemoveAt(imageList1.Images.Count - 1);
+
+            largeImageList.Images.Clear();
 
             ModelSelector.Models.Clear();
 
@@ -86,6 +92,8 @@ namespace Utopia.Editor.Forms
             foreach (var visualVoxelModel in Program.IconManager.ModelManager.Enumerate())
             {
                 imageList1.Images.Add(_icons[visualVoxelModel.VoxelModel.Name]);
+                largeImageList.Images.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+
                 _icons[visualVoxelModel.VoxelModel.Name].Tag = imageList1.Images.Count - 1; //Add Image Index in imageList
 
                 ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
@@ -97,6 +105,7 @@ namespace Utopia.Editor.Forms
             {
                 if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
                 imageList1.Images.Add(_icons["CubeResource_" + cubeprofiles.Name]);
+                largeImageList.Images.Add("CubeResource_" + cubeprofiles.Name, _icons["CubeResource_" + cubeprofiles.Name]);
                 _icons["CubeResource_" + cubeprofiles.Name].Tag = imageList1.Images.Count - 1;
             }
 
@@ -112,6 +121,8 @@ namespace Utopia.Editor.Forms
             
             tvMainCategories.ImageList = imageList1;
 
+            _pluralization = PluralizationService.CreateService(
+                new CultureInfo("en"));
             
         }
 
@@ -244,21 +255,40 @@ namespace Utopia.Editor.Forms
 
             //Add new Entities nodes
 
-            foreach (var pair in _configuration.BluePrints)
-            {
-                var entity = pair.Value;
+            // get entities types
+            var entitiesTypes = _configuration.BluePrints.Values.Select(e => e.GetType()).Distinct().ToArray();
 
-                string iconName = null;
-                
-                if (entity is IVoxelEntity)
+            // add categories
+
+            foreach (var entitiesType in entitiesTypes)
+            {
+                var categoryNode = AddSubNode(entitiesRootNode, _pluralization.Pluralize(entitiesType.Name), entitiesType);
+
+                categoryNode.ImageIndex = 9;
+                categoryNode.SelectedImageIndex = 10;
+
+                foreach (var entity in _configuration.BluePrints.Values.Where(e => e.GetType() == entitiesType))
                 {
-                    var voxelEntity = entity as IVoxelEntity;
-                    iconName = voxelEntity.ModelName;
+                    string iconName = null;
+
+                    if (entity is IVoxelEntity)
+                    {
+                        var voxelEntity = entity as IVoxelEntity;
+                        iconName = voxelEntity.ModelName;
+                    }
+
+                    var node = AddSubNode(categoryNode, entity.Name, entity, iconName);
+
+                    node.ContextMenuStrip = contextMenuEntity;
                 }
 
-                var node = AddSubNode(entitiesRootNode, entity.Name, entity, iconName);
+            }
 
-                node.ContextMenuStrip = contextMenuEntity;
+
+
+            foreach (var pair in _configuration.BluePrints)
+            {
+
             }
 
 
@@ -485,6 +515,74 @@ namespace Utopia.Editor.Forms
 
                     containerEditor.Content = content;
                 }
+                else if (selectedObject is Type)
+                {
+                    ShowMainControl(entityListView);
+
+                    // show entities in that category
+                    entityListView.Groups.Clear();
+                    entityListView.Items.Clear();
+                    foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GetType() == selectedObject))
+                    {
+                        string imgKey = null;
+
+                        if (entity is IVoxelEntity)
+                        {
+                            imgKey = (entity as IVoxelEntity).ModelName;
+                        }
+
+                        var lvi = new ListViewItem { 
+                            Text = entity.Name,
+                            ImageKey = imgKey,
+                            Tag = entity
+                        };
+
+                        entityListView.Items.Add(lvi);
+                    }
+
+                }
+                else if (selectedObject == null && tvMainCategories.SelectedNode.Name == "Entities")
+                {
+                    // show all entities, grouped
+
+                    ShowMainControl(entityListView);
+                    entityListView.Groups.Clear();
+                    entityListView.Items.Clear();
+
+                    // get entities types
+                    var entitiesTypes = _configuration.BluePrints.Values.Select(en => en.GetType()).Distinct().ToArray();
+
+                    // add categories
+
+                    foreach (var entitiesType in entitiesTypes)
+                    {
+                        var group = new ListViewGroup(_pluralization.Pluralize(entitiesType.Name));
+                        //group.HeaderAlignment = HorizontalAlignment.Left;
+                        entityListView.Groups.Add(group);
+
+                        foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GetType() == entitiesType))
+                        {
+                            string imgKey = null;
+
+                            if (entity is IVoxelEntity)
+                            {
+                                imgKey = (entity as IVoxelEntity).ModelName;
+                            }
+
+                            var lvi = new ListViewItem { 
+                                Text = entity.Name,
+                                ImageKey = imgKey,
+                                Tag = entity
+                            };
+
+                            entityListView.Items.Add(lvi).Group = group;
+                        }
+
+                        
+                    }
+
+
+                }
                 else
                 {
                     // show property grid of this object
@@ -492,13 +590,13 @@ namespace Utopia.Editor.Forms
                     pgDetails.Visible = true;
                     if (selectedObject is BlockProfile)
                     {
-                        pgDetails.Enabled = !((BlockProfile) tvMainCategories.SelectedNode.Tag).IsSystemCube;
+                        pgDetails.Enabled = !( (BlockProfile)tvMainCategories.SelectedNode.Tag ).IsSystemCube;
                     }
                     else
                     {
                         pgDetails.Enabled = true;
                     }
-                    if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true;
+                    if (( ModifierKeys & Keys.Control ) != 0) pgDetails.Enabled = true;
                     pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
 
                     if (selectedObject is IVoxelEntity)
@@ -569,6 +667,16 @@ namespace Utopia.Editor.Forms
         }
 
         #endregion
+
+        private void entityListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (entityListView.SelectedItems.Count == 1)
+            {
+                var lvi = entityListView.SelectedItems[0];
+
+                tvMainCategories.SelectedNode = FindByTag(lvi.Tag);
+            }
+        }
 
 
 

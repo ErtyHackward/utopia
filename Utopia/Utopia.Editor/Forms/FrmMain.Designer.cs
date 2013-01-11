@@ -57,6 +57,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.containerEditor = new Utopia.Shared.Tools.ContainerEditor();
+            this.entityListView = new System.Windows.Forms.ListView();
+            this.largeImageList = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuEntity = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuCategories.SuspendLayout();
@@ -196,6 +198,7 @@
             // 
             this.tvMainCategories.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvMainCategories.Enabled = false;
+            this.tvMainCategories.HideSelection = false;
             this.tvMainCategories.ImageIndex = 0;
             this.tvMainCategories.ImageList = this.imageList1;
             this.tvMainCategories.Location = new System.Drawing.Point(3, 22);
@@ -253,6 +256,8 @@
             this.imageList1.Images.SetKeyName(6, "wrench.png");
             this.imageList1.Images.SetKeyName(7, "chest.png");
             this.imageList1.Images.SetKeyName(8, "script.png");
+            this.imageList1.Images.SetKeyName(9, "folder.png");
+            this.imageList1.Images.SetKeyName(10, "folder_opened.png");
             // 
             // label1
             // 
@@ -282,6 +287,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgDetails);
             this.splitContainer1.Panel2.Controls.Add(this.containerEditor);
+            this.splitContainer1.Panel2.Controls.Add(this.entityListView);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(3);
             this.splitContainer1.Size = new System.Drawing.Size(859, 646);
             this.splitContainer1.SplitterDistance = 188;
@@ -300,6 +306,23 @@
             this.containerEditor.Text = "containerEditor1";
             this.containerEditor.Visible = false;
             this.containerEditor.ItemNeeded += new System.EventHandler<Utopia.Shared.Tools.ItemNeededEventArgs>(this.ContainerEditorItemNeeded);
+            // 
+            // entityListView
+            // 
+            this.entityListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityListView.LargeImageList = this.largeImageList;
+            this.entityListView.Location = new System.Drawing.Point(3, 3);
+            this.entityListView.Name = "entityListView";
+            this.entityListView.Size = new System.Drawing.Size(661, 640);
+            this.entityListView.TabIndex = 2;
+            this.entityListView.UseCompatibleStateImageBehavior = false;
+            this.entityListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.entityListView_MouseDoubleClick);
+            // 
+            // largeImageList
+            // 
+            this.largeImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.largeImageList.ImageSize = new System.Drawing.Size(32, 32);
+            this.largeImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // contextMenuEntity
             // 
@@ -363,6 +386,8 @@
         private Shared.Tools.ContainerEditor containerEditor;
         private System.Windows.Forms.ContextMenuStrip contextMenuEntity;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ListView entityListView;
+        private System.Windows.Forms.ImageList largeImageList;
     }
 }
 
