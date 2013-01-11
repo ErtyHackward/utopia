@@ -71,9 +71,9 @@ namespace S33M3CoreComponents.Maths.Noises
             // Skew the input space to determine which simplex cell we're in
             const double F3 = 1.0 / 3.0;
             double s = (x + y + z) * F3; // Very nice and simple skew factor for 3D
-            int i = MathHelper.Fastfloor(x + s);
-            int j = MathHelper.Fastfloor(y + s);
-            int k = MathHelper.Fastfloor(z + s);
+            int i = MathHelper.Floor(x + s);
+            int j = MathHelper.Floor(y + s);
+            int k = MathHelper.Floor(z + s);
 
             const double G3 = 1.0 / 6.0; // Very nice and simple unskew factor, too
             double t = (i + j + k) * G3;
@@ -190,8 +190,8 @@ namespace S33M3CoreComponents.Maths.Noises
             // Skew the input space to determine which simplex cell we're in
             const double F2 = 0.3660254; //0.5*(Math.Sqrt(3.0)-1.0);
             double s = (x + y) * F2; // Hairy factor for 2D
-            int i = MathHelper.Fastfloor(x + s);
-            int j = MathHelper.Fastfloor(y + s);
+            int i = MathHelper.Floor(x + s);
+            int j = MathHelper.Floor(y + s);
             const double G2 = 0.2113248; //(3.0-Math.Sqrt(3.0))/6.0;
             double t = (i + j) * G2;
             double X0 = i - t; // Unskew the cell origin back to (x,y) space

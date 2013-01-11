@@ -139,8 +139,8 @@ namespace S33M3CoreComponents.Noise.Generator
             // Skew the input space to determine which simplex cell we're in
             double s = (x + y) * F2; // Hairy factor for 2D
 
-            int i = MathHelper.Fastfloor(x + s);
-            int j = MathHelper.Fastfloor(y + s);
+            int i = MathHelper.Floor(x + s);
+            int j = MathHelper.Floor(y + s);
 
             double t = (i + j) * G2;
 
@@ -219,9 +219,9 @@ namespace S33M3CoreComponents.Noise.Generator
             double s = (x + y + z) * F3;
 
             // for 3D
-            int i = MathHelper.Fastfloor(x + s);
-            int j = MathHelper.Fastfloor(y + s);
-            int k = MathHelper.Fastfloor(z + s);
+            int i = MathHelper.Floor(x + s);
+            int j = MathHelper.Floor(y + s);
+            int k = MathHelper.Floor(z + s);
 
             double t = (i + j + k) * G3;
 
@@ -373,10 +373,10 @@ namespace S33M3CoreComponents.Noise.Generator
             // Skew the (x,y,z,w) space to determine which cell of 24 simplices
             double s = (x + y + z + w) * F4; // Factor for 4D skewing
 
-            int i = MathHelper.Fastfloor(x + s);
-            int j = MathHelper.Fastfloor(y + s);
-            int k = MathHelper.Fastfloor(z + s);
-            int l = MathHelper.Fastfloor(w + s);
+            int i = MathHelper.Floor(x + s);
+            int j = MathHelper.Floor(y + s);
+            int k = MathHelper.Floor(z + s);
+            int l = MathHelper.Floor(w + s);
 
             double t = (i + j + k + l) * G4; // Factor for 4D unskewing
 

@@ -14,7 +14,7 @@ namespace S33M3DXEngine.Textures
 
             while (mipSlice > 0)
             {
-                size = MathHelper.Fastfloor(size / 2.0f);
+                size = MathHelper.Floor(size / 2.0f);
                 mipSlice--;
             }
 

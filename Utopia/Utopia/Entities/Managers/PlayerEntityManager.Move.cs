@@ -266,15 +266,15 @@ namespace Utopia.Entities.Managers
 
         private void CheckHeadUnderWater()
         {
-            if (_cubesHolder.IndexSafe(MathHelper.Fastfloor(CameraWorldPosition.X), MathHelper.Fastfloor(CameraWorldPosition.Y), MathHelper.Fastfloor(CameraWorldPosition.Z), out _headCubeIndex))
+            if (_cubesHolder.IndexSafe(MathHelper.Floor(CameraWorldPosition.X), MathHelper.Floor(CameraWorldPosition.Y), MathHelper.Floor(CameraWorldPosition.Z), out _headCubeIndex))
             {
                 //Get the cube at the camera position !
                 _headCube = _cubesHolder.Cubes[_headCubeIndex];
 
                 //Get Feet block
-                int feetBlockIdx = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
+                int feetBlockIdx = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Floor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
-                TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Fastfloor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
+                TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Floor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
 
                 if (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
                    (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
@@ -293,11 +293,11 @@ namespace Utopia.Entities.Managers
                 BlockProfile headCubeProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id];
                 if (headCubeProfile.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid)
                 {
-                    int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Fastfloor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
+                    int AboveHead = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Floor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Plus1);
                     if (_cubesHolder.Cubes[AboveHead].Id == WorldConfiguration.CubeId.Air)
                     {
                         //Check the offset of the water
-                        var Offset = CameraWorldPosition.Y - MathHelper.Fastfloor(CameraWorldPosition.Y);
+                        var Offset = CameraWorldPosition.Y - MathHelper.Floor(CameraWorldPosition.Y);
                         if (Offset >= 1 - _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].YBlockOffset)
                         {
                             IsHeadInsideWater = false;

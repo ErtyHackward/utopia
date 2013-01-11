@@ -529,11 +529,11 @@ namespace Utopia.Worlds.Chunks
                         //Raise Up until the Ground, next the previous position
                         if (_collidingCube.BlockProfile.YBlockOffset > 0)
                         {
-                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
+                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
                         }
                         else
                         {
-                            previousPosition.Y = MathHelper.Fastfloor(previousPosition.Y);
+                            previousPosition.Y = MathHelper.Floor(previousPosition.Y);
                         }
                     }
 

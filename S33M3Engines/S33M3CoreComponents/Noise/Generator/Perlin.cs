@@ -78,8 +78,8 @@ namespace S33M3CoreComponents.Noise.Generator
         public double Get(double x, double y)
         {
             // Fast floor
-            int xf = MathHelper.Fastfloor(x);
-            int yf = MathHelper.Fastfloor(y);
+            int xf = MathHelper.Floor(x);
+            int yf = MathHelper.Floor(y);
 
             // Compute the cell coordinates
             int X = xf & 255;
@@ -118,9 +118,9 @@ namespace S33M3CoreComponents.Noise.Generator
         public double Get(double x, double y, double z)
         {
             // Fast floor
-            int xf = MathHelper.Fastfloor(x);
-            int yf = MathHelper.Fastfloor(y);
-            int zf = MathHelper.Fastfloor(z);
+            int xf = MathHelper.Floor(x);
+            int yf = MathHelper.Floor(y);
+            int zf = MathHelper.Floor(z);
 
             // Compute the cell coordinates
             // Find unit cube that contains the point
