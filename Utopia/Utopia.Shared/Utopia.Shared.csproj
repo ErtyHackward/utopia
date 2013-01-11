@@ -140,6 +140,7 @@
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
     <Compile Include="Entities\Inventory\EntityPosition.cs" />
     <Compile Include="Entities\Inventory\PickType.cs" />
+    <Compile Include="Entities\Recipe.cs" />
     <Compile Include="Entities\ResourcesCollector.cs" />
     <Compile Include="Entities\Concrete\Container.cs" />
     <Compile Include="Entities\Concrete\Door.cs" />
