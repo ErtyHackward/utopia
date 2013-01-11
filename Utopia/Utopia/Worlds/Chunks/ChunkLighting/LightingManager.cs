@@ -172,9 +172,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             {
                 //Get the Cube where is located the entity
                 Vector3D entityWorldPosition = ((IEntity)LightingEntity).Position;
-                Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
-                                                            MathHelper.Fastfloor(entityWorldPosition.Y),
-                                                            MathHelper.Fastfloor(entityWorldPosition.Z));
+                Vector3I entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
+                                                            MathHelper.Floor(entityWorldPosition.Y),
+                                                            MathHelper.Floor(entityWorldPosition.Z));
 
                 //Get big array index of this cube
                 int index = _cubesHolder.Index(ref entityBlockPosition);
@@ -357,7 +357,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     else
                     {
                         //Find the Cube where the entity is placed, and assign its color to the entity
-                        voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Fastfloor(voxelEntity.Entity.Position.X), MathHelper.Fastfloor(voxelEntity.Entity.Position.Y), MathHelper.Fastfloor(voxelEntity.Entity.Position.Z))].EmissiveColor;
+                        voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Floor(voxelEntity.Entity.Position.X), MathHelper.Floor(voxelEntity.Entity.Position.Y), MathHelper.Floor(voxelEntity.Entity.Position.Z))].EmissiveColor;
                     }
                 }
             }

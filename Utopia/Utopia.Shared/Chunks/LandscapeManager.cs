@@ -25,16 +25,16 @@ namespace Utopia.Shared.Chunks
         public T GetChunk(Vector3D globalPosition)
         {
             return
-                GetChunk(new Vector2I(MathHelper.Fastfloor(globalPosition.X / AbstractChunk.ChunkSize.X),
-                                      MathHelper.Fastfloor(globalPosition.Z / AbstractChunk.ChunkSize.Z)));
+                GetChunk(new Vector2I(MathHelper.Floor(globalPosition.X / AbstractChunk.ChunkSize.X),
+                                      MathHelper.Floor(globalPosition.Z / AbstractChunk.ChunkSize.Z)));
         }
 
 
         public T GetChunk(Vector3I blockPosition)
         {
             return
-                GetChunk(new Vector2I(MathHelper.Fastfloor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
-                                      MathHelper.Fastfloor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
+                GetChunk(new Vector2I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
+                                      MathHelper.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
         }
 
         public LandscapeManager(WorldParameters wp)

@@ -43,8 +43,8 @@ namespace Utopia.Shared.World
             WorldParameters = worldParameters;
 
             //Find the chunk location
-            int X = (MathHelper.Fastfloor(player.Position.X / 16) * 16) - ((VisibleChunkInWorld.X / 2) * 16);
-            int Z = (MathHelper.Fastfloor(player.Position.Z / 16) * 16) - ((VisibleChunkInWorld.Y / 2) * 16);
+            int X = (MathHelper.Floor(player.Position.X / 16) * 16) - ((VisibleChunkInWorld.X / 2) * 16);
+            int Z = (MathHelper.Floor(player.Position.Z / 16) * 16) - ((VisibleChunkInWorld.Y / 2) * 16);
 
             WorldChunkStartUpPosition = new Vector2I(X, Z);
         }

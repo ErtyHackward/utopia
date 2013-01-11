@@ -416,7 +416,7 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            if (Index(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z), true, out cubeIndex))
+            if (Index(MathHelper.Floor(position.X), MathHelper.Floor(position.Y), MathHelper.Floor(position.Z), true, out cubeIndex))
             {
                 cube = Cubes[cubeIndex];
                 // Simon disabled this, i dont want it and method was not in use :  if (Cubes[cubeIndex].Id == RealmConfiguration.CubeId.Air) cube = new TerraCube(CubeId.Error);
@@ -431,7 +431,7 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+            var cubePosition = new Vector3I(MathHelper.Floor(position.X), MathHelper.Floor(position.Y), MathHelper.Floor(position.Z));
 
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
@@ -447,7 +447,7 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+            var cubePosition = new Vector3I(MathHelper.Floor(position.X), MathHelper.Floor(position.Y), MathHelper.Floor(position.Z));
 
             if (cubePosition.Y  < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
@@ -463,7 +463,7 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+            var cubePosition = new Vector3I(MathHelper.Floor(position.X), MathHelper.Floor(position.Y), MathHelper.Floor(position.Z));
 
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
@@ -480,7 +480,7 @@ namespace Utopia.Shared.Chunks
         {
             int cubeIndex;
 
-            var cubePosition = new Vector3I(MathHelper.Fastfloor(position.X), MathHelper.Fastfloor(position.Y), MathHelper.Fastfloor(position.Z));
+            var cubePosition = new Vector3I(MathHelper.Floor(position.X), MathHelper.Floor(position.Y), MathHelper.Floor(position.Z));
 
             if (cubePosition.Y < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
@@ -493,7 +493,7 @@ namespace Utopia.Shared.Chunks
         public bool IsSolidToPlayer(ref Vector3D worldPosition)
         {
             int index;
-            if (IndexSafe(MathHelper.Fastfloor(worldPosition.X), MathHelper.Fastfloor(worldPosition.Y), MathHelper.Fastfloor(worldPosition.Z), out index))
+            if (IndexSafe(MathHelper.Floor(worldPosition.X), MathHelper.Floor(worldPosition.Y), MathHelper.Floor(worldPosition.Z), out index))
             {
                 TerraCube cube = Cubes[index];
                 return _config.BlockProfiles[cube.Id].IsSolidToEntity;
@@ -507,12 +507,12 @@ namespace Utopia.Shared.Chunks
             int index;
 
             //Get ground surface 4 blocks below the Bounding box
-            int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
-            int Zmin = MathHelper.Fastfloor(bb.Minimum.Z);
-            int Ymin = MathHelper.Fastfloor(bb.Minimum.Y);
-            int Xmax = MathHelper.Fastfloor(bb.Maximum.X);
-            int Zmax = MathHelper.Fastfloor(bb.Maximum.Z);
-            int Ymax = MathHelper.Fastfloor(bb.Maximum.Y);
+            int Xmin = MathHelper.Floor(bb.Minimum.X);
+            int Zmin = MathHelper.Floor(bb.Minimum.Z);
+            int Ymin = MathHelper.Floor(bb.Minimum.Y);
+            int Xmax = MathHelper.Floor(bb.Maximum.X);
+            int Zmax = MathHelper.Floor(bb.Maximum.Z);
+            int Ymax = MathHelper.Floor(bb.Maximum.Y);
 
             for (int x = Xmin; x <= Xmax; x++)
             {
@@ -540,12 +540,12 @@ namespace Utopia.Shared.Chunks
             BlockProfile profile;
 
             //Get ground surface 4 blocks below the Bounding box
-            int Xmin = MathHelper.Fastfloor(bb.Minimum.X);
-            int Zmin = MathHelper.Fastfloor(bb.Minimum.Z);
-            int Ymin = MathHelper.Fastfloor(bb.Minimum.Y);
-            int Xmax = MathHelper.Fastfloor(bb.Maximum.X);
-            int Zmax = MathHelper.Fastfloor(bb.Maximum.Z);
-            int Ymax = MathHelper.Fastfloor(bb.Maximum.Y);
+            int Xmin = MathHelper.Floor(bb.Minimum.X);
+            int Zmin = MathHelper.Floor(bb.Minimum.Z);
+            int Ymin = MathHelper.Floor(bb.Minimum.Y);
+            int Xmax = MathHelper.Floor(bb.Maximum.X);
+            int Zmax = MathHelper.Floor(bb.Maximum.Z);
+            int Ymax = MathHelper.Floor(bb.Maximum.Y);
 
             for (int x = Xmin; x <= Xmax; x++)
             {
@@ -579,7 +579,7 @@ namespace Utopia.Shared.Chunks
                                     else
                                     {
                                         //check the head when On a Offseted Block
-                                        IndexSafe(x, MathHelper.Fastfloor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
+                                        IndexSafe(x, MathHelper.Floor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
                                         profile = _config.BlockProfiles[Cubes[index].Id];
                                         if (profile.IsSolidToEntity) return true;
                                     }
@@ -604,9 +604,9 @@ namespace Utopia.Shared.Chunks
             cubeWithPosition = new TerraCubeWithPosition();
             cubeWithPosition.Cube = new TerraCube(WorldConfiguration.CubeId.Air);
 
-            int X = MathHelper.Fastfloor(FromPosition.X);
-            int Z = MathHelper.Fastfloor(FromPosition.Z);
-            int Y = MathHelper.Fastfloor(FromPosition.Y);
+            int X = MathHelper.Floor(FromPosition.X);
+            int Z = MathHelper.Floor(FromPosition.Z);
+            int Y = MathHelper.Floor(FromPosition.Y);
 
             if (Y >= _visualWorldParam.WorldVisibleSize.Y) Y = _visualWorldParam.WorldVisibleSize.Y - 1;
 

@@ -64,7 +64,7 @@ namespace S33M3CoreComponents.Noise.Various
             at *= DensityAdjustment;
             at += _offset;
 
-            Vector2I cell = new Vector2I(MathHelper.Fastfloor(at.X), MathHelper.Fastfloor(at.Y));
+            Vector2I cell = new Vector2I(MathHelper.Floor(at.X), MathHelper.Floor(at.Y));
 
             ProcessCell(cell, at, results);
 

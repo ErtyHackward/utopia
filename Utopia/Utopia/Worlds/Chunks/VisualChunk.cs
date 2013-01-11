@@ -523,9 +523,9 @@ namespace Utopia.Worlds.Chunks
                 {
                     //Get the Cube where is located the entity
                     Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
-                    Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
-                                                                MathHelper.Fastfloor(entityWorldPosition.Y),
-                                                                MathHelper.Fastfloor(entityWorldPosition.Z));
+                    Vector3I entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
+                                                                MathHelper.Floor(entityWorldPosition.Y),
+                                                                MathHelper.Floor(entityWorldPosition.Z));
                     _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
                 }
             }
@@ -543,9 +543,9 @@ namespace Utopia.Worlds.Chunks
             {
                 //Get the Cube where is located the entity
                 Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
-                Vector3I entityBlockPosition = new Vector3I(MathHelper.Fastfloor(entityWorldPosition.X),
-                                                            MathHelper.Fastfloor(entityWorldPosition.Y),
-                                                            MathHelper.Fastfloor(entityWorldPosition.Z));
+                Vector3I entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
+                                                            MathHelper.Floor(entityWorldPosition.Y),
+                                                            MathHelper.Floor(entityWorldPosition.Z));
                 _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
             }
         }

@@ -297,19 +297,22 @@ namespace S33M3CoreComponents.Maths
             return angle;
         }
 
-        public static int Fastfloor(double x)
+        public static int Floor(double x)
         {
-            return x % 1 >= 0 ? (int)x : (int)x - 1;
+            //return x % 1 >= 0 ? (int)x : (int)x - 1;
+            return (int)Math.Floor(x);
         }
 
-        public static int Fastfloor(float x)
+        public static int Floor(float x)
         {
-            return x % 1 >= 0 ? (int)x : (int)x - 1;
+            //return x % 1 >= 0 ? (int)x : (int)x - 1;
+            return (int)Math.Floor(x);
         }
 
-        public static byte FastfloorByte(float x)
+        public static byte FloorByte(float x)
         {
-            return x % 1 >= 0 ? (byte)x : (byte)(x - 1);
+            //return x % 1 >= 0 ? (byte)x : (byte)(x - 1);
+            return (byte)Math.Floor(x);
         }
 
         public static double Dot(int[] g, ref double x, ref double y, ref double z)
