@@ -27,10 +27,21 @@ namespace S33M3CoreComponents.Sound
         private float _fadingVolumeCoef;
         private float _voiceVolume;
         private Stopwatch _fadingTimer = new Stopwatch();
+        private Stopwatch _deferredStartTimer = new Stopwatch();
+        private uint _defferedStart;
+        private uint _maxDefferedStart;
         private bool _isPlaying;
+        private FastRandom _rnd = new FastRandom();
         #endregion
 
         #region Public Properties
+        public string Id { get; set; }
+
+        public uint MaxDefferedStart
+        {
+            get { return _maxDefferedStart; }
+            set { _maxDefferedStart = value; }
+        }
 
         public SourceVoice Voice
         {
@@ -42,7 +53,10 @@ namespace S33M3CoreComponents.Sound
         {
             get
             {
-                if (_isPlaying && _voice.State.BuffersQueued == 0 && _playingDataSource.PlayMode == DataSourcePlayMode.Buffered) _isPlaying = false;
+                if (_isPlaying && _voice.State.BuffersQueued == 0 && IsLooping == false && _playingDataSource.PlayMode == DataSourcePlayMode.Buffered)
+                {
+                    Stop();
+                }
                 return _isPlaying;
             }
             set { _isPlaying = value; }
@@ -107,6 +121,19 @@ namespace S33M3CoreComponents.Sound
         //Enqueue the currently linked datasource buffer for playing
         public void PushDataSourceForPlaying()
         {
+            //Do nothing, start will be deferred !
+            if (_maxDefferedStart > 0)
+            {
+                if (_defferedStart > _deferredStartTimer.ElapsedMilliseconds) return;
+
+                //Not playing the sound with Buffered start => Assign new rnd start
+                if (_voice.State.BuffersQueued == 0)
+                {
+                    AssignNewRndStart();
+                    logger.Trace("AssignNewRndStart {0} {1}", this.Id, this.PlayingDataSource.SoundAlias);
+                }
+            }
+
             if (_playingDataSource is SoundStreamedDataSource)
             {
                 ((SoundStreamedDataSource)_playingDataSource).StartVoiceDataFetching(this);
@@ -127,7 +154,7 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
-        public void Start(float soundVolume, uint fadeIn = 0)
+        public void Start(float soundVolume, uint fadeIn = 0, uint maxDefferedStart = 0)
         {
             if (fadeIn > 0)
             {
@@ -141,16 +168,18 @@ namespace S33M3CoreComponents.Sound
                 _fadingVolumeCoef = 1.0f;
             }
 
+            _maxDefferedStart = maxDefferedStart;
             _voiceVolume = soundVolume;
             RefreshVoices();
 
             _voice.Start();
+
             IsPlaying = true;
         }
 
-        public void Start(uint fadeIn = 0)            
+        public void Start(uint fadeIn = 0, uint rndDefferedStart = 0)            
         {
-            Start(_playingDataSource.SoundVolume, fadeIn);
+            Start(_playingDataSource.SoundVolume, fadeIn, rndDefferedStart);
         }
 
         public void Stop(uint fadeOut = 0)
@@ -161,14 +190,16 @@ namespace S33M3CoreComponents.Sound
                 _fadingStepThreeshold = 1.0f / fadeOut * -1;
                 _fadingVolumeCoef = 1.0f;
                 _fadingTimer.Restart();
-                _soundEngine.LookAtSound(this);
+                _soundEngine.AddSoundWatching(this);
             }
             else
             {
                 IsFadingMode = false;
                 IsLooping = false;
                 _voice.Stop();
+                _fadingTimer.Stop();
                 _voice.FlushSourceBuffers();
+                _defferedStart = 0;
                 IsPlaying = false;
             }
 
@@ -182,6 +213,12 @@ namespace S33M3CoreComponents.Sound
         #endregion
 
         #region Private Methods
+
+        private void AssignNewRndStart()
+        {
+            _defferedStart = (uint)_rnd.Next(0, (int)_maxDefferedStart);
+            _deferredStartTimer.Restart();
+        }
 
         private void RefreshFading()
         {
@@ -215,7 +252,7 @@ namespace S33M3CoreComponents.Sound
         private void Refresh3DVoiceData()
         {
             //Change output speakers parameter to simulate 3D sound
-            DspSettings settings3D = _soundEngine.X3DAudio.Calculate(_soundEngine.Listener, Emitter, CalculateFlags.Matrix, 1, _soundEngine.DeviceDetail.OutputFormat.Channels);
+            DspSettings settings3D = _soundEngine.X3DAudio.Calculate(_soundEngine.Listener, Emitter, CalculateFlags.Matrix, PlayingDataSource.WaveFormat.Channels, _soundEngine.DeviceDetail.OutputFormat.Channels);
             _voice.SetOutputMatrix(PlayingDataSource.WaveFormat.Channels, _soundEngine.DeviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
 
             //Set global input sound volume based on distance VS object
