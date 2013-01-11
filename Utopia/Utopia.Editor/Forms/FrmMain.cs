@@ -56,6 +56,7 @@ namespace Utopia.Editor.Forms
                     containerEditor.Configuration = _configuration;
                     containerEditor.Icons = _icons;
                     ContainerSetSelector.Configuration = _configuration;
+                    BlueprintSelector.Configuration = _configuration;
 
                     UpdateImageList();
 
@@ -113,9 +114,6 @@ namespace Utopia.Editor.Forms
 
             
         }
-
-        #region Public Methods
-        #endregion
 
         #region Private Methods
 
@@ -287,6 +285,31 @@ namespace Utopia.Editor.Forms
 
             #endregion
 
+            #region Recipes
+
+            var recipesNode = tvMainCategories.Nodes["Recipes"];
+            recipesNode.Nodes.Clear();
+
+            foreach (var recipe in _configuration.Recipes)
+            {
+                string iconName = null;
+                if (recipe.ResultBlueprintId != 0)
+                {
+                    var entity = _configuration.BluePrints[recipe.ResultBlueprintId];
+
+                    if (entity is IVoxelEntity)
+                    {
+                        var voxelEntity = entity as IVoxelEntity;
+                        iconName = voxelEntity.ModelName;
+                    }
+
+                }
+
+                AddSubNode(recipesNode, recipe.Name, recipe, iconName);
+            }
+
+            #endregion
+
             tvMainCategories.EndUpdate();
         }
 
@@ -381,7 +404,12 @@ namespace Utopia.Editor.Forms
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(newValue);
                     break;
-
+                case "Recipes":
+                    var recipe = new Recipe { Name = "noname" };
+                    _configuration.Recipes.Add(recipe);
+                    UpdateTree();
+                    tvMainCategories.SelectedNode = FindByTag(recipe);
+                    break;
                 default:
                     break;
             }
