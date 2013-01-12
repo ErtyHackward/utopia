@@ -66,6 +66,13 @@ namespace Realms.Client.States
                 return;
             }
 
+            if (e.Error == "2")
+            {
+                login.ShowErrorText("You don't have realms account");
+                login.Locked = false;
+                return;
+            }
+
             if (string.IsNullOrEmpty(e.AccessToken))
             {
                 login.ShowErrorText("Wrong login/password combination");
