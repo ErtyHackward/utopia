@@ -8,8 +8,8 @@ namespace Utopia.Shared.Net.Web
     /// </summary>
     public class ClientWebApi : UtopiaWebApiBase
     {
-        private const string ClientId = "RZDNCumxDHtJHY74mPQDaDzvFBkzcg";
-        private const string ClientSecret = "Hx3bKHoXEMKeVBx2vKyUrAruYMyQPQ";
+        public static string ClientId;
+        public static string ClientSecret;
 
         /// <summary>
         /// Gets a token received from a login procedure

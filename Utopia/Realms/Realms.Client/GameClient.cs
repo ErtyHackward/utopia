@@ -10,6 +10,7 @@ using S33M3DXEngine.Threading;
 using S33M3CoreComponents.Inputs;
 using S33M3DXEngine;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Net.Web;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 using System.Reflection;
@@ -41,6 +42,9 @@ namespace Realms.Client
 
             var watermark = _iocContainer.Get<VersionWatermark>();
             watermark.WatermarkText = "Utopia Realms " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
+            ClientWebApi.ClientId = "qWyZtDyspRUFFowjwEEFZeK79wNfdDNkYuqPkkeX";
+            ClientWebApi.ClientSecret = "TeriKuoziAoshYrHUvzHFXaKMTdWA3pmvupJ6xoi";
 
             System.Net.ServicePointManager.Expect100Continue = false;
 

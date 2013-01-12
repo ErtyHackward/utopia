@@ -10,6 +10,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3DXEngine;
 using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Net.Web;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 
@@ -42,6 +43,8 @@ namespace Sandbox.Client
             var watermark = _iocContainer.Get<VersionWatermark>();
             watermark.WatermarkText = "Utopia Sandbox " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
+            ClientWebApi.ClientId = "RZDNCumxDHtJHY74mPQDaDzvFBkzcg";
+            ClientWebApi.ClientSecret = "Hx3bKHoXEMKeVBx2vKyUrAruYMyQPQ";
 
             System.Net.ServicePointManager.Expect100Continue = false;
 
