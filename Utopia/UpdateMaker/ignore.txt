@@ -20,3 +20,4 @@ Utopia.pdb
 Utopia.Resources.pdb
 Utopia.Server.pdb
 Utopia.Shared.pdb
+Launcher.exe
