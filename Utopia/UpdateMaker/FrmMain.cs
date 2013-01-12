@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using UpdateMaker.Properties;
-using Utopia.Shared.Structs;
 using Utopia.Updater;
 
 namespace UpdateMaker

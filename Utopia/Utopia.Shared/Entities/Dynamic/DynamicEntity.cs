@@ -1,6 +1,7 @@
 using System;
 using ProtoBuf;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
@@ -13,6 +14,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Represents dynamic voxel entity (players, robots, animals, NPC)
     /// </summary>
     [ProtoContract]
+    [EditorHide]
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
         public DynamicEntityState EntityState;

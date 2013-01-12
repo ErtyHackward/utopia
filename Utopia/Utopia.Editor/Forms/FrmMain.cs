@@ -345,9 +345,10 @@ namespace Utopia.Editor.Forms
             {
                 var categoryNode = AddSubNode(entitiesRootNode, entityGroup, entityGroup);
 
+                categoryNode.ContextMenuStrip = contextMenuCategories;
                 categoryNode.ImageIndex = 9;
                 categoryNode.SelectedImageIndex = 10;
-
+                
                 foreach (var entity in _configuration.BluePrints.Values.Where(e => e.GroupName == entityGroup))
                 {
                     string iconName = null;
@@ -364,14 +365,6 @@ namespace Utopia.Editor.Forms
                 }
 
             }
-
-
-
-            foreach (var pair in _configuration.BluePrints)
-            {
-
-            }
-
 
             //Clear all the Cube node items
             var cubesRootNode = tvMainCategories.Nodes["Cubes"];
@@ -511,13 +504,7 @@ namespace Utopia.Editor.Forms
             switch (tvMainCategories.SelectedNode.Name)
             {
                 case "Entities":
-                    var form = new FrmEntityChoose();
-                    if (form.ShowDialog() == DialogResult.OK)
-                    {
-                        var entityInstance = Configuration.CreateNewEntity(form.SelectedType);
-                        UpdateTree();
-                        tvMainCategories.SelectedNode = FindByTag(entityInstance);
-                    }
+                    AddEntity();
                     break;
                 case "Cubes":
                     var cubeInstance = Configuration.CreateNewCube();
@@ -538,6 +525,25 @@ namespace Utopia.Editor.Forms
                     break;
                 default:
                     break;
+            }
+
+            if (tvMainCategories.SelectedNode.Tag is string)
+            {
+                AddEntity();
+            }
+        }
+
+        private Type _lastType;
+
+        private void AddEntity()
+        {
+            var form = new FrmEntityChoose { SelectedType = _lastType };
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                _lastType = form.SelectedType;
+                var entityInstance = Configuration.CreateNewEntity(form.SelectedType);
+                UpdateTree();
+                tvMainCategories.SelectedNode = FindByTag(entityInstance);
             }
         }
 

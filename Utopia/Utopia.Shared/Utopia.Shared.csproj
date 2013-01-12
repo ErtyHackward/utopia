@@ -135,6 +135,7 @@
     <Compile Include="Entities\Concrete\Food.cs" />
     <Compile Include="Entities\Concrete\HandTool.cs" />
     <Compile Include="Entities\Concrete\ItemOrientation.cs" />
+    <Compile Include="Entities\Concrete\Stuff.cs" />
     <Compile Include="Entities\EntityParticule.cs" />
     <Compile Include="Entities\Events\UseType.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />

@@ -89,6 +89,7 @@
             this.Name = "FrmEntityChoose";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Choose base type";
+            this.Load += new System.EventHandler(this.FrmEntityChoose_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -17,6 +17,7 @@ namespace Utopia.Shared.Entities
         public const ushort LightSource = 1004;
         public const ushort OrientedBlockLinkedItem = 1005;
         public const ushort OrientedBlockItem = 1006;
+        public const ushort Stuff = 1007;
 
         // tools 
         public const ushort CubeResource = 1500;
