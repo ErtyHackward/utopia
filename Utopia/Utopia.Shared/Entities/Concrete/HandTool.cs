@@ -1,4 +1,5 @@
-﻿using Utopia.Shared.Configuration;
+﻿using System;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -9,6 +10,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// <summary>
     /// Special tool used when no tool is set
     /// </summary>
+    [EditorHide]
     public class HandTool : Item, ITool
     {
         public override ushort ClassId
@@ -63,5 +65,14 @@ namespace Utopia.Shared.Entities.Concrete
         {
             throw new System.NotImplementedException();
         }
+    }
+
+    /// <summary>
+    /// Allows to hide class from using as base in the editor
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class EditorHideAttribute : Attribute
+    {
+
     }
 }

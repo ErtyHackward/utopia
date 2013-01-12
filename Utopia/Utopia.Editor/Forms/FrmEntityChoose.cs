@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Editor.Forms
@@ -13,9 +14,23 @@ namespace Utopia.Editor.Forms
         static FrmEntityChoose()
         {
             var type = typeof(IEntity);
-            _possibleTypes = AppDomain.CurrentDomain.GetAssemblies().ToList()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && !p.IsAbstract).ToList();
+
+            var query = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                        from t in assembly.GetTypes()
+                        where
+                            type.IsAssignableFrom(t) && !t.IsAbstract &&
+                            t.GetCustomAttributes(typeof(EditorHideAttribute), true).Length == 0
+                        select t;
+
+
+
+            // 
+
+            _possibleTypes = query.ToList();
+
+            //_possibleTypes = AppDomain.CurrentDomain.GetAssemblies().ToList()
+            //    .SelectMany(s => s.GetTypes())
+            //    .Where(p => type.IsAssignableFrom(p) && !p.IsAbstract).ToList();
         }
 
         public Type SelectedType { get; set; }
@@ -38,6 +53,14 @@ namespace Utopia.Editor.Forms
             SelectedType = (Type)comboBoxTypes.SelectedItem;
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void FrmEntityChoose_Load(object sender, EventArgs e)
+        {
+            if (SelectedType != null)
+            {
+                comboBoxTypes.SelectedItem = SelectedType;
+            }
         }
     }
 }
