@@ -18,7 +18,7 @@ Source: ..\Utopia\Realms\Realms.Client\bin\Release\*; DestDir: {app}; Excludes: 
 VersionInfoVersion=1.0.0
 VersionInfoCompany=Utopia
 VersionInfoDescription=Utopia
-VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2012-2013
+VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2013
 VersionInfoProductName=Utopia realms
 MinVersion=0,6.0.6000
 AppName=Utopia: Realms
@@ -31,10 +31,11 @@ LicenseFile=EULA.txt
 DisableProgramGroupPage=true
 ShowLanguageDialog=auto
 DefaultDirName={pf}\Utopia Realms\
-SetupIconFile=Utopia.ico
+SetupIconFile=..\Media\Utopia2.ico
 WizardImageFile=setupTitle.bmp
-WizardSmallImageFile=setupSmall.bmp
-UninstallDisplayIcon=Utopia.ico
+WizardSmallImageFile=setupSmallRealms.bmp
+UninstallDisplayIcon=..\Media\Utopia2.ico
+OutputBaseFilename=setup_realms
 
 [Icons]
 Name: {group}\Utopia Realms; Filename: {app}\Launcher.exe
@@ -77,6 +78,7 @@ begin
 		
 		Exec(ExpandConstant('{app}\PacksOptimize.exe'), ExpandConstant('action=createtexturearray path="{app}\TexturesPacks"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 		
+    Exec('netsh', ExpandConstant('advfirewall firewall add rule name="Utopia Realms Updater" dir=in action=allow program="{app}\Launcher.exe" enable=yes'),'', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 		Exec('netsh', ExpandConstant('advfirewall firewall add rule name="Utopia Realms" dir=in action=allow program="{app}\Realms.exe" enable=yes'),'', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 		
 		ProcessMsgPage.Hide;

@@ -81,8 +81,6 @@ namespace Utopia.Updater
                 Application.Exit();
                 return;
             }
-
-            // update the game
             
             // check if we need to have admin rights
             try
@@ -95,96 +93,103 @@ namespace Utopia.Updater
                 return;
             }
 
+            // update the game
             new ThreadStart(Update).BeginInvoke(null, null);
         }
 
         private new void Update()
         {
-            Status("Load update info...");
-            // get update index
-            var req = WebRequest.Create("http://update.utopiarealms.com/index.update");
-
-            using (var response = req.GetResponse())
-            using (var stream = response.GetResponseStream())
-            using (var zs = new GZipStream(stream, CompressionMode.Decompress))
+            try
             {
-                var reader = new BinaryReader(zs);
-                _updateFile = new UpdateFile();
-                _updateFile.Load(reader);
-            }
+                Status("Load update info...");
+                // get update index
+                var req = WebRequest.Create("http://update.utopiarealms.com/index.update");
 
-            Status("Check files to update...");
-
-            var files = new List<UpdateFileInfo>();
-
-            foreach (var file in _updateFile.Files)
-            {
-                var filePath = Path.Combine(_basePath, file.SystemPath);
-
-                if (File.Exists(filePath))
+                using (var response = req.GetResponse())
+                using (var stream = response.GetResponseStream())
+                using (var zs = new GZipStream(stream, CompressionMode.Decompress))
                 {
-                    using (var fs = File.OpenRead(filePath))
-                    {
-                        var hash = Md5Hash.Calculate(fs);
-                        if (hash.ToString() == file.Md5Hash && fs.Length == file.Length)
-                            continue;
-                    }
+                    var reader = new BinaryReader(zs);
+                    _updateFile = new UpdateFile();
+                    _updateFile.Load(reader);
                 }
 
-                files.Add(file);
-            }
+                Status("Check files to update...");
 
-            float index = 0f;
-            foreach (var file in files)
-            {
-                Status("Updating " + file.SystemPath, index / files.Count);
-                try
+                var files = new List<UpdateFileInfo>();
+
+                foreach (var file in _updateFile.Files)
                 {
-
                     var filePath = Path.Combine(_basePath, file.SystemPath);
-                    if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                    
-                    var fileReq = WebRequest.Create(file.DownloadUri);
 
-                    using (var response = fileReq.GetResponse())
-                    using (var fs = File.OpenWrite(filePath))
+                    if (File.Exists(filePath))
                     {
-                        fs.SetLength(0);
-                        using (var stream = response.GetResponseStream())
+                        using (var fs = File.OpenRead(filePath))
                         {
-                            if (file.Compressed)
-                            {
-                                using (var zip = new GZipStream(stream, CompressionMode.Decompress))
-                                {
-                                    zip.CopyTo(fs);
-                                }
-                            }
-                            else
-                            {
-                                stream.CopyTo(fs);    
-                            }
-
-                            
+                            var hash = Md5Hash.Calculate(fs);
+                            if (hash.ToString() == file.Md5Hash && fs.Length == file.Length)
+                                continue;
                         }
                     }
+
+                    files.Add(file);
                 }
-                catch (Exception x)
+
+                float index = 0f;
+                foreach (var file in files)
                 {
-                    MessageBox.Show(x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Application.Exit();
+                    Status("Updating " + file.SystemPath, index / files.Count);
+                    try
+                    {
+
+                        var filePath = Path.Combine(_basePath, file.SystemPath);
+                        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                        var fileReq = WebRequest.Create(file.DownloadUri);
+
+                        using (var response = fileReq.GetResponse())
+                        using (var fs = File.OpenWrite(filePath))
+                        {
+                            fs.SetLength(0);
+                            using (var stream = response.GetResponseStream())
+                            {
+                                if (file.Compressed)
+                                {
+                                    using (var zip = new GZipStream(stream, CompressionMode.Decompress))
+                                    {
+                                        zip.CopyTo(fs);
+                                    }
+                                }
+                                else
+                                {
+                                    stream.CopyTo(fs);
+                                }
+
+
+                            }
+                        }
+                    }
+                    catch (Exception x)
+                    {
+                        MessageBox.Show(x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Application.Exit();
+                    }
+
+                    index++;
                 }
 
-                index++;
+                // save current token
+                File.WriteAllText(Path.Combine(_basePath, "update.token"), _updateFile.UpdateToken);
+
+                StartGame();
             }
-
-            // save current token
-            File.WriteAllText(Path.Combine(_basePath, "update.token"), _updateFile.UpdateToken);
-
-            StartGame();
-
+            catch (Exception x)
+            {
+                MessageBox.Show(string.Format("Exception occured: {0}\nPlease post this information to the forum at http://utopiarealms.com", x.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
-        
+
         private void Status(string status, float progress = 0f)
         {
             _ao.Post(o =>
