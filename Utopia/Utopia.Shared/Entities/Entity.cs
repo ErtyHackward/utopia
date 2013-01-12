@@ -4,7 +4,6 @@ using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
-using System.Collections.Generic;
 
 namespace Utopia.Shared.Entities
 {
@@ -74,31 +73,43 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets model collision type
         /// </summary>
-        [Browsable(true)]
+        [Category("Entity")]
         [ProtoMember(8)]
         public EntityCollisionType CollisionType { get; set; }
 
         /// <summary>
         /// TODO: finish description
         /// </summary>
-        [Browsable(true)]
+        [Category("Entity")]
         [ProtoMember(9)]
         public double YForceOnSideHit { get; set; }
 
         /// <summary>
         /// Gets a displayed entity name
         /// </summary>
-        [Category("Entity")]
         [ProtoMember(10)]
+        [Category("Entity")]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
-        [Description("Define particules emiting behaviours")]
+        
         [ProtoMember(11, OverwriteList=true)]
+        [Category("Entity")]
+        [Description("Define particules emiting behaviours")]
         public EntityParticule[] Particules { get; set; }
+
+        /// <summary>
+        /// Get or sets entity grouping category
+        /// Used to group entities in the editor
+        /// Can be null
+        /// </summary>
+        [ProtoMember(12)]
+        [Category("Entity")]
+        [Description("Allows to put entity in special group")]
+        public string GroupName { get; set; }
 
         /// <summary>
         /// Gets entity class id

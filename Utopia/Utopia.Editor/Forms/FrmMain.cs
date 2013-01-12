@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.Entity.Design.PluralizationServices;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Utopia.Editor.Properties;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
@@ -124,11 +127,42 @@ namespace Utopia.Editor.Forms
             _pluralization = PluralizationService.CreateService(
                 new CultureInfo("en"));
             
+            UpdateRecent();
         }
 
         #region Private Methods
 
         #region Menu related
+
+        private void UpdateRecent()
+        {
+            var recent = Settings.Default.RecentConfigurations;
+
+            if (recent != null)
+            {
+                for (int i = fileToolStripMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+                {
+                    ToolStripItem item = fileToolStripMenuItem.DropDownItems[i];
+                    if (item.Tag is string) 
+                        fileToolStripMenuItem.DropDownItems.RemoveAt(i);
+                }
+
+                var insertIndex = fileToolStripMenuItem.DropDownItems.IndexOf(recentToolStripMenuItem) + 1;
+
+                foreach (var recentConfiguration in recent)
+                {
+                    var item = new ToolStripMenuItem(Path.GetFileName(recentConfiguration));
+                    item.Tag = recentConfiguration;
+                    item.Click += (sender, args) => OpenConfiguration(( sender as ToolStripItem ).Tag as string);
+                    fileToolStripMenuItem.DropDownItems.Insert(insertIndex++, item);
+                }
+                recentToolStripMenuItem.Visible = true;
+            }
+            else
+            {
+                recentToolStripMenuItem.Visible = false;
+            }
+        }
 
         //Events from FILE ===========================
 
@@ -171,15 +205,50 @@ namespace Utopia.Editor.Forms
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                try
+                OpenConfiguration(openFileDialog1.FileName);
+            }
+        }
+
+        private void OpenConfiguration(string fileName)
+        {
+            if (!File.Exists(fileName))
+            {
+                var recent = Settings.Default.RecentConfigurations;
+
+                if (recent != null)
                 {
-                    Configuration = WorldConfiguration.LoadFromFile(openFileDialog1.FileName, withHelperAssignation: true);
-                    _filePath = openFileDialog1.FileName;
+                    recent.Remove(fileName);
                 }
-                catch (Exception x)
+                UpdateRecent();
+
+                MessageBox.Show("File doesn't exists", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                Configuration = WorldConfiguration.LoadFromFile(fileName, withHelperAssignation: true);
+                _filePath = fileName;
+
+                var recent = Settings.Default.RecentConfigurations ?? new StringCollection();
+
+                recent.Remove(_filePath);
+                
+                recent.Insert(0, _filePath);
+
+                while (recent.Count > 3)
                 {
-                    MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    recent.RemoveAt(recent.Count-1);
                 }
+
+                Settings.Default.RecentConfigurations = recent;
+                Settings.Default.Save();
+
+                UpdateRecent();
+            }
+            catch (Exception x)
+            {
+                MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -246,6 +315,11 @@ namespace Utopia.Editor.Forms
 
             tvMainCategories.BeginUpdate();
 
+            object selectedTag = null;
+            
+            if (tvMainCategories.SelectedNode != null)
+                selectedTag = tvMainCategories.SelectedNode.Tag;
+
             //Bind Configuration object to General root Node
             tvMainCategories.Nodes["General"].Tag = _configuration;
 
@@ -255,19 +329,26 @@ namespace Utopia.Editor.Forms
 
             //Add new Entities nodes
 
+            // fill empty categories
+            foreach (var entity in _configuration.BluePrints.Values)
+            {
+                if (string.IsNullOrWhiteSpace(entity.GroupName))
+                    entity.GroupName = _pluralization.Pluralize(entity.GetType().Name);
+            }
+
             // get entities types
-            var entitiesTypes = _configuration.BluePrints.Values.Select(e => e.GetType()).Distinct().ToArray();
+            var entitiesGroups = _configuration.BluePrints.Values.Select(e => e.GroupName).Distinct().ToArray();
 
             // add categories
 
-            foreach (var entitiesType in entitiesTypes)
+            foreach (var entityGroup in entitiesGroups)
             {
-                var categoryNode = AddSubNode(entitiesRootNode, _pluralization.Pluralize(entitiesType.Name), entitiesType);
+                var categoryNode = AddSubNode(entitiesRootNode, entityGroup, entityGroup);
 
                 categoryNode.ImageIndex = 9;
                 categoryNode.SelectedImageIndex = 10;
 
-                foreach (var entity in _configuration.BluePrints.Values.Where(e => e.GetType() == entitiesType))
+                foreach (var entity in _configuration.BluePrints.Values.Where(e => e.GroupName == entityGroup))
                 {
                     string iconName = null;
 
@@ -342,6 +423,11 @@ namespace Utopia.Editor.Forms
 
             #endregion
 
+            if (selectedTag != null)
+            {
+                tvMainCategories.SelectedNode = FindByTag(selectedTag);
+            }
+
             tvMainCategories.EndUpdate();
         }
 
@@ -374,6 +460,14 @@ namespace Utopia.Editor.Forms
         {
             try
             {
+
+                // don't store default groups
+                foreach (var bluePrint in Configuration.BluePrints.Values)
+                {
+                    if (bluePrint.GroupName == _pluralization.Pluralize(bluePrint.GetType().Name))
+                        bluePrint.GroupName = null;
+                }
+
                 Configuration.UpdatedAt = DateTime.Now;
                 Configuration.SaveToFile(filePath);
                 _filePath = filePath;
@@ -509,6 +603,11 @@ namespace Utopia.Editor.Forms
             {
                 UpdateTree();
             }
+
+            if (e.ChangedItem.Label == "GroupName")
+            {
+                UpdateTree();
+            }
         }
 
         private void tvMainCategories_AfterSelect(object sender, TreeViewEventArgs e)
@@ -532,14 +631,14 @@ namespace Utopia.Editor.Forms
 
                     containerEditor.Content = content;
                 }
-                else if (selectedObject is Type)
+                else if (selectedObject is string)
                 {
                     ShowMainControl(entityListView);
 
                     // show entities in that category
                     entityListView.Groups.Clear();
                     entityListView.Items.Clear();
-                    foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GetType() == (Type)selectedObject))
+                    foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GroupName == (string)selectedObject))
                     {
                         string imgKey = null;
 
@@ -567,17 +666,17 @@ namespace Utopia.Editor.Forms
                     entityListView.Items.Clear();
 
                     // get entities types
-                    var entitiesTypes = _configuration.BluePrints.Values.Select(en => en.GetType()).Distinct().ToArray();
+                    var entitiesGroups = _configuration.BluePrints.Values.Select(en => en.GroupName).Distinct().ToArray();
 
                     // add categories
 
-                    foreach (var entitiesType in entitiesTypes)
+                    foreach (var entityGroup in entitiesGroups)
                     {
-                        var group = new ListViewGroup(_pluralization.Pluralize(entitiesType.Name));
+                        var group = new ListViewGroup(entityGroup);
                         //group.HeaderAlignment = HorizontalAlignment.Left;
                         entityListView.Groups.Add(group);
 
-                        foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GetType() == entitiesType))
+                        foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GroupName == entityGroup))
                         {
                             string imgKey = null;
 
