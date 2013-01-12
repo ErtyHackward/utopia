@@ -61,7 +61,8 @@ namespace PacksOptimize
         {
             foreach (var data in PackTextureArrayDirectoriesInfo)
             {
-                CreateTextureArray(data.DirectoryPath, Path.Combine(PackPath, data.DirectoryPath), data.FileFilters, data.ArrayTextureCompressionMode);
+                if (Directory.Exists(data.DirectoryPath))
+                    CreateTextureArray(data.DirectoryPath, Path.Combine(PackPath, data.DirectoryPath), data.FileFilters, data.ArrayTextureCompressionMode);
             }
         }
 
