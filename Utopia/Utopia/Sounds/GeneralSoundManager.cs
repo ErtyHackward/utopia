@@ -3,6 +3,7 @@ using S33M3DXEngine.Main;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Sound;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Sounds
 {
@@ -27,6 +28,10 @@ namespace Utopia.Sounds
         public GeneralSoundManager(ISoundEngine soundEngine)
         {
             _soundEngine = soundEngine;
+            //Get Global sound value from configuration
+            _soundEngine.GlobalFXVolume = (ClientSettings.Current.Settings.SoundParameters.GlobalFXVolume / 100.0f);
+            _soundEngine.GlobalMusicVolume = (ClientSettings.Current.Settings.SoundParameters.GlobalMusicVolume / 100.0f);
+
             this.IsSystemComponent = true;
         }
 
@@ -67,3 +72,4 @@ namespace Utopia.Sounds
         }
     }
 }
+

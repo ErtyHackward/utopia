@@ -168,6 +168,10 @@ namespace Utopia.Shared.Settings
     [Serializable]
     public class SoundParameters
     {
+        [ParameterAttribute("Global Music Volume", "Set global music volume", "", ParamInputMethod.Slider, 0, 100, false)]
+        public int GlobalMusicVolume { get; set; }
+        [ParameterAttribute("Global FX Volume", "Set global fx volume", "", ParamInputMethod.Slider, 0, 100, false)]
+        public int GlobalFXVolume { get; set; }
     }
 
     /// <summary>
@@ -315,6 +319,8 @@ namespace Utopia.Shared.Settings
                     },
                     SoundParameters = new SoundParameters
                     {
+                        GlobalFXVolume = 50,
+                        GlobalMusicVolume = 50
                     },
                     GraphicalParameters = new GraphicalParameters
                     {

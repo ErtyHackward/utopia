@@ -94,8 +94,8 @@ namespace Utopia.Shared.Settings
 
             HorizontalSliderControl input = new HorizontalSliderControl()
             {
-                ThumbSize = 1 / (float)(attrib.MaxSliderValue - attrib.MinSliderValue),
-                ThumbSmoothMovement = false
+                ThumbSize = 0.1f,//1 / (float)(attrib.MaxSliderValue - attrib.MinSliderValue),
+                ThumbSmoothMovement = true
             };
             input.ThumbMinValue = (int)attrib.MinSliderValue;
             input.ThumbMaxValue = (int)attrib.MaxSliderValue;

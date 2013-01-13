@@ -77,7 +77,7 @@ namespace Realms.Client.Components.GUI.Settings
             }
         }
 
-
+        public static int SliderWidth = 300;
         public void Resize()
         {
             if (this.Parent != null) this.Bounds = new UniRectangle(0, 0, this.Parent.Bounds.Size.X.Offset, this.Parent.Bounds.Size.Y.Offset);
@@ -99,7 +99,7 @@ namespace Realms.Client.Components.GUI.Settings
                         row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 50, 25);
                         break;
                     case ParamInputMethod.Slider:
-                        row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, 150, 25);
+                        row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 5, SliderWidth, 25);
                         break;
                     case ParamInputMethod.ButtonList:
                         row.InputingComp.Bounds = new UniRectangle(BorderMargin + 200, lineHeight - 7, 150, 30);

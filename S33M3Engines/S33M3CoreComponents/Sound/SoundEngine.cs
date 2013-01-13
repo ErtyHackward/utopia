@@ -47,11 +47,24 @@ namespace S33M3CoreComponents.Sound
 
         //Will hold custom Channel Mapping arrays
         private Dictionary<Vector2I, float[]> _customChannelMapping = new Dictionary<Vector2I, float[]>();
+
+        private float _globalMusicVolume;
+        private float _globalFXVolume;
+
         #endregion
 
         #region Public Properties
-        public float GlobalMusicVolume { get; set; }
-        public float GlobalFXVolume { get; set; }
+        public float GlobalMusicVolume
+        {
+            get { return _globalMusicVolume; }
+            set { _globalMusicVolume = value; RefreshMusicSoundVolume(); }
+        }
+
+        public float GlobalFXVolume
+        {
+            get { return _globalFXVolume; }
+            set { _globalFXVolume = value; RefreshFXSoundVolume(); }
+        }
 
         public Listener Listener
         {
@@ -172,11 +185,11 @@ namespace S33M3CoreComponents.Sound
 
         public void StopAllSounds()
         {
-            foreach (var soundCatQueue in _soundVoices.Values)
+            foreach (var soundVoicesQueue in _soundVoices.Values)
             {
-                foreach (var sound in soundCatQueue.Where(x => x != null && x.IsPlaying))
+                foreach (var soundVoice in soundVoicesQueue.Where(x => x != null && x.IsPlaying))
                 {
-                    sound.Stop();
+                    soundVoice.Stop();
                 }
             }
         }
@@ -424,6 +437,27 @@ namespace S33M3CoreComponents.Sound
             _xaudio2.StartEngine();
         }
 
+        private void RefreshMusicSoundVolume()
+        {
+            foreach (var soundVoicesQueue in _soundVoices.Values)
+            {
+                foreach (var soundVoice in soundVoicesQueue.Where(x => x != null && x.is3DSound == false && x.IsPlaying && x.PlayingDataSource.Category == SourceCategory.Music))
+                {
+                    soundVoice.RefreshVoices();
+                }
+            }
+        }
+
+        private void RefreshFXSoundVolume()
+        {
+            foreach (var soundVoicesQueue in _soundVoices.Values)
+            {
+                foreach (var soundVoice in soundVoicesQueue.Where(x => x != null && x.is3DSound == false && x.IsPlaying && x.PlayingDataSource.Category == SourceCategory.FX))
+                {
+                    soundVoice.RefreshVoices();
+                }
+            }
+        }
 
         private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
