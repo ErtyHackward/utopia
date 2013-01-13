@@ -20,6 +20,7 @@ License along with this library
 
 using System;
 using System.Linq;
+using System.Windows.Forms.VisualStyles;
 using SharpDX;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -522,6 +523,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         /// </summary>
         public Vector2 MinimumSize = new Vector2(20, 10);
 
+        public VerticalAlignment ChildsAlignment = VerticalAlignment.Top;
     }
 
     [Flags]
@@ -543,7 +545,9 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         FreeWidth = 0x1,
         FreeHeight = 0x2,
         WholeRow = 0x4,
-        WholeRowCenter = 0x8,
+        WholeRowCenter = WholeRow | Center,
+        Skip = 0x10,
+        Center = 0x20
     }
 
     public class ControlLayout
@@ -557,8 +561,17 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
         public void LayoutControls(Control parent)
         {
+            RectangleF parentBounds;
+            if (parent.Screen == null)
+            {
+                parentBounds = parent.Bounds.ToOffset(0,0);
+            }
+            else
+            {
+                parentBounds = parent.GetAbsoluteBounds();
+            }
 
-            var controlsSpace = new Vector2(parent.Bounds.Size.X.Offset - parent.LeftTopMargin.X - parent.RightBottomMargin.X, parent.Bounds.Size.Y.Offset - parent.LeftTopMargin.Y - parent.RightBottomMargin.Y);
+            var controlsSpace = new Vector2(parentBounds.Width - parent.LeftTopMargin.X - parent.RightBottomMargin.X, parentBounds.Height - parent.LeftTopMargin.Y - parent.RightBottomMargin.Y);
 
             Rows.Clear();
             var currentRow = new ControlsRow(controlsSpace.X);
@@ -567,7 +580,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             // put controls in rows
             foreach (var control in parent.Children)
             {
-                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRow) || control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRowCenter))
+                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.Skip))
+                    continue;
+
+                if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRow))
                 {
                     if (currentRow.Controls.Count > 0)
                     {
@@ -609,15 +625,22 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
             // update controls 
             var y = parent.LeftTopMargin.Y;
+
+            if (parent.ChildsAlignment == VerticalAlignment.Center)
+            {
+                var bounds = parent.GetAbsoluteBounds();
+                y = ( bounds.Height - minHeight ) / 2;
+            }
+
             foreach (var controlsRow in Rows)
             {
                 var x = parent.LeftTopMargin.X;
 
                 foreach (var control in controlsRow.Controls)
                 {
-                    if (control.LayoutFlags.HasFlag(ControlLayoutFlags.WholeRowCenter))
+                    if (control.LayoutFlags.HasFlag(ControlLayoutFlags.Center))
                     {
-                        control.Bounds.Left = x + (controlsSpace.X - control.Bounds.Size.X.Offset) / 2;
+                        control.Bounds.Left = x + (controlsSpace.X - controlsRow.Width) / 2;
                     }
                     else
                     {
@@ -636,7 +659,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
 
     public class ControlsRow
     {
-        private float Width;
+        public float Width;
         public float MaxWidth;
         public float Height;
         public bool FreeHeight;

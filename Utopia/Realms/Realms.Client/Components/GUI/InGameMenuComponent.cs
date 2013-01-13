@@ -113,9 +113,7 @@ namespace Realms.Client.Components.GUI
             _buttonsGroup.Children.Add(_exitButton);
             _buttonsGroup.LeftTopMargin = new SharpDX.Vector2(105, 141);
             _buttonsGroup.ControlsSpacing = new SharpDX.Vector2(0, 0);
-
-            _buttonsGroup.UpdateLayout();
-
+            
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
         }
 
@@ -125,8 +123,8 @@ namespace Realms.Client.Components.GUI
 
             //Hide all currently existing components
             _screen.HideAll();
-
             _screen.Desktop.Children.Add(_buttonsGroup);
+            _buttonsGroup.UpdateLayout();
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
             base.EnableComponent();
         }

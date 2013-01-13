@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using S33M3CoreComponents.Inputs.MouseHandler;
@@ -93,6 +94,12 @@ namespace S33M3CoreComponents.GUI
             _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
             _d3DEngine.GameWindow.KeyUp += GameWindowKeyUp;
 
+            _d3DEngine.ViewPort_Updated += _d3DEngine_ViewPort_Updated;
+
+            _screen.Width = _d3DEngine.ViewPort.Width;
+            _screen.Height = _d3DEngine.ViewPort.Height;
+            _screen.Desktop.ChildsAlignment = VerticalAlignment.Center;
+
             DrawOrders.UpdateIndex(0, 10001);
             UpdateOrder = _inputManager.UpdateOrder + 1;
 
@@ -140,6 +147,12 @@ namespace S33M3CoreComponents.GUI
                 TriggerType = MouseTriggerMode.ScrollWheelBackWard,
                 Binding = MouseButton.ScrollWheel
             });
+        }
+
+        void _d3DEngine_ViewPort_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
+        {
+            _screen.Width = viewport.Width;
+            _screen.Height = viewport.Height;
         }
 
         public override void BeforeDispose()

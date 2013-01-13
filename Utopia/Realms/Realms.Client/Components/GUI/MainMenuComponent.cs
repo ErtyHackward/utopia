@@ -201,9 +201,7 @@ namespace Realms.Client.Components.GUI
             _buttonsGroup.Children.Add(_credits);
             _buttonsGroup.Children.Add(_exitButton);
             _buttonsGroup.ControlsSpacing = new SharpDX.Vector2(0, 0);
-
-            _buttonsGroup.UpdateLayout();
-
+            
             _helloLabel = new LabelControl { 
                 Text = "HELLO",
                 Color = ColorHelper.ToColor4(Color.FromArgb(198,0,75)),
@@ -229,6 +227,9 @@ namespace Realms.Client.Components.GUI
             _screen.Desktop.Children.Add(_nicknameLabel);
             _screen.Desktop.Children.Add(_buttonsGroup);
             _screen.Desktop.Children.Add(_mainMenuLabel);
+
+            _buttonsGroup.UpdateLayout();
+
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
             base.EnableComponent(forced);
         }

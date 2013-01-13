@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3CoreComponents.Inputs.Actions;
+﻿using S33M3CoreComponents.Inputs.Actions;
 
 namespace Utopia.Action
 {
@@ -29,5 +25,6 @@ namespace Utopia.Action
         public const int RightDown                      = 49;
         public const int Toggle_Interface               = 50;
         public const int Drop_Mode                      = 51;
+        public const int Open_Crafting                  = 52;
     }
 }

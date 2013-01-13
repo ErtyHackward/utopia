@@ -3,6 +3,7 @@ using System.Drawing;
 using Ninject;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
+using Realms.Client.Components.GUI.Inventory;
 using Realms.Client.Components.GUI.Settings;
 using Realms.Client.Components.GUI.SinglePlayer;
 using Realms.Client.States;
@@ -186,6 +187,7 @@ namespace Realms.Client
             _iocContainer.Bind<PlayerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ContainerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<CraftingInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<Hud>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");

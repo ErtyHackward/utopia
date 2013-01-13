@@ -122,6 +122,7 @@
     <Compile Include="Components\FadeSwitchComponent.cs" />
     <Compile Include="Components\VersionWatermark.cs" />
     <Compile Include="Entities\Managers\EntityPickResult.cs" />
+    <Compile Include="GUI\Inventory\CraftingWindow.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
@@ -181,7 +182,6 @@
     <Compile Include="GUI\Inventory\ItemInfoWindow.cs" />
     <Compile Include="GUI\Inventory\CharacterInventory.cs" />
     <Compile Include="GUI\Inventory\ToolBarUI.cs" />
-    <Compile Include="GUI\Inventory\Vector2I.cs" />
     <Compile Include="GUI\Map\MapComponent.cs" />
     <Compile Include="GUI\Map\MapControl.cs" />
     <Compile Include="GUI\Map\MapRenderer.cs" />

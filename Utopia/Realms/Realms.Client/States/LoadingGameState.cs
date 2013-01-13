@@ -4,6 +4,7 @@ using Ninject;
 using Ninject.Parameters;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
+using Realms.Client.Components.GUI.Inventory;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
@@ -205,6 +206,7 @@ namespace Realms.Client.States
             var inventory = _ioc.Get<InventoryComponent>();
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
             inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
+            inventory.CraftingWindow = _ioc.Get<CraftingInventory>();
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
