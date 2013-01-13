@@ -262,13 +262,15 @@ namespace S33M3CoreComponents.Sound
             _voice.SetOutputMatrix(PlayingDataSource.WaveFormat.Channels, _soundEngine.DeviceDetail.OutputFormat.Channels, settings3D.MatrixCoefficients);
 
             //Set global input sound volume based on distance VS object
-            float soundVolume = _fadingVolumeCoef * _voiceVolume * (1.0f - (Math.Max(0.0f, Math.Min(1.0f, settings3D.EmitterToListenerDistance / _playingDataSource.SoundPower))));
+            float soundVolume = _voiceVolume * 
+                                (1.0f - (Math.Max(0.0f, Math.Min(1.0f, settings3D.EmitterToListenerDistance / _playingDataSource.SoundPower)))) *
+                                (_playingDataSource.Category == SourceCategory.Music ? _soundEngine.GlobalMusicVolume : _soundEngine.GlobalFXVolume);
             _voice.SetVolume(soundVolume, XAudio2.CommitNow);
         }
 
         private void Refresh2DVoiceData()
         {
-            float soundVolume = _fadingVolumeCoef * _voiceVolume;
+            float soundVolume = _fadingVolumeCoef * _voiceVolume * (_playingDataSource.Category == SourceCategory.Music ? _soundEngine.GlobalMusicVolume : _soundEngine.GlobalFXVolume);
             _voice.SetVolume(soundVolume, XAudio2.CommitNow);
         }
 

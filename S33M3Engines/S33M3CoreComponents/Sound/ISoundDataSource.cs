@@ -19,6 +19,8 @@ namespace S33M3CoreComponents.Sound
         WaveFormat WaveFormat { get; set; }
         AudioBuffer AudioBuffer { get; }
 
+        SourceCategory Category { get; set; }
+
         int GetSoundFormatCategory();
     }
 }

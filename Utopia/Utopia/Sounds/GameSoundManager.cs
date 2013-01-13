@@ -154,7 +154,7 @@ namespace Utopia.Sounds
             #region Load Derived classes sounds
             foreach (var data in _preLoad)
             {
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias, SourceCategory.FX);
                 if (dataSource != null)
                 {
                     dataSource.SoundVolume = data.Volume;
@@ -184,7 +184,7 @@ namespace Utopia.Sounds
             {
                 foreach (var sound in pair.Value)
                 {
-                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias);
+                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias, SourceCategory.FX);
                     if (dataSource != null)
                     {
                         dataSource.SoundVolume = sound.Volume;
@@ -204,7 +204,7 @@ namespace Utopia.Sounds
                 {
                     foreach (var biomeSound in biome.AmbientSound)
                     {
-                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias);
+                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias, SourceCategory.Music);
                         if (dataSource != null)
                         {
                             dataSource.SoundVolume = biomeSound.DefaultVolume;
@@ -268,7 +268,7 @@ namespace Utopia.Sounds
                     InsertMoodSound(soundSource, time, type);
                 }
 
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(soundSource.SoundFilePath, soundSource.SoundAlias);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(soundSource.SoundFilePath, soundSource.SoundAlias, SourceCategory.Music);
                 if (dataSource != null)
                 {
                     dataSource.SoundVolume = soundSource.DefaultVolume;
@@ -439,11 +439,11 @@ namespace Utopia.Sounds
 
                 if (entityTrack.isLocalSound)
                 {
-                    _soundEngine.StartPlay2D(sounds[soundIndex].Alias);
+                    _soundEngine.StartPlay2D(sounds[soundIndex].Alias, SourceCategory.FX);
                 }
                 else
                 {
-                    _soundEngine.StartPlay3D(sounds[soundIndex].Alias, new Vector3((float)entityTrack.Entity.Position.X, (float)entityTrack.Entity.Position.Y, (float)entityTrack.Entity.Position.Z));
+                    _soundEngine.StartPlay3D(sounds[soundIndex].Alias, new Vector3((float)entityTrack.Entity.Position.X, (float)entityTrack.Entity.Position.Y, (float)entityTrack.Entity.Position.Z), SourceCategory.FX);
                 }
             }
 
@@ -496,7 +496,7 @@ namespace Utopia.Sounds
                 }
                 //Pickup next biome ambiant sound, and start it !
                 int nextAmbientSoundId = _rnd.Next(0, currentBiome.AmbientSound.Count);
-                _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].SoundAlias, false, 3000);
+                _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].SoundAlias, SourceCategory.Music ,false, 3000);
 
                 _previousBiomePlaying = currentBiome;
             }
@@ -538,7 +538,7 @@ namespace Utopia.Sounds
             if (MoodsSounds.TryGetValue(currentMood, out soundSource))
             {
                 IUtopiaSoundSource sound = soundSource[_rnd.Next(0, soundSource.Count)];
-                _currentlyPlayingMoodSound = SoundEngine.StartPlay2D(sound.SoundAlias, false, 5000);
+                _currentlyPlayingMoodSound = SoundEngine.StartPlay2D(sound.SoundAlias, SourceCategory.Music, false, 5000);
                 return _currentlyPlayingMoodSound;
             }
             else
@@ -668,14 +668,14 @@ namespace Utopia.Sounds
             {
                 if (_staticEntityPlayingVoices.TryGetValue(entities, out voice) == false)
                 {
-                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), true, 10000);
+                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), SourceCategory.FX, true, 10000);
                     _staticEntityPlayingVoices.Add(entities, playingVoice);
                 }
                 else
                 {
                     if (voice == null)
                     {
-                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), true, 10000);
+                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), SourceCategory.FX, true, 10000);
                         _staticEntityPlayingVoices[entities] = playingVoice;
                     }
                 }

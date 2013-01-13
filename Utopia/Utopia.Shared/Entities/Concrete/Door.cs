@@ -81,7 +81,7 @@ namespace Utopia.Shared.Entities.Concrete
         {
             if (!string.IsNullOrEmpty(FinishSound) && SoundEngine != null)
             {
-                SoundEngine.StartPlay3D(FinishSound, FinishSound, Position.AsVector3());
+                SoundEngine.StartPlay3D(FinishSound, FinishSound, Position.AsVector3(), SourceCategory.FX);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (!string.IsNullOrEmpty(StartSound) && SoundEngine != null)
             {
-                SoundEngine.StartPlay3D(StartSound, StartSound, Position.AsVector3());
+                SoundEngine.StartPlay3D(StartSound, StartSound, Position.AsVector3(), SourceCategory.FX);
             }
 
             NotifyParentContainerChange();

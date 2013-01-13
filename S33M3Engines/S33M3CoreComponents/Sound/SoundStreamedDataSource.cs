@@ -31,6 +31,7 @@ namespace S33M3CoreComponents.Sound
         #endregion
 
         #region Public Properties
+        public SourceCategory Category { get; set; }
         public DataSourcePlayMode PlayMode { get { return DataSourcePlayMode.Streamed; } }
         public string SoundAlias { get; set; }
         public float SoundVolume { get; set; }
