@@ -7,7 +7,7 @@ using Utopia.Entities;
 using Utopia.GUI.Inventory;
 using Utopia.Shared.Entities.Dynamic;
 
-namespace Realms.Client.Components.GUI
+namespace Realms.Client.Components.GUI.Inventory
 {
     /// <summary>
     /// Sandbox inventory window

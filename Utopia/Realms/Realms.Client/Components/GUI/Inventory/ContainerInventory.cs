@@ -6,7 +6,7 @@ using S33M3Resources.Structs;
 using Utopia.Entities;
 using Utopia.GUI.Inventory;
 
-namespace Realms.Client.Components.GUI
+namespace Realms.Client.Components.GUI.Inventory
 {
     public class ContainerInventory : InventoryWindow
     {

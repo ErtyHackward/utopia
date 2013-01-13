@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Ninject;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Sound;
 using S33M3DXEngine;
 using Utopia.Action;
@@ -37,12 +38,14 @@ namespace Utopia.GUI.Inventory
         private readonly ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
         private InventoryWindow _containerInventoryWindow;
+        private CraftingWindow _craftingWindow;
 
         private InventoryCell _dragControl;
         private InventoryCell _hoverSlot;
         private Point _dragOffset;
         private ItemInfoWindow _infoWindow;
-
+        private bool _inventoryActive;
+        private bool _craftingActive;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
 
@@ -55,7 +58,9 @@ namespace Utopia.GUI.Inventory
         /// <summary>
         /// Indicates if inventory is active now
         /// </summary>
-        public bool IsActive { get; private set; }
+        public bool IsActive {
+            get { return _inventoryActive || _craftingActive; }
+        }
 
         /// <summary>
         /// Gets or sets current player inventory window that will popup when user press inventory key
@@ -77,7 +82,30 @@ namespace Utopia.GUI.Inventory
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Gets or sets current player crafting window
+        /// </summary>
+        public CraftingWindow CraftingWindow
+        {
+            get { return _craftingWindow; }
+            set { 
+
+                if (_craftingWindow == value)
+                    return;
+
+                if (_craftingWindow != null)
+                {
+                    UnregisterInventoryWindow(_craftingWindow);
+                }
+                _craftingWindow = value;
+                if (_craftingWindow != null)
+                {
+                    RegisterInventoryWindow(_craftingWindow);
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets optional container inventory window that will popup on container operations
         /// </summary>
@@ -453,10 +481,40 @@ namespace Utopia.GUI.Inventory
             
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory) && _playerInventoryWindow != null)
             {
-                if (IsActive) 
-                    HideInventory();
+                if (IsActive)
+                {
+                    if (_inventoryActive)
+                    {
+                        HideInventory();
+                    }
+                    else
+                    {
+                        HideCrafting();
+                        ShowInventory();
+                    }
+                }
                 else
                     ShowInventory();
+            }
+
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.Open_Crafting))
+            {
+                if (IsActive)
+                {
+                    if (_craftingActive)
+                    {
+                        HideCrafting();
+                    }
+                    else
+                    {
+                        HideInventory();
+                        ShowCrafting();
+                    }
+                }
+                else
+                {
+                    ShowCrafting();
+                }
             }
         }
 
@@ -467,9 +525,7 @@ namespace Utopia.GUI.Inventory
         public void ShowInventory(Container otherParty = null)
         {
             var windows = new List<InventoryWindow>();
-
-
-            //_guiManager.Screen.Desktop.Children.Add(_infoWindow);
+            
             var desktop = _guiManager.Screen.Desktop;
 
             windows.Add(_playerInventoryWindow);
@@ -486,32 +542,17 @@ namespace Utopia.GUI.Inventory
             // show windows
             foreach (var inventoryWindow in windows)
             {
+                inventoryWindow.LayoutFlags = ControlLayoutFlags.Center;
                 desktop.Children.Add(inventoryWindow);
             }
             
-            // locate windows on the screen
-            var horisontalFreeSpace = Math.Max((int)_engine.ViewPort.Width - windows.Sum(w => (int)w.Bounds.Size.X.Offset), 0);
-            var horisontalSpace = horisontalFreeSpace / (1 + windows.Count);
-            
-            int horisontalCurrentPos = horisontalSpace;
-            for (int i = 0; i < windows.Count; i++)
-            {
-                var inventoryWindow = windows[i];
-
-                var verticalSpace = Math.Max((int)_engine.ViewPort.Height - inventoryWindow.Bounds.Size.Y.Offset, 0) / 2;
-
-                inventoryWindow.Bounds.Location.X = horisontalCurrentPos;
-                inventoryWindow.Bounds.Location.Y = verticalSpace;
-
-                horisontalCurrentPos += horisontalSpace + (int)inventoryWindow.Bounds.Size.X.Offset;
-            }
-
+            desktop.UpdateLayout();
 
             _itemMessageTranslator.Enabled = true;
             _inputManager.ActionsManager.IsMouseExclusiveMode = true;
             _guiManager.ForceExclusiveMode = true;
             _inputManager.MouseManager.MouseCapture = false;
-            IsActive = true;
+            _inventoryActive = true;
 
             OnSwitchInventory(false);
         }
@@ -534,7 +575,44 @@ namespace Utopia.GUI.Inventory
             _inputManager.ActionsManager.IsMouseExclusiveMode = false;
             _guiManager.ForceExclusiveMode = false;
             _inputManager.MouseManager.MouseCapture = true;
-            IsActive = false;
+            _inventoryActive = false;
+
+            OnSwitchInventory(true);
+        }
+
+        private void ShowCrafting()
+        {
+            if (_craftingWindow == null)
+                throw new InvalidOperationException("Unable to open crafting window because no windows is associated");
+
+            var desktop = _guiManager.Screen.Desktop;
+
+            _craftingWindow.LayoutFlags = ControlLayoutFlags.Center;
+            desktop.Children.Add(_craftingWindow);
+
+            // position window at the center
+            desktop.UpdateLayout();
+
+            _itemMessageTranslator.Enabled = true;
+            _inputManager.ActionsManager.IsMouseExclusiveMode = true;
+            _guiManager.ForceExclusiveMode = true;
+            _inputManager.MouseManager.MouseCapture = false;
+            _craftingActive = true;
+
+            OnSwitchInventory(false);
+        }
+
+        private void HideCrafting()
+        {
+            //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
+            _guiManager.Screen.Desktop.Children.Remove(_craftingWindow);
+            _itemMessageTranslator.Enabled = false;
+            //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
+            //But in this case, I need to prevent ALL event to be sent while this component is activated
+            _inputManager.ActionsManager.IsMouseExclusiveMode = false;
+            _guiManager.ForceExclusiveMode = false;
+            _inputManager.MouseManager.MouseCapture = true;
+            _craftingActive = false;
 
             OnSwitchInventory(true);
         }

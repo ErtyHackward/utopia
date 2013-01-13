@@ -33,6 +33,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets recipe display name
         /// </summary>
+        [ProtoMember(4)]
         public string Name { get; set; }
 
         public Recipe()

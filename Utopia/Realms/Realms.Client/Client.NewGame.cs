@@ -276,6 +276,13 @@ namespace Realms.Client
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Throw
             }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
+            {
+                ActionId = UtopiaActions.Open_Crafting,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Crafting
+            }, rebindSettingsBasedAction);
         }
     }
 }

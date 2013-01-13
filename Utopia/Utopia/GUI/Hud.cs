@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Ninject;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.GUI.Inventory;
@@ -62,6 +63,7 @@ namespace Utopia.GUI
             DrawOrders.UpdateIndex(0, 10000);
             _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
             ToolbarUi = toolbar;
+            toolbar.LayoutFlags = ControlLayoutFlags.Skip;
             _camManager = camManager;
 
             _inputManager.KeyboardManager.IsRunning = true;

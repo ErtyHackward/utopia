@@ -217,6 +217,7 @@ namespace Utopia.Shared.Settings
         public KeyWithModifier Throw;
         public KeyWithModifier Inventory;
         public KeyWithModifier ToggleInterface;
+        public KeyWithModifier Crafting;
     }
 
     /// <summary>
@@ -307,12 +308,12 @@ namespace Utopia.Shared.Settings
                     {
                         NickName = "Utopia Guest"
                     },
-                    EngineParameters = new EngineParameters()
+                    EngineParameters = new EngineParameters
                     {
                         AllocatedThreadsModifier = 0,
                         EffectPack = "Default"
                     },
-                    SoundParameters = new SoundParameters()
+                    SoundParameters = new SoundParameters
                     {
                     },
                     GraphicalParameters = new GraphicalParameters
@@ -322,7 +323,7 @@ namespace Utopia.Shared.Settings
                         TexturePack = "Default",
                         LandscapeFog = "SkyFog",
                         VSync = true,
-                        MSAA = new SampleDescriptionSetting() { SampleDescription = new SampleDescription(1, 0) }
+                        MSAA = new SampleDescriptionSetting { SampleDescription = new SampleDescription(1, 0) }
                     },
                     KeyboardMapping = new KeyboardMapping
                     {
@@ -338,16 +339,17 @@ namespace Utopia.Shared.Settings
                             Run = Keys.LShiftKey,
                             Mode = Keys.F
                         },
-                        Game = new GameBindingKeys()
+                        Game = new GameBindingKeys
                         {
                             CameraType = new KeyWithModifier { MainKey = Keys.F5, Modifier = Keys.None, Info = "Change Camera type" },
                             Chat = new KeyWithModifier { MainKey = Keys.Enter, Modifier = Keys.None, Info = "Open/Close the chat" },
                             Use = new KeyWithModifier { MainKey = Keys.E, Modifier = Keys.None, Info = "Use" },
                             Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
                             Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
-                            ToggleInterface = new KeyWithModifier { MainKey = Keys.Z, Modifier = Keys.Alt, Info = "Toggle Interface" }
+                            ToggleInterface = new KeyWithModifier { MainKey = Keys.Z, Modifier = Keys.Alt, Info = "Toggle Interface" },
+                            Crafting = new KeyWithModifier { MainKey = Keys.O, Info = "Toggle crafting window" }
                         },
-                        System = new SystemBindingKeys()
+                        System = new SystemBindingKeys
                         {
                             VSync = new KeyWithModifier { MainKey = Keys.F8, Modifier = Keys.RControlKey, Info = "Enable/Disable VSync" },
                             LockMouseCursor = new KeyWithModifier { MainKey = Keys.Tab, Modifier = Keys.None, Info = "Locking/Unlocking mouse cursor" },

@@ -95,9 +95,10 @@
     <Compile Include="Client.Binding.cs" />
     <Compile Include="Client.NewGame.cs" />
     <Compile Include="Components\GUI\BlackBgComponent.cs" />
-    <Compile Include="Components\GUI\ContainerInventory.cs" />
+    <Compile Include="Components\GUI\Inventory\ContainerInventory.cs" />
     <Compile Include="Components\GUI\InGameMenuComponent.cs" />
     <Compile Include="Components\GUI\CreditsComponent.cs" />
+    <Compile Include="Components\GUI\Inventory\CraftingInventory.cs" />
     <Compile Include="Components\GUI\LoadingComponent.cs" />
     <Compile Include="Components\GUI\LoginComponent.cs" />
     <Compile Include="Components\GUI\MainMenuComponent.cs" />
@@ -105,7 +106,7 @@
     <Compile Include="Components\GUI\MenuTemplate1Component.Designer.cs">
       <DependentUpon>MenuTemplate1Component.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\GUI\PlayerInventory.cs" />
+    <Compile Include="Components\GUI\Inventory\PlayerInventory.cs" />
     <Compile Include="Components\GUI\SandboxCommonResources.cs" />
     <Compile Include="Components\GUI\SandboxToolBar.cs" />
     <Compile Include="Components\GUI\Settings\CoreEngineSettingsPanel.cs" />
