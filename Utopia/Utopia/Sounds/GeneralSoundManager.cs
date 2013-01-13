@@ -32,7 +32,7 @@ namespace Utopia.Sounds
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
-            _soundEngine.AddSoundSourceFromFile(_buttonPressSound, "ButtonPressed").SoundVolume = 0.3f;
+            _soundEngine.AddSoundSourceFromFile(_buttonPressSound, "ButtonPressed", SourceCategory.FX).SoundVolume = 0.3f;
         }
 
         public void SetGuiButtonSound(string filePath)
@@ -43,7 +43,7 @@ namespace Utopia.Sounds
 
         private void PressableControlPressedSome(object sender, EventArgs e)
         {
-            _soundEngine.StartPlay2D("ButtonPressed");
+            _soundEngine.StartPlay2D("ButtonPressed", SourceCategory.FX);
         }
 
         public override void BeforeDispose()

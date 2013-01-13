@@ -26,6 +26,8 @@ namespace S33M3CoreComponents.Sound
         public WaveFormat WaveFormat { get; set; }
         public AudioBuffer AudioBuffer { get; private set; }
 
+        public SourceCategory Category { get; set; }
+
         public int GetSoundFormatCategory()
         {
             return ((int)WaveFormat.Encoding << 16) ^ WaveFormat.Channels;
@@ -38,7 +40,7 @@ namespace S33M3CoreComponents.Sound
 
             //Creating the source, was not existing
             SoundVolume = 1.0f;
-            
+
             SoundStream soundstream;
             switch (FileName.Extension)
             {

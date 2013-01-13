@@ -50,6 +50,9 @@ namespace S33M3CoreComponents.Sound
         #endregion
 
         #region Public Properties
+        public float GlobalMusicVolume { get; set; }
+        public float GlobalFXVolume { get; set; }
+
         public Listener Listener
         {
             get { return _listener; }
@@ -186,7 +189,7 @@ namespace S33M3CoreComponents.Sound
 
         #region Sounds repository management - creation/buffering
 
-        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, bool? streamedSound = null, float soundPower = 16)
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, SourceCategory Category, bool? streamedSound = null, float soundPower = 16)
         {
             ISoundDataSource soundDataSource;
 
@@ -228,12 +231,12 @@ namespace S33M3CoreComponents.Sound
                 }
                 else
                 {
-                    //soundDataSource = new SoundBufferedDataSource(fi);
                     soundDataSource = new SoundStreamedDataSource(fi);
                 }
 
                 soundDataSource.SoundAlias = soundAlias;
                 soundDataSource.SoundPower = soundPower;
+                soundDataSource.Category = Category;
 
                 //Add DataSound into collection
                 _soundDataSources.Add(soundAlias, soundDataSource);
@@ -295,19 +298,19 @@ namespace S33M3CoreComponents.Sound
             return StartPlay2D(soundSource, soundSource.SoundVolume, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string soundAlias, float volume, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, float volume, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), volume, playLooped, fadeIn, rndDefferedStart);
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), volume, playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias), playLooped, fadeIn, rndDefferedStart);
+            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias, Category), playLooped, fadeIn, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string soundAlias, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias), playLooped, fadeIn, rndDefferedStart);
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), playLooped, fadeIn, rndDefferedStart);
         }
 
         #endregion
@@ -350,19 +353,19 @@ namespace S33M3CoreComponents.Sound
             return null;
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, volume, playLooped, rndDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, volume, playLooped, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias), position, playLooped, rndDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, playLooped, rndDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias), position, playLooped, rndDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias, Category), position, playLooped, rndDefferedStart);
         }
 
         #endregion
@@ -414,6 +417,9 @@ namespace S33M3CoreComponents.Sound
             _thread.Start();
 
             GeneralSoundVolume = 1.0f;
+
+            GlobalMusicVolume = 1;
+            GlobalFXVolume = 1;
 
             _xaudio2.StartEngine();
         }
@@ -534,9 +540,5 @@ namespace S33M3CoreComponents.Sound
         }
         
         #endregion
-
-
-
-
     }
 }

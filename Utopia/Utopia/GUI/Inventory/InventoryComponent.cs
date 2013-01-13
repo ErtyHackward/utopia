@@ -183,7 +183,7 @@ namespace Utopia.GUI.Inventory
 
             if (!string.IsNullOrEmpty(putSound))
             {
-                SoundEngine.StartPlay2D(putSound, putSound);
+                SoundEngine.StartPlay2D(putSound, putSound, SourceCategory.FX);
             }
         }
 
