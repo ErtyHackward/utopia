@@ -670,14 +670,14 @@ namespace Utopia.Sounds
             {
                 if (_staticEntityPlayingVoices.TryGetValue(entities, out voice) == false)
                 {
-                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, entities.Position.AsVector3(), entities.EmittedSound.isLooping, entities.EmittedSound.maxDeferredStart);
+                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, entities.Position.AsVector3(), entities.EmittedSound.isLooping, entities.EmittedSound.minDeferredStart, entities.EmittedSound.maxDeferredStart);
                     _staticEntityPlayingVoices.Add(entities, playingVoice);
                 }
                 else
                 {
                     if (voice == null)
                     {
-                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, entities.Position.AsVector3(), entities.EmittedSound.isLooping, entities.EmittedSound.maxDeferredStart);
+                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, entities.Position.AsVector3(), entities.EmittedSound.isLooping, entities.EmittedSound.minDeferredStart, entities.EmittedSound.maxDeferredStart);
                         _staticEntityPlayingVoices[entities] = playingVoice;
                     }
                 }

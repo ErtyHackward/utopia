@@ -22,6 +22,7 @@ using Sandbox.Client.States;
 using S33M3CoreComponents.Config;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Components;
+using S33M3CoreComponents.Sound;
 using Utopia.Worlds.Chunks;
 
 namespace Sandbox.Client.Components.GUI.Settings
@@ -30,6 +31,7 @@ namespace Sandbox.Client.Components.GUI.Settings
     {
         #region Private variables
         private IKernel _iocContainer;
+        private ISoundEngine _soundEngine;
         #endregion
 
         #region Public properties/methods
@@ -37,10 +39,11 @@ namespace Sandbox.Client.Components.GUI.Settings
         public bool isGameRunning { get; set; }
         #endregion
 
-        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, IKernel iocContainer)
-            : base(game, engine, screen, commonResources)
+        public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, IKernel iocContainer, ISoundEngine soundEngine)
+            :base(game, engine, screen, commonResources)
         {
             _iocContainer = iocContainer;
+            _soundEngine = soundEngine;
         }
 
         public override void BeforeDispose()
@@ -206,6 +209,18 @@ namespace Sandbox.Client.Components.GUI.Settings
                         {
                             if (attrib.NeedRestartAfterChange) _restartNeeded = true;
                             piTmp.SetValue(Parameter, row.FieldData.Value, null);
+
+                            switch (row.FieldData.Name)
+                            {
+                                case "GlobalFXVolume":
+                                    SetGlobalFXVol((int)row.FieldData.Value);
+                                    break;
+                                case "GlobalMusicVolume":
+                                    SetGlobalMusicVol((int)row.FieldData.Value);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
@@ -352,6 +367,16 @@ namespace Sandbox.Client.Components.GUI.Settings
                     skyDome.DrawOrders.UpdateIndex(0, 990);
                 }
             }
+        }
+
+        private void SetGlobalMusicVol(int value)
+        {
+            _soundEngine.GlobalMusicVolume = (value / 100.0f);
+        }
+
+        private void SetGlobalFXVol(int value)
+        {
+            _soundEngine.GlobalFXVolume = (value / 100.0f);
         }
 
         //ButtonList Event management ==========================================
