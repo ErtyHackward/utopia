@@ -1,8 +1,8 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Utopia.Shared.Tools
 {
-    public class SoundSelector : StringConverter
+    public class SoundList : StringConverter
     {
         public static string[] PossibleSound;
 
