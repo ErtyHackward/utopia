@@ -19,6 +19,7 @@ using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
+using Utopia.Shared.Entities.Sound;
 
 namespace Utopia.Shared.Entities
 {
@@ -68,6 +69,7 @@ namespace Utopia.Shared.Entities
             chunkDataProvider.AddSubType(101, typeof(SingleArrayDataProvider));
 
             soundSource.AddSubType(100, typeof(BiomeSoundSource));
+            soundSource.AddSubType(101, typeof(StaticEntitySoundSource));
 
             // world configs
 

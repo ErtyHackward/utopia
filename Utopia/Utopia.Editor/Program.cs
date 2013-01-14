@@ -55,7 +55,9 @@ namespace Utopia.Editor
             files.AddRange(GetFiles(Path.Combine(Settings.Default.UtopiaFolder), "*.wma").Select(f => f.Remove(0, baseSoundPath.Length + 1)));
 
 
-            SoundSelector.PossibleSound = files.OrderBy(x => x).ToArray();
+
+            ShortSoundSelector.PossibleSound = files.OrderBy(x => x).ToArray();
+            SoundList.PossibleSound = ShortSoundSelector.PossibleSound;
             ModelIcons = new Dictionary<string, Image>();
 
             Application.Run(new FrmMain());

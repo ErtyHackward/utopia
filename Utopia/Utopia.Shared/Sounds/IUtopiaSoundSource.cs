@@ -8,9 +8,9 @@ namespace Utopia.Shared.Sounds
     public interface IUtopiaSoundSource
     {
         TimeOfDaySound TimeOfDay { get; set; }
-        string SoundFilePath { get; set; }
-        string SoundAlias { get; set; }
-        float DefaultVolume { get; set; }
+        string FilePath { get; set; }
+        string Alias { get; set; }
+        float Volume { get; set; }
         float Power { get; set; }
     }
 }

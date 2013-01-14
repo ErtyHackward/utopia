@@ -157,8 +157,8 @@ namespace Utopia.Sounds
                 ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias, SourceCategory.FX);
                 if (dataSource != null)
                 {
-                    dataSource.SoundVolume = data.Volume;
-                    dataSource.SoundPower = data.Power;
+                    dataSource.Volume = data.Volume;
+                    dataSource.Power = data.Power;
                 }
             }
             #endregion
@@ -171,9 +171,9 @@ namespace Utopia.Sounds
                 {
                     RegisterStepSound(cube.Id, new SoundMetaData()
                     {
-                        Path = walkingSound.SoundFilePath,
-                        Alias = walkingSound.SoundAlias,
-                        Volume = walkingSound.DefaultVolume,
+                        Path = walkingSound.FilePath,
+                        Alias = walkingSound.Alias,
+                        Volume = walkingSound.Volume,
                         Power = walkingSound.Power
                     }
                         );
@@ -187,8 +187,8 @@ namespace Utopia.Sounds
                     ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias, SourceCategory.FX);
                     if (dataSource != null)
                     {
-                        dataSource.SoundVolume = sound.Volume;
-                        dataSource.SoundPower = sound.Power;
+                        dataSource.Volume = sound.Volume;
+                        dataSource.Power = sound.Power;
                     }
                 }
             }
@@ -204,10 +204,11 @@ namespace Utopia.Sounds
                 {
                     foreach (var biomeSound in biome.AmbientSound)
                     {
-                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.SoundFilePath, biomeSound.SoundAlias, SourceCategory.Music);
+                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.FilePath, biomeSound.Alias, SourceCategory.Music);
                         if (dataSource != null)
                         {
-                            dataSource.SoundVolume = biomeSound.DefaultVolume;
+                            dataSource.Volume = biomeSound.Volume;
+                            dataSource.isStreamed = true;
                         }
                     }
                 }
@@ -253,9 +254,10 @@ namespace Utopia.Sounds
 
                 MoodsSoundSource soundSource = new MoodsSoundSource()
                 {
-                    SoundAlias = "Mood" + fileMetaData[0],
-                    SoundFilePath = moodSoundFile,
-                    DefaultVolume = type == MoodType.Peace ? 0.1f : 0.4f
+                    Alias = "Mood" + fileMetaData[0],
+                    FilePath = moodSoundFile,
+                    Volume = type == MoodType.Peace ? 0.1f : 0.4f,
+                    isStreamed = true
                 };
 
                 if (time == TimeOfDaySound.FullDay)
@@ -268,11 +270,11 @@ namespace Utopia.Sounds
                     InsertMoodSound(soundSource, time, type);
                 }
 
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(soundSource.SoundFilePath, soundSource.SoundAlias, SourceCategory.Music);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, SourceCategory.Music);
                 if (dataSource != null)
                 {
-                    dataSource.SoundVolume = soundSource.DefaultVolume;
-                    dataSource.SoundPower = soundSource.Power;
+                    dataSource.Volume = soundSource.Volume;
+                    dataSource.Power = soundSource.Power;
                 }
             }
             #endregion
@@ -496,7 +498,7 @@ namespace Utopia.Sounds
                 }
                 //Pickup next biome ambiant sound, and start it !
                 int nextAmbientSoundId = _rnd.Next(0, currentBiome.AmbientSound.Count);
-                _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].SoundAlias, SourceCategory.Music ,false, 3000);
+                _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].Alias, SourceCategory.Music ,false, 3000);
 
                 _previousBiomePlaying = currentBiome;
             }
@@ -538,7 +540,7 @@ namespace Utopia.Sounds
             if (MoodsSounds.TryGetValue(currentMood, out soundSource))
             {
                 IUtopiaSoundSource sound = soundSource[_rnd.Next(0, soundSource.Count)];
-                _currentlyPlayingMoodSound = SoundEngine.StartPlay2D(sound.SoundAlias, SourceCategory.Music, false, 5000);
+                _currentlyPlayingMoodSound = SoundEngine.StartPlay2D(sound.Alias, SourceCategory.Music, false, 5000);
                 return _currentlyPlayingMoodSound;
             }
             else
@@ -668,14 +670,14 @@ namespace Utopia.Sounds
             {
                 if (_staticEntityPlayingVoices.TryGetValue(entities, out voice) == false)
                 {
-                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), SourceCategory.FX, true, 10000);
+                    ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, entities.Position.AsVector3(), entities.EmittedSound.isLooping, entities.EmittedSound.maxDeferredStart);
                     _staticEntityPlayingVoices.Add(entities, playingVoice);
                 }
                 else
                 {
                     if (voice == null)
                     {
-                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, null, entities.Position.AsVector3(), SourceCategory.FX, true, 10000);
+                        ISoundVoice playingVoice = _soundEngine.StartPlay3D(entities.EmittedSound, entities.Position.AsVector3(), entities.EmittedSound.isLooping, entities.EmittedSound.maxDeferredStart);
                         _staticEntityPlayingVoices[entities] = playingVoice;
                     }
                 }

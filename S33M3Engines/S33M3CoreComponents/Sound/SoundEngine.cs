@@ -247,8 +247,8 @@ namespace S33M3CoreComponents.Sound
                     soundDataSource = new SoundStreamedDataSource(fi);
                 }
 
-                soundDataSource.SoundAlias = soundAlias;
-                soundDataSource.SoundPower = soundPower;
+                soundDataSource.Alias = soundAlias;
+                soundDataSource.Power = soundPower;
                 soundDataSource.Category = Category;
 
                 //Add DataSound into collection
@@ -300,7 +300,7 @@ namespace S33M3CoreComponents.Sound
             }
             else
             {
-                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundSource.SoundAlias);
+                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundSource.Alias);
             }
 
             return soundVoice;
@@ -308,7 +308,12 @@ namespace S33M3CoreComponents.Sound
 
         public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
         {
-            return StartPlay2D(soundSource, soundSource.SoundVolume, playLooped, fadeIn, rndDefferedStart);
+            return StartPlay2D(soundSource, soundSource.Volume, playLooped, fadeIn, rndDefferedStart);
+        }
+
+        public ISoundVoice StartPlay2D(ISoundDataSourceBase soundSource, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
+        {
+            return StartPlay2D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power), soundSource.Volume, playLooped, fadeIn, rndDefferedStart);
         }
 
         public ISoundVoice StartPlay2D(string soundAlias, float volume, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0)
@@ -354,7 +359,7 @@ namespace S33M3CoreComponents.Sound
             }
             else
             {
-                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundSource.SoundAlias);
+                logger.Warn("Sound playing skipped because no sound channel are IDLE : {0}", soundSource.Alias);
             }
 
             return soundVoice;
@@ -362,8 +367,13 @@ namespace S33M3CoreComponents.Sound
 
         public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
         {
-            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.SoundVolume, playLooped, rndDefferedStart);
+            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.Volume, playLooped, rndDefferedStart);
             return null;
+        }
+
+        public ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0)
+        {
+            return StartPlay3D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category,soundSource.isStreamed, soundSource.Power), position, soundSource.Volume, playLooped, rndDefferedStart);
         }
 
         public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0)

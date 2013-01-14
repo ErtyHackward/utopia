@@ -10,6 +10,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
@@ -46,15 +47,16 @@ namespace Utopia.Shared.Entities.Inventory
 
         [Category("Sound")]
         [Description("Sound of item put")]
-        [TypeConverter(typeof(SoundSelector))]
-        [ProtoMember(4)]
-        public string PutSound { get; set; }
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(6)]
+        public StaticEntitySoundSource PutSound { get; set; }
 
         [Category("Sound")]
         [Description("EmittedSound sound of an item")]
-        [TypeConverter(typeof(SoundSelector))]
-        [ProtoMember(5)]
-        public string EmittedSound { get; set; }
+        [TypeConverter(typeof(FullSoundSelector))]
+        [ProtoMember(7)]
+        public StaticEntitySoundSource EmittedSound { get; set; }
+
 
         /// <summary>
         /// Gets or sets voxel model instance
@@ -96,6 +98,8 @@ namespace Utopia.Shared.Entities.Inventory
         {
             AllowedSlots = EquipmentSlotType.Hand;
             MaxStackSize = 1;
+
+            EmittedSound = new StaticEntitySoundSource();
         }
 
         /// <summary>

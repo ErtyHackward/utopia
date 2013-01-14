@@ -33,9 +33,11 @@ namespace S33M3CoreComponents.Sound
         #region Public Properties
         public SourceCategory Category { get; set; }
         public DataSourcePlayMode PlayMode { get { return DataSourcePlayMode.Streamed; } }
-        public string SoundAlias { get; set; }
-        public float SoundVolume { get; set; }
-        public float SoundPower { get; set; }
+        public string FilePath { get; set; }
+        public string Alias { get; set; }
+        public float Volume { get; set; }
+        public float Power { get; set; }
+        public bool isStreamed { get; set; }
         public WaveFormat WaveFormat { get; set; }
         public AudioBuffer AudioBuffer
         {
@@ -63,7 +65,7 @@ namespace S33M3CoreComponents.Sound
                 _memBuffers[i].Pointer = Utilities.AllocateMemory(_memBuffers[i].Size);
             }
 
-            SoundVolume = 1;
+            Volume = 1;
             //Get File metaData
             _audioDecoder = new AudioDecoder(_bufferedCompressedFile);
             WaveFormat = _audioDecoder.WaveFormat;

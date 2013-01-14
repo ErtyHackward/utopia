@@ -112,6 +112,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="soundPower">The maximum distance at wich the sound can be propagated : its "power", value in World unit</param>
         /// <returns>The soundDataSource object</returns>
         ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, SourceCategory Category, bool? streamedSound = null, float soundPower = 16);
+
         /// <summary>
         /// Get a sound source via its alias
         /// </summary>
@@ -161,6 +162,10 @@ namespace S33M3CoreComponents.Sound
         /// <returns>The voice currently playing the sound</returns>
         ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume,  bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
 
+
+        ISoundVoice StartPlay2D(ISoundDataSourceBase soundSource, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        
+
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
@@ -206,6 +211,8 @@ namespace S33M3CoreComponents.Sound
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
         ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume,  bool playLooped = false, uint rndDefferedStart = 0);
+
+        ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0);
 
         /// <summary>
         /// Remove all buffered sound sources, will free up memory

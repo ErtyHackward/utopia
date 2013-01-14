@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 
@@ -27,15 +29,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         string Description { get; }
 
-        [Category("Sound")]
-        [Description("Sound of item put")]
-        [TypeConverter(typeof(SoundSelector))]
-        string PutSound { get; set; }
 
-        [Category("Sound")]
-        [Description("EmittedSound sound of an item")]
-        [TypeConverter(typeof(SoundSelector))]
-        string EmittedSound { get; set; }
+        StaticEntitySoundSource PutSound { get; set; }
+
+        StaticEntitySoundSource EmittedSound { get; set; }
 
         /// <summary>
         /// Returns new entity position correspoding to the player

@@ -4,6 +4,7 @@ using ProtoBuf;
 using S33M3CoreComponents.Sound;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Concrete
@@ -33,18 +34,18 @@ namespace Utopia.Shared.Entities.Concrete
 
         [Category("Sound")]
         [Description("Sound of the door opening/closing")]
-        [TypeConverter(typeof(SoundSelector))]
-        [ProtoMember(4)]
-        public string StartSound { get; set; }
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(6)]
+        public StaticEntitySoundSource StartSound { get; set; }
 
         [Category("Sound")]
         [Description("Sound of the door impact on close/open")]
-        [TypeConverter(typeof(SoundSelector))]
-        [ProtoMember(5)]
-        public string FinishSound { get; set; }
-
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(7)]
+        public StaticEntitySoundSource FinishSound { get; set; }
 
         private ISoundEngine _soundEngine;
+
 
         public ISoundEngine SoundEngine
         {
@@ -79,9 +80,9 @@ namespace Utopia.Shared.Entities.Concrete
 
         private void ModelInstanceOnStateChanged(object sender, EventArgs eventArgs)
         {
-            if (!string.IsNullOrEmpty(FinishSound) && SoundEngine != null)
+            if (FinishSound != null && SoundEngine != null)
             {
-                SoundEngine.StartPlay3D(FinishSound, FinishSound, Position.AsVector3(), SourceCategory.FX);
+                SoundEngine.StartPlay3D(FinishSound, Position.AsVector3());
             }
         }
 
@@ -96,9 +97,9 @@ namespace Utopia.Shared.Entities.Concrete
                     ModelInstance.SwitchState(newState);
             }
 
-            if (!string.IsNullOrEmpty(StartSound) && SoundEngine != null)
+            if (StartSound != null && SoundEngine != null)
             {
-                SoundEngine.StartPlay3D(StartSound, StartSound, Position.AsVector3(), SourceCategory.FX);
+                SoundEngine.StartPlay3D(StartSound, Position.AsVector3());
             }
 
             NotifyParentContainerChange();
