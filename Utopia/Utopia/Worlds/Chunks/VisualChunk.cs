@@ -553,14 +553,14 @@ namespace Utopia.Worlds.Chunks
         private void AddSoundEntity(EntityCollectionEventArgs e)
         {
             IItem item = e.Entity as IItem;
-            if (item == null || item.EmittedSound == null) return;
+            if (item == null || item.EmittedSound == null || item.EmittedSound.FilePath == null) return;
             SoundStaticEntities.Add(item);
         }
 
         private void RemoveSoundEntity(EntityCollectionEventArgs e)
         {
             IItem item = e.Entity as IItem;
-            if (item == null || item.EmittedSound == null) return;
+            if (item == null || item.EmittedSound == null || item.EmittedSound.FilePath == null) return;
             SoundStaticEntities.Remove(item);
         }
 

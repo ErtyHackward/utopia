@@ -29,7 +29,6 @@ namespace S33M3CoreComponents.Sound
         private Stopwatch _fadingTimer = new Stopwatch();
         private Stopwatch _deferredStartTimer = new Stopwatch();
         private uint _defferedStart;
-        private uint _maxDefferedStart;
         private bool _deferredPaused;
         private bool _isPlaying;
         private FastRandom _rnd = new FastRandom();
@@ -38,11 +37,8 @@ namespace S33M3CoreComponents.Sound
         #region Public Properties
         public string Id { get; set; }
 
-        public uint MaxDefferedStart
-        {
-            get { return _maxDefferedStart; }
-            set { _maxDefferedStart = value; }
-        }
+        public uint MaxDefferedStart { get; set; }
+        public uint MinDefferedStart { get; set; }
 
         public SourceVoice Voice
         {
@@ -123,7 +119,7 @@ namespace S33M3CoreComponents.Sound
         public void PushDataSourceForPlaying()
         {
             //Do nothing, start will be deferred !
-            if (_maxDefferedStart > 0)
+            if (MaxDefferedStart > 0)
             {
                 //Not playing the sound with Buffered start => Assign new rnd start
                 if (_voice.State.BuffersQueued == 0 && _deferredPaused == false)
@@ -157,7 +153,7 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
-        public void Start(float soundVolume, uint fadeIn = 0, uint maxDefferedStart = 0)
+        public void Start(float soundVolume, uint fadeIn = 0)
         {
             if (fadeIn > 0 && !is3DSound)
             {
@@ -171,9 +167,7 @@ namespace S33M3CoreComponents.Sound
                 _fadingVolumeCoef = 1.0f;
             }
 
-            _maxDefferedStart = maxDefferedStart;
-
-            if (_maxDefferedStart > 0) _deferredPaused = false;
+            if (MaxDefferedStart > 0) _deferredPaused = false;
 
             _voiceVolume = soundVolume;
             RefreshVoices();
@@ -183,9 +177,9 @@ namespace S33M3CoreComponents.Sound
             IsPlaying = true;
         }
 
-        public void Start(uint fadeIn = 0, uint rndDefferedStart = 0)            
+        public void Start(uint fadeIn = 0)            
         {
-            Start(_playingDataSource.Volume, fadeIn, rndDefferedStart);
+            Start(_playingDataSource.Volume, fadeIn);
         }
 
         public void Stop(uint fadeOut = 0)
@@ -206,6 +200,8 @@ namespace S33M3CoreComponents.Sound
                 _fadingTimer.Stop();
                 _voice.FlushSourceBuffers();
                 _defferedStart = 0;
+                MaxDefferedStart = 0;
+                MinDefferedStart = 0;
                 IsPlaying = false;
             }
 
@@ -222,7 +218,8 @@ namespace S33M3CoreComponents.Sound
 
         private void AssignNewRndStart()
         {
-            _defferedStart = (uint)_rnd.Next(0, (int)_maxDefferedStart);
+            if (MinDefferedStart > MaxDefferedStart) MaxDefferedStart = MinDefferedStart;
+            _defferedStart = (uint)_rnd.Next((int)MinDefferedStart, (int)MaxDefferedStart);
             _deferredStartTimer.Restart();
         }
 

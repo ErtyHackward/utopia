@@ -127,7 +127,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="soundAlias">Sound Alias</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
-        ISoundVoice StartPlay2D(string FilePath, string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay2D(string FilePath, string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
         /// <summary>
         /// Start playing a sound in 2D mode
@@ -136,7 +136,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="soundAlias">Sound Alias</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
-        ISoundVoice StartPlay2D(string soundAlias, float volume, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay2D(string soundAlias, float volume, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
 
         /// <summary>
@@ -145,14 +145,14 @@ namespace S33M3CoreComponents.Sound
         /// <param name="soundAlias">Sound Alias</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
-        ISoundVoice StartPlay2D(string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay2D(string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0);
         /// <summary>
         /// Start playing a sound in 2D mode
         /// </summary>
         /// <param name="soundSource">The sound source to use for playing</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
-        ISoundVoice StartPlay2D(ISoundDataSource soundSource,  bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
         /// <summary>
         /// Start playing a sound in 2D mode
@@ -160,10 +160,10 @@ namespace S33M3CoreComponents.Sound
         /// <param name="soundSource">The sound source to use for playing</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the sound</returns>
-        ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume,  bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
 
-        ISoundVoice StartPlay2D(ISoundDataSourceBase soundSource, bool playLooped = false, uint fadeIn = 0, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay2D(ISoundDataSourceBase soundSource, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0);
         
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
         /// <summary>
         /// Start Playing a sound in 3D Mode
@@ -184,7 +184,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
         /// <summary>
         /// Start Playing a sound in 3D Mode
@@ -193,7 +193,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay3D(string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0);
         /// <summary>
         /// Start Playing a sound in 3D Mode
         /// </summary>
@@ -201,7 +201,7 @@ namespace S33M3CoreComponents.Sound
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position,  bool playLooped = false, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
         /// <summary>
         /// Start Playing a sound in 3D Mode
@@ -210,9 +210,9 @@ namespace S33M3CoreComponents.Sound
         /// <param name="position">Sound world position</param>
         /// <param name="playLooped">Keep on playing sound when finished</param>
         /// <returns>The voice currently playing the soun</returns>
-        ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume,  bool playLooped = false, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
-        ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint rndDefferedStart = 0);
+        ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0);
 
         /// <summary>
         /// Remove all buffered sound sources, will free up memory
