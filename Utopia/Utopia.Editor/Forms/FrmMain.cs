@@ -747,9 +747,9 @@ namespace Utopia.Editor.Forms
         private void ShowMainControl(Control control)
         {
             pgDetails.Hide();
-            if (_processorControl != null)
-                _processorControl.Hide();
+            if (_processorControl != null) _processorControl.Hide();
             containerEditor.Hide();
+            entityListView.Hide();
 
             control.Show();
         }
