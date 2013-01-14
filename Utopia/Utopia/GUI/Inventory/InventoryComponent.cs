@@ -179,11 +179,9 @@ namespace Utopia.GUI.Inventory
 
         private void OnSlotPut(ContainedSlot slot)
         {
-            var putSound = slot.Item.PutSound;
-
-            if (!string.IsNullOrEmpty(putSound))
+            if (slot.Item.PutSound != null)
             {
-                SoundEngine.StartPlay2D(putSound, putSound, SourceCategory.FX);
+                SoundEngine.StartPlay2D(slot.Item.PutSound);
             }
         }
 

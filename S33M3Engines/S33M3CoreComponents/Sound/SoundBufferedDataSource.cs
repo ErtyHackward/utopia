@@ -18,10 +18,11 @@ namespace S33M3CoreComponents.Sound
         #region Public Properties
         public DataSourcePlayMode PlayMode { get { return DataSourcePlayMode.Buffered; } }
 
-        public string SoundAlias { get; set; }
-
-        public float SoundVolume { get; set; }
-        public float SoundPower { get; set; }
+        public string Alias { get; set; }
+        public string FilePath { get; set; }
+        public float Volume { get; set; }
+        public float Power { get; set; }
+        public bool isStreamed { get; set; }
 
         public WaveFormat WaveFormat { get; set; }
         public AudioBuffer AudioBuffer { get; private set; }
@@ -39,7 +40,7 @@ namespace S33M3CoreComponents.Sound
             //Extract the data from the sound file, and create a buffer with them
 
             //Creating the source, was not existing
-            SoundVolume = 1.0f;
+            Volume = 1.0f;
 
             SoundStream soundstream;
             switch (FileName.Extension)

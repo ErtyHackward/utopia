@@ -130,7 +130,7 @@ namespace S33M3CoreComponents.Sound
                 {
                     AssignNewRndStart();
                     _deferredPaused = true;
-                    logger.Trace("AssignNewRndStart {0} {1}", this.Id, this.PlayingDataSource.SoundAlias);
+                    logger.Trace("AssignNewRndStart {0} {1}", this.Id, this.PlayingDataSource.Alias);
                 }
 
                 if (_defferedStart > _deferredStartTimer.ElapsedMilliseconds) return;
@@ -185,7 +185,7 @@ namespace S33M3CoreComponents.Sound
 
         public void Start(uint fadeIn = 0, uint rndDefferedStart = 0)            
         {
-            Start(_playingDataSource.SoundVolume, fadeIn, rndDefferedStart);
+            Start(_playingDataSource.Volume, fadeIn, rndDefferedStart);
         }
 
         public void Stop(uint fadeOut = 0)
@@ -235,7 +235,7 @@ namespace S33M3CoreComponents.Sound
                 {
                     IsFadingMode = false;
                     _fadingVolumeCoef = 1.0f;
-                    logger.Trace("Fading IN of sound {0} finished",_playingDataSource.SoundAlias);
+                    logger.Trace("Fading IN of sound {0} finished",_playingDataSource.Alias);
                 }
                 else
                 {
@@ -245,7 +245,7 @@ namespace S33M3CoreComponents.Sound
                         _fadingVolumeCoef = 0.0f;
                         _fadingTimer.Reset();
                         Stop(0);
-                        logger.Trace("Fading OUT of sound {0} finished", _playingDataSource.SoundAlias);
+                        logger.Trace("Fading OUT of sound {0} finished", _playingDataSource.Alias);
                         IsPlaying = false;
                         return;
                     }
@@ -263,7 +263,7 @@ namespace S33M3CoreComponents.Sound
 
             //Set global input sound volume based on distance VS object
             float soundVolume = _voiceVolume * 
-                                (1.0f - (Math.Max(0.0f, Math.Min(1.0f, settings3D.EmitterToListenerDistance / _playingDataSource.SoundPower)))) *
+                                (1.0f - (Math.Max(0.0f, Math.Min(1.0f, settings3D.EmitterToListenerDistance / _playingDataSource.Power)))) *
                                 (_playingDataSource.Category == SourceCategory.Music ? _soundEngine.GlobalMusicVolume : _soundEngine.GlobalFXVolume);
             _voice.SetVolume(soundVolume, XAudio2.CommitNow);
         }

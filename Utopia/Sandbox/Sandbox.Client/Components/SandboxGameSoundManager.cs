@@ -75,9 +75,9 @@ namespace Sandbox.Client.Components
             {
                 var item = e.Entity as IItem;
                 var putSound = item.PutSound;
-                if (!string.IsNullOrEmpty(putSound))
+                if (putSound != null)
                 {
-                    SoundEngine.StartPlay3D(putSound, putSound, e.Entity.Position.AsVector3());
+                    SoundEngine.StartPlay3D(putSound, e.Entity.Position.AsVector3());
                 }
             }
         }

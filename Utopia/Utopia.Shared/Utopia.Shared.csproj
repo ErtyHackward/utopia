@@ -217,6 +217,7 @@
     <Compile Include="Entities\Models\VoxelModelInstance.cs" />
     <Compile Include="Entities\Models\VoxelModelPartState.cs" />
     <Compile Include="Entities\Models\VoxelModelState.cs" />
+    <Compile Include="Entities\Sound\StaticEntitySoundSource.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />
     <Compile Include="Entities\Models\VoxelFrame.cs" />
@@ -329,9 +330,11 @@
     </Compile>
     <Compile Include="Tools\ContainerSetSelector.cs" />
     <Compile Include="Tools\ExceptionHandler.cs" />
+    <Compile Include="Tools\FullSoundSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
     <Compile Include="Tools\ModelStateSelector.cs" />
-    <Compile Include="Tools\SoundSelector.cs" />
+    <Compile Include="Tools\ShortSoundSelector.cs" />
+    <Compile Include="Tools\SoundList.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
     <Compile Include="World\PlanGenerator\Corner.cs" />
