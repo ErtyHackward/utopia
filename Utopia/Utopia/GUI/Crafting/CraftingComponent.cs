@@ -7,6 +7,7 @@ using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs.Vertex;
+using SharpDX;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Settings;
 
@@ -15,6 +16,7 @@ namespace Utopia.GUI.Crafting
     public class CraftingComponent : GameComponent
     {
         private HLSLVoxelModel _voxelEffect;
+        private float _modelRotation = 0f;
 
         [Inject]
         public CraftingWindow CraftingWindow { get; set; }
@@ -45,6 +47,17 @@ namespace Utopia.GUI.Crafting
         public void HideCrafting()
         {
             GuiManager.Screen.Desktop.Children.Remove(CraftingWindow);
+        }
+
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        {
+            _modelRotation += elapsedTime * 0.001f;
+
+            if (_modelRotation > Math.PI*2)
+                _modelRotation -= (float)Math.PI*2;
+
+            CraftingWindow.ModelControl.Rotation = Quaternion.RotationYawPitchRoll(_modelRotation, 0, 0);
+
         }
 
     }
