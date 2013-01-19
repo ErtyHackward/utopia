@@ -55,6 +55,7 @@ namespace Realms.Client.States
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
             inputsManager.ActionsManager.KeyboardAction += ActionsManager_KeyboardAction;
+
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
@@ -150,14 +151,41 @@ namespace Realms.Client.States
 
         void ActionsManager_KeyboardAction(object sender, S33M3CoreComponents.Inputs.Actions.ActionsManagerEventArgs e)
         {
+            if (StatesManager.CurrentState.Name == "Settings") return;
+
+            if (e.Action.ActionId == UtopiaActions.EngineExit)
+            {
+                if (StatesManager.CurrentState.Name != "InGameMenu")
+                {
+                    StatesManager.ActivateGameStateAsync("InGameMenu", true);
+                }
+                else
+                {
+                    StatesManager.ActivateGameStateAsync("Gameplay");
+                }
+                return;
+            }
+
             if (e.Action.ActionId == UtopiaActions.OpenInventory)
             {
-                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Inventory" ? "Inventory" : "Gameplay", true);
+                if (StatesManager.CurrentState.Name != "Inventory")
+                {
+                    StatesManager.ActivateGameStateAsync("Inventory", true); 
+                }else{
+                    StatesManager.ActivateGameStateAsync("Gameplay"); 
+                }
             }
 
             if (e.Action.ActionId == UtopiaActions.OpenCrafting)
             {
-                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Crafting" ? "Crafting" : "Gameplay", true);
+                if (StatesManager.CurrentState.Name != "Crafting")
+                {
+                    StatesManager.ActivateGameStateAsync("Crafting", true);
+                }
+                else
+                {
+                    StatesManager.ActivateGameStateAsync("Gameplay");
+                }
             }
         }
 

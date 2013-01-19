@@ -85,7 +85,6 @@ namespace Realms.Client
 
             stateManager.ActivateGameStateAsync("StartUp");
 
-            game.MenuRequested += game_MenuRequested;
             game.GameStateManager = stateManager;
 
             ApplySystemSettings();
@@ -190,15 +189,6 @@ namespace Realms.Client
             return needSave;
         }
 
-
-        private void game_MenuRequested(object sender, EventArgs e)
-        {
-            //Only if GamePlayState is activate
-            if (_iocContainer.Get<GameStatesManager>().CurrentState is GamePlayState)
-            {
-                _iocContainer.Get<GameStatesManager>().ActivateGameStateAsync(_iocContainer.Get<InGameMenuState>(), true);
-            }
-        }
         #endregion
 
         public void Dispose()
