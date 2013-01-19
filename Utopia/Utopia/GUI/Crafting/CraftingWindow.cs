@@ -29,6 +29,11 @@ namespace Utopia.GUI.Crafting
         protected ButtonControl _craftButton;
         protected RectangleF _ingredientsRect;
 
+        public ModelControl ModelControl
+        {
+            get { return _resultModel; }
+        }
+
         public HLSLVoxelModel VoxelEffect {
             get { return _resultModel.VoxelEffect; }
             set { _resultModel.VoxelEffect = value; }
@@ -63,7 +68,7 @@ namespace Utopia.GUI.Crafting
 
             _resultModel = new ModelControl(_iconFactory.VoxelModelManager) 
             { 
-                Bounds = new UniRectangle(240, 30, 150, 150) 
+                Bounds = new UniRectangle(300, 10, 230, 230) 
             };
 
             Children.Add(_resultModel);

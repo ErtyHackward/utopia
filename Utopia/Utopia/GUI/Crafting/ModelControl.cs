@@ -1,4 +1,6 @@
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Sprites2D;
+using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities.Models;
@@ -18,8 +20,13 @@ namespace Utopia.GUI.Crafting
 
         public HLSLVoxelModel VoxelEffect { get; set; }
 
+        public SpriteTexture ModelTexture { get; set; }
+
+        public Quaternion Rotation { get; set; }
+
         public ModelControl(VoxelModelManager manager)
         {
+            Rotation = Quaternion.Identity;
             _manager = manager;
         }
 
