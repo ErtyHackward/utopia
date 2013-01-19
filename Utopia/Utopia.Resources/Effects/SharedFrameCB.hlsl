@@ -13,5 +13,6 @@ cbuffer PerFrame
 	float FogType;                 //Fog Type : 0 skyfog, 1 SimpleFog, 2 NoFog
 	float3 CameraWorldPosition;    //The camera in world position coordinate
 	matrix InvertedOrientation;		//The inverted Matrix view
+	float4 Various2;                //x = 1 if head under water
 };
 

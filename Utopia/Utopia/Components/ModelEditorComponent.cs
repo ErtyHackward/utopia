@@ -2265,7 +2265,7 @@ namespace Utopia.Components
                 direction.Normalize();
                 _voxelInstancedEffect.Begin(context);
                 _voxelInstancedEffect.CBPerFrame.Values.LightDirection = direction;
-                _voxelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
+                _voxelInstancedEffect.CBPerFrame.Values.ViewProjectionOLD = Matrix.Transpose(_viewProjection);
                 _voxelInstancedEffect.CBPerFrame.IsDirty = true;
 
                 _instance.LightColor = new Color3(1, 1, 1);

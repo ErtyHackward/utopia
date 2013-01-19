@@ -202,7 +202,7 @@ namespace Utopia.Worlds.Chunks
             {
                 _voxelModelInstancedEffect.Begin(context);
                 _voxelModelInstancedEffect.CBPerFrame.Values.LightDirection = _skydome.LightDirection;
-                _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+                _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjectionOLD = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
             }
             else

@@ -22,11 +22,9 @@ namespace Utopia.Resources.Effects.Entities
         public struct CBPerFrameStructure
         {
             [FieldOffset(0)]
-            public Matrix ViewProjection;
+            public Matrix ViewProjectionOLD;
             [FieldOffset(64)]
             public Vector3 LightDirection;
-            [FieldOffset(76)]
-            public float FogDistance;
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 1024)]
