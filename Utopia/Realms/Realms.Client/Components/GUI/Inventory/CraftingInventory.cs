@@ -8,6 +8,7 @@ using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
 using Utopia.GUI.Inventory;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 
 namespace Realms.Client.Components.GUI.Inventory
@@ -29,8 +30,8 @@ namespace Realms.Client.Components.GUI.Inventory
         private InventoryCell _resultCell;
         private ButtonControl _craftButton;
 
-        public CraftingInventory(D3DEngine engine, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) :
-            base(character.Inventory, iconFactory, new Point(200, 120), new Point(570, 50), inputManager)
+        public CraftingInventory(D3DEngine engine, WorldConfiguration conf, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) :
+            base(conf, character, iconFactory, inputManager)
         {
             _engine = engine;
             _iconFactory = iconFactory;
@@ -46,45 +47,29 @@ namespace Realms.Client.Components.GUI.Inventory
             CustomWindowImage = _stInventoryWindow;
             Bounds.Size = new UniVector(904, 388);
 
-            CellsCreated();
-            CreateCraftingControls();
+            InitializeComponent();
         }
 
-        private void CreateCraftingControls()
+        public override void InitializeComponent()
         {
-            var recipesList = new ListControl();
-            recipesList.Bounds = new UniRectangle(20, 50, 200, 300);
-            Children.Add(recipesList);
+            // create base controls
+            base.InitializeComponent();
+
+            // customize them
 
             // labels
             Children.Add(new ImageControl { Image = _stLabelRecipes, Bounds = new UniRectangle(20, 20, 60, 18) });
-            Children.Add(new ImageControl { Image = _stLabelResult, Bounds = new UniRectangle(240, 20, 55, 18) });
             Children.Add(new ImageControl { Image = _stLabelIngredients, Bounds = new UniRectangle(240, 120, 96, 18) });
 
             // cells
-            _resultCell = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
-                {
-                    Bounds = new UniRectangle(240, 50, 42, 42),
-                    DrawIconsGroupId = 5,
-                    DrawIconsActiveCellId = 6,
-                    CustomBackground = _commonResources.StInventorySlot,
-                    CustomBackgroundHover = _commonResources.StInventorySlotHover
-                };
-
-
-            Children.Add(_resultCell);
-            
-            _ingredientCells = new List<InventoryCell>();
             for (int i = 0; i < 6; i++)
             {
-                var cell = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
-                    {
-                        Bounds = new UniRectangle(240 + i % 3 * 50, 150 + i / 3 * 50, 42, 42),
-                        DrawIconsGroupId = 5,
-                        DrawIconsActiveCellId = 6,
-                        CustomBackground = _commonResources.StInventorySlot,
-                        CustomBackgroundHover = _commonResources.StInventorySlotHover
-                    };
+                var cell = _ingredientCells[i];
+
+                cell.DrawIconsGroupId = 5;
+                cell.DrawIconsActiveCellId = 6;
+                cell.CustomBackground = _commonResources.StInventorySlot;
+                cell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
 
                 _ingredientCells.Add(cell);
                 Children.Add(cell);
@@ -95,39 +80,13 @@ namespace Realms.Client.Components.GUI.Inventory
             const int buttonWidth = 212;
             const int buttomHeight = 40;
 
-            _craftButton = new ButtonControl
-            {
-                CustomImage = _commonResources.StButtonBackground,
-                CustomImageDown = _commonResources.StButtonBackgroundDown,
-                CustomImageHover = _commonResources.StButtonBackgroundHover,
-                CusomImageLabel = _stLabelCraft,
-                Bounds = new UniRectangle(240, 250, buttonWidth, buttomHeight)
-            };
-            _craftButton.Pressed += delegate { };
-            Children.Add(_craftButton);
+            _craftButton.CustomImage = _commonResources.StButtonBackground;
+            _craftButton.CustomImageDown = _commonResources.StButtonBackgroundDown;
+            _craftButton.CustomImageHover = _commonResources.StButtonBackgroundHover;
+            _craftButton.CusomImageLabel = _stLabelCraft;
 
-        }
+            _craftButton.Bounds = new UniRectangle(240, 250, buttonWidth, buttomHeight);
 
-        protected override void CellsCreated()
-        {
-            if (_commonResources == null)
-                return;
-
-            var cellSize = new Vector2I(42, 42);
-
-            for (var x = 0; x < UiGrid.GetLength(0); x++)
-            {
-                for (var y = 0; y < UiGrid.GetLength(1); y++)
-                {
-                    var cell = UiGrid[x, y];
-
-                    cell.CustomBackground = _commonResources.StInventorySlot;
-                    cell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
-                    cell.Bounds = new S33M3CoreComponents.GUI.Nuclex.UniRectangle(GridOffset.X + x * cellSize.X, GridOffset.Y + y * cellSize.Y, 42, 42);
-                    cell.DrawIconsGroupId = 5;
-                    cell.DrawIconsActiveCellId = 6;
-                }
-            }
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using S33M3Resources.Effects.Basics;
 using S33M3Resources.Effects.Sprites;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -25,9 +24,7 @@ using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
 using S33M3Resources.Structs;
 using Utopia.Shared.GameDXStates;
-using Resource = SharpDX.Direct3D11.Resource;
 using Utopia.Shared.Configuration;
-using System.Linq;
 using Utopia.Shared.World;
 using Utopia.Resources.Effects.Entities;
 
@@ -63,14 +60,16 @@ namespace Utopia.Entities
 
         #endregion
 
-        #region Public Properties
         public WorldConfiguration Configuration
         {
             get { return _visualWorldParameters.WorldParameters.Configuration; }
             set { _visualWorldParameters.WorldParameters.Configuration = value; }
         }
 
-        #endregion
+        public VoxelModelManager VoxelModelManager
+        {
+            get { return _modelManager; }
+        }
 
         public IconFactory(D3DEngine d3DEngine, VoxelModelManager modelManager, VisualWorldParameters visualWorldParameters)
         {

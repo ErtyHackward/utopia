@@ -29,11 +29,7 @@ using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
-using Utopia.Shared.Configuration;
 using Utopia.Shared.World;
-using S33M3CoreComponents.Particules;
-using Utopia.Components;
-using Utopia.Particules;
 
 namespace Utopia.Entities.Managers
 {

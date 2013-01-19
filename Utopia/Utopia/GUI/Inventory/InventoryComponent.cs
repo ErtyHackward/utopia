@@ -38,14 +38,12 @@ namespace Utopia.GUI.Inventory
         private readonly ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
         private InventoryWindow _containerInventoryWindow;
-        private CraftingWindow _craftingWindow;
 
         private InventoryCell _dragControl;
         private InventoryCell _hoverSlot;
         private Point _dragOffset;
         private ItemInfoWindow _infoWindow;
         private bool _inventoryActive;
-        private bool _craftingActive;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
 
@@ -59,7 +57,7 @@ namespace Utopia.GUI.Inventory
         /// Indicates if inventory is active now
         /// </summary>
         public bool IsActive {
-            get { return _inventoryActive || _craftingActive; }
+            get { return _inventoryActive; }
         }
 
         /// <summary>
@@ -79,29 +77,6 @@ namespace Utopia.GUI.Inventory
                 if (_playerInventoryWindow != null)
                 {
                     RegisterInventoryWindow(_playerInventoryWindow);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets current player crafting window
-        /// </summary>
-        public CraftingWindow CraftingWindow
-        {
-            get { return _craftingWindow; }
-            set { 
-
-                if (_craftingWindow == value)
-                    return;
-
-                if (_craftingWindow != null)
-                {
-                    UnregisterInventoryWindow(_craftingWindow);
-                }
-                _craftingWindow = value;
-                if (_craftingWindow != null)
-                {
-                    RegisterInventoryWindow(_craftingWindow);
                 }
             }
         }
@@ -476,44 +451,6 @@ namespace Utopia.GUI.Inventory
         {
             var mouseState = _inputManager.MouseManager.CurMouseState;
             _dragControl.Bounds.Location = new UniVector(new UniScalar(mouseState.X - _dragOffset.X), new UniScalar(mouseState.Y - _dragOffset.Y));
-            
-            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.OpenInventory) && _playerInventoryWindow != null)
-            {
-                if (IsActive)
-                {
-                    if (_inventoryActive)
-                    {
-                        HideInventory();
-                    }
-                    else
-                    {
-                        HideCrafting();
-                        ShowInventory();
-                    }
-                }
-                else
-                    ShowInventory();
-            }
-
-            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.Open_Crafting))
-            {
-                if (IsActive)
-                {
-                    if (_craftingActive)
-                    {
-                        HideCrafting();
-                    }
-                    else
-                    {
-                        HideInventory();
-                        ShowCrafting();
-                    }
-                }
-                else
-                {
-                    ShowCrafting();
-                }
-            }
         }
 
         /// <summary>
@@ -547,9 +484,6 @@ namespace Utopia.GUI.Inventory
             desktop.UpdateLayout();
 
             _itemMessageTranslator.Enabled = true;
-            _inputManager.ActionsManager.IsMouseExclusiveMode = true;
-            _guiManager.ForceExclusiveMode = true;
-            _inputManager.MouseManager.MouseCapture = false;
             _inventoryActive = true;
 
             OnSwitchInventory(false);
@@ -565,56 +499,12 @@ namespace Utopia.GUI.Inventory
                 }
             }
 
-            //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
             _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
             _itemMessageTranslator.Enabled = false;
-            //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
-            //But in this case, I need to prevent ALL event to be sent while this component is activated
-            _inputManager.ActionsManager.IsMouseExclusiveMode = false;
-            _guiManager.ForceExclusiveMode = false;
-            _inputManager.MouseManager.MouseCapture = true;
             _inventoryActive = false;
 
             OnSwitchInventory(true);
         }
-
-        private void ShowCrafting()
-        {
-            if (_craftingWindow == null)
-                throw new InvalidOperationException("Unable to open crafting window because no windows is associated");
-
-            var desktop = _guiManager.Screen.Desktop;
-
-            _craftingWindow.LayoutFlags = ControlLayoutFlags.Center;
-            desktop.Children.Add(_craftingWindow);
-
-            // position window at the center
-            desktop.UpdateLayout();
-
-            _itemMessageTranslator.Enabled = true;
-            _inputManager.ActionsManager.IsMouseExclusiveMode = true;
-            _guiManager.ForceExclusiveMode = true;
-            _inputManager.MouseManager.MouseCapture = false;
-            _craftingActive = true;
-
-            OnSwitchInventory(false);
-        }
-
-        private void HideCrafting()
-        {
-            //_guiManager.Screen.Desktop.Children.Remove(_infoWindow);
-            _guiManager.Screen.Desktop.Children.Remove(_craftingWindow);
-            _itemMessageTranslator.Enabled = false;
-            //Has this is A gui component, its own windows will automatically by protected for events going "through" it,
-            //But in this case, I need to prevent ALL event to be sent while this component is activated
-            _inputManager.ActionsManager.IsMouseExclusiveMode = false;
-            _guiManager.ForceExclusiveMode = false;
-            _inputManager.MouseManager.MouseCapture = true;
-            _craftingActive = false;
-
-            OnSwitchInventory(true);
-        }
-
     }
 
     public class InventorySwitchEventArgs : EventArgs

@@ -76,6 +76,10 @@ namespace Realms.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
+            var fade = _iocContainer.Get<FadeComponent>();
+            fade.Color = new SharpDX.Color4(0, 0, 0, 0.85f);
+            fade.Visible = true;
+
             var inputManager = _iocContainer.Get<InputsManager>();
             _captureMouse = inputManager.MouseManager.MouseCapture;
             inputManager.MouseManager.MouseCapture = false;
@@ -88,6 +92,9 @@ namespace Realms.Client.States
 
         public override void OnDisabled(GameState nextState)
         {
+            var fade = _iocContainer.Get<FadeComponent>();
+            fade.Visible = false;
+
             if (_isGameExited)
             {
                 //Disconnect in a clean way from the server

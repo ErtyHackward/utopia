@@ -24,7 +24,7 @@ namespace Utopia.Action
         public const int EndMove_StrafeRight            = 48;
         public const int RightDown                      = 49;
         public const int Toggle_Interface               = 50;
-        public const int Drop_Mode                      = 51;
-        public const int Open_Crafting                  = 52;
+        public const int DropMode                       = 51;
+        public const int OpenCrafting                   = 52;
     }
 }

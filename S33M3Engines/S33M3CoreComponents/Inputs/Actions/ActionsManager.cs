@@ -116,6 +116,14 @@ namespace S33M3CoreComponents.Inputs.Actions
 
         #endregion
 
+        public event EventHandler<ActionsManagerEventArgs> KeyboardAction;
+
+        protected void OnKeyboardAction(ActionsManagerEventArgs e)
+        {
+            var handler = KeyboardAction;
+            if (handler != null) handler(this, e);
+        }
+
         public ActionsManager(D3DEngine engine, MouseManager mouseManager ,Type actionType)
         {
             _engine = engine;
@@ -189,6 +197,12 @@ namespace S33M3CoreComponents.Inputs.Actions
 
             //Reset array values
             Array.Clear(_bufferedActionsInProgress, 0, _bufferedActionsInProgress.Length);
+
+            foreach (var keyboardAction in _keyboardActions)
+            {
+                if (isTriggered(keyboardAction.ActionId))
+                    OnKeyboardAction(new ActionsManagerEventArgs { Action = keyboardAction});
+            }
         }
 
         /// <summary>
@@ -462,5 +476,10 @@ namespace S33M3CoreComponents.Inputs.Actions
             }
         }
         #endregion
+    }
+
+    public class ActionsManagerEventArgs : EventArgs
+    {
+        public KeyboardTriggeredAction Action { get; set; }
     }
 }

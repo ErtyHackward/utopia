@@ -42,6 +42,11 @@ namespace Utopia.Shared.Entities
             ResultCount = 1;
             Name = "Noname";
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     /// <summary>

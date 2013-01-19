@@ -202,6 +202,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         private D3DEngine _d3dEngine;
         private string _resourceDirectory;
 
+        public D3DEngine Engine
+        {
+            get { return _d3dEngine; }
+        }
+
         /// <summary>Initializes a new gui painter</summary>
         /// <param name="contentManager">
         ///   Content manager containing the resources for the GUI. The instance takes

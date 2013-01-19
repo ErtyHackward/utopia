@@ -7,8 +7,6 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
 using S33M3CoreComponents.Inputs;
-using S33M3CoreComponents.Config;
-using S33M3CoreComponents.Sprites2D;
 
 namespace Sandbox.Client
 {
@@ -273,7 +271,7 @@ namespace Sandbox.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.Drop_Mode,
+                ActionId = UtopiaActions.DropMode,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Throw
             }, rebindSettingsBasedAction);

@@ -272,14 +272,14 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.Drop_Mode,
+                ActionId = UtopiaActions.DropMode,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Throw
             }, rebindSettingsBasedAction);
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.Open_Crafting,
+                ActionId = UtopiaActions.OpenCrafting,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Crafting
             }, rebindSettingsBasedAction);

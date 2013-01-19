@@ -123,6 +123,8 @@
     <Compile Include="Components\VersionWatermark.cs" />
     <Compile Include="Entities\Managers\EntityPickResult.cs" />
     <Compile Include="GUI\Inventory\CraftingWindow.cs" />
+    <Compile Include="GUI\Inventory\ModelControl.cs" />
+    <Compile Include="GUI\Inventory\ModelControlRenderer.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
