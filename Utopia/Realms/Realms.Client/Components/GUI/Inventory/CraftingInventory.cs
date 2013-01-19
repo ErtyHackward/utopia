@@ -62,8 +62,8 @@ namespace Realms.Client.Components.GUI.Inventory
             // customize them
 
             // labels
-            Children.Add(new ImageControl { Image = _stLabelRecipes, Bounds = new UniRectangle(20, 5, 136, 30) });
-            Children.Add(new ImageControl { Image = _stLabelIngredients, Bounds = new UniRectangle(370, 250, 96, 18) });
+            Children.Add(new ImageControl { Image = _stLabelRecipes, Bounds = new UniRectangle(20, 5, 136, 30), IsClickTransparent = true });
+            Children.Add(new ImageControl { Image = _stLabelIngredients, Bounds = new UniRectangle(370, 250, 96, 18), IsClickTransparent = true });
 
             // cells
             for (int i = 0; i < 6; i++)

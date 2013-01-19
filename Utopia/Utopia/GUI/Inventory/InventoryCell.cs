@@ -111,6 +111,11 @@ namespace Utopia.GUI.Inventory
 
         public EquipmentSlotType SlotType { get; set; }
 
+        /// <summary>
+        /// Special string to display instead of the count
+        /// </summary>
+        public string CountString { get; set; } 
+
         public event EventHandler<MouseDownEventArgs> MouseUp;
 
         private void OnMouseUp(MouseDownEventArgs e)
