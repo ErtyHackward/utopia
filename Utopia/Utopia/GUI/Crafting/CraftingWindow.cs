@@ -34,6 +34,11 @@ namespace Utopia.GUI.Crafting
             get { return _resultModel; }
         }
 
+        public ListControl RecipesList
+        {
+            get { return _recipesList; }
+        }
+
         public HLSLVoxelModel VoxelEffect {
             get { return _resultModel.VoxelEffect; }
             set { _resultModel.VoxelEffect = value; }
@@ -80,7 +85,7 @@ namespace Utopia.GUI.Crafting
                 {
                     DrawIconsGroupId = 5,
                     DrawIconsActiveCellId = 6,
-                    //IsVisible = false
+                    IsVisible = false
                 };
 
                 _ingredientCells.Add(cell);
@@ -139,9 +144,10 @@ namespace Utopia.GUI.Crafting
 
                     cell.Slot = new ContainedSlot
                         {
-                            Item = (Item)_conf.BluePrints[bpId],
-                            CountString = string.Format("{0}/{1}", needItems, haveItems)
+                            Item = (Item)_conf.BluePrints[bpId]
                         };
+
+                    cell.CountString = string.Format("{0} / {1}", needItems, haveItems);
                     
                     var offsetX = ( _ingredientsRect.Width - recipe.Ingredients.Count * 50 ) / 2;
                     cell.Bounds = new UniRectangle(_ingredientsRect.X + offsetX + i * 50, _ingredientsRect.Y, 42, 42);

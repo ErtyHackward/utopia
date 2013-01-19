@@ -103,9 +103,9 @@ namespace Utopia.GUI.Inventory
 
             #region Items count
 
-            if (control.Slot != null && control.Slot.ItemsCount > 1)
+            if ((control.Slot != null && control.Slot.ItemsCount > 1) || !string.IsNullOrEmpty(control.CountString))
             {
-                var itemsCount = control.Slot.ItemsCount.ToString();
+                var itemsCount = control.CountString ?? control.Slot.ItemsCount.ToString();
 
                 var textSize = graphics.MeasureString("slot.items",ref controlBounds, itemsCount);
 

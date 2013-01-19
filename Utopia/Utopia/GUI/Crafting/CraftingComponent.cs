@@ -16,7 +16,6 @@ namespace Utopia.GUI.Crafting
     public class CraftingComponent : GameComponent
     {
         private HLSLVoxelModel _voxelEffect;
-        private float _modelRotation = 0f;
 
         [Inject]
         public CraftingWindow CraftingWindow { get; set; }
@@ -30,6 +29,7 @@ namespace Utopia.GUI.Crafting
             _voxelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
 
             CraftingWindow.VoxelEffect = _voxelEffect;
+            
 
             base.LoadContent(context);
         }
@@ -37,6 +37,11 @@ namespace Utopia.GUI.Crafting
         public void ShowCrafting()
         {
             var desktop = GuiManager.Screen.Desktop;
+
+            if (CraftingWindow.RecipesList.Items.Count > 0 && CraftingWindow.RecipesList.SelectedItems.Count == 0)
+            {
+                CraftingWindow.RecipesList.SelectItem = 0;
+            }
 
             CraftingWindow.LayoutFlags = ControlLayoutFlags.Center;
             desktop.Children.Add(CraftingWindow);
@@ -51,12 +56,10 @@ namespace Utopia.GUI.Crafting
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
         {
-            _modelRotation += elapsedTime * 0.001f;
-
-            if (_modelRotation > Math.PI*2)
-                _modelRotation -= (float)Math.PI*2;
-
-            CraftingWindow.ModelControl.Rotation = Quaternion.RotationYawPitchRoll(_modelRotation, 0, 0);
+            if (CraftingWindow.ModelControl.ManualRotation)
+                return;
+            
+            CraftingWindow.ModelControl.Rotation *= Quaternion.RotationYawPitchRoll(elapsedTime * 0.001f, 0, 0);
 
         }
 

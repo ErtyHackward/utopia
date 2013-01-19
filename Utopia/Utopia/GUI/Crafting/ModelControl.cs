@@ -13,6 +13,8 @@ namespace Utopia.GUI.Crafting
     public class ModelControl : Control
     {
         private readonly VoxelModelManager _manager;
+        private Vector2 _mousePosition;
+
 
         public VoxelModelInstance ModelInstance { get; set; }
 
@@ -23,6 +25,31 @@ namespace Utopia.GUI.Crafting
         public SpriteTexture ModelTexture { get; set; }
 
         public Quaternion Rotation { get; set; }
+
+        public bool ManualRotation { get; private set; }
+
+        protected override void OnMousePressed(S33M3CoreComponents.GUI.Nuclex.Input.MouseButtons button)
+        {
+            ManualRotation = true;
+            base.OnMousePressed(button);
+        }
+
+        protected override void OnMouseReleased(S33M3CoreComponents.GUI.Nuclex.Input.MouseButtons button)
+        {
+            ManualRotation = false;
+            base.OnMouseReleased(button);
+        }
+
+        protected override void OnMouseMoved(float x, float y)
+        {
+            if (ManualRotation)
+            {
+                Rotation *= Quaternion.RotationYawPitchRoll(( _mousePosition.X - x ) * 0.01f, 0, 0);
+            }
+
+            _mousePosition = new Vector2(x,y);
+            base.OnMouseMoved(x, y);
+        }
 
         public ModelControl(VoxelModelManager manager)
         {
