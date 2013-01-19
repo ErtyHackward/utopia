@@ -12,9 +12,11 @@ using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
+using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -179,6 +181,8 @@ namespace Realms.Client.States
                     break;
             }
 
+            _ioc.Rebind<WorldConfiguration>().ToConstant(clientSideworldParam.Configuration);
+
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
@@ -242,6 +246,7 @@ namespace Realms.Client.States
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
+            var crafting = _ioc.Get<CraftingComponent>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -277,6 +282,7 @@ namespace Realms.Client.States
             AddComponent(fadeComponent);
             AddComponent(particuleEngine);
             AddComponent(ghostedRenderer);
+            AddComponent(crafting);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

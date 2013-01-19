@@ -7,6 +7,7 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.GUI.Crafting;
 using Utopia.GUI.Inventory;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
@@ -19,16 +20,17 @@ namespace Realms.Client.Components.GUI.Inventory
         private readonly IconFactory _iconFactory;
         private readonly InputsManager _inputManager;
         private readonly SandboxCommonResources _commonResources;
+        
         private SpriteTexture _stInventoryWindow;
         private SpriteTexture _stLabelRecipes;
-        private SpriteTexture _stLabelResult;
         private SpriteTexture _stLabelIngredients;
         private SpriteTexture _stLabelCraft;
 
-        private ListControl _recipesList;
-        private List<InventoryCell> _ingredientCells;
-        private InventoryCell _resultCell;
-        private ButtonControl _craftButton;
+        private SpriteTexture _stBtnCraft;
+        private SpriteTexture _stBtnCraftDown;
+        private SpriteTexture _stBtnCraftHover;
+
+        
 
         public CraftingInventory(D3DEngine engine, WorldConfiguration conf, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) :
             base(conf, character, iconFactory, inputManager)
@@ -37,15 +39,17 @@ namespace Realms.Client.Components.GUI.Inventory
             _iconFactory = iconFactory;
             _inputManager = inputManager;
             _commonResources = commonResources;
-            _stInventoryWindow = new SpriteTexture(engine.Device, @"Images\Inventory\crafting_window.png");
+            _stInventoryWindow = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\crafting_window.png"));
 
-            _stLabelRecipes = new SpriteTexture(engine.Device, @"Images\Inventory\label_recipes.png");
-            _stLabelResult = new SpriteTexture(engine.Device, @"Images\Inventory\label_result.png");
-            _stLabelIngredients = new SpriteTexture(engine.Device, @"Images\Inventory\label_ingredients.png");
-            _stLabelCraft = new SpriteTexture(engine.Device, @"Images\Inventory\label_craft.png");
+            _stLabelRecipes     = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\label_crafting_recipes.png"));
+            _stLabelIngredients = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\label_ingredients.png"));
+            _stLabelCraft       = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\label_craft.png"));
+            _stBtnCraft         = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close.png"));
+            _stBtnCraftDown     = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_down.png"));
+            _stBtnCraftHover    = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_hover.png"));
 
             CustomWindowImage = _stInventoryWindow;
-            Bounds.Size = new UniVector(904, 388);
+            Bounds.Size = new UniVector(627, 388);
 
             InitializeComponent();
         }
@@ -58,8 +62,8 @@ namespace Realms.Client.Components.GUI.Inventory
             // customize them
 
             // labels
-            Children.Add(new ImageControl { Image = _stLabelRecipes, Bounds = new UniRectangle(20, 20, 60, 18) });
-            Children.Add(new ImageControl { Image = _stLabelIngredients, Bounds = new UniRectangle(240, 120, 96, 18) });
+            Children.Add(new ImageControl { Image = _stLabelRecipes, Bounds = new UniRectangle(20, 5, 136, 30) });
+            Children.Add(new ImageControl { Image = _stLabelIngredients, Bounds = new UniRectangle(370, 250, 96, 18) });
 
             // cells
             for (int i = 0; i < 6; i++)
@@ -70,22 +74,19 @@ namespace Realms.Client.Components.GUI.Inventory
                 cell.DrawIconsActiveCellId = 6;
                 cell.CustomBackground = _commonResources.StInventorySlot;
                 cell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
-
-                _ingredientCells.Add(cell);
-                Children.Add(cell);
             }
 
             // craft button
 
-            const int buttonWidth = 212;
-            const int buttomHeight = 40;
+            const int buttonWidth = 185;
+            const int buttomHeight = 50;
 
-            _craftButton.CustomImage = _commonResources.StButtonBackground;
-            _craftButton.CustomImageDown = _commonResources.StButtonBackgroundDown;
-            _craftButton.CustomImageHover = _commonResources.StButtonBackgroundHover;
+            _craftButton.CustomImage = _stBtnCraft;
+            _craftButton.CustomImageDown = _stBtnCraftDown;
+            _craftButton.CustomImageHover = _stBtnCraftHover;
             _craftButton.CusomImageLabel = _stLabelCraft;
 
-            _craftButton.Bounds = new UniRectangle(240, 250, buttonWidth, buttomHeight);
+            _craftButton.Bounds = new UniRectangle(436, 320, buttonWidth, buttomHeight);
 
         }
     }

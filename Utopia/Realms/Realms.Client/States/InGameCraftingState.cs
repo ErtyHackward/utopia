@@ -6,6 +6,7 @@ using Ninject;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.States;
 using Utopia.Components;
+using Utopia.GUI.Crafting;
 
 namespace Realms.Client.States
 {
@@ -33,6 +34,9 @@ namespace Realms.Client.States
             var guiManager = _iocContainer.Get<GuiManager>();
             guiManager.SetDialogMode(true);
 
+            var crafting = _iocContainer.Get<CraftingComponent>();
+            crafting.ShowCrafting();
+
             base.OnEnabled(previousState);
         }
 
@@ -43,6 +47,9 @@ namespace Realms.Client.States
 
             var guiManager = _iocContainer.Get<GuiManager>();
             guiManager.SetDialogMode(false);
+
+            var crafting = _iocContainer.Get<CraftingComponent>();
+            crafting.HideCrafting();
 
             base.OnDisabled(nextState);
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using S33M3CoreComponents.GUI.Nuclex;
@@ -6,13 +6,15 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Inputs;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.GUI.Inventory;
+using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
-namespace Utopia.GUI.Inventory
+namespace Utopia.GUI.Crafting
 {
     public class CraftingWindow : WindowControl
     {
@@ -27,6 +29,11 @@ namespace Utopia.GUI.Inventory
         protected ButtonControl _craftButton;
         protected RectangleF _ingredientsRect;
 
+        public HLSLVoxelModel VoxelEffect {
+            get { return _resultModel.VoxelEffect; }
+            set { _resultModel.VoxelEffect = value; }
+        }
+
         public CraftingWindow(WorldConfiguration conf, PlayerCharacter player, IconFactory iconFactory, InputsManager inputsManager )
         {
             _conf = conf;
@@ -37,10 +44,11 @@ namespace Utopia.GUI.Inventory
         
         public virtual void InitializeComponent()
         {
-
-            _ingredientsRect = new RectangleF(200, 250, 200, 42);
+            Children.Clear();
             
-            _recipesList = new ListControl();
+            _ingredientsRect = new RectangleF(240, 275, 360, 42);
+
+            _recipesList = new ListControl { SelectionMode = ListSelectionMode.Single };
             _recipesList.Bounds = new UniRectangle(20, 50, 200, 300);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
 
@@ -55,7 +63,7 @@ namespace Utopia.GUI.Inventory
 
             _resultModel = new ModelControl(_iconFactory.VoxelModelManager) 
             { 
-                Bounds = new UniRectangle(160, 30, 150, 150) 
+                Bounds = new UniRectangle(240, 30, 150, 150) 
             };
 
             Children.Add(_resultModel);
@@ -67,7 +75,7 @@ namespace Utopia.GUI.Inventory
                 {
                     DrawIconsGroupId = 5,
                     DrawIconsActiveCellId = 6,
-                    IsVisible = false
+                    //IsVisible = false
                 };
 
                 _ingredientCells.Add(cell);
@@ -82,14 +90,17 @@ namespace Utopia.GUI.Inventory
             _craftButton = new ButtonControl
             {
                 Text = "Craft",
-                Bounds = new UniRectangle(240, 250, buttonWidth, buttomHeight)
+                Bounds = new UniRectangle(340, 300, buttonWidth, buttomHeight)
             };
-            _craftButton.Pressed += delegate { };
+            _craftButton.Pressed += delegate {  };
             Children.Add(_craftButton);
         }
 
         private void RecipesListOnSelectionChanged(object sender, EventArgs eventArgs)
         {
+            if (_recipesList.SelectedItem == null)
+                return;
+            
             var recipe = (Recipe)_recipesList.SelectedItem;
 
             var bp = _conf.BluePrints[recipe.ResultBlueprintId];
@@ -131,8 +142,6 @@ namespace Utopia.GUI.Inventory
                     cell.Bounds = new UniRectangle(_ingredientsRect.X + offsetX + i * 50, _ingredientsRect.Y, 42, 42);
                 }
             }
-
-            _craftButton.Enabled = canCraft;
         }
     }
 }
