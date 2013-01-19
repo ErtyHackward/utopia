@@ -287,6 +287,16 @@ namespace S33M3DXEngine
             context.Rasterizer.SetViewports(_viewPort);
         }
 
+        public void SetCustomViewPort(ViewportF customViewPort)
+        {
+            ImmediateContext.Rasterizer.SetViewports(customViewPort);
+        }
+
+        public void SetScreenViewPort()
+        {
+            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+        }
+
         public SharpDX.Rectangle[] ScissorRectangles
         {
             get

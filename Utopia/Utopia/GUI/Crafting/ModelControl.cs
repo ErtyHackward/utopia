@@ -22,8 +22,6 @@ namespace Utopia.GUI.Crafting
 
         public HLSLVoxelModel VoxelEffect { get; set; }
 
-        public SpriteTexture ModelTexture { get; set; }
-
         public Quaternion Rotation { get; set; }
 
         public bool ManualRotation { get; private set; }
