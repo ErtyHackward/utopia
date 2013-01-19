@@ -283,7 +283,7 @@ namespace Utopia.Entities.Managers
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _voxelModelEffect.Begin(context);
             _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
-            _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelModelEffect.CBPerFrame.Values.ViewProjectionOLD = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
 

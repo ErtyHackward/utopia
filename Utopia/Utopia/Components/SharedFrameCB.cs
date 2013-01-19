@@ -17,6 +17,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Components
 {
@@ -26,7 +27,7 @@ namespace Utopia.Components
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 240)]
+        [StructLayout(LayoutKind.Explicit, Size = 256)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
@@ -47,6 +48,8 @@ namespace Utopia.Components
             public Vector3 CameraWorldPosition;
             [FieldOffset(176)]
             public Matrix InvertedOrientation;
+            [FieldOffset(240)]
+            public Vector4 Various2;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -58,6 +61,7 @@ namespace Utopia.Components
         private StaggingBackBuffer _backBuffer;
         private float _animationValue = 0.0f;
         private float _animationSpeed = 0.0005f;
+        private IWeather _weather;
 
 
         public SharedFrameCB(D3DEngine engine,
@@ -65,7 +69,8 @@ namespace Utopia.Components
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              PlayerEntityManager playerManager,
-                             [Named("SkyBuffer")] StaggingBackBuffer backBuffer)
+                             [Named("SkyBuffer")] StaggingBackBuffer backBuffer,
+                             IWeather weather)
             
         {
             _engine = engine;
@@ -74,6 +79,8 @@ namespace Utopia.Components
             _visualWorldParam = visualWorldParam;
             _playerManager = playerManager;
             _backBuffer = backBuffer;
+            _weather = weather;
+
             DrawOrders.UpdateIndex(0, 0);
 
             CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine.Device, "PerFrame");
@@ -92,6 +99,8 @@ namespace Utopia.Components
             CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
             CBPerFrame.Values.CameraWorldPosition = _cameraManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
             CBPerFrame.Values.InvertedOrientation = Matrix.Transpose(Matrix.RotationQuaternion(Quaternion.Invert(_cameraManager.ActiveCamera.Orientation.ValueInterp)));
+            CBPerFrame.Values.Various2.X = _weather.Wind.FlatWindFlowNormalizedWithNoise.X;
+            CBPerFrame.Values.Various2.Z = _weather.Wind.FlatWindFlowNormalizedWithNoise.Z;
 
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {

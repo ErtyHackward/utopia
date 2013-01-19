@@ -1,18 +1,18 @@
 ﻿//--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-
 cbuffer VoxelModelPerFrame
 {
-	matrix ViewProjection;
+	matrix ViewProjectionOLD;
 	float3 LightDirection;		//diffuse light direction
-	float fogdist;
 };
 
 cbuffer VoxelModel
 {
 	float4 colorMapping[64];
 }
+
+#include <SharedFrameCB.hlsl>
 
 //	cube face						ba	F	Bo	T	L   R
 static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
@@ -61,7 +61,12 @@ PS_IN VS(VS_IN input)
 
 	float4 newPosition = {input.Position.xyz, 1.0f};
     float4 worldPosition = mul(newPosition, input.Transform);
-	output.Position = mul(worldPosition, ViewProjection);
+
+	worldPosition.x += (newPosition.y / 16 * Various2.x);
+	worldPosition.z += (newPosition.y / 16 * Various2.z);
+
+	output.Position = mul(worldPosition, ViewProjectionOLD);
+
 
 	int facetype = input.faceType.x;
 
