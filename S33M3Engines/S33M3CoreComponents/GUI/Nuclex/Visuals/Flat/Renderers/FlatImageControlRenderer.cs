@@ -6,12 +6,16 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
     {
         public void Render(Controls.Desktop.ImageControl control, IFlatGuiGraphics graphics)
         {
-            RectangleF rect;
+            RectangleF rect = control.GetAbsoluteBounds();
 
-            rect.X = control.Bounds.Location.X.Offset;
-            rect.Y = control.Bounds.Location.Y.Offset;
-            rect.Width  = control.Bounds.Size.X.Offset;
-            rect.Height = control.Bounds.Size.Y.Offset;
+            //rect.X = control.Bounds.Location.X.Offset;
+            //rect.Y = control.Bounds.Location.Y.Offset;
+            //rect.Width  = control.Bounds.Size.X.Offset;
+            //rect.Height = control.Bounds.Size.Y.Offset;
+
+            rect.X = (int)rect.X;
+            rect.Y = (int)rect.Y;
+
 
             if (control.Image != null)
             {
