@@ -26,10 +26,10 @@ namespace Utopia.GUI.Crafting
                 var voxelEffect = control.VoxelEffect;
                 var context = graphics.Engine.ImmediateContext;
                 
-                var texture = new RenderedTexture2D(graphics.Engine, (int)bounds.Width, (int)bounds.Height, Format.R8G8B8A8_UNorm)
-                {
-                    BackGroundColor = new Color4(0, 0, 0, 0)
-                };
+                //var texture = new RenderedTexture2D(graphics.Engine, (int)bounds.Width, (int)bounds.Height, Format.R8G8B8A8_UNorm)
+                //{
+                //    BackGroundColor = new Color4(0, 0, 0, 0)
+                //};
 
                 float aspectRatio = bounds.Width / bounds.Height;
                 Matrix projection;
@@ -37,8 +37,10 @@ namespace Utopia.GUI.Crafting
                 Matrix.PerspectiveFovLH(fov, aspectRatio, 0.5f, 100f, out projection);
                 Matrix view = Matrix.LookAtLH(new Vector3(0, 0, -1.9f), Vector3.Zero, Vector3.UnitY);
 
-                texture.Begin(context);
+                //Set custom ViewPort
+                graphics.Engine.SetCustomViewPort(new ViewportF(bounds.X, bounds.Y, bounds.Width, bounds.Height));
 
+                //Rendering the Tool
                 RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
                 voxelEffect.Begin(context);
@@ -65,24 +67,7 @@ namespace Utopia.GUI.Crafting
 
                 control.VisualVoxelModel.Draw(context, control.VoxelEffect, instance);
 
-                texture.End(context, false);
-
-                var tex2D = texture.CloneTexture(context, ResourceUsage.Default);
-
-                if (control.ModelTexture != null)
-                {
-                    control.ModelTexture.Dispose();
-                    control.ModelTexture = null;
-                }
-
-                var spriteTexture = new SpriteTexture(tex2D);
-                graphics.DrawCustomTexture(spriteTexture, ref bounds);
-                control.ModelTexture = spriteTexture;
-
-                tex2D.Dispose();
-                texture.Dispose();
-
-                graphics.Engine.SetRenderTargetsAndViewPort(context);
+                graphics.Engine.SetScreenViewPort();
             }
 
         }
