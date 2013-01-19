@@ -1,9 +1,9 @@
-﻿using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 using Utopia.Entities.Voxel;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities.Models;
 
-namespace Utopia.GUI.Inventory
+namespace Utopia.GUI.Crafting
 {
     /// <summary>
     /// Shows a 3d model and allows to rotate

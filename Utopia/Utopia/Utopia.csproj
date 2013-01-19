@@ -122,9 +122,10 @@
     <Compile Include="Components\FadeSwitchComponent.cs" />
     <Compile Include="Components\VersionWatermark.cs" />
     <Compile Include="Entities\Managers\EntityPickResult.cs" />
-    <Compile Include="GUI\Inventory\CraftingWindow.cs" />
-    <Compile Include="GUI\Inventory\ModelControl.cs" />
-    <Compile Include="GUI\Inventory\ModelControlRenderer.cs" />
+    <Compile Include="GUI\Crafting\CraftingComponent.cs" />
+    <Compile Include="GUI\Crafting\CraftingWindow.cs" />
+    <Compile Include="GUI\Crafting\ModelControl.cs" />
+    <Compile Include="GUI\Crafting\ModelControlRenderer.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />

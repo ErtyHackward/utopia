@@ -14,10 +14,6 @@ namespace Realms.Client.States
             :base(stateManager)
         {
             _iocContainer = iocContainer;
-
-            var gui = _iocContainer.Get<GuiManager>();
-
-            AddComponent(gui);
         }
 
         public override string Name

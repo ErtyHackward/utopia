@@ -88,8 +88,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             {
                 var imgRect = controlBounds;
 
-                imgRect.X += (imgRect.Width - control.CusomImageLabel.Width) / 2;
-                imgRect.Y += (imgRect.Height - control.CusomImageLabel.Height) / 2;
+                imgRect.X += ( imgRect.Width - control.CusomImageLabel.Width ) / 2;
+                imgRect.Y += ( imgRect.Height - control.CusomImageLabel.Height ) / 2;
                 imgRect.Width = control.CusomImageLabel.Width;
                 imgRect.Height = control.CusomImageLabel.Height;
 
@@ -98,9 +98,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
 
                 graphics.DrawCustomTexture(control.CusomImageLabel, ref imgRect);
             }
-
-            // If there's text assigned to the button, draw it into the button
-            if (!string.IsNullOrEmpty(control.Text))
+            else if (!string.IsNullOrEmpty(control.Text))
             {
                 if (control.ColorSet)
                 {

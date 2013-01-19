@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using System.Linq;
+using Ninject;
 using Realms.Client.Components;
 using Utopia.Action;
 using Utopia.Entities;
@@ -8,6 +9,7 @@ using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
+using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
@@ -95,6 +97,7 @@ namespace Realms.Client.States
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
+            var crafting = _ioc.Get<CraftingComponent>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -120,6 +123,7 @@ namespace Realms.Client.States
             AddComponent(toolRenderer);
             AddComponent(particuleEngine);
             AddComponent(ghostedRenderer);
+            AddComponent(crafting);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
@@ -148,12 +152,12 @@ namespace Realms.Client.States
         {
             if (e.Action.ActionId == UtopiaActions.OpenInventory)
             {
-                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Inventory" ? "Inventory" : "Gameplay");
+                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Inventory" ? "Inventory" : "Gameplay", true);
             }
 
             if (e.Action.ActionId == UtopiaActions.OpenCrafting)
             {
-                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Crafting" ? "Crafting" : "Gameplay");
+                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Crafting" ? "Crafting" : "Gameplay", true);
             }
         }
 
