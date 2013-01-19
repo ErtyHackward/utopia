@@ -108,8 +108,8 @@ namespace Realms.Client.States
             }
             else
             {
-                var inventory = _iocContainer.Get<InventoryComponent>();
-                inventory.EnableComponent();
+                var inputManager = _iocContainer.Get<InputsManager>();
+                inputManager.MouseManager.MouseCapture = _captureMouse;
             }
         }
 
