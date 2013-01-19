@@ -39,6 +39,7 @@ namespace S33M3CoreComponents.Sound
         private Dictionary<string, ISoundDataSource> _soundDataSources;
         private Dictionary<int, ISoundVoice[]> _soundVoices;
         private List<ISoundVoice> _soundProcessingQueue;
+        private Object _soundQueueSync = new Object();
 
         //sound Threading Loop
         private ManualResetEvent _syncro;
@@ -196,7 +197,10 @@ namespace S33M3CoreComponents.Sound
 
         public void AddSoundWatching(ISoundVoice voice)
         {
-            _soundProcessingQueue.Add(voice);
+            lock (_soundQueueSync)
+            {
+                _soundProcessingQueue.Add(voice);
+            }
             _syncro.Set();
         }
 
@@ -534,32 +538,34 @@ namespace S33M3CoreComponents.Sound
         //Function that is running its own thread responsible to do background stuff concerning sound
         private void DataSoundPocessingAsync()
         {
-            try
+            while (!IsDisposed && !_stopThreading && !_d3dEngine.IsShuttingDownRequested)
             {
-                while (!IsDisposed && !_stopThreading && !_d3dEngine.IsShuttingDownRequested)
+                WatchingSoundRefresh();
+                //Reset only if no more fading sound in processing Voice List
+                lock (_soundQueueSync)
                 {
-                    WatchingSoundRefresh();
-                    //Reset only if no more fading sound in processing Voice List
                     if (_soundProcessingQueue.Count(x => x.IsFadingMode == true || x.IsLooping) == 0)
                     {
                         _syncro.Reset();
                     }
-
-                    _syncro.WaitOne();
-
-                    Thread.Sleep(10);
                 }
-                _d3dEngine.RunningThreadedWork.Remove("SoundEngine");
+
+                _syncro.WaitOne();
+
+                Thread.Sleep(10);
             }
-            catch (Exception)
-            {
-            }
+            _d3dEngine.RunningThreadedWork.Remove("SoundEngine");
         }
 
         private void WatchingSoundRefresh()
         {
             ISoundVoice soundVoice;
-            for (int i = _soundProcessingQueue.Count - 1; i >= 0; i--)
+            int soundQueueCount;
+            lock (_soundQueueSync)
+            {
+                soundQueueCount = _soundProcessingQueue.Count;
+            }
+            for (int i = soundQueueCount - 1; i >= 0; i--)
             {
                 soundVoice = _soundProcessingQueue[i];
 
@@ -569,7 +575,10 @@ namespace S33M3CoreComponents.Sound
                 //CleanUp Queue if needed
                 if (soundVoice.IsPlaying == false)
                 {
-                    _soundProcessingQueue.RemoveAt(i);
+                    lock (_soundQueueSync)
+                    {
+                        _soundProcessingQueue.RemoveAt(i);
+                    }
                 }
             }
         }
