@@ -28,6 +28,11 @@ namespace Utopia.Shared.Entities.Inventory
         public Vector2I GridPosition { get; set; }
 
         /// <summary>
+        /// Special string to display instead of the count
+        /// </summary>
+        public string CountString { get; set; }
+
+        /// <summary>
         /// Detects whether the slots can be stacked
         /// </summary>
         /// <param name="slot"></param>

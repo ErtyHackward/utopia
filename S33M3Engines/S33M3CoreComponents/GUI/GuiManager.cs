@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
-using S33M3CoreComponents.Inputs.MouseHandler;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Interfaces;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex;
@@ -14,7 +10,6 @@ using S33M3CoreComponents.GUI.Nuclex.Controls;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
-using ButtonState = S33M3CoreComponents.Inputs.MouseHandler.ButtonState;
 using Control = S33M3CoreComponents.GUI.Nuclex.Controls.Control;
 using MouseButtons = S33M3CoreComponents.GUI.Nuclex.Input.MouseButtons;
 using Screen = S33M3CoreComponents.GUI.Nuclex.MainScreen;
@@ -22,7 +17,6 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine.Debug.Interfaces;
 using System.Reflection;
-using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace S33M3CoreComponents.GUI
 {
@@ -294,6 +288,13 @@ namespace S33M3CoreComponents.GUI
             DialogHelper.DialogBg.BringToFront();
 
             mbWindow.BringToFront();
+        }
+
+        public void SetDialogMode(bool dialogMode)
+        {
+            ForceExclusiveMode = dialogMode;
+            _inputManager.ActionsManager.IsMouseExclusiveMode = dialogMode;
+            _inputManager.MouseManager.MouseCapture = !dialogMode;
         }
 
         //Draw at 2d level ! (Last draw called)

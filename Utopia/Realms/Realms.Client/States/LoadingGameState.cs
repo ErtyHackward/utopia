@@ -206,8 +206,7 @@ namespace Realms.Client.States
             var inventory = _ioc.Get<InventoryComponent>();
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
             inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
-            inventory.CraftingWindow = _ioc.Get<CraftingInventory>();
-
+            
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
 

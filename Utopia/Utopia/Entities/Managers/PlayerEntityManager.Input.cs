@@ -30,7 +30,7 @@ namespace Utopia.Entities.Managers
             if (!HasMouseFocus) 
                 return; //the editor(s) can acquire the mouseFocus
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Drop_Mode, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.DropMode, CatchExclusiveAction))
             {
                 // switch the drop mode if possible
                 var tool = Player.Equipment.RightTool;

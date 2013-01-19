@@ -151,6 +151,8 @@
     </Compile>
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="States\GameScope.cs" />
+    <Compile Include="States\InGameCraftingState.cs" />
+    <Compile Include="States\InGameInventoryState.cs" />
     <Compile Include="States\InGameMenuState.cs" />
     <Compile Include="States\CreditsState.cs" />
     <Compile Include="States\EditorState.cs" />

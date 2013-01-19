@@ -1,16 +1,138 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Inputs;
+using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.GUI.Inventory
 {
-    public class CraftingWindow : InventoryWindow
+    public class CraftingWindow : WindowControl
     {
-        public CraftingWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition, Point gridOffset, InputsManager inputManager) : 
-            base(container, iconFactory, windowStartPosition, gridOffset, inputManager)
+        private readonly WorldConfiguration _conf;
+        private readonly PlayerCharacter _player;
+        private readonly IconFactory _iconFactory;
+        private readonly InputsManager _inputsManager;
+
+        protected ListControl _recipesList;
+        protected List<InventoryCell> _ingredientCells;
+        protected ModelControl _resultModel;
+        protected ButtonControl _craftButton;
+        protected RectangleF _ingredientsRect;
+
+        public CraftingWindow(WorldConfiguration conf, PlayerCharacter player, IconFactory iconFactory, InputsManager inputsManager )
+        {
+            _conf = conf;
+            _player = player;
+            _iconFactory = iconFactory;
+            _inputsManager = inputsManager;
+        }
+        
+        public virtual void InitializeComponent()
         {
 
+            _ingredientsRect = new RectangleF(200, 250, 200, 42);
+            
+            _recipesList = new ListControl();
+            _recipesList.Bounds = new UniRectangle(20, 50, 200, 300);
+            _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
+
+            foreach (var recipe in _conf.Recipes)
+            {
+                _recipesList.Items.Add(recipe);
+            }
+
+            Children.Add(_recipesList);
+
+            // cells
+
+            _resultModel = new ModelControl(_iconFactory.VoxelModelManager) 
+            { 
+                Bounds = new UniRectangle(160, 30, 150, 150) 
+            };
+
+            Children.Add(_resultModel);
+
+            _ingredientCells = new List<InventoryCell>();
+            for (int i = 0; i < 6; i++)
+            {
+                var cell = new InventoryCell(null, _iconFactory, new Vector2I(), _inputsManager)
+                {
+                    DrawIconsGroupId = 5,
+                    DrawIconsActiveCellId = 6,
+                    IsVisible = false
+                };
+
+                _ingredientCells.Add(cell);
+                Children.Add(cell);
+            }
+
+            // craft button
+
+            const int buttonWidth = 212;
+            const int buttomHeight = 40;
+
+            _craftButton = new ButtonControl
+            {
+                Text = "Craft",
+                Bounds = new UniRectangle(240, 250, buttonWidth, buttomHeight)
+            };
+            _craftButton.Pressed += delegate { };
+            Children.Add(_craftButton);
+        }
+
+        private void RecipesListOnSelectionChanged(object sender, EventArgs eventArgs)
+        {
+            var recipe = (Recipe)_recipesList.SelectedItem;
+
+            var bp = _conf.BluePrints[recipe.ResultBlueprintId];
+
+            var voxelEntity = bp as IVoxelEntity;
+
+            if (voxelEntity != null)
+            {
+                _resultModel.SetModel(voxelEntity.ModelName);
+            }
+            
+            // show ingredients slots
+            // and position it in the center of the ingredients rect
+
+            var canCraft = true;
+
+            for (var i = 0; i < _ingredientCells.Count; i++)
+            {
+                var cell = _ingredientCells[i];
+                cell.IsVisible = i < recipe.Ingredients.Count;
+
+                if (cell.IsVisible)
+                {
+                    var bpId = recipe.Ingredients[i].BlueprintId;
+
+                    var needItems = recipe.Ingredients[i].Count;
+                    var haveItems = _player.FindAll(s => s.Item.BluePrintId == bpId).Sum(s => s.ItemsCount);
+
+                    if (haveItems < needItems)
+                        canCraft = false;
+
+                    cell.Slot = new ContainedSlot
+                        {
+                            Item = (Item)_conf.BluePrints[bpId],
+                            CountString = string.Format("{0}/{1}", needItems, haveItems)
+                        };
+                    
+                    var offsetX = ( _ingredientsRect.Width - recipe.Ingredients.Count * 50 ) / 2;
+                    cell.Bounds = new UniRectangle(_ingredientsRect.X + offsetX + i * 50, _ingredientsRect.Y, 42, 42);
+                }
+            }
+
+            _craftButton.Enabled = canCraft;
         }
     }
 }

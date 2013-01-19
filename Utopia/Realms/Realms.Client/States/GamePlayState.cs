@@ -1,6 +1,6 @@
 ﻿using Ninject;
 using Realms.Client.Components;
-using S33M3DXEngine;
+using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
@@ -10,7 +10,6 @@ using Utopia.Entities.Voxel;
 using Utopia.GUI;
 using Utopia.Network;
 using Utopia.Worlds.Chunks;
-using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Worlds.Weather;
@@ -24,9 +23,6 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.Inventory;
 using Utopia.Components;
 using Utopia.Shared.Settings;
-using System.Linq;
-using Utopia.Shared.Configuration;
-using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Utopia.Sounds;
 
@@ -56,11 +52,11 @@ namespace Realms.Client.States
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
+            inputsManager.ActionsManager.KeyboardAction += ActionsManager_KeyboardAction;
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
-            inventory.SwitchInventory += InventorySwitchInventory;
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
 
@@ -148,18 +144,16 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
-        void InventorySwitchInventory(object sender, InventorySwitchEventArgs e)
+        void ActionsManager_KeyboardAction(object sender, S33M3CoreComponents.Inputs.Actions.ActionsManagerEventArgs e)
         {
-            var inventory = _ioc.Get<InventoryComponent>();
-            var fadeComponent = _ioc.Get<FadeComponent>();
-            fadeComponent.Color = new SharpDX.Color4(0, 0, 0, 0.85f);
-            if (e.Closing)
+            if (e.Action.ActionId == UtopiaActions.OpenInventory)
             {
-                fadeComponent.Visible = false;
+                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Inventory" ? "Inventory" : "Gameplay");
             }
-            else
+
+            if (e.Action.ActionId == UtopiaActions.OpenCrafting)
             {
-                fadeComponent.Visible = true;
+                StatesManager.ActivateGameStateAsync(StatesManager.CurrentState.Name != "Crafting" ? "Crafting" : "Gameplay");
             }
         }
 
@@ -167,9 +161,7 @@ namespace Realms.Client.States
         {
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
-            var fadeComponent = _ioc.Get<FadeComponent>();
-            var inventory = _ioc.Get<InventoryComponent>();
-            fadeComponent.Visible = inventory.IsActive;
+ 
 
             base.OnEnabled(previousState);
         }

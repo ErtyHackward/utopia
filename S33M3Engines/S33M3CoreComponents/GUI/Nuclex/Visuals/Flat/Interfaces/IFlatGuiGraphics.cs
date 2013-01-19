@@ -19,6 +19,7 @@ License along with this library
 #endregion
 
 using System;
+using S33M3DXEngine;
 using SharpDX;
 using System.Collections.Generic;
 using SharpDX.Direct3D11;
@@ -36,6 +37,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
     /// </remarks>
     public interface IFlatGuiGraphics
     {
+
+        D3DEngine Engine { get; }
 
         //<summary>Sets the clipping region for any future drawing commands</summary>
         //<param name="clipRegion">Clipping region that will be set</param>

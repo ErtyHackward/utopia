@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.States.Interfaces;
 using System.Threading;
 using S33M3DXEngine.Threading;
-using S33M3DXEngine.Main.Interfaces;
-using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3DXEngine;
 using System.Threading.Tasks;
