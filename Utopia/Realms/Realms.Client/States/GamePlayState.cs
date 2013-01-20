@@ -166,6 +166,8 @@ namespace Realms.Client.States
                 return;
             }
 
+            if (StatesManager.CurrentState.Name == "InGameMenu") return;
+
             if (e.Action.ActionId == UtopiaActions.OpenInventory)
             {
                 if (StatesManager.CurrentState.Name != "Inventory")
