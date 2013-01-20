@@ -29,9 +29,21 @@ namespace Utopia.GUI.Crafting
             _voxelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
 
             CraftingWindow.VoxelEffect = _voxelEffect;
-            
+            CraftingWindow.CraftButton.Pressed += CraftButtonOnPressed;
 
             base.LoadContent(context);
+        }
+
+        private void CraftButtonOnPressed(object sender, EventArgs eventArgs)
+        {
+            if (CraftingWindow.CanCraft)
+            {
+                var recipeIndex = CraftingWindow.RecipesList.SelectedItems[0];
+
+                CraftingWindow.Player.CraftUse(recipeIndex);
+                CraftingWindow.Player.Craft(recipeIndex);
+                CraftingWindow.Update();
+            }
         }
 
         public void ShowCrafting()

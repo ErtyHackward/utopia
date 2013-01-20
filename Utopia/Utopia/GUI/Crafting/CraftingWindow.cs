@@ -28,6 +28,7 @@ namespace Utopia.GUI.Crafting
         protected ModelControl _resultModel;
         protected ButtonControl _craftButton;
         protected RectangleF _ingredientsRect;
+        private bool _canCraft;
 
         public ModelControl ModelControl
         {
@@ -37,6 +38,21 @@ namespace Utopia.GUI.Crafting
         public ListControl RecipesList
         {
             get { return _recipesList; }
+        }
+
+        public ButtonControl CraftButton
+        {
+            get { return _craftButton; }
+        }
+
+        public bool CanCraft
+        {
+            get { return _canCraft; }
+        }
+
+        public PlayerCharacter Player
+        {
+            get { return _player; }
         }
 
         public HLSLVoxelModel VoxelEffect {
@@ -102,8 +118,13 @@ namespace Utopia.GUI.Crafting
                 Text = "Craft",
                 Bounds = new UniRectangle(340, 300, buttonWidth, buttomHeight)
             };
-            _craftButton.Pressed += delegate {  };
+            
             Children.Add(_craftButton);
+        }
+
+        public void Update()
+        {
+            RecipesListOnSelectionChanged(null, null);
         }
 
         private void RecipesListOnSelectionChanged(object sender, EventArgs eventArgs)
@@ -125,7 +146,7 @@ namespace Utopia.GUI.Crafting
             // show ingredients slots
             // and position it in the center of the ingredients rect
 
-            var canCraft = true;
+            _canCraft = true;
 
             for (var i = 0; i < _ingredientCells.Count; i++)
             {
@@ -140,7 +161,7 @@ namespace Utopia.GUI.Crafting
                     var haveItems = _player.FindAll(s => s.Item.BluePrintId == bpId).Sum(s => s.ItemsCount);
 
                     if (haveItems < needItems)
-                        canCraft = false;
+                        _canCraft = false;
 
                     cell.Slot = new ContainedSlot
                         {

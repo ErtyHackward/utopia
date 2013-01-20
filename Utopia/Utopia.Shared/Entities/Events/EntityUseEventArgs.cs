@@ -59,6 +59,8 @@ namespace Utopia.Shared.Entities.Events
 
         public Vector3I PickNormal { get; set; }
 
+        public int RecipeIndex { get; set; }
+
         /// <summary>
         /// Creates event args from entity state
         /// </summary>
