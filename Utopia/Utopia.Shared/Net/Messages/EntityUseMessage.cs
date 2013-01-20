@@ -77,6 +77,12 @@ namespace Utopia.Shared.Net.Messages
         public UseType UseType { get; set; }
 
         /// <summary>
+        /// Get config recipe index to craft
+        /// </summary>
+        [ProtoMember(14)]
+        public int RecipeIndex { get; set; }
+
+        /// <summary>
         /// Gets message id (cast to MessageTypes enumeration)
         /// </summary>
         public byte MessageId
@@ -102,6 +108,7 @@ namespace Utopia.Shared.Net.Messages
             PickPoint = e.PickPosition;
             PickNormal = e.PickNormal;
             UseType = e.UseType;
+            RecipeIndex = e.RecipeIndex;
         }
     }
 }

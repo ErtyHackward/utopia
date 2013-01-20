@@ -169,6 +169,15 @@ namespace Utopia.Server.Structs
             
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
+            if (entityUseMessage.UseType == UseType.Craft)
+            {
+                var impact = new ToolImpact();
+                impact.Success = playerCharacter.Craft(entityUseMessage.RecipeIndex);
+
+                Connection.Send(new UseFeedbackMessage() { Token = entityUseMessage.Token, EntityImpactBytes = impact.Serialize() });
+                return;
+            }
+
             // detect use type, if 0 then it is entity use, otherwise it is tool use
             if (entityUseMessage.ToolId != 0)
             {

@@ -151,6 +151,9 @@ namespace Realms.Client.States
 
             var player = (PlayerCharacter)e.Message.Entity;
 
+            var factory = _ioc.Get<EntityFactory>();
+            factory.PrepareEntity(player);
+
             _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
             _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
 

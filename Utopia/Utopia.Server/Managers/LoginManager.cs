@@ -156,7 +156,8 @@ namespace Utopia.Server.Managers
                     }
                 }
                 #endregion
-
+                
+                _server.EntityFactory.PrepareEntity(playerEntity.DynamicEntity);
                 connection.ServerEntity = playerEntity;
 
                 connection.Send(new LoginResultMessage { Logged = true });

@@ -2,8 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -11,7 +13,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Provides character base properties. Character entity has an equipment and inventory. It can wear the tool.
     /// </summary>
     [ProtoContract]
-    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity
+    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldIntercatingEntity
     {
         /// <summary>
         /// Gets character name
@@ -42,6 +44,16 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(5)]
         public int MaxHealth { get; set; }
+
+        /// <summary>
+        /// Gets entityFactory, this field is injected
+        /// </summary>
+        public EntityFactory EntityFactory { get; set; }
+
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        public ILandscapeManager2D LandscapeManager { get; set; }
 
         /// <summary>
         /// Indicates if this charater controlled by real human
@@ -99,6 +111,90 @@ namespace Utopia.Shared.Entities.Dynamic
             foreach (var slot in Inventory.Where(pred))
             {
                 yield return slot;
+            }
+        }
+
+        public bool TakeItems(ushort blueprintId, int count)
+        {
+            while (count > 0)
+            {
+                var slot = Inventory.LastOrDefault(s => s.Item.BluePrintId == blueprintId);
+
+                if (slot == null)
+                    break;
+
+                var takeItems = Math.Min(slot.ItemsCount, count);
+
+                Inventory.TakeItem(slot.GridPosition, takeItems);
+
+                count -= takeItems;
+            }
+
+            while (count > 0)
+            {
+                var slot = Equipment.LastOrDefault(s => s.Item.BluePrintId == blueprintId);
+
+                if (slot == null)
+                    break;
+
+                var takeItems = Math.Min(slot.ItemsCount, count);
+
+                Equipment.TakeItem(slot.GridPosition, takeItems);
+
+                count -= takeItems;
+            }
+
+            return count == 0;
+        }
+
+        /// <summary>
+        /// Fires entity use event for the craft operation
+        /// </summary>
+        /// <param name="recipeIndex"></param>
+        public void CraftUse(int recipeIndex)
+        {
+            var args = EntityUseEventArgs.FromState(EntityState, this);
+            args.UseType = UseType.Craft;
+            args.RecipeIndex = recipeIndex;
+            OnUse(args);
+        }
+
+        /// <summary>
+        /// Creates the item from its recipe
+        /// </summary>
+        /// <param name="recipeIndex"></param>
+        /// <returns></returns>
+        public bool Craft(int recipeIndex)
+        {
+            try
+            {
+                var recipe = EntityFactory.Config.Recipes[recipeIndex];
+
+                // check if we have all ingredients
+                foreach (var ingredient in recipe.Ingredients)
+                {
+                    var count = FindAll(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
+                    if (count < ingredient.Count)
+                        return false;
+                }
+
+                foreach (var ingredient in recipe.Ingredients)
+                {
+                    if (!TakeItems(ingredient.BlueprintId, ingredient.Count))
+                        return false;
+                }
+                
+                var item = (Item)EntityFactory.CreateFromBluePrint(recipe.ResultBlueprintId);
+
+                if (!Inventory.PutItem(item, recipe.ResultCount))
+                    return false;
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
             }
         }
     }
