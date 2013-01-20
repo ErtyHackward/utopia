@@ -5,10 +5,12 @@ using System.Text;
 using Ninject;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Sound;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Settings;
 
 namespace Utopia.GUI.Crafting
@@ -22,6 +24,9 @@ namespace Utopia.GUI.Crafting
         
         [Inject]
         public GuiManager GuiManager { get; set; }
+
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
 
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
@@ -43,6 +48,13 @@ namespace Utopia.GUI.Crafting
                 CraftingWindow.Player.CraftUse(recipeIndex);
                 CraftingWindow.Player.Craft(recipeIndex);
                 CraftingWindow.Update();
+
+                var recipe = (Recipe)CraftingWindow.RecipesList.Items[recipeIndex];
+
+                if (recipe.CraftSound != null)
+                {
+                    SoundEngine.StartPlay2D(recipe.CraftSound);
+                }
             }
         }
 
