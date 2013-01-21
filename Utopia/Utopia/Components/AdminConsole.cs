@@ -11,6 +11,7 @@ using S33M3DXEngine;
 using S33M3DXEngine.Main;
 using Utopia.Network;
 using Utopia.Shared.Net.Messages;
+using System.Diagnostics;
 
 namespace Utopia.Components
 {
@@ -27,9 +28,12 @@ namespace Utopia.Components
         private D3DEngine _engine;
         private Game _mainGameLoop;
         private ServerComponent _server;
+        private Stopwatch _pingTimer = new Stopwatch();
+
         #endregion
 
         #region Public Properties
+        public Stopwatch PingTimer { get { return _pingTimer; } }
         #endregion
 
         public AdminConsole(ChatComponent chatComp,
@@ -39,6 +43,7 @@ namespace Utopia.Components
                             ServerComponent server)
         {
             _chatComp = chatComp;
+            _chatComp.Console = this;
             _worldChunk = worldChunk;
             _engine = engine;
             _mainGameLoop = mainGameLoop;
@@ -89,7 +94,8 @@ namespace Utopia.Components
                             commandProcessed = true;
                             break;
                         case "/ping": //Send a ping to the server without using the chat system
-                            _server.ServerConnection.Send(new PingMessage());
+                            _pingTimer.Restart();
+                            _server.ServerConnection.Send(new PingMessage() { Request = true });
                             commandProcessed = true;
                             break;
                         default:
