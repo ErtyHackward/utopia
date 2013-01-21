@@ -9,6 +9,8 @@ using Utopia.Worlds.Chunks;
 using Utopia.Shared.Settings;
 using S33M3DXEngine;
 using S33M3DXEngine.Main;
+using Utopia.Network;
+using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Components
 {
@@ -24,6 +26,7 @@ namespace Utopia.Components
         private IWorldChunks _worldChunk;
         private D3DEngine _engine;
         private Game _mainGameLoop;
+        private ServerComponent _server;
         #endregion
 
         #region Public Properties
@@ -32,12 +35,14 @@ namespace Utopia.Components
         public AdminConsole(ChatComponent chatComp,
                             IWorldChunks worldChunk,
                             D3DEngine engine,
-                            Game mainGameLoop)
+                            Game mainGameLoop,
+                            ServerComponent server)
         {
             _chatComp = chatComp;
             _worldChunk = worldChunk;
             _engine = engine;
             _mainGameLoop = mainGameLoop;
+            _server = server;
             _chatComp.MessageOut += _chatComp_MessageOut;
         }
 
@@ -63,7 +68,6 @@ namespace Utopia.Components
             try
             {
 
-
                 if (string.IsNullOrEmpty(command) == false && command[0] == '/')
                 {
                     string[] splittedCmd = command.Split(' ');
@@ -82,6 +86,10 @@ namespace Utopia.Components
                             break;
                         case "/fpslimit":
                             _mainGameLoop.FramelimiterTime = (long)(1.0 / long.Parse(splittedCmd[1]) * 1000.0);
+                            commandProcessed = true;
+                            break;
+                        case "/ping": //Send a ping to the server without using the chat system
+                            _server.ServerConnection.Send(new PingMessage());
                             commandProcessed = true;
                             break;
                         default:

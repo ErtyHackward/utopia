@@ -83,7 +83,6 @@ namespace Sandbox.Client
 
             stateManager.ActivateGameStateAsync("StartUp");
 
-            game.MenuRequested += game_MenuRequested;
             game.GameStateManager = stateManager;
 
             ApplySystemSettings();
