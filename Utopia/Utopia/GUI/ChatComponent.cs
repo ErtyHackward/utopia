@@ -14,6 +14,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using S33M3CoreComponents.Inputs.KeyboardHandler;
+using Utopia.Components;
 
 namespace Utopia.GUI
 {
@@ -37,6 +38,9 @@ namespace Utopia.GUI
         private readonly Queue<string> _messages = new Queue<string>();
         private float _windowHeight;
         private bool _activated;
+
+        public AdminConsole Console { get; set; }
+
 
         /// <summary>
         /// Occurs when the chat message is ready to be sent to the server, allows to supress this operation
@@ -139,7 +143,8 @@ namespace Utopia.GUI
 
         private void _server_MessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
         {
-            AddMessage(string.Format("<Pong> {1} ms", e.Message.Token));
+            AddMessage(string.Format("<Pong> {0} ms", Console.PingTimer.ElapsedMilliseconds));
+            Console.PingTimer.Stop();
         }
 
         private void SetFontAlphaColor(byte color)
