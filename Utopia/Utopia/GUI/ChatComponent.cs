@@ -70,6 +70,7 @@ namespace Utopia.GUI
             _server = server;
 
             _server.MessageChat += ServerConnectionMessageChat;
+            _server.MessagePing += _server_MessagePing;
 
             ChatLineLimit = 30;
             //For 5 seconds =
@@ -86,6 +87,7 @@ namespace Utopia.GUI
 
         public override void BeforeDispose()
         {
+            _server.MessagePing -= _server_MessagePing;
             _server.MessageChat -= ServerConnectionMessageChat;
             _d3dEngine.ViewPort_Updated -= LocateChat;            
         }
@@ -133,6 +135,11 @@ namespace Utopia.GUI
             }
 
             _lastUpdateTime = Stopwatch.GetTimestamp();
+        }
+
+        private void _server_MessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
+        {
+            AddMessage(string.Format("<Pong> {1} ms", e.Message.Token));
         }
 
         private void SetFontAlphaColor(byte color)
