@@ -3,6 +3,7 @@ using Realms.Client.Components.GUI.Settings;
 using S33M3CoreComponents.States;
 using Ninject;
 using S33M3CoreComponents.GUI;
+using S33M3CoreComponents.Inputs;
 
 namespace Realms.Client.States
 {
@@ -38,6 +39,8 @@ namespace Realms.Client.States
         public override void OnEnabled(GameState previousState)
         {
             var settings = _iocContainer.Get<SettingsComponent>();
+            var inputManager = _iocContainer.Get<InputsManager>();
+            inputManager.MouseManager.MouseCapture = false;
             settings.isGameRunning = this.PreviousGameState == StatesManager.GetByName("InGameMenu");
         }
 
