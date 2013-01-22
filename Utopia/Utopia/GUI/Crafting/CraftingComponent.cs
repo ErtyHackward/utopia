@@ -48,13 +48,6 @@ namespace Utopia.GUI.Crafting
                 CraftingWindow.Player.CraftUse(recipeIndex);
                 CraftingWindow.Player.Craft(recipeIndex);
                 CraftingWindow.Update();
-
-                var recipe = (Recipe)CraftingWindow.RecipesList.Items[recipeIndex];
-
-                if (recipe.CraftSound != null)
-                {
-                    SoundEngine.StartPlay2D(recipe.CraftSound);
-                }
             }
         }
 
@@ -69,6 +62,7 @@ namespace Utopia.GUI.Crafting
 
             CraftingWindow.LayoutFlags = ControlLayoutFlags.Center;
             desktop.Children.Add(CraftingWindow);
+            CraftingWindow.Update();
 
             desktop.UpdateLayout();
         }
