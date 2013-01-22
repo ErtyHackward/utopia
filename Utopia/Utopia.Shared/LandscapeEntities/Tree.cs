@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
+using SharpDX;
+using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.LandscapeEntities
@@ -26,9 +28,37 @@ namespace Utopia.Shared.LandscapeEntities
 
             //Generate the Mesh.
             var height = fastRnd.Next(2, 4);
-            int size = 1;
+            int size = 0;
 
             height += size;
+
+            //Create foliage
+            for (int foliageGroup = 0; foliageGroup <= size; foliageGroup++)
+            {
+
+                //Create Elipsoid shape centred around the Root
+                var ellipsoidSize = new Vector3I(7, 4, 7);
+                var range = new Range3I { Size = ellipsoidSize };
+                var center = (Vector3)ellipsoidSize / 2;
+                var radius = ellipsoidSize / 2;
+
+                //Get Position
+                Vector3I foliageRoot = new Vector3I()
+                {
+                    Y = WorldBlockLocation.Y + height + fastRnd.Next((int)ellipsoidSize.Y / 3, (int)ellipsoidSize.Y / 2),
+                    X = WorldBlockLocation.X + fastRnd.Next(size * 2),
+                    Z = WorldBlockLocation.Z + fastRnd.Next(size * 2)
+                };
+
+
+                foreach (var position in range)
+                {
+                    var point = position + new Vector3(0.5f, 0.5f, 0.5f);
+
+                    if (IsInsideEllipsoid(center, radius, point))
+                        mesh.Add(new BlockWithPosition() { BlockId = foliageBlockId, WorldPosition = position + foliageRoot - (ellipsoidSize / 2) });
+                }
+            }
 
             //Create trunk Kern
             int kernSize = size - 1;
@@ -59,29 +89,22 @@ namespace Utopia.Shared.LandscapeEntities
             }
 
 
-            //Create foliage
-            for (int foliageGroup = 0; foliageGroup <= size + 1; foliageGroup++)
-            {
-                //Get Position
-                Vector3I foliageRoot = new Vector3I()
-                {
-                    Y = WorldBlockLocation.Y + height + fastRnd.Next((int)height / 2, height),
-                    X = WorldBlockLocation.X + fastRnd.Next(size * 2),
-                    Z = WorldBlockLocation.X + fastRnd.Next(size * 2)
-                };
-
-                mesh.Add(new BlockWithPosition() { BlockId = foliageBlockId, WorldPosition = foliageRoot });
-
-                //Create shape centred around the Root
-                //TODO
-            }
 
             return mesh;
-            
         }
         #endregion
 
         #region Private Methods
+        private bool IsInsideEllipsoid(Vector3 center, Vector3 radius, Vector3 point)
+        {
+            var dx = point.X - center.X;
+            var dy = point.Y - center.Y;
+            var dz = point.Z - center.Z;
+
+            return dx * dx / ( radius.X * radius.X ) + 
+                   dy * dy / ( radius.Y * radius.Y ) +
+                   dz * dz / ( radius.Z * radius.Z ) <= 1;
+        }
         #endregion
     }
 }
