@@ -80,11 +80,11 @@ namespace Utopia.Shared.LandscapeEntities
                     case 'G':
                     case 'F':
                         // Tree trunk
-                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + 1, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _trunkBlockId });
-                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X - 1, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _trunkBlockId });
-                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z + 1), BlockId = _trunkBlockId });
-                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z - 1), BlockId = _trunkBlockId });
-                        //mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _trunkBlockId });
+                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X + 1, rootPosition.Y + (int)position.Y, rootPosition.Z + (int)position.Z), BlockId = _trunkBlockId });
+                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X - 1, rootPosition.Y + (int)position.Y, rootPosition.Z + (int)position.Z), BlockId = _trunkBlockId });
+                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X, rootPosition.Y + (int)position.Y, rootPosition.Z + (int)position.Z + 1), BlockId = _trunkBlockId });
+                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X, rootPosition.Y + (int)position.Y, rootPosition.Z + (int)position.Z - 1), BlockId = _trunkBlockId });
+                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X, rootPosition.Y + (int)position.Y, rootPosition.Z + (int)position.Z), BlockId = _trunkBlockId });
 
                         // Generate leaves
                         if (_stackPosition.Count > 1)
@@ -99,10 +99,10 @@ namespace Utopia.Shared.LandscapeEntities
                                     {
                                         if (Math.Abs(x) == size && Math.Abs(y) == size && Math.Abs(z) == size) continue;
 
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + 1 + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + z), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X - 1 + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + z), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + 1 + z), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z - 1 + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X + 1 + x, rootPosition.Y + (int)position.Y + y, rootPosition.Z + (int)position.Z + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X - 1 + x, rootPosition.Y + (int)position.Y + y, rootPosition.Z + (int)position.Z + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X + x, rootPosition.Y + (int)position.Y + y, rootPosition.Z + (int)position.Z + 1 + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + (int)position.X + x, rootPosition.Y + (int)position.Y + y, rootPosition.Z + (int)position.Z - 1 + z), BlockId = _foliageBlockId });
                                         //mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + z), BlockId = _foliageBlockId });
                                     }
                                 }
@@ -111,7 +111,7 @@ namespace Utopia.Shared.LandscapeEntities
 
                         Vector3 dir = new Vector3(1, 0, 0);
                         Vector3.TransformNormal(ref dir, ref rotation, out dir); //Apply rotation on the direction vector
-                        
+
                         position += dir; //Make the "cursor advance"
 
                         break;

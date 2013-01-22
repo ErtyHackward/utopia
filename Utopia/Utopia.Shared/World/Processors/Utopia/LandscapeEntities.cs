@@ -62,11 +62,14 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Methods
         private void TreeGeneration(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, ChunkColumnInfo[] columndInfo, FastRandom rnd)
         {
-            int nbrTree = rnd.Next(biome.BiomeTrees.TreePerChunks.Min, biome.BiomeTrees.TreePerChunks.Max + 1);
-            for (int i = 0; i < nbrTree; i++)
-            {
+            //int nbrTree = rnd.Next(biome.BiomeTrees.TreePerChunks.Min, biome.BiomeTrees.TreePerChunks.Max + 1);
+            //for (int i = 0; i < nbrTree; i++)
+            //{
+            //    PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
+            //}
+            if (chunk.Position == new Vector2I(0, 0))
                 PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
-            }
+
         }
 
         private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, BiomeTrees biomeTrees, ChunkColumnInfo[] columndInfo, FastRandom rnd)
@@ -76,13 +79,17 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Get Rnd chunk Location.
             int x = rnd.Next(0, 16);
             int z = rnd.Next(0, 16);
+            x = 7;
+            z = 7;
             int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight + 1;
             x += (chunk.Position.X * AbstractChunk.ChunkSize.X);
             z += (chunk.Position.Y * AbstractChunk.ChunkSize.Z);
             Vector3I worldPosition = new Vector3I(x, y, z);
 
             //Generate Tree mesh !
-            TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
+            //TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
+
+            TreeLSystem generator = _treeGenerator[1];
 
             foreach (var chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(generator.Generate(rnd, worldPosition)))
             {
