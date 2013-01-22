@@ -37,12 +37,6 @@ namespace Utopia.Shared.Entities
         [ProtoMember(4)]
         public string Name { get; set; }
 
-        [Category("Sound")]
-        [Description("Sound played when item is created")]
-        [TypeConverter(typeof(ShortSoundSelector))]
-        [ProtoMember(5)]
-        public StaticEntitySoundSource CraftSound { get; set; }
-
         public Recipe()
         {
             Ingredients = new List<RecipeIngredient>();

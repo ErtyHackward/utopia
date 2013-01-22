@@ -386,7 +386,8 @@ namespace Utopia.Editor.Forms
 
             foreach (var containerSet in _configuration.ContainerSets)
             {
-                AddSubNode(setsRootNode, containerSet.Key, containerSet.Value);
+                var node = AddSubNode(setsRootNode, containerSet.Key, containerSet.Value);
+                node.ContextMenuStrip = contextMenuEntity;
             }
 
             #endregion
@@ -411,7 +412,8 @@ namespace Utopia.Editor.Forms
 
                 }
 
-                AddSubNode(recipesNode, recipe.Name, recipe, iconName);
+                var node = AddSubNode(recipesNode, recipe.Name, recipe, iconName);
+                node.ContextMenuStrip = contextMenuEntity;
             }
 
             #endregion
@@ -550,21 +552,31 @@ namespace Utopia.Editor.Forms
         //Called when the DELETE button is pushed on a Main Category treeview
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tvMainCategories.SelectedNode.Tag is Entity)
+            var tag = tvMainCategories.SelectedNode.Tag;
+            if (tag is Entity)
             {
                 var entity = (Entity)tvMainCategories.SelectedNode.Tag;
                 _configuration.BluePrints.Remove(entity.BluePrintId);
-                tvMainCategories.SelectedNode.Remove();
             }
-            else if (tvMainCategories.SelectedNode.Tag is BlockProfile)
+            else if (tag is BlockProfile)
             {
                 var blockProfile = (BlockProfile)tvMainCategories.SelectedNode.Tag;
-                if (_configuration.DeleteBlockProfile(blockProfile))
+                if (!_configuration.DeleteBlockProfile(blockProfile))
                 {
-                    tvMainCategories.SelectedNode.Remove();
+                    return;
                 }
             }
+            else if (tag is SlotContainer<BlueprintSlot>)
+            {
+                var key = _configuration.ContainerSets.Where(p => p.Value == tag).Select(p => p.Key).First();
+                _configuration.ContainerSets.Remove(key);
+            }
+            else if (tag is Recipe)
+            {
+                _configuration.Recipes.Remove((Recipe)tag);
+            }
 
+            tvMainCategories.SelectedNode.Remove();
         }
 
         
