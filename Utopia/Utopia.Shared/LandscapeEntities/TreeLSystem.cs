@@ -84,7 +84,7 @@ namespace Utopia.Shared.LandscapeEntities
                         mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X - 1, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _trunkBlockId });
                         mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z + 1), BlockId = _trunkBlockId });
                         mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z - 1), BlockId = _trunkBlockId });
-                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _trunkBlockId });
+                        //mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _trunkBlockId });
 
                         // Generate leaves
                         if (_stackPosition.Count > 1)
@@ -99,11 +99,11 @@ namespace Utopia.Shared.LandscapeEntities
                                     {
                                         if (Math.Abs(x) == size && Math.Abs(y) == size && Math.Abs(z) == size) continue;
 
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + 1, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X - 1, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z + 1), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z - 1), BlockId = _foliageBlockId });
-                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X, rootPosition.Y + position.Y, rootPosition.Z + position.Z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + 1 + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X - 1 + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + 1 + z), BlockId = _foliageBlockId });
+                                        mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z - 1 + z), BlockId = _foliageBlockId });
+                                        //mesh.Add(new BlockWithPosition() { WorldPosition = new Vector3I(rootPosition.X + position.X + x, rootPosition.Y + position.Y + y, rootPosition.Z + position.Z + z), BlockId = _foliageBlockId });
                                     }
                                 }
                             }

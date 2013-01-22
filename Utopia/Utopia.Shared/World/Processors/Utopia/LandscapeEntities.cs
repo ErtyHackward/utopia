@@ -92,7 +92,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     {
                         cursor.SetInternalPosition(block.WorldPosition);
                         byte blockId = cursor.Read();
-                        if (blockId == UtopiaProcessorParams.CubeId.Air || blockId == UtopiaProcessorParams.CubeId.Trunk) cursor.Write(block.BlockId);
+                        if (blockId == UtopiaProcessorParams.CubeId.Air) cursor.Write(block.BlockId);
                     }
                 }
                 else
