@@ -7,6 +7,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
 {
     public struct TreeTemplate
     {
+        public string Name { get; set; }
         public string Axiom { get; set; }
         public string Rules_a { get; set; }
         public string Rules_b { get; set; }
