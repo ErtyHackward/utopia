@@ -24,9 +24,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         public LandscapeEntities()
         {
-            TreeTemplate newModel;
-
-            newModel = new TreeTemplate()
+            _treeTemplates.Add(new TreeTemplate()
             {
                 Axiom = "FFFFFBFB",
                 Rules_a = "[&&&GGF[++^Fd][--&Fd]//Fd[+^Fd][--&Fd]]////[&&&GGF[++^Fd][--&Fd]//Fd[+^Fd][--&Fd]]////[&&&GGF[++^Fd][--&Fd]//Fd[+^Fd][--&Fdd]]",
@@ -39,9 +37,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Iteration = 2,
                 RandomeLevel = 0,
                 TrunkType = TrunkType.Single,
-                SmallBranches = true                
-            };
-
+                SmallBranches = true
+            });
+            
 
         }
 
