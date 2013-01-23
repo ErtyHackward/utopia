@@ -8,7 +8,7 @@ var
 	version: cardinal;
 	
 begin
-	if not FileExists(ExpandConstant('{sys}\D3DX11d_43.dll')) then
+	if not FileExists(ExpandConstant('{sys}\d3dx11_43.dll')) then
 		AddProduct('dxwebsetup.exe',
 			'/q',
 			CustomMessage('dxredist_title'),
