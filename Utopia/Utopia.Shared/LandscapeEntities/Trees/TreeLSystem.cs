@@ -12,11 +12,6 @@ namespace Utopia.Shared.LandscapeEntities.Trees
     public class TreeLSystem
     {
         #region Private Variables
-        // chance of inserting abcd rules
-        private double _ruleAProba = 9;
-        private double _ruleBProba = 8;
-        private double _ruleCProba = 7;
-        private double _ruleDProba = 6;
         #endregion
 
         #region Public Properties
@@ -56,32 +51,32 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                     switch (axiomChar)
                     {
                         case 'A':
-                            temp += treeType.Rules_a;
+                            temp += treeType.Rules_a.Rule;
                             break;
                         case 'B':
-                            temp += treeType.Rules_b;
+                            temp += treeType.Rules_b.Rule;
                             break;
                         case 'C':
-                            temp += treeType.Rules_c;
+                            temp += treeType.Rules_c.Rule;
                             break;
                         case 'D':
-                            temp += treeType.Rules_d;
+                            temp += treeType.Rules_d.Rule;
                             break;
                         case 'a':
-                            if (_ruleAProba >= rnd.Next(1, 10))
-                                temp += treeType.Rules_a;
+                            if (treeType.Rules_a.Prob >= rnd.NextDouble())
+                                temp += treeType.Rules_a.Rule;
                             break;
                         case 'b':
-                            if (_ruleBProba >= rnd.Next(1, 10))
-                                temp += treeType.Rules_b;
+                            if (treeType.Rules_b.Prob >= rnd.NextDouble())
+                                temp += treeType.Rules_b.Rule;
                             break;
                         case 'c':
-                            if (_ruleCProba >= rnd.Next(1, 10))
-                                temp += treeType.Rules_c;
+                            if (treeType.Rules_c.Prob >= rnd.NextDouble())
+                                temp += treeType.Rules_c.Rule;
                             break;
                         case 'd':
-                            if (_ruleDProba >= rnd.Next(1, 10))
-                                temp += treeType.Rules_d;
+                            if (treeType.Rules_d.Prob >= rnd.NextDouble())
+                                temp += treeType.Rules_d.Rule;
                             break;
                         default:
                             temp += axiomChar;
@@ -157,7 +152,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                         }
 
                         //Create foliage "around" trunk, only for "Sub" branch, not the main trunk
-                        if (stackOrientation.Count > 0)
+                        if (stackOrientation.Count >= treeType.FoliageGenerationStart)
                         {
                             int foliageSize = 1;
                             for (x = -foliageSize; x <= foliageSize; x++)
@@ -167,13 +162,12 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                                     for (z = -foliageSize; z <= foliageSize; z++)
                                     {
                                         //Create only foliage outer form (Not inside)
-                                        if (Math.Abs(x) == foliageSize && Math.Abs(y) == foliageSize && Math.Abs(z) == foliageSize)
-                                        {
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x + 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) });
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x - 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) });
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z + 1) });
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z - 1) });
-                                        }
+                                        if (Math.Abs(x) == foliageSize && Math.Abs(y) == foliageSize && Math.Abs(z) == foliageSize) continue;
+
+                                        mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x + 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) });
+                                        mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x - 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) });
+                                        mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z + 1) });
+                                        mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z - 1) });
                                     }
                                 }
                             }
