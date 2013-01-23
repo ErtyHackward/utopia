@@ -40,7 +40,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
             double angleOffsetRad = MathHelper.ToRadians(rnd.NextDouble());
 
             //initialize rotation matrix, position and stacks for branches
-            Matrix rotation = Matrix.RotationAxis(new Vector3(0, 0, 1), MathHelper.Pi / 180.0f);
+            Matrix rotation = Matrix.RotationAxis(new Vector3(0, 0, 1), (float)Math.PI / 2.0f);
             Vector3 position = Vector3.Zero;
             Stack<Matrix> stackOrientation = new Stack<Matrix>();
             Stack<Vector3> stackPosition = new Stack<Vector3>();
@@ -133,7 +133,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                     case 'F':
 
                         //Single Trunk => Always added
-                        mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X, WPos.Y + position.Y, WPos.Z + position.Z)});
+                        mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z) });
 
                         //Handling other trunk type
                         if (stackOrientation.Count == 0 || (stackOrientation.Count > 0 && !treeType.SmallBranches == false))
@@ -141,15 +141,15 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                             switch (treeType.TrunkType)
                             {
                                 case TrunkType.Double:
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X + 1, WPos.Y + position.Y, WPos.Z + position.Z) });
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X, WPos.Y + position.Y, WPos.Z + position.Z + 1) });
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X + 1, WPos.Y + position.Y, WPos.Z + position.Z + 1) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + 1, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z + 1) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + 1, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z + 1) });
                                     break;
                                 case TrunkType.Crossed:
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X + 1, WPos.Y + position.Y, WPos.Z + position.Z) });
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X - 1, WPos.Y + position.Y, WPos.Z + position.Z) });
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X, WPos.Y + position.Y, WPos.Z + position.Z + 1) });
-                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + position.X, WPos.Y + position.Y, WPos.Z + position.Z - 1) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + 1, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X - 1, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z + 1) });
+                                    mesh.Add(new BlockWithPosition() { BlockId = treeType.TrunkBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z - 1) });
                                     break;
                                 default:
                                     break;
@@ -169,10 +169,10 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                                         //Create only foliage outer form (Not inside)
                                         if (Math.Abs(x) == foliageSize && Math.Abs(y) == foliageSize && Math.Abs(z) == foliageSize)
                                         {
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x + 1, WPos.Y + position.Y + y, WPos.Z + position.Z + z) });
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x - 1, WPos.Y + position.Y + y, WPos.Z + position.Z + z) });
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + position.Y + y, WPos.Z + position.Z + z + 1) });
-                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + position.Y + y, WPos.Z + position.Z + z - 1) });
+                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x + 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) });
+                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x - 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) });
+                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z + 1) });
+                                            mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z - 1) });
                                         }
                                     }
                                 }
@@ -180,7 +180,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                         }
 
                         dir = new Vector3(1, 0, 0);
-                        dir = Vector3.TransformNormal(dir, rotation);
+                        Vector3.TransformNormal(ref dir, ref rotation, out dir);
                         position += dir;
                         break;
 
