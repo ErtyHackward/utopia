@@ -185,7 +185,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                         break;
 
                     case 'f':
-                        mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + position.X + 1, WPos.Y + position.Y, WPos.Z + position.Z) });
+                        mesh.Add(new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X, WPos.Y + (int)position.Y, WPos.Z + (int)position.Z) });
                         dir = new Vector3(1, 0, 0);
                         dir = Vector3.TransformNormal(dir, rotation);
                         position += dir;
@@ -201,27 +201,27 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                         break;
                     case '+':
                         tempRotation = Matrix.RotationAxis(new Vector3(0, 0, 1),(float)(angleRad + angleOffsetRad));
-                        rotation *= tempRotation;
+                        rotation = tempRotation * rotation;
                         break;
                     case '-':
                         tempRotation = Matrix.RotationAxis(new Vector3(0, 0, -1), (float)(angleRad + angleOffsetRad));
-                        rotation *= tempRotation;
+                        rotation = tempRotation * rotation;
                         break;
                     case '&':
                         tempRotation = Matrix.RotationAxis(new Vector3(0, 1, 0), (float)(angleRad + angleOffsetRad));
-                        rotation *= tempRotation;
+                        rotation = tempRotation * rotation;
                         break;
                     case '^':
                         tempRotation = Matrix.RotationAxis(new Vector3(0, -1, 0), (float)(angleRad + angleOffsetRad));
-                        rotation *= tempRotation;
+                        rotation = tempRotation * rotation;
                         break;
                     case '*':
                         tempRotation = Matrix.RotationAxis(new Vector3(1, 0, 0), (float)(angleRad));
-                        rotation *= tempRotation;
+                        rotation = tempRotation * rotation;
                         break;
                     case '/':
                         tempRotation = Matrix.RotationAxis(new Vector3(-1, 0, 0), (float)(angleRad));
-                        rotation *= tempRotation;
+                        rotation = tempRotation * rotation;
                         break;
                     default:
                         break;
