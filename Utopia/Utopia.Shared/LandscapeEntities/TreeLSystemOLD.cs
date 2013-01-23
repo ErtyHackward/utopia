@@ -9,7 +9,7 @@ using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.LandscapeEntities
 {
-    public class TreeLSystem
+    public class TreeLSystemOLD
     {
         #region Private Variables
         //Settings
@@ -28,7 +28,7 @@ namespace Utopia.Shared.LandscapeEntities
         #region Public Properties
         #endregion
 
-        public TreeLSystem(string initialAxiom, Dictionary<char, string> ruleSet, Dictionary<char, double> probabilities, int iteration, int angle, byte trunkBlockId, byte foliageBlockId)
+        public TreeLSystemOLD(string initialAxiom, Dictionary<char, string> ruleSet, Dictionary<char, double> probabilities, int iteration, int angle, byte trunkBlockId, byte foliageBlockId)
         {
             _angleDegree = angle;
             _iteration = iteration;

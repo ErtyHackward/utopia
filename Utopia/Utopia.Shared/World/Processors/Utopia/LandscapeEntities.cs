@@ -7,6 +7,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.LandscapeEntities;
+using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.World.Processors.Utopia
@@ -14,7 +15,8 @@ namespace Utopia.Shared.World.Processors.Utopia
     public class LandscapeEntities
     {
         #region Private Variables
-        private TreeLSystem[] _treeGenerator = new TreeLSystem[5];
+        private TreeLSystem _treeGenerator = new TreeLSystem();
+        private List<TreeTemplate> _treeTemplates = new List<TreeTemplate>();
         #endregion
 
         #region Public Properties
@@ -22,33 +24,25 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         public LandscapeEntities()
         {
-            //Pine
-            Dictionary<char, double> probs = new Dictionary<char,double>();
-            probs.Add('A', 0.5);
-            probs.Add('B', 0.4);
+            TreeTemplate newModel;
 
-            Dictionary<char, string> rules = new Dictionary<char, string>();
-            rules.Add('A', "[&FFFFFA]////[&FFFFFA]////[&FFFFFA]");
-            _treeGenerator[0] = new TreeLSystem("FFFFAFFFFFFFAFFFFA", rules, probs, 4, 35, UtopiaProcessorParams.CubeId.Trunk, UtopiaProcessorParams.CubeId.Foliage);
+            newModel = new TreeTemplate()
+            {
+                Axiom = "FFFFFBFB",
+                Rules_a = "[&&&GGF[++^Fd][--&Fd]//Fd[+^Fd][--&Fd]]////[&&&GGF[++^Fd][--&Fd]//Fd[+^Fd][--&Fd]]////[&&&GGF[++^Fd][--&Fd]//Fd[+^Fd][--&Fdd]]",
+                Rules_b = "[&&&F[++^Fd][--&d]//d[+^d][--&d]]////[&&&F[++^Fd][--&d]//d[+^d][--&d]]////[&&&F[++^Fd][--&Fd]//d[+^d][--&d]]",
+                Rules_c = "/",
+                Rules_d = "F",
+                TrunkBlock = UtopiaProcessorParams.CubeId.Trunk,
+                FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
+                Angle = 30,
+                Iteration = 2,
+                RandomeLevel = 0,
+                TrunkType = TrunkType.Single,
+                SmallBranches = true                
+            };
 
-            rules = new Dictionary<char, string>();
-            rules.Add('A', "[&FFBFA]////[&BFFFA]////[&FBFFAFFA]");
-            rules.Add('B', "[&FFFAFFFF]////[&FFFAFFF]////[&FFFAFFAA]");
-            _treeGenerator[1] = new TreeLSystem("FFFFFFA", rules, probs, 4, 35, UtopiaProcessorParams.CubeId.Trunk, UtopiaProcessorParams.CubeId.Foliage);
 
-            rules = new Dictionary<char, string>();
-            rules.Add('A', "[&FFFAFFF]////[&FFAFFF]////[&FFFAFFF]");
-            rules.Add('B', "[&FAF]////[&FAF]////[&FAF]");
-            _treeGenerator[2] = new TreeLSystem("FFFFAFFFFBFFFFAFFFFBFFFFAFFFFBFF", rules, probs, 4, 35, UtopiaProcessorParams.CubeId.Trunk, UtopiaProcessorParams.CubeId.Foliage);
-
-            rules = new Dictionary<char, string>();
-            rules.Add('A', "[&FFBFA]////[&BFFFA]////[&FBFFA]");
-            rules.Add('B', "[&FFFA]////[&FFFA]////[&FFFA]");
-            _treeGenerator[3] = new TreeLSystem("FFFFFFA", rules, probs, 4, 35, UtopiaProcessorParams.CubeId.Trunk, UtopiaProcessorParams.CubeId.Foliage);
-
-            rules = new Dictionary<char, string>();
-            rules.Add('A', "[&FFAFF]////[&FFAFF]////[&FFAFF]");
-            _treeGenerator[4] = new TreeLSystem("FFFFFAFAFAF", rules, probs, 4, 40, UtopiaProcessorParams.CubeId.Trunk, UtopiaProcessorParams.CubeId.Foliage);
         }
 
         #region Public Methods
@@ -68,14 +62,12 @@ namespace Utopia.Shared.World.Processors.Utopia
             //    PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
             //}
             if (chunk.Position == new Vector2I(0, 0))
-                PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
+                PopulateChunkWithTree(cursor, chunk, columndInfo, rnd);
 
         }
 
-        private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, BiomeTrees biomeTrees, ChunkColumnInfo[] columndInfo, FastRandom rnd)
+        private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ChunkColumnInfo[] columndInfo, FastRandom rnd)
         {
-            var treeTemplate = TreeTemplates.Templates[(int)biomeTrees.GetNextTreeType(rnd)];
-
             //Get Rnd chunk Location.
             int x = rnd.Next(0, 16);
             int z = rnd.Next(0, 16);
@@ -88,10 +80,10 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //Generate Tree mesh !
             //TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
+            TreeTemplate treeType = _treeTemplates[rnd.Next(0, _treeTemplates.Count)];
 
-            TreeLSystem generator = _treeGenerator[1];
 
-            foreach (var chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(generator.Generate(rnd, worldPosition)))
+            foreach (var chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType)))
             {
                 if (chunkMesh.ChunkLocation == chunk.Position)
                 {
