@@ -44,6 +44,7 @@ namespace Utopia.Entities
         private ShaderResourceView _iconsTextureArray;
         private SpriteTexture _iconTextureArray;
         private VisualWorldParameters _visualWorldParameters;
+        private Dictionary<byte, byte> _iconIndexes;
 
         // holds cached textures of the voxel models
         private readonly Dictionary<string, SpriteTexture> _voxelIcons = new Dictionary<string, SpriteTexture>();
@@ -76,7 +77,7 @@ namespace Utopia.Entities
             _d3DEngine = d3DEngine;
             _modelManager = modelManager;
             _visualWorldParameters = visualWorldParameters;
-
+            _iconIndexes = new Dictionary<byte, byte>();
             //if(Utopia.UtopiaRender.LCDefferedModeLvl !=1) this.IsDefferedLoadContent = true;
         }
 
@@ -171,7 +172,7 @@ namespace Utopia.Entities
             {
                 texture = _iconTextureArray;
                 var cubeId = ((CubeResource)item).CubeId;
-                textureArrayIndex = cubeId - 1;
+                textureArrayIndex = _iconIndexes[cubeId];
                 return;
             }
             else if (item is Item)
@@ -573,6 +574,7 @@ namespace Utopia.Entities
                 }
 
                 createdIconsTexture.Add(tex2d);
+                _iconIndexes.Add(profile.Id, (byte)(createdIconsTexture.Count - 1));
             }
 
             //Reset device Default render target
