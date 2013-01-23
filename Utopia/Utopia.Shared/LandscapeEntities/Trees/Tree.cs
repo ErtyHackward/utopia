@@ -8,7 +8,7 @@ using SharpDX;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 
-namespace Utopia.Shared.LandscapeEntities
+namespace Utopia.Shared.LandscapeEntities.Trees
 {
     public class TreeGenerator
     {
