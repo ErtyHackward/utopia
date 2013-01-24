@@ -7,6 +7,7 @@ using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using System;
 using System.Diagnostics;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -44,6 +45,7 @@ namespace Utopia.Worlds.Chunks
         public override void FTSUpdate(GameTime timeSpend)
         {
             PlayerDisplacementChunkEvents();
+            HandlingNewChunkLandscapeEntities();
 
             // make chunks pop Up
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
@@ -106,6 +108,37 @@ namespace Utopia.Worlds.Chunks
         private void IntilializeUpdateble()
         {
             _chunkCreationTrigger = (VisualWorldParameters.WorldVisibleSize.X / 2) - (1 * AbstractChunk.ChunkSize.X);
+        }
+
+        private System.Collections.Generic.List<LandscapeEntityChunkMesh> test = new System.Collections.Generic.List<LandscapeEntityChunkMesh>();
+        private void HandlingNewChunkLandscapeEntities()
+        {
+            _landscapeEntityManager.SetLock();
+            test.AddRange(_landscapeEntityManager.GetNew());
+            _landscapeEntityManager.ReleaseLock();
+
+            foreach (LandscapeEntityChunkMesh data in test)
+            {
+                //To do in thread !
+                //1 Check if chunk is in working range or not => TODO
+                var chunk = GetChunkFromChunkCoord(data.ChunkLocation.X, data.ChunkLocation.Y);
+                if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
+                {
+                    Console.WriteLine(data.ChunkLocation);
+
+                    foreach (var block in data.Blocks)
+                    {
+                        chunk.BlockData.SetBlockWithoutEvents(block.WorldPosition, (byte)1);
+                    }
+
+                    //Change chunk State !
+                    chunk.State = ChunkState.LandscapeCreated;
+                    data.Blocks.Clear();
+                }
+            }
+
+            test.RemoveAll(x => x.Blocks.Count == 0);
+
         }
 
         private void ChunkUpdateManager()

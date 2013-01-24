@@ -233,6 +233,12 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityManager.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityChunkMesh.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityParser.cs" />
+    <Compile Include="LandscapeEntities\Trees\Tree.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeTemplate.cs" />
     <Compile Include="Net\Messages\ITimeStampedMsg.cs" />
     <Compile Include="Net\Messages\RequestDateTimeSyncMessage.cs" />
     <Compile Include="Net\Web\ClientWebApi.cs" />
@@ -244,6 +250,7 @@
     <Compile Include="Net\Web\WebEventArgs.cs" />
     <Compile Include="Sounds\IUtopiaSoundSource.cs" />
     <Compile Include="Sounds\TimeOfDaySound.cs" />
+    <Compile Include="Structs\Landscape\BlockWithPosition.cs" />
     <Compile Include="Structs\Landscape\TerraCubeResult.cs" />
     <Compile Include="Tools\BinarySerializer\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
@@ -388,6 +395,7 @@
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\SurfaceCtrl.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\WorldCtrl.cs" />
+    <Compile Include="World\Processors\Utopia\LandscapeEntities.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
