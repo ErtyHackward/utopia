@@ -125,7 +125,7 @@ namespace Utopia.Worlds.Chunks
                 if (GetSafeChunk(data.ChunkLocation.X * AbstractChunk.ChunkSize.X, data.ChunkLocation.Y * AbstractChunk.ChunkSize.Z, out chunk))
                 {
 
-                    if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
+                    if (chunk.State == ChunkState.DisplayInSyncWithMeshes && chunk.SurroundingChunksMinimumState(ChunkState.DisplayInSyncWithMeshes))
                     {
                         logger.Warn("New chunk entity mesh received for rendering {0}", data.ChunkLocation);
 
@@ -135,6 +135,12 @@ namespace Utopia.Worlds.Chunks
                         }
 
                         //Change chunk State !
+                        foreach (var c in chunk.SurroundingChunks)
+                        {
+                            c.IsOutsideLightSourcePropagated = false;
+                            //c.State = ChunkState.InnerLightsSourcePropagated;
+                        }
+
                         chunk.State = ChunkState.LandscapeCreated;
                         data.Blocks.Clear();
                     }
