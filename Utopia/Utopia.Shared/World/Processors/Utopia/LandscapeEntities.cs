@@ -330,7 +330,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //{
             //    PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
             //}
-            if (chunk.Position == new Vector2I(0, 2))
+            if (chunk.Position == new Vector2I(3, 2))
                 PopulateChunkWithTree(cursor, chunk, columndInfo, rnd);
 
         }
