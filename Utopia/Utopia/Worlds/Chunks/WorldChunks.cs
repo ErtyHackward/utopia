@@ -369,7 +369,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk was found</returns>
         public bool GetSafeChunk(int X, int Z, out VisualChunk chunk)
         {
-            if (X < VisualWorldParameters.WorldRange.Position.X || X > VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Position.Z || Z > VisualWorldParameters.WorldRange.Max.Z)
+            if (X < VisualWorldParameters.WorldRange.Position.X || X >= VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Position.Z || Z >= VisualWorldParameters.WorldRange.Max.Z)
             {
                 chunk = null;
                 return false;

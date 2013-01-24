@@ -56,7 +56,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Angle = 35,
                 Iteration = 4,
                 RandomeLevel = 0,
-                TrunkType = TrunkType.Single,
+                TrunkType = TrunkType.Double,
                 SmallBranches = true,
                 FoliageGenerationStart = 2
             });

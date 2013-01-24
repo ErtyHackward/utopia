@@ -131,7 +131,7 @@ namespace Utopia.Worlds.Chunks
 
                         foreach (var block in data.Blocks)
                         {
-                            chunk.BlockData.SetBlockWithoutEvents(block.WorldPosition, (byte)1);
+                            chunk.BlockData.SetBlockWithoutEvents(block.WorldPosition, block.BlockId);
                         }
 
                         //Change chunk State !
