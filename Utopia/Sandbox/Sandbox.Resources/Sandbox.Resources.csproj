@@ -793,14 +793,8 @@
     <None Include="TexturesPacks\Default\AnimatedTextures\ArrayAnimatedTextures.dds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\BiomesColors\ArrayBiomesColors.dds">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="TexturesPacks\Default\Gui\Crosshair.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Particules\ArrayParticules.dds">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TexturesPacks\Default\SkyDome\moon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -810,9 +804,6 @@
     </None>
     <None Include="TexturesPacks\Default\SkyDome\skyText.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Terran\ArrayTerran.dds">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TexturesPacks\Default\Terran\ct01_Stone.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
