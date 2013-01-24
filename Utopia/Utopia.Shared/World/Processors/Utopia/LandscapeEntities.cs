@@ -337,6 +337,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         }
 
+        private int last = 0;
         private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ChunkColumnInfo[] columndInfo, FastRandom rnd)
         {
             //Get Rnd chunk Location.
@@ -351,7 +352,9 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //Generate Tree mesh !
             //TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
-            TreeTemplate treeType = _treeTemplates[1];
+            TreeTemplate treeType = _treeTemplates[last];
+            last++;
+            if(last >= _treeTemplates.Count) last = 0;
 
             foreach (LandscapeEntityChunkMesh chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType)))
             {
