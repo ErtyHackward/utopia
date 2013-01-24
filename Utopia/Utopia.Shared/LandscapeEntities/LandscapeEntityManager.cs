@@ -60,29 +60,26 @@ namespace Utopia.Shared.LandscapeEntities
             return result;
         }
 
-        public void SetLock()
+        List<LandscapeEntityChunkMesh> _newList = new List<LandscapeEntityChunkMesh>();
+        public List<LandscapeEntityChunkMesh> GetNew()
         {
-            System.Threading.Monitor.Enter(_dicoSync);
-        }
-
-        public void ReleaseLock()
-        {
-            System.Threading.Monitor.Exit(_dicoSync);
-        }
-
-        public IEnumerable<LandscapeEntityChunkMesh> GetNew()
-        {
-            while (_newEntities.Count > 0)
+            _newList.Clear();
+            if (_newEntities.Count == 0) return _newList;
+            lock (_dicoSync)
             {
-                var chunkEntities = _newEntities.Pop();
-                if (chunkEntities.isProcessed == false)
+                while (_newEntities.Count > 0)
                 {
-                    foreach (var entity in chunkEntities.Collection)
+                    var chunkEntities = _newEntities.Pop();
+                    if (chunkEntities.isProcessed == false)
                     {
-                        yield return entity;
+                        foreach (var entity in chunkEntities.Collection)
+                        {
+                            _newList.Add(entity);
+                        }
                     }
                 }
             }
+            return _newList;
         }
         #endregion
 

@@ -14,11 +14,11 @@ namespace S33M3DXEngine.Threading
     public static class ThreadsManager
     {
         #region Private Variables
-        private static QueuedTaskScheduler _monoConcurrencyTaskSheduler;
-        private static QueuedTaskScheduler _mainTaskSheduler;
-        private static TaskScheduler _lowPrioritySchedduler;
-        private static TaskScheduler _normalPrioritySchedduler;
-        private static TaskScheduler _highPrioritySchedduler;
+        public static QueuedTaskScheduler _monoConcurrencyTaskSheduler;
+        public static QueuedTaskScheduler _mainTaskSheduler;
+        public static TaskScheduler _lowPrioritySchedduler;
+        public static TaskScheduler _normalPrioritySchedduler;
+        public static TaskScheduler _highPrioritySchedduler;
         private static int _totThread;
         private static bool _isBoostMode;
         #endregion
@@ -35,7 +35,7 @@ namespace S33M3DXEngine.Threading
             {
                 if (value == ThreadsManager._isBoostMode) return;
                 ThreadsManager._isBoostMode = value;
-                CreateTaskScheduler();
+                //CreateTaskScheduler();
             }
         }
         #endregion
@@ -136,7 +136,8 @@ namespace S33M3DXEngine.Threading
             }
             //We will never start more thread than the number of Virutal processor on the computer !
             int nbrThreads = ThreadsManager._isBoostMode ? _totThread + 4 : _totThread;
-            _mainTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, nbrThreads);
+            _mainTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, 6);
+
             //Create the Priority queues
             _highPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(0);
             _normalPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(1);
