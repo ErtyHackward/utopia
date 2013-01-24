@@ -52,6 +52,7 @@ using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Sandbox.Client.Components.GUI;
 using Utopia.Sounds;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Sandbox.Client.States
 {
@@ -171,6 +172,8 @@ namespace Sandbox.Client.States
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
             _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
 
+            var landscapeEntityManager = _ioc.Get<LandscapeEntityManager>();
+
             IWorldProcessor processor = null;
             switch (clientSideworldParam.Configuration.WorldProcessor)
             {
@@ -178,7 +181,7 @@ namespace Sandbox.Client.States
                     processor = new FlatWorldProcessor();
                     break;
                 case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+                    processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"), landscapeEntityManager);
                     break;
                 default:
                     break;

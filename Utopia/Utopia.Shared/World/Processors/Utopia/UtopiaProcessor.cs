@@ -15,6 +15,7 @@ using Utopia.Shared.World.Processors.Utopia.ClimateFct;
 using System.Linq;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -28,6 +29,10 @@ namespace Utopia.Shared.World.Processors.Utopia
         private int _worldGeneratedHeight = 128;
         private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
+        private LandscapeEntityManager _landscapeEntityManager;
+
+        //Landscape generators
+        private LandscapeEntities _landscapeEntities;
         #endregion
 
         #region Public Properties
@@ -47,13 +52,15 @@ namespace Utopia.Shared.World.Processors.Utopia
         }
         #endregion
 
-        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory)
+        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory, LandscapeEntityManager landscapeEntityManager)
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;
             _config = (UtopiaWorldConfiguration)worldParameters.Configuration;
             _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
+            _landscapeEntityManager = landscapeEntityManager;
+            _landscapeEntities = new LandscapeEntities(_landscapeEntityManager);
         }
 
         public void Dispose()
@@ -454,9 +461,12 @@ namespace Utopia.Shared.World.Processors.Utopia
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
 
+            //Add LandscapeEntities to the chunk
+            _landscapeEntities.GenerateChunkItems(dataCursor, chunk, masterBiome, columnInfo, chunkRnd);      
+
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
-            masterBiome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+            //masterBiome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
             masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
         }
 

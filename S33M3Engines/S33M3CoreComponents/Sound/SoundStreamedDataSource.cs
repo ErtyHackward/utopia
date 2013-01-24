@@ -92,7 +92,10 @@ namespace S33M3CoreComponents.Sound
         public void StartVoiceDataFetching(ISoundVoice voice)
         {
             if (_fetchingThread != null &&
-                _fetchingThread.Status == TaskStatus.Running
+                _fetchingThread.Status != TaskStatus.RanToCompletion &&
+                _fetchingThread.Status != TaskStatus.Faulted &&
+                _fetchingThread.Status != TaskStatus.Canceled &&
+                _fetchingThread.Status != TaskStatus.Created
                 )
             {
                 //logger.Warn("Cannot stream the same resource as streaming source for 2 differents voices !! Previously playing sound will be stopped");

@@ -33,6 +33,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Ninject;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -91,7 +92,7 @@ namespace Utopia.Worlds.Chunks
         private VoxelModelManager _voxelModelManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private UtopiaProcessorParams _utopiaProcessorParam;
-
+        private LandscapeEntityManager _landscapeEntityManager;
         /// <summary>
         /// List of chunks that still _slowly_ appearing
         /// </summary>
@@ -166,7 +167,8 @@ namespace Utopia.Worlds.Chunks
                            SharedFrameCB sharedFrameCB,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
-                           IChunkEntityImpactManager chunkEntityImpactManager
+                           IChunkEntityImpactManager chunkEntityImpactManager,
+                           LandscapeEntityManager landscapeEntityManager
             )
         {
             _server = server;
@@ -190,6 +192,7 @@ namespace Utopia.Worlds.Chunks
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
+            _landscapeEntityManager = landscapeEntityManager;
 
             _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
 
