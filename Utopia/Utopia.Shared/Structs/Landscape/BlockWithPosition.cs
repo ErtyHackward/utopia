@@ -10,5 +10,6 @@ namespace Utopia.Shared.Structs.Landscape
     {
         public byte BlockId;
         public Vector3I WorldPosition;
+        public Vector3I ChunkPosition;
     }
 }
