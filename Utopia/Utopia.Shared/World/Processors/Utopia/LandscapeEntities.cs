@@ -14,6 +14,8 @@ namespace Utopia.Shared.World.Processors.Utopia
 {
     public class LandscapeEntities
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         private TreeLSystem _treeGenerator = new TreeLSystem();
         private List<TreeTemplate> _treeTemplates = new List<TreeTemplate>();
@@ -364,6 +366,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 }
                 else
                 {
+                    logger.Warn("New chunk entity in the wild {0}", chunkMesh.ChunkLocation);
                     //Send this Mesh to the landscape entity Manager ! This part of the mesh must be constructed inside another chunk !
                     _landscapeEntityManager.Add(chunkMesh);
                 }

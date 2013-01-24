@@ -39,8 +39,8 @@ namespace Utopia.Shared.LandscapeEntities
                 {
                     entityChunkList = new EntityChunkMeshCollection();
                     _pendingLandscapeEntities.Add(landscapeEntity.ChunkLocation, entityChunkList);
-                    _newEntities.Push(entityChunkList);
                 }
+                _newEntities.Push(entityChunkList);
                 entityChunkList.Collection.Add(landscapeEntity);
             }
         }

@@ -120,20 +120,24 @@ namespace Utopia.Worlds.Chunks
             foreach (LandscapeEntityChunkMesh data in test)
             {
                 //To do in thread !
-                //1 Check if chunk is in working range or not => TODO
-                var chunk = GetChunkFromChunkCoord(data.ChunkLocation.X, data.ChunkLocation.Y);
-                if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
+                //var chunk = GetChunkFromChunkCoord(data.ChunkLocation.X, data.ChunkLocation.Y);
+                VisualChunk chunk;
+                if (GetSafeChunk(data.ChunkLocation.X * AbstractChunk.ChunkSize.X, data.ChunkLocation.Y * AbstractChunk.ChunkSize.Z, out chunk))
                 {
-                    Console.WriteLine(data.ChunkLocation);
 
-                    foreach (var block in data.Blocks)
+                    if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
                     {
-                        chunk.BlockData.SetBlockWithoutEvents(block.WorldPosition, (byte)1);
-                    }
+                        logger.Warn("New chunk entity mesh received for rendering {0}", data.ChunkLocation);
 
-                    //Change chunk State !
-                    chunk.State = ChunkState.LandscapeCreated;
-                    data.Blocks.Clear();
+                        foreach (var block in data.Blocks)
+                        {
+                            chunk.BlockData.SetBlockWithoutEvents(block.WorldPosition, (byte)1);
+                        }
+
+                        //Change chunk State !
+                        chunk.State = ChunkState.LandscapeCreated;
+                        data.Blocks.Clear();
+                    }
                 }
             }
 
