@@ -462,7 +462,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
 
             //Add LandscapeEntities to the chunk
-            _landscapeEntities.GenerateChunkItems(dataCursor, chunk, masterBiome, columnInfo, chunkRnd);      
+            //_landscapeEntities.GenerateChunkItems(dataCursor, chunk, masterBiome, columnInfo, chunkRnd);      
 
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);

@@ -45,7 +45,6 @@ namespace Utopia.Worlds.Chunks
         public override void FTSUpdate(GameTime timeSpend)
         {
             PlayerDisplacementChunkEvents();
-            HandlingNewChunkLandscapeEntities();
 
             // make chunks pop Up
             for (int i = _transparentChunks.Count - 1; i >= 0; i--)
@@ -108,47 +107,6 @@ namespace Utopia.Worlds.Chunks
         private void IntilializeUpdateble()
         {
             _chunkCreationTrigger = (VisualWorldParameters.WorldVisibleSize.X / 2) - (1 * AbstractChunk.ChunkSize.X);
-        }
-
-        private System.Collections.Generic.List<LandscapeEntityChunkMesh> test = new System.Collections.Generic.List<LandscapeEntityChunkMesh>();
-        private void HandlingNewChunkLandscapeEntities()
-        {
-            _landscapeEntityManager.SetLock();
-            test.AddRange(_landscapeEntityManager.GetNew());
-            _landscapeEntityManager.ReleaseLock();
-
-            foreach (LandscapeEntityChunkMesh data in test)
-            {
-                //To do in thread !
-                //var chunk = GetChunkFromChunkCoord(data.ChunkLocation.X, data.ChunkLocation.Y);
-                VisualChunk chunk;
-                if (GetSafeChunk(data.ChunkLocation.X * AbstractChunk.ChunkSize.X, data.ChunkLocation.Y * AbstractChunk.ChunkSize.Z, out chunk))
-                {
-
-                    if (chunk.State == ChunkState.DisplayInSyncWithMeshes && chunk.SurroundingChunksMinimumState(ChunkState.DisplayInSyncWithMeshes))
-                    {
-                        logger.Warn("New chunk entity mesh received for rendering {0}", data.ChunkLocation);
-
-                        foreach (var block in data.Blocks)
-                        {
-                            chunk.BlockData.SetBlockWithoutEvents(block.WorldPosition, block.BlockId);
-                        }
-
-                        //Change chunk State !
-                        foreach (var c in chunk.SurroundingChunks)
-                        {
-                            c.IsOutsideLightSourcePropagated = false;
-                            //c.State = ChunkState.InnerLightsSourcePropagated;
-                        }
-
-                        chunk.State = ChunkState.LandscapeCreated;
-                        data.Blocks.Clear();
-                    }
-                }
-            }
-
-            test.RemoveAll(x => x.Blocks.Count == 0);
-
         }
 
         private void ChunkUpdateManager()
