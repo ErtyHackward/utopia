@@ -20,6 +20,7 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Interfaces;
 using SharpDX;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
@@ -35,6 +36,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private IChunkStorageManager _chunkStorageManager;
         private TimerManager.GameTimer _timer;
         private VoxelModelManager _voxelModelManager;
+        private LandscapeEntityManager _landscapeEntityManager;
         #endregion
 
 
@@ -49,7 +51,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         public EntityFactory EntityFactory { get; set; }
 
-        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager, VoxelModelManager voxelModelManager)
+        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager, VoxelModelManager voxelModelManager, LandscapeEntityManager landscapeEntityManager)
         {
             _chunkStorageManager = chunkStorageManager;
             _voxelModelManager = voxelModelManager;
@@ -57,6 +59,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             _server = server;
             _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
             _server.MessageChunkData += ServerConnection_MessageChunkData;
+            _landscapeEntityManager = landscapeEntityManager;
             
             //Add a new Timer trigger
             _timer = timerManager.AddTimer(0, 10000);
@@ -270,6 +273,20 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void CreateLandscapeFromGenerator(VisualChunk visualChunk)
         {
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
+
+            //Get landscape entity for the chunk
+            var chunkLandscapeEntities = _landscapeEntityManager.Get(generatedChunk.Position);
+            if (chunkLandscapeEntities != null)
+            {
+                //Add information into the generated raw lanscape
+                foreach (var entity in chunkLandscapeEntities.Collection)
+                {
+                    foreach (var block in entity.Blocks)
+                    {
+                        generatedChunk.BlockData.SetBlock(block.ChunkPosition, block.BlockId);
+                    }
+                }
+            }
 
             //Assign The Block generated to the Chunk
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes(), generatedChunk.BlockData.GetTags());
