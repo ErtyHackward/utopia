@@ -31,8 +31,9 @@ namespace Utopia.Shared.LandscapeEntities
                     chunks.Add(ChunkLocation, chunkMesh);
                 }
                 //Tranform World position to chunk position
-                localData.WorldPosition.X -= (ChunkLocation.X * AbstractChunk.ChunkSize.X);
-                localData.WorldPosition.Z -= (ChunkLocation.Y * AbstractChunk.ChunkSize.Z);
+                localData.ChunkPosition.X = localData.WorldPosition.X - (ChunkLocation.X * AbstractChunk.ChunkSize.X);
+                localData.ChunkPosition.Y = localData.WorldPosition.Y;
+                localData.ChunkPosition.Z = localData.WorldPosition.Z - (ChunkLocation.Y * AbstractChunk.ChunkSize.Z);
                 chunkMesh.Blocks.Add(localData);
             }
 

@@ -17,13 +17,16 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Variables
         private TreeLSystem _treeGenerator = new TreeLSystem();
         private List<TreeTemplate> _treeTemplates = new List<TreeTemplate>();
+        private LandscapeEntityManager _landscapeEntityManager;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public LandscapeEntities()
+        public LandscapeEntities(LandscapeEntityManager landscapeEntityManager)
         {
+            _landscapeEntityManager = landscapeEntityManager;
+
 
             _treeTemplates.Add(new TreeTemplate()
             {
@@ -310,7 +313,6 @@ namespace Utopia.Shared.World.Processors.Utopia
 
 
         }
-        private int last = 0;
 
         #region Public Methods
         public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, ChunkColumnInfo[] columndInfo, FastRandom chunkRnd)
@@ -328,7 +330,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //{
             //    PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
             //}
-            if (chunk.Position == new Vector2I(1, 0))
+            if (chunk.Position == new Vector2I(0, 2))
                 PopulateChunkWithTree(cursor, chunk, columndInfo, rnd);
 
         }
@@ -347,18 +349,15 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //Generate Tree mesh !
             //TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
-            TreeTemplate treeType = _treeTemplates[last];
-            last++;
-            if(last >= _treeTemplates.Count) last = 0;
+            TreeTemplate treeType = _treeTemplates[1];
 
-
-            foreach (var chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType)))
+            foreach (LandscapeEntityChunkMesh chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType)))
             {
                 if (chunkMesh.ChunkLocation == chunk.Position)
                 {
                     foreach (var block in chunkMesh.Blocks)
                     {
-                        cursor.SetInternalPosition(block.WorldPosition);
+                        cursor.SetInternalPosition(block.ChunkPosition);
                         byte blockId = cursor.Read();
                         if (blockId == UtopiaProcessorParams.CubeId.Air) cursor.Write(block.BlockId);
                     }
@@ -366,6 +365,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 else
                 {
                     //Send this Mesh to the landscape entity Manager ! This part of the mesh must be constructed inside another chunk !
+                    _landscapeEntityManager.Add(chunkMesh);
                 }
             }
         }

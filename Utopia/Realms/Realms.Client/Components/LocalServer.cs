@@ -72,7 +72,7 @@ namespace Realms.Client.Components
                     processor = new FlatWorldProcessor();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(worldParam, _serverFactory);
+                    processor = new UtopiaProcessor(worldParam, _serverFactory, new Utopia.Shared.LandscapeEntities.LandscapeEntityManager());
                     break;
                 default:
                     break;

@@ -57,6 +57,7 @@ using S33M3CoreComponents.Sound;
 using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Utopia.Sounds;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Realms.Client
 {
@@ -209,6 +210,7 @@ namespace Realms.Client
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
+            _iocContainer.Bind<LandscapeEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);            //Chunk "Wrapping" inside the big Array
             //=============================================================
 
             //Entities related stuff ====================================================

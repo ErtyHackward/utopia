@@ -233,6 +233,7 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityManager.cs" />
     <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityChunkMesh.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityParser.cs" />
