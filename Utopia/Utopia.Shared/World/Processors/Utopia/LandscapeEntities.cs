@@ -14,6 +14,8 @@ namespace Utopia.Shared.World.Processors.Utopia
 {
     public class LandscapeEntities
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         private TreeLSystem _treeGenerator = new TreeLSystem();
         private List<TreeTemplate> _treeTemplates = new List<TreeTemplate>();
@@ -330,7 +332,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //{
             //    PopulateChunkWithTree(cursor, chunk, biome.BiomeTrees, columndInfo, rnd);
             //}
-            if (chunk.Position == new Vector2I(0, 2))
+            if (chunk.Position == new Vector2I(3, 2))
                 PopulateChunkWithTree(cursor, chunk, columndInfo, rnd);
 
         }
@@ -340,8 +342,6 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Get Rnd chunk Location.
             int x = rnd.Next(0, 16);
             int z = rnd.Next(0, 16);
-            x = 7;
-            z = 7;
             int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight + 1;
             x += (chunk.Position.X * AbstractChunk.ChunkSize.X);
             z += (chunk.Position.Y * AbstractChunk.ChunkSize.Z);
@@ -363,7 +363,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                     }
                 }
                 else
-                {
+                {                    
+                    logger.Warn("_landscapeEntityManager add chunk {0}", chunkMesh.ChunkLocation);
                     //Send this Mesh to the landscape entity Manager ! This part of the mesh must be constructed inside another chunk !
                     _landscapeEntityManager.Add(chunkMesh);
                 }

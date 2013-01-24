@@ -8,6 +8,8 @@ using S33M3Resources.Structs;
 using System;
 using System.Diagnostics;
 using Utopia.Shared.LandscapeEntities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -113,18 +115,15 @@ namespace Utopia.Worlds.Chunks
         private System.Collections.Generic.List<LandscapeEntityChunkMesh> test = new System.Collections.Generic.List<LandscapeEntityChunkMesh>();
         private void HandlingNewChunkLandscapeEntities()
         {
-            _landscapeEntityManager.SetLock();
             test.AddRange(_landscapeEntityManager.GetNew());
-            _landscapeEntityManager.ReleaseLock();
 
             foreach (LandscapeEntityChunkMesh data in test)
             {
                 //To do in thread !
                 //1 Check if chunk is in working range or not => TODO
                 var chunk = GetChunkFromChunkCoord(data.ChunkLocation.X, data.ChunkLocation.Y);
-                if (chunk.State == ChunkState.DisplayInSyncWithMeshes)
+                if (chunk.State == ChunkState.DisplayInSyncWithMeshes && chunk.ThreadStatus == ThreadsManager.ThreadStatus.Idle)
                 {
-                    Console.WriteLine(data.ChunkLocation);
 
                     foreach (var block in data.Blocks)
                     {
@@ -133,12 +132,38 @@ namespace Utopia.Worlds.Chunks
 
                     //Change chunk State !
                     chunk.State = ChunkState.LandscapeCreated;
+                    logger.Warn("Chunk {0}, Id : {1} State set {2}", data.ChunkLocation, chunk.ChunkID, chunk.State);
+
                     data.Blocks.Clear();
                 }
             }
 
             test.RemoveAll(x => x.Blocks.Count == 0);
+        }
 
+        private class TaskMeta
+        {
+            public Task task;
+            public Vector2I ChunkPosi;
+            public string From;
+        }
+
+        private static List<TaskMeta> taskList = new List<TaskMeta>();
+        private void ChunkCheck(VisualChunk chunk, string from, System.Threading.Tasks.Task task = null )
+        {
+            if (chunk.ChunkPosition == new Vector2I(3, 3) ||
+               chunk.ChunkPosition == new Vector2I(2, 2) ||
+               chunk.ChunkPosition == new Vector2I(4, 2) ||
+               chunk.ChunkPosition == new Vector2I(2, 1) ||
+               chunk.ChunkPosition == new Vector2I(2, 3) ||
+               chunk.ChunkPosition == new Vector2I(3, 1))
+            {
+                if (task != null)
+                {
+                    taskList.Add(new TaskMeta() { task = task, From = from, ChunkPosi = chunk.ChunkPosition });
+                }
+                logger.Warn("Chunk {0}, Id : {1} State change set {2} Method : {3}", chunk.ChunkPosition, chunk.ChunkID, chunk.State, from);
+            }
         }
 
         private void ChunkUpdateManager()
@@ -153,8 +178,9 @@ namespace Utopia.Worlds.Chunks
         //Will create new chunks based on chunks with state = Empty
         private void CreateNewChunk()
         {
+
             //Process each chunk that are in Empty state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty || x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 VisualChunk localChunk = chunk;
 
@@ -162,25 +188,29 @@ namespace Utopia.Worlds.Chunks
                 localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
 #if DEBUG
                 localChunk.ThreadLockedBy = "CreateNewChunk";
-#endif
-                //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
-                S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(localChunk));
+#endif               
+                ChunkCheck(chunk, "CreateNewChunk before ASYNC", S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkCreationThreadedSteps_Threaded(localChunk)));
             }
         }
 
         //Chunk creation steps
         //The process done isnight this step is impacting only the chunk that need to be creation
+
+        private static int nbr = 0;
         private void ChunkCreationThreadedSteps_Threaded(VisualChunk chunk)
         {
-
+            nbr++;
 #if PERFTEST
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("ChunkCreationThreadedSteps_Threaded Started " + chunk.ChunkID);
 #endif
 
             //Create the landscape, by updating the "Big Array" area under the chunk
-            if(chunk.State == ChunkState.Empty) _landscapeManager.CreateLandScape(chunk);
+            if (chunk.State == ChunkState.Empty)
+            {
+                _landscapeManager.CreateLandScape(chunk);
+            }
 
-            //Was my landscape Creation, if not it means that the chunk has been requested to the server, waiting for server answer
+            //Was my landscape Created, if not it means that the chunk has been requested to the server, waiting for server answer
             if (chunk.State == ChunkState.LandscapeCreated)
             {
                 //Create Inner chunk Light sources
@@ -191,11 +221,21 @@ namespace Utopia.Worlds.Chunks
             }
 
             chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
+            nbr--;
         }
 
         //Will take the newly created chunks || the chunk that didn't had the outside light propagate (Border chunk), and propagate the light from the surroundings chunks
         private void PropagateOuterChunkLights()
         {
+
+            //foreach (var c in SortedChunks)
+            //{
+            //    if (c.ChunkPosition == new Vector2I(3, 3))
+            //    {
+            //        Console.WriteLine(c.State);
+            //    }
+            //}
+
             //Process each chunk that are in InnerLightsSourcePropagated state, and not being currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x =>
                                                        (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false && x.State >= ChunkState.InnerLightsSourcePropagated)) &&
@@ -211,8 +251,7 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
                     localChunk.ThreadLockedBy = "PropagateOuterChunkLights";
 #endif
-                    //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
-                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(localChunk));
+                    ChunkCheck(chunk, "PropagateOuterChunkLights BEFORE ASYNC", S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(localChunk)));
                 }
             }
         }
@@ -223,7 +262,6 @@ namespace Utopia.Worlds.Chunks
 #if PERFTEST
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("ChunkOuterLightPropagation_Threaded Started " + chunk.ChunkID);
 #endif
-
             _lightingManager.PropagateOutsideChunkLightSources(chunk);
             chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
             //The state will always be OuterLightSourcesProcessed, but the logic could not be implementated if the chunk was a Border chunk. In this case its 
@@ -245,7 +283,7 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
                     localChunk.ThreadLockedBy = "CreateChunkMeshes";
 #endif
-                    S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk), localChunk.UpdateOrder > 0 ? ThreadsManager.ThreadTaskPriority.High : ThreadsManager.ThreadTaskPriority.Normal);
+                    ChunkCheck(chunk, "CreateChunkMeshes BEFORE ASYNC", S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CreateChunkMeshes_Threaded(localChunk), localChunk.UpdateOrder > 0 ? ThreadsManager.ThreadTaskPriority.High : ThreadsManager.ThreadTaskPriority.Normal));
                 }
             }
         }
@@ -267,13 +305,15 @@ namespace Utopia.Worlds.Chunks
         //Maybe it will be worth to check is a limit of chunk by update must be placed (But this will slow down chunk creation time)
         private void SendMeshesToGC(int maximumUpdateOrderPossible)
         {
-            int nbrchunksSend2GC = 0;            
+            int nbrchunksSend2GC = 0;
 
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
             foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged &&
                                                              x.ThreadStatus == ThreadsManager.ThreadStatus.Idle &&
                                                              x.UpdateOrder == maximumUpdateOrderPossible))
             {
+                ChunkCheck(chunk, "SendCubeMeshesToBuffers");
+
                 chunk.UpdateOrder = 0;
                 chunk.SendCubeMeshesToBuffers();
                 nbrchunksSend2GC++;
