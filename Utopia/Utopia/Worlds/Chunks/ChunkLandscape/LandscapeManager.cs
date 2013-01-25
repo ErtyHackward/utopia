@@ -274,20 +274,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         {
             GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
 
-            //Get landscape entity for the chunk
-            var chunkLandscapeEntities = _landscapeEntityManager.Get(generatedChunk.Position);
-            if (chunkLandscapeEntities != null)
-            {
-                //Add information into the generated raw lanscape
-                foreach (var entity in chunkLandscapeEntities.Collection)
-                {
-                    foreach (var block in entity.Blocks)
-                    {
-                        generatedChunk.BlockData.SetBlock(block.ChunkPosition, block.BlockId);
-                    }
-                }
-            }
-
             //Assign The Block generated to the Chunk
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes(), generatedChunk.BlockData.GetTags());
             visualChunk.BlockData.ColumnsInfo = generatedChunk.BlockData.ColumnsInfo;

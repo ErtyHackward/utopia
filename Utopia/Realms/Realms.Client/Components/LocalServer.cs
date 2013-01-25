@@ -20,6 +20,7 @@ using Utopia.Shared.World.Processors.Utopia;
 using System.Linq;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Realms.Client.Components
 {
@@ -33,6 +34,7 @@ namespace Realms.Client.Components
         private EntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
+        private LandscapeEntityManager _landscapeEntityManager;
 
         public bool IsDisposed
         {
@@ -40,9 +42,10 @@ namespace Realms.Client.Components
         }
 
 
-        public LocalServer(RuntimeVariables vars)
+        public LocalServer(RuntimeVariables vars, LandscapeEntityManager landscapeEntityManager)
         {
             _vars = vars;
+            _landscapeEntityManager = landscapeEntityManager;
         }
 
         public void InitSinglePlayerServer(WorldParameters worldParam)
@@ -72,7 +75,7 @@ namespace Realms.Client.Components
                     processor = new FlatWorldProcessor();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(worldParam, _serverFactory, new Utopia.Shared.LandscapeEntities.LandscapeEntityManager());
+                    processor = new UtopiaProcessor(worldParam, _serverFactory, _landscapeEntityManager);
                     break;
                 default:
                     break;
@@ -89,7 +92,7 @@ namespace Realms.Client.Components
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
-
+            
             _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
 

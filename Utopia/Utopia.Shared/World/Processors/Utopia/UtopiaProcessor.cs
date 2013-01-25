@@ -61,6 +61,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
             _landscapeEntityManager = landscapeEntityManager;
             _landscapeEntities = new LandscapeEntities(_landscapeEntityManager);
+
+            landscapeEntityManager.Processor = this;
         }
 
         public void Dispose()
@@ -73,10 +75,14 @@ namespace Utopia.Shared.World.Processors.Utopia
             Range3I chunkWorldRange;
             generationRange.Foreach(pos =>
             {
+
                 //Get the chunk
                 GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
+
+                //Get the landscape Items for this chunk.
+                _landscapeEntityManager.Get(chunk.Position);
 
                 //Create a byte array that will receive the landscape generated
                 byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
@@ -104,6 +110,29 @@ namespace Utopia.Shared.World.Processors.Utopia
                 chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
+
+        /// <summary>
+        /// Specialy created to render quickl the landscape in order to be used by LandscapeItem Manager
+        /// </summary>
+        /// <param name="chunkBytes"></param>
+        /// <param name="ChunkPosition"></param>
+        /// <param name="chunkWorldRange"></param>
+        public void GenerateForLandscapeEntity(byte[] chunkBytes, Vector2I ChunkPosition, Range3I chunkWorldRange)
+        {
+            ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+            FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
+
+            chunkWorldRange = new Range3I()
+            {
+                Position = new Vector3I(ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, ChunkPosition.Y * AbstractChunk.ChunkSize.Z),
+                Size = AbstractChunk.ChunkSize
+            };
+
+            double[,] biomeMap;
+            GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
+            TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+        }
+
         #endregion
 
         #region Private Methods
