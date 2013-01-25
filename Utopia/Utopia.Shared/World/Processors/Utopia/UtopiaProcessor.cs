@@ -84,8 +84,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
-                //Get the landscape Items for this chun
-                LandscapeChunkBuffer landscapeEntities = _landscapeEntityManager.Get(chunk.Position);
+                //Get the landscape Items for this chunk
+                LandscapeChunkBuffer landscapeBuffer = _landscapeEntityManager.Get(chunk.Position);
 
                 //Create a byte array that will receive the landscape generated
                 byte[] chunkBytes;
@@ -98,7 +98,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     Size = AbstractChunk.ChunkSize
                 };
 
-                if (landscapeEntities.ColumnsInfoBuffer != null && landscapeEntities.chunkBytesBuffer != null)
+                if (landscapeBuffer.ColumnsInfoBuffer != null && landscapeBuffer.chunkBytesBuffer != null)
                 {
                     chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
                     columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
@@ -108,11 +108,11 @@ namespace Utopia.Shared.World.Processors.Utopia
                 }
                 else
                 {
-                    chunkBytes = landscapeEntities.chunkBytesBuffer;
-                    columnsInfo = landscapeEntities.ColumnsInfoBuffer;
+                    chunkBytes = landscapeBuffer.chunkBytesBuffer;
+                    columnsInfo = landscapeBuffer.ColumnsInfoBuffer;
                 }
 
-                InsertLandscapeEntities(chunkBytes, columnsInfo, landscapeEntities);
+                InsertLandscapeEntities(chunkBytes, columnsInfo, landscapeBuffer);
 
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
                 Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0 , chunk.Position.Y * AbstractChunk.ChunkSize.Z);
