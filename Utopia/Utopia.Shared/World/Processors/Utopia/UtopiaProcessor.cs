@@ -85,12 +85,12 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
                 //Get the landscape Items for this chun
-                LandscapeEntityChunkBuffer landscapeEntities = _landscapeEntityManager.Get(chunk.Position);
+                LandscapeChunkBuffer landscapeEntities = _landscapeEntityManager.Get(chunk.Position);
 
                 //Create a byte array that will receive the landscape generated
-                byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                byte[] chunkBytes;
                 //Create an array that wll receive the ColumnChunk Informations
-                ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+                ChunkColumnInfo[] columnsInfo;
 
                 chunkWorldRange = new Range3I()
                 {
@@ -98,9 +98,19 @@ namespace Utopia.Shared.World.Processors.Utopia
                     Size = AbstractChunk.ChunkSize
                 };
 
-                double[,] biomeMap;
-                GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
-                TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+                if (landscapeEntities.ColumnsInfoBuffer != null && landscapeEntities.chunkBytesBuffer != null)
+                {
+                    chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                    columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+                    double[,] biomeMap;
+                    GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
+                    TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+                }
+                else
+                {
+                    chunkBytes = landscapeEntities.chunkBytesBuffer;
+                    columnsInfo = landscapeEntities.ColumnsInfoBuffer;
+                }
 
                 InsertLandscapeEntities(chunkBytes, columnsInfo, landscapeEntities);
 
@@ -123,7 +133,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// <param name="chunkBytes"></param>
         /// <param name="ChunkPosition"></param>
         /// <param name="chunkWorldRange"></param>
-        public void GenerateForLandscapeEntity(byte[] chunkBytes, Vector2I ChunkPosition, out Biome biome, out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
+        public void GenerateForLandscapeEntity(Vector2I ChunkPosition, out Biome biome, out byte[] chunkBytes ,out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
         {
             Range3I chunkWorldRange = new Range3I()
             {
@@ -131,6 +141,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Size = AbstractChunk.ChunkSize
             };
 
+            chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
             columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
             chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
 
@@ -488,7 +499,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void InsertLandscapeEntities(byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, LandscapeEntityChunkBuffer landscapeEntities)
+        private void InsertLandscapeEntities(byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, LandscapeChunkBuffer landscapeEntities)
         {
             if (landscapeEntities.Entities == null) return;
 
