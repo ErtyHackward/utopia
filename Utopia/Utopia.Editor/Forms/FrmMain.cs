@@ -16,6 +16,7 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Tools;
+using Utopia.Shared.LandscapeEntities.Trees;
 
 namespace Utopia.Editor.Forms
 {
@@ -379,6 +380,16 @@ namespace Utopia.Editor.Forms
                 node.Tag = blockProfile;
             }
 
+            //Trees Landscape Entities
+            var LandEntitiesRootNode = tvMainCategories.Nodes["LandscapeEntities"];
+            var TreesRootNode = LandEntitiesRootNode.Nodes["Trees"];
+            TreesRootNode.Nodes.Clear();
+            foreach (var tree in _configuration.TreeTemplates)
+            {
+                var node = AddSubNode(TreesRootNode, tree.Name, tree, null);
+                node.ContextMenuStrip = contextMenuEntity;
+            }
+
             #region Sets
 
             var setsRootNode = tvMainCategories.Nodes["Container sets"];
@@ -487,13 +498,6 @@ namespace Utopia.Editor.Forms
                     return node1;
             }
 
-            foreach (TreeNode node1 in nodes)
-            {
-                var result = FindByTag(tag, node1);
-
-                if (result != null)
-                    return result;
-            }
 
             return null;
         }
@@ -525,10 +529,16 @@ namespace Utopia.Editor.Forms
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(recipe);
                     break;
+                case "Trees":
+                    var tree = new TreeTemplate() { Name = "Tree", Angle = 30, Iteration = 3, RandomLevel = 0 , IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
+                    _configuration.TreeTemplates.Add(tree);
+                    UpdateTree();
+                    tvMainCategories.SelectedNode = FindByTag(tree);
+                    break;
                 default:
                     break;
             }
-
+            if (tvMainCategories.SelectedNode == null) return;
             if (tvMainCategories.SelectedNode.Tag is string)
             {
                 AddEntity();
@@ -574,6 +584,9 @@ namespace Utopia.Editor.Forms
             else if (tag is Recipe)
             {
                 _configuration.Recipes.Remove((Recipe)tag);
+            } if (tag is TreeTemplate)
+            {
+                _configuration.TreeTemplates.Remove((TreeTemplate)tag);
             }
 
             tvMainCategories.SelectedNode.Remove();

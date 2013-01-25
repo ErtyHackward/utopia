@@ -12,6 +12,7 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Tools;
 using System.Linq;
+using Utopia.Shared.LandscapeEntities.Trees;
 
 namespace Utopia.Shared.Configuration
 {
@@ -130,6 +131,12 @@ namespace Utopia.Shared.Configuration
         /// </summary>
         [ProtoMember(13)]
         public List<Recipe> Recipes { get; set; }
+
+        /// <summary>
+        /// Get or sets Tree template, that will be added in the biome.
+        /// </summary>
+        [ProtoMember(14)]
+        public List<TreeTemplate> TreeTemplates { get; set; }
 
         #endregion
 
@@ -294,6 +301,7 @@ namespace Utopia.Shared.Configuration
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
             Recipes = new List<Recipe>();
+            TreeTemplates = new List<TreeTemplate>();
         }
 
         private void CreateDefaultValues()
