@@ -28,14 +28,14 @@ namespace Sandbox.Client.Components
     /// </summary>
     public class LocalServer : IDisposable
     {
-        private readonly RuntimeVariables _vars;
+        private readonly SandboxRuntimeVariables _vars;
         private Server _server;
         private EntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
-        private LandscapeEntityManager _landscapeEntityManager;
+        private LandscapeBufferManager _landscapeEntityManager;
 
-        public LocalServer(RuntimeVariables vars, LandscapeEntityManager landscapeEntityManager)
+        public LocalServer(SandboxRuntimeVariables vars, LandscapeBufferManager landscapeEntityManager)
         {
             _vars = vars;
             _landscapeEntityManager = landscapeEntityManager;

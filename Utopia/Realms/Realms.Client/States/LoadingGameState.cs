@@ -63,7 +63,7 @@ namespace Realms.Client.States
     public class LoadingGameState : GameState
     {
         private readonly IKernel _ioc;
-        private RuntimeVariables _vars;
+        private RealmRuntimeVariables _vars;
         
         public override string Name
         {
@@ -83,7 +83,7 @@ namespace Realms.Client.States
             if (PreviousGameState != this) GameComponents.Clear();
 
             var loading = _ioc.Get<LoadingComponent>();
-            _vars = _ioc.Get<RuntimeVariables>();
+            _vars = _ioc.Get<RealmRuntimeVariables>();
             
             AddComponent(loading); //Will "Mask" the Components being loaded.
             AddComponent(_ioc.Get<ServerComponent>());
@@ -172,7 +172,11 @@ namespace Realms.Client.States
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
             _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
 
-            var landscapeEntityManager = _ioc.Get<LandscapeEntityManager>();
+            var landscapeEntityManager = _ioc.Get<LandscapeBufferManager>();
+            FileInfo fi = new FileInfo(_vars.LocalDataBasePath);
+            string bufferPath = Path.Combine(fi.Directory.FullName, "LandscapeBuffer.proto");
+            landscapeEntityManager.SetBufferPath(bufferPath);
+            landscapeEntityManager.Deserialize();
 
             IWorldProcessor processor = null;
             switch (clientSideworldParam.Configuration.WorldProcessor)
