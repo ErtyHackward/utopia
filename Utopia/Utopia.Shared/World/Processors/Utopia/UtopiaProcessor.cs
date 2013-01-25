@@ -29,7 +29,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private int _worldGeneratedHeight = 128;
         private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
-        private LandscapeEntityManager _landscapeEntityManager;
+        private LandscapeBufferManager _landscapeEntityManager;
 
         //Landscape entities generators
         
@@ -54,7 +54,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         public LandscapeEntities LandscapeEntities { get; set; }
         #endregion
 
-        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory, LandscapeEntityManager landscapeEntityManager)
+        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory, LandscapeBufferManager landscapeEntityManager)
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;

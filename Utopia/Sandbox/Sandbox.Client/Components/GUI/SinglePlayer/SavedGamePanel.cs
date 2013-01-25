@@ -14,12 +14,12 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         #region Private variables
         private SandboxCommonResources _commonResources;
         private WorldParameters _currentWorldParameter;
-        private RuntimeVariables _vars;
+        private SandboxRuntimeVariables _vars;
         #endregion
 
         public bool NeedShowResults { get; set; }
 
-        public SavedGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, RuntimeVariables vars)
+        public SavedGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, SandboxRuntimeVariables vars)
         {
             _vars = vars;
             _currentWorldParameter = currentWorldParameter;

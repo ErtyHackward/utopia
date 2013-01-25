@@ -20,13 +20,13 @@ namespace Utopia.Shared.World.Processors.Utopia
         #region Private Variables
         private TreeLSystem _treeGenerator = new TreeLSystem();
         private List<TreeTemplate> _treeTemplates = new List<TreeTemplate>();
-        private LandscapeEntityManager _entityManager;
+        private LandscapeBufferManager _entityManager;
         #endregion
 
         #region Public Properties
         #endregion
 
-        public LandscapeEntities(LandscapeEntityManager entityManager)
+        public LandscapeEntities(LandscapeBufferManager entityManager)
         {
             _entityManager = entityManager;
 

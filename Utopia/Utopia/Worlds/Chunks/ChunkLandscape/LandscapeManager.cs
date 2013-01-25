@@ -36,7 +36,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private IChunkStorageManager _chunkStorageManager;
         private TimerManager.GameTimer _timer;
         private VoxelModelManager _voxelModelManager;
-        private LandscapeEntityManager _landscapeEntityManager;
+        private LandscapeBufferManager _landscapeEntityManager;
         #endregion
 
 
@@ -51,7 +51,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         public EntityFactory EntityFactory { get; set; }
 
-        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager, VoxelModelManager voxelModelManager, LandscapeEntityManager landscapeEntityManager)
+        public LandscapeManager(ServerComponent server, IChunkStorageManager chunkStorageManager, TimerManager timerManager, VoxelModelManager voxelModelManager, LandscapeBufferManager landscapeEntityManager)
         {
             _chunkStorageManager = chunkStorageManager;
             _voxelModelManager = voxelModelManager;
