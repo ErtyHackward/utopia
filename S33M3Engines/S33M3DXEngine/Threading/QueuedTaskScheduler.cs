@@ -83,6 +83,7 @@ namespace System.Threading.Tasks.Schedulers
         /// <summary>The number of Tasks that have been queued or that are running while using an underlying scheduler.</summary>
         private int _delegatesQueuedOrRunning = 0;
 
+        public event EventHandler QueueIsEmpty;
         public int RunningThreads { get { return _delegatesQueuedOrRunning; } }
 
         // ***
@@ -395,6 +396,7 @@ namespace System.Threading.Tasks.Schedulers
                         if (_nonthreadsafeTaskQueue.Count == 0)
                         {
                             _delegatesQueuedOrRunning--;
+                            if (QueueIsEmpty != null) QueueIsEmpty(this, null);
                             continueProcessing = false;
                             _taskProcessingThread.Value = false;
                         }

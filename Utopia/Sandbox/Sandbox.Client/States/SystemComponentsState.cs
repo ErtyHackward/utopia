@@ -59,7 +59,7 @@ namespace Sandbox.Client.States
             InitMSAASystemList();
 
             //Init RuntimeVariables
-            var vars = _iocContainer.Get<RuntimeVariables>();
+            var vars = _iocContainer.Get<SandboxRuntimeVariables>();
             vars.ApplicationDataPath = XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData);
 
             //"Late Binding" of IVoxelModelStorage, must be done after vars is initialized

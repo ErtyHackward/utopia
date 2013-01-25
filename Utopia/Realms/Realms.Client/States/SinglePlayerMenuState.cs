@@ -9,7 +9,7 @@ namespace Realms.Client.States
     public class SinglePlayerMenuState : GameState
     {
         private readonly IKernel _iocContainer;
-        private RuntimeVariables _vars;
+        private RealmRuntimeVariables _vars;
 
         public override string Name
         {
@@ -27,7 +27,7 @@ namespace Realms.Client.States
         {
             var gui = _iocContainer.Get<GuiManager>();
             var singlePlayer = _iocContainer.Get<SinglePlayerComponent>();
-            _vars = _iocContainer.Get<RuntimeVariables>();
+            _vars = _iocContainer.Get<RealmRuntimeVariables>();
 
             AddComponent(singlePlayer);
             AddComponent(gui);

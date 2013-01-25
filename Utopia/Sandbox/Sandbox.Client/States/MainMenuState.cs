@@ -15,7 +15,7 @@ namespace Sandbox.Client.States
     public class MainMenuState : GameState
     {
         private readonly IKernel _iocContainer;
-        private RuntimeVariables _vars;
+        private SandboxRuntimeVariables _vars;
 
         public override string Name
         {
@@ -35,7 +35,7 @@ namespace Sandbox.Client.States
             var gui = _iocContainer.Get<GuiManager>();
             var menu = _iocContainer.Get<MainMenuComponent>();
             var sound = _iocContainer.Get<GeneralSoundManager>();
-            _vars = _iocContainer.Get<RuntimeVariables>();
+            _vars = _iocContainer.Get<SandboxRuntimeVariables>();
 
             AddComponent(bg);
             AddComponent(gui);

@@ -53,6 +53,7 @@ using Utopia.Shared.World.Processors;
 using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Utopia.Sounds;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Realms.Client.States
 {
@@ -62,7 +63,7 @@ namespace Realms.Client.States
     public class LoadingGameState : GameState
     {
         private readonly IKernel _ioc;
-        private RuntimeVariables _vars;
+        private RealmRuntimeVariables _vars;
         
         public override string Name
         {
@@ -82,7 +83,7 @@ namespace Realms.Client.States
             if (PreviousGameState != this) GameComponents.Clear();
 
             var loading = _ioc.Get<LoadingComponent>();
-            _vars = _ioc.Get<RuntimeVariables>();
+            _vars = _ioc.Get<RealmRuntimeVariables>();
             
             AddComponent(loading); //Will "Mask" the Components being loaded.
             AddComponent(_ioc.Get<ServerComponent>());
@@ -171,6 +172,12 @@ namespace Realms.Client.States
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
             _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
 
+            var landscapeEntityManager = _ioc.Get<LandscapeBufferManager>();
+            FileInfo fi = new FileInfo(_vars.LocalDataBasePath);
+            string bufferPath = Path.Combine(fi.Directory.FullName, "LandscapeBuffer.proto");
+            landscapeEntityManager.SetBufferPath(bufferPath);
+            landscapeEntityManager.Deserialize();
+
             IWorldProcessor processor = null;
             switch (clientSideworldParam.Configuration.WorldProcessor)
             {
@@ -178,7 +185,7 @@ namespace Realms.Client.States
                     processor = new FlatWorldProcessor();
                     break;
                 case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"));
+                    processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"), landscapeEntityManager);
                     break;
                 default:
                     break;

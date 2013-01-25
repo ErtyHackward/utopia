@@ -8,10 +8,10 @@ namespace Realms.Client.Components.GUI.SinglePlayer
     {
         private SandboxCommonResources _commonResources;
         private WorldParameters _currentWorldParameter;
-        private RuntimeVariables _vars;
+        private RealmRuntimeVariables _vars;
         private GuiManager _guiManager;
-        
-        public NewGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, RuntimeVariables vars, GuiManager guiManager)
+
+        public NewGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, RealmRuntimeVariables vars, GuiManager guiManager)
         {
             _vars = vars;
             _guiManager = guiManager;

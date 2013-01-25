@@ -5,6 +5,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Ninject;
 using S33M3Resources.Structs;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Shared.World
 {

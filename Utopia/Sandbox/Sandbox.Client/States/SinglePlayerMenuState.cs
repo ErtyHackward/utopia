@@ -13,7 +13,7 @@ namespace Sandbox.Client.States
     public class SinglePlayerMenuState : GameState
     {
         private readonly IKernel _iocContainer;
-        private RuntimeVariables _vars;
+        private SandboxRuntimeVariables _vars;
 
         public override string Name
         {
@@ -31,7 +31,7 @@ namespace Sandbox.Client.States
         {
             var gui = _iocContainer.Get<GuiManager>();
             var singlePlayer = _iocContainer.Get<SinglePlayerComponent>();
-            _vars = _iocContainer.Get<RuntimeVariables>();
+            _vars = _iocContainer.Get<SandboxRuntimeVariables>();
 
             AddComponent(singlePlayer);
             AddComponent(gui);

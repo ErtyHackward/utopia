@@ -145,6 +145,19 @@ namespace Utopia.Shared.Chunks
                                    });
         }
 
+        /// <summary>
+        /// Operation is not supported
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <param name="blockValue"></param>
+        /// <param name="tag"></param>
+        public void SetBlockWithoutEvents(Vector3I worldPosition, byte blockValue)
+        {
+            int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
+            ChunkCubes.Cubes[index] = new TerraCube(blockValue);
+            RefreshMetaData(ref worldPosition);
+        }
+
         private void RefreshMetaData(ref Vector3I worldPosition)
         {
             //Must look from World Top to bottom to recompute the new High Block !

@@ -7,6 +7,7 @@ using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using System;
 using System.Diagnostics;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks
 {
