@@ -11,9 +11,9 @@ namespace Utopia.Shared.LandscapeEntities
 {
     public static class LandscapeEntityParser
     {
-        public static List<LandscapeEntityChunkMesh> GlobalMesh2ChunkMesh(IEnumerable<BlockWithPosition> globalMesh)
+        public static List<LandscapeEntityChunkBuffer> GlobalMesh2ChunkMesh(IEnumerable<BlockWithPosition> globalMesh)
         {
-            Dictionary<Vector2I, LandscapeEntityChunkMesh> chunks = new Dictionary<Vector2I, LandscapeEntityChunkMesh>();
+            Dictionary<Vector2I, LandscapeEntityChunkBuffer> chunks = new Dictionary<Vector2I, LandscapeEntityChunkBuffer>();
 
             foreach (var data in globalMesh)
             {
@@ -22,10 +22,10 @@ namespace Utopia.Shared.LandscapeEntities
                 Vector2I ChunkLocation;
                 GetChunk(localData.WorldPosition, out ChunkLocation);
 
-                LandscapeEntityChunkMesh chunkMesh;
+                LandscapeEntityChunkBuffer chunkMesh;
                 if (chunks.TryGetValue(ChunkLocation, out chunkMesh) == false)
                 {
-                    chunkMesh = new LandscapeEntityChunkMesh();
+                    chunkMesh = new LandscapeEntityChunkBuffer();
                     chunkMesh.ChunkLocation = ChunkLocation;
                     chunkMesh.Blocks = new List<BlockWithPosition>();
                     chunks.Add(ChunkLocation, chunkMesh);

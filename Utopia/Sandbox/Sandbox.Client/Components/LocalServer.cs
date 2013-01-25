@@ -19,6 +19,7 @@ using System.Linq;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Sandbox.Client.Components
 {
@@ -32,10 +33,12 @@ namespace Sandbox.Client.Components
         private EntityFactory _serverFactory;
         private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
+        private LandscapeEntityManager _landscapeEntityManager;
 
-        public LocalServer(RuntimeVariables vars)
+        public LocalServer(RuntimeVariables vars, LandscapeEntityManager landscapeEntityManager)
         {
             _vars = vars;
+            _landscapeEntityManager = landscapeEntityManager;
         }
 
         public bool IsDisposed
@@ -68,7 +71,7 @@ namespace Sandbox.Client.Components
                     processor = new FlatWorldProcessor();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(worldParam, _serverFactory, new Utopia.Shared.LandscapeEntities.LandscapeEntityManager());
+                    processor = new UtopiaProcessor(worldParam, _serverFactory, _landscapeEntityManager);
                     break;
                 default:
                     break;

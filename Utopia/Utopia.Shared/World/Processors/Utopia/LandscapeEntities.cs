@@ -340,40 +340,40 @@ namespace Utopia.Shared.World.Processors.Utopia
         private int last = 0;
         private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ChunkColumnInfo[] columndInfo, FastRandom rnd)
         {
-            //Get Rnd chunk Location.
-            int x = rnd.Next(0, 16);
-            int z = rnd.Next(0, 16);
-            x = 7;
-            z = 7;
-            int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight + 1;
-            x += (chunk.Position.X * AbstractChunk.ChunkSize.X);
-            z += (chunk.Position.Y * AbstractChunk.ChunkSize.Z);
-            Vector3I worldPosition = new Vector3I(x, y, z);
+            ////Get Rnd chunk Location.
+            //int x = rnd.Next(0, 16);
+            //int z = rnd.Next(0, 16);
+            //x = 7;
+            //z = 7;
+            //int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight + 1;
+            //x += (chunk.Position.X * AbstractChunk.ChunkSize.X);
+            //z += (chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+            //Vector3I worldPosition = new Vector3I(x, y, z);
 
-            //Generate Tree mesh !
-            //TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
-            TreeTemplate treeType = _treeTemplates[last];
-            last++;
-            if(last >= _treeTemplates.Count) last = 0;
+            ////Generate Tree mesh !
+            ////TreeLSystem generator = _treeGenerator[rnd.Next(0, 5)];
+            //TreeTemplate treeType = _treeTemplates[last];
+            //last++;
+            //if(last >= _treeTemplates.Count) last = 0;
 
-            foreach (LandscapeEntityChunkMesh chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType)))
-            {
-                if (chunkMesh.ChunkLocation == chunk.Position)
-                {
-                    foreach (var block in chunkMesh.Blocks)
-                    {
-                        cursor.SetInternalPosition(block.ChunkPosition);
-                        byte blockId = cursor.Read();
-                        if (blockId == UtopiaProcessorParams.CubeId.Air) cursor.Write(block.BlockId);
-                    }
-                }
-                else
-                {
-                    logger.Warn("New chunk entity in the wild {0}", chunkMesh.ChunkLocation);
-                    //Send this Mesh to the landscape entity Manager ! This part of the mesh must be constructed inside another chunk !
-                    _landscapeEntityManager.Add(chunkMesh);
-                }
-            }
+            //foreach (LandscapeEntityChunkBuffer chunkMesh in LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType)))
+            //{
+            //    if (chunkMesh.ChunkLocation == chunk.Position)
+            //    {
+            //        foreach (var block in chunkMesh.Blocks)
+            //        {
+            //            cursor.SetInternalPosition(block.ChunkPosition);
+            //            byte blockId = cursor.Read();
+            //            if (blockId == UtopiaProcessorParams.CubeId.Air) cursor.Write(block.BlockId);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        logger.Warn("New chunk entity in the wild {0}", chunkMesh.ChunkLocation);
+            //        //Send this Mesh to the landscape entity Manager ! This part of the mesh must be constructed inside another chunk !
+            //        _landscapeEntityManager.Add(chunkMesh);
+            //    }
+            //}
         }
         #endregion
     }

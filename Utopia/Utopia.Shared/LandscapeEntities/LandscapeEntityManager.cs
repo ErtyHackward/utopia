@@ -3,90 +3,102 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using Utopia.Shared.Structs;
+using Utopia.Shared.World.Processors.Utopia;
 
 namespace Utopia.Shared.LandscapeEntities
 {
     public class LandscapeEntityManager
     {
-        public class EntityChunkMeshCollection
-        {
-            public List<LandscapeEntityChunkMesh> Collection = new List<LandscapeEntityChunkMesh>();
-            public bool isProcessed = false;
-        }
-
         #region Private Variables
-        private Dictionary<Vector2I, EntityChunkMeshCollection> _pendingLandscapeEntities;
-        private object _dicoSync = new object();
-        private Stack<EntityChunkMeshCollection> _newEntities;
+        private object _syncLock = new object();
+        private Dictionary<Vector2I, LandscapeEntityChunkBuffer> _buffer;
+        private Vector2I _chunkRangeLookUp = new Vector2I(3, 3);
         #endregion
 
         #region Public Properties
+        public UtopiaProcessor Processor { get; set; }
         #endregion
 
         public LandscapeEntityManager()
         {
-            _pendingLandscapeEntities = new Dictionary<Vector2I, EntityChunkMeshCollection>();
-            _newEntities = new Stack<EntityChunkMeshCollection>();
+            _buffer = new Dictionary<Vector2I, LandscapeEntityChunkBuffer>();
         }
 
         #region Public Methods
-        public void Add(LandscapeEntityChunkMesh landscapeEntity)
+        public LandscapeEntityChunkBuffer Get(Vector2I chunkLocation)
         {
-            lock (_dicoSync)
+            LandscapeEntityChunkBuffer buffer;
+            lock (_syncLock)
             {
-                EntityChunkMeshCollection entityChunkList;
-                if (_pendingLandscapeEntities.TryGetValue(landscapeEntity.ChunkLocation, out entityChunkList) == false)
+                if (_buffer.TryGetValue(chunkLocation, out buffer) == false)
                 {
-                    entityChunkList = new EntityChunkMeshCollection();
-                    _pendingLandscapeEntities.Add(landscapeEntity.ChunkLocation, entityChunkList);
-                }
-                _newEntities.Push(entityChunkList);
-                entityChunkList.Collection.Add(landscapeEntity);
-            }
-        }
-
-        public EntityChunkMeshCollection Get(Vector2I chunkLocation)
-        {
-            EntityChunkMeshCollection result;
-
-            lock (_dicoSync)
-            {
-                if (_pendingLandscapeEntities.TryGetValue(chunkLocation, out result))
-                {
-                    _pendingLandscapeEntities.Remove(chunkLocation);
-                    result.isProcessed = true;
+                    buffer = new LandscapeEntityChunkBuffer() { ChunkLocation = chunkLocation };
+                    _buffer.Add(chunkLocation, buffer);
                 }
             }
-            return result;
-        }
 
-        public void SetLock()
-        {
-            System.Threading.Monitor.Enter(_dicoSync);
-        }
-
-        public void ReleaseLock()
-        {
-            System.Threading.Monitor.Exit(_dicoSync);
-        }
-
-        public IEnumerable<LandscapeEntityChunkMesh> GetNew()
-        {
-            while (_newEntities.Count > 0)
+            if (buffer.isReady)
             {
-                var chunkEntities = _newEntities.Pop();
-                if (chunkEntities.isProcessed == false)
-                {
-                    foreach (var entity in chunkEntities.Collection)
-                    {
-                        yield return entity;
-                    }
-                }
+                return buffer;
             }
+            else
+            {
+                //Start needed landscape entity generation
+                GenerateLandscapeEntities(buffer);
+                return buffer;
+            }
+
         }
+
         #endregion
 
         #region Private Methods
+        private void GenerateLandscapeEntities(LandscapeEntityChunkBuffer buffer)
+        {
+            //Get the Range the minimum chunk range that need to be computed to validate current chunk landscape entities generation
+            Range2I chunkRange = new Range2I(buffer.ChunkLocation - _chunkRangeLookUp, new Vector2I(_chunkRangeLookUp.X * 2, _chunkRangeLookUp.Y * 2));
+            List<LandscapeEntityChunkBuffer> chunkBuffers = new List<LandscapeEntityChunkBuffer>(chunkRange.Count);
+            foreach (Vector2I chunkPosition in chunkRange)
+            {
+                //Check if all those chunks have been / have their landscape item processed (They could potentially impact this chunk).
+                LandscapeEntityChunkBuffer surrendingChunkBuffer;
+                bool need2Process = false;
+                lock (_syncLock)
+                {
+                    if (_buffer.TryGetValue(chunkPosition, out surrendingChunkBuffer) == false)
+                    {
+                        surrendingChunkBuffer = new LandscapeEntityChunkBuffer() { ChunkLocation = chunkPosition, ProcessingState = LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.NotProcessed };
+                        _buffer.Add(chunkPosition, surrendingChunkBuffer);
+                    }
+
+                    if (surrendingChunkBuffer.ProcessingState == LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.NotProcessed)
+                    {
+                        surrendingChunkBuffer.ProcessingState = LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.Processing;
+                        need2Process = true;
+                    }
+                }
+
+                chunkBuffers.Add(surrendingChunkBuffer);
+
+                if (need2Process)
+                {
+                    //Process Landscape
+                    //Process Entity landscape creation
+
+                    //==> Send results entity landscape generated inside chunks (Using Parser)
+                    surrendingChunkBuffer.ProcessingState = LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.Processed;
+                }
+            }
+
+            //Here, all chunk have been at least processed, some could still be in Processing state, waiting for all of them to finish.
+            while (chunkBuffers.Count(x => x.ProcessingState != LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.Processed) != 0)
+            {
+                //Wait for all lanscape entity from our range to be processed
+                Thread.Sleep(1);
+            }
+        }
         #endregion
 
     }
