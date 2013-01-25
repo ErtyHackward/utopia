@@ -101,7 +101,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                 double[,] biomeMap;
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
                 TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
-                InsertLandscapeEntities(chunkBytes, landscapeEntities);
+
+                InsertLandscapeEntities(chunkBytes, columnsInfo, landscapeEntities);
 
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
                 Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0 , chunk.Position.Y * AbstractChunk.ChunkSize.Z);
@@ -487,7 +488,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void InsertLandscapeEntities(byte[] ChunkCubes, LandscapeEntityChunkBuffer landscapeEntities)
+        private void InsertLandscapeEntities(byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, LandscapeEntityChunkBuffer landscapeEntities)
         {
             if (landscapeEntities.Entities == null) return;
 
@@ -495,10 +496,15 @@ namespace Utopia.Shared.World.Processors.Utopia
             {
                 foreach (var block in entity.Blocks)
                 {
-                    int index = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
-                    if (ChunkCubes[index] == UtopiaProcessorParams.CubeId.Air)
+                    int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
+                    if (ChunkCubes[index3D] == UtopiaProcessorParams.CubeId.Air)
                     {
-                        ChunkCubes[index] = block.BlockId;
+                        ChunkCubes[index3D] = block.BlockId;
+
+                        //Update Max Height for lighting !
+                        int index2D = (block.ChunkPosition.X * AbstractChunk.ChunkSize.Z) + block.ChunkPosition.Z;
+                        if (columnsInfo[index2D].MaxHeight < block.ChunkPosition.Y) 
+                            columnsInfo[index2D].MaxHeight = (byte)block.ChunkPosition.Y;
                     }
                 }
             }

@@ -350,11 +350,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Get Rnd chunk Location.
             int x = rnd.Next(0, 16);
             int z = rnd.Next(0, 16);
-            x = 7;
-            z = 7;
             int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight + 1;
-
-            y = 70;
 
             x += (chunkPosition.X * AbstractChunk.ChunkSize.X);
             z += (chunkPosition.Y * AbstractChunk.ChunkSize.Z);
