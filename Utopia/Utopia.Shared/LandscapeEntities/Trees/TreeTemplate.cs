@@ -13,7 +13,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
     {
         [Category("General")]
         [ProtoMember(1)]
-        public string Name { get; set; }
+        public string TemplateName { get; set; }
         [Category("Configuration")]
         [ProtoMember(2)]
         public string Axiom { get; set; }
