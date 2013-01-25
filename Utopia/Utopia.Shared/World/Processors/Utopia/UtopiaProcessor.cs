@@ -62,7 +62,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
             _landscapeEntityManager = landscapeEntityManager;
-            LandscapeEntities = new LandscapeEntities(_landscapeEntityManager);
+            LandscapeEntities = new LandscapeEntities(_landscapeEntityManager, _worldParameters);
 
             landscapeEntityManager.Processor = this;
         }
@@ -80,6 +80,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                 //Get the chunk
                 GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
+                Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
 
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
@@ -87,42 +88,23 @@ namespace Utopia.Shared.World.Processors.Utopia
                 //Get the landscape Items for this chunk
                 LandscapeChunkBuffer landscapeBuffer = _landscapeEntityManager.Get(chunk.Position);
 
-                //Create a byte array that will receive the landscape generated
-                byte[] chunkBytes;
                 //Create an array that wll receive the ColumnChunk Informations
-                ChunkColumnInfo[] columnsInfo;
-
                 chunkWorldRange = new Range3I()
                 {
                     Position = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z),
                     Size = AbstractChunk.ChunkSize
                 };
 
-                if (landscapeBuffer.ColumnsInfoBuffer != null && landscapeBuffer.chunkBytesBuffer != null)
-                {
-                    chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
-                    columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
-                    double[,] biomeMap;
-                    GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
-                    TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
-                }
-                else
-                {
-                    chunkBytes = landscapeBuffer.chunkBytesBuffer;
-                    columnsInfo = landscapeBuffer.ColumnsInfoBuffer;
-                }
+                InsertLandscapeEntities(landscapeBuffer.chunkBytesBuffer, landscapeBuffer.ColumnsInfoBuffer, landscapeBuffer);
 
-                InsertLandscapeEntities(chunkBytes, columnsInfo, landscapeBuffer);
+                ChunkMetaData metaData = CreateChunkMetaData(landscapeBuffer.ColumnsInfoBuffer);
 
-                ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
-                Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0 , chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+                PopulateChunk(chunk, landscapeBuffer.chunkBytesBuffer, ref chunkWorldPosition, landscapeBuffer.ColumnsInfoBuffer, metaData, chunkRnd, _entityFactory);
+                
+                RefreshChunkMetaData(metaData, landscapeBuffer.ColumnsInfoBuffer);
 
-                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
-
-                RefreshChunkMetaData(metaData, columnsInfo);
-
-                chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
-                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
+                chunk.BlockData.SetBlockBytes(landscapeBuffer.chunkBytesBuffer); //Save block array
+                chunk.BlockData.ColumnsInfo = landscapeBuffer.ColumnsInfoBuffer; //Save Columns info Array
                 chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
@@ -508,7 +490,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 foreach (var block in entity.Blocks)
                 {
                     int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
-                    if (ChunkCubes[index3D] == UtopiaProcessorParams.CubeId.Air)
+                    if (ChunkCubes[index3D] == UtopiaProcessorParams.CubeId.Air || block.isMandatory)
                     {
                         ChunkCubes[index3D] = block.BlockId;
 

@@ -183,11 +183,11 @@ namespace Utopia.Shared.World
                     Processor.GenerateForLandscapeEntity(surrendingChunkBuffer.ChunkLocation, out chunkMasterBiome, out chunkBytes, out chunkNewRnd, out columnsInfo);
 
                     //Process chunk Entity landscape creation
-                    Processor.LandscapeEntities.GenerateChunkItems(surrendingChunkBuffer.ChunkLocation, chunkMasterBiome, columnsInfo, chunkNewRnd);
-
+                    Processor.LandscapeEntities.GenerateChunkItems(surrendingChunkBuffer.ChunkLocation, chunkMasterBiome, chunkBytes, columnsInfo, chunkNewRnd);
+                   
                     surrendingChunkBuffer.chunkBytesBuffer = chunkBytes;
                     surrendingChunkBuffer.ColumnsInfoBuffer = columnsInfo;
-
+                   
                     surrendingChunkBuffer.ProcessingState = LandscapeChunkBuffer.LandscapeChunkBufferState.Processed;
                 }
             }

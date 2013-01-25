@@ -16,5 +16,7 @@ namespace Utopia.Shared.Structs.Landscape
         public Vector3I WorldPosition;
         [ProtoMember(3)]
         public Vector3I ChunkPosition;
+        [ProtoMember(4)]
+        public bool isMandatory;
     }
 }
