@@ -33,7 +33,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             #region Templates
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Tree 1",
+                TemplateName = "Tree 1",
                 Axiom = "FFFFAFFFFFFFAFFFFA",
                 Rules_a = new LSystemRule() { Rule = "[&FFFFFA]////[&FFFFFA]////[&FFFFFA]", Prob = 0.5f },
                 TrunkBlock = UtopiaProcessorParams.CubeId.Trunk,
@@ -48,7 +48,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Tree 2",
+                TemplateName = "Tree 2",
                 Axiom = "FFFFFFA",
                 Rules_a = new LSystemRule() { Rule = "[&FFBFA]////[&BFFFA]////[&FBFFAFFA]", Prob = 0.5f },
                 Rules_b = new LSystemRule() { Rule = "[&FFFAFFFF]////[&FFFAFFF]////[&FFFAFFAA]", Prob = 0.4f },
@@ -64,7 +64,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Tree 3",
+                TemplateName = "Tree 3",
                 Axiom = "FFFFAFFFFBFFFFAFFFFBFFFFAFFFFBFF",
                 Rules_a = new LSystemRule() { Rule = "[&FFFAFFF]////[&FFAFFF]////[&FFFAFFF]", Prob = 0.5f },
                 Rules_b = new LSystemRule() { Rule = "[&FAF]////[&FAF]////[&FAF]", Prob = 0.4f },
@@ -80,7 +80,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Tree 4",
+                TemplateName = "Tree 4",
                 Axiom = "FFFFFFA",
                 Rules_a = new LSystemRule() { Rule = "[&FFBFA]////[&BFFFA]////[&FBFFA]", Prob = 0.5f },
                 Rules_b = new LSystemRule() { Rule = "[&FFFA]////[&FFFA]////[&FFFA]", Prob = 0.4f },
@@ -96,7 +96,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Tree 5",
+                TemplateName = "Tree 5",
                 Axiom = "FFFFFAFAFAF",
                 Rules_a = new LSystemRule() { Rule = "[&FFAFF]////[&FFAFF]////[&FFAFF]", Prob = 0.5f },
                 TrunkBlock = UtopiaProcessorParams.CubeId.Trunk,
@@ -111,7 +111,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Beech",
+                TemplateName = "Beech",
                 Axiom = "FFFFFAFA",
                 Rules_a = new LSystemRule() { Rule = "[&&&F[++^Fb][--&b]//b[+^b][--&b]]////[&&&F[++^Fb][--&b]//b[+^b][--&b]]////[&&&F[++^Fb][--&Fb]//b[+^b][--&b]]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "F", Prob = 0.6f },
@@ -127,7 +127,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Apple Tree",
+                TemplateName = "Apple Tree",
                 Axiom = "FFFFFAFFBF",
                 Rules_a = new LSystemRule() { Rule ="[&&&FFFFF&&FFFF][&&&++++FFFFF&&FFFF][&&&----FFFFF&&FFFF]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&&&++FFFFF&&FFFF][&&&--FFFFF&&FFFF][&&&------FFFFF&&FFFF]", Prob = 0.8f },
@@ -143,7 +143,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Oak",
+                TemplateName = "Oak",
                 Axiom = "FFFFFFA",
                 Rules_a = new LSystemRule() { Rule = "[&FFBFA]////[&BFFFA]////[&FBFFA]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&FFFA]////[&FFFA]////[&FFFA]", Prob = 0.8f },
@@ -158,7 +158,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Sequoia",
+                TemplateName = "Sequoia",
                 Axiom = "FFFFFFFFFFddccA///cccFddcFA///ddFcFA/cFFddFcdBddd/A/ccdcddd/ccAddddcFBcccAccFdFcFBcccc/BFdFFcFFdcccc/B",
                 Rules_a = new LSystemRule() { Rule = "[&&&GGF[++^FFdd][--&Fddd]//Fdd[+^Fd][--&Fdd]]////[&&&GGF[++^FFdd][--&Fddd]//Fdd[+^Fd][--&Fdd]]////[&&&GGF[++^FFdd][--&Fddd]//Fdd[+^Fd][--&Fdd]]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&&&GGF[++^Fdd][--&Fdd]//dd[+^d][--&Fd]]////[&&&GGF[++^Fdd][--&Fdd]//dd[+^d][--&Fd]]////[&&&GGF[++^Fdd][--&Fdd]//dd[+^d][--&Fd]]", Prob = 0.8f },
@@ -176,7 +176,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Birch 1",
+                TemplateName = "Birch 1",
                 Axiom = "FFFFFdddccA/FFFFFFcA/FFFFFFcB",
                 Rules_a = new LSystemRule() { Rule = "[&&&dddd^^ddddddd][&&&---dddd^^ddddddd][&&&+++dddd^^ddddddd][&&&++++++dddd^^ddddddd]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&&&ddd^^ddddd][&&&---ddd^^ddddd][&&&+++ddd^^ddddd][&&&++++++ddd^^ddddd]", Prob = 0.8f },
@@ -194,7 +194,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Birch 2",
+                TemplateName = "Birch 2",
                 Axiom = "FFFdddccA/FFFFFccA/FFFFFccB",
                 Rules_a = new LSystemRule() { Rule = "[&&&dFFF^^FFFdd][&&&---dFFF^^FFFdd][&&&+++dFFF^^FFFdd][&&&++++++dFFF^^FFFdd]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&&&dFF^^FFFd][&&&---dFFF^^FFFd][&&&+++dFF^^FFFd][&&&++++++dFF^^FFFd]", Prob = 0.8f },
@@ -212,7 +212,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Palm",
+                TemplateName = "Palm",
                 Axiom = "FFccc&FFFFFdddFA//A//A//A//A//A",
                 Rules_a = new LSystemRule() { Rule = "[&fb&bbb[++f--&ffff&ff][--f++&ffff&ff]&ffff&bbbb&b]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "f", Prob = 0.8f },
@@ -230,7 +230,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Spruce 1",
+                TemplateName = "Spruce 1",
                 Axiom = "FFFFFAFFFFFFBFFFFFFCFFFFFFDFFFFFF[&&&F^^FF][&&&++F^^FF][&&&++++F^^FF][&&&++++++F^^FF][&&&--F^^FF][&&&----F^^FF][FFFFf]",
                 Rules_a = new LSystemRule() { Rule = "[&&&FFFFFF^^FFF][&&&++FFFFFF^^FFF][&&&++++FFFFFF^^FFF][&&&++++++FFFFFF^^FFF][&&&--FFFFFF^^FFF][&&&----FFFFFF^^FFF]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&&&FFFFF^^FFF][&&&++FFFFF^^FFF][&&&++++FFFFF^^FFF][&&&++++++FFFFF^^FFF][&&&--FFFFF^^FFF][&&&----FFFFF^^FFF]", Prob = 0.8f },
@@ -248,7 +248,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Spruce 2",
+                TemplateName = "Spruce 2",
                 Axiom = "FFFFFFBFFFFFFCFFFFFFDFFFFFF[&&&F^^FF][&&&++F^^FF][&&&++++F^^FF][&&&++++++F^^FF][&&&--F^^FF][&&&----F^^FF][FFFFf]",
                 Rules_b = new LSystemRule() { Rule = "[&&&FFFFF^^FFF][&&&++FFFFF^^FFF][&&&++++FFFFF^^FFF][&&&++++++FFFFF^^FFF][&&&--FFFFF^^FFF][&&&----FFFFF^^FFF]", Prob = 0.8f },
                 Rules_c = new LSystemRule() { Rule = "[&&&FFFF^^FFF][&&&++FFFF^^FFF][&&&++++FFFF^^FFF][&&&++++++FFFF^^FFF][&&&--FFFF^^FFF][&&&----FFFF^^FFF]", Prob = 0.7f },
@@ -265,7 +265,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Pine",
+                TemplateName = "Pine",
                 Axiom = "FFFFFcccdddB///cFdFB////cFdFB///cFdFB///cFdFA///cFdFA///cFdFB[FF]f",
                 Rules_a = new LSystemRule() { Rule = "[&&&TTTT[++^TFdd][--&TFd]//Tdd[+^Fd][--&Fdd]]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&&&TTT[++^Fdd][--&Fdd]//dd[+^d][--&Fd]]", Prob = 0.8f },
@@ -283,7 +283,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Willow",
+                TemplateName = "Willow",
                 Axiom = "FFFFFFFFccA",
                 Rules_a = new LSystemRule() { Rule = "[&FF&FFFF&&F&FFFFFFFdddd][**&FF&FFFF&&F&FFFFFFFdddd][//&FF&FFFF&&F&FFFFFFFdddd][////&FF&FFFF&&F&FFFFFFFdddd][//////&FF&FFFF&&F&FFFFFFFdddd][////////&FF&FFFF&&F&FFFFFFFdddd]", Prob = 0.9f },
                 Rules_c = new LSystemRule() { Rule = "/", Prob = 0.7f },
@@ -300,7 +300,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             _treeTemplates.Add(new TreeTemplate()
             {
-                Name = "Rubber",
+                TemplateName = "Rubber",
                 Axiom = "FFFFA",
                 Rules_a = new LSystemRule() { Rule = "[&FFBFA]////[&BFFFA]////[&FBFFA]", Prob = 0.9f },
                 Rules_b = new LSystemRule() { Rule = "[&FFA]////[&FFA]////[&FFA]", Prob = 0.8f },
