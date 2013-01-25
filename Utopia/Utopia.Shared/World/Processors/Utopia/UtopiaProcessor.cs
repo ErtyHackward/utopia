@@ -134,9 +134,9 @@ namespace Utopia.Shared.World.Processors.Utopia
             columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
             chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
 
-            //double[,] biomeMap;
-            //GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
-            //TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+            double[,] biomeMap;
+            GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
+            TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
 
             var metaData = CreateChunkMetaData(columnsInfo);
             biome = _config.ProcessorParam.Biomes[metaData.ChunkMasterBiomeType];
