@@ -9,10 +9,17 @@ using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.Chunks;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
+using Utopia.Shared.LandscapeEntities;
+using ProtoBuf;
+using System.IO;
+using System.IO.Compression;
+using ProtoBuf.Meta;
+using S33M3CoreComponents.Config;
 
-namespace Utopia.Shared.LandscapeEntities
+namespace Utopia.Shared.World
 {
-    public class LandscapeEntityManager
+    [ProtoContract]
+    public class LandscapeBufferManager : IDisposable
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -20,18 +27,71 @@ namespace Utopia.Shared.LandscapeEntities
         private object _syncLock = new object();
         private Dictionary<Vector2I, LandscapeChunkBuffer> _buffer;
         private Vector2I _chunkRangeLookUp = new Vector2I(3, 3);
+        private string _bufferPath;
         #endregion
 
         #region Public Properties
+        [ProtoMember(1, OverwriteList = true)]
+        public Dictionary<Vector2I, LandscapeChunkBuffer> Buffer
+        {
+            get { return _buffer; }
+            set { _buffer = value; }
+        }
+
         public UtopiaProcessor Processor { get; set; }
         #endregion
 
-        public LandscapeEntityManager()
+        public LandscapeBufferManager()
         {
             _buffer = new Dictionary<Vector2I, LandscapeChunkBuffer>();
         }
 
+        public void Dispose()
+        {
+            Serialize();
+        }
+
+
         #region Public Methods
+        public void SetBufferPath(string Path)
+        {
+            _bufferPath = Path;
+        }
+
+        private void Serialize()
+        {
+            if (_bufferPath == null) return;
+
+            //Serialize buffer, to easy loading back next session !
+            using (var fs = new FileStream(_bufferPath, FileMode.Create))
+            {
+                using (var zip = new GZipStream(fs, CompressionMode.Compress))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        Serializer.Serialize(ms, _buffer);
+                        //Serializer.SerializeWithLengthPrefix(ms, _buffer, PrefixStyle.Fixed32);
+                        var array = ms.ToArray();
+                        zip.Write(array, 0, array.Length);
+                    }
+                }
+            }
+        }
+
+        public void Deserialize()
+        {
+            if (_bufferPath == null) return;
+            FileInfo fi = new FileInfo(_bufferPath);
+            if (fi.Exists)
+            {
+                using (var ms = new FileStream(fi.FullName, FileMode.Open))
+                using (var zip = new GZipStream(ms, CompressionMode.Decompress))
+                {
+                    _buffer = Serializer.Deserialize<Dictionary<Vector2I, LandscapeChunkBuffer>>(zip);
+                }
+            }
+        }
+
         public LandscapeChunkBuffer Get(Vector2I chunkLocation)
         {
             LandscapeChunkBuffer buffer;
@@ -51,10 +111,9 @@ namespace Utopia.Shared.LandscapeEntities
             else
             {
                 //Start needed landscape entity generation
-                GenerateLandscapeEntities(buffer);
+                GenerateLandscapeBuffer(buffer);
                 return buffer;
             }
-
         }
 
         public void Insert(Vector2I chunkLocation, LandscapeEntity entity)
@@ -75,7 +134,17 @@ namespace Utopia.Shared.LandscapeEntities
         #endregion
 
         #region Private Methods
-        private void GenerateLandscapeEntities(LandscapeChunkBuffer buffer)
+        private void LoadBuffer()
+        {
+
+        }
+
+        private void SaveBuffer()
+        {
+
+        }
+
+        private void GenerateLandscapeBuffer(LandscapeChunkBuffer buffer)
         {
             //Get the Range the minimum chunk range that need to be computed to validate current chunk landscape entities generation
             Range2I chunkRange = new Range2I(buffer.ChunkLocation - _chunkRangeLookUp, new Vector2I(_chunkRangeLookUp.X * 2, _chunkRangeLookUp.Y * 2));
