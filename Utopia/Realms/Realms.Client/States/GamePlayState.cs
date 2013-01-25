@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Ninject;
 using Realms.Client.Components;
+using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -11,6 +13,8 @@ using Utopia.Entities.Voxel;
 using Utopia.GUI;
 using Utopia.GUI.Crafting;
 using Utopia.Network;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
@@ -60,6 +64,8 @@ namespace Realms.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
+            
+            
             var chat = _ioc.Get<ChatComponent>();
             var hud = _ioc.Get<Hud>();
 
@@ -87,6 +93,8 @@ namespace Realms.Client.States
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
+            playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
@@ -99,6 +107,8 @@ namespace Realms.Client.States
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
+            var inventoryEvents = _ioc.Get<InventoryEventComponent>();
+            
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -125,6 +135,7 @@ namespace Realms.Client.States
             AddComponent(particuleEngine);
             AddComponent(ghostedRenderer);
             AddComponent(crafting);
+            AddComponent(inventoryEvents);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
@@ -149,11 +160,23 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
+        private void InventoryOnItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            var iec = _ioc.Get<InventoryEventComponent>();
+            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " removed " + (e.Slot.ItemsCount > 1 ? "x" + e.Slot.ItemsCount : ""), false);
+        }
+
+        private void InventoryOnItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            var iec = _ioc.Get<InventoryEventComponent>();
+            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " added " + (e.Slot.ItemsCount > 1 ? "x" + e.Slot.ItemsCount : ""), true);
+        }
+
         void ActionsManager_KeyboardAction(object sender, S33M3CoreComponents.Inputs.Actions.ActionsManagerEventArgs e)
         {
             if (StatesManager.CurrentState.Name == "Settings") return;
 
-            if (e.Action.ActionId == UtopiaActions.EngineExit)
+            if (e.Action.ActionId == Actions.EngineExit)
             {
                 if (StatesManager.CurrentState.Name != "InGameMenu")
                 {
@@ -172,9 +195,11 @@ namespace Realms.Client.States
             {
                 if (StatesManager.CurrentState.Name != "Inventory")
                 {
-                    StatesManager.ActivateGameStateAsync("Inventory", true); 
-                }else{
-                    StatesManager.ActivateGameStateAsync("Gameplay"); 
+                    StatesManager.ActivateGameStateAsync("Inventory", true);
+                }
+                else
+                {
+                    StatesManager.ActivateGameStateAsync("Gameplay");
                 }
             }
 
@@ -195,9 +220,10 @@ namespace Realms.Client.States
         {
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
- 
 
             base.OnEnabled(previousState);
         }
+
+
     }
 }

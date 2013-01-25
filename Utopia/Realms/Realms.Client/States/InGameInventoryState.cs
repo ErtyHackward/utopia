@@ -33,6 +33,9 @@ namespace Realms.Client.States
             var guiManager = _iocContainer.Get<GuiManager>();
             guiManager.SetDialogMode(true);
 
+            var notice = _iocContainer.Get<InventoryEventComponent>();
+            notice.DisableComponent();
+
             base.OnEnabled(previousState);
         }
 
@@ -46,6 +49,9 @@ namespace Realms.Client.States
 
             var guiManager = _iocContainer.Get<GuiManager>();
             guiManager.SetDialogMode(false);
+
+            var notice = _iocContainer.Get<InventoryEventComponent>();
+            notice.EnableComponent();
 
             base.OnDisabled(nextState);
         }
