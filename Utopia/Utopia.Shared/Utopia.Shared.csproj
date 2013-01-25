@@ -234,6 +234,7 @@
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityManager.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntity.cs" />
     <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityChunkBuffer.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityParser.cs" />

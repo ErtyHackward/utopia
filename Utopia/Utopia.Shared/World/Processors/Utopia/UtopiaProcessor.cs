@@ -31,8 +31,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         private BiomeHelper _biomeHelper;
         private LandscapeEntityManager _landscapeEntityManager;
 
-        //Landscape generators
-        private LandscapeEntities _landscapeEntities;
+        //Landscape entities generators
+        
         #endregion
 
         #region Public Properties
@@ -50,6 +50,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             get { return "New lanscape generation algo. using s33m3 engine noise framework"; }
         }
+
+        public LandscapeEntities LandscapeEntities { get; set; }
         #endregion
 
         public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory, LandscapeEntityManager landscapeEntityManager)
@@ -60,7 +62,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
             _landscapeEntityManager = landscapeEntityManager;
-            _landscapeEntities = new LandscapeEntities(_landscapeEntityManager);
+            LandscapeEntities = new LandscapeEntities(_landscapeEntityManager);
 
             landscapeEntityManager.Processor = this;
         }
@@ -78,11 +80,12 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                 //Get the chunk
                 GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
+
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
-                //Get the landscape Items for this chunk.
-                _landscapeEntityManager.Get(chunk.Position);
+                //Get the landscape Items for this chun
+                LandscapeEntityChunkBuffer landscapeEntities = _landscapeEntityManager.Get(chunk.Position);
 
                 //Create a byte array that will receive the landscape generated
                 byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
@@ -98,6 +101,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                 double[,] biomeMap;
                 GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
                 TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+                InsertLandscapeEntities(chunkBytes, landscapeEntities);
+
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
                 Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0 , chunk.Position.Y * AbstractChunk.ChunkSize.Z);
 
@@ -117,20 +122,23 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// <param name="chunkBytes"></param>
         /// <param name="ChunkPosition"></param>
         /// <param name="chunkWorldRange"></param>
-        public void GenerateForLandscapeEntity(byte[] chunkBytes, Vector2I ChunkPosition, Range3I chunkWorldRange)
+        public void GenerateForLandscapeEntity(byte[] chunkBytes, Vector2I ChunkPosition, out Biome biome, out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
         {
-            ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
-            FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
-
-            chunkWorldRange = new Range3I()
+            Range3I chunkWorldRange = new Range3I()
             {
                 Position = new Vector3I(ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, ChunkPosition.Y * AbstractChunk.ChunkSize.Z),
                 Size = AbstractChunk.ChunkSize
             };
 
-            double[,] biomeMap;
-            GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
-            TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+            columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+            chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
+
+            //double[,] biomeMap;
+            //GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
+            //TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+
+            var metaData = CreateChunkMetaData(columnsInfo);
+            biome = _config.ProcessorParam.Biomes[metaData.ChunkMasterBiomeType];
         }
 
         #endregion
@@ -475,6 +483,23 @@ namespace Utopia.Shared.World.Processors.Utopia
                     columnsInfo[noise2DIndex] = columnInfo;
                     noise2DIndex++;
 
+                }
+            }
+        }
+
+        private void InsertLandscapeEntities(byte[] ChunkCubes, LandscapeEntityChunkBuffer landscapeEntities)
+        {
+            if (landscapeEntities.Entities == null) return;
+
+            foreach (var entity in landscapeEntities.Entities)
+            {
+                foreach (var block in entity.Blocks)
+                {
+                    int index = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
+                    if (ChunkCubes[index] == UtopiaProcessorParams.CubeId.Air)
+                    {
+                        ChunkCubes[index] = block.BlockId;
+                    }
                 }
             }
         }

@@ -22,7 +22,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         }
 
         #region Public Methods
-        public IEnumerable<BlockWithPosition> Generate(FastRandom rnd, Vector3I WPos, TreeTemplate treeType)
+        public List<BlockWithPosition> Generate(FastRandom rnd, Vector3I WPos, TreeTemplate treeType)
         {
             List<BlockWithPosition> mesh = new List<BlockWithPosition>();
 

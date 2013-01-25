@@ -17,7 +17,7 @@ namespace Utopia.Shared.LandscapeEntities
         }
 
         public Vector2I ChunkLocation;
-        public List<BlockWithPosition> Blocks;
+        public List<LandscapeEntity> Entities;
         public LandscapeEntityChunkBufferState ProcessingState = LandscapeEntityChunkBufferState.NotProcessed;
         public bool isReady = false;
     }

@@ -6,11 +6,16 @@ using System.Text;
 using System.Threading;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Shared.Chunks;
+using S33M3CoreComponents.Maths;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.LandscapeEntities
 {
     public class LandscapeEntityManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         private object _syncLock = new object();
         private Dictionary<Vector2I, LandscapeEntityChunkBuffer> _buffer;
@@ -52,6 +57,21 @@ namespace Utopia.Shared.LandscapeEntities
 
         }
 
+        public void Insert(Vector2I chunkLocation, LandscapeEntity entity)
+        {
+            LandscapeEntityChunkBuffer buffer;
+            lock (_syncLock)
+            {
+                if (_buffer.TryGetValue(chunkLocation, out buffer) == false)
+                {
+                    buffer = new LandscapeEntityChunkBuffer() { ChunkLocation = chunkLocation };
+                    _buffer.Add(chunkLocation, buffer);
+                }
+            }
+
+            if (buffer.Entities == null) buffer.Entities = new List<LandscapeEntity>();
+            buffer.Entities.Add(entity);
+        }
         #endregion
 
         #region Private Methods
@@ -85,15 +105,21 @@ namespace Utopia.Shared.LandscapeEntities
                 if (need2Process)
                 {
                     //Process Landscape
-                    //Process Entity landscape creation
+                    FastRandom chunkNewRnd;
+                    Biome chunkMasterBiome;
+                    ChunkColumnInfo[] columnsInfo;
+                    byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                    Processor.GenerateForLandscapeEntity(chunkBytes, surrendingChunkBuffer.ChunkLocation, out chunkMasterBiome, out chunkNewRnd, out columnsInfo);
 
-                    //==> Send results entity landscape generated inside chunks (Using Parser)
+                    //Process chunk Entity landscape creation
+                    Processor.LandscapeEntities.GenerateChunkItems(surrendingChunkBuffer.ChunkLocation, chunkMasterBiome, columnsInfo, chunkNewRnd);
+
                     surrendingChunkBuffer.ProcessingState = LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.Processed;
                 }
             }
 
             //Here, all chunk have been at least processed, some could still be in Processing state, waiting for all of them to finish.
-            while (chunkBuffers.Count(x => x.ProcessingState != LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.Processed) != 0)
+            while (chunkBuffers.Count(x => x.ProcessingState != LandscapeEntityChunkBuffer.LandscapeEntityChunkBufferState.Processed) > 0)
             {
                 //Wait for all lanscape entity from our range to be processed
                 Thread.Sleep(1);
