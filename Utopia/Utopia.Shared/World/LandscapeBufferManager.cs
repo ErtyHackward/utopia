@@ -22,6 +22,7 @@ namespace Utopia.Shared.World
     public class LandscapeBufferManager : IDisposable
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public static bool WithoutLandscapeBuffer;
 
         #region Private Variables
         private object _syncLock = new object();
@@ -60,7 +61,8 @@ namespace Utopia.Shared.World
 
         private void Serialize()
         {
-            if (_bufferPath == null) return;
+
+            if (_bufferPath == null || WithoutLandscapeBuffer) return;
 
             //Serialize buffer, to easy loading back next session !
             using (var fs = new FileStream(_bufferPath, FileMode.Create))
@@ -80,7 +82,7 @@ namespace Utopia.Shared.World
 
         public void Deserialize()
         {
-            if (_bufferPath == null) return;
+            if (_bufferPath == null || WithoutLandscapeBuffer) return;
             FileInfo fi = new FileInfo(_bufferPath);
             if (fi.Exists)
             {
