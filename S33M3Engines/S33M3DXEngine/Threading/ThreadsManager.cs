@@ -128,8 +128,10 @@ namespace S33M3DXEngine.Threading
 
         private static void CreateTaskScheduler()
         {
-            if (_mainTaskSheduler != null) 
-                _mainTaskSheduler.Dispose();
+            if (_mainTaskSheduler != null)
+            {
+                _mainTaskSheduler.QueueIsEmpty += _mainTaskSheduler_QueueIsEmpty;
+            }
             if (_monoConcurrencyTaskSheduler == null)
             {
                 _monoConcurrencyTaskSheduler = new QueuedTaskScheduler(TaskScheduler.Default, 1);
@@ -142,6 +144,15 @@ namespace S33M3DXEngine.Threading
             _normalPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(1);
             _lowPrioritySchedduler = _mainTaskSheduler.ActivateNewQueue(2);
         }
+
+        static void _mainTaskSheduler_QueueIsEmpty(object sender, EventArgs e)
+        {
+            QueuedTaskScheduler deprecatedScheduler = (QueuedTaskScheduler)sender;
+            deprecatedScheduler.QueueIsEmpty -= _mainTaskSheduler_QueueIsEmpty;
+            deprecatedScheduler.Dispose();
+        }
+
+        
         #endregion
 
         public enum ThreadTaskPriority : byte

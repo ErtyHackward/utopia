@@ -47,7 +47,7 @@ namespace Realms.Client.States
         void SelectionConnectPressed(object sender, EventArgs e)
         {
             var selection = _iocContainer.Get<ServerSelectionComponent>();
-            var vars = _iocContainer.Get<RuntimeVariables>();
+            var vars = _iocContainer.Get<RealmRuntimeVariables>();
 
             vars.SinglePlayer = false;
             vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;

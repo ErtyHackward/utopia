@@ -94,7 +94,7 @@ namespace Sandbox.Client.States
 
 #if DEBUG
                     // first state will be the login state
-                    var vars = _iocContainer.Get<RuntimeVariables>();
+                    var vars = _iocContainer.Get<SandboxRuntimeVariables>();
                     vars.SinglePlayer = true;
                     vars.Login = "test";
                     vars.PasswordHash = "";

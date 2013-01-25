@@ -11,7 +11,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
     {
         #region Private variables
         private WorldParameters _currentWorldParameter;
-        private RuntimeVariables _vars;
+        private SandboxRuntimeVariables _vars;
         private GuiManager _guiManager;
         #endregion
 
@@ -27,7 +27,7 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
 
         #endregion
 
-        public SinglePlayerComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, WorldParameters currentWorldParameter, RuntimeVariables var, GuiManager guiManager)
+        public SinglePlayerComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, WorldParameters currentWorldParameter, SandboxRuntimeVariables var, GuiManager guiManager)
             : base(game, engine, screen, commonResources)
         {
             _guiManager = guiManager;
