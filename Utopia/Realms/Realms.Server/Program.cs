@@ -4,16 +4,19 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using Ninject;
+using S33M3CoreComponents.Sound;
 using Utopia.Server;
 using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Web;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
+using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.World.WorldConfigs;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
@@ -22,6 +25,8 @@ namespace Realms.Server
 {
     class Program
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static Utopia.Server.Server Server
         {
             get { return _server; }
@@ -41,11 +46,30 @@ namespace Realms.Server
             if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
                 settingsManager.Settings.DatabasePath = Path.Combine(XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
 
+            _iocContainer.Bind<ISoundEngine>().ToConstant<ISoundEngine>(null);
 
             var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null, param);
 
             _iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
             _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(settingsManager).InSingletonScope();
+            
+            IWorldProcessor processor = null;
+            switch (param.Configuration.WorldProcessor)
+            {
+                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Flat:
+                    processor = new FlatWorldProcessor();
+                    break;
+                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
+                    processor = new UtopiaProcessor(param, _iocContainer.Get<EntityFactory>());
+                    break;
+                default:
+                    break;
+            }
+
+            _iocContainer.Rebind<WorldConfiguration>().ToConstant(param.Configuration);
+
+            var worldGenerator = new WorldGenerator(param, processor);
+            _iocContainer.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
             //_iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
             //_iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
@@ -54,7 +78,7 @@ namespace Realms.Server
             //_iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
             //_iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
             
-            _iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
+            //_iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
 
             _iocContainer.Bind<SQLiteStorageManager>().ToConstant(sqLiteStorageManager).InSingletonScope();
             _iocContainer.Bind<IUsersStorage>().To<ServerUsersStorage>().InSingletonScope();
@@ -69,23 +93,57 @@ namespace Realms.Server
             // redirect all trace into the console
             Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 
-            _iocContainer = new StandardKernel(new NinjectSettings());
+            logger.Info("Utopia Realms game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
-            System.Net.ServicePointManager.Expect100Continue = false;
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "main.realm");
+
+            if (!File.Exists(path))
+            {
+                if (args.Length == 0)
+                {
+                    logger.Fatal("Could not file realm to use. Specify realm configuration file path.");
+                    return;
+                }
+
+                path = args[0];
+
+                if (!File.Exists(path))
+                {
+                    logger.Fatal("Could not find the realm file at " + path);
+                    return;
+                }
+            }
 
             var serverFactory = new EntityFactory(null);
 
+            EntityFactory.InitializeProtobufInheritanceHierarchy();
+
+            WorldConfiguration conf;
+            try
+            {
+                conf = WorldConfiguration.LoadFromFile(path);
+                serverFactory.Config = conf;
+            }
+            catch (Exception ex)
+            {
+                logger.Fatal("Exception when trying to load configuration:\n" + ex.Message);
+                return;
+            }
+
+            _iocContainer = new StandardKernel(new NinjectSettings { AllowNullInjection = true });
+            System.Net.ServicePointManager.Expect100Continue = false;
             _iocContainer.Bind<EntityFactory>().ToConstant(serverFactory).InSingletonScope();
 
-            IocBind(new WorldParameters()
-            {
-                SeedName = "New World"
-            }
-            );
+            var wp = new WorldParameters
+                {
+                    WorldName = "Utopia",
+                    SeedName = "",
+                    Configuration = conf
+                };
+
+            IocBind(wp);
 
             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
-
-            TraceHelper.Write("Utopia Realms game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
             
             _server = new Utopia.Server.Server(
                 _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
@@ -94,22 +152,10 @@ namespace Realms.Server
                 _iocContainer.Get<IChunksStorage>(),
                 _iocContainer.Get<IEntityStorage>(),
                 serverFactory,
-                null
+                wp
                 );
 
             serverFactory.LandscapeManager = _server.LandscapeManager;
-
-            try
-            {
-                //if (_iocContainer.Get<IWorldProcessor>() is PlanWorldProcessor)
-                //{
-                //    var processor = _iocContainer.Get<IWorldProcessor>() as PlanWorldProcessor;
-                //    _server.LoginManager.GenerationParameters = processor.WorldPlan.Parameters;
-                //}
-            }
-            catch (Exception)
-            {
-            }
             
             _gameplay = new ServerGameplayProvider(_server, null);
 
@@ -124,7 +170,7 @@ namespace Realms.Server
 
             while (Console.ReadLine() != "exit")
             {
-
+                Console.WriteLine("Type 'exit' to quit");
             }
         }
 
@@ -132,7 +178,7 @@ namespace Realms.Server
         {
             var webApi = _iocContainer.Get<ServerWebApi>();
             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
-            webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count);
+            //webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count);
         }
 
         static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
