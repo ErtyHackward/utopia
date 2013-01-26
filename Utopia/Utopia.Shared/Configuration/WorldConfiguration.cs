@@ -166,7 +166,7 @@ namespace Utopia.Shared.Configuration
             }
         }
         
-        public static WorldConfiguration LoadFromFile(string path, EntityFactory factory = null, bool withHelperAssignation = false)
+        public static WorldConfiguration LoadFromFile(string path, bool withHelperAssignation = false)
         {
             using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
             {
