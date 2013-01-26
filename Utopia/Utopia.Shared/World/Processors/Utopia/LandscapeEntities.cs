@@ -42,7 +42,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 35,
                 Iteration = 4,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 2
@@ -58,7 +58,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 35,
                 Iteration = 4,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Double,
                 SmallBranches = true,
                 FoliageGenerationStart = 2
@@ -74,7 +74,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 35,
                 Iteration = 4,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 2
@@ -90,7 +90,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 35,
                 Iteration = 4,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 2
@@ -105,7 +105,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 40,
                 Iteration = 4,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 2
@@ -121,7 +121,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -137,7 +137,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -153,7 +153,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 5,
-                RandomLevel = 2,
+                IterationRndLevel = 2,
                 TrunkType = TrunkType.Crossed,
                 FoliageGenerationStart = 1
             });
@@ -170,7 +170,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -188,7 +188,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -206,7 +206,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -224,7 +224,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -242,7 +242,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -259,7 +259,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -277,7 +277,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Single,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -294,7 +294,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 30,
                 Iteration = 2,
-                RandomLevel = 0,
+                IterationRndLevel = 0,
                 TrunkType = TrunkType.Crossed,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
@@ -310,7 +310,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 FoliageBlock = UtopiaProcessorParams.CubeId.Foliage,
                 Angle = 35,
                 Iteration = 3,
-                RandomLevel = 1,
+                IterationRndLevel = 1,
                 TrunkType = TrunkType.Double,
                 SmallBranches = true,
                 FoliageGenerationStart = 1
