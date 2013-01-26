@@ -9,7 +9,7 @@ using ProtoBuf;
 namespace Utopia.Shared.LandscapeEntities.Trees
 {
     [ProtoContract]
-    public partial struct TreeTemplate
+    public partial class TreeTemplate
     {
         [Category("General")]
         [ProtoMember(1)]
@@ -51,10 +51,6 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [DisplayName("Iteration Rnd Level")]
         [ProtoMember(11)]
         public int IterationRndLevel { get; set; }
-        [Category("Configuration")]
-        [Browsable(false)]
-        [ProtoMember(12)]
-        public int RandomLevel { get; set; }
         [Category("Configuration")]
         [ProtoMember(13)]
         [DisplayName("Trunk Type")]
@@ -99,6 +95,16 @@ namespace Utopia.Shared.LandscapeEntities.Trees
             public override bool GetPropertiesSupported(ITypeDescriptorContext context)
             {
                 return true;
+            }
+
+            public override bool GetCreateInstanceSupported(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override object CreateInstance(ITypeDescriptorContext context, System.Collections.IDictionary propertyValues)
+            {
+                return new LSystemRule() { Rule = (string)propertyValues["Rule"], Prob = (float)propertyValues["Prob"]};
             }
         }
     }

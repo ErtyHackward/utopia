@@ -129,13 +129,13 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// Gets or sets list of all possible recipes
         /// </summary>
-        [ProtoMember(13)]
+        [ProtoMember(13, OverwriteList = true)]
         public List<Recipe> Recipes { get; set; }
 
         /// <summary>
         /// Get or sets Tree template, that will be added in the biome.
         /// </summary>
-        [ProtoMember(14)]
+        [ProtoMember(14, OverwriteList = true)]
         public List<TreeTemplate> TreeTemplates { get; set; }
 
         #endregion

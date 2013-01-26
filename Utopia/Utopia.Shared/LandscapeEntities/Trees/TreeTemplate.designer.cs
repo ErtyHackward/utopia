@@ -7,7 +7,7 @@ using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.LandscapeEntities.Trees
 {
-    public partial struct TreeTemplate
+    public partial class TreeTemplate
     {
         [TypeConverter(typeof(CubeConverter))]
         [DisplayName("Trunk Block")]
