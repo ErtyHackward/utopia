@@ -33,6 +33,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets landscape manager used to create new tools
         /// </summary>
+        [Inject]
         public ILandscapeManager2D LandscapeManager { get; set; }
 
         /// <summary>
@@ -359,9 +360,7 @@ namespace Utopia.Shared.Entities
             if (entity is IWorldIntercatingEntity)
             {
                 var item = entity as IWorldIntercatingEntity;
-                item.LandscapeManager = LandscapeManager;
                 item.EntityFactory = this;
-                item.DynamicEntityManager = DynamicEntityManager;
             }
 
             if (entity is ISoundEmitterEntity)

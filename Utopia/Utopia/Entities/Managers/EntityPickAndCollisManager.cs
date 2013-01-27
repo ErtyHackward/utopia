@@ -71,13 +71,9 @@ namespace Utopia.Entities.Managers
         }
 
         [Inject]
-        public ILandscapeManager2D LandscapeManager
+        public EntityFactory EntityFactory
         {
-            get { return _landscapeManager; }
-            set { 
-                _landscapeManager = value;
-                _handTool.LandscapeManager = _landscapeManager;
-            }
+            set { _handTool.EntityFactory = value; }
         }
 
         #endregion
@@ -281,7 +277,6 @@ namespace Utopia.Entities.Managers
         }
 
         bool _isOnGround;
-        private ILandscapeManager2D _landscapeManager;
 
         private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
