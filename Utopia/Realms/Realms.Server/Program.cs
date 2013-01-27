@@ -114,7 +114,7 @@ namespace Realms.Server
                 }
             }
 
-            var serverFactory = new EntityFactory(null);
+            var serverFactory = new EntityFactory();
 
             EntityFactory.InitializeProtobufInheritanceHierarchy();
 
@@ -156,6 +156,7 @@ namespace Realms.Server
                 );
 
             serverFactory.LandscapeManager = _server.LandscapeManager;
+            serverFactory.DynamicEntityManager = _server.AreaManager;
             
             _gameplay = new ServerGameplayProvider(_server, null);
 

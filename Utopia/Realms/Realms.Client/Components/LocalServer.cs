@@ -52,7 +52,7 @@ namespace Realms.Client.Components
 
             _worldParam = worldParam;
 
-            _serverFactory = new EntityFactory(null);
+            _serverFactory = new EntityFactory();
             _serverFactory.Config = _worldParam.Configuration;
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
@@ -92,6 +92,7 @@ namespace Realms.Client.Components
 
             _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
+            _serverFactory.DynamicEntityManager = _server.AreaManager;
 
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();

@@ -136,7 +136,7 @@ namespace Utopia.Shared.Configuration
         protected WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
         {
             if (factory == null) 
-                factory = new EntityFactory(null);
+                factory = new EntityFactory();
             if (withHelperAssignation) 
                 EditorConfigHelper.Config = this;
             
