@@ -51,16 +51,6 @@ namespace Utopia.Shared.Entities.Dynamic
         public EntityFactory EntityFactory { get; set; }
 
         /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
-        public ILandscapeManager2D LandscapeManager { get; set; }
-
-        /// <summary>
-        /// Gets dynamic entity manager, this field is injected
-        /// </summary>
-        public IDynamicEntityManager DynamicEntityManager { get; set; }
-
-        /// <summary>
         /// Indicates if this charater controlled by real human
         /// </summary>
         public bool IsRealPlayer { get; set; }

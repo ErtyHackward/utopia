@@ -81,7 +81,6 @@ namespace Utopia.Entities.Managers
         private bool _stopMovedAction = false;
 
         private VisualWorldParameters _visualWorldParameters;
-        private readonly ILandscapeManager2D _landscapeManager;
         private ItemMessageTranslator _itemMessageTranslator;
 
         // Event related variables
@@ -259,7 +258,7 @@ namespace Utopia.Entities.Managers
                                    IPickingRenderer pickingRenderer,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
-                                   ILandscapeManager2D landscapeManager
+                                   EntityFactory factory
             )
         {
             _d3DEngine = engine;
@@ -269,8 +268,7 @@ namespace Utopia.Entities.Managers
             _cubesHolder = cubesHolder;
             _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
-            _landscapeManager = landscapeManager;
-            _handTool.LandscapeManager = landscapeManager;
+            _handTool.EntityFactory = factory;
 
             Player = player;
 

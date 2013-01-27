@@ -1,4 +1,5 @@
 ﻿using System;
+using Ninject;
 using Utopia.Shared;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities;
@@ -16,8 +17,6 @@ namespace Utopia.Network
     /// </summary>
     public class ServerComponent : GameComponent, IDebugInfo
     {
-        private readonly EntityFactory _factory;
-
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
         public PlayerCharacter Player { get; set; }
@@ -131,10 +130,12 @@ namespace Utopia.Network
         public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
         #endregion
 
-        public ServerComponent(EntityFactory factory)
-        {
-            _factory = factory;
+        [Inject]
+        public EntityFactory EntityFactory { get; set; }
 
+        public ServerComponent()
+        {
+            
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
         }
 
@@ -347,7 +348,7 @@ namespace Utopia.Network
         /// <param name="msg"></param>
         private void InvokeEventForNetworkDataReceived(IBinaryMessage msg)
         {
-            _factory.ProcessMessage(msg);
+            EntityFactory.ProcessMessage(msg);
 
             if (msg is ITimeStampedMsg)
             {

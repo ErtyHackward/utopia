@@ -94,17 +94,17 @@ namespace Utopia.Shared.Entities.Inventory
         [Browsable(false)]
         public EntityFactory EntityFactory { get; set; }
 
-        /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
         [Browsable(false)]
-        public ILandscapeManager2D LandscapeManager { get; set; }
+        public ILandscapeManager2D LandscapeManager
+        {
+            get { return EntityFactory.LandscapeManager; }
+        }
 
-        /// <summary>
-        /// Gets dynamic entity manager, this field is injected
-        /// </summary>
         [Browsable(false)]
-        public IDynamicEntityManager DynamicEntityManager { get; set; }
+        public IDynamicEntityManager DynamicEntityManager
+        {
+            get { return EntityFactory.DynamicEntityManager; }
+        }
 
         #endregion
 
@@ -177,15 +177,15 @@ namespace Utopia.Shared.Entities.Inventory
 
             var entityBB = new BoundingBox(pos.Position.AsVector3(), DefaultSize);
 
-            foreach (var dynEntity in DynamicEntityManager.EnumerateAround(pos.Position.AsVector3()))
+            foreach (var dynEntity in EntityFactory.DynamicEntityManager.EnumerateAround(pos.Position.AsVector3()))
             {
                 var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.DefaultSize);
                 if (entityBB.Intersects(ref dynBB))
                     return impact;
             }
-            
 
-            var cursor = LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
+
+            var cursor = EntityFactory.LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
             
             var entity = (Item)Clone();
 
