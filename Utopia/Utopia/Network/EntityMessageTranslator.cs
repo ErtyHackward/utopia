@@ -17,7 +17,7 @@ namespace Utopia.Network
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly ServerComponent _server;
-        private readonly IDynamicEntityManager _dynamicEntityManager;
+        private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly IChunkEntityImpactManager _landscapeManager;
         private IDynamicEntity _playerEntity;
 
@@ -56,7 +56,7 @@ namespace Utopia.Network
         /// <param name="playerEntity"></param>
         /// <param name="dynamicEntityManager"></param>
         /// <param name="landscapeManager"> </param>
-        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IDynamicEntityManager dynamicEntityManager, IChunkEntityImpactManager landscapeManager)
+        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IVisualDynamicEntityManager dynamicEntityManager, IChunkEntityImpactManager landscapeManager)
         {
             _server = server;
 

@@ -46,7 +46,7 @@ namespace Utopia.Entities.Managers
     /// Responsible to draw them, also used to check collission detection with the player
     /// Draws the player entity if player is in 3rd person mode
     /// </summary>
-    public class DynamicEntityManager : DrawableGameComponent, IDynamicEntityManager
+    public class DynamicEntityManager : DrawableGameComponent, IVisualDynamicEntityManager
     {
         /// <summary>
         /// Allows to group instances by model to perform instanced drawing
@@ -605,9 +605,12 @@ namespace Utopia.Entities.Managers
 
         #endregion
 
+        public IEnumerable<IDynamicEntity> EnumerateAround(Vector3 pos)
+        {
+            // as we store all entites in one collection
+            // we will enumerate by all of them
 
-
-
-
+            return _dynamicEntitiesDico.Values.Select(visualDynamicEntity => visualDynamicEntity.DynamicEntity);
+        }
     }
 }

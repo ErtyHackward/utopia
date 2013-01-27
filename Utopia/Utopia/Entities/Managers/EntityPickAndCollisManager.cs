@@ -34,7 +34,7 @@ namespace Utopia.Entities.Managers
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region private variables
-        private IDynamicEntityManager _dynamicEntityManager;
+        private IVisualDynamicEntityManager _dynamicEntityManager;
         //private TimerManager.GameTimer _timer;
         private List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
         private PlayerEntityManager _player;
@@ -64,7 +64,7 @@ namespace Utopia.Entities.Managers
         public bool isDirty { get; set; }
 
         [Inject]
-        public IDynamicEntityManager DynamicEntityManager
+        public IVisualDynamicEntityManager DynamicEntityManager
         {
             get { return _dynamicEntityManager; }
             set { _dynamicEntityManager = value; }

@@ -86,6 +86,26 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         public EquipmentSlotType AllowedSlots { get; set; }
 
+        // -------------------------------------------------------------------------
+
+        /// <summary>
+        /// Gets entityFactory, this field is injected
+        /// </summary>
+        [Browsable(false)]
+        public EntityFactory EntityFactory { get; set; }
+
+        /// <summary>
+        /// Gets landscape manager, this field is injected
+        /// </summary>
+        [Browsable(false)]
+        public ILandscapeManager2D LandscapeManager { get; set; }
+
+        /// <summary>
+        /// Gets dynamic entity manager, this field is injected
+        /// </summary>
+        [Browsable(false)]
+        public IDynamicEntityManager DynamicEntityManager { get; set; }
+
         #endregion
 
         /// <summary>
@@ -155,8 +175,18 @@ namespace Utopia.Shared.Entities.Inventory
             if (!pos.Valid)
                 return impact;
 
-            var cursor = LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
+            var entityBB = new BoundingBox(pos.Position.AsVector3(), DefaultSize);
 
+            foreach (var dynEntity in DynamicEntityManager.EnumerateAround(pos.Position.AsVector3()))
+            {
+                var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.DefaultSize);
+                if (entityBB.Intersects(ref dynBB))
+                    return impact;
+            }
+            
+
+            var cursor = LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
+            
             var entity = (Item)Clone();
 
             SetPosition(pos, entity, owner);
@@ -184,18 +214,6 @@ namespace Utopia.Shared.Entities.Inventory
 
             return impact;
         }
-
-        /// <summary>
-        /// Gets entityFactory, this field is injected
-        /// </summary>
-        [Browsable(false)]
-        public EntityFactory EntityFactory { get; set; }
-
-        /// <summary>
-        /// Gets landscape manager, this field is injected
-        /// </summary>
-        [Browsable(false)]
-        public ILandscapeManager2D LandscapeManager { get; set; }
 
         /// <summary>
         /// Defines tool pick behaviour for the blocks

@@ -75,12 +75,12 @@ namespace Utopia.Server.Managers
 
         void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessagePosition += ConnectionMessagePosition;
-            e.Connection.MessageDirection += ConnectionMessageDirection;
-            e.Connection.MessageEntityUse += ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer += ConnectionMessageItemTransfer;
+            e.Connection.MessagePosition        += ConnectionMessagePosition;
+            e.Connection.MessageDirection       += ConnectionMessageDirection;
+            e.Connection.MessageEntityUse       += ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer    += ConnectionMessageItemTransfer;
             e.Connection.MessageEntityEquipment += ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock += ConnectionMessageEntityLock;
+            e.Connection.MessageEntityLock      += ConnectionMessageEntityLock;
         }
 
         private void ConnectionMessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)

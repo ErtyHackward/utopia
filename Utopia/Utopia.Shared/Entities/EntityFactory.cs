@@ -28,13 +28,17 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
-        
         public WorldConfiguration Config { get; set; }
 
         /// <summary>
         /// Gets landscape manager used to create new tools
         /// </summary>
         public ILandscapeManager2D LandscapeManager { get; set; }
+
+        /// <summary>
+        /// Gets dynamic entity manager
+        /// </summary>
+        public IDynamicEntityManager DynamicEntityManager { get; set; }
 
         /// <summary>
         /// Gets or sets optional sound manager used by ISoundEmitterEntities
@@ -227,12 +231,6 @@ namespace Utopia.Shared.Entities
             #endregion
         }
 
-        public EntityFactory(ILandscapeManager2D landscapeManager)
-        {
-            // type hierarhy should be described here
-            LandscapeManager = landscapeManager;
-        }
-
         /// <summary>
         /// Occurs when entity was created, this stage can be used to prepare entity for release
         /// </summary>
@@ -363,6 +361,7 @@ namespace Utopia.Shared.Entities
                 var item = entity as IWorldIntercatingEntity;
                 item.LandscapeManager = LandscapeManager;
                 item.EntityFactory = this;
+                item.DynamicEntityManager = DynamicEntityManager;
             }
 
             if (entity is ISoundEmitterEntity)

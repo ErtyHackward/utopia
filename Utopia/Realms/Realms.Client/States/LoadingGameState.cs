@@ -169,8 +169,10 @@ namespace Realms.Client.States
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
-            _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
 
+            var clientFactory = _ioc.Get<EntityFactory>("Client");
+            clientFactory.Config = clientSideworldParam.Configuration;
+            
             IWorldProcessor processor = null;
             switch (clientSideworldParam.Configuration.WorldProcessor)
             {
@@ -237,7 +239,7 @@ namespace Realms.Client.States
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
-            var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
+            var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
@@ -256,7 +258,7 @@ namespace Realms.Client.States
             cameraManager.SetCamerasPlugin(playerEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
-
+            
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
