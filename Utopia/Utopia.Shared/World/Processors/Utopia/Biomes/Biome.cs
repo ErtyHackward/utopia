@@ -128,6 +128,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             set { _moistureFilter = value; }
         }
 
+        [Browsable(false)]
         public WorldConfiguration Configuration
         {
             get { return _config; }
@@ -192,15 +193,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         PopulateChunkWithCave(cursor, x, y, z, layer, cavern.CubeId, rnd);
                     }
                 }
-            }
-        }
-
-        public void GenerateChunkTrees(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
-        {
-            int nbrTree = rnd.Next(BiomeTrees.TreePerChunks.Min, BiomeTrees.TreePerChunks.Max + 1);
-            for (int i = 0; i < nbrTree; i++)
-            {
-                PopulateChunkWithTree(cursor, chunk, ref chunkWorldPosition, entityFactory, columndInfo, biome, rnd);
             }
         }
 
@@ -398,107 +390,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     }
                 }
                 if (layerRadiusModifier < caveRadius) layerRadiusModifier++;
-            }
-        }
-
-        private void PopulateChunkWithTree(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, EntityFactory entityFactory, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd)
-        {
-
-            var treeTemplate = TreeTemplates.Templates[(int)BiomeTrees.GetNextTreeType(rnd)];
-
-            //Get Rnd chunk Location.
-            int x = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
-            int z = rnd.Next(treeTemplate.Radius - 1, 16 - treeTemplate.Radius + 1);
-            int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
-
-            cursor.SetInternalPosition(x, y, z);
-            //No other tree around me ?
-            byte trunkRootCube = cursor.Read();
-            BlockProfile profile = _config.BlockProfiles[trunkRootCube];
-
-            Vector3I radiusRange = new Vector3I(treeTemplate.Radius - 1, 1, treeTemplate.Radius - 1);
-
-            if ((profile.IsSolidToEntity && !profile.IsSeeThrough) &&
-                cursor.IsCubePresent(treeTemplate.TrunkCubeId, radiusRange) == false &&
-                cursor.IsCubePresent(UtopiaProcessorParams.CubeId.StillWater, radiusRange) == false)
-            {
-                //Generate the Trunk first
-                int trunkSize = rnd.Next(treeTemplate.TrunkSize.Min, treeTemplate.TrunkSize.Max + 1);
-                for (int trunkBlock = 0; trunkBlock < trunkSize; trunkBlock++)
-                {
-                    cursor.Write(treeTemplate.TrunkCubeId);
-                    cursor.Move(CursorRelativeMovement.Up);
-                }
-                //Move Down to the last trunk block
-                cursor.Move(CursorRelativeMovement.Down);
-
-                //Add Foliage
-                foreach (List<int> treeStructBlock in treeTemplate.FoliageStructure)
-                {
-                    int foliageStructOffset1 = 0; int foliageStructOffset2 = 0;
-                    //Random "move" between each block if blocks nbr is > 1
-                    if (treeTemplate.FoliageStructure.Count > 1)
-                    {
-                        foliageStructOffset1 = rnd.Next(1, 5);
-                        cursor.Move(foliageStructOffset1);
-                        foliageStructOffset2 = rnd.Next(1, 5);
-                        cursor.Move(foliageStructOffset2);
-                    }
-                    foreach (int foliageMove in treeStructBlock)
-                    {
-                        cursor.Move(foliageMove);
-                        if (foliageMove >= 0 && cursor.Read() == UtopiaProcessorParams.CubeId.Air)
-                        {
-                            cursor.Write(treeTemplate.FoliageCubeId);
-                        }
-                    }
-
-                    //In case of cactus add a flower on top of fit
-                    if (treeTemplate.TreeType == TreeTemplates.TreeType.Cactus)
-                    {
-                        Vector3I posi = cursor.InternalPosition;
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, UtopiaProcessorParams.BluePrintId.CactusFlower, posi.X, posi.Y, posi.Z, rnd, entityFactory, true);
-                    }
-
-                    //Remove Offset
-                    if (foliageStructOffset1 != 0)
-                    {
-                        switch (foliageStructOffset1)
-                        {
-                            case 1:
-                                cursor.Move(CursorRelativeMovement.West);
-                                break;
-                            case 2:
-                                cursor.Move(CursorRelativeMovement.East);
-                                break;
-                            case 3:
-                                cursor.Move(CursorRelativeMovement.South);
-                                break;
-                            case 4:
-                                cursor.Move(CursorRelativeMovement.North);
-                                break;
-                            default:
-                                break;
-                        }
-                        switch (foliageStructOffset2)
-                        {
-                            case 1:
-                                cursor.Move(CursorRelativeMovement.West);
-                                break;
-                            case 2:
-                                cursor.Move(CursorRelativeMovement.East);
-                                break;
-                            case 3:
-                                cursor.Move(CursorRelativeMovement.South);
-                                break;
-                            case 4:
-                                cursor.Move(CursorRelativeMovement.North);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
             }
         }
 

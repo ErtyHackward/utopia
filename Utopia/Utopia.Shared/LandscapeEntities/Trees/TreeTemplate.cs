@@ -12,6 +12,10 @@ namespace Utopia.Shared.LandscapeEntities.Trees
     public partial class TreeTemplate
     {
         [Category("General")]
+        //[Browsable(false)]
+        [ProtoMember(17)]
+        public uint TemplateId { get; set; }
+        [Category("General")]
         [ProtoMember(1)]
         public string TemplateName { get; set; }
         [Category("Configuration")]
@@ -63,6 +67,11 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [DisplayName("Foliage start Iteration")]
         [ProtoMember(15)]
         public int FoliageGenerationStart { get; set; }
+
+        public override string ToString()
+        {
+            return TemplateName;
+        }
     }
 
     [ProtoContract]
