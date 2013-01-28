@@ -489,41 +489,57 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Order the Entities by their HashCode in order to always draw them in the same order
             foreach (var entity in landscapeEntities.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
             {
-                var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
-
-                int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
-                if (x < 0 || x >= AbstractChunk.ChunkSize.X) continue;
-                int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
-                if (z < 0 || z >= AbstractChunk.ChunkSize.Z) continue;
-
-                dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
-                for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+                for (int fruits = 0; fruits <= 15; fruits++)
                 {
-                    if (dataCursor.Read() == treetemplate.FoliageBlock)
+                    var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
+
+                    int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
+                    int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
+
+                    if (x >= 0 && x < AbstractChunk.ChunkSize.X && z >= 0 && z < AbstractChunk.ChunkSize.Z)
                     {
-                        //Add new Static item here !
-                        var staticEntity = entityFactory.CreateFromBluePrint(279);
-                        staticEntity.Position = new Vector3D(entity.RootLocation.X + chunkWorldPosition.X, y - 2, entity.RootLocation.Z + chunkWorldPosition.Y);
 
-                        //if (staticEntity is IBlockLinkedEntity)
-                        //{
-                        //    Vector3I linkedCubePosition = new Vector3I(chunkWorldPosition.X + x, y, chunkWorldPosition.Y + z);
-                        //    ((IBlockLinkedEntity)staticEntity).LinkedCube = linkedCubePosition;
-                        //}
+                        bool isOnGround = chunkRnd.NextDouble() > 0.5;
+                        if (isOnGround == false)
+                        {
+                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
 
-                        //if (staticEntity is BlockLinkedItem)
-                        //{
-                        //    Vector3I LocationCube = new Vector3I(chunkWorldPosition.X + x, y - 1, chunkWorldPosition.Y + z);
-                        //    ((BlockLinkedItem)staticEntity).BlockLocationRoot = LocationCube;
-                        //}
+                            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+                            {
+                                if (dataCursor.Read() == treetemplate.FoliageBlock)
+                                {
+                                    //Add new Static item here !
+                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
+                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, y - 0.25, z + chunkWorldPosition.Y + 0.5);
 
+                                    chunk.Entities.Add((StaticEntity)staticEntity);
+                                    break;
+                                }
+                                dataCursor.Move(CursorRelativeMovement.Up);
+                            }
+                        }
+                        else
+                        {
+                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y, z);
 
-                        chunk.Entities.Add((StaticEntity)staticEntity);
-                        logger.Warn("Apple Added to tree {0}, cursor position {1}", staticEntity.Position, dataCursor.InternalPosition);
-                        break;
+                            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y < AbstractChunk.ChunkSize.Y; y--)
+                            {
+                                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
+                                {
+                                    //Add Static item here on the ground!
+                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
+                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y + 0.5);
+
+                                    chunk.Entities.Add((StaticEntity)staticEntity);
+                                    break;
+                                }
+
+                                dataCursor.Move(CursorRelativeMovement.Down);
+                            }
+                        }
+
                     }
 
-                    dataCursor.Move(CursorRelativeMovement.Up);
                 }
 
                 foreach (var block in entity.Blocks)
