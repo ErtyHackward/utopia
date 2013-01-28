@@ -215,7 +215,7 @@ namespace Realms.Client
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
-            _iocContainer.Bind<LandscapeBufferManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);            //Chunk "Wrapping" inside the big Array
+            _iocContainer.Bind<LandscapeBufferManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);            
             //=============================================================
 
             //Entities related stuff ====================================================

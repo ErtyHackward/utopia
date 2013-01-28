@@ -29,6 +29,7 @@ using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Utopia.Sounds;
+using Utopia.Shared.World;
 
 namespace Sandbox.Client.States
 {
@@ -98,6 +99,7 @@ namespace Sandbox.Client.States
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
+            var landscapeEntityManager = _ioc.Get<LandscapeBufferManager>();
 
             AddComponent(cameraManager);
             AddComponent(serverComponent);
