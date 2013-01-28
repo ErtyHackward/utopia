@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.RealmEditor;
+using System.Drawing.Design;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -13,9 +15,16 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         [Browsable(false)]
         [ProtoMember(1)]
-        public uint TemplateId { get; set; }
+        public int TemplateId { get; set; }
+
         [ProtoMember(2)]
-        public uint SpawnChances { get; set; }
+        [TypeConverter(typeof(NumericUpDownTypeConverter))]
+        [Editor(typeof(NumericUpDownTypeEditor), typeof(UITypeEditor)), MinMaxAttribute(0, 1000)]
+        [DisplayName("Spanwing Distribution"), Description("Spawning distribution chance")]
+        public int SpawnDistribution { get; set; }
+
+        [Browsable(false)]
+        public int SpawnDistributionThreshold { get; set; }
 
         public override string ToString()
         {
