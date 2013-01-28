@@ -176,7 +176,7 @@ namespace Realms.Client.States
             FileInfo fi = new FileInfo(_vars.LocalDataBasePath);
             string bufferPath = Path.Combine(fi.Directory.FullName, "LandscapeBuffer.proto");
             landscapeEntityManager.SetBufferPath(bufferPath);
-            landscapeEntityManager.Deserialize();
+            landscapeEntityManager.LoadBuffer();
 
             IWorldProcessor processor = null;
             switch (clientSideworldParam.Configuration.WorldProcessor)
@@ -267,7 +267,7 @@ namespace Realms.Client.States
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
-            
+
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);

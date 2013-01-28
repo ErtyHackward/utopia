@@ -33,7 +33,6 @@ namespace Realms.Client
                     Utopia.UtopiaRender.LCDefferedModeLvl = int.Parse(arg.ToLower().Replace("-lcdefferedmodelvl", ""));
                 }
             }
-
 #if DEBUG
             ShowDebug = true;     
 #endif

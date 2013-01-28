@@ -46,7 +46,7 @@ namespace Realms.Server
 
             _iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
             _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(settingsManager).InSingletonScope();
-
+            _iocContainer.Bind<LandscapeBufferManager>().ToSelf();
             //_iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
             //_iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
             //_iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
