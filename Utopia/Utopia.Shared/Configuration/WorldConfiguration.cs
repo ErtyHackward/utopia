@@ -138,6 +138,22 @@ namespace Utopia.Shared.Configuration
         [ProtoMember(14, OverwriteList = true)]
         public List<TreeTemplate> TreeTemplates { get; set; }
 
+
+        private Dictionary<int, TreeTemplate> _treeTemplateDico;
+        [Browsable(false)]
+        public Dictionary<int, TreeTemplate> TreeTemplateDico
+        {
+            get
+            {
+                if (_treeTemplateDico == null)
+                {
+                    _treeTemplateDico = new Dictionary<int, TreeTemplate>();
+                    foreach (var tree in TreeTemplates) _treeTemplateDico.Add(tree.TemplateId, tree);
+                }
+                return _treeTemplateDico;
+            }
+        }
+
         #endregion
 
         protected WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)

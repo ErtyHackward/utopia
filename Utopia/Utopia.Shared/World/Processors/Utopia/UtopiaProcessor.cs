@@ -16,6 +16,7 @@ using System.Linq;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.LandscapeEntities;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -95,7 +96,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     Size = AbstractChunk.ChunkSize
                 };
 
-                InsertLandscapeEntities(landscapeBuffer.chunkBytesBuffer, landscapeBuffer.ColumnsInfoBuffer, landscapeBuffer);
+                InsertLandscapeEntities(chunkRnd, chunk, _entityFactory, landscapeBuffer.chunkBytesBuffer, landscapeBuffer.ColumnsInfoBuffer, landscapeBuffer);
                 ChunkMetaData metaData = CreateChunkMetaData(landscapeBuffer.ColumnsInfoBuffer);
                 PopulateChunk(chunk, landscapeBuffer.chunkBytesBuffer, ref chunkWorldPosition, landscapeBuffer.ColumnsInfoBuffer, metaData, chunkRnd, _entityFactory);
                 
@@ -479,13 +480,52 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void InsertLandscapeEntities(byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, LandscapeChunkBuffer landscapeEntities)
+        private void InsertLandscapeEntities(FastRandom chunkRnd, GeneratedChunk chunk, EntityFactory entityFactory, byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, LandscapeChunkBuffer landscapeEntities)
         {
             if (landscapeEntities.Entities == null) return;
 
+            ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes, columnsInfo);
+            Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
             //Order the Entities by their HashCode in order to always draw them in the same order
             foreach (var entity in landscapeEntities.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
             {
+                var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
+
+                int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
+                if (x < 0 || x >= AbstractChunk.ChunkSize.X) continue;
+                int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
+                if (z < 0 || z >= AbstractChunk.ChunkSize.Z) continue;
+
+                dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
+                for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+                {
+                    if (dataCursor.Read() == treetemplate.FoliageBlock)
+                    {
+                        //Add new Static item here !
+                        var staticEntity = entityFactory.CreateFromBluePrint(279);
+                        staticEntity.Position = new Vector3D(entity.RootLocation.X + chunkWorldPosition.X, y - 2, entity.RootLocation.Z + chunkWorldPosition.Y);
+
+                        //if (staticEntity is IBlockLinkedEntity)
+                        //{
+                        //    Vector3I linkedCubePosition = new Vector3I(chunkWorldPosition.X + x, y, chunkWorldPosition.Y + z);
+                        //    ((IBlockLinkedEntity)staticEntity).LinkedCube = linkedCubePosition;
+                        //}
+
+                        //if (staticEntity is BlockLinkedItem)
+                        //{
+                        //    Vector3I LocationCube = new Vector3I(chunkWorldPosition.X + x, y - 1, chunkWorldPosition.Y + z);
+                        //    ((BlockLinkedItem)staticEntity).BlockLocationRoot = LocationCube;
+                        //}
+
+
+                        chunk.Entities.Add((StaticEntity)staticEntity);
+                        logger.Warn("Apple Added to tree {0}, cursor position {1}", staticEntity.Position, dataCursor.InternalPosition);
+                        break;
+                    }
+
+                    dataCursor.Move(CursorRelativeMovement.Up);
+                }
+
                 foreach (var block in entity.Blocks)
                 {
                     int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
