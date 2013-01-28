@@ -489,7 +489,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Order the Entities by their HashCode in order to always draw them in the same order
             foreach (var entity in landscapeEntities.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
             {
-                for (int fruits = 0; fruits <= 15; fruits++)
+                for (int fruits = 0; fruits <= 5; fruits++)
                 {
                     var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
 
