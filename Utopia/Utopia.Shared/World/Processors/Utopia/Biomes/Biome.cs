@@ -164,12 +164,15 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     }
                     else
                     {
-                        //Get Rnd chunk Location.
-                        int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
-                        int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
-                        int z = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
+                        if (vein.CubeId == UtopiaProcessorParams.CubeId.DynamicLava)
+                        {
+                            //Get Rnd chunk Location.
+                            int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
+                            int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
+                            int z = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
 
-                        PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                            PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                        }
                     }
                 }
             }

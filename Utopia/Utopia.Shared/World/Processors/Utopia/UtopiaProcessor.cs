@@ -96,9 +96,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 };
 
                 InsertLandscapeEntities(landscapeBuffer.chunkBytesBuffer, landscapeBuffer.ColumnsInfoBuffer, landscapeBuffer);
-
                 ChunkMetaData metaData = CreateChunkMetaData(landscapeBuffer.ColumnsInfoBuffer);
-
                 PopulateChunk(chunk, landscapeBuffer.chunkBytesBuffer, ref chunkWorldPosition, landscapeBuffer.ColumnsInfoBuffer, metaData, chunkRnd, _entityFactory);
                 
                 RefreshChunkMetaData(metaData, landscapeBuffer.ColumnsInfoBuffer);
@@ -514,12 +512,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
 
-            //Add LandscapeEntities to the chunk
-            //_landscapeEntities.GenerateChunkItems(dataCursor, chunk, masterBiome, columnInfo, chunkRnd);      
-
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
-            //masterBiome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
             masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
         }
 

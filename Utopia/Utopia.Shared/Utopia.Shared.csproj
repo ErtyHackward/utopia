@@ -236,6 +236,7 @@
     <Compile Include="LandscapeEntities\Trees\TreeTemplate.designer.cs">
       <DependentUpon>TreeTemplate.cs</DependentUpon>
     </Compile>
+    <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="World\LandscapeBufferManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntity.cs" />

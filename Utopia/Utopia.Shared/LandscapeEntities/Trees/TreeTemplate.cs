@@ -14,7 +14,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [Category("General")]
         //[Browsable(false)]
         [ProtoMember(17)]
-        public uint TemplateId { get; set; }
+        public int TemplateId { get; set; }
         [Category("General")]
         [ProtoMember(1)]
         public string TemplateName { get; set; }

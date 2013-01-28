@@ -530,9 +530,7 @@ namespace Utopia.Editor.Forms
                     tvMainCategories.SelectedNode = FindByTag(recipe);
                     break;
                 case "Trees":
-                    var tree = new TreeTemplate() { TemplateName = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom = "FFF" };
-                    var currentMaxId = _configuration.TreeTemplates.Max(x => x.TemplateId);
-                    tree.TemplateId = currentMaxId + 1;
+                    var tree = new TreeTemplate() { TemplateName = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
                     _configuration.TreeTemplates.Add(tree);
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(tree);
