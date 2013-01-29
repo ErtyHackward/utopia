@@ -96,8 +96,9 @@ namespace Utopia.Shared.World
             _bufferPath = Path;
         }
 
-        public bool TryGet(Vector2I chunkLocation, out LandscapeChunkBuffer buffer)
+        public LandscapeChunkBuffer Get(Vector2I chunkLocation)
         {
+            LandscapeChunkBuffer buffer;
             lock (_syncLock)
             {
                 if (_buffer.TryGetValue(chunkLocation, out buffer) == false)
@@ -105,26 +106,18 @@ namespace Utopia.Shared.World
                     buffer = new LandscapeChunkBuffer() { ChunkLocation = chunkLocation };
                     _buffer.Add(chunkLocation, buffer);
                 }
-
-                if (buffer.isReady) return true;
-                if (buffer.isLocked) return false;
-                buffer.isLocked = true;
             }
 
-            GenerateLandscapeBuffer(buffer);
-            buffer.isLocked = false;
-            return true;
-        }
-
-        public LandscapeChunkBuffer Get(Vector2I chunkLocation)
-        {
-            LandscapeChunkBuffer buffer;
-            while (TryGet(chunkLocation, out buffer) == false)
+            if (buffer.isReady)
             {
-                Thread.Sleep(1);
+                return buffer;
             }
-
-            return buffer;
+            else
+            {
+                //Start needed landscape entity generation
+                GenerateLandscapeBuffer(buffer);
+                return buffer;
+            }
         }
 
         public void Insert(Vector2I chunkLocation, LandscapeEntity entity)

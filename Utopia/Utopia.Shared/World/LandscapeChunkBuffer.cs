@@ -34,8 +34,6 @@ namespace Utopia.Shared.World
         [ProtoMember(6)]
         public bool isReady = false;
 
-        public bool isLocked { get; set; }
-
         public LandscapeChunkBuffer()
         {
             ProcessingState = LandscapeChunkBufferState.NotProcessed;
