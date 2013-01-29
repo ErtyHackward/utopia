@@ -94,7 +94,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Array.Copy(landscapeBuffer.chunkBytesBuffer, chunkBytes, landscapeBuffer.chunkBytesBuffer.Length);
                 Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
-                InsertLandscapeEntities(chunkRnd, chunk, _entityFactory, chunkBytes, columnsInfo, landscapeBuffer);
+                //InsertLandscapeEntities(chunkRnd, chunk, _entityFactory, chunkBytes, columnsInfo, landscapeBuffer);
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
                 PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
 
@@ -130,6 +130,31 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             var metaData = CreateChunkMetaData(columnsInfo);
             biome = _config.ProcessorParam.Biomes[metaData.ChunkMasterBiomeType];
+        }
+
+        public void GenerateMicroLandscape(LandscapeChunkBuffer buffer)
+        {
+            if (buffer.Entities == null) return;
+
+            foreach (var entity in buffer.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
+            {
+                foreach (var block in entity.Blocks)
+                {
+                    int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
+                    if (buffer.chunkBytesBuffer[index3D] == UtopiaProcessorParams.CubeId.Air || block.isMandatory)
+                    {
+                        buffer.chunkBytesBuffer[index3D] = block.BlockId;
+
+                        //Update Max Height for lighting !
+                        int index2D = (block.ChunkPosition.X * AbstractChunk.ChunkSize.Z) + block.ChunkPosition.Z;
+                        if (buffer.ColumnsInfoBuffer[index2D].MaxHeight < block.ChunkPosition.Y)
+                            buffer.ColumnsInfoBuffer[index2D].MaxHeight = (byte)block.ChunkPosition.Y;
+                    }
+                }
+
+                //The block buffer has been processed, I can clear it now. => It has been introduced into the Global landscape Array
+                entity.Blocks.Clear();
+            }
         }
 
         #endregion
@@ -482,9 +507,9 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             if (landscapeEntities.Entities == null) return;
 
-            ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes, columnsInfo);
-            Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
-            //Order the Entities by their HashCode in order to always draw them in the same order
+            //ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes, columnsInfo);
+            //Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+            ////Order the Entities by their HashCode in order to always draw them in the same order
             foreach (var entity in landscapeEntities.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
             {
                 foreach (var block in entity.Blocks)
@@ -501,58 +526,58 @@ namespace Utopia.Shared.World.Processors.Utopia
                     }
                 }
 
-                for (int fruits = 0; fruits <= 5; fruits++)
-                {
-                    var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
+                //for (int fruits = 0; fruits <= 5; fruits++)
+                //{
+                //    var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
 
-                    int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
-                    int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
+                //    int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
+                //    int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
 
-                    if (x >= 0 && x < AbstractChunk.ChunkSize.X && z >= 0 && z < AbstractChunk.ChunkSize.Z)
-                    {
+                //    if (x >= 0 && x < AbstractChunk.ChunkSize.X && z >= 0 && z < AbstractChunk.ChunkSize.Z)
+                //    {
 
-                        bool isOnGround = chunkRnd.NextDouble() > 0.5;
-                        if (isOnGround == false)
-                        {
-                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
+                //        bool isOnGround = chunkRnd.NextDouble() > 0.5;
+                //        if (isOnGround == false)
+                //        {
+                //            dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
 
-                            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
-                            {
-                                if (dataCursor.Read() == treetemplate.FoliageBlock)
-                                {
-                                    //Add new Static item here !
-                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
-                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, y - 0.25, z + chunkWorldPosition.Y + 0.5);
+                //            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+                //            {
+                //                if (dataCursor.Read() == treetemplate.FoliageBlock)
+                //                {
+                //                    //Add new Static item here !
+                //                    var staticEntity = entityFactory.CreateFromBluePrint(279);
+                //                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, y - 0.25, z + chunkWorldPosition.Y + 0.5);
 
-                                    chunk.Entities.Add((StaticEntity)staticEntity);
-                                    break;
-                                }
-                                dataCursor.Move(CursorRelativeMovement.Up);
-                            }
-                        }
-                        else
-                        {
-                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y, z);
+                //                    chunk.Entities.Add((StaticEntity)staticEntity);
+                //                    break;
+                //                }
+                //                dataCursor.Move(CursorRelativeMovement.Up);
+                //            }
+                //        }
+                //        else
+                //        {
+                //            dataCursor.SetInternalPosition(x, entity.RootLocation.Y, z);
 
-                            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y < AbstractChunk.ChunkSize.Y; y--)
-                            {
-                                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
-                                {
-                                    //Add Static item here on the ground!
-                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
-                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y + 0.5);
+                //            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y < AbstractChunk.ChunkSize.Y; y--)
+                //            {
+                //                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
+                //                {
+                //                    //Add Static item here on the ground!
+                //                    var staticEntity = entityFactory.CreateFromBluePrint(279);
+                //                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y + 0.5);
 
-                                    chunk.Entities.Add((StaticEntity)staticEntity);
-                                    break;
-                                }
+                //                    chunk.Entities.Add((StaticEntity)staticEntity);
+                //                    break;
+                //                }
 
-                                dataCursor.Move(CursorRelativeMovement.Down);
-                            }
-                        }
+                //                dataCursor.Move(CursorRelativeMovement.Down);
+                //            }
+                //        }
 
-                    }
+                //    }
 
-                }
+                //}
             }
         }
 

@@ -203,6 +203,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
         {
+
+            //int nbr = 0;
             foreach (BiomeEntity entity in BiomeEntities)
             {
                 //Entity population
@@ -216,9 +218,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
 
                         PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
+                        //nbr++;
                     }
                 }
             }
+
+            //logger.Warn("{0} | {1}", chunk.Position, nbr);
+
         }
 
         #endregion
