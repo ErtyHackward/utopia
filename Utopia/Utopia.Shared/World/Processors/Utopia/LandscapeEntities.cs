@@ -1,0 +1,87 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.Configuration;
+using Utopia.Shared.LandscapeEntities;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Structs.Landscape;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
+
+namespace Utopia.Shared.World.Processors.Utopia
+{
+    public class LandscapeEntities
+    {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        #region Private Variables
+        private TreeLSystem _treeGenerator = new TreeLSystem();
+        private LandscapeBufferManager _entityManager;
+        private WorldParameters _worldParameters;
+        #endregion
+
+        #region Public Properties
+        #endregion
+
+        public LandscapeEntities(LandscapeBufferManager entityManager, WorldParameters worldParameters)
+        {
+            _entityManager = entityManager;
+            _worldParameters = worldParameters;
+        }
+
+        #region Public Methods
+        public void GenerateChunkItems(Vector2I chunkPosition, Biome biome, byte[] chunkBytes, ChunkColumnInfo[] columndInfo, FastRandom chunkRnd)
+        {
+            //Generate landscape trees
+            foreach (var entities in TreeGeneration(chunkPosition, biome, chunkBytes, columndInfo, chunkRnd))
+            {
+                _entityManager.Insert(entities.ChunkLocation, entities);
+            }
+        }
+        #endregion
+
+        #region Private Methods
+        private List<LandscapeEntity> TreeGeneration(Vector2I chunkPosition, Biome biome, byte[] chunkBytes, ChunkColumnInfo[] columndInfo, FastRandom rnd)
+        {
+            List<LandscapeEntity> GlobalList = new List<LandscapeEntity>();
+
+            int nbrTree = rnd.Next(biome.BiomeTrees.TreePerChunks.Min, biome.BiomeTrees.TreePerChunks.Max + 1);
+            for (int i = 0; i < nbrTree; i++)
+            {
+                //Check probability to make it spawn !
+                if (rnd.Next(0, 100) < biome.BiomeTrees.ChanceOfSpawning)
+                {
+                    List<LandscapeEntity> treeEntities = PopulateChunksWithTree(chunkPosition, biome, chunkBytes, columndInfo, rnd);
+                    if (treeEntities != null) GlobalList.AddRange(treeEntities);
+                }
+            }
+
+            return GlobalList;
+        }
+
+        private List<LandscapeEntity> PopulateChunksWithTree(Vector2I chunkPosition, Biome biome, byte[] chunkBytes, ChunkColumnInfo[] columndInfo, FastRandom rnd)
+        {
+            //Get Rnd chunk Location.
+            int x = rnd.Next(0, 16);
+            int z = rnd.Next(0, 16);
+            int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight + 1;
+
+            //Validate position = Must be Air block (not water) !
+            if (chunkBytes[((z * AbstractChunk.ChunkSize.X) + x) * AbstractChunk.ChunkSize.Y + y] != WorldConfiguration.CubeId.Air) return null;
+
+            x += (chunkPosition.X * AbstractChunk.ChunkSize.X);
+            z += (chunkPosition.Y * AbstractChunk.ChunkSize.Z);
+            Vector3I worldPosition = new Vector3I(x, y, z);
+
+            //Generate Tree mesh !
+            //Get tree type following distribution chances inside the biome
+            TreeTemplate treeType = biome.BiomeTrees.GetTreeTemplate(rnd, _worldParameters.Configuration.TreeTemplates);
+
+            return LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType), worldPosition, treeType.TemplateId);
+        }
+        #endregion
+    }
+}

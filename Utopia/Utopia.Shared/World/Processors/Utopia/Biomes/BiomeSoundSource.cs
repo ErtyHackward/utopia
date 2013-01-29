@@ -11,5 +11,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [Description("Time of day when the ambient sound can be played"), Category("General")]
         [ProtoMember(1)]
         public TimeOfDaySound TimeOfDay { get; set; }
+
+        public override string ToString()
+        {
+            return this.FilePath;
+        }
     }
 }

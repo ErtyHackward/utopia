@@ -31,10 +31,13 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 1, 1);
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Recipes", 8, 8);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Trees", 9, 9);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Landscape Entities", 2, 2, new System.Windows.Forms.TreeNode[] {
+            treeNode3});
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Recipes", 8, 8);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -220,31 +223,41 @@
             treeNode2.SelectedImageIndex = 2;
             treeNode2.Text = "Entities";
             treeNode3.ContextMenuStrip = this.contextMenuCategories;
-            treeNode3.ImageIndex = 4;
-            treeNode3.Name = "Cubes";
-            treeNode3.SelectedImageIndex = 4;
-            treeNode3.Text = "Cubes";
-            treeNode4.ImageIndex = 5;
-            treeNode4.Name = "WorldProcessor Params";
-            treeNode4.SelectedImageIndex = 5;
-            treeNode4.Text = "WorldProcessor Params";
+            treeNode3.ImageIndex = 9;
+            treeNode3.Name = "Trees";
+            treeNode3.SelectedImageIndex = 9;
+            treeNode3.Text = "Trees";
+            treeNode4.ImageIndex = 2;
+            treeNode4.Name = "LandscapeEntities";
+            treeNode4.SelectedImageIndex = 2;
+            treeNode4.Text = "Landscape Entities";
             treeNode5.ContextMenuStrip = this.contextMenuCategories;
-            treeNode5.ImageIndex = 7;
-            treeNode5.Name = "Container sets";
-            treeNode5.SelectedImageIndex = 7;
-            treeNode5.Text = "Container sets";
-            treeNode6.ContextMenuStrip = this.contextMenuCategories;
-            treeNode6.ImageIndex = 8;
-            treeNode6.Name = "Recipes";
-            treeNode6.SelectedImageIndex = 8;
-            treeNode6.Text = "Recipes";
+            treeNode5.ImageIndex = 4;
+            treeNode5.Name = "Cubes";
+            treeNode5.SelectedImageIndex = 4;
+            treeNode5.Text = "Cubes";
+            treeNode6.ImageIndex = 5;
+            treeNode6.Name = "WorldProcessor Params";
+            treeNode6.SelectedImageIndex = 5;
+            treeNode6.Text = "WorldProcessor Params";
+            treeNode7.ContextMenuStrip = this.contextMenuCategories;
+            treeNode7.ImageIndex = 7;
+            treeNode7.Name = "Container sets";
+            treeNode7.SelectedImageIndex = 7;
+            treeNode7.Text = "Container sets";
+            treeNode8.ContextMenuStrip = this.contextMenuCategories;
+            treeNode8.ImageIndex = 8;
+            treeNode8.Name = "Recipes";
+            treeNode8.SelectedImageIndex = 8;
+            treeNode8.Text = "Recipes";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
-            treeNode3,
             treeNode4,
             treeNode5,
-            treeNode6});
+            treeNode6,
+            treeNode7,
+            treeNode8});
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
             this.tvMainCategories.TabIndex = 5;
