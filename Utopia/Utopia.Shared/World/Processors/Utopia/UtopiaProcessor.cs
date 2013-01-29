@@ -17,6 +17,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared.Entities.Interfaces;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -77,7 +78,6 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             generationRange.Foreach(pos =>
             {
-
                 //Get the chunk
                 GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
                 Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
@@ -94,9 +94,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Array.Copy(landscapeBuffer.chunkBytesBuffer, chunkBytes, landscapeBuffer.chunkBytesBuffer.Length);
                 Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
-                //InsertLandscapeEntities(chunkRnd, chunk, _entityFactory, chunkBytes, columnsInfo, landscapeBuffer);
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
-                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
+                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
 
                 RefreshChunkMetaData(metaData, columnsInfo);
 
@@ -132,6 +131,10 @@ namespace Utopia.Shared.World.Processors.Utopia
             biome = _config.ProcessorParam.Biomes[metaData.ChunkMasterBiomeType];
         }
 
+        /// <summary>
+        /// Will add landscape entities to the chunk byte landscape
+        /// </summary>
+        /// <param name="buffer"></param>
         public void GenerateMicroLandscape(LandscapeChunkBuffer buffer)
         {
             if (buffer.Entities == null) return;
@@ -503,90 +506,12 @@ namespace Utopia.Shared.World.Processors.Utopia
             }
         }
 
-        private void InsertLandscapeEntities(FastRandom chunkRnd, GeneratedChunk chunk, EntityFactory entityFactory, byte[] ChunkCubes, ChunkColumnInfo[] columnsInfo, LandscapeChunkBuffer landscapeEntities)
-        {
-            if (landscapeEntities.Entities == null) return;
-
-            //ByteChunkCursor dataCursor = new ByteChunkCursor(ChunkCubes, columnsInfo);
-            //Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
-            ////Order the Entities by their HashCode in order to always draw them in the same order
-            foreach (var entity in landscapeEntities.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
-            {
-                foreach (var block in entity.Blocks)
-                {
-                    int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
-                    if (ChunkCubes[index3D] == UtopiaProcessorParams.CubeId.Air || block.isMandatory)
-                    {
-                        ChunkCubes[index3D] = block.BlockId;
-
-                        //Update Max Height for lighting !
-                        int index2D = (block.ChunkPosition.X * AbstractChunk.ChunkSize.Z) + block.ChunkPosition.Z;
-                        if (columnsInfo[index2D].MaxHeight < block.ChunkPosition.Y) 
-                            columnsInfo[index2D].MaxHeight = (byte)block.ChunkPosition.Y;
-                    }
-                }
-
-                //for (int fruits = 0; fruits <= 5; fruits++)
-                //{
-                //    var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
-
-                //    int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
-                //    int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
-
-                //    if (x >= 0 && x < AbstractChunk.ChunkSize.X && z >= 0 && z < AbstractChunk.ChunkSize.Z)
-                //    {
-
-                //        bool isOnGround = chunkRnd.NextDouble() > 0.5;
-                //        if (isOnGround == false)
-                //        {
-                //            dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
-
-                //            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
-                //            {
-                //                if (dataCursor.Read() == treetemplate.FoliageBlock)
-                //                {
-                //                    //Add new Static item here !
-                //                    var staticEntity = entityFactory.CreateFromBluePrint(279);
-                //                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, y - 0.25, z + chunkWorldPosition.Y + 0.5);
-
-                //                    chunk.Entities.Add((StaticEntity)staticEntity);
-                //                    break;
-                //                }
-                //                dataCursor.Move(CursorRelativeMovement.Up);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            dataCursor.SetInternalPosition(x, entity.RootLocation.Y, z);
-
-                //            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y < AbstractChunk.ChunkSize.Y; y--)
-                //            {
-                //                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
-                //                {
-                //                    //Add Static item here on the ground!
-                //                    var staticEntity = entityFactory.CreateFromBluePrint(279);
-                //                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y + 0.5);
-
-                //                    chunk.Entities.Add((StaticEntity)staticEntity);
-                //                    break;
-                //                }
-
-                //                dataCursor.Move(CursorRelativeMovement.Down);
-                //            }
-                //        }
-
-                //    }
-
-                //}
-            }
-        }
-
         /// <summary>
         /// Will Populate the chunks with various resources
         /// </summary>
         /// <param name="ChunkCubes"></param>
         /// <param name="chunkMetaData"></param>
-        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory)
+        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
         {
             //Get Chunk Master Biome
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
@@ -595,6 +520,71 @@ namespace Utopia.Shared.World.Processors.Utopia
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
             masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+            InsertMicrolandscapeStaticEntities(dataCursor, chunk, chunkRnd, entityFactory, landscapeEntities);
+
+        }
+
+        private void InsertMicrolandscapeStaticEntities(ByteChunkCursor dataCursor, GeneratedChunk chunk, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
+        {
+            if (landscapeEntities == null) return;
+
+            Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+
+            foreach (var entity in landscapeEntities.OrderBy(x => x.ChunkLocation.GetHashCode()))
+            {
+                for (int fruits = 0; fruits <= 5; fruits++)
+                {
+                    var treetemplate = _worldParameters.Configuration.TreeBluePrintsDico[entity.LandscapeEntityId];
+
+                    int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
+                    int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
+
+                    if (x >= 0 && x < AbstractChunk.ChunkSize.X && z >= 0 && z < AbstractChunk.ChunkSize.Z)
+                    {
+
+                        bool isOnGround = chunkRnd.NextDouble() > 0.5;
+                        if (isOnGround == false)
+                        {
+                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
+
+                            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+                            {
+                                if (dataCursor.Read() == treetemplate.FoliageBlock)
+                                {
+                                    //Add new Static item here !
+                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
+                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, y - 0.25, z + chunkWorldPosition.Y + 0.5);
+                                    
+                                    chunk.Entities.Add((StaticEntity)staticEntity);
+                                    break;
+                                }
+                                dataCursor.Move(CursorRelativeMovement.Up);
+                            }
+                        }
+                        else
+                        {
+                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y, z);
+
+                            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y < AbstractChunk.ChunkSize.Y; y--)
+                            {
+                                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
+                                {
+                                    //Add Static item here on the ground!
+                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
+                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y + 0.5);
+
+                                    chunk.Entities.Add((StaticEntity)staticEntity);
+                                    break;
+                                }
+
+                                dataCursor.Move(CursorRelativeMovement.Down);
+                            }
+                        }
+
+                    }
+
+                }
+            }
         }
 
         private ChunkMetaData CreateChunkMetaData(ChunkColumnInfo[] columnsInfo)

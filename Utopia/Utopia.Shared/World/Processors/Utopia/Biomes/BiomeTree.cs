@@ -15,7 +15,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     {
         [Browsable(false)]
         [ProtoMember(1)]
-        public int TemplateId { get; set; }
+        public int LandscapeEntityBluePrintId { get; set; }
 
         [ProtoMember(2)]
         [TypeConverter(typeof(NumericUpDownTypeConverter))]

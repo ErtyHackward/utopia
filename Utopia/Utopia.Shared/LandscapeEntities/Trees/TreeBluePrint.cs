@@ -9,12 +9,8 @@ using ProtoBuf;
 namespace Utopia.Shared.LandscapeEntities.Trees
 {
     [ProtoContract]
-    public partial class TreeTemplate
+    public partial class TreeBluePrint : LandscapeEntityBluePrint
     {
-        [Category("General")]
-        //[Browsable(false)]
-        [ProtoMember(17)]
-        public int TemplateId { get; set; }
         [Category("General")]
         [ProtoMember(1)]
         public string TemplateName { get; set; }

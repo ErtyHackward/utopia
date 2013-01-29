@@ -136,25 +136,33 @@ namespace Utopia.Shared.Configuration
         /// Get or sets Tree template, that will be added in the biome.
         /// </summary>
         [ProtoMember(14, OverwriteList = true)]
-        public List<TreeTemplate> TreeTemplates { get; set; }
+        public List<TreeBluePrint> TreeBluePrints { get; set; }
 
-
-        private Dictionary<int, TreeTemplate> _treeTemplateDico;
+        private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
-        public Dictionary<int, TreeTemplate> TreeTemplateDico
+        public Dictionary<int, TreeBluePrint> TreeBluePrintsDico
         {
             get
             {
-                if (_treeTemplateDico == null)
+                if (_treeBluePrintsDico == null)
                 {
-                    _treeTemplateDico = new Dictionary<int, TreeTemplate>();
-                    foreach (var tree in TreeTemplates) _treeTemplateDico.Add(tree.TemplateId, tree);
+                    _treeBluePrintsDico = new Dictionary<int, TreeBluePrint>();
+                    foreach (var tree in TreeBluePrints) _treeBluePrintsDico.Add(tree.Id, tree);
                 }
-                return _treeTemplateDico;
+                return _treeBluePrintsDico;
             }
         }
-
         #endregion
+
+        private int GetNextLandscapeEntityId()
+        {
+            int newId = int.MinValue;
+            //Look into Tree landscape entities
+            int treeMaxId = TreeBluePrints.Max(x => x.Id);
+            if (newId < treeMaxId) newId = treeMaxId;
+
+            return newId + 1;
+        }
 
         protected WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
         {
@@ -317,7 +325,7 @@ namespace Utopia.Shared.Configuration
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
             Recipes = new List<Recipe>();
-            TreeTemplates = new List<TreeTemplate>();
+            TreeBluePrints = new List<TreeBluePrint>();
         }
 
         private void CreateDefaultValues()
