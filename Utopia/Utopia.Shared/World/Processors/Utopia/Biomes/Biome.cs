@@ -16,6 +16,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     [ProtoContract]
     public partial class Biome
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         //Chunk Population elements
         private List<CubeVein> _cubeVeins = new List<CubeVein>();
@@ -434,6 +436,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
                 chunk.Entities.Add((StaticEntity)entity);
             }
+
         }
 
         #endregion

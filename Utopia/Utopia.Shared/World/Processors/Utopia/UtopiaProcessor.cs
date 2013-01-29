@@ -30,7 +30,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private int _worldGeneratedHeight = 128;
         private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
-        private LandscapeBufferManager _landscapeEntityManager;
+        private LandscapeBufferManager _landscapeBufferManager;
 
         //Landscape entities generators
         
@@ -62,8 +62,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             _config = (UtopiaWorldConfiguration)worldParameters.Configuration;
             _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
-            _landscapeEntityManager = landscapeEntityManager;
-            LandscapeEntities = new LandscapeEntities(_landscapeEntityManager, _worldParameters);
+            _landscapeBufferManager = landscapeEntityManager;
+            LandscapeEntities = new LandscapeEntities(_landscapeBufferManager, _worldParameters);
 
             landscapeEntityManager.Processor = this;
         }
@@ -75,7 +75,6 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         public void Generate(Structs.Range2I generationRange, Chunks.GeneratedChunk[,] chunks)
         {
-            Range3I chunkWorldRange;
             generationRange.Foreach(pos =>
             {
 
@@ -86,24 +85,23 @@ namespace Utopia.Shared.World.Processors.Utopia
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
-                //Get the landscape Items for this chunk
-                LandscapeChunkBuffer landscapeBuffer = _landscapeEntityManager.Get(chunk.Position);
+                //Get the landscape Items for this chunk from the buffer
+                LandscapeChunkBuffer landscapeBuffer = _landscapeBufferManager.Get(chunk.Position);
 
-                //Create an array that wll receive the ColumnChunk Informations
-                chunkWorldRange = new Range3I()
-                {
-                    Position = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z),
-                    Size = AbstractChunk.ChunkSize
-                };
+                //"Localize" the array from Buffer to Client/Server. => In order to avoid having the same collection being shared between server/client
+                ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+                byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                Array.Copy(landscapeBuffer.chunkBytesBuffer, chunkBytes, landscapeBuffer.chunkBytesBuffer.Length);
+                Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
-                InsertLandscapeEntities(chunkRnd, chunk, _entityFactory, landscapeBuffer.chunkBytesBuffer, landscapeBuffer.ColumnsInfoBuffer, landscapeBuffer);
-                ChunkMetaData metaData = CreateChunkMetaData(landscapeBuffer.ColumnsInfoBuffer);
-                PopulateChunk(chunk, landscapeBuffer.chunkBytesBuffer, ref chunkWorldPosition, landscapeBuffer.ColumnsInfoBuffer, metaData, chunkRnd, _entityFactory);
-                
-                RefreshChunkMetaData(metaData, landscapeBuffer.ColumnsInfoBuffer);
+                InsertLandscapeEntities(chunkRnd, chunk, _entityFactory, chunkBytes, columnsInfo, landscapeBuffer);
+                ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
+                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
 
-                chunk.BlockData.SetBlockBytes(landscapeBuffer.chunkBytesBuffer); //Save block array
-                chunk.BlockData.ColumnsInfo = landscapeBuffer.ColumnsInfoBuffer; //Save Columns info Array
+                RefreshChunkMetaData(metaData, columnsInfo);
+
+                chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
+                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
                 chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
@@ -114,7 +112,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// <param name="chunkBytes"></param>
         /// <param name="ChunkPosition"></param>
         /// <param name="chunkWorldRange"></param>
-        public void GenerateForLandscapeEntity(Vector2I ChunkPosition, out Biome biome, out byte[] chunkBytes ,out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
+        public void GenerateMacroLandscape(Vector2I ChunkPosition, out Biome biome, out byte[] chunkBytes ,out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
         {
             Range3I chunkWorldRange = new Range3I()
             {
@@ -489,6 +487,20 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Order the Entities by their HashCode in order to always draw them in the same order
             foreach (var entity in landscapeEntities.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
             {
+                foreach (var block in entity.Blocks)
+                {
+                    int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
+                    if (ChunkCubes[index3D] == UtopiaProcessorParams.CubeId.Air || block.isMandatory)
+                    {
+                        ChunkCubes[index3D] = block.BlockId;
+
+                        //Update Max Height for lighting !
+                        int index2D = (block.ChunkPosition.X * AbstractChunk.ChunkSize.Z) + block.ChunkPosition.Z;
+                        if (columnsInfo[index2D].MaxHeight < block.ChunkPosition.Y) 
+                            columnsInfo[index2D].MaxHeight = (byte)block.ChunkPosition.Y;
+                    }
+                }
+
                 for (int fruits = 0; fruits <= 5; fruits++)
                 {
                     var treetemplate = _worldParameters.Configuration.TreeTemplateDico[entity.LandscapeEntityId];
@@ -540,20 +552,6 @@ namespace Utopia.Shared.World.Processors.Utopia
 
                     }
 
-                }
-
-                foreach (var block in entity.Blocks)
-                {
-                    int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
-                    if (ChunkCubes[index3D] == UtopiaProcessorParams.CubeId.Air || block.isMandatory)
-                    {
-                        ChunkCubes[index3D] = block.BlockId;
-
-                        //Update Max Height for lighting !
-                        int index2D = (block.ChunkPosition.X * AbstractChunk.ChunkSize.Z) + block.ChunkPosition.Z;
-                        if (columnsInfo[index2D].MaxHeight < block.ChunkPosition.Y) 
-                            columnsInfo[index2D].MaxHeight = (byte)block.ChunkPosition.Y;
-                    }
                 }
             }
         }

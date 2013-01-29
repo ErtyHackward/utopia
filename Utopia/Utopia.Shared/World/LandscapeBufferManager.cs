@@ -206,7 +206,7 @@ namespace Utopia.Shared.World
                     Biome chunkMasterBiome;
                     ChunkColumnInfo[] columnsInfo;
                     byte[] chunkBytes;
-                    Processor.GenerateForLandscapeEntity(surrendingChunkBuffer.ChunkLocation, out chunkMasterBiome, out chunkBytes, out chunkNewRnd, out columnsInfo);
+                    Processor.GenerateMacroLandscape(surrendingChunkBuffer.ChunkLocation, out chunkMasterBiome, out chunkBytes, out chunkNewRnd, out columnsInfo);
 
                     //Process chunk Entity landscape creation
                     Processor.LandscapeEntities.GenerateChunkItems(surrendingChunkBuffer.ChunkLocation, chunkMasterBiome, chunkBytes, columnsInfo, chunkNewRnd);
@@ -224,6 +224,8 @@ namespace Utopia.Shared.World
                 //Wait for all lanscape entity from our range to be processed
                 Thread.Sleep(1);
             }
+
+            buffer.isReady = true;
         }
         #endregion
 
