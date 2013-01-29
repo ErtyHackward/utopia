@@ -31,6 +31,7 @@ using Utopia.Components;
 using Utopia.Shared.Settings;
 using Utopia.Particules;
 using Utopia.Sounds;
+using Utopia.Shared.World;
 
 namespace Realms.Client.States
 {
@@ -109,7 +110,6 @@ namespace Realms.Client.States
             var crafting = _ioc.Get<CraftingComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             
-
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);

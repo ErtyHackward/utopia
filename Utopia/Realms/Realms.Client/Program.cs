@@ -23,6 +23,7 @@ namespace Realms.Client
         {            
             foreach (var arg in args)
             {
+                if (arg.ToLower() == "-nolandscapebuffer") Utopia.Shared.World.LandscapeBufferManager.WithoutLandscapeBuffer = true;
                 if (arg.ToLower() == "-showdebug") ShowDebug = true;
                 if (arg.ToLower() == "-resetsingleplayerworld") DeleteAllSavedGame();
                 if (arg.ToLower() == "-640p") StartUpResolution = new System.Drawing.Size(1024, 576);
@@ -32,7 +33,6 @@ namespace Realms.Client
                     Utopia.UtopiaRender.LCDefferedModeLvl = int.Parse(arg.ToLower().Replace("-lcdefferedmodelvl", ""));
                 }
             }
-
 #if DEBUG
             ShowDebug = true;     
 #endif

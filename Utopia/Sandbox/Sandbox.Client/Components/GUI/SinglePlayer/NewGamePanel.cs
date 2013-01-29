@@ -13,14 +13,14 @@ namespace Sandbox.Client.Components.GUI.SinglePlayer
         #region Private variables
         private SandboxCommonResources _commonResources;
         private WorldParameters _currentWorldParameter;
-        private RuntimeVariables _vars;
+        private SandboxRuntimeVariables _vars;
         private GuiManager _guiManager;
         #endregion
 
         #region Public variable/properties
         #endregion
 
-        public NewGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, RuntimeVariables vars, GuiManager guiManager)
+        public NewGamePanel(SandboxCommonResources commonResources, WorldParameters currentWorldParameter, SandboxRuntimeVariables vars, GuiManager guiManager)
         {
             _vars = vars;
             _guiManager = guiManager;

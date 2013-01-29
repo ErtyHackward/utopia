@@ -16,7 +16,7 @@ namespace Sandbox.Client.Components.GUI
     {
         private readonly D3DEngine _engine;
         private readonly MainScreen _screen;
-        private readonly RuntimeVariables _runtime;
+        private readonly SandboxRuntimeVariables _runtime;
 
         private SpriteTexture _stLabelCredits;
         private SpriteTexture _stLabelExit;
@@ -79,7 +79,7 @@ namespace Sandbox.Client.Components.GUI
         }
         #endregion
 
-        public MainMenuComponent(D3DEngine engine, MainScreen screen, RuntimeVariables runtime, SandboxCommonResources commonResources)
+        public MainMenuComponent(D3DEngine engine, MainScreen screen, SandboxRuntimeVariables runtime, SandboxCommonResources commonResources)
             : base(engine, screen, commonResources)
         {
             if (engine == null) throw new ArgumentNullException("engine");
