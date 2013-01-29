@@ -154,11 +154,12 @@ namespace Utopia.Shared.Configuration
         }
         #endregion
 
-        private int GetNextLandscapeEntityId()
+        public int GetNextLandscapeEntityId()
         {
             int newId = int.MinValue;
-            //Look into Tree landscape entities
-            int treeMaxId = TreeBluePrints.Max(x => x.Id);
+            //Look into Tree landscape entities;
+            int treeMaxId = 0;
+            if(TreeBluePrints.Count > 0) treeMaxId = TreeBluePrints.Max(x => x.Id);
             if (newId < treeMaxId) newId = treeMaxId;
 
             return newId + 1;

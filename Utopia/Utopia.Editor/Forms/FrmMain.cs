@@ -386,7 +386,7 @@ namespace Utopia.Editor.Forms
             TreesRootNode.Nodes.Clear();
             foreach (var tree in _configuration.TreeBluePrints)
             {
-                var node = AddSubNode(TreesRootNode, tree.TemplateName, tree, null);
+                var node = AddSubNode(TreesRootNode, tree.Name, tree, null);
                 node.ContextMenuStrip = contextMenuEntity;
             }
 
@@ -530,7 +530,8 @@ namespace Utopia.Editor.Forms
                     tvMainCategories.SelectedNode = FindByTag(recipe);
                     break;
                 case "Trees":
-                    var tree = new TreeBluePrint() { TemplateName = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
+                    var tree = new TreeBluePrint() { Name = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
+                    tree.Id = _configuration.GetNextLandscapeEntityId();
                     _configuration.TreeBluePrints.Add(tree);
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(tree);

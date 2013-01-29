@@ -30,5 +30,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             return this.Tree; 
         }
+
+        public BiomeTree()
+        {
+            LandscapeEntityBluePrintId = 1;
+        }
     }
 }

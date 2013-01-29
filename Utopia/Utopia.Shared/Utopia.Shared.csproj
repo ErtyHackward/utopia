@@ -235,6 +235,9 @@
     <Compile Include="ClassExt\StringExtensions.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.designer.cs">
+      <DependentUpon>LandscapeEntityStaticItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
       <DependentUpon>TreeBluePrint.cs</DependentUpon>
     </Compile>

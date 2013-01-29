@@ -11,9 +11,6 @@ namespace Utopia.Shared.LandscapeEntities.Trees
     [ProtoContract]
     public partial class TreeBluePrint : LandscapeEntityBluePrint
     {
-        [Category("General")]
-        [ProtoMember(1)]
-        public string TemplateName { get; set; }
         [Category("Configuration")]
         [ProtoMember(2)]
         public string Axiom { get; set; }
@@ -66,7 +63,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
 
         public override string ToString()
         {
-            return TemplateName;
+            return base.Name;
         }
     }
 

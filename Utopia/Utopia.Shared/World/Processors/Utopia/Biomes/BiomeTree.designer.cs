@@ -16,12 +16,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
-                return EditorConfigHelper.Config.TreeBluePrints.First(x => x.Id == LandscapeEntityBluePrintId).TemplateName;
+                return EditorConfigHelper.Config.TreeBluePrints.First(x => x.Id == LandscapeEntityBluePrintId).Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                LandscapeEntityBluePrintId = EditorConfigHelper.Config.TreeBluePrints.First(x => x.TemplateName == value).Id;
+                LandscapeEntityBluePrintId = EditorConfigHelper.Config.TreeBluePrints.First(x => x.Name == value).Id;
             }
         }
 
@@ -42,7 +42,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(EditorConfigHelper.Config.TreeBluePrints.OrderBy(x => x.TemplateName).ToList());
+                return new StandardValuesCollection(EditorConfigHelper.Config.TreeBluePrints.OrderBy(x => x.Name).ToList());
             }
         }
     }
