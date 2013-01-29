@@ -153,7 +153,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                 }
 
                 //The block buffer has been processed, I can clear it now. => It has been introduced into the Global landscape Array
-                entity.Blocks.Clear();
+                //entity.Blocks.Clear();
             }
         }
 
