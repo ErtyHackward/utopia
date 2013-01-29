@@ -233,8 +233,10 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
-    <Compile Include="LandscapeEntities\Trees\TreeTemplate.designer.cs">
-      <DependentUpon>TreeTemplate.cs</DependentUpon>
+    <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
+      <DependentUpon>TreeBluePrint.cs</DependentUpon>
     </Compile>
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
@@ -243,8 +245,7 @@
     <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
     <Compile Include="World\LandscapeChunkBuffer.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityParser.cs" />
-    <Compile Include="LandscapeEntities\Trees\Tree.cs" />
-    <Compile Include="LandscapeEntities\Trees\TreeTemplate.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeBluePrint.cs" />
     <Compile Include="Net\Messages\ITimeStampedMsg.cs" />
     <Compile Include="Net\Messages\RequestDateTimeSyncMessage.cs" />
     <Compile Include="Net\Web\ClientWebApi.cs" />

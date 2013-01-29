@@ -22,7 +22,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         }
 
         #region Public Methods
-        public List<BlockWithPosition> Generate(FastRandom rnd, Vector3I WPos, TreeTemplate treeType)
+        public List<BlockWithPosition> Generate(FastRandom rnd, Vector3I WPos, TreeBluePrint treeType)
         {
             Dictionary<Vector3I, BlockWithPosition> meshDico = new Dictionary<Vector3I, BlockWithPosition>();
 

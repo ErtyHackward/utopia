@@ -180,11 +180,11 @@ namespace Utopia.Editor.Forms
             switch (processorChoose.SelectedProcessor)
             {
                 case WorldConfiguration.WorldProcessors.Flat:
-                    newConfiguration = new FlatWorldConfiguration();
+                    newConfiguration = new FlatWorldConfiguration(withHelperAssignation:true);
                     ((FlatWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    newConfiguration = new UtopiaWorldConfiguration();
+                    newConfiguration = new UtopiaWorldConfiguration(withHelperAssignation:true);
                     ((UtopiaWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
                     break;
                 default:
@@ -384,7 +384,7 @@ namespace Utopia.Editor.Forms
             var LandEntitiesRootNode = tvMainCategories.Nodes["LandscapeEntities"];
             var TreesRootNode = LandEntitiesRootNode.Nodes["Trees"];
             TreesRootNode.Nodes.Clear();
-            foreach (var tree in _configuration.TreeTemplates)
+            foreach (var tree in _configuration.TreeBluePrints)
             {
                 var node = AddSubNode(TreesRootNode, tree.TemplateName, tree, null);
                 node.ContextMenuStrip = contextMenuEntity;
@@ -530,8 +530,8 @@ namespace Utopia.Editor.Forms
                     tvMainCategories.SelectedNode = FindByTag(recipe);
                     break;
                 case "Trees":
-                    var tree = new TreeTemplate() { TemplateName = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
-                    _configuration.TreeTemplates.Add(tree);
+                    var tree = new TreeBluePrint() { TemplateName = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
+                    _configuration.TreeBluePrints.Add(tree);
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(tree);
                     break;
@@ -584,9 +584,9 @@ namespace Utopia.Editor.Forms
             else if (tag is Recipe)
             {
                 _configuration.Recipes.Remove((Recipe)tag);
-            } if (tag is TreeTemplate)
+            } if (tag is TreeBluePrint)
             {
-                _configuration.TreeTemplates.Remove((TreeTemplate)tag);
+                _configuration.TreeBluePrints.Remove((TreeBluePrint)tag);
             }
 
             tvMainCategories.SelectedNode.Remove();

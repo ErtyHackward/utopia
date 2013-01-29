@@ -257,6 +257,7 @@ namespace Realms.Client.States
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
+            var inventoryEvents = _ioc.Get<InventoryEventComponent>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             playerEntityManager.HasMouseFocus = true;
@@ -293,6 +294,7 @@ namespace Realms.Client.States
             AddComponent(particuleEngine);
             AddComponent(ghostedRenderer);
             AddComponent(crafting);
+            AddComponent(inventoryEvents);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           
