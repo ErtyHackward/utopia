@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Utopia.Shared.Configuration;
 
 namespace Utopia.Shared.LandscapeEntities.Trees
@@ -11,6 +12,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
     {
         [TypeConverter(typeof(CubeConverter))]
         [DisplayName("Trunk Block")]
+        [XmlIgnoreAttribute()]
         public string TrunkBlockName
         {
             //When first loaded set property with the first item in the rule list.
@@ -28,6 +30,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
 
         [TypeConverter(typeof(CubeConverter))]
         [DisplayName("Foliage Block")]
+        [XmlIgnoreAttribute()]
         public string FoliageBlockName
         {
             //When first loaded set property with the first item in the rule list.
