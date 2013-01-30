@@ -15,6 +15,7 @@ using SharpDX;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.Inputs.KeyboardHandler;
 
 namespace LtreeVisualizer
 {
@@ -38,6 +39,34 @@ namespace LtreeVisualizer
             _inputManager.MouseManager.IsRunning = true;
             _inputManager.EnableComponent();
 
+            _inputManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
+                ActionId = Actions.Move_Forward,
+                TriggerType = MouseTriggerMode.ScrollWheelForward,
+                Binding = MouseButton.ScrollWheel
+            });
+
+            _inputManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
+                ActionId = Actions.Move_Backward,
+                TriggerType = MouseTriggerMode.ScrollWheelBackWard,
+                Binding = MouseButton.ScrollWheel
+            });
+
+            _inputManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
+                ActionId = Actions.Move_Up,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = new KeyWithModifier() { MainKey = Keys.Z }
+            });
+
+            _inputManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
+                ActionId = Actions.Move_Down,
+                TriggerType = KeyboardTriggerMode.KeyDown,
+                Binding = new KeyWithModifier() { MainKey = Keys.S }
+            });
+
             _cameraMnger = ToDispose(new CameraManager<ICamera>(_inputManager, null));
             ((CameraManager<ICamera>)_cameraMnger).RegisterNewCamera(_camera);
             _cameraMnger.EnableComponent();
@@ -53,6 +82,7 @@ namespace LtreeVisualizer
             //Register Here all components
             base.GameComponents.Add(_cameraMnger);
             base.GameComponents.Add(_gamecomp);
+            base.GameComponents.Add(_inputManager);
             base.GameComponents.Add(_cameraEntity);
         }
 
@@ -65,6 +95,31 @@ namespace LtreeVisualizer
 
             this.Engine.GameWindow.KeyUp += new KeyEventHandler(GameWindow_KeyUp);
             base.Initialize();
+        }
+
+        public override void FTSUpdate(GameTime TimeSpend)
+        {
+            base.FTSUpdate(TimeSpend);
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.Move_Backward))
+            {
+                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0, -0.2);
+            }
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.Move_Forward))
+            {
+                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0, 0.2);
+            }
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.Move_Up))
+            {
+                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0.1, 0);
+            }
+
+            if (_inputManager.ActionsManager.isTriggered(Actions.Move_Down))
+            {
+                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, -0.1, 0);
+            }
         }
 
         void GameWindow_KeyUp(object sender, KeyEventArgs e)

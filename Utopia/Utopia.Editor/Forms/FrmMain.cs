@@ -783,6 +783,19 @@ namespace Utopia.Editor.Forms
                             }
                         }
                     }
+
+                    if (selectedObject is TreeBluePrint)
+                    {
+                        //Tree blue print properties have been change ...
+                        if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
+                        {
+                            //Serialize object
+                            TreeBluePrint obj = (TreeBluePrint)selectedObject;
+                            string xmlobj = XmlSerialize.XmlSerializeToString(obj);
+                            xmlobj = xmlobj.Replace(Environment.NewLine, "|");
+                            Pipe.MessagesQueue.Enqueue(xmlobj);
+                        }
+                    }
                 }
             }
 

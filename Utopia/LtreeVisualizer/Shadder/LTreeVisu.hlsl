@@ -17,7 +17,7 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput {
-	float3 Position				: POSITION;
+	float4 Position				: POSITION;
 	float4 Color				: COLOR;
 };
 
@@ -44,8 +44,8 @@ GSInput VS (VSInput input)
 
 	output.Position = mul(newPosition, World);				  
 	output.Position = mul( output.Position, ViewProjection ); 
-	output.Color = input.Color;
-	
+	output.Color = input.Color * input.Position.w;
+
 	return output;
 }
 
