@@ -530,59 +530,83 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
 
-            foreach (var entity in landscapeEntities.OrderBy(x => x.ChunkLocation.GetHashCode()))
+            //The entities are sorted by their origine chunk hashcode value
+            foreach (LandscapeEntity entity in landscapeEntities)
             {
-                for (int fruits = 0; fruits <= 5; fruits++)
+                //Get LandscapeEntity
+                var landscapeEntity = _worldParameters.Configuration.LandscapeEntitiesDico[entity.LandscapeEntityId];
+
+                foreach (var staticEntity in landscapeEntity.StaticItems)
                 {
-                    var treetemplate = _worldParameters.Configuration.TreeBluePrintsDico[entity.LandscapeEntityId];
-
-                    int x = chunkRnd.Next(-5, 5) + entity.RootLocation.X;
-                    int z = chunkRnd.Next(-5, 5) + entity.RootLocation.Z;
-
-                    if (x >= 0 && x < AbstractChunk.ChunkSize.X && z >= 0 && z < AbstractChunk.ChunkSize.Z)
+                    //Get number of object
+                    var nbr = chunkRnd.Next(staticEntity.Quantity.Min, staticEntity.Quantity.Max);
+                    //If Root out of chunk, devide the qt of object to spawn by 2
+                    if ((entity.RootLocation.X < 0 || entity.RootLocation.X >= AbstractChunk.ChunkSize.X || entity.RootLocation.Z < 0 || entity.RootLocation.Z >= AbstractChunk.ChunkSize.Z))
                     {
+                        nbr = (int)(nbr / 2.0);
+                    }
 
-                        bool isOnGround = chunkRnd.NextDouble() > 0.5;
-                        if (isOnGround == false)
+                    //Foreach object to create
+                    while (nbr > 0)
+                    {
+                        //find location of the static entity
+                        double x = chunkRnd.NextDouble(-staticEntity.SpawningRange, staticEntity.SpawningRange) + entity.RootLocation.X;
+                        double z = chunkRnd.NextDouble(-staticEntity.SpawningRange, staticEntity.SpawningRange) + entity.RootLocation.Z;
+
+                        //If out of current chunk, don't create it
+                        if (x < 0 || x >= AbstractChunk.ChunkSize.X || z < 0 || z >= AbstractChunk.ChunkSize.Z) break;
+
+                        bool groundSpawing;
+                        if (staticEntity.SpawningType == SpawningType.Both)
                         {
-                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y + 1, z);
+                            groundSpawing = chunkRnd.NextFloat() > 0.5;
+                        }
+                        else
+                        {
+                            groundSpawing = staticEntity.SpawningType == SpawningType.Ground;
+                        }
 
-                            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+
+                        StaticEntity landscapeStaticEntity = null;
+                        //Find Y spawning position
+                        if (groundSpawing)
+                        {
+                            dataCursor.SetInternalPosition(MathHelper.Floor(x), entity.RootLocation.Y, MathHelper.Floor(z));
+                            //Loop until I hit the ground, with a maximum of Y - 15 blocks
+                            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y > 0; y--)
                             {
-                                if (dataCursor.Read() == treetemplate.FoliageBlock)
+                                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
                                 {
-                                    //Add new Static item here !
-                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
-                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, y - 0.25, z + chunkWorldPosition.Y + 0.5);
-                                    
-                                    chunk.Entities.Add((StaticEntity)staticEntity);
+                                    //Add Static item here on the ground !
+                                    landscapeStaticEntity = (StaticEntity)entityFactory.CreateFromBluePrint(staticEntity.ItemblueprintId);
+                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y);
                                     break;
                                 }
-                                dataCursor.Move(CursorRelativeMovement.Up);
+                                dataCursor.Move(CursorRelativeMovement.Down);
                             }
                         }
                         else
                         {
-                            dataCursor.SetInternalPosition(x, entity.RootLocation.Y, z);
-
-                            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y < AbstractChunk.ChunkSize.Y; y--)
+                            dataCursor.SetInternalPosition(MathHelper.Floor(x), entity.RootLocation.Y + 1, MathHelper.Floor(z));
+                            //Loop until I hit the ground, with a maximum of Y + 15 blocks
+                            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
                             {
                                 if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
                                 {
-                                    //Add Static item here on the ground!
-                                    var staticEntity = entityFactory.CreateFromBluePrint(279);
-                                    staticEntity.Position = new Vector3D(x + chunkWorldPosition.X + 0.5, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y + 0.5);
-
-                                    chunk.Entities.Add((StaticEntity)staticEntity);
+                                    //Add Static item here on the ground !
+                                    landscapeStaticEntity = (StaticEntity)entityFactory.CreateFromBluePrint(staticEntity.ItemblueprintId);
+                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.InternalPosition.Y - 0.25, z + chunkWorldPosition.Y);
                                     break;
                                 }
-
-                                dataCursor.Move(CursorRelativeMovement.Down);
+                                dataCursor.Move(CursorRelativeMovement.Up);
                             }
+
                         }
 
-                    }
+                        if(landscapeStaticEntity != null) chunk.Entities.Add(landscapeStaticEntity);
 
+                        nbr--;
+                    }
                 }
             }
         }

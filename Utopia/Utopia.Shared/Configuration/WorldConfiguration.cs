@@ -13,6 +13,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Tools;
 using System.Linq;
 using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Shared.Configuration
 {
@@ -150,6 +151,22 @@ namespace Utopia.Shared.Configuration
                     foreach (var tree in TreeBluePrints) _treeBluePrintsDico.Add(tree.Id, tree);
                 }
                 return _treeBluePrintsDico;
+            }
+        }
+
+        private Dictionary<int, LandscapeEntityBluePrint> _landscapeEntitiesDico;
+        [Browsable(false)]
+        public Dictionary<int, LandscapeEntityBluePrint> LandscapeEntitiesDico
+        {
+            get
+            {
+                if (_landscapeEntitiesDico == null)
+                {
+                    _landscapeEntitiesDico = new Dictionary<int, LandscapeEntityBluePrint>();
+                    //Adding LandscapeEntityBluePrint trees
+                    foreach (var tree in TreeBluePrints) _landscapeEntitiesDico.Add(tree.Id, tree);
+                }
+                return _landscapeEntitiesDico;
             }
         }
         #endregion

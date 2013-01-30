@@ -64,6 +64,7 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         private List<LandscapeEntity> PopulateChunksWithTree(Vector2I chunkPosition, Biome biome, byte[] chunkBytes, ChunkColumnInfo[] columndInfo, FastRandom rnd)
         {
+            if (biome.BiomeTrees.Trees.Count <= 0) return null;
             //Get Rnd chunk Location.
             int x = rnd.Next(0, 16);
             int z = rnd.Next(0, 16);
@@ -78,7 +79,8 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //Generate Tree mesh !
             //Get tree type following distribution chances inside the biome
-            TreeBluePrint treeType = biome.BiomeTrees.GetTreeTemplate(rnd, _worldParameters.Configuration.TreeBluePrints);
+            
+            TreeBluePrint treeType = biome.BiomeTrees.GetTreeTemplate(rnd, _worldParameters.Configuration.TreeBluePrintsDico);
 
             return LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType), worldPosition, treeType.Id);
         }
