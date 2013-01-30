@@ -57,6 +57,8 @@ namespace S33M3DXEngine.Buffers
 
         public void SetData(DeviceContext context,dataType[] data, int offset, int _indiceCount, bool MapUpdate = false)
         {
+            if (_indiceCount == 0) return;
+
             _indicesCount = _indiceCount;
 
             //Autoresize ??
