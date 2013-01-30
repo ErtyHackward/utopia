@@ -34,7 +34,7 @@ namespace Utopia.Editor.DataPipe
                         using (StreamWriter sw = new StreamWriter(pipeStream))
                         {
                             string data;
-                            while (StopThread != true) // && (RunningLtree != null && RunningLtree.HasExited == false))
+                            while (StopThread != true && (RunningLtree != null && RunningLtree.HasExited == false))
                             {
                                 sw.AutoFlush = true;
                                 try

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.RealmEditor;
 
@@ -12,6 +13,7 @@ namespace Utopia.Shared.LandscapeEntities
     {
         [TypeConverter(typeof(StaticEntityConverter))] //Display Cube List
         [DisplayName("Entity")]
+        [XmlIgnoreAttribute()]
         public string EntityName
         {
             //When first loaded set property with the first item in the rule list.

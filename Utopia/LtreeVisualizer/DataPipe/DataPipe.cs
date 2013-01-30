@@ -33,10 +33,10 @@ namespace LtreeVisualizer.DataPipe
                     while (StopThread != true)
                     {
                         string data = sr.ReadLine();
-                        data = data.Replace( "|", Environment.NewLine);
-                        TreeBluePrint BleuPrintdata = (TreeBluePrint)XmlSerialize.XmlDeserializeFromString(data, typeof(TreeBluePrint));
                         if (data != null)
                         {
+                            data = data.Replace("|", Environment.NewLine);
+                            TreeBluePrint BleuPrintdata = (TreeBluePrint)XmlSerialize.XmlDeserializeFromString(data, typeof(TreeBluePrint));
                             MessagesQueue.Enqueue(BleuPrintdata);
                         }
                         Thread.Sleep(1);
