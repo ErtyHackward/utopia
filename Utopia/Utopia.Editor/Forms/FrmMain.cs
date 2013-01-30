@@ -20,6 +20,8 @@ using Utopia.Shared.LandscapeEntities.Trees;
 using System.Threading;
 using Utopia.Editor.DataPipe;
 using System.IO.Pipes;
+using ProtoBuf;
+using Utopia.Shared.Tools.XMLSerializer;
 
 namespace Utopia.Editor.Forms
 {
@@ -606,10 +608,15 @@ namespace Utopia.Editor.Forms
             if (((PropertyGrid)sender).SelectedObject.GetType() == typeof(TreeBluePrint))
             {
                 //Tree blue print properties have been change ...
-                if(Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
-                Pipe.MessagesQueue.Enqueue("OKkkkkkkkkkkkkkk");
+                if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
+                {
+                    //Serialize object
+                    TreeBluePrint obj = (TreeBluePrint)((PropertyGrid)sender).SelectedObject;
+                    string xmlobj = XmlSerialize.XmlSerializeToString(obj);
+                    xmlobj = xmlobj.Replace(Environment.NewLine, "|");
+                    Pipe.MessagesQueue.Enqueue(xmlobj);
+                }
             }
-
 
             //Update ListBox Icon when the modelName is changing
             if (e.ChangedItem.Label == "ModelName")

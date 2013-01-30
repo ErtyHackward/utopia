@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using LtreeVisualizer.DataPipe;
 using S33M3DXEngine.Main;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.LandscapeEntities.Trees;
 
 namespace LtreeVisualizer
 {
@@ -43,10 +44,11 @@ namespace LtreeVisualizer
 
         public override void FTSUpdate(GameTime TimeSpend)
         {
-            string test;
-            if (Pipe.MessagesQueue.TryDequeue(out test))
+            TreeBluePrint newTemplate;
+
+            if (Pipe.MessagesQueue.TryDequeue(out newTemplate))
             {
-                this.Engine.GameWindow.Text = test;
+                this.Engine.GameWindow.Text = newTemplate.Axiom;
             }
 
             base.FTSUpdate(TimeSpend);
