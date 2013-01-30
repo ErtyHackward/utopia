@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataPipe\DataPipe.cs" />
     <Compile Include="Forms\FrmEntityChoose.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,6 +162,10 @@
     <ProjectReference Include="..\..\S33M3Engines\S33M3DXEngine\S33M3DXEngine.csproj">
       <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
       <Name>S33M3DXEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LtreeVisualizer\LtreeVisualizer.csproj">
+      <Project>{bf406949-62cf-4f16-b5a5-4519fdd0ebad}</Project>
+      <Name>LtreeVisualizer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>

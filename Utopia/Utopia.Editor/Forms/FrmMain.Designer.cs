@@ -51,6 +51,8 @@
             this.recentToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ltreeVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.officialSiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +103,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -168,6 +171,21 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ltreeVisualizerToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // ltreeVisualizerToolStripMenuItem
+            // 
+            this.ltreeVisualizerToolStripMenuItem.Name = "ltreeVisualizerToolStripMenuItem";
+            this.ltreeVisualizerToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ltreeVisualizerToolStripMenuItem.Text = "Ltree Visualizer";
+            this.ltreeVisualizerToolStripMenuItem.Click += new System.EventHandler(this.ltreeVisualizerToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -367,6 +385,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Name = "FrmMain";
             this.Text = "Utopia realm editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
             this.contextMenuCategories.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -409,6 +428,8 @@
         private System.Windows.Forms.ListView entityListView;
         private System.Windows.Forms.ImageList largeImageList;
         private System.Windows.Forms.ToolStripSeparator recentToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ltreeVisualizerToolStripMenuItem;
     }
 }
 
