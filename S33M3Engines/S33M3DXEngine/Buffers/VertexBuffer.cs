@@ -68,6 +68,8 @@ namespace S33M3DXEngine.Buffers
 
         public void SetData(DeviceContext context, dataType[] data, int offset, int vertexCount, bool MapUpdate = false)
         {
+            if (vertexCount == 0) return;
+
             _vertexCount = vertexCount;
             //Do I need to create my Buffer or re-create it because its size is not enough (autoresize) ?
             if (_vertexBuffer == null || (_vertexCount > _bufferCount))
