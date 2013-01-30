@@ -12,6 +12,12 @@ namespace LtreeVisualizer.Components
     public class Entity : GameComponent, ICameraPlugin
     {
         private Vector3D _entityWorldPosition;
+
+        public Vector3D EntityWorldPosition
+        {
+            get { return _entityWorldPosition; }
+            set { _entityWorldPosition = value; }
+        }
         private Quaternion _entityOrientation;
         private Quaternion _entityYAxisOrientation;
 
