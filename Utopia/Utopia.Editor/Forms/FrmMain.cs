@@ -17,6 +17,9 @@ using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Tools;
 using Utopia.Shared.LandscapeEntities.Trees;
+using System.Threading;
+using Utopia.Editor.DataPipe;
+using System.IO.Pipes;
 
 namespace Utopia.Editor.Forms
 {
@@ -600,6 +603,14 @@ namespace Utopia.Editor.Forms
         /// </summary>
         private void pgDetails_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
+            if (((PropertyGrid)sender).SelectedObject.GetType() == typeof(TreeBluePrint))
+            {
+                //Tree blue print properties have been change ...
+                if(Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
+                Pipe.MessagesQueue.Enqueue("OKkkkkkkkkkkkkkk");
+            }
+
+
             //Update ListBox Icon when the modelName is changing
             if (e.ChangedItem.Label == "ModelName")
             {
@@ -826,6 +837,40 @@ namespace Utopia.Editor.Forms
             }
         }
 
+        Thread _pipeThread;
+        Pipe _dataPipe = new Pipe();
+        private void ltreeVisualizerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_pipeThread == null || (_pipeThread.ThreadState != System.Threading.ThreadState.Running && _pipeThread.ThreadState != System.Threading.ThreadState.WaitSleepJoin))
+            {
+                if(_pipeThread != null) Console.WriteLine(_pipeThread.ThreadState);
+                _pipeThread = new Thread(_dataPipe.Start);
+                _pipeThread.Start();
+            }
+
+            if(Pipe.RunningLtree == null || Pipe.RunningLtree.HasExited == true) Pipe.RunningLtree = System.Diagnostics.Process.Start(@"LtreeVisualizer.exe");
+        }
+
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false) Pipe.RunningLtree.Kill();
+            if (_pipeThread != null && (_pipeThread.ThreadState == System.Threading.ThreadState.Running || _pipeThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin))
+            {
+                Pipe.StopThread = true;
+                try
+                {
+                    using (NamedPipeClientStream npcs = new NamedPipeClientStream("UtopiaEditor"))
+                    {
+                        npcs.Connect(100);
+                    }
+
+                }
+                catch (Exception)
+                {
+                }
+
+            }
+        }
 
     }
 }
