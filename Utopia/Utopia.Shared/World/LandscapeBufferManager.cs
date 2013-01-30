@@ -233,6 +233,10 @@ namespace Utopia.Shared.World
             }
 
             Processor.GenerateMicroLandscape(buffer);
+
+            //Sort the final landscape entity items by their chunk origine.
+            if(buffer.Entities != null) buffer.Entities = buffer.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()).ToList();
+
             buffer.isReady = true;
         }
         #endregion

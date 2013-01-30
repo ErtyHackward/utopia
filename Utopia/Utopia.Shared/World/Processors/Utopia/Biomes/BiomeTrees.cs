@@ -39,7 +39,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             Trees = new List<BiomeTree>();
         }
 
-        public TreeBluePrint GetTreeTemplate(FastRandom rnd, List<TreeBluePrint> templates)
+        public TreeBluePrint GetTreeTemplate(FastRandom rnd, Dictionary<int, TreeBluePrint> templates)
         {
             if (_distributionDirty) CreatedDistributionList();
             //Get a tree following the distribution chances
