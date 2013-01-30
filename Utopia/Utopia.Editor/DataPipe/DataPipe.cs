@@ -7,6 +7,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace Utopia.Editor.DataPipe
 {
@@ -30,27 +31,21 @@ namespace Utopia.Editor.DataPipe
                     Console.WriteLine("[Server] Pipe connection established");
                     try
                     {
-
-
                         using (StreamWriter sw = new StreamWriter(pipeStream))
                         {
-                            using (StreamReader sr = new StreamReader(pipeStream))
+                            string data;
+                            while (StopThread != true) // && (RunningLtree != null && RunningLtree.HasExited == false))
                             {
                                 sw.AutoFlush = true;
-                                string msg;
-                                sw.WriteLine("Bonjour");
-                                while (StopThread != true && (RunningLtree != null && RunningLtree.HasExited == false))
+                                try
                                 {
-                                    try
+                                    if (MessagesQueue.TryDequeue(out data))
                                     {
-                                        if (MessagesQueue.TryDequeue(out msg))
-                                        {
-                                            sw.WriteLine(msg);
-                                        }
-                                        Thread.Sleep(1);
+                                        sw.WriteLine(data);
                                     }
-                                    catch (Exception) { }
+                                    Thread.Sleep(1);
                                 }
+                                catch (Exception) { }
                             }
                         }
                     }
@@ -61,9 +56,6 @@ namespace Utopia.Editor.DataPipe
             }
         }
 
-        public void Stop()
-        {
-
-        }
+       
     }
 }

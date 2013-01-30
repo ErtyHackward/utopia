@@ -243,6 +243,7 @@
     </Compile>
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
+    <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
     <Compile Include="World\LandscapeBufferManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntity.cs" />
     <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
