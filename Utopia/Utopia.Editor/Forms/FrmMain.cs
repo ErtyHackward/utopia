@@ -598,7 +598,17 @@ namespace Utopia.Editor.Forms
             tvMainCategories.SelectedNode.Remove();
         }
 
-        
+        private void SendTreeTemplateForVisualization(TreeBluePrint template)
+        {
+            //Tree blue print properties have been change ...
+            if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
+            {
+                //Serialize object
+                string xmlobj = XmlSerialize.XmlSerializeToString(template);
+                xmlobj = xmlobj.Replace(Environment.NewLine, "|");
+                Pipe.MessagesQueue.Enqueue(xmlobj);
+            }
+        }
 
         /// <summary>
         /// Event raised when a property change in the Details property grid.
@@ -607,15 +617,7 @@ namespace Utopia.Editor.Forms
         {
             if (((PropertyGrid)sender).SelectedObject.GetType() == typeof(TreeBluePrint))
             {
-                //Tree blue print properties have been change ...
-                if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
-                {
-                    //Serialize object
-                    TreeBluePrint obj = (TreeBluePrint)((PropertyGrid)sender).SelectedObject;
-                    string xmlobj = XmlSerialize.XmlSerializeToString(obj);
-                    xmlobj = xmlobj.Replace(Environment.NewLine, "|");
-                    Pipe.MessagesQueue.Enqueue(xmlobj);
-                }
+                SendTreeTemplateForVisualization((TreeBluePrint)((PropertyGrid)sender).SelectedObject);
             }
 
             //Update ListBox Icon when the modelName is changing
@@ -786,15 +788,7 @@ namespace Utopia.Editor.Forms
 
                     if (selectedObject is TreeBluePrint)
                     {
-                        //Tree blue print properties have been change ...
-                        if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
-                        {
-                            //Serialize object
-                            TreeBluePrint obj = (TreeBluePrint)selectedObject;
-                            string xmlobj = XmlSerialize.XmlSerializeToString(obj);
-                            xmlobj = xmlobj.Replace(Environment.NewLine, "|");
-                            Pipe.MessagesQueue.Enqueue(xmlobj);
-                        }
+                        SendTreeTemplateForVisualization( (TreeBluePrint)selectedObject);
                     }
                 }
             }
