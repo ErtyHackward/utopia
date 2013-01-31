@@ -71,12 +71,12 @@ namespace LtreeVisualizer
             ((CameraManager<ICamera>)_cameraMnger).RegisterNewCamera(_camera);
             _cameraMnger.EnableComponent();
 
-            _cameraEntity = ToDispose(new Entity(new S33M3Resources.Structs.Vector3D(0, 0, -20), Quaternion.RotationAxis(Vector3.UnitY, 0.0f)));
+            _cameraEntity = ToDispose(new Entity(new S33M3Resources.Structs.Vector3D(0, 3, -20), Quaternion.RotationAxis(Vector3.UnitY, 0.0f)));
             _cameraEntity.EnableComponent();
 
             _camera.CameraPlugin = (ICameraPlugin)_cameraEntity;
 
-            _gamecomp = new LTreeVisu((CameraManager<ICamera>)_cameraMnger);
+            _gamecomp = new LTreeVisu(Engine, (CameraManager<ICamera>)_cameraMnger, _inputManager);
             _gamecomp.EnableComponent();
 
             //Register Here all components
@@ -103,12 +103,12 @@ namespace LtreeVisualizer
 
             if (_inputManager.ActionsManager.isTriggered(Actions.Move_Backward))
             {
-                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0, -0.2);
+                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0, -0.8);
             }
 
             if (_inputManager.ActionsManager.isTriggered(Actions.Move_Forward))
             {
-                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0, 0.2);
+                ((Entity)_cameraEntity).EntityWorldPosition += new S33M3Resources.Structs.Vector3D(0, 0, 0.8);
             }
 
             if (_inputManager.ActionsManager.isTriggered(Actions.Move_Up))
