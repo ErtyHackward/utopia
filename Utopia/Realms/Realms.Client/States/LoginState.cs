@@ -82,7 +82,7 @@ namespace Realms.Client.States
 
             if (e != null && !string.IsNullOrEmpty(e.AccessToken))
             {
-                var vars = _iocContainer.Get<RuntimeVariables>();
+                var vars = _iocContainer.Get<RealmRuntimeVariables>();
 
                 vars.Login = login.Email;
                 vars.PasswordHash = login.Password.GetSHA1Hash();

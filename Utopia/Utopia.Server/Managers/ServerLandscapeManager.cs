@@ -391,9 +391,9 @@ namespace Utopia.Server.Managers
         /// <param name="cubePosition">a cube position inside the chunk</param>
         public void GetBlockAndChunk(Vector3D position, out ServerChunk chunk, out Vector3I cubePosition)
         {
-            cubePosition.X = (int)Math.Floor(position.X);
-            cubePosition.Y = (int)Math.Floor(position.Y);
-            cubePosition.Z = (int)Math.Floor(position.Z);
+            cubePosition.x = (int)Math.Floor(position.X);
+            cubePosition.y = (int)Math.Floor(position.Y);
+            cubePosition.z = (int)Math.Floor(position.Z);
 
             chunk = GetChunk(new Vector2I(cubePosition.X / AbstractChunk.ChunkSize.X, cubePosition.Z / AbstractChunk.ChunkSize.Z));
 

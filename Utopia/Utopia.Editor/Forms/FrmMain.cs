@@ -16,6 +16,13 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Tools;
+using Utopia.Shared.LandscapeEntities.Trees;
+using System.Threading;
+using Utopia.Editor.DataPipe;
+using System.IO.Pipes;
+using ProtoBuf;
+using Utopia.Shared.Tools.XMLSerializer;
+using S33M3Resources.Structs;
 
 namespace Utopia.Editor.Forms
 {
@@ -179,11 +186,11 @@ namespace Utopia.Editor.Forms
             switch (processorChoose.SelectedProcessor)
             {
                 case WorldConfiguration.WorldProcessors.Flat:
-                    newConfiguration = new FlatWorldConfiguration();
+                    newConfiguration = new FlatWorldConfiguration(withHelperAssignation:true);
                     ((FlatWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    newConfiguration = new UtopiaWorldConfiguration();
+                    newConfiguration = new UtopiaWorldConfiguration(withHelperAssignation:true);
                     ((UtopiaWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
                     break;
                 default:
@@ -379,6 +386,16 @@ namespace Utopia.Editor.Forms
                 node.Tag = blockProfile;
             }
 
+            //Trees Landscape Entities
+            var LandEntitiesRootNode = tvMainCategories.Nodes["LandscapeEntities"];
+            var TreesRootNode = LandEntitiesRootNode.Nodes["Trees"];
+            TreesRootNode.Nodes.Clear();
+            foreach (var tree in _configuration.TreeBluePrints)
+            {
+                var node = AddSubNode(TreesRootNode, tree.Name, tree, null);
+                node.ContextMenuStrip = contextMenuEntity;
+            }
+
             #region Sets
 
             var setsRootNode = tvMainCategories.Nodes["Container sets"];
@@ -487,13 +504,6 @@ namespace Utopia.Editor.Forms
                     return node1;
             }
 
-            foreach (TreeNode node1 in nodes)
-            {
-                var result = FindByTag(tag, node1);
-
-                if (result != null)
-                    return result;
-            }
 
             return null;
         }
@@ -525,10 +535,17 @@ namespace Utopia.Editor.Forms
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(recipe);
                     break;
+                case "Trees":
+                    var tree = new TreeBluePrint() { Name = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF", FoliageSize = new Vector3I(1,1,1) };
+                    tree.Id = _configuration.GetNextLandscapeEntityId();
+                    _configuration.TreeBluePrints.Add(tree);
+                    UpdateTree();
+                    tvMainCategories.SelectedNode = FindByTag(tree);
+                    break;
                 default:
                     break;
             }
-
+            if (tvMainCategories.SelectedNode == null) return;
             if (tvMainCategories.SelectedNode.Tag is string)
             {
                 AddEntity();
@@ -574,18 +591,36 @@ namespace Utopia.Editor.Forms
             else if (tag is Recipe)
             {
                 _configuration.Recipes.Remove((Recipe)tag);
+            } if (tag is TreeBluePrint)
+            {
+                _configuration.TreeBluePrints.Remove((TreeBluePrint)tag);
             }
 
             tvMainCategories.SelectedNode.Remove();
         }
 
-        
+        private void SendTreeTemplateForVisualization(TreeBluePrint template)
+        {
+            //Tree blue print properties have been change ...
+            if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false)
+            {
+                //Serialize object
+                string xmlobj = XmlSerialize.XmlSerializeToString(template);
+                xmlobj = xmlobj.Replace(Environment.NewLine, "|");
+                Pipe.MessagesQueue.Enqueue(xmlobj);
+            }
+        }
 
         /// <summary>
         /// Event raised when a property change in the Details property grid.
         /// </summary>
         private void pgDetails_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
+            if (((PropertyGrid)sender).SelectedObject.GetType() == typeof(TreeBluePrint))
+            {
+                SendTreeTemplateForVisualization((TreeBluePrint)((PropertyGrid)sender).SelectedObject);
+            }
+
             //Update ListBox Icon when the modelName is changing
             if (e.ChangedItem.Label == "ModelName")
             {
@@ -751,6 +786,11 @@ namespace Utopia.Editor.Forms
                             }
                         }
                     }
+
+                    if (selectedObject is TreeBluePrint)
+                    {
+                        SendTreeTemplateForVisualization( (TreeBluePrint)selectedObject);
+                    }
                 }
             }
 
@@ -812,6 +852,40 @@ namespace Utopia.Editor.Forms
             }
         }
 
+        Thread _pipeThread;
+        Pipe _dataPipe = new Pipe();
+        private void ltreeVisualizerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_pipeThread == null || (_pipeThread.ThreadState != System.Threading.ThreadState.Running && _pipeThread.ThreadState != System.Threading.ThreadState.WaitSleepJoin))
+            {
+                if(_pipeThread != null) Console.WriteLine(_pipeThread.ThreadState);
+                _pipeThread = new Thread(_dataPipe.Start);
+                _pipeThread.Start();
+            }
+
+            if(Pipe.RunningLtree == null || Pipe.RunningLtree.HasExited == true) Pipe.RunningLtree = System.Diagnostics.Process.Start(@"LtreeVisualizer.exe");
+        }
+
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false) Pipe.RunningLtree.Kill();
+            if (_pipeThread != null && (_pipeThread.ThreadState == System.Threading.ThreadState.Running || _pipeThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin))
+            {
+                Pipe.StopThread = true;
+                try
+                {
+                    using (NamedPipeClientStream npcs = new NamedPipeClientStream("UtopiaEditor"))
+                    {
+                        npcs.Connect(100);
+                    }
+
+                }
+                catch (Exception)
+                {
+                }
+
+            }
+        }
 
     }
 }

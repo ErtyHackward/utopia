@@ -21,9 +21,9 @@ namespace System.IO
         {
             Vector3I loc;
 
-            loc.X = reader.ReadInt32();
-            loc.Y = reader.ReadInt32();
-            loc.Z = reader.ReadInt32();
+            loc.x = reader.ReadInt32();
+            loc.y = reader.ReadInt32();
+            loc.z = reader.ReadInt32();
 
             return loc;
         }

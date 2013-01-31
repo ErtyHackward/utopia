@@ -23,6 +23,7 @@ namespace Utopia.Entities.Managers
 
         #region Public Properties
         public double YForceApplying { get; set; }
+        public Vector2I ChunkPosition { get; set; }
         #endregion
 
         #region Public Methods
@@ -85,6 +86,10 @@ namespace Utopia.Entities.Managers
             }
 
             Player.Position = _worldPosition; //Send the newly compute location to the playercharacter dynamicEntity
+            
+            //Compute player chunk Position
+            ChunkPosition = new Vector2I(MathHelper.Floor(Player.Position.X / AbstractChunk.ChunkSize.X),
+                                         MathHelper.Floor(Player.Position.Z / AbstractChunk.ChunkSize.Z));
 
             if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.FirstPerson)
             {
@@ -233,6 +238,9 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void CheckAfterNewPosition()
         {
+            //Send player chunk Position in the buffer manager.
+            _bufferManager.CleanUpClient(ChunkPosition, _visualWorldParameters);
+
             CheckForEventRaising();
         }
 

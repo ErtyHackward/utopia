@@ -82,11 +82,23 @@
     <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TexturesPacks\Default\Terran\ct23_Foliage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\Terran\ct24_Foliage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\Terran\ct25_Foliage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TexturesPacks\Default\Terran\ct26_Foliage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Config\FlatWorld.realm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Config\Island.realm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Config\Sandbox.realm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -793,14 +805,8 @@
     <None Include="TexturesPacks\Default\AnimatedTextures\ArrayAnimatedTextures.dds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="TexturesPacks\Default\BiomesColors\ArrayBiomesColors.dds">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="TexturesPacks\Default\Gui\Crosshair.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Particules\ArrayParticules.dds">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TexturesPacks\Default\SkyDome\moon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -810,9 +816,6 @@
     </None>
     <None Include="TexturesPacks\Default\SkyDome\skyText.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TexturesPacks\Default\Terran\ArrayTerran.dds">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TexturesPacks\Default\Terran\ct01_Stone.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -33,6 +33,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Ninject;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -91,7 +92,6 @@ namespace Utopia.Worlds.Chunks
         private VoxelModelManager _voxelModelManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private UtopiaProcessorParams _utopiaProcessorParam;
-
         /// <summary>
         /// List of chunks that still _slowly_ appearing
         /// </summary>
@@ -366,7 +366,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk was found</returns>
         public bool GetSafeChunk(int X, int Z, out VisualChunk chunk)
         {
-            if (X < VisualWorldParameters.WorldRange.Position.X || X > VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Position.Z || Z > VisualWorldParameters.WorldRange.Max.Z)
+            if (X < VisualWorldParameters.WorldRange.Position.X || X >= VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Position.Z || Z >= VisualWorldParameters.WorldRange.Max.Z)
             {
                 chunk = null;
                 return false;

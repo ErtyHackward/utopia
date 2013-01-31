@@ -67,9 +67,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.0.0.612, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+    <Reference Include="protobuf-net, Version=2.0.0.621, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\protobuf-net.2.0.0.612\lib\net40\protobuf-net.dll</HintPath>
+      <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,13 +89,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.82.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+    <Reference Include="System.Data.SQLite, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.82.0\lib\net40\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.82.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.82.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -233,6 +233,23 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.designer.cs">
+      <DependentUpon>LandscapeEntityStaticItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
+      <DependentUpon>TreeBluePrint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
+    <Compile Include="RuntimeVariables.cs" />
+    <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
+    <Compile Include="World\LandscapeBufferManager.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntity.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
+    <Compile Include="World\LandscapeChunkBuffer.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityParser.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeBluePrint.cs" />
     <Compile Include="Net\Messages\ITimeStampedMsg.cs" />
     <Compile Include="Net\Messages\RequestDateTimeSyncMessage.cs" />
     <Compile Include="Net\Web\ClientWebApi.cs" />
@@ -244,6 +261,7 @@
     <Compile Include="Net\Web\WebEventArgs.cs" />
     <Compile Include="Sounds\IUtopiaSoundSource.cs" />
     <Compile Include="Sounds\TimeOfDaySound.cs" />
+    <Compile Include="Structs\Landscape\BlockWithPosition.cs" />
     <Compile Include="Structs\Landscape\TerraCubeResult.cs" />
     <Compile Include="Tools\BinarySerializer\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
@@ -356,8 +374,12 @@
     </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeHelper.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeSoundSource.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTree.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTree.designer.cs">
+      <DependentUpon>BiomeTree.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.Designer.cs">
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.designer.cs">
       <DependentUpon>BiomeTrees.cs</DependentUpon>
     </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\Cavern.cs" />
@@ -370,7 +392,6 @@
     <Compile Include="World\Processors\Utopia\Biomes\CubeVein.Designer.cs">
       <DependentUpon>CubeVein.cs</DependentUpon>
     </Compile>
-    <Compile Include="World\Processors\Utopia\Biomes\TreeTemplates.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Moisture.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Temperature.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\enuWorldType.cs" />
@@ -388,6 +409,7 @@
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\SurfaceCtrl.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\WorldCtrl.cs" />
+    <Compile Include="World\Processors\Utopia\LandscapeEntities.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
@@ -441,6 +463,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Tools\ContainerEditor.resx">
+      <DependentUpon>ContainerEditor.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -448,12 +475,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tools\ContainerEditor.resx">
-      <DependentUpon>ContainerEditor.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

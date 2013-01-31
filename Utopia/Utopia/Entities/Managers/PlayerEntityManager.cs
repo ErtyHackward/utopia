@@ -54,6 +54,7 @@ namespace Utopia.Entities.Managers
         private WorldFocusManager _worldFocusManager;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
+        private LandscapeBufferManager _bufferManager;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -259,7 +260,8 @@ namespace Utopia.Entities.Managers
                                    IPickingRenderer pickingRenderer,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
-                                   ILandscapeManager2D landscapeManager
+                                   ILandscapeManager2D landscapeManager,
+                                   LandscapeBufferManager bufferManager
             )
         {
             _d3DEngine = engine;
@@ -271,6 +273,7 @@ namespace Utopia.Entities.Managers
             _visualWorldParameters = visualWorldParameters;
             _landscapeManager = landscapeManager;
             _handTool.LandscapeManager = landscapeManager;
+            _bufferManager = bufferManager;
 
             Player = player;
 

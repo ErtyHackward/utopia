@@ -75,9 +75,9 @@ namespace Utopia.Shared.Structs
                     {
                         Vector3I pos;
 
-                        pos.X = x;
-                        pos.Y = y;
-                        pos.Z = z;
+                        pos.x = x;
+                        pos.y = y;
+                        pos.z = z;
 
                         yield return pos;
                     }
