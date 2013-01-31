@@ -96,7 +96,7 @@ namespace Realms.Client.States
 
 #if DEBUG
                     // first state will be the login state
-                    var vars = _iocContainer.Get<RuntimeVariables>();
+                    var vars = _iocContainer.Get<RealmRuntimeVariables>();
                     vars.SinglePlayer = true;
                     vars.Login = "test";
                     vars.PasswordHash = "";

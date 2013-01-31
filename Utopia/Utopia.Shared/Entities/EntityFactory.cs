@@ -20,6 +20,8 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Shared.Entities.Sound;
+using Utopia.Shared.LandscapeEntities;
+using Utopia.Shared.LandscapeEntities.Trees;
 
 namespace Utopia.Shared.Entities
 {
@@ -63,7 +65,9 @@ namespace Utopia.Shared.Entities
             var worldConfig =               protoTypeModel.Add(typeof(WorldConfiguration), true);
             var soundSource =               protoTypeModel.Add(typeof(SoundSource), true);
             var chunkDataProvider =         protoTypeModel.Add(typeof(ChunkDataProvider), true);
+            var landscapeEntityBluePrint =  protoTypeModel.Add(typeof(LandscapeEntityBluePrint), true);
 
+            landscapeEntityBluePrint.AddSubType(100, typeof(TreeBluePrint));
 
             chunkDataProvider.AddSubType(100, typeof(InsideDataProvider));
             chunkDataProvider.AddSubType(101, typeof(SingleArrayDataProvider));

@@ -56,6 +56,7 @@ using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Sandbox.Client.Components.GUI.SinglePlayer;
 using Utopia.Sounds;
+using Utopia.Shared;
 
 namespace Sandbox.Client
 {
@@ -79,7 +80,10 @@ namespace Sandbox.Client
             _iocContainer.Bind<SandboxCommonResources>().ToSelf().InSingletonScope();
 
             // Game states ================================================
-            _iocContainer.Bind<RuntimeVariables>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<SandboxRuntimeVariables>().ToSelf().InSingletonScope();
+            //Force RuntimeVariables to use the same singleton as SandboxRuntimeVariables !
+            _iocContainer.Bind<RuntimeVariables>().ToMethod(x => x.Kernel.Get<SandboxRuntimeVariables>());
+
             _iocContainer.Bind<LoginState>().ToSelf().InSingletonScope();
             _iocContainer.Bind<LoginComponent>().ToSelf().InSingletonScope();
 
@@ -206,6 +210,7 @@ namespace Sandbox.Client
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
+            _iocContainer.Bind<LandscapeBufferManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Entities related stuff ====================================================

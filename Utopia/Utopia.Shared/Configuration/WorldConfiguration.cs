@@ -12,6 +12,8 @@ using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Tools;
 using System.Linq;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Shared.Configuration
 {
@@ -128,10 +130,57 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// Gets or sets list of all possible recipes
         /// </summary>
-        [ProtoMember(13)]
+        [ProtoMember(13, OverwriteList = true)]
         public List<Recipe> Recipes { get; set; }
 
+        /// <summary>
+        /// Get or sets Tree template, that will be added in the biome.
+        /// </summary>
+        [ProtoMember(14, OverwriteList = true)]
+        public List<TreeBluePrint> TreeBluePrints { get; set; }
+
+        private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
+        [Browsable(false)]
+        public Dictionary<int, TreeBluePrint> TreeBluePrintsDico
+        {
+            get
+            {
+                if (_treeBluePrintsDico == null)
+                {
+                    _treeBluePrintsDico = new Dictionary<int, TreeBluePrint>();
+                    foreach (var tree in TreeBluePrints) _treeBluePrintsDico.Add(tree.Id, tree);
+                }
+                return _treeBluePrintsDico;
+            }
+        }
+
+        private Dictionary<int, LandscapeEntityBluePrint> _landscapeEntitiesDico;
+        [Browsable(false)]
+        public Dictionary<int, LandscapeEntityBluePrint> LandscapeEntitiesDico
+        {
+            get
+            {
+                if (_landscapeEntitiesDico == null)
+                {
+                    _landscapeEntitiesDico = new Dictionary<int, LandscapeEntityBluePrint>();
+                    //Adding LandscapeEntityBluePrint trees
+                    foreach (var tree in TreeBluePrints) _landscapeEntitiesDico.Add(tree.Id, tree);
+                }
+                return _landscapeEntitiesDico;
+            }
+        }
         #endregion
+
+        public int GetNextLandscapeEntityId()
+        {
+            int newId = int.MinValue;
+            //Look into Tree landscape entities;
+            int treeMaxId = 0;
+            if(TreeBluePrints.Count > 0) treeMaxId = TreeBluePrints.Max(x => x.Id);
+            if (newId < treeMaxId) newId = treeMaxId;
+
+            return newId + 1;
+        }
 
         protected WorldConfiguration(EntityFactory factory = null, bool withHelperAssignation = false)
         {
@@ -294,6 +343,7 @@ namespace Utopia.Shared.Configuration
             Services = new List<KeyValuePair<string, string>>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
             Recipes = new List<Recipe>();
+            TreeBluePrints = new List<TreeBluePrint>();
         }
 
         private void CreateDefaultValues()

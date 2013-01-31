@@ -188,9 +188,9 @@ namespace Utopia.Shared.Chunks
 
                 Vector3I copySize;
 
-                copySize.X = newSize.X > _chunkSize.X ? _chunkSize.X : newSize.X;
-                copySize.Y = newSize.Y > _chunkSize.Y ? _chunkSize.Y : newSize.Y;
-                copySize.Z = newSize.Z > _chunkSize.Z ? _chunkSize.Z : newSize.Z;
+                copySize.x = newSize.X > _chunkSize.X ? _chunkSize.X : newSize.X;
+                copySize.y = newSize.Y > _chunkSize.Y ? _chunkSize.Y : newSize.Y;
+                copySize.z = newSize.Z > _chunkSize.Z ? _chunkSize.Z : newSize.Z;
 
                 for (int x = 0; x < copySize.X; x++)
                 {
@@ -294,9 +294,9 @@ namespace Utopia.Shared.Chunks
                     for (int z = 0; z < _chunkSize.Z; z++)
                     {
                         Vector3I vec;
-                        vec.X = x;
-                        vec.Y = y;
-                        vec.Z = z;
+                        vec.x = x;
+                        vec.y = y;
+                        vec.z = z;
 
                         var value = GetBlock(vec);
 
@@ -425,40 +425,6 @@ namespace Utopia.Shared.Chunks
         }
         #endregion
 
-        /// <summary>
-        /// Loads current object from binary form
-        /// </summary>
-        /// <param name="reader"></param>
-        public void Load(BinaryReader reader)
-        {
-            //Load the Chunk Block informations ==================
-            _chunkSize = reader.ReadVector3I(); 
-            var bytesCount = _chunkSize.X * _chunkSize.Y * _chunkSize.Z;
-            _blockBytes = reader.ReadBytes(bytesCount);
-
-            if (_blockBytes.Length != bytesCount)
-                throw new EndOfStreamException();
-
-            //Load the Block tags metaData informations ==========
-            var tagsCount = reader.ReadInt32();
-            _tags.Clear();
-            for (var i = 0; i < tagsCount; i++)
-            {
-                var position = reader.ReadVector3I();
-                var tag = EntityFactory.CreateTagFromBytes(reader);
-                _tags.Add(position, tag);
-            }
-
-            //Load the Chunk Column informations =================
-            var columnsInfoCount = reader.ReadInt32();
-            for (var i = 0; i < columnsInfoCount; i++)
-            {
-                _chunkColumns[i] = new ChunkColumnInfo();
-                _chunkColumns[i].Load(reader);
-            }
-
-            //Load The chunk metaData
-            ChunkMetaData.Load(reader);
-        }
+        
     }
 }

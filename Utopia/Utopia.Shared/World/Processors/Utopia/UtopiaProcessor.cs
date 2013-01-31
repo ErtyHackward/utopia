@@ -15,6 +15,9 @@ using Utopia.Shared.World.Processors.Utopia.ClimateFct;
 using System.Linq;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.LandscapeEntities;
+using Utopia.Shared.Entities.Interfaces;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -28,6 +31,10 @@ namespace Utopia.Shared.World.Processors.Utopia
         private int _worldGeneratedHeight = 128;
         private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
+        private LandscapeBufferManager _landscapeBufferManager;
+
+        //Landscape entities generators
+        
         #endregion
 
         #region Public Properties
@@ -45,15 +52,21 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             get { return "New lanscape generation algo. using s33m3 engine noise framework"; }
         }
+
+        public LandscapeEntities LandscapeEntities { get; set; }
         #endregion
 
-        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory)
+        public UtopiaProcessor(WorldParameters worldParameters, EntityFactory entityFactory, LandscapeBufferManager landscapeEntityManager)
         {
             _worldParameters = worldParameters;
             _entityFactory = entityFactory;
             _config = (UtopiaWorldConfiguration)worldParameters.Configuration;
             _biomeHelper = new BiomeHelper(_config);
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
+            _landscapeBufferManager = landscapeEntityManager;
+            LandscapeEntities = new LandscapeEntities(_landscapeBufferManager, _worldParameters);
+
+            landscapeEntityManager.Processor = this;
         }
 
         public void Dispose()
@@ -63,32 +76,26 @@ namespace Utopia.Shared.World.Processors.Utopia
 
         public void Generate(Structs.Range2I generationRange, Chunks.GeneratedChunk[,] chunks)
         {
-            Range3I chunkWorldRange;
             generationRange.Foreach(pos =>
             {
                 //Get the chunk
                 GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
+                Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+
                 //Create the Rnd component to be used by the landscape creator
                 FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
-                //Create a byte array that will receive the landscape generated
-                byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
-                //Create an array that wll receive the ColumnChunk Informations
+                //Get the landscape Items for this chunk from the buffer
+                LandscapeChunkBuffer landscapeBuffer = _landscapeBufferManager.Get(chunk.Position);
+
+                //"Localize" the array from Buffer to Client/Server. => In order to avoid having the same collection being shared between server/client
                 ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+                byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                Array.Copy(landscapeBuffer.chunkBytesBuffer, chunkBytes, landscapeBuffer.chunkBytesBuffer.Length);
+                Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
-                chunkWorldRange = new Range3I()
-                {
-                    Position = new Vector3I(pos.X * AbstractChunk.ChunkSize.X, 0, pos.Y * AbstractChunk.ChunkSize.Z),
-                    Size = AbstractChunk.ChunkSize
-                };
-
-                double[,] biomeMap;
-                GenerateLandscape(chunkBytes, ref chunkWorldRange,out biomeMap);
-                TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
                 ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
-                Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0 , chunk.Position.Y * AbstractChunk.ChunkSize.Z);
-
-                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory);
+                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
 
                 RefreshChunkMetaData(metaData, columnsInfo);
 
@@ -97,6 +104,62 @@ namespace Utopia.Shared.World.Processors.Utopia
                 chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
+
+        /// <summary>
+        /// Specialy created to render quickl the landscape in order to be used by LandscapeItem Manager
+        /// </summary>
+        /// <param name="chunkBytes"></param>
+        /// <param name="ChunkPosition"></param>
+        /// <param name="chunkWorldRange"></param>
+        public void GenerateMacroLandscape(Vector2I ChunkPosition, out Biome biome, out byte[] chunkBytes ,out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
+        {
+            Range3I chunkWorldRange = new Range3I()
+            {
+                Position = new Vector3I(ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, ChunkPosition.Y * AbstractChunk.ChunkSize.Z),
+                Size = AbstractChunk.ChunkSize
+            };
+
+            chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+            columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+            chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
+
+            double[,] biomeMap;
+            GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);
+            TerraForming(chunkBytes, columnsInfo, ref chunkWorldRange, biomeMap, chunkRnd);
+
+            var metaData = CreateChunkMetaData(columnsInfo);
+            biome = _config.ProcessorParam.Biomes[metaData.ChunkMasterBiomeType];
+        }
+
+        /// <summary>
+        /// Will add landscape entities to the chunk byte landscape
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void GenerateMicroLandscape(LandscapeChunkBuffer buffer)
+        {
+            if (buffer.Entities == null) return;
+
+            foreach (var entity in buffer.Entities.OrderBy(x => x.ChunkLocation.GetHashCode()))
+            {
+                foreach (var block in entity.Blocks)
+                {
+                    int index3D = ((block.ChunkPosition.Z * AbstractChunk.ChunkSize.X) + block.ChunkPosition.X) * AbstractChunk.ChunkSize.Y + (block.ChunkPosition.Y);
+                    if (buffer.chunkBytesBuffer[index3D] == UtopiaProcessorParams.CubeId.Air || block.isMandatory)
+                    {
+                        buffer.chunkBytesBuffer[index3D] = block.BlockId;
+
+                        //Update Max Height for lighting !
+                        int index2D = (block.ChunkPosition.X * AbstractChunk.ChunkSize.Z) + block.ChunkPosition.Z;
+                        if (buffer.ColumnsInfoBuffer[index2D].MaxHeight < block.ChunkPosition.Y)
+                            buffer.ColumnsInfoBuffer[index2D].MaxHeight = (byte)block.ChunkPosition.Y;
+                    }
+                }
+
+                //The block buffer has been processed, I can clear it now. => It has been introduced into the Global landscape Array
+                entity.Blocks.Clear();
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -448,7 +511,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// </summary>
         /// <param name="ChunkCubes"></param>
         /// <param name="chunkMetaData"></param>
-        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory)
+        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
         {
             //Get Chunk Master Biome
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
@@ -456,8 +519,96 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
-            masterBiome.GenerateChunkTrees(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
             masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+            InsertMicrolandscapeStaticEntities(dataCursor, chunk, chunkRnd, entityFactory, landscapeEntities);
+
+        }
+
+        private void InsertMicrolandscapeStaticEntities(ByteChunkCursor dataCursor, GeneratedChunk chunk, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
+        {
+            if (landscapeEntities == null) return;
+
+            Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+
+            //The entities are sorted by their origine chunk hashcode value
+            foreach (LandscapeEntity entity in landscapeEntities)
+            {
+                //Get LandscapeEntity
+                var landscapeEntity = _worldParameters.Configuration.LandscapeEntitiesDico[entity.LandscapeEntityId];
+
+                foreach (var staticEntity in landscapeEntity.StaticItems)
+                {
+                    //Get number of object
+                    var nbr = chunkRnd.Next(staticEntity.Quantity.Min, staticEntity.Quantity.Max);
+                    //If Root out of chunk, devide the qt of object to spawn by 2
+                    if ((entity.RootLocation.X < 0 || entity.RootLocation.X >= AbstractChunk.ChunkSize.X || entity.RootLocation.Z < 0 || entity.RootLocation.Z >= AbstractChunk.ChunkSize.Z))
+                    {
+                        nbr = (int)(nbr / 2.0);
+                    }
+
+                    //Foreach object to create
+                    while (nbr > 0)
+                    {
+                        //find location of the static entity
+                        double x = chunkRnd.NextDouble(-staticEntity.SpawningRange, staticEntity.SpawningRange) + entity.RootLocation.X;
+                        double z = chunkRnd.NextDouble(-staticEntity.SpawningRange, staticEntity.SpawningRange) + entity.RootLocation.Z;
+
+                        //If out of current chunk, don't create it
+                        if (x < 0 || x >= AbstractChunk.ChunkSize.X || z < 0 || z >= AbstractChunk.ChunkSize.Z) break;
+
+                        bool groundSpawing;
+                        if (staticEntity.SpawningType == SpawningType.Both)
+                        {
+                            groundSpawing = chunkRnd.NextFloat() > 0.5;
+                        }
+                        else
+                        {
+                            groundSpawing = staticEntity.SpawningType == SpawningType.Ground;
+                        }
+
+
+                        StaticEntity landscapeStaticEntity = null;
+                        //Find Y spawning position
+                        if (groundSpawing)
+                        {
+                            dataCursor.SetInternalPosition(MathHelper.Floor(x), entity.RootLocation.Y, MathHelper.Floor(z));
+                            //Loop until I hit the ground, with a maximum of Y - 15 blocks
+                            for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y > 0; y--)
+                            {
+                                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
+                                {
+                                    //Add Static item here on the ground !
+                                    landscapeStaticEntity = (StaticEntity)entityFactory.CreateFromBluePrint(staticEntity.ItemblueprintId);
+                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y);
+                                    break;
+                                }
+                                dataCursor.Move(CursorRelativeMovement.Down);
+                            }
+                        }
+                        else
+                        {
+                            dataCursor.SetInternalPosition(MathHelper.Floor(x), entity.RootLocation.Y + 1, MathHelper.Floor(z));
+                            //Loop until I hit the ground, with a maximum of Y + 15 blocks
+                            for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
+                            {
+                                if (dataCursor.Read() != WorldConfiguration.CubeId.Air)
+                                {
+                                    //Add Static item here on the ground !
+                                    landscapeStaticEntity = (StaticEntity)entityFactory.CreateFromBluePrint(staticEntity.ItemblueprintId);
+                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.InternalPosition.Y - 0.25, z + chunkWorldPosition.Y);
+                                    break;
+                                }
+                                dataCursor.Move(CursorRelativeMovement.Up);
+                            }
+
+                        }
+
+                        if(landscapeStaticEntity != null) chunk.Entities.Add(landscapeStaticEntity);
+
+                        nbr--;
+                    }
+                }
+            }
         }
 
         private ChunkMetaData CreateChunkMetaData(ChunkColumnInfo[] columnsInfo)

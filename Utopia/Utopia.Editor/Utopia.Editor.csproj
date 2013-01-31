@@ -36,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="protobuf-net, Version=2.0.0.621, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpDX.2.4.2\lib\net40\SharpDX.dll</HintPath>
@@ -65,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataPipe\DataPipe.cs" />
     <Compile Include="Forms\FrmEntityChoose.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,6 +166,14 @@
     <ProjectReference Include="..\..\S33M3Engines\S33M3DXEngine\S33M3DXEngine.csproj">
       <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
       <Name>S33M3DXEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3Resources\S33M3Resources.csproj">
+      <Project>{52e1f2ef-4462-4cc3-a783-2d3a352a2602}</Project>
+      <Name>S33M3Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LtreeVisualizer\LtreeVisualizer.csproj">
+      <Project>{bf406949-62cf-4f16-b5a5-4519fdd0ebad}</Project>
+      <Name>LtreeVisualizer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>

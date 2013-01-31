@@ -52,6 +52,7 @@ namespace Realms.Server
 
             _iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
             _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(settingsManager).InSingletonScope();
+            _iocContainer.Bind<LandscapeBufferManager>().ToSelf();
             
             IWorldProcessor processor = null;
             switch (param.Configuration.WorldProcessor)
@@ -60,7 +61,7 @@ namespace Realms.Server
                     processor = new FlatWorldProcessor();
                     break;
                 case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(param, _iocContainer.Get<EntityFactory>());
+                    processor = new UtopiaProcessor(param, _iocContainer.Get<EntityFactory>(), _iocContainer.Get<LandscapeBufferManager>());
                     break;
                 default:
                     break;

@@ -58,7 +58,7 @@ namespace Realms.Client.States
             InitMSAASystemList();
 
             //Init RuntimeVariables
-            var vars = _iocContainer.Get<RuntimeVariables>();
+            var vars = _iocContainer.Get<RealmRuntimeVariables>();
             vars.ApplicationDataPath = XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData);
 
             //"Late Binding" of IVoxelModelStorage, must be done after vars is initialized

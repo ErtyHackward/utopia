@@ -7,6 +7,7 @@ using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using System;
 using System.Diagnostics;
+using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -274,7 +275,6 @@ namespace Utopia.Worlds.Chunks
             {
                 chunk.DistanceFromPlayer = MVector3.Distance2D(chunk.ChunkCenter, _playerManager.CameraWorldPosition);
             }
-
 
             //Sort by this distance
             int index = 0;
