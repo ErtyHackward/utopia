@@ -90,26 +90,25 @@ namespace Utopia.Shared.LandscapeEntities.Trees
 
 	        Key for Special L-System Symbols used in Axioms
 
-            G  - move forward one unit with the pen up
+            M  - move forward one unit with the pen up
             F  - move forward one unit with the pen down drawing trunks and branches
             f  - move forward one unit with the pen down drawing leaves
             A  - replace with rules set A
             B  - replace with rules set B
             C  - replace with rules set C
             D  - replace with rules set D
-            a  - replace with rules set A, chance 90%
-            b  - replace with rules set B, chance 80%
-            c  - replace with rules set C, chance 70%
-            d  - replace with rules set D, chance 60%
+            a  - replace with rules set A, taking into account probability set for rule A
+            b  - replace with rules set B, taking into account probability set for rule B
+            c  - replace with rules set C, taking into account probability set for rule C
+            d  - replace with rules set D, taking into account probability set for rule D
+            [  - Push stack states
+            ]  - Pop Stack states
             +  - yaw the turtle right by angle degrees
             -  - yaw the turtle left by angle degrees
             &  - pitch the turtle down by angle degrees
             ^  - pitch the turtle up by angle degrees
             /  - roll the turtle to the right by angle degrees
             *  - roll the turtle to the left by angle degrees
-            [  - save in stack current state info
-            ]  - recover from stack state info
-
             */
 
             int x, y, z;
@@ -121,7 +120,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
 
                 switch (axiomChar)
                 {
-                    case 'G':
+                    case 'M':
                         dir = new Vector3(1, 0, 0);
                         dir = Vector3.TransformNormal(dir, rotation);
                         position += dir;
@@ -133,7 +132,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                         if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
 
                         //Handling other trunk type
-                        if (stackOrientation.Count == 0 || (stackOrientation.Count > 0 && !treeType.SmallBranches == false))
+                        if (stackOrientation.Count == 0 || (stackOrientation.Count > 0 && treeType.SmallBranches == false))
                         {
                             switch (treeType.TrunkType)
                             {
@@ -163,24 +162,26 @@ namespace Utopia.Shared.LandscapeEntities.Trees
                         //Create foliage "around" trunk, only for "Sub" branch, not the main trunk
                         if (stackOrientation.Count >= treeType.FoliageGenerationStart)
                         {
-                            int foliageSize = 1;
-                            for (x = -foliageSize; x <= foliageSize; x++)
+                            for (x = -treeType.FoliageSize.X; x <= treeType.FoliageSize.X; x++)
                             {
-                                for (y = -foliageSize; y <= foliageSize; y++)
+                                for (y = -treeType.FoliageSize.Y; y <= treeType.FoliageSize.Y; y++)
                                 {
-                                    for (z = -foliageSize; z <= foliageSize; z++)
+                                    for (z = -treeType.FoliageSize.Z; z <= treeType.FoliageSize.Z; z++)
                                     {
                                         //Create only foliage outer form (Not inside)
-                                        if (Math.Abs(x) == foliageSize && Math.Abs(y) == foliageSize && Math.Abs(z) == foliageSize) continue;
+                                        if (Math.Abs(x) == treeType.FoliageSize.X && Math.Abs(y) == treeType.FoliageSize.Y && Math.Abs(z) == treeType.FoliageSize.Z) continue;
 
-                                        block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x + 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) };
+                                        block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x , WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) };
                                         if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
-                                        block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x - 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) };
-                                        if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
-                                        block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z + 1) };
-                                        if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
-                                        block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z - 1) };
-                                        if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
+
+                                        //block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x + 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) };
+                                        //if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
+                                        //block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x - 1, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z) };
+                                        //if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
+                                        //block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z + 1) };
+                                        //if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
+                                        //block = new BlockWithPosition() { BlockId = treeType.FoliageBlock, WorldPosition = new Vector3I(WPos.X + (int)position.X + x, WPos.Y + (int)position.Y + y, WPos.Z + (int)position.Z + z - 1) };
+                                        //if (!meshDico.ContainsKey(block.WorldPosition)) meshDico.Add(block.WorldPosition, block);
                                     }
                                 }
                             }

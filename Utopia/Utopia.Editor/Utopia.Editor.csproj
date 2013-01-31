@@ -167,6 +167,10 @@
       <Project>{27574C31-E46C-4E4D-BA36-404346F897C8}</Project>
       <Name>S33M3DXEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3Resources\S33M3Resources.csproj">
+      <Project>{52e1f2ef-4462-4cc3-a783-2d3a352a2602}</Project>
+      <Name>S33M3Resources</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LtreeVisualizer\LtreeVisualizer.csproj">
       <Project>{bf406949-62cf-4f16-b5a5-4519fdd0ebad}</Project>
       <Name>LtreeVisualizer</Name>

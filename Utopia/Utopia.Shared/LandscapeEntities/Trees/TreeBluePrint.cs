@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using ProtoBuf;
+using S33M3Resources.Structs;
 
 namespace Utopia.Shared.LandscapeEntities.Trees
 {
@@ -60,6 +61,18 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [DisplayName("Foliage start Iteration")]
         [ProtoMember(15)]
         public int FoliageGenerationStart { get; set; }
+        [Category("Configuration")]
+        [DisplayName("Foliage size")]
+        [ProtoMember(16)]
+        //public Vector3I FoliageSize { get; set; }
+
+        public Vector3I FoliageSize
+        {
+            get { return _foliageSize; }
+            set { _foliageSize = value; }
+        }
+        private Vector3I _foliageSize;
+
 
         public override string ToString()
         {

@@ -188,9 +188,9 @@ namespace Utopia.Shared.Chunks
 
                 Vector3I copySize;
 
-                copySize.X = newSize.X > _chunkSize.X ? _chunkSize.X : newSize.X;
-                copySize.Y = newSize.Y > _chunkSize.Y ? _chunkSize.Y : newSize.Y;
-                copySize.Z = newSize.Z > _chunkSize.Z ? _chunkSize.Z : newSize.Z;
+                copySize.x = newSize.X > _chunkSize.X ? _chunkSize.X : newSize.X;
+                copySize.y = newSize.Y > _chunkSize.Y ? _chunkSize.Y : newSize.Y;
+                copySize.z = newSize.Z > _chunkSize.Z ? _chunkSize.Z : newSize.Z;
 
                 for (int x = 0; x < copySize.X; x++)
                 {
@@ -294,9 +294,9 @@ namespace Utopia.Shared.Chunks
                     for (int z = 0; z < _chunkSize.Z; z++)
                     {
                         Vector3I vec;
-                        vec.X = x;
-                        vec.Y = y;
-                        vec.Z = z;
+                        vec.x = x;
+                        vec.y = y;
+                        vec.z = z;
 
                         var value = GetBlock(vec);
 
