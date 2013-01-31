@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Globalization;
 using SharpDX;
 
 namespace S33M3Resources.Structs
@@ -6,24 +8,43 @@ namespace S33M3Resources.Structs
     /// <summary>
     /// Defines a three component structure of System.Int32 type
     /// </summary>
+    [TypeConverter(typeof(Vector3ITypeConverter))]
     public struct Vector3I : IComparable<Vector3I>
     {
-        public int X;
-        public int Y;
-        public int Z;
+        public int x;
+        public int y;
+        public int z;
+
+        public int X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+
+        public int Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+
+        public int Z
+        {
+            get { return z; }
+            set { z = value; }
+        }
 
         public Vector3I(int x, int y, int z)
         {
-            X = x;
-            Y = y;
-            Z = z;
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
         public Vector3I(double x, double y, double z)
-        {            
-            X = (int)x;
-            Y = (int)y;
-            Z = (int)z;
+        {
+            this.x = (int)x;
+            this.y = (int)y;
+            this.z = (int)z;
         }
 
         /// <summary>
@@ -34,9 +55,9 @@ namespace S33M3Resources.Structs
         /// <returns></returns>
         public static double Distance(Vector3I first, Vector3I second)
         {
-            var dx = first.X - second.X;
-            var dy = first.Y - second.Y;
-            var dz = first.Z - second.Z;
+            var dx = first.x - second.x;
+            var dy = first.y - second.y;
+            var dz = first.z - second.z;
 
             dx = dx * dx;
             dy = dy * dy;
@@ -47,9 +68,9 @@ namespace S33M3Resources.Structs
 
         public static double DistanceSquared(Vector3I first, Vector3I second)
         {
-            var dx = first.X - second.X;
-            var dy = first.Y - second.Y;
-            var dz = first.Z - second.Z;
+            var dx = first.x - second.x;
+            var dy = first.y - second.y;
+            var dz = first.z - second.z;
 
             return dx * dx + dy * dy + dz * dz;
         }
@@ -71,45 +92,45 @@ namespace S33M3Resources.Structs
 
         public int CompareTo(Vector3I other)
         {
-            if (X == other.X)
+            if (x == other.x)
             {
-                if (Y == other.Y)
+                if (y == other.y)
                 {
-                    if (Z == other.Z)
+                    if (z == other.z)
                     {
                         return 0;
                     }
-                    return Z > other.Z ? 1 : -1;
+                    return z > other.z ? 1 : -1;
                 }
-                return Y > other.Y ? 1 : -1;
+                return y > other.y ? 1 : -1;
             }
-            return X > other.X ? 1 : -1;
+            return x > other.x ? 1 : -1;
         }
 
         public override bool Equals(object obj)
         {
             if (obj == null || obj.GetType() != GetType()) return false;
             var other = (Vector3I)obj;
-            return X == other.X && Y == other.Y;
+            return x == other.x && y == other.y && z == other.z;
         }
 
         public override int GetHashCode()
         {
-            return X + (Y << 10) + (Z << 20);
+            return x + (y << 10) + (z << 20);
         }
 
         public override string ToString()
         {
-            return string.Format("[{0};{1};{2}]", X, Y, Z);
+            return string.Format("[{0};{1};{2}]", x, y, z);
         }
 
         public static implicit operator Vector3(Vector3I pos)
         {
             Vector3 vec;
 
-            vec.X = pos.X;
-            vec.Y = pos.Y;
-            vec.Z = pos.Z;
+            vec.X = pos.x;
+            vec.Y = pos.y;
+            vec.Z = pos.z;
 
             return vec;
         }
@@ -128,9 +149,9 @@ namespace S33M3Resources.Structs
         {
             Vector3I res;
 
-            res.X = pos.X * value;
-            res.Y = pos.Y * value;
-            res.Z = pos.Z * value;
+            res.x = pos.x * value;
+            res.y = pos.y * value;
+            res.z = pos.z * value;
 
             return res;
         }
@@ -139,9 +160,9 @@ namespace S33M3Resources.Structs
         {
             Vector3I res;
 
-            res.X = pos.X / value;
-            res.Y = pos.Y / value;
-            res.Z = pos.Z / value;
+            res.x = pos.x / value;
+            res.y = pos.y / value;
+            res.z = pos.z / value;
 
             return res;
         }
@@ -150,9 +171,9 @@ namespace S33M3Resources.Structs
         {
             Vector3I res;
 
-            res.X = pos.X + value.X;
-            res.Y = pos.Y + value.Y;
-            res.Z = pos.Z + value.Z;
+            res.x = pos.x + value.x;
+            res.y = pos.y + value.y;
+            res.z = pos.z + value.z;
 
             return res;
         }
@@ -161,9 +182,9 @@ namespace S33M3Resources.Structs
         {
             Vector3I res;
 
-            res.X = pos.X + value;
-            res.Y = pos.Y + value;
-            res.Z = pos.Z + value;
+            res.x = pos.x + value;
+            res.y = pos.y + value;
+            res.z = pos.z + value;
 
             return res;
         }
@@ -172,9 +193,9 @@ namespace S33M3Resources.Structs
         {
             Vector3I res;
 
-            res.X = pos.X - value;
-            res.Y = pos.Y - value;
-            res.Z = pos.Z - value;
+            res.x = pos.x - value;
+            res.y = pos.y - value;
+            res.z = pos.z - value;
 
             return res;
         }
@@ -183,16 +204,16 @@ namespace S33M3Resources.Structs
         {
             Vector3I res;
 
-            res.X = pos.X - other.X;
-            res.Y = pos.Y - other.Y;
-            res.Z = pos.Z - other.Z;
+            res.x = pos.x - other.x;
+            res.y = pos.y - other.y;
+            res.z = pos.z - other.z;
 
             return res;
         }
 
         public static bool operator ==(Vector3I first, Vector3I second)
         {
-            return first.X == second.X && first.Y == second.Y && first.Z == second.Z;
+            return first.x == second.x && first.y == second.y && first.z == second.z;
         }
 
         public static bool operator !=(Vector3I first, Vector3I second)
@@ -250,7 +271,7 @@ namespace S33M3Resources.Structs
 
         public bool IsZero()
         {
-            return X == 0 && Y == 0 && Z == 0;
+            return x == 0 && y == 0 && z == 0;
         }
 
         /// <summary>
@@ -263,9 +284,9 @@ namespace S33M3Resources.Structs
         {
             Vector3I vec;
             
-            vec.X = Math.Min(vec1.X, vec2.X);
-            vec.Y = Math.Min(vec1.Y, vec2.Y);
-            vec.Z = Math.Min(vec1.Z, vec2.Z);
+            vec.x = Math.Min(vec1.x, vec2.x);
+            vec.y = Math.Min(vec1.y, vec2.y);
+            vec.z = Math.Min(vec1.z, vec2.z);
 
             return vec;
         }
@@ -280,11 +301,45 @@ namespace S33M3Resources.Structs
         {
             Vector3I vec;
 
-            vec.X = Math.Max(vec1.X, vec2.X);
-            vec.Y = Math.Max(vec1.Y, vec2.Y);
-            vec.Z = Math.Max(vec1.Z, vec2.Z);
+            vec.x = Math.Max(vec1.x, vec2.x);
+            vec.y = Math.Max(vec1.y, vec2.y);
+            vec.z = Math.Max(vec1.z, vec2.z);
 
             return vec;
+        }
+
+        //Property Grid editing Purpose
+        internal class Vector3ITypeConverter : ExpandableObjectConverter
+        {
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {   //This method is used to shown information in the PropertyGrid.
+                if (destinationType == typeof(string))
+                {
+                    return ((Vector3I)value).ToString();
+                }
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
+
+            public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
+            {
+                return TypeDescriptor.GetProperties(typeof(Vector3I), attributes).Sort(new string[] { "X", "Y", "Z" });
+            }
+
+            public override bool GetPropertiesSupported(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override bool GetCreateInstanceSupported(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override object CreateInstance(ITypeDescriptorContext context, System.Collections.IDictionary propertyValues)
+            {
+                return new Vector3I((int)propertyValues["X"], (int)propertyValues["Y"], (int)propertyValues["Z"]);
+            }
+
         }
     }
 }

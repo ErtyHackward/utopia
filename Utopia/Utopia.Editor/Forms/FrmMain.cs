@@ -22,6 +22,7 @@ using Utopia.Editor.DataPipe;
 using System.IO.Pipes;
 using ProtoBuf;
 using Utopia.Shared.Tools.XMLSerializer;
+using S33M3Resources.Structs;
 
 namespace Utopia.Editor.Forms
 {
@@ -535,7 +536,7 @@ namespace Utopia.Editor.Forms
                     tvMainCategories.SelectedNode = FindByTag(recipe);
                     break;
                 case "Trees":
-                    var tree = new TreeBluePrint() { Name = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF" };
+                    var tree = new TreeBluePrint() { Name = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF", FoliageSize = new Vector3I(1,1,1) };
                     tree.Id = _configuration.GetNextLandscapeEntityId();
                     _configuration.TreeBluePrints.Add(tree);
                     UpdateTree();
