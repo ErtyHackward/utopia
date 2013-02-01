@@ -310,7 +310,7 @@ namespace Utopia.Entities.Renderer
 
         private void DrawingTool(DeviceContext context)
         {
-            if (_toolVoxelInstance == null || _toolVoxelModel == null || !_toolVoxelModel.Initialized)
+            if (_renderingType == ToolRenderingType.Voxel && (_toolVoxelInstance == null || _toolVoxelModel == null || !_toolVoxelModel.Initialized))
                 return;
 
             context.ClearDepthStencilView(_d3dEngine.DepthStencilTarget, DepthStencilClearFlags.Depth, 1.0f, 0);
