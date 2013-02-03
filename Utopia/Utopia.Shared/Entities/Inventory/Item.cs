@@ -175,11 +175,11 @@ namespace Utopia.Shared.Entities.Inventory
             if (!pos.Valid)
                 return impact;
 
-            var entityBB = new BoundingBox(pos.Position.AsVector3(), DefaultSize);
+            var entityBB = new BoundingBox(pos.Position.AsVector3(), pos.Position.AsVector3() + DefaultSize);
 
             foreach (var dynEntity in EntityFactory.DynamicEntityManager.EnumerateAround(pos.Position.AsVector3()))
             {
-                var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.DefaultSize);
+                var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
                 if (entityBB.Intersects(ref dynBB))
                     return impact;
             }

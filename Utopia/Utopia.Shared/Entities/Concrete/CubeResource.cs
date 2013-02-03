@@ -1,4 +1,5 @@
 using ProtoBuf;
+using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -55,6 +56,14 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (entity.EntityState.IsBlockPicked)
             {
+                var blockBB = new BoundingBox(entity.EntityState.NewBlockPosition, entity.EntityState.NewBlockPosition + Vector3.One);
+                foreach (var dynEntity in EntityFactory.DynamicEntityManager.EnumerateAround(entity.EntityState.NewBlockPosition))
+                {
+                    var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
+                    if (blockBB.Intersects(ref dynBB))
+                        return impact;
+                }
+                
                 //Add new block
                 var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
 
