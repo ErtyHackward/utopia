@@ -73,10 +73,7 @@ namespace Utopia.Entities.Managers
         private readonly CameraManager<ICameraFocused> _camManager;
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
-        private readonly PlayerEntityManager _playerEntityManager;
         private readonly SingleArrayChunkContainer _chunkContainer;
-        private readonly ISkyDome _skyDome;
-        private readonly SharedFrameCB _sharedFrameCB;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
 
@@ -121,16 +118,36 @@ namespace Utopia.Entities.Managers
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
         public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
 
+        #region DI
+        [Inject]
+        public PlayerEntityManager PlayerEntityManager
+        {
+            get { return _playerEntityManager; }
+            set { _playerEntityManager = value; }
+        }
+
+        [Inject]
+        public ISkyDome SkyDome
+        {
+            get { return _skyDome; }
+            set { _skyDome = value; }
+        }
+
+        [Inject]
+        public SharedFrameCB SharedFrameCB
+        {
+            get { return _sharedFrameCB; }
+            set { _sharedFrameCB = value; }
+        }
+
+        #endregion
 
         public DynamicEntityManager(D3DEngine d3DEngine,
                                     VoxelModelManager voxelModelManager,
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
-                                    PlayerEntityManager playerEntityManager,
-                                    ISkyDome skyDome,
-                                    SingleArrayChunkContainer chunkContainer,
-                                    SharedFrameCB sharedFrameCB)
+                                    SingleArrayChunkContainer chunkContainer)
         {
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
@@ -138,9 +155,6 @@ namespace Utopia.Entities.Managers
             _chunkContainer = chunkContainer;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
-            _playerEntityManager = playerEntityManager;
-            _skyDome = skyDome;
-            _sharedFrameCB = sharedFrameCB;
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
@@ -185,6 +199,9 @@ namespace Utopia.Entities.Managers
         private VertexBuffer<VertexMesh> _cubeVb;
         private IndexBuffer<ushort> _cubeIb;
         private Dictionary<int, int> _materialChangeMapping;
+        private PlayerEntityManager _playerEntityManager;
+        private ISkyDome _skyDome;
+        private SharedFrameCB _sharedFrameCB;
 
         public override void LoadContent(DeviceContext context)
         {

@@ -81,6 +81,7 @@ namespace Utopia.Entities.Managers
         private bool _stopMovedAction = false;
 
         private VisualWorldParameters _visualWorldParameters;
+        private readonly EntityFactory _factory;
         private ItemMessageTranslator _itemMessageTranslator;
 
         // Event related variables
@@ -268,6 +269,7 @@ namespace Utopia.Entities.Managers
             _cubesHolder = cubesHolder;
             _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
+            _factory = factory;
             _handTool.EntityFactory = factory;
 
             Player = player;
