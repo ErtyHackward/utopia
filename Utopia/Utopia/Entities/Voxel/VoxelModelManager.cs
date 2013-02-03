@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ninject;
 using Utopia.Network;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
@@ -16,12 +17,11 @@ namespace Utopia.Entities.Voxel
     public class VoxelModelManager : GameComponent
     {
         private bool _initialized;
-        private readonly IVoxelModelStorage _storage;
-        private readonly ServerComponent _server;
-        private readonly VoxelMeshFactory _voxelMeshFactory;
+        private ServerComponent _server;
         private readonly object _syncRoot = new object();
         private readonly Dictionary<string, VisualVoxelModel> _models = new Dictionary<string, VisualVoxelModel>();
         private HashSet<string> _pendingModels = new HashSet<string>();
+
 
         /// <summary>
         /// Occurs when a voxel model is available (received from the server, loaded from the storage)
@@ -34,16 +34,21 @@ namespace Utopia.Entities.Voxel
             if (handler != null) handler(this, e);
         }
 
-        public VoxelModelManager(IVoxelModelStorage storage, ServerComponent server, VoxelMeshFactory voxelMeshFactory)
-        {
-            if (storage == null) throw new ArgumentNullException("storage");
-            _storage = storage;
-            _server = server;
-            _voxelMeshFactory = voxelMeshFactory;
+        [Inject]
+        public IVoxelModelStorage VoxelModelStorage { get; set; }
 
-            if (_server != null)
+        [Inject]
+        public ServerComponent Server
+        {
+            get { return _server; }
+            set { 
+                _server = value;
                 _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
+            }
         }
+
+        [Inject]
+        public VoxelMeshFactory VoxelMeshFactory { get; set; }
 
         public override void BeforeDispose()
         {
@@ -55,13 +60,13 @@ namespace Utopia.Entities.Voxel
         {
             lock (_syncRoot)
             {
-                _models.Add(e.Message.VoxelModel.Name, new VisualVoxelModel(e.Message.VoxelModel,_voxelMeshFactory));
+                _models.Add(e.Message.VoxelModel.Name, new VisualVoxelModel(e.Message.VoxelModel, VoxelMeshFactory));
                 _pendingModels.Remove(e.Message.VoxelModel.Name);
             }
 
             OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = e.Message.VoxelModel });
 
-            _storage.Save(e.Message.VoxelModel);
+            VoxelModelStorage.Save(e.Message.VoxelModel);
         }
 
         /// <summary>
@@ -117,10 +122,10 @@ namespace Utopia.Entities.Voxel
                 if (_models.ContainsKey(model.VoxelModel.Name))
                 {
                     _models.Remove(model.VoxelModel.Name);
-                    _storage.Delete(model.VoxelModel.Name);
+                    VoxelModelStorage.Delete(model.VoxelModel.Name);
                 }
                 _models.Add(model.VoxelModel.Name, model);
-                _storage.Save(model.VoxelModel);
+                VoxelModelStorage.Save(model.VoxelModel);
             }
         }
 
@@ -138,7 +143,7 @@ namespace Utopia.Entities.Voxel
                     _models.Remove(name);
                 }
 
-                _storage.Delete(model.VoxelModel.Name);
+                VoxelModelStorage.Delete(model.VoxelModel.Name);
             }
         }
 
@@ -158,9 +163,9 @@ namespace Utopia.Entities.Voxel
             // load all models
             lock (_syncRoot)
             {
-                foreach (var voxelModel in _storage.Enumerate())
+                foreach (var voxelModel in VoxelModelStorage.Enumerate())
                 {
-                    var vmodel = new VisualVoxelModel(voxelModel, _voxelMeshFactory);
+                    var vmodel = new VisualVoxelModel(voxelModel, VoxelMeshFactory);
                     vmodel.BuildMesh(); //Build the mesh of all local models
                     _models.Add(voxelModel.Name, vmodel);
                 }
@@ -214,8 +219,8 @@ namespace Utopia.Entities.Voxel
                 if (!_models.TryGetValue(oldName, out model))
                     throw new InvalidOperationException("No such model to rename");
                 model.VoxelModel.Name = newName;
-                _storage.Delete(oldName);
-                _storage.Save(model.VoxelModel);
+                VoxelModelStorage.Delete(oldName);
+                VoxelModelStorage.Save(model.VoxelModel);
                 _models.Remove(oldName);
                 _models.Add(newName, model);
             }

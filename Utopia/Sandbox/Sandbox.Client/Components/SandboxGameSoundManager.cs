@@ -27,7 +27,7 @@ namespace Sandbox.Client.Components
         public SandboxGameSoundManager( ISoundEngine soundEngine,
                                     CameraManager<ICameraFocused> cameraManager,
                                     SingleArrayChunkContainer singleArray,
-                                    IDynamicEntityManager dynamicEntityManager,
+                                    IVisualDynamicEntityManager dynamicEntityManager,
                                     IDynamicEntity player,
                                     IChunkEntityImpactManager chunkEntityImpactManager,
                                     IWorldChunks worldChunk,

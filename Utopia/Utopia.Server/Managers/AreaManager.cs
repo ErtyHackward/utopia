@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using System.Threading;
 using Utopia.Shared.Structs.Helpers;
@@ -17,7 +19,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Manages the dynamic entites
     /// </summary>
-    public class AreaManager : IDisposable
+    public class AreaManager : IDisposable, IDynamicEntityManager
     {
         private readonly Server _server;
         private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
@@ -369,6 +371,13 @@ namespace Utopia.Server.Managers
             ServerDynamicEntity result;
             _dynamicEntities.TryGetValue(dynamicEntityId, out result);
             return result;
+        }
+
+        public IEnumerable<Shared.Entities.Interfaces.IDynamicEntity> EnumerateAround(SharpDX.Vector3 pos)
+        {
+            var area = GetArea(new Vector3D(pos));
+
+            return area.Enumerate().Select(s => s.DynamicEntity);
         }
     }
 }
