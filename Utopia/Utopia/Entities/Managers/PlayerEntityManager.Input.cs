@@ -104,7 +104,7 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-                        entity = link.ResolveStatic(_landscapeManager);
+                        entity = link.ResolveStatic(_factory.LandscapeManager);
                     }
 
                     if (entity == null)
