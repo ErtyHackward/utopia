@@ -67,35 +67,35 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.0.0.602, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+    <Reference Include="protobuf-net, Version=2.0.0.621, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\protobuf-net.2.0.0.602\lib\net40\protobuf-net.dll</HintPath>
+      <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.4.1\lib\net40\SharpDX.dll</HintPath>
+      <HintPath>..\packages\SharpDX.2.4.2\lib\net40\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.1\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.2\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D11, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.Direct3D11.2.4.1\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>..\packages\SharpDX.Direct3D11.2.4.2\lib\net40\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.DXGI, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.DXGI.2.4.1\lib\net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>..\packages\SharpDX.DXGI.2.4.2\lib\net40\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.82.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+    <Reference Include="System.Data.SQLite, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.82.0\lib\net40\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.82.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.82.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -132,7 +132,16 @@
     <Compile Include="Configuration\UtopiaWorldConfiguration.cs" />
     <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
+    <Compile Include="Entities\Concrete\Food.cs" />
+    <Compile Include="Entities\Concrete\HandTool.cs" />
+    <Compile Include="Entities\Concrete\ItemOrientation.cs" />
+    <Compile Include="Entities\Concrete\Stuff.cs" />
+    <Compile Include="Entities\EntityParticule.cs" />
+    <Compile Include="Entities\Events\UseType.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
+    <Compile Include="Entities\Inventory\EntityPosition.cs" />
+    <Compile Include="Entities\Inventory\PickType.cs" />
+    <Compile Include="Entities\Recipe.cs" />
     <Compile Include="Entities\ResourcesCollector.cs" />
     <Compile Include="Entities\Concrete\Container.cs" />
     <Compile Include="Entities\Concrete\Door.cs" />
@@ -140,11 +149,10 @@
     <Compile Include="Entities\Concrete\Interface\IOrientedItem.cs" />
     <Compile Include="Entities\Concrete\Interface\IOrientedSlope.cs" />
     <Compile Include="Entities\Concrete\Interface\IRndYRotation.cs" />
-    <Compile Include="Entities\Concrete\Interface\OrientedItem.cs" />
     <Compile Include="Entities\Concrete\OrientedBlockItem.cs" />
     <Compile Include="Entities\Concrete\OrientedBlockLinkedItem.cs" />
     <Compile Include="Entities\Concrete\Plant.cs" />
-    <Compile Include="Entities\Concrete\SideLightSource.cs" />
+    <Compile Include="Entities\Concrete\LightSource.cs" />
     <Compile Include="Entities\Dynamic\ICharacterEntity.cs" />
     <Compile Include="Entities\Events\EntityBodyRotationEventArgs.cs" />
     <Compile Include="Entities\Interfaces\BlockFace.cs" />
@@ -209,6 +217,7 @@
     <Compile Include="Entities\Models\VoxelModelInstance.cs" />
     <Compile Include="Entities\Models\VoxelModelPartState.cs" />
     <Compile Include="Entities\Models\VoxelModelState.cs" />
+    <Compile Include="Entities\Sound\StaticEntitySoundSource.cs" />
     <Compile Include="Entities\SpriteFormat.cs" />
     <Compile Include="Entities\StaticEntity.cs" />
     <Compile Include="Entities\Models\VoxelFrame.cs" />
@@ -224,6 +233,29 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
+<<<<<<< local
+    <Compile Include="Interfaces\IDynamicEntityManager.cs" />
+=======
+    <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.designer.cs">
+      <DependentUpon>LandscapeEntityStaticItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
+      <DependentUpon>TreeBluePrint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
+    <Compile Include="RuntimeVariables.cs" />
+    <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
+    <Compile Include="World\LandscapeBufferManager.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntity.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeLSystem.cs" />
+    <Compile Include="World\LandscapeChunkBuffer.cs" />
+    <Compile Include="LandscapeEntities\LandscapeEntityParser.cs" />
+    <Compile Include="LandscapeEntities\Trees\TreeBluePrint.cs" />
+>>>>>>> other
+    <Compile Include="Net\Messages\ITimeStampedMsg.cs" />
+    <Compile Include="Net\Messages\RequestDateTimeSyncMessage.cs" />
     <Compile Include="Net\Web\ClientWebApi.cs" />
     <Compile Include="Net\Web\Responses\ServerListResponse.cs" />
     <Compile Include="Net\Web\Responses\TokenResponse.cs" />
@@ -231,6 +263,10 @@
     <Compile Include="Net\Web\ServerWebApi.cs" />
     <Compile Include="Net\Web\UtopiaWebApiBase.cs" />
     <Compile Include="Net\Web\WebEventArgs.cs" />
+    <Compile Include="Sounds\IUtopiaSoundSource.cs" />
+    <Compile Include="Sounds\TimeOfDaySound.cs" />
+    <Compile Include="Structs\Landscape\BlockWithPosition.cs" />
+    <Compile Include="Structs\Landscape\TerraCubeResult.cs" />
     <Compile Include="Tools\BinarySerializer\IBinaryStorable.cs" />
     <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
@@ -280,7 +316,7 @@
     <Compile Include="Roleplay\CharacterSecondaryAttributes.cs" />
     <Compile Include="Roleplay\CharacterSurvivalAttributes.cs" />
     <Compile Include="Settings\ClientSettings.cs" />
-    <Compile Include="Settings\CubeProfile.cs" />
+    <Compile Include="Settings\BlockProfile.cs" />
     <Compile Include="Settings\LocalWorlds.cs" />
     <Compile Include="Settings\ParamRow.cs" />
     <Compile Include="Settings\ParamValue.cs" />
@@ -307,6 +343,7 @@
     <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
+    <Compile Include="Tools\BlueprintSelector.cs" />
     <Compile Include="Tools\ContainerEditor.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -314,9 +351,12 @@
       <DependentUpon>ContainerEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\ContainerSetSelector.cs" />
+    <Compile Include="Tools\ExceptionHandler.cs" />
+    <Compile Include="Tools\FullSoundSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
     <Compile Include="Tools\ModelStateSelector.cs" />
-    <Compile Include="Tools\SoundSelector.cs" />
+    <Compile Include="Tools\ShortSoundSelector.cs" />
+    <Compile Include="Tools\SoundList.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
     <Compile Include="World\PlanGenerator\BiomeType.cs" />
     <Compile Include="World\PlanGenerator\Corner.cs" />
@@ -338,8 +378,12 @@
     </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeHelper.cs" />
     <Compile Include="World\Processors\Utopia\Biomes\BiomeSoundSource.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTree.cs" />
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTree.designer.cs">
+      <DependentUpon>BiomeTree.cs</DependentUpon>
+    </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.cs" />
-    <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.Designer.cs">
+    <Compile Include="World\Processors\Utopia\Biomes\BiomeTrees.designer.cs">
       <DependentUpon>BiomeTrees.cs</DependentUpon>
     </Compile>
     <Compile Include="World\Processors\Utopia\Biomes\Cavern.cs" />
@@ -352,7 +396,6 @@
     <Compile Include="World\Processors\Utopia\Biomes\CubeVein.Designer.cs">
       <DependentUpon>CubeVein.cs</DependentUpon>
     </Compile>
-    <Compile Include="World\Processors\Utopia\Biomes\TreeTemplates.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Moisture.cs" />
     <Compile Include="World\Processors\Utopia\ClimateFct\Temperature.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\enuWorldType.cs" />
@@ -370,6 +413,7 @@
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\SurfaceCtrl.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\WorldCtrl.cs" />
+    <Compile Include="World\Processors\Utopia\LandscapeEntities.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
@@ -423,6 +467,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Tools\ContainerEditor.resx">
+      <DependentUpon>ContainerEditor.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -430,12 +479,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Tools\ContainerEditor.resx">
-      <DependentUpon>ContainerEditor.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -42,7 +42,7 @@ namespace Utopia.Server.Structs
             Connection = connection;
             _server = server;
 
-            _handTool.LandscapeManager = _server.LandscapeManager;
+            _handTool.EntityFactory = server.EntityFactory;
         }
 
         public override void AddArea(MapArea area)

@@ -4,6 +4,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Entities.Managers.Interfaces
 {
@@ -12,7 +13,7 @@ namespace Utopia.Entities.Managers.Interfaces
     /// Responsible to draw them, also used to check collission detection with the player
     /// Draws the player entity if player is in 3rd person mode
     /// </summary>
-    public interface IDynamicEntityManager : IDrawableComponent
+    public interface IVisualDynamicEntityManager : IDrawableComponent, IDynamicEntityManager
     {
         event EventHandler<DynamicEntityEventArgs> EntityAdded;
 
@@ -34,5 +35,4 @@ namespace Utopia.Entities.Managers.Interfaces
         /// </summary>
         IDynamicEntity PlayerEntity { get; set; }
     }
-
 }

@@ -34,7 +34,7 @@ namespace Utopia.Entities.Managers
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region private variables
-        private IDynamicEntityManager _dynamicEntityManager;
+        private IVisualDynamicEntityManager _dynamicEntityManager;
         //private TimerManager.GameTimer _timer;
         private List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
         private PlayerEntityManager _player;
@@ -64,20 +64,16 @@ namespace Utopia.Entities.Managers
         public bool isDirty { get; set; }
 
         [Inject]
-        public IDynamicEntityManager DynamicEntityManager
+        public IVisualDynamicEntityManager DynamicEntityManager
         {
             get { return _dynamicEntityManager; }
             set { _dynamicEntityManager = value; }
         }
 
         [Inject]
-        public ILandscapeManager2D LandscapeManager
+        public EntityFactory EntityFactory
         {
-            get { return _landscapeManager; }
-            set { 
-                _landscapeManager = value;
-                _handTool.LandscapeManager = _landscapeManager;
-            }
+            set { _handTool.EntityFactory = value; }
         }
 
         #endregion
@@ -281,7 +277,6 @@ namespace Utopia.Entities.Managers
         }
 
         bool _isOnGround;
-        private ILandscapeManager2D _landscapeManager;
 
         private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {

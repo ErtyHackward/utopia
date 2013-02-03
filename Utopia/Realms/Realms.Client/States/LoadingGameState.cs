@@ -157,7 +157,7 @@ namespace Realms.Client.States
 
             _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
             _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
-
+            
             serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
             serverComponent.Player = player;
 
@@ -170,8 +170,10 @@ namespace Realms.Client.States
             WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
 
             clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
-            _ioc.Get<EntityFactory>("Client").Config = clientSideworldParam.Configuration;
 
+            var clientFactory = _ioc.Get<EntityFactory>("Client");
+            clientFactory.Config = clientSideworldParam.Configuration;
+            
             var landscapeEntityManager = _ioc.Get<LandscapeBufferManager>();
             FileInfo fi = new FileInfo(_vars.LocalDataBasePath);
             string bufferPath = Path.Combine(fi.Directory.FullName, "LandscapeBuffer.proto");
@@ -244,7 +246,7 @@ namespace Realms.Client.States
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
-            var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
+            var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
@@ -264,6 +266,8 @@ namespace Realms.Client.States
             cameraManager.SetCamerasPlugin(playerEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
+
+            _ioc.Get<EntityFactory>().DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;
