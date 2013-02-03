@@ -52,7 +52,9 @@ namespace Utopia.Editor
             DXStates.CreateStates(_engine);
             var modelsStorage = new FileModelStorage(Path.Combine(_utopiaFolder, "Models"));
             var voxelMeshFactory = new VoxelMeshFactory(_engine);
-            _modelManager = new VoxelModelManager(modelsStorage, null, voxelMeshFactory);
+            _modelManager = new VoxelModelManager();
+            _modelManager.VoxelModelStorage = modelsStorage;
+            _modelManager.VoxelMeshFactory = voxelMeshFactory;
             _modelManager.Initialize();
 
             _iconFactory = new IconFactory(_engine, _modelManager, new Shared.World.VisualWorldParameters());

@@ -156,9 +156,7 @@ namespace Realms.Client.States
 
             _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
             _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
-
-            factory.DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-
+            
             serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
             serverComponent.Player = player;
 
@@ -260,7 +258,9 @@ namespace Realms.Client.States
             cameraManager.SetCamerasPlugin(playerEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
-            
+
+            _ioc.Get<EntityFactory>().DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
+
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
