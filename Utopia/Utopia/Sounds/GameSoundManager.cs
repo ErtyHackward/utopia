@@ -54,7 +54,7 @@ namespace Utopia.Sounds
         #region Private Variables
         private readonly IClock _worlClock;
         private readonly CameraManager<ICameraFocused> _cameraManager;
-        private IDynamicEntityManager _dynamicEntityManager;
+        private IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly ISoundEngine _soundEngine;
         private SingleArrayChunkContainer _singleArray;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
@@ -96,7 +96,7 @@ namespace Utopia.Sounds
         public GameSoundManager(ISoundEngine soundEngine,
                                 CameraManager<ICameraFocused> cameraManager,
                                 SingleArrayChunkContainer singleArray,
-                                IDynamicEntityManager dynamicEntityManager,
+                                IVisualDynamicEntityManager dynamicEntityManager,
                                 IDynamicEntity player,
                                 IChunkEntityImpactManager chunkEntityImpactManager,
                                 IWorldChunks worldChunk,

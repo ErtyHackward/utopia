@@ -28,7 +28,7 @@ namespace Realms.Client.Components
         public RealmGameSoundManager( ISoundEngine soundEngine,
                                     CameraManager<ICameraFocused> cameraManager,
                                     SingleArrayChunkContainer singleArray,
-                                    IDynamicEntityManager dynamicEntityManager,
+                                    IVisualDynamicEntityManager dynamicEntityManager,
                                     IDynamicEntity player,
                                     IChunkEntityImpactManager chunkEntityImpactManager,
                                     IWorldChunks worldChunk,

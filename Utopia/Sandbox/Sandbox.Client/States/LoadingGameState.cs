@@ -242,7 +242,7 @@ namespace Sandbox.Client.States
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
-            var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
+            var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();

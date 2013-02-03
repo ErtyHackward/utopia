@@ -92,7 +92,7 @@ namespace Realms.Client.States
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
-            var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
+            var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
             playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
