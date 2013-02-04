@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Provides character base properties. Character entity has an equipment and inventory. It can wear the tool.
     /// </summary>
     [ProtoContract]
-    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldIntercatingEntity
+    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldInteractingEntity
     {
         /// <summary>
         /// Gets character name

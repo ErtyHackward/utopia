@@ -361,9 +361,9 @@ namespace Utopia.Shared.Entities
         /// <param name="entity"></param>
         protected virtual void InjectFields(IEntity entity)
         {
-            if (entity is IWorldIntercatingEntity)
+            if (entity is IWorldInteractingEntity)
             {
-                var item = entity as IWorldIntercatingEntity;
+                var item = entity as IWorldInteractingEntity;
                 item.EntityFactory = this;
             }
 

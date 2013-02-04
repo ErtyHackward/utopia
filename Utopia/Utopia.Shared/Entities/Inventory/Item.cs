@@ -21,7 +21,7 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     [ProtoContract]
-    public abstract class Item : StaticEntity, IItem, IWorldIntercatingEntity
+    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity
     {
         private VoxelModelInstance _modelInstance;
 

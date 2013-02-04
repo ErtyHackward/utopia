@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Inventory;
 using System;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Concrete.Interface;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -56,12 +57,23 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (entity.EntityState.IsBlockPicked)
             {
+                //Do Dynamic entity collision testing (Cannot place a block if a dynamic entity intersect.
                 var blockBB = new BoundingBox(entity.EntityState.NewBlockPosition, entity.EntityState.NewBlockPosition + Vector3.One);
                 foreach (var dynEntity in EntityFactory.DynamicEntityManager.EnumerateAround(entity.EntityState.NewBlockPosition))
                 {
                     var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
-                    if (blockBB.Intersects(ref dynBB))
+                    if (blockBB.Intersects(ref dynBB)) return impact;
+                }
+
+                // Get the chunk where the entity will be added and check if another block static entity is present inside this block
+                var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
+                foreach (IBlockLocationRoot staticEntity in workingchunk.Entities.Entities.Values)
+                {
+                    if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
+                    {
+                        // IBlockLocationRoot Entity already present at this location
                         return impact;
+                    }
                 }
                 
                 //Add new block

@@ -202,9 +202,9 @@
       <Project>{0DE240B7-B340-43AD-B663-65CFA43351ED}</Project>
       <Name>Utopia.Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Sandbox\Sandbox.Resources\Sandbox.Resources.csproj">
+    <ProjectReference Include="..\..\Sandbox\Sandbox.Resources\Shared.Resources.csproj">
       <Project>{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}</Project>
-      <Name>Sandbox.Resources</Name>
+      <Name>Shared.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
