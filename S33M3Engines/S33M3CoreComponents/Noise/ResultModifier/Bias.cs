@@ -38,6 +38,12 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            double value = _source.Get(x);
+            return Math.Pow(value, Math.Log(_bias.Get(x)) / Math.Log(0.5));
+        }
+
         public double Get(double x, double y)
         {
             double value = _source.Get(x, y);

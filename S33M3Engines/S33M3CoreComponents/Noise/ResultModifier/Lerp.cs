@@ -26,6 +26,11 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            return MathHelper.FullLerp(_targetMin, _targetMax, _sourceMin, _sourceMax, _source.Get(x));
+        }
+
         public double Get(double x, double y)
         {
             return MathHelper.FullLerp(_targetMin, _targetMax, _sourceMin, _sourceMax, _source.Get(x, y));

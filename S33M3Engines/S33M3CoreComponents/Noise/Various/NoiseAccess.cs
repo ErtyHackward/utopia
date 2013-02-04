@@ -11,6 +11,7 @@ namespace S33M3CoreComponents.Noise.Various
 
         public enum enuDimUsage
         {
+            Noise1D,
             Noise2D,
             Noise3D,
             Noise4D
@@ -54,6 +55,21 @@ namespace S33M3CoreComponents.Noise.Various
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            switch (_noiseDimUsage)
+            {
+                case enuDimUsage.Noise2D:
+                    return _noise2D.Get(x, 0);
+                case enuDimUsage.Noise3D:
+                    return _noise3D.Get(x, 0, 0);
+                case enuDimUsage.Noise4D:
+                    return _noise4D.Get(x, 0, 0, 0);
+                default:
+                    return _noise2D.Get(x, 0);
+            }
+        }
+
         public double Get(double x, double y)
         {
             switch (_noiseDimUsage)

@@ -19,6 +19,11 @@ namespace S33M3CoreComponents.Noise.Generator
         }
 	
 	    #region Public Methods
+        public double Get(double x)
+        {
+            return _cstValue;
+        }
+
         public double Get(double x, double y)
         {
             return _cstValue;

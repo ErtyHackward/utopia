@@ -35,6 +35,25 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            switch (_combinerType)
+            {
+                case CombinerType.Add:
+                    return AddGet(x);
+                case CombinerType.Multiply:
+                    return MultiplyGet(x);
+                case CombinerType.Max:
+                    return MaxGet(x);
+                case CombinerType.Min:
+                    return MinGet(x);
+                case CombinerType.Avg:
+                    return AvgGet(x);
+                default:
+                    return 0.0;
+            }
+        }
+
         public double Get(double x, double y)
         {
             switch (_combinerType)
@@ -96,6 +115,16 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
 
         #region Private Methods
         #region Add
+        private double AddGet(double x)
+        {
+            double result = 0.0;
+            for (int i = 0; i < _noises.Count; i++)
+            {
+                result += _noises[i].Get(x);
+            }
+            return result;
+        }
+
         private double AddGet(double x, double y)
         {
             double result = 0.0;
@@ -128,6 +157,16 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         #endregion
 
         #region Multiply
+        private double MultiplyGet(double x)
+        {
+            double result = 1.0;
+            for (int i = 0; i < _noises.Count; i++)
+            {
+                result *= _noises[i].Get(x);
+            }
+            return result;
+        }
+
         private double MultiplyGet(double x, double y)
         {
             double result = 1.0;
@@ -160,6 +199,20 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         #endregion
 
         #region Min
+        private double MinGet(double x)
+        {
+            double minValue = 0.0;
+            if (_noises.Count > 0) minValue = _noises[0].Get(x);
+
+            for (int i = 1; i < _noises.Count; i++)
+            {
+                double value = _noises[i].Get(x);
+                if (value < minValue) minValue = value;
+            }
+
+            return minValue;
+        }
+
         private double MinGet(double x, double y)
         {
             double minValue = 0.0;
@@ -204,6 +257,20 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         #endregion
 
         #region Max
+        private double MaxGet(double x)
+        {
+            double maxValue = 0.0;
+            if (_noises.Count > 0) maxValue = _noises[0].Get(x);
+
+            for (int i = 1; i < _noises.Count; i++)
+            {
+                double value = _noises[i].Get(x);
+                if (value > maxValue) maxValue = value;
+            }
+
+            return maxValue;
+        }
+
         private double MaxGet(double x, double y)
         {
             double maxValue = 0.0;
@@ -248,6 +315,17 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         #endregion
 
         #region Avg
+        private double AvgGet(double x)
+        {
+            double result = 0.0;
+            if (_noises.Count == 0) return result;
+            for (int i = 0; i < _noises.Count; i++)
+            {
+                result += _noises[i].Get(x);
+            }
+            return result / _noises.Count;
+        }
+
         private double AvgGet(double x, double y)
         {
             double result = 0.0;

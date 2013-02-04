@@ -131,6 +131,11 @@ namespace S33M3CoreComponents.Noise.Generator
         #endregion
 
         #region Public methods
+        public double Get(double x)
+        {
+            throw new NotImplementedException();
+        }
+
         public double Get(double x, double y)
         {
             // Noise contributions from the three corners

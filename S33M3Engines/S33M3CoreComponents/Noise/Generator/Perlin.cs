@@ -75,6 +75,19 @@ namespace S33M3CoreComponents.Noise.Generator
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            // Compute the cell coordinates
+            int X = (int)Math.Floor(x) & 255;
+
+            // Retrieve the decimal part of the cell
+            x -= (float)Math.Floor(x);
+
+            double u = interpolationFct(x);
+
+            return MathHelper.Lerp(u, Grad(_random[X], x), Grad(_random[X + 1], x - 1));
+        }
+
         public double Get(double x, double y)
         {
             // Fast floor
@@ -209,6 +222,22 @@ namespace S33M3CoreComponents.Noise.Generator
         {
             return t*t*t*(t*(t*6-15)+10);
 
+        }
+
+        /// <summary>
+        /// Modifies the result by adding a directional bias
+        /// </summary>
+        /// <param name="hash">The random value telling in which direction the bias will occur</param>
+        /// <param name="x">The amount of the bias on the X axis</param>
+        /// <returns>The directional bias strength</returns>
+        private static double Grad(int hash, double x)
+        {
+            // Result table
+            // ---+------+----
+            //  0 | 0000 |  x 
+            //  1 | 0001 | -x 
+
+            return (hash & 1) == 0 ? x : -x;
         }
 
         /// <summary>
