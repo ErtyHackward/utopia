@@ -20,7 +20,7 @@ namespace S33M3CoreComponents.Noise.Various
 
         #region Private Variables
         private Vector2 _offset;
-        private static readonly float DensityAdjustment = 0.39815f;
+        private static readonly float DensityAdjustment = 0.039815f;
         private static readonly float InverseDensityAdjustment = 1.0f / DensityAdjustment;
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace S33M3CoreComponents.Noise.Various
         {
             Vector2 at = new Vector2((float)x, (float)y);
 
-            VoronoiResult[] results = new VoronoiResult[4];
+            VoronoiResult[] results = new VoronoiResult[1];
             for (int i = 0; i < results.Length; i++)
             {
                 results[i].distance = float.MaxValue;
@@ -69,8 +69,8 @@ namespace S33M3CoreComponents.Noise.Various
             ProcessCell(cell, at, results);
 
             Vector2 cellPos = at - cell;
-            Vector2 distMax = new Vector2(new Vector2(1 - cellPos.X, 0).LengthSquared(), new Vector2(0, 1 - cellPos.Y).LengthSquared());
-            Vector2 distMin = new Vector2(new Vector2(cellPos.X, 0).LengthSquared(), new Vector2(0, cellPos.Y).LengthSquared());
+            Vector2 distMax = new Vector2(new Vector2(1 - cellPos.X, 0).Length(), new Vector2(0, 1 - cellPos.Y).Length());
+            Vector2 distMin = new Vector2(new Vector2(cellPos.X, 0).Length(), new Vector2(0, cellPos.Y).Length());
 
             // Test near cells
             if (distMin.X < results[results.Length - 1].distance) ProcessCell(cell - Vector2I.XAxis, at, results);
@@ -107,8 +107,8 @@ namespace S33M3CoreComponents.Noise.Various
         #region Private Methods
         private void Initialize()
         {
-            Random rnd = new Random(Seed);
-            _offset = 99999 * new Vector2(rnd.Next(), rnd.Next());
+            FastRandom rnd = new FastRandom(Seed);
+            _offset = 9999 * new Vector2(rnd.NextFloat(), rnd.NextFloat());
         }
 
         private uint incrementSeed(uint last)
@@ -137,7 +137,7 @@ namespace S33M3CoreComponents.Noise.Various
                 Vector2 innerPos = new Vector2(x, y);
                 Vector2 delta = cell + innerPos - at;
 
-                float dist = delta.LengthSquared();
+                float dist = delta.Length();
 
                 if (dist < results[results.Length - 1].distance)
                 {

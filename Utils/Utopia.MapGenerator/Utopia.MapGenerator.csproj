@@ -52,11 +52,11 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="S33M3_DXEngine">
-      <HintPath>..\..\S33M3Engines\S33M3Resources\bin\Release\S33M3_DXEngine.dll</HintPath>
+    <Reference Include="S33M3DXEngine">
+      <HintPath>..\..\S33M3Engines\S33M3Resources\bin\Release\S33M3DXEngine.dll</HintPath>
     </Reference>
-    <Reference Include="S33M3_Resources">
-      <HintPath>..\..\S33M3Engines\S33M3Resources\bin\Release\S33M3_Resources.dll</HintPath>
+    <Reference Include="S33M3Resources">
+      <HintPath>..\..\S33M3Engines\S33M3Resources\bin\Release\S33M3Resources.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

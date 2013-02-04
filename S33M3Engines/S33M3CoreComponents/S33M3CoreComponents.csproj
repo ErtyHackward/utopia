@@ -262,6 +262,7 @@
     <Compile Include="Noise\Various\Cache.cs" />
     <Compile Include="Noise\Various\NoiseAccess.cs" />
     <Compile Include="Noise\Various\NoiseAnalyse.cs" />
+    <Compile Include="Noise\Various\Voronoi2.cs" />
     <Compile Include="Particules\ParticulesCol\BaseParticule.cs" />
     <Compile Include="Particules\Emitters\Emitter.cs" />
     <Compile Include="Particules\Interfaces\IEmitter.cs" />
