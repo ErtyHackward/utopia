@@ -290,6 +290,19 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        public IEnumerable<IDynamicEntity> EnumerateAround(Vector3 pos)
+        {
+            // as we store all entites in one collection
+            // we will enumerate by all of them and add a player entity separately
+
+            yield return _playerEntityManager.Player;
+
+            foreach (var entity in _dynamicEntitiesDico.Values.Select(visualDynamicEntity => visualDynamicEntity.DynamicEntity))
+            {
+                yield return entity;
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -622,17 +635,5 @@ namespace Utopia.Entities.Managers
 
         #endregion
 
-        public IEnumerable<IDynamicEntity> EnumerateAround(Vector3 pos)
-        {
-            // as we store all entites in one collection
-            // we will enumerate by all of them and add a player entity separately
-
-            yield return _playerEntityManager.Player;
-
-            foreach (var entity in _dynamicEntitiesDico.Values.Select(visualDynamicEntity => visualDynamicEntity.DynamicEntity))
-            {
-                yield return entity;
-            }
-        }
     }
 }

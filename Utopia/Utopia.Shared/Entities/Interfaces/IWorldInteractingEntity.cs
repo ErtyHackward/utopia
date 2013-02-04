@@ -2,7 +2,7 @@
 
 namespace Utopia.Shared.Entities.Interfaces
 {
-    public interface IWorldIntercatingEntity
+    public interface IWorldInteractingEntity
     {
         /// <summary>
         /// Gets entityFactory, this field is injected

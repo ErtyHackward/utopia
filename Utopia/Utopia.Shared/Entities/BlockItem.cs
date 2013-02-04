@@ -36,8 +36,7 @@ namespace Utopia.Shared.Entities
         {
             var pos = new EntityPosition();
 
-            if (!owner.EntityState.IsBlockPicked)
-                return pos;
+            if (!owner.EntityState.IsBlockPicked) return pos;
 
             // Get the chunk where the entity will be added and check if another entity is present inside this block
             var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
