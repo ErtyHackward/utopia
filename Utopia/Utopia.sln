@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gameplay", "Gameplay", "{16
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Realms.Server", "Realms\Realms.Server\Realms.Server.csproj", "{B0BB4433-F9CF-423F-9C58-8FABD8A82B41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Resources", "Sandbox\Sandbox.Resources\Shared.Resources.csproj", "{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Resources", "Resources\Shared.Resources\Shared.Resources.csproj", "{C09A8BDD-5E9F-43D9-91C5-7C6F6362A0B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "S33m3Engines", "S33m3Engines", "{545BA7F6-928A-4C2C-AB0F-5EFB5D153708}"
 EndProject
