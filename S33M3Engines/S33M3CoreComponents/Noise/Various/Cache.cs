@@ -37,6 +37,19 @@ namespace S33M3CoreComponents.Noise.Various
         }
 
         #region Public Methods
+
+        public double Get(double x)
+        {
+            if (!_c2.valid || _c2.x != x)
+            {
+                _c2.x = x;
+                _c2.valid = true;
+                _c2.val = _source.Get(x);
+            }
+            return _c2.val;
+        }
+
+
         public double Get(double x, double y)
         {
             if (!_c2.valid || _c2.x != x || _c2.y != y)

@@ -27,6 +27,11 @@ namespace S33M3CoreComponents.Noise.Generator
         }
 
         #region Public methods
+        public double Get(double x)
+        {
+            return _rnd.NextDouble();
+        }
+
         public double Get(double x, double y)
         {
             return _rnd.NextDouble();

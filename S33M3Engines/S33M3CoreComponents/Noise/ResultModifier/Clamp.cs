@@ -25,6 +25,11 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            return MathHelper.Clamp(_source.Get(x), _lowClamp, _highClamp);
+        }
+
         public double Get(double x, double y)
         {
             return MathHelper.Clamp(_source.Get(x, y), _lowClamp, _highClamp);

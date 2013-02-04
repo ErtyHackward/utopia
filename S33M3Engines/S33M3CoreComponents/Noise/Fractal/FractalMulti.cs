@@ -29,6 +29,35 @@ namespace S33M3CoreComponents.Noise.Fractal
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            double value = 1.0;
+            x *= _frequency;
+
+            for (int i = 0; i < _numOctaves; ++i)
+            {
+                value *= _source.Get(x) * _exparray[i] + 1.0;
+                x *= _lacunarity;
+            }
+
+            if (_withValueRemap)
+            {
+                FractalRemap remap = _fractalRemap[_numOctaves - 1];
+                if (base._defaultRange == enuBaseNoiseRange.MinOneToOne)
+                {
+                    return value * remap.Scale + remap.Bias;
+                }
+                else
+                {
+                    return ((value * remap.Scale + remap.Bias) + 1.0) / 2.0;
+                }
+            }
+            else
+            {
+                return value;
+            }
+        }
+
         public double Get(double x, double y)
         {
             double value=1.0;

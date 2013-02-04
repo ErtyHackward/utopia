@@ -28,6 +28,17 @@ namespace S33M3CoreComponents.Noise.Generator
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            double dx = x - _centerX;
+            double len = Math.Sqrt(dx * dx);
+            double i = (_radius - len) / _radius;
+            if (i < 0) i = 0;
+            if (i > 1) i = 1;
+
+            return i;
+        }
+
         public double Get(double x, double y)
         {
             double dx = x - _centerX;

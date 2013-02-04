@@ -1,4 +1,6 @@
-﻿using System;
+﻿using S33M3CoreComponents.Noise.Fractal;
+using S33M3CoreComponents.Noise.Generator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +9,8 @@ namespace S33M3CoreComponents.Noise.Various
 {
     public class Voronoi2 : ValueNoiseBasis
     {
+        FractalFbm NoiseX, NoiseY;
+
         private static readonly double Sqrt3 = 1.7320508075688772935;
 
         public double Frequency { get; set; }
@@ -20,12 +24,18 @@ namespace S33M3CoreComponents.Noise.Various
             Displacement = 1.0;
             Seed = 0;
             DistanceEnabled = false;
+
+            NoiseX = new FractalFbm(new Simplex(1234), 1, 0.9);
+            NoiseY = new FractalFbm(new Simplex(4321), 1, 0.9);
         }
 
         public double GetValue(double x, double y, out double distance)
         {
             x *= Frequency;
             y *= Frequency;
+
+            x += NoiseX.Get(x, 0) * 0.2;
+            y += NoiseX.Get(y, 0) * 0.2;
 
             int xInt = (x > 0.0 ? (int)x : (int)x - 1);
             int yInt = (y > 0.0 ? (int)y : (int)y - 1);

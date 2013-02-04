@@ -39,6 +39,11 @@ namespace S33M3CoreComponents.Noise.DomainModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            return _source.Get(x + _xOffset.Get(x));
+        }
+
         public double Get(double x, double y)
         {
             return _source.Get(x + _xOffset.Get(x,y), y + _yOffset.Get(x, y));

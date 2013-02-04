@@ -70,6 +70,11 @@ namespace S33M3CoreComponents.Noise
             _noiseParam = noiseParam;
         }
 
+        public double Get(double x)
+        {
+            return _noiseParam == null ? _scalarParam : _noiseParam.Get(x);
+        }
+
         public double Get(double x, double y)
         {
             return _noiseParam == null ? _scalarParam : _noiseParam.Get(x, y);

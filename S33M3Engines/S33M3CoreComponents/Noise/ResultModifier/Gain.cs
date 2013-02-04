@@ -38,6 +38,21 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            double value = _source.Get(x);
+            double gain = _gain.Get(x);
+
+            if (gain < 0.5)
+            {
+                return Math.Pow(2.0 * value, Math.Log(1.0 - gain) / Math.Log(0.5)) / 2.0;
+            }
+            else
+            {
+                return 1.0 - Math.Pow(2.0 - 2.0 * value, Math.Log(1.0 - gain) / Math.Log(0.5)) / 2.0;
+            }
+        }
+
         public double Get(double x, double y)
         {
             double value = _source.Get(x, y);

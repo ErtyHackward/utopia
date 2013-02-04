@@ -25,6 +25,12 @@ namespace S33M3CoreComponents.Noise.DomainModifier
         }
 
         #region Public methods
+
+        public double Get(double x)
+        {
+            throw new NotImplementedException();
+        }
+
         public double Get(double x, double y)
         {
             double nx, ny;
@@ -95,5 +101,7 @@ namespace S33M3CoreComponents.Noise.DomainModifier
             _rotmatrix[2, 2] = 1 + (1 - Math.Cos(angle)) * (z * z - 1);
         }
         #endregion
+
+
     }
 }

@@ -22,6 +22,11 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            return Math.Pow(_source.Get(x), _power.Get(x));
+        }
+
         public double Get(double x, double y)
         {
             return Math.Pow(_source.Get(x, y), _power.Get(x, y));

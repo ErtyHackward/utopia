@@ -48,6 +48,16 @@ namespace S33M3CoreComponents.Noise.ResultCombiner
         }
 
         #region Public Methods
+
+        public double Get(double x)
+        {
+            double vLow = _lowSource.Get(x);
+            double vHigh = _highSource.Get(x);
+            double blend = _controler.Get(x);
+
+            return MathHelper.FullLerp(vLow, vHigh, _controlerRange.Min, _controlerRange.Max, blend);
+        }
+
         public double Get(double x, double y)
         {
             double vLow = _lowSource.Get(x, y);

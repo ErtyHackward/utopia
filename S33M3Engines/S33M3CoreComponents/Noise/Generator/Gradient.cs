@@ -42,6 +42,14 @@ namespace S33M3CoreComponents.Noise.Generator
         }
 
         #region Public methods
+        public double Get(double x)
+        {
+            double dx = x - m_gx1;
+            double dp = dx * m_x;
+            dp /= m_vlen;
+            return dp;
+        }
+
         public double Get(double x, double y)
         {
             double dx = x - m_gx1;

@@ -24,6 +24,11 @@ namespace S33M3CoreComponents.Noise.ResultModifier
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            return _source.Get(x) * _scale.Get(x) + _offset.Get(x);
+        }
+
         public double Get(double x, double y)
         {
             return _source.Get(x, y) * _scale.Get(x, y) + _offset.Get(x, y);

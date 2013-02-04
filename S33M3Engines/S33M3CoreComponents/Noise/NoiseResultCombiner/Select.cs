@@ -41,6 +41,40 @@ namespace S33M3CoreComponents.Noise.NoiseResultCombiner
         }
 
         #region Public Methods
+        public double Get(double x)
+        {
+            double control = _control.Get(x);
+            double falloff = _falloff.Get(x);
+            double threshold = _threshold.Get(x);
+
+            if (falloff > 0.0)
+            {
+                if (control < (threshold - falloff))
+                {
+                    // Lies outside of falloff area below threshold, return first source
+                    return _lowSource.Get(x);
+                }
+                else if (control > (threshold + falloff))
+                {
+                    // Lise outside of falloff area above threshold, return second source
+                    return _highSource.Get(x);
+                }
+                else
+                {
+                    // Lies within falloff area.
+                    double lower = threshold - falloff;
+                    double upper = threshold + falloff;
+                    double blend = MathHelper.SCurve5((control - lower) / (upper - lower));
+                    return MathHelper.Lerp(_lowSource.Get(x), _highSource.Get(x), blend);
+                }
+            }
+            else
+            {
+                if (control < threshold) return _lowSource.Get(x);
+                else return _highSource.Get(x);
+            }
+        }
+
         public double Get(double x, double y)
         {
             double control = _control.Get(x, y);
