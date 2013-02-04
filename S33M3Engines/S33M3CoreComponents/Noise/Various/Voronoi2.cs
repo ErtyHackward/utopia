@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3CoreComponents.Noise.Fractal;
+using S33M3CoreComponents.Noise.Generator;
 
 namespace S33M3CoreComponents.Noise.Various
 {
@@ -9,6 +11,9 @@ namespace S33M3CoreComponents.Noise.Various
     {
         private static readonly double Sqrt3 = 1.7320508075688772935;
 
+        INoise noise1 = new FractalFbm(new Simplex(1), 2, 2);
+        INoise noise2 = new FractalFbm(new Simplex(12345), 2, 2);
+        
         public double Frequency { get; set; }
         public double Displacement { get; set; }
         public bool DistanceEnabled { get; set; }
@@ -27,6 +32,11 @@ namespace S33M3CoreComponents.Noise.Various
             x *= Frequency;
             y *= Frequency;
 
+            //Add randomness
+            x += (noise1.Get(x, y) * 0.02);
+            y += (noise2.Get(x, y) * 0.02);
+
+            
             int xInt = (x > 0.0 ? (int)x : (int)x - 1);
             int yInt = (y > 0.0 ? (int)y : (int)y - 1);
 
