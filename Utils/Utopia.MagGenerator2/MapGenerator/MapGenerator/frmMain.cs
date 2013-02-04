@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using S33M3Engines.Shared.Math.Noises;
+using S33M3CoreComponents.Maths.Noises;
 
 namespace MapGenerator
 {

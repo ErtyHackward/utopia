@@ -34,6 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="S33M3CoreComponents">
+      <HintPath>..\..\..\..\S33M3Engines\S33M3CoreComponents\bin\Release\S33M3CoreComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3DXEngine">
+      <HintPath>..\..\..\..\S33M3Engines\S33M3CoreComponents\bin\Release\S33M3DXEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="S33M3Resources">
+      <HintPath>..\..\..\..\S33M3Engines\S33M3CoreComponents\bin\Release\S33M3Resources.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -76,12 +85,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Utopia\S33M3Engines.Shared\S33M3Engines.Shared.csproj">
-      <Project>{6D148E07-4114-42CF-B0C2-9350746E1304}</Project>
-      <Name>S33M3Engines.Shared</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

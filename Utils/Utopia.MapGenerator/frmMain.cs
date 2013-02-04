@@ -39,11 +39,11 @@ namespace Utopia.MapGenerator
                 PolygonsCount = (int)voronoiPolyNumeric.Value, 
                 RelaxCount = 3});
 
-            _map.RenderMapTemplate = Resources.mapbg;
-            _map.RenderContinentTemplate = Resources.brush;
-            _map.RenderWavePatterns = new [] { Resources.wavePattern, Resources.wavePattern1, Resources.wavePattern2};
-            _map.RenderForest = Resources.forest;
-            _map.RenderTropicalForest = Resources.tropicForest;
+            //_map.RenderMapTemplate = Resources.mapbg;
+            //_map.RenderContinentTemplate = Resources.brush;
+            //_map.RenderWavePatterns = new [] { Resources.wavePattern, Resources.wavePattern1, Resources.wavePattern2};
+            //_map.RenderForest = Resources.forest;
+            //_map.RenderTropicalForest = Resources.tropicForest;
 
             var sw = Stopwatch.StartNew();
             _map.Generate();
