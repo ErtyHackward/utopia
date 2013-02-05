@@ -13,26 +13,39 @@ namespace S33M3CoreComponents.Noise.Various
     {
         public struct VoronoiCell
         {
-            public double Distance;
+            public double DistanceSquared;
             public Vector2I CellId;
+        }
+
+        public enum VoronoiMode
+        {
+            RandomValue,
+            FrontierDetection
         }
 
         public double Frequency { get; set; }
         public int Seed { get; set; }
         public double Noisiness { get; set; }
         public INoise NoiseBorder { get; set; }
+        public VoronoiMode Mode { get; set; }
 
-        public Voronoi2(int seed,  double frequency = 1.0, double Noisiness = 0.6, INoise NoiseBorder = null) 
+        public Voronoi2(int seed,  double frequency = 1.0, double Noisiness = 0.6, INoise NoiseBorder = null, VoronoiMode mode = VoronoiMode.RandomValue) 
         {
+            this.Mode = mode;
             this.Seed = seed;
             this.Frequency = frequency;
             this.Noisiness = Noisiness;
             this.NoiseBorder = NoiseBorder;
         }
 
-        public VoronoiCell GetCell(double x, double y)
+        public VoronoiCell[] GetCells(double x, double y, int nbrCells = 4)
         {
-            VoronoiCell cell;
+            VoronoiCell[] cells = new VoronoiCell[nbrCells];
+            //Init result
+            for (int i = 0; i < nbrCells; i++)
+            {
+                cells[i] = new VoronoiCell() { DistanceSquared = double.MaxValue };
+            }
 
             x *= Frequency;
             y *= Frequency;
@@ -46,13 +59,12 @@ namespace S33M3CoreComponents.Noise.Various
             int xInt = (x > 0.0 ? (int)x : (int)x - 1);
             int yInt = (y > 0.0 ? (int)y : (int)y - 1);
 
-            double minDist = double.MaxValue;
-            int xCell = 0;
-            int yCell = 0;
+
 
             // Inside each unit cube, there is a seed point at a random position.  Go
             // through each of the nearby cubes until we find a cube with a seed point
             // that is closest to the specified position.
+            int highestFreeCellsIndex = 0;
 
             for (int yCur = yInt - 2; yCur <= yInt + 2; yCur++)
             {
@@ -66,23 +78,28 @@ namespace S33M3CoreComponents.Noise.Various
                     double yDist = yPos - y;
                     double dist = xDist * xDist + yDist * yDist;
 
-                    if (dist < minDist)
+                    for (int c = 0; c < nbrCells; c++)
                     {
-                        // This seed point is closer to any others found so far, so record
-                        minDist = dist;
-                        xCell = xCur;
-                        yCell = yCur;
+                        if (dist < cells[c].DistanceSquared)
+                        {
+                            if(c < highestFreeCellsIndex)
+                            {
+                                //Shift array to right if needed
+                                Array.Copy(cells, c, cells, c + 1, cells.Length - c - 1);
+                            }
+
+                            //Add new item at correct place (keeping the cells ordered in the list)
+                            cells[c].DistanceSquared = dist;
+                            cells[c].CellId = new Vector2I(xCur, yCur);
+                            highestFreeCellsIndex++;
+                            break;
+                        }
                     }
                 }
             }
-
-            // Determine the distance to the nearest seed point.
-            cell.Distance = (System.Math.Sqrt(minDist));
-
-            cell.CellId = new Vector2I(xCell, yCell);
-
+            
             // Return the calculated distance with the displacement value applied.
-            return cell;
+            return cells;
         }
 
         public double Get(double x)
@@ -92,50 +109,60 @@ namespace S33M3CoreComponents.Noise.Various
 
         public double Get(double x, double y)
         {
-            x *= Frequency;
-            y *= Frequency;
-
-            if (NoiseBorder != null)
+            if (Mode == VoronoiMode.FrontierDetection)
             {
-                x += NoiseBorder.Get(x, 0);
-                y += NoiseBorder.Get(0, y);
+                var result = GetCells(x, y, 2);
+                //Return the distance between the two nearest points
+                return result[1].DistanceSquared - result[0].DistanceSquared;
             }
-
-            int xInt = (x > 0.0 ? (int)x : (int)x - 1);
-            int yInt = (y > 0.0 ? (int)y : (int)y - 1);
-
-            double minDist = double.MaxValue;
-            int xCell = 0;
-            int yCell = 0;
-
-            // Inside each unit cube, there is a seed point at a random position.  Go
-            // through each of the nearby cubes until we find a cube with a seed point
-            // that is closest to the specified position.
-
-            for (int yCur = yInt - 2; yCur <= yInt + 2; yCur++)
+            else
             {
-                for (int xCur = xInt - 2; xCur <= xInt + 2; xCur++)
-                {
-                    // Calculate the position and distance to the seed point inside of
-                    // this unit cube.
-                    double xPos = xCur + (ValueNoise(xCur, yCur, Seed + 1) * Noisiness);
-                    double yPos = yCur + (ValueNoise(xCur, yCur, Seed + 2) * Noisiness);
-                    double xDist = xPos - x;
-                    double yDist = yPos - y;
-                    double dist = xDist * xDist + yDist * yDist;
 
-                    if (dist < minDist)
+                x *= Frequency;
+                y *= Frequency;
+
+                if (NoiseBorder != null)
+                {
+                    x += NoiseBorder.Get(x, 0);
+                    y += NoiseBorder.Get(0, y);
+                }
+
+                int xInt = (x > 0.0 ? (int)x : (int)x - 1);
+                int yInt = (y > 0.0 ? (int)y : (int)y - 1);
+
+                double minDist = double.MaxValue;
+                int xCell = 0;
+                int yCell = 0;
+
+                // Inside each unit cube, there is a seed point at a random position.  Go
+                // through each of the nearby cubes until we find a cube with a seed point
+                // that is closest to the specified position.
+
+                for (int yCur = yInt - 2; yCur <= yInt + 2; yCur++)
+                {
+                    for (int xCur = xInt - 2; xCur <= xInt + 2; xCur++)
                     {
-                        // This seed point is closer to any others found so far, so record
-                        minDist = dist;
-                        xCell = xCur;
-                        yCell = yCur;
+                        // Calculate the position and distance to the seed point inside of
+                        // this unit cube.
+                        double xPos = xCur + (ValueNoise(xCur, yCur, Seed + 1) * Noisiness);
+                        double yPos = yCur + (ValueNoise(xCur, yCur, Seed + 2) * Noisiness);
+                        double xDist = xPos - x;
+                        double yDist = yPos - y;
+                        double dist = xDist * xDist + yDist * yDist;
+
+                        if (dist < minDist)
+                        {
+                            // This seed point is closer to any others found so far, so record
+                            minDist = dist;
+                            xCell = xCur;
+                            yCell = yCur;
+                        }
                     }
                 }
-            }
 
-            // Return the calculated distance with the displacement value applied.
-            return ValueNoise(xCell, yCell, Seed);
+                // Return the calculated distance with the displacement value applied.
+                return ValueNoise(xCell, yCell, Seed);
+            }
         }
 
         public double Get(double x, double y, double z)

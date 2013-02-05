@@ -94,7 +94,7 @@ namespace Utopia.Worlds.Cubes
             else
             {
                 //Add a naturel Offset to StillWater when touching water at the surface !
-                yBlockOffset = (float)blockProfile.YBlockOffset;
+                //if(topCube.Id != cube.Id) yBlockOffset = (float)blockProfile.YBlockOffset;
             }
 
             yBlockOffsetAsByte = (byte)(yBlockOffset * 255);
