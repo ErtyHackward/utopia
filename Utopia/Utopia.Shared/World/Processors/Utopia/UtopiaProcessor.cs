@@ -433,9 +433,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                         //Restart Surface layer if needed
                         if (surfaceLayer > 0 && cubeId == UtopiaProcessorParams.CubeId.Air && Y > (_config.ProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
 
-                        if (riverProcessed == false && riverValue <= 0.01 && cubeId == UtopiaProcessorParams.CubeId.Stone && Y < 75 && Y > _config.ProcessorParam.WaterLevel - 2)
+                        if (riverProcessed == false && riverValue <= 0.015 && cubeId == UtopiaProcessorParams.CubeId.Stone && Y < 75 && Y > _config.ProcessorParam.WaterLevel - 2)
                         {                           
-                            riverDepth = (int)MathHelper.FullLerp(1, 5, 0.01, 0, riverValue);
+                            riverDepth = (int)MathHelper.FullLerp(1, 5, 0.015, 0, riverValue);
                             for (int Yair = Y; Yair < Y + (riverDepth / 2.0); Yair++)
                             {
                                 int indexAir = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Yair;
