@@ -168,7 +168,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                                   out INoise underground, 
                                   out INoise landScapeType, 
                                   out INoise temperature, 
-                                  out INoise moisture)
+                                  out INoise moisture,
+                                  out INoise river)
         {
 
             INoise terrainDelimiter;
@@ -194,6 +195,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
             temperature = new Temperature(_worldParameters.Seed - 963, _config.ProcessorParam.TempCtrlOctave, _config.ProcessorParam.TempCtrlFrequency).GetLandFormFct();
             moisture = new Moisture(_worldParameters.Seed - 96, _config.ProcessorParam.MoistureCtrlOctave, _config.ProcessorParam.MoistureCtrlFrequency).GetLandFormFct();
+            river = new River(_worldParameters.Seed - 1001, 0, 0).GetLandFormFct();
         }
 
         public INoise CreateLandFormFct(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)
@@ -300,8 +302,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         private void GenerateLandscape(byte[] ChunkCubes, ref Range3I chunkWorldRange, out double[,] biomeMap)
         {
             //Create the test Noise, A new object must be created each time
-            INoise mainLandscape, underground, landScapeType, temperature, moisture;
-            CreateNoises(out mainLandscape, out underground, out landScapeType, out temperature, out moisture);
+            INoise mainLandscape, underground, landScapeType, temperature, moisture, river;
+            CreateNoises(out mainLandscape, out underground, out landScapeType, out temperature, out moisture, out river);
 
             //Create value from Noise Fct sampling
             //noiseLandscape[x,0] = MainLandscape
@@ -315,12 +317,14 @@ namespace Utopia.Shared.World.Processors.Utopia
             //biomeMap[x,0] = Biome Type
             //biomeMap[x,1] = temperature
             //biomeMap[x,2] = Moisture
+            //biomeMap[x,3] = River
             biomeMap = NoiseSampler.NoiseSampling(new Vector2I(AbstractChunk.ChunkSize.X, AbstractChunk.ChunkSize.Z),
                                                             chunkWorldRange.Position.X / 320.0, (chunkWorldRange.Position.X / 320.0) + 0.05, AbstractChunk.ChunkSize.X,
                                                             chunkWorldRange.Position.Z / 320.0, (chunkWorldRange.Position.Z / 320.0) + 0.05, AbstractChunk.ChunkSize.Z,
                                                             landScapeType,
                                                             temperature,
-                                                            moisture);
+                                                            moisture,
+                                                            river);
 
             //Create the chunk Block byte from noiseResult
             int noiseValueIndex = 0;
@@ -399,6 +403,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                     bool mustPlacedSnow;
                     double temperature = biomeMap[noise2DIndex, 1];
                     double moisture = biomeMap[noise2DIndex, 2];
+                    double riverValue = biomeMap[noise2DIndex, 3];
                     byte biomeId = _biomeHelper.GetBiome(biomeMap[noise2DIndex, 0], temperature, moisture);
                     //Get this landscape Column Biome value
                     currentBiome = _config.ProcessorParam.Biomes[biomeId];
@@ -417,6 +422,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                     inWaterMaxLevel = 0;
                     surfaceLayer = 0;
                     bool solidGroundHitted = false;
+                    int riverDepth = 0;
+                    bool riverProcessed = false;
 
                     for (int Y = _worldGeneratedHeight - 1; Y >= 0; Y--) //Y
                     {
@@ -426,7 +433,25 @@ namespace Utopia.Shared.World.Processors.Utopia
                         //Restart Surface layer if needed
                         if (surfaceLayer > 0 && cubeId == UtopiaProcessorParams.CubeId.Air && Y > (_config.ProcessorParam.WaterLevel - 5)) surfaceLayer = 1;
 
-                        if (cubeId == UtopiaProcessorParams.CubeId.Stone)
+                        if (riverProcessed == false && riverValue <= 0.01 && cubeId == UtopiaProcessorParams.CubeId.Stone && Y < 75 && Y > _config.ProcessorParam.WaterLevel - 2)
+                        {                           
+                            riverDepth = (int)MathHelper.FullLerp(1, 5, 0.01, 0, riverValue);
+                            for (int Yair = Y; Yair < Y + (riverDepth / 2.0); Yair++)
+                            {
+                                int indexAir = ((Z * AbstractChunk.ChunkSize.X) + X) * AbstractChunk.ChunkSize.Y + Yair;
+                                if (ChunkCubes[indexAir] == UtopiaProcessorParams.CubeId.StillWater)
+                                {
+                                    riverDepth = 0;
+                                    riverProcessed = true;
+                                    break;
+                                }
+                                ChunkCubes[indexAir] = UtopiaProcessorParams.CubeId.Air;
+                            }
+                            riverProcessed = true;
+                            continue;
+                        }
+
+                        if (cubeId == UtopiaProcessorParams.CubeId.Stone && riverDepth == 0)
                         {
                             if (solidGroundHitted == false)
                             {
@@ -441,7 +466,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             cubeId = currentBiome.GroundCube;
 
                             //Under water soil
-                            if (Y < _config.ProcessorParam.WaterLevel && inWaterMaxLevel != 0)
+                            if (inWaterMaxLevel != 0)
                             {
                                 if (cubeId == currentBiome.GroundCube)
                                 {
@@ -477,23 +502,41 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else //This block is not Stone (Air, Water, or BedRock)
                         {
-                            if (cubeId == UtopiaProcessorParams.CubeId.StillWater)
+                            if (riverDepth > 0)
                             {
                                 if (mustPlacedSnow)
                                 {
-                                    //Get cube index above this one
-                                    //Place a snow block on it
                                     ChunkCubes[index] = UtopiaProcessorParams.CubeId.Ice;
                                 }
-
+                                else
+                                {
+                                    ChunkCubes[index] = UtopiaProcessorParams.CubeId.StillWater;
+                                }
                                 inWaterMaxLevel = Y;
                                 columnInfo.MaxHeight = (byte)Y;
+                                surfaceLayer = 1;
+                                riverDepth--;
                             }
                             else
                             {
-                                if (inWaterMaxLevel > 0 && cubeId == UtopiaProcessorParams.CubeId.Air)
+                                if (cubeId == UtopiaProcessorParams.CubeId.StillWater)
                                 {
-                                    ChunkCubes[index] = UtopiaProcessorParams.CubeId.StillWater;
+                                    if (mustPlacedSnow)
+                                    {
+                                        //Get cube index above this one
+                                        //Place a snow block on it
+                                        ChunkCubes[index] = UtopiaProcessorParams.CubeId.Ice;
+                                    }
+
+                                    inWaterMaxLevel = Y;
+                                    columnInfo.MaxHeight = (byte)Y;
+                                }
+                                else
+                                {
+                                    if (inWaterMaxLevel > 0 && cubeId == UtopiaProcessorParams.CubeId.Air)
+                                    {
+                                        ChunkCubes[index] = UtopiaProcessorParams.CubeId.StillWater;
+                                    }
                                 }
                             }
                         }

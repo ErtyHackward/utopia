@@ -408,10 +408,11 @@
     <Compile Include="World\Processors\Utopia\LandformFct\UnderGrounds\UnderGround.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\Ocean.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\SurfaceFct\SurfaceCtrl.cs" />
-    <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
+    <Compile Include="World\Processors\Utopia\LandformFct\Water\River2.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\WorldCtrl.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeEntities.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
+    <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\ErtyHackwardWorldConfig.cs" />
@@ -475,6 +476,9 @@
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="World\Processors\Utopia\OtherFct\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
