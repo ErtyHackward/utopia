@@ -26,5 +26,7 @@ namespace Utopia.Action
         public const int Toggle_Interface               = 50;
         public const int DropMode                       = 51;
         public const int OpenCrafting                   = 52;
+        public const int LandscapeSlicerUp              = 53;
+        public const int LandscapeSlicerDown            = 54;
     }
 }
