@@ -128,6 +128,7 @@ namespace Utopia.Entities.EntityMovement
             {
                 switch (_displacementMode)
                 {
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
                     case EntityDisplacementModes.Walking:
                     case EntityDisplacementModes.Swiming:
@@ -269,6 +270,7 @@ namespace Utopia.Entities.EntityMovement
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Forward))
                 switch (_displacementMode)
                 {
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Swiming:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector += _lookAt;
@@ -284,6 +286,7 @@ namespace Utopia.Entities.EntityMovement
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Backward))
                 switch (_displacementMode)
                 {
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Swiming:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector -= _lookAt;
@@ -302,6 +305,7 @@ namespace Utopia.Entities.EntityMovement
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.X += 1.0f;
                         break;
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector += _entityEyeXAxis;
                         break;
@@ -316,6 +320,7 @@ namespace Utopia.Entities.EntityMovement
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.X -= 1.0f;
                         break;
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector -= _entityEyeXAxis;
                         break;
@@ -327,9 +332,10 @@ namespace Utopia.Entities.EntityMovement
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Up))
                 switch (_displacementMode)
                 {
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector += Vector3.UnitY;
-                        break;
+                        break;                    
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.Y += 1.0f;
                         break;
@@ -338,6 +344,7 @@ namespace Utopia.Entities.EntityMovement
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Down))
                 switch (_displacementMode)
                 {
+                    case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector -= Vector3.UnitY;
                         break;

@@ -34,6 +34,7 @@ namespace Utopia.Entities.Managers
         {
             switch (Player.DisplacementMode)
             {
+                case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     _gravityInfluence = 3;  // We will move 6 times faster if flying
                     break;
@@ -113,6 +114,7 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Swiming:
                     SwimmingFreeFirstPersonMove(ref timeSpent);
                     break;
+                case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     FreeFirstPersonMove();
                     break;
@@ -247,7 +249,7 @@ namespace Utopia.Entities.Managers
         private void CheckForEventRaising()
         {
             //Landing on ground after falling event
-            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying)
+            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying || Player.DisplacementMode == EntityDisplacementModes.God)
             {
                 //New "trigger"
                 if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;

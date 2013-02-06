@@ -138,14 +138,14 @@ namespace Utopia.Entities.Managers
                     _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
                     _physicSimu.ConstraintOnlyMode = false;
                 }
-//Collision detection not activated oustide debug mode when flying !
-#if !DEBUG
-                else if (value == EntityDisplacementModes.Flying)
-                {
-                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
-                    _physicSimu.ConstraintOnlyMode = true;
-                }
-#endif
+                //Collision detection not activated oustide debug mode when flying !
+//#if !DEBUG
+//                else if (value == EntityDisplacementModes.Flying)
+//                {
+//                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+//                    _physicSimu.ConstraintOnlyMode = true;
+//                }
+//#endif
                 else
                 {
                     _physicSimu.StopSimulation();

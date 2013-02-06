@@ -8,6 +8,7 @@ using S33M3Resources.Structs;
 using System;
 using System.Diagnostics;
 using Utopia.Shared.LandscapeEntities;
+using Utopia.Action;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -36,6 +37,7 @@ namespace Utopia.Worlds.Chunks
         #region Private variables
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
+        private int _sliceValue = -1;
         #endregion
 
         #region Public variables/properties
@@ -52,6 +54,12 @@ namespace Utopia.Worlds.Chunks
                 var transparentChunk = _transparentChunks[i];
                 transparentChunk.PopUpValue.BackUpValue();
                 transparentChunk.PopUpValue.Value -= 0.02f;
+            }
+
+            //slicing view of the chunk only if player is in God mode !
+            if (_playerManager.DisplacementMode == Shared.Entities.EntityDisplacementModes.God)
+            {
+                SlicingUpdate(timeSpend);
             }
         }
 
@@ -341,6 +349,37 @@ namespace Utopia.Worlds.Chunks
             }
         }
         #endregion
+
+
+        //Landscape chunk Slicing visualization Handling
+        private void SlicingUpdate(GameTime timeSpend)
+        {
+            if (SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerUp))
+            {
+                if (_sliceValue == -1) _sliceValue = (int)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y;
+                _sliceValue++;
+                RefreshSlicedChunks();
+            }
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerDown))
+            {
+                if (_sliceValue == -1) _sliceValue = (int)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y;
+                _sliceValue--;
+                RefreshSlicedChunks();
+            }
+        }
+
+        private void RefreshSlicedChunks()
+        {
+            //Get all chunks to be sliced = 9 first chunk that have been sorted from player position
+            for (int i = 0; i < 9; i++)
+            {
+                SortedChunks[i].SliceValue = _sliceValue;
+                SortedChunks[i].State = ChunkState.OuterLightSourcesProcessed;
+            }
+        }
 
         #endregion
     }

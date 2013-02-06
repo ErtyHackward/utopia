@@ -34,6 +34,7 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Ninject;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.LandscapeEntities;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -92,6 +93,7 @@ namespace Utopia.Worlds.Chunks
         private VoxelModelManager _voxelModelManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private UtopiaProcessorParams _utopiaProcessorParam;
+        private InputsManager _inputsManager;
         /// <summary>
         /// List of chunks that still _slowly_ appearing
         /// </summary>
@@ -166,7 +168,8 @@ namespace Utopia.Worlds.Chunks
                            SharedFrameCB sharedFrameCB,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
-                           IChunkEntityImpactManager chunkEntityImpactManager
+                           IChunkEntityImpactManager chunkEntityImpactManager,
+                           InputsManager inputsManager
             )
         {
             _server = server;
@@ -190,6 +193,7 @@ namespace Utopia.Worlds.Chunks
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
+            _inputsManager = inputsManager;
 
             _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
 
@@ -628,7 +632,6 @@ namespace Utopia.Worlds.Chunks
 
                     //Create the new VisualChunk
                     chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
-                    chunk.SoundEngine = SoundEngine;
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);
