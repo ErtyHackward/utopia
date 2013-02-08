@@ -50,10 +50,16 @@ namespace S33M3CoreComponents.Cameras
 
         #endregion
 
-        public CameraManager(InputsManager inputManager, WorldFocusManager worldFocusManager)
+        public CameraManager(TCamType camera = null)
+            : this(null, null, camera)
+        {
+        }
+
+        public CameraManager(InputsManager inputManager, WorldFocusManager worldFocusManager, TCamType camera = null)
         {
             _inputManager = inputManager;
             _worldFocusManager = worldFocusManager;
+            if (camera != null) RegisterNewCamera(camera);
         }
 
         #region Public methods
