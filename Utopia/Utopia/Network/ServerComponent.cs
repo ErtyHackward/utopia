@@ -167,7 +167,7 @@ namespace Utopia.Network
 
             Address = address;
 
-            if(ServerConnection != null) 
+            if (ServerConnection != null)
                 ServerConnection.Dispose();
             ServerConnection = new ServerConnection();
             return true;
@@ -178,7 +178,7 @@ namespace Utopia.Network
             Login = userName;
             DisplayName = displayName;
 
-            if(ServerConnection.LoggedOn)
+            if (ServerConnection.LoggedOn)
                 ServerConnection.Disconnect();
             
             ServerConnection.Login = userName;

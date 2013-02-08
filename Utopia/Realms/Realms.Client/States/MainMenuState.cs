@@ -88,14 +88,8 @@ namespace Realms.Client.States
 
         void MenuMultiplayerPressed(object sender, EventArgs e)
         {
-#if DEBUG
-
             _vars.SinglePlayer = false;
             StatesManager.ActivateGameStateAsync("SelectServer");
-#else
-            var gui = _iocContainer.Get<GuiManager>();
-            gui.MessageBox("Multiplayer is not yet available.");
-#endif
         }
 
         void MenuSinglePlayerPressed(object sender, EventArgs e)
