@@ -55,7 +55,7 @@ namespace Realms.Client.States
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }
 
-        void WebApiServerListReceived(object sender, WebEventArgs<ServerListResponse> e)
+        void WebApiServerListReceived(object sender, ServerListResponse e)
         {
             var selection = _iocContainer.Get<ServerSelectionComponent>();
 
@@ -63,13 +63,13 @@ namespace Realms.Client.States
             {
                 selection.List.Items.Clear();
 
-                if (e.Response.Servers != null)
+                if (e.Servers != null)
                 {
-                    foreach (var serverInfo in e.Response.Servers)
+                    foreach (var serverInfo in e.Servers)
                     {
                         selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount) );
                     }
-                    ServerList = e.Response.Servers;
+                    ServerList = e.Servers;
                 }
             }
             else

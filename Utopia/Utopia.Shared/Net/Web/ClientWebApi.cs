@@ -32,9 +32,9 @@ namespace Utopia.Shared.Net.Web
         /// <summary>
         /// Occurs when server list is received
         /// </summary>
-        public event EventHandler<WebEventArgs<ServerListResponse>> ServerListReceived;
+        public event EventHandler<ServerListResponse> ServerListReceived;
 
-        private void OnServerListReceived(WebEventArgs<ServerListResponse> e)
+        private void OnServerListReceived(ServerListResponse e)
         {
             var handler = ServerListReceived;
             if (handler != null) handler(this, e);
@@ -59,7 +59,7 @@ namespace Utopia.Shared.Net.Web
         public void GetServersListAsync()
         {
             CheckToken();
-            PostRequestAsync<WebEventArgs<ServerListResponse>>(ServerUrl + "/servers", "", OnServerListReceived);
+            GetRequestAsync<ServerListResponse>(ServerUrl + string.Format("/api/servers?access_token={0}", Token), OnServerListReceived);
         }
     }
 }

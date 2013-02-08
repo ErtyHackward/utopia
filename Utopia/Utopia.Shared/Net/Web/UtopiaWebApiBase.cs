@@ -40,7 +40,8 @@ namespace Utopia.Shared.Net.Web
                         using (var respStream = responce.GetResponseStream())
                         using (var streamReader = new StreamReader(respStream))
                         {
-                            ea = JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                            var str = streamReader.ReadToEnd();
+                            ea = JsonConvert.DeserializeObject<T>(str);
                         }
                     }
                     catch (Exception x)
@@ -118,7 +119,8 @@ namespace Utopia.Shared.Net.Web
             using (var respStream = response.GetResponseStream())
             using (var streamReader = new StreamReader(respStream))
             {
-                return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                var str = streamReader.ReadToEnd();
+                return JsonConvert.DeserializeObject<T>(str);
             }
         }
 
