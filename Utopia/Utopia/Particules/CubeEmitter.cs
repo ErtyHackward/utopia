@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3CoreComponents.Particules;
 using S33M3CoreComponents.Particules.Interfaces;

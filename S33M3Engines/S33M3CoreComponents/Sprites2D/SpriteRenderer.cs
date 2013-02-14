@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using S33M3CoreComponents.Sprites2D;
+using S33M3DXEngine.Main;
 using SharpDX;
 using S33M3CoreComponents.Sprites2D.Interfaces;
 using S33M3DXEngine;
@@ -10,7 +11,6 @@ using S33M3Resources.Structs;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.Structs.Vertex;
 using Rectangle = SharpDX.Rectangle;
-using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sprites2D
 {

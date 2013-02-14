@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using SharpDX;
 using Utopia.GUI;
-using S33M3_DXEngine.Main;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.Settings;
 using S33M3DXEngine;

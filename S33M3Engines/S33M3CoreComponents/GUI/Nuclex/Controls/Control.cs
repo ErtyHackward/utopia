@@ -21,6 +21,7 @@ License along with this library
 using System;
 using System.Linq;
 using System.Windows.Forms.VisualStyles;
+using S33M3DXEngine.Main;
 using SharpDX;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -28,7 +29,6 @@ using System.Diagnostics;
 using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
 using S33M3Resources.Structs;
-using S33M3_DXEngine.Main;
 using Color = SharpDX.Color;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
@@ -82,6 +82,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             get { return _color; }
             set { _color = value; ColorSet = true; }
         }
+
+        /// <summary>
+        /// If true the control will fire tooltip event
+        /// </summary>
+        public bool ToolTipEnabled { get; set; }
 
         public override void BeforeDispose()
         {

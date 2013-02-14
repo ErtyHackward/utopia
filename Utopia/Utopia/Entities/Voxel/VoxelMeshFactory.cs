@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using S33M3DXEngine.Main;
 using SharpDX;
 using SharpDX.Direct3D;
 using Utopia.Shared.Chunks;
@@ -8,7 +9,6 @@ using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
-using S33M3_DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
 {

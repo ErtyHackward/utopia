@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -11,7 +12,6 @@ using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Rectangle = SharpDX.Rectangle;
 using S33M3DXEngine.Effects.HLSLFramework;
-using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Sprites2D
 {

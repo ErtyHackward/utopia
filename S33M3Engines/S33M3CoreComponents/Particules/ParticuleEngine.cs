@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Particules.Interfaces;
 using S33M3DXEngine;
 using S33M3DXEngine.Effects.HLSLFramework;

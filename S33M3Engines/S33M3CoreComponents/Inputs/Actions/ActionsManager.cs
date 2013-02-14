@@ -7,8 +7,8 @@ using S33M3CoreComponents.Inputs.MouseHandler;
 using S33M3DXEngine;
 using System.Diagnostics;
 using System.Reflection;
+using S33M3DXEngine.Main;
 using SharpDX;
-using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.Inputs.Actions
 {
