@@ -68,6 +68,19 @@ namespace Utopia.GUI
 
             _inputManager.KeyboardManager.IsRunning = true;
             IsHided = false;
+
+            _screen.ToolTipShow += _screen_ToolTipShow;
+            _screen.ToolTipHide += _screen_ToolTipHide;
+        }
+
+        void _screen_ToolTipHide(object sender, EventArgs e)
+        {
+            
+        }
+
+        void _screen_ToolTipShow(object sender, ToolTipEventArgs e)
+        {
+            
         }
 
         private void SelectSlot(int index)
