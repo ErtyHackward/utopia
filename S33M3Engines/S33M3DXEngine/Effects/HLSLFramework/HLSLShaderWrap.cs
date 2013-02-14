@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
 using SharpDX.D3DCompiler;
 using Buffer = SharpDX.Direct3D11.Buffer;
@@ -11,7 +12,6 @@ using SharpDX;
 using System.IO;
 using S33M3DXEngine.VertexFormat;
 using S33M3DXEngine.Debug;
-using S33M3_DXEngine.Main;
 
 namespace S33M3DXEngine.Effects.HLSLFramework
 {

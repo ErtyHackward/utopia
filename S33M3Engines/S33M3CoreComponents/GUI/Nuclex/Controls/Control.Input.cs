@@ -18,14 +18,15 @@ License along with this library
 */
 #endregion
 
-using System; using SharpDX;
+using System;
+using S33M3DXEngine.Main;
+using SharpDX;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using S33M3CoreComponents.GUI.Nuclex.Input;
 using System.Windows.Forms;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Interfaces;
-using S33M3_DXEngine.Main;
 
 namespace S33M3CoreComponents.GUI.Nuclex.Controls
 {

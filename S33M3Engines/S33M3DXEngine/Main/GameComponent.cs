@@ -5,7 +5,6 @@ using System.Text;
 using S33M3DXEngine.Main.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D11;
-using S33M3_DXEngine.Main;
 
 namespace S33M3DXEngine.Main
 {

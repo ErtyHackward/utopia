@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
+using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
 using S33M3Resources.Effects.Sprites;
 using S33M3Resources.Structs;

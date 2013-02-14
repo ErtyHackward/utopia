@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3DXEngine.Main;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System.Drawing.Text;
@@ -13,7 +14,6 @@ using RectangleF = SharpDX.RectangleF;
 using Color = SharpDX.Color;
 using SharpDX.Direct3D;
 using S33M3CoreComponents.Config;
-using S33M3_DXEngine.Main;
 using S33M3CoreComponents.Unsafe;
 
 namespace S33M3CoreComponents.Sprites2D

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3DXEngine.Main;
 using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Direct3D11;
 using SharpDX.Direct3D;
-using S33M3_DXEngine.Main;
 
 namespace S33M3DXEngine.Textures
 {

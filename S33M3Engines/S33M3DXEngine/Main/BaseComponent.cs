@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SharpDX;
+﻿using SharpDX;
 
-namespace S33M3_DXEngine.Main
+namespace S33M3DXEngine.Main
 {
     public class BaseComponent : Component
     {
