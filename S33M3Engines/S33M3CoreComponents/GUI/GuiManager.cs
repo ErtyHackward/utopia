@@ -236,6 +236,8 @@ namespace S33M3CoreComponents.GUI
 
             DialogClosed = false;
             InjectMouseInput();
+
+            _screen.Update();
         }
 
         public void MessageBox(string message, string title = "", string[] buttonsText = null, System.Action<string> action = null)

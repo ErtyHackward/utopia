@@ -86,7 +86,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
         /// <summary>
         /// If true the control will fire tooltip event
         /// </summary>
-        public bool ToolTipEnabled { get; set; }
+        public virtual bool ToolTipEnabled { get; set; }
 
         public override void BeforeDispose()
         {

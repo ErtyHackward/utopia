@@ -595,12 +595,24 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             if (!_toolTipActive && ((DateTime.Now - _tooltipTimeout).TotalMilliseconds >= TooltipTimeout))
             {
-                if (activatedControl != null && activatedControl.ToolTipEnabled)
+
+
+                if (GetTopControl().ToolTipEnabled)
                 {
-                    OnToolTipShow(new ToolTipEventArgs { Control = activatedControl, CursorPos = _prevMousePos });
+                    OnToolTipShow(new ToolTipEventArgs { Control = desktopControl.MouseOverControl, CursorPos = _prevMousePos });
                     _toolTipActive = true;
                 }
             }
+        }
+
+        public Control GetTopControl(Control c = null)
+        {
+            if (c == null)
+                c = desktopControl;
+
+            if (c.MouseOverControl != null && c.MouseOverControl != c)
+                return GetTopControl(c.MouseOverControl);
+            return c;
         }
 
         private void HideToolTip()

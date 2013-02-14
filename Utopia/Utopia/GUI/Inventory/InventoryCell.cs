@@ -114,7 +114,16 @@ namespace Utopia.GUI.Inventory
         /// <summary>
         /// Special string to display instead of the count
         /// </summary>
-        public string CountString { get; set; } 
+        public string CountString { get; set; }
+
+        public override bool ToolTipEnabled
+        {
+            get { return base.ToolTipEnabled && Slot != null; }
+            set
+            {
+                base.ToolTipEnabled = value;
+            }
+        }
 
         public event EventHandler<MouseDownEventArgs> MouseUp;
 
@@ -163,6 +172,7 @@ namespace Utopia.GUI.Inventory
             InventoryPosition = position;
             DrawCellBackground = true;
             DrawIconsGroupId = 2;
+            base.ToolTipEnabled = true;
         }
 
         protected override void OnMouseEntered()
