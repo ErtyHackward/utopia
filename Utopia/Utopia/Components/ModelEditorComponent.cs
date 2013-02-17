@@ -1545,7 +1545,8 @@ namespace Utopia.Components
         /// <param name="timeSpent">Provides a snapshot of timing values.</param>
         public override void FTSUpdate( GameTime timeSpent)
         {
-            if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null || GuiManager.DialogClosed ) return;
+            if (_visualVoxelModel == null || !_d3DEngine.HasFocus || DialogHelper.DialogBg.Parent != null || GuiManager.DialogClosed) 
+                return;
 
             if ( _gui.Screen.IsMouseOverGui)
             {
@@ -1666,6 +1667,13 @@ namespace Utopia.Components
                                         _translatePoint = intersectPoint;
                                     }
                                 }
+
+                                if (translationVector.Length() > 3f)
+                                {
+                                    _translatePoint = intersectPoint;
+                                    translationVector = Vector3.Zero;
+                                }
+
                                 if (_cursorMode)
                                 {
                                     _cursorPoint += translationVector;
