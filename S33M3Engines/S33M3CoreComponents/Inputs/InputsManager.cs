@@ -59,9 +59,9 @@ namespace S33M3CoreComponents.Inputs
 
         public override void FTSUpdate(GameTime timeSpent)
         {
-            ActionsManager.FetchInputs();
             if (_isFixTimeStepMode)
             {
+                ActionsManager.FetchInputs();
                 ActionsManager.Update();
                 MouseManager.Update();
                 KeyboardManager.Update();
