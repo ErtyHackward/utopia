@@ -86,7 +86,7 @@ namespace S33M3CoreComponents.Components.Debug
         {
             _font = ToDispose(new SpriteFont());
             _font.Initialize("Lucida Console", 10f, System.Drawing.FontStyle.Regular, true, _d3dEngine.Device);
-            _spriteRender = ToDispose(new SpriteRenderer(_d3dEngine));
+            _spriteRender = ToDispose(new SpriteRenderer(_d3dEngine, true));
         }
 
         /// <summary>

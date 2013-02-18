@@ -198,7 +198,7 @@ namespace Utopia.Particules
             RefreshExistingParticules(timeSpend.ElapsedGameTimeInS_LD);
         }
 
-        public void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             ColoredParticule p;
             for (int i = 0; i < _particules.Count; i++)

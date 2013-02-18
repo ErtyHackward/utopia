@@ -72,12 +72,12 @@ namespace Utopia.GUI.Crafting
             GuiManager.Screen.Desktop.Children.Remove(CraftingWindow);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (CraftingWindow.ModelControl.ManualRotation)
                 return;
-            
-            CraftingWindow.ModelControl.Rotation *= Quaternion.RotationYawPitchRoll(elapsedTime * 0.001f, 0, 0);
+
+            CraftingWindow.ModelControl.Rotation *= Quaternion.RotationYawPitchRoll(elapsedTime, 0, 0);
 
         }
 

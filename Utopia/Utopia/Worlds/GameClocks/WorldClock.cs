@@ -89,7 +89,7 @@ namespace Utopia.Worlds.GameClocks
 
         #region Private methods
         //A freeze did occurded in the client rendering loop, ask server current datetime for syncing.
-        private void Game_OnRenderLoopFrozen(long frozenTime)
+        private void Game_OnRenderLoopFrozen(float frozenTime)
         {
             _server.ServerConnection.Send(new RequestDateTimeSyncMessage());
         }

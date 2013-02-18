@@ -119,7 +119,7 @@ namespace Utopia.Worlds.GameClocks
         {
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             float recomputedClock = _clockTime.Value;
             if (_clockTime.Value < _clockTime.ValuePrev)

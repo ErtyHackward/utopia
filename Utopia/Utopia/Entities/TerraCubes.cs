@@ -82,8 +82,8 @@ namespace Utopia.Entities
 
                 pack.Mesh = _cubeMeshBluePrint.Clone(materialChangeMapping);
                 
-                pack.Vb = ToDispose(new VertexBuffer<VertexMesh>(_d3DEngine.Device, _cubeMeshBluePrint.Vertices.Length, VertexMesh.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
-                pack.Ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
+                pack.Vb = ToDispose(new VertexBuffer<VertexMesh>(_d3DEngine.Device, _cubeMeshBluePrint.Vertices.Length, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
+                pack.Ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, _cubeMeshBluePrint.Indices.Length, "Block IB"));
 
                 pack.Vb.SetData(_d3DEngine.ImmediateContext, pack.Mesh.Vertices);
                 pack.Ib.SetData(_d3DEngine.ImmediateContext, pack.Mesh.Indices);

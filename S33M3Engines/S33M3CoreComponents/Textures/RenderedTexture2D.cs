@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using S33M3DXEngine.Main;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using S33M3DXEngine;
 using SharpDX;
 using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs;
+using S33M3DXEngine.Main;
 
 namespace S33M3CoreComponents.Textures
 {

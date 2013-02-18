@@ -282,7 +282,7 @@ namespace Utopia.Sounds
             base.LoadContent(context);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _listenerPosition = _cameraManager.ActiveCamera.WorldPosition.Value.AsVector3();
             //Set current camera Position

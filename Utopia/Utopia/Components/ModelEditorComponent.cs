@@ -546,10 +546,10 @@ namespace Utopia.Components
 
             var indices = new ushort[] { 0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 2, 6, 1, 5, 3, 7 };
 
-            _boxVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 8, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorBox_vertexBuffer");
+            _boxVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, 8, PrimitiveTopology.LineList, "EditorBox_vertexBuffer");
             _boxVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
-            _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine.Device, indices.Length, SharpDX.DXGI.Format.R16_UInt, "EditorBox_indexBuffer");
+            _boxIndexBuffer = new IndexBuffer<ushort>(_d3DEngine.Device, indices.Length, "EditorBox_indexBuffer");
             _boxIndexBuffer.SetData(_d3DEngine.ImmediateContext, indices);
             
             ptList.Clear();
@@ -559,7 +559,7 @@ namespace Utopia.Components
             ptList.Add(new VertexPosition(new Vector3(0, -1,  0)));
             ptList.Add(new VertexPosition(new Vector3(0,  1,  0)));
 
-            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
+            _crosshairVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, PrimitiveTopology.LineList, "EditorCrosshair_vertexBuffer");
             _crosshairVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             ptList.Clear();
@@ -570,14 +570,14 @@ namespace Utopia.Components
             ptList.Add(new VertexPosition(new Vector3( 0, 0, 0)));
             ptList.Add(new VertexPosition(new Vector3( 0, 0, 1)));
 
-            _directionVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorDirection_vertexBuffer");
+            _directionVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, PrimitiveTopology.LineList, "EditorDirection_vertexBuffer");
             _directionVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             ptList.Clear();
             ptList.Add(new VertexPosition(new Vector3(0, 0, 0)));
             ptList.Add(new VertexPosition(new Vector3(1, 0, 0)));
             
-            _rotationVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorRotation_vertexBuffer");
+            _rotationVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, PrimitiveTopology.LineList, "EditorRotation_vertexBuffer");
             _rotationVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             ptList.Clear();
@@ -587,7 +587,7 @@ namespace Utopia.Components
             ptList.Add(new VertexPosition(new Vector3(-0.5f, 0.8f, 0)));
             ptList.Add(new VertexPosition(new Vector3(0.5f, 0.8f, 0)));
 
-            _toolVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorTool_vertexBuffer");
+            _toolVertexBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, ptList.Count, PrimitiveTopology.LineList, "EditorTool_vertexBuffer");
             _toolVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
@@ -1439,12 +1439,12 @@ namespace Utopia.Components
 
         #endregion
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
-            if (timePassed == 0)
-                timePassed = 1;
+            if (elapsedTime == 0)
+                elapsedTime = 0.001f;
             if (_instance != null)
-                _instance.Interpolation(timePassed);
+                _instance.Interpolation(elapsedTime);
         }
 
         private void UpdateCamera()
@@ -2601,7 +2601,7 @@ namespace Utopia.Components
                     _xGridVertextBuffer.Dispose();
                 var list = new List<VertexPosition>();
                 FillGrid(list, size.X, size.Z);
-                _xGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorXGrid");
+                _xGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, PrimitiveTopology.LineList, "EditorXGrid");
                 _xGridVertextBuffer.SetData(_d3DEngine.ImmediateContext, list.ToArray());
             }
 
@@ -2611,7 +2611,7 @@ namespace Utopia.Components
                     _yGridVertextBuffer.Dispose();
                 var list = new List<VertexPosition>();
                 FillGrid(list, size.X, size.Y);
-                _yGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorYGrid");
+                _yGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, PrimitiveTopology.LineList, "EditorYGrid");
                 _yGridVertextBuffer.SetData(_d3DEngine.ImmediateContext ,list.ToArray());
             }
 
@@ -2621,7 +2621,7 @@ namespace Utopia.Components
                     _zGridVertextBuffer.Dispose();
                 var list = new List<VertexPosition>();
                 FillGrid(list, size.Z, size.Y);
-                _zGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, VertexPosition.VertexDeclaration, PrimitiveTopology.LineList, "EditorYGrid");
+                _zGridVertextBuffer = new VertexBuffer<VertexPosition>(_d3DEngine.Device, list.Count, PrimitiveTopology.LineList, "EditorYGrid");
                 _zGridVertextBuffer.SetData(_d3DEngine.ImmediateContext, list.ToArray());
             }
 

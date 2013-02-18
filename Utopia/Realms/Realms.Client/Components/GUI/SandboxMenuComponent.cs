@@ -71,10 +71,9 @@ namespace Realms.Client.Components.GUI
 
             _staticBlockVB = ToDispose(new VertexBuffer<VertexMesh>(_engine.Device,
                                                            _meshBluePrint.Vertices.Length,
-                                                           VertexMesh.VertexDeclaration,
                                                            SharpDX.Direct3D.PrimitiveTopology.TriangleList,
                                                            "rotatingBlockVB"));
-            _staticBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "rotatingBlockIB"));
+            _staticBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, "rotatingBlockIB"));
 
             _cubeShader = ToDispose(new HLSLLoadingCube(_engine.Device,
                                         ClientSettings.EffectPack + @"Entities/LoadingCube.hlsl",
@@ -133,7 +132,7 @@ namespace Realms.Client.Components.GUI
             }
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             foreach (RotationCube cube in _rotatingCubes)
             {

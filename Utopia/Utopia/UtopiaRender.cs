@@ -38,7 +38,7 @@ namespace Utopia
         }
 
         public UtopiaRender(D3DEngine engine, InputsManager inputManager, bool withComObjectDisposeTracking)
-            : base(engine, withComObjectDisposeTracking)
+            : base(engine, withComObjectDisposeTracking ,withFullDebug:true)
         {
             _inputManager = inputManager;
 
@@ -75,9 +75,9 @@ namespace Utopia
             InputHandling();
         }
 
-        public override void VTSUpdate(double interpolation_hd, float interpolation_ld, long timePassed)
+        public override void VTSUpdate(double interpolation_hd, float interpolation_ld, float elapsedTime)
         {
-            base.VTSUpdate(interpolation_hd, interpolation_ld, timePassed);
+            base.VTSUpdate(interpolation_hd, interpolation_ld, elapsedTime);
         }
 
         private void InputHandling()

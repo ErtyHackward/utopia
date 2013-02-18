@@ -49,7 +49,7 @@ namespace Utopia.Worlds.SkyDomes
             _lightDirection.Value.Normalize();
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _lightDirection.ValueInterp = Vector3.Lerp(_lightDirection.ValuePrev, _lightDirection.Value, interpolationLd);
             _lightDirection.ValueInterp.Normalize();

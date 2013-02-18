@@ -36,16 +36,16 @@ namespace Utopia.Worlds.SkyDomes
 
         private VertexBuffer<VertexPositionNormalTexture> _domeVertexBuffer;
         private VertexBuffer<VertexPositionTexture> _moonVertexBuffer;
-        private IndexBuffer<short> _domeIndexBuffer, _moonIndexBuffer;
+        private IndexBuffer<ushort> _domeIndexBuffer, _moonIndexBuffer;
         private VertexPositionNormalTexture[] _domeVerts;
-        short[] _domeIb;
+        ushort[] _domeIb;
         private int DomeN;
         private int DVSize;
         private int DISize;
 
         // Moon Mesh building Variables
         private VertexPositionTexture[] _moonVerts;
-        private short[] _moonIb;
+        private ushort[] _moonIb;
 
         //Drawing Objects
         private ShaderResourceView _skyTex_View, _moonTex_View, _glowTex_View;
@@ -145,10 +145,10 @@ namespace Utopia.Worlds.SkyDomes
             base.FTSUpdate(timeSpend);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
-            _clouds.VTSUpdate(interpolationHd, interpolationLd, timePassed);
-            base.VTSUpdate(interpolationHd, interpolationLd, timePassed);
+            _clouds.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+            base.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -259,63 +259,63 @@ namespace Utopia.Worlds.SkyDomes
                 }
             }
 
-            short BottomIndexMM, BottomIndexMP, BottomIndexPP, BottomIndexPM;
+            ushort BottomIndexMM, BottomIndexMP, BottomIndexPP, BottomIndexPM;
             //Closing the Dome Bottom !
-            BottomIndexMM = (short)DomeIndex;
+            BottomIndexMM = (ushort)DomeIndex;
             _domeVerts[DomeIndex] = new VertexPositionNormalTexture();
             _domeVerts[DomeIndex].Position.X = -scale;
             _domeVerts[DomeIndex].Position.Y = minY;
             _domeVerts[DomeIndex].Position.Z = -scale;
             DomeIndex++;
 
-            BottomIndexMP = (short)DomeIndex;
+            BottomIndexMP = (ushort)DomeIndex;
             _domeVerts[DomeIndex] = new VertexPositionNormalTexture();
             _domeVerts[DomeIndex].Position.X = -scale;
             _domeVerts[DomeIndex].Position.Y = minY;
             _domeVerts[DomeIndex].Position.Z = +scale;
             DomeIndex++;
 
-            BottomIndexPM = (short)DomeIndex;
+            BottomIndexPM = (ushort)DomeIndex;
             _domeVerts[DomeIndex] = new VertexPositionNormalTexture();
             _domeVerts[DomeIndex].Position.X = +scale;
             _domeVerts[DomeIndex].Position.Y = minY;
             _domeVerts[DomeIndex].Position.Z = -scale;
             DomeIndex++;
 
-            BottomIndexPP = (short)DomeIndex;
+            BottomIndexPP = (ushort)DomeIndex;
             _domeVerts[DomeIndex] = new VertexPositionNormalTexture();
             _domeVerts[DomeIndex].Position.X = +scale;
             _domeVerts[DomeIndex].Position.Y = minY;
             _domeVerts[DomeIndex].Position.Z = +scale;
 
             // Fill index buffer
-            _domeIb = new short[(DISize * 3) + 6];
+            _domeIb = new ushort[(DISize * 3) + 6];
             int index = 0;
             for (short i = 0; i < Longitude - 1; i++)
             {
                 for (short j = 0; j < Latitude - 1; j++)
                 {
-                    _domeIb[index++] = (short)(i * Latitude + j);
-                    _domeIb[index++] = (short)((i + 1) * Latitude + j);
-                    _domeIb[index++] = (short)((i + 1) * Latitude + j + 1);
+                    _domeIb[index++] = (ushort)(i * Latitude + j);
+                    _domeIb[index++] = (ushort)((i + 1) * Latitude + j);
+                    _domeIb[index++] = (ushort)((i + 1) * Latitude + j + 1);
 
-                    _domeIb[index++] = (short)((i + 1) * Latitude + j + 1);
-                    _domeIb[index++] = (short)(i * Latitude + j + 1);
-                    _domeIb[index++] = (short)(i * Latitude + j);
+                    _domeIb[index++] = (ushort)((i + 1) * Latitude + j + 1);
+                    _domeIb[index++] = (ushort)(i * Latitude + j + 1);
+                    _domeIb[index++] = (ushort)(i * Latitude + j);
                 }
             }
-            short Offset = (short)(Latitude * Longitude);
+            ushort Offset = (ushort)(Latitude * Longitude);
             for (short i = 0; i < Longitude - 1; i++)
             {
                 for (short j = 0; j < Latitude - 1; j++)
                 {
-                    _domeIb[index++] = (short)(Offset + i * Latitude + j);
-                    _domeIb[index++] = (short)(Offset + (i + 1) * Latitude + j + 1);
-                    _domeIb[index++] = (short)(Offset + (i + 1) * Latitude + j);
+                    _domeIb[index++] = (ushort)(Offset + i * Latitude + j);
+                    _domeIb[index++] = (ushort)(Offset + (i + 1) * Latitude + j + 1);
+                    _domeIb[index++] = (ushort)(Offset + (i + 1) * Latitude + j);
 
-                    _domeIb[index++] = (short)(Offset + i * Latitude + j + 1);
-                    _domeIb[index++] = (short)(Offset + (i + 1) * Latitude + j + 1);
-                    _domeIb[index++] = (short)(Offset + i * Latitude + j);
+                    _domeIb[index++] = (ushort)(Offset + i * Latitude + j + 1);
+                    _domeIb[index++] = (ushort)(Offset + (i + 1) * Latitude + j + 1);
+                    _domeIb[index++] = (ushort)(Offset + i * Latitude + j);
                 }
             }
 
@@ -372,7 +372,7 @@ namespace Utopia.Worlds.SkyDomes
                                 new Vector3(MoonScale,MoonScale,0),
                                 new Vector2(1,0))
                         };
-            _moonIb = new short[] { 0, 2, 1, 2, 0, 3 };
+            _moonIb = new ushort[] { 0, 2, 1, 2, 0, 3 };
         }
 
         private void DrawingMoon(DeviceContext context)
@@ -433,15 +433,15 @@ namespace Utopia.Worlds.SkyDomes
         {
             //Copy Dome to graphic buffers
             //SkyDome
-            _domeIndexBuffer = new IndexBuffer<short>(_d3dEngine.Device, _domeIb.Length, SharpDX.DXGI.Format.R16_UInt, "_domeIndexBuffer");
+            _domeIndexBuffer = new IndexBuffer<ushort>(_d3dEngine.Device, _domeIb.Length, "_domeIndexBuffer");
             _domeIndexBuffer.SetData(_d3dEngine.ImmediateContext, _domeIb);
-            _domeVertexBuffer = new VertexBuffer<VertexPositionNormalTexture>(_d3dEngine.Device, _domeVerts.Length, VertexPositionNormalTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_domeVertexBuffer");
+            _domeVertexBuffer = new VertexBuffer<VertexPositionNormalTexture>(_d3dEngine.Device, _domeVerts.Length, PrimitiveTopology.TriangleList, "_domeVertexBuffer");
             _domeVertexBuffer.SetData(_d3dEngine.ImmediateContext,_domeVerts);
 
             //Moon
-            _moonVertexBuffer = new VertexBuffer<VertexPositionTexture>(_d3dEngine.Device, _moonVerts.Length, VertexPositionTexture.VertexDeclaration, PrimitiveTopology.TriangleList, "_moonVertexBuffer");
+            _moonVertexBuffer = new VertexBuffer<VertexPositionTexture>(_d3dEngine.Device, _moonVerts.Length,  PrimitiveTopology.TriangleList, "_moonVertexBuffer");
             _moonVertexBuffer.SetData(_d3dEngine.ImmediateContext,_moonVerts);
-            _moonIndexBuffer = new IndexBuffer<short>(_d3dEngine.Device, _moonIb.Length, SharpDX.DXGI.Format.R16_UInt, "_moonIndexBuffer");
+            _moonIndexBuffer = new IndexBuffer<ushort>(_d3dEngine.Device, _moonIb.Length, "_moonIndexBuffer");
             _moonIndexBuffer.SetData(_d3dEngine.ImmediateContext,_moonIb);
         }
         #endregion

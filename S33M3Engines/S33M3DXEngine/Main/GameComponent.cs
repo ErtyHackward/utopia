@@ -136,7 +136,7 @@ namespace S33M3DXEngine.Main
         {
         }
 
-        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
         }
 

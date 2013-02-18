@@ -47,9 +47,9 @@ namespace Utopia.Worlds.Weather
             Wind.FTSUpdate(timeSpend);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
-            Wind.VTSUpdate(interpolationHd, interpolationLd, timePassed);
+            Wind.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
         #endregion 
 

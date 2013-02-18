@@ -36,9 +36,15 @@ namespace S33M3CoreComponents.Sprites2D
 
         private SpriteDrawBuffer _spriteBuffer;
         private bool _isScissorMode;
+        private bool _withAlphaClip;
         #endregion
 
         #region Public variables
+        public int BlendStateId
+        {
+            get { return _blendStateId; }
+            set { _blendStateId = value; }
+        }
 
         public SamplerState SpriteSamplerClamp
         {
@@ -63,16 +69,16 @@ namespace S33M3CoreComponents.Sprites2D
         public int SpritesDraw;
         #endregion
 
-        public SpriteRenderer(D3DEngine d3DEngine)
-            : this(d3DEngine, @"Effects\Sprites\Sprites2.hlsl")
+        public SpriteRenderer(D3DEngine d3DEngine, bool withAlphaClip = true)
+            : this(d3DEngine, @"Effects\Sprites\Sprites2.hlsl", withAlphaClip)
         {
-
         }
 
-        public SpriteRenderer(D3DEngine d3DEngine, string shaderFilePath)
+        public SpriteRenderer(D3DEngine d3DEngine, string shaderFilePath, bool withAlphaClip = true)
         {
             _d3DEngine = d3DEngine;
             _shaderFilePath = shaderFilePath;
+            _withAlphaClip = withAlphaClip;
             Initialize();
         }
 
@@ -123,7 +129,7 @@ namespace S33M3CoreComponents.Sprites2D
             }
         }
 
-        public void End(DeviceContext context)
+        public void End(DeviceContext context, bool unbindResource = false)
         {
             //ForEach sprite group
             foreach (SpriteDrawInfo spriteGroup in _spriteBuffer.GetAllSpriteGroups())
@@ -147,6 +153,12 @@ namespace S33M3CoreComponents.Sprites2D
                 DrawCalls++;
                 SpritesDraw += _ib.IndicesCount / 6;
             }
+
+            //Will unbind the used resource but the shadder (Not needed if resources (textures) are not shares with another components)
+            if (unbindResource)
+            {
+                _effect.UnBindResources(context);
+            }
         }
 
         /// <summary>
@@ -163,7 +175,17 @@ namespace S33M3CoreComponents.Sprites2D
             Draw(spriteTexture, ref position, ref size, ref color, textureArrayIndex, drawGroupId);
         }
 
+        public void Draw(SpriteTexture spriteTexture, Rectangle destRect, ByteColor color, int textureArrayIndex = 0, int drawGroupId = 0)
+        {
+            Draw(spriteTexture, ref destRect, ref color, textureArrayIndex, drawGroupId);
+        }
+
         public void Draw(SpriteTexture spriteTexture, ref Vector2 position, ref Vector2 size, ref ByteColor color, int textureArrayIndex = 0, int drawGroupId = 0)
+        {
+            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, textureArrayIndex, ref color, drawGroupId);
+        }
+
+        public void Draw(SpriteTexture spriteTexture, Vector2 position, Vector2 size, ByteColor color, int textureArrayIndex = 0, int drawGroupId = 0)
         {
             _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, textureArrayIndex, ref color, drawGroupId);
         }
@@ -364,10 +386,10 @@ namespace S33M3CoreComponents.Sprites2D
             {
                 blendDescr.RenderTarget[i].IsBlendEnabled = true;
                 blendDescr.RenderTarget[i].BlendOperation = BlendOperation.Add;
-                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Add;
+                blendDescr.RenderTarget[i].AlphaBlendOperation = BlendOperation.Maximum;
                 blendDescr.RenderTarget[i].DestinationBlend = BlendOption.InverseSourceAlpha;
                 blendDescr.RenderTarget[i].DestinationAlphaBlend = BlendOption.One;
-                blendDescr.RenderTarget[i].SourceBlend = BlendOption.One;
+                blendDescr.RenderTarget[i].SourceBlend = BlendOption.SourceAlpha;
                 blendDescr.RenderTarget[i].SourceAlphaBlend = BlendOption.One;
                 blendDescr.RenderTarget[i].RenderTargetWriteMask = ColorWriteMaskFlags.All;
             }
@@ -394,11 +416,11 @@ namespace S33M3CoreComponents.Sprites2D
             });
 
             //Create the effect and set the default texture sampler
-            _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device, _shaderFilePath));
+            _effect = ToDispose(new HLSLSprites2(_d3DEngine.Device, _withAlphaClip, _shaderFilePath));
 
             //Buffer creation
-            _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, VertexSprite2.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Dynamic, 20));
-            _ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 24, SharpDX.DXGI.Format.R16_UInt, "SpriteRenderer2 IB", 20, ResourceUsage.Dynamic));
+            _vb = ToDispose(new VertexBuffer<VertexSprite2>(_d3DEngine.Device, 16, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "SpriteRenderer2 VB", ResourceUsage.Dynamic, 20));
+            _ib = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 24, "SpriteRenderer2 IB", 20, ResourceUsage.Dynamic));
 
             //Sprite buffer creation
             _spriteBuffer = new SpriteDrawBuffer();

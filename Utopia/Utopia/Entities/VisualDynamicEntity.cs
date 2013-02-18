@@ -186,7 +186,7 @@ namespace Utopia.Entities
         }
 
         //Draw interpolation (Before each Drawing)
-        public void Interpolation(double interpolationHd, float interpolationLd, long timePassed)
+        public void Interpolation(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             Quaternion.Slerp(ref LookAtDirection.ValuePrev, ref LookAtDirection.Value, interpolationLd, out LookAtDirection.ValueInterp);
             Quaternion.Slerp(ref MoveDirection.ValuePrev, ref MoveDirection.Value, interpolationLd, out MoveDirection.ValueInterp);
@@ -196,7 +196,7 @@ namespace Utopia.Entities
             {
                 ModelInstance.HeadRotation = Quaternion.Invert(LookAtDirection.ValueInterp);
                 ModelInstance.Rotation = Quaternion.Invert(MoveDirection.ValueInterp);
-                ModelInstance.Interpolation(timePassed);
+                ModelInstance.Interpolation(elapsedTime);
             }
         }
         #endregion

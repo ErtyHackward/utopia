@@ -74,7 +74,7 @@ namespace S33M3CoreComponents.Cameras
             ActiveCamera.FTSUpdate(timeSpend);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             ActiveCamera.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }

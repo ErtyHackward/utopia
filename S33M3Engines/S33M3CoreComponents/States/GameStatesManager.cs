@@ -232,7 +232,7 @@ namespace S33M3CoreComponents.States
 
         #region Public methods
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             //For each Pending Initizalion running
             for (int i = AsyncStateInitResults.Count - 1; i >= 0; i--)

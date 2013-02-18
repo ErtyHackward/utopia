@@ -24,6 +24,7 @@ namespace S33M3CoreComponents.Inputs
     {
         #region Private variables
         private D3DEngine _engine;
+        private bool _isFixTimeStepMode;
         #endregion
 
         #region Public variables/Properties
@@ -39,10 +40,11 @@ namespace S33M3CoreComponents.Inputs
         /// <param name="cameraManager">The Camera Manager</param>
         /// <param name="actionType">The type presenting the collection of Actions at disposal via Const variables</param>
         public InputsManager(D3DEngine engine, 
-                            Type actionType)
+                             Type actionType,
+                             bool isFixTimeStepMode = true)
         {
             _engine = engine;
-
+            _isFixTimeStepMode = isFixTimeStepMode;
             MouseManager = ToDispose(new MouseManager(_engine));
             ActionsManager = ToDispose(new ActionsManager(_engine, MouseManager, actionType));
             KeyboardManager = ToDispose(new KeyboardManager(_engine));
@@ -57,15 +59,24 @@ namespace S33M3CoreComponents.Inputs
 
         public override void FTSUpdate(GameTime timeSpent)
         {
-            ActionsManager.FetchInputs();
-            ActionsManager.Update();
-            MouseManager.Update();
-            KeyboardManager.Update();
+            if (_isFixTimeStepMode)
+            {
+                ActionsManager.FetchInputs();
+                ActionsManager.Update();
+                MouseManager.Update();
+                KeyboardManager.Update();
+            }
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             ActionsManager.FetchInputs();
+            if (_isFixTimeStepMode == false)
+            {
+                ActionsManager.Update();
+                MouseManager.Update();
+                KeyboardManager.Update();
+            }
         }
 
         #endregion

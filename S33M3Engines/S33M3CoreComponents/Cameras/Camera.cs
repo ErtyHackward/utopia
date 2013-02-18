@@ -86,6 +86,11 @@ namespace S33M3CoreComponents.Cameras
             get { return _viewProjection3D; }
         }
 
+        public Matrix View
+        {
+            get { return _view; }
+        }
+
         public float NearPlane
         {
             get { return _nearPlane; }
@@ -161,7 +166,7 @@ namespace S33M3CoreComponents.Cameras
         {
         }
 
-        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
         }
 

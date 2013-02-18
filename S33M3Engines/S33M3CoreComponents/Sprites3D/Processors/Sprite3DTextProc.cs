@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Effects.HLSLFramework;
-using S33M3DXEngine.Main;
 using S33M3Resources.Effects.Sprites;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
@@ -53,7 +53,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             _effect.SamplerDiffuse.Value = _spriteSampler;
 
             _spritesCollection = new List<VertexPointSprite3DTexCoord>();
-            _vb = new VertexBuffer<VertexPointSprite3DTexCoord>(context.Device, 16, VertexPointSprite3DTexCoord.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DProcessorTexCoord", usage, 10);
+            _vb = new VertexBuffer<VertexPointSprite3DTexCoord>(context.Device, 16, PrimitiveTopology.PointList, "VB Sprite3DProcessorTexCoord", usage, 10);
             _isCollectionDirty = false;
         }
 

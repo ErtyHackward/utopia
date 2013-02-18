@@ -37,12 +37,12 @@ namespace LtreeVisualizer.Components
         private SpriteFont _font;
 
         private VertexBuffer<VertexHLSLLTree> _vb;
-        private IndexBuffer<short> _ib;
+        private IndexBuffer<ushort> _ib;
 
         private HLSLLTree _shader;
 
         private List<VertexHLSLLTree> _letreeVertexCollection = new List<VertexHLSLLTree>();
-        private List<short> _letreeIndexCollection = new List<short>();
+        private List<ushort> _letreeIndexCollection = new List<ushort>();
 
         private bool _bufferDirty = true;
 
@@ -86,8 +86,8 @@ namespace LtreeVisualizer.Components
         {
             _shader = new HLSLLTree(context.Device, @"Shadder\LTreeVisu.hlsl", VertexHLSLLTree.VertexDeclaration);
 
-            _vb = new VertexBuffer<VertexHLSLLTree>(context.Device, 16, VertexHLSLLTree.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "VB", AutoResizePerc: 10);
-            _ib = new IndexBuffer<short>(context.Device, 32, SharpDX.DXGI.Format.R16_UInt, "IB");
+            _vb = new VertexBuffer<VertexHLSLLTree>(context.Device, 16, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "VB", AutoResizePerc: 10);
+            _ib = new IndexBuffer<ushort>(context.Device, 32, "IB");
         }
 
         float rotation = 0;
@@ -128,7 +128,7 @@ namespace LtreeVisualizer.Components
             if (rotation <= -MathHelper.TwoPi) rotation = 0;
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             float MouseRotation = 0;
             if (_inputManager.MouseManager.CurMouseState.LeftButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
@@ -191,7 +191,7 @@ namespace LtreeVisualizer.Components
             List<BlockWithPosition> result = _treeSystem.Generate(rnd, new S33M3Resources.Structs.Vector3I(), treeTemplate);
 
             _letreeVertexCollection = new List<VertexHLSLLTree>();
-            _letreeIndexCollection = new List<short>();
+            _letreeIndexCollection = new List<ushort>();
 
             MaxtreeSize.X = int.MinValue;
             MaxtreeSize.Y = int.MinValue;
@@ -231,7 +231,7 @@ namespace LtreeVisualizer.Components
 
                 foreach (var index in indicesCube)
                 {
-                    _letreeIndexCollection.Add((short)(index + vertexOffset));
+                    _letreeIndexCollection.Add((ushort)(index + vertexOffset));
                 }
 
             }

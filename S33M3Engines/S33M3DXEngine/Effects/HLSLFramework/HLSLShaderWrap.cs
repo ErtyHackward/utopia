@@ -151,7 +151,7 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                     //Get the VS Input signature from the Vertex Shader
                     _signature = ToDispose(ShaderSignature.GetInputSignature(byteCode));
                     //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
-                    _inputLayout = ToDispose(new InputLayout(device, _signature, _vertexDeclaration.Elements));
+                    if(_vertexDeclaration != null) _inputLayout = ToDispose(new InputLayout(device, _signature, _vertexDeclaration.Elements));
 
                     _vs = ToDispose(new VertexShader(device, byteCode));
 #if DEBUG
@@ -320,18 +320,21 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             if (_gs != null) context.GeometryShader.Set(_gs); else context.GeometryShader.Set(null);
             if (_ps != null) context.PixelShader.Set(_ps); else context.PixelShader.Set(null);
 
-            if (D3DEngine.SingleThreadRenderingOptimization)
+            if (_inputLayout != null)
             {
-                // Input Layout changed ?? ==> Need to send it to the InputAssembler
-                if (HLSLShaderWrap.LastEffectSet != _inputLayout.GetHashCode())
+                if (D3DEngine.SingleThreadRenderingOptimization)
+                {
+                    // Input Layout changed ?? ==> Need to send it to the InputAssembler
+                    if (HLSLShaderWrap.LastEffectSet != _inputLayout.GetHashCode())
+                    {
+                        context.InputAssembler.InputLayout = _inputLayout;
+                        HLSLShaderWrap.LastEffectSet = _inputLayout.GetHashCode();
+                    }
+                }
+                else
                 {
                     context.InputAssembler.InputLayout = _inputLayout;
-                    HLSLShaderWrap.LastEffectSet = _inputLayout.GetHashCode();
                 }
-            }
-            else
-            {
-                context.InputAssembler.InputLayout = _inputLayout;
             }
 
             //Set the constants for the Effect
@@ -372,6 +375,16 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             for (int i = 0; i < _shaderSamplers.Length; i++)
             {
                 _shaderSamplers[i].Update(context);
+            }
+        }
+
+        //Will update the Constant Buffers that have been modified set in dirty states
+        public void UnBindResources(DeviceContext context)
+        {
+            //Set the resources (forced)
+            for (int i = 0; i < _shaderResources.Length; i++)
+            {
+                _shaderResources[i].UnBindAll(context);
             }
         }
 

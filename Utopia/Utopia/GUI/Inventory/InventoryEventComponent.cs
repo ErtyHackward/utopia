@@ -87,7 +87,7 @@ namespace Utopia.GUI.Inventory
             _spriteRender = ToDispose(new SpriteRenderer(Engine));
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (( DateTime.Now - _lastUpdate ).TotalSeconds >= 3)
             {

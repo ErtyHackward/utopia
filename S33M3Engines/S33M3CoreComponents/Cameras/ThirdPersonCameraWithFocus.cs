@@ -116,21 +116,21 @@ namespace S33M3CoreComponents.Cameras
             _lookAt.Value = new Vector3(cameraRotation.M13, cameraRotation.M23, cameraRotation.M33);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (_zoomingPower != 0.0f)
             {
                 if (_zoomingPower > 0)
                 {
-                    _offsetDistance -= _zoomingStep * elapsedTime;
-                    _zoomingPower -= _zoomingStep * elapsedTime;
+                    _offsetDistance -= _zoomingStep * (float)elapsedTime;
+                    _zoomingPower -= _zoomingStep * (float)elapsedTime;
                     if (_zoomingPower < 0.0f) _zoomingPower = 0.0f;
                     if (_offsetDistance < 0.0f) _offsetDistance = 0.0f;
                 }
                 else
                 {
-                    _offsetDistance += _zoomingStep * elapsedTime;
-                    _zoomingPower += _zoomingStep * elapsedTime;
+                    _offsetDistance += _zoomingStep * (float)elapsedTime;
+                    _zoomingPower += _zoomingStep * (float)elapsedTime;
                     if (_zoomingPower > 0.0f) _zoomingPower = 0.0f;
                     if (_offsetDistance > 15.0f) _offsetDistance = 15.0f;
                 }

@@ -135,7 +135,7 @@ namespace Utopia.Entities.Renderer
 
         #region Public Methods
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             // update model color, get the cube where model is
             var result = _chunkContainer.GetCube(_player.Position);
@@ -150,7 +150,7 @@ namespace Utopia.Entities.Renderer
 
                 if (_lightColor.ValueInterp != _lightColor.Value)
                 {
-                    Color3.Lerp(ref _lightColor.ValueInterp, ref _lightColor.Value, elapsedTime / 100f, out _lightColor.ValueInterp);
+                    Color3.Lerp(ref _lightColor.ValueInterp, ref _lightColor.Value, (float)elapsedTime / 100.0f, out _lightColor.ValueInterp);
                 }
             }
 
@@ -164,8 +164,8 @@ namespace Utopia.Entities.Renderer
 
                 if (_animationStated)
                 {
-                    Quaternion.Slerp(ref _animationRotation, ref finalRotation, elapsedTime * speed, out _animationRotation);
-                    Vector3.Lerp(ref _animationOffset, ref finalOffset, elapsedTime * speed, out _animationOffset);
+                    Quaternion.Slerp(ref _animationRotation, ref finalRotation, (float)elapsedTime * speed, out _animationRotation);
+                    Vector3.Lerp(ref _animationOffset, ref finalOffset, (float)elapsedTime * speed, out _animationOffset);
 
                     if (_animationRotation.EqualsEpsilon(finalRotation, 0.1f))
                         _animationStated = false;
@@ -174,8 +174,8 @@ namespace Utopia.Entities.Renderer
                 {
                     var identity = Quaternion.Identity;
                     var nullOffset = new Vector3();
-                    Quaternion.Slerp(ref _animationRotation, ref identity, elapsedTime * speed, out _animationRotation);
-                    Vector3.Lerp(ref _animationOffset, ref nullOffset, elapsedTime * speed, out _animationOffset);
+                    Quaternion.Slerp(ref _animationRotation, ref identity, (float)elapsedTime * speed, out _animationRotation);
+                    Vector3.Lerp(ref _animationOffset, ref nullOffset, (float)elapsedTime * speed, out _animationOffset);
                 }
 
                 if (_animationRotation == Quaternion.Identity)
@@ -212,8 +212,8 @@ namespace Utopia.Entities.Renderer
             ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
             //Create Vertex/Index Buffer to store the loaded cube mesh.
-            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, VertexMesh.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
-            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
+            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
+            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, "Block IB"));
 
             _cubeToolEffect = ToDispose(new HLSLCubeTool(context.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
             _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;

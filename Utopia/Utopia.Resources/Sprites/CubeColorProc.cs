@@ -24,9 +24,9 @@ namespace Utopia.Resources.Sprites
     {
         #region Private Variables
         private List<VertexCubeColor> _spritesvertexCollection;
-        private List<short> _spritesIndexCollection;
+        private List<ushort> _spritesIndexCollection;
         private VertexBuffer<VertexCubeColor> _vb;
-        private IndexBuffer<short> _ib;
+        private IndexBuffer<ushort> _ib;
         private bool _isCollectionDirty;
         private HLSLCubeColorParticule _effect;
         private Include _sharedCBIncludeHandler;
@@ -53,10 +53,10 @@ namespace Utopia.Resources.Sprites
             _effect = ToDispose(new HLSLCubeColorParticule(context.Device, ClientSettings.EffectPack + @"Particules/CubeColorParticule.hlsl", VertexCubeColor.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             _spritesvertexCollection = new List<VertexCubeColor>();
-            _vb = ToDispose(new VertexBuffer<VertexCubeColor>(context.Device, 16, VertexCubeColor.VertexDeclaration, PrimitiveTopology.TriangleList, "VB Sprite3DColorBillBoardProcessor", usage, 10));
+            _vb = ToDispose(new VertexBuffer<VertexCubeColor>(context.Device, 16, PrimitiveTopology.TriangleList, "VB Sprite3DColorBillBoardProcessor", usage, 10));
 
-            _spritesIndexCollection = new List<short>();
-            _ib = ToDispose(new IndexBuffer<short>(context.Device, 6, SharpDX.DXGI.Format.R16_UInt, "CubeColorProc_iBuffer"));
+            _spritesIndexCollection = new List<ushort>();
+            _ib = ToDispose(new IndexBuffer<ushort>(context.Device, 6, "CubeColorProc_iBuffer"));
 
             _isCollectionDirty = false;
         }
@@ -104,7 +104,7 @@ namespace Utopia.Resources.Sprites
 
             foreach (var index in ibCube)
             {
-                _spritesIndexCollection.Add((short)(index + vertexOffset));
+                _spritesIndexCollection.Add((ushort)(index + vertexOffset));
             }
 
             _isCollectionDirty = true;
