@@ -150,15 +150,15 @@ namespace Utopia.Entities.Renderer
 
                 if (_lightColor.ValueInterp != _lightColor.Value)
                 {
-                    Color3.Lerp(ref _lightColor.ValueInterp, ref _lightColor.Value, (float)elapsedTime / 100.0f, out _lightColor.ValueInterp);
+                    Color3.Lerp(ref _lightColor.ValueInterp, ref _lightColor.Value, elapsedTime * 10.0f, out _lightColor.ValueInterp);
                 }
             }
 
             // play animation
             if (_animation)
             {
-                const float speed = 0.021f;
-                if (elapsedTime == 0) elapsedTime = 1;
+                const float speed = 21f;
+                if (elapsedTime == 0.0f) elapsedTime = 0.0001f;
                 Quaternion finalRotation = Quaternion.RotationYawPitchRoll(0, MathHelper.PiOver2, 0);
                 Vector3 finalOffset = new Vector3(0,0,2);
 
