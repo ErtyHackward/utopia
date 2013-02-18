@@ -591,7 +591,7 @@ namespace Utopia.Components
             _toolVertexBuffer.SetData(_d3DEngine.ImmediateContext, ptList.ToArray());
 
             _voxelEffect = new HLSLVoxelModel(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration);
-            _voxelInstancedEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration);
+            _voxelInstancedEffect = new HLSLVoxelModelInstanced(_d3DEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VoxelInstanceData.VertexDeclaration);
 
 
             base.LoadContent(context);

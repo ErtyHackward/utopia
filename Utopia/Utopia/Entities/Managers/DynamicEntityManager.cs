@@ -215,7 +215,7 @@ namespace Utopia.Entities.Managers
             _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
             _cubeToolEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
 
-            _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
+            _voxelModelEffect = ToDispose(new HLSLVoxelModelInstanced(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VoxelInstanceData.VertexDeclaration));
             _voxelToolEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _materialChangeMapping = new Dictionary<int, int>();
 

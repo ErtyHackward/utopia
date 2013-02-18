@@ -323,7 +323,7 @@ namespace Utopia.Shared.Entities.Models
         public void Interpolation(float elapsedTime)
         {
             if (!Playing) return;
-            var ms = (int)elapsedTime * 1000;
+            var ms = (int)(elapsedTime * 1000.0f);
 
             _elapsed += ms;
 

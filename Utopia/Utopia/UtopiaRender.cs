@@ -38,7 +38,7 @@ namespace Utopia
         }
 
         public UtopiaRender(D3DEngine engine, InputsManager inputManager, bool withComObjectDisposeTracking)
-            : base(engine, withComObjectDisposeTracking ,withFullDebug:true)
+            : base(engine, withComObjectDisposeTracking ,withFullDebug:false)
         {
             _inputManager = inputManager;
 

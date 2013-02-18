@@ -151,7 +151,8 @@ namespace S33M3DXEngine.Effects.HLSLFramework
                     //Get the VS Input signature from the Vertex Shader
                     _signature = ToDispose(ShaderSignature.GetInputSignature(byteCode));
                     //Create the inputLayout from the signature (Must Match the Vertex Format used with this effect !!!)
-                    if(_vertexDeclaration != null) _inputLayout = ToDispose(new InputLayout(device, _signature, _vertexDeclaration.Elements));
+                    if (_vertexDeclaration != null)
+                        _inputLayout = ToDispose(new InputLayout(device, _signature, _vertexDeclaration.Elements));
 
                     _vs = ToDispose(new VertexShader(device, byteCode));
 #if DEBUG

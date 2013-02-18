@@ -15,6 +15,7 @@ using S33M3CoreComponents.Maths;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Resources.VertexFormats;
+using Utopia.Entities.Voxel;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -295,7 +296,7 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
 
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
-            _voxelModelInstancedEffect = ToDispose(new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VertexVoxelInstanced.VertexDeclaration));
+            _voxelModelInstancedEffect = ToDispose(new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VoxelInstanceData.VertexDeclaration));
         }
 
         private void _skyBackBuffer_OnStaggingBackBufferChanged(ShaderResourceView newStaggingBackBuffer)
