@@ -130,7 +130,6 @@
     <Compile Include="VertexFormats\VertexCubeColor.cs" />
     <Compile Include="VertexFormats\VertexPointSprite3DExt1.cs" />
     <Compile Include="VertexFormats\VertexPointSprite3DTexCoord.cs" />
-    <Compile Include="VertexFormats\Interfaces\IVertexType.cs" />
     <Compile Include="VertexFormats\VertexColumnChart.cs" />
     <Compile Include="VertexFormats\VertexCubeCloud.cs" />
     <Compile Include="VertexFormats\VertexCubeFaceHQ.cs" />
@@ -233,6 +232,9 @@
     <None Include="Effects\Sprites\ColorOverlay.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="VertexFormats\Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

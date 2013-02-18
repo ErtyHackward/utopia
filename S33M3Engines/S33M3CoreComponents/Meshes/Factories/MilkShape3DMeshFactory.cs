@@ -228,7 +228,12 @@ namespace S33M3CoreComponents.Meshes.Factories
                         line = sr.ReadLine();
                         _strScan.Scan(line, "{0}", MaterialsName_Holder);
                         newMaterial.Name = ((string)MaterialsName_Holder[0]).Replace("\"", "");
-                        newMaterial.Id = int.Parse(newMaterial.Name.Split('_')[0], CultureInfo.InvariantCulture);
+                        //Specially added to support Texture Array. The texture array id must be put before the material name, like : 1_Material0
+                        if (newMaterial.Name.Contains('_'))
+                        {
+                            newMaterial.Id = int.Parse(newMaterial.Name.Split('_')[0], CultureInfo.InvariantCulture);
+                        }
+                        else newMaterial.Id = 0;
 
                         //Read ambient color
                         line = sr.ReadLine();

@@ -1,5 +1,6 @@
 ﻿using System;
 using S33M3DXEngine.VertexFormat;
+using S33M3Resources.VertexFormats.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -18,7 +19,7 @@ namespace S33M3DXEngine.Buffers
         }
     }
 
-    public class VertexBuffer<dataType> : IDisposable where dataType : struct
+    public class VertexBuffer<dataType> : IDisposable where dataType : struct, IVertexType
     {
         #region Private variables
         VertexBufferBinding _binding;
@@ -40,13 +41,16 @@ namespace S33M3DXEngine.Buffers
 
         #region Public Properties
         #endregion
-        public VertexBuffer(Device device, int vertexCount, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, string bufferName, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)            
-        {                    
+
+        public VertexBuffer(Device device, int vertexCount, PrimitiveTopology primitiveTopology, string bufferName, ResourceUsage usage = ResourceUsage.Default, int AutoResizePerc = 0)            
+        {
+            //Get vertex declaration
+
             _autoResizePerc = AutoResizePerc;
             _vertexCount = 0;
             _bufferCount = vertexCount + ((int)(vertexCount * AutoResizePerc / 100));
             _bufferName = bufferName;
-            _vertexDeclatation = vertexDeclatation;
+            _vertexDeclatation = ((IVertexType)new dataType()).VertexDeclaration;
             _primitiveTopology = primitiveTopology;
             _device = device;
 
@@ -56,7 +60,7 @@ namespace S33M3DXEngine.Buffers
                 BindFlags = BindFlags.VertexBuffer,
                 CpuAccessFlags = usage == ResourceUsage.Default || usage == ResourceUsage.Immutable ? CpuAccessFlags.None : CpuAccessFlags.Write,
                 OptionFlags = ResourceOptionFlags.None,
-                SizeInBytes = _bufferCount * vertexDeclatation.VertexStride,
+                SizeInBytes = _bufferCount * _vertexDeclatation.VertexStride,
                 Usage = usage
             };
         }

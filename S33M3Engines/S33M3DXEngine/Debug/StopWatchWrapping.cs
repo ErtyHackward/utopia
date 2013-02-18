@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace S33M3_DXEngine.Debug
+namespace S33M3DXEngine.Debug
 {
     public class StopWatchWrapping
     {

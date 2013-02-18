@@ -118,7 +118,7 @@ namespace Utopia.Particules
             _particules.RemoveAll(x => x.Age > x.maxAge);
         }
 
-        public void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (_particules.Count == 0) return;
             RefreshExistingParticules(elapsedTime);
@@ -199,7 +199,7 @@ namespace Utopia.Particules
 
         #region Private Methods
 
-        private void RefreshExistingParticules(long elapsedTime)
+        private void RefreshExistingParticules(float elapsedTime)
         {
             //Parallel processing here !! <== TO DO !!
 

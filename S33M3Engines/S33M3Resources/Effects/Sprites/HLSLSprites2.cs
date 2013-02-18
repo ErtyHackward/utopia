@@ -53,14 +53,19 @@ namespace S33M3Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLSprites2(Device device) : this(device, @"Effects\Sprites\Sprites2.hlsl")
+        public HLSLSprites2(Device device, bool withAlphaClip) : this(device, withAlphaClip, @"Effects\Sprites\Sprites2.hlsl")
         {
             
         }
 
-        public HLSLSprites2(Device device, string shaderFilePath)
+        public HLSLSprites2(Device device, bool withAlphaClip, string shaderFilePath)
             : base(device, shaderFilePath, VertexSprite2.VertexDeclaration, null)
         {
+            if (!withAlphaClip)
+            {
+                _shadersEntryPoint.PixelShader_EntryPoint = "SpritePSNoClip";
+            }
+
             //Create Constant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);

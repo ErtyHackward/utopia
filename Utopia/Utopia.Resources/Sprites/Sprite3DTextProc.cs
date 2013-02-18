@@ -53,7 +53,7 @@ namespace Utopia.Resources.Sprites
             _effect.SamplerDiffuse.Value = _spriteSampler;
 
             _spritesCollection = new List<VertexPointSprite3DTexCoord>();
-            _vb = new VertexBuffer<VertexPointSprite3DTexCoord>(context.Device, 16, VertexPointSprite3DTexCoord.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DProcessorTexCoord", usage, 10);
+            _vb = new VertexBuffer<VertexPointSprite3DTexCoord>(context.Device, 16, PrimitiveTopology.PointList, "VB Sprite3DProcessorTexCoord", usage, 10);
             _isCollectionDirty = false;
         }
 

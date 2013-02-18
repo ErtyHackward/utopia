@@ -8,6 +8,9 @@ using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
 using SharpDX.Direct3D11;
 using Utopia.Resources.Effects.Entities;
+using S33M3Resources.VertexFormats.Interfaces;
+using S33M3DXEngine.VertexFormat;
+using SharpDX.DXGI;
 
 namespace Utopia.Entities.Voxel
 {
@@ -328,9 +331,33 @@ namespace Utopia.Entities.Voxel
         public IndexBuffer<ushort> IndexBuffer;
     }
 
-    public struct VoxelInstanceData
+    public struct VoxelInstanceData : IVertexType
     {
+        public static readonly VertexDeclaration VertexDeclaration;
+
         public Matrix Transform;
         public Color3 LightColor;
+
+        static VoxelInstanceData()
+        {
+            var elements = new[] 
+            { 
+                new InputElement("POSITION",  0, Format.R8G8B8A8_UInt,      0,                          0, InputClassification.PerVertexData,   0), 
+                new InputElement("INFO",      0, Format.R8G8B8A8_UInt,      InputElement.AppendAligned, 0, InputClassification.PerVertexData,   0),
+                new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, 0,                          1, InputClassification.PerInstanceData, 1), //World Matrix Row0
+                new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row1
+                new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row2
+                new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row3
+                new InputElement("COLOR",     0, Format.R32G32B32_Float,    InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
+            };
+
+            VertexDeclaration = new VertexDeclaration(elements);
+        }
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+
     }
 }

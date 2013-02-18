@@ -197,7 +197,7 @@ namespace Utopia.Network
             }
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (ServerConnection != null)
             {

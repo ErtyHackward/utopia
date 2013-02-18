@@ -66,7 +66,7 @@ namespace Utopia.Worlds.Weather
             _rnd = new FastRandom();
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _keyFrameAnimation.ValueInterp = MathHelper.Lerp(_keyFrameAnimation.ValuePrev, _keyFrameAnimation.Value, interpolationHd);
             Vector3.Lerp(ref _flatWindFlowNormalizedWithNoise.ValuePrev, ref _flatWindFlowNormalizedWithNoise.Value, interpolationLd, out _flatWindFlowNormalizedWithNoise.ValueInterp);

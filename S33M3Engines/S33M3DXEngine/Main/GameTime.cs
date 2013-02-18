@@ -13,6 +13,8 @@ namespace S33M3DXEngine.Main
         private long _frequencyInMiliSec;
         private long _lastUpdate;
 
+        public static Stopwatch ElapsedTime = new Stopwatch();
+
         public readonly int FTSTargetedGameUpdatePerSecond; //Number of targeted update per seconds for fixed time step mode
         public readonly long GameUpdateDelta;
         public readonly double ElapsedGameTimeInS_HD;
@@ -34,22 +36,25 @@ namespace S33M3DXEngine.Main
             //Compute time elapsed (in  between 2 update in fixed time step situation)
             ElapsedGameTimeInS_HD = (1.0 / _frequencyInSec) * GameUpdateDelta;        //Fixe amount of time elapsed !
             ElapsedGameTimeInS_LD = (float)(1.0 / _frequencyInSec) * GameUpdateDelta; //Fixe amount of time elapsed !
+
+            //Start an elapsed time stopWatch for the application
+            ElapsedTime.Start();
         }
 
         /// <summary>
-        /// Time passed in 1/1000 seconds
+        /// Time passed in seconds
         /// </summary>
         /// <returns></returns>
-        public long GetElapsedTime()
+        public float GetElapsedTime()
         {
-            long elapsedTime = (Stopwatch.GetTimestamp() - _lastUpdate) / _frequencyInMiliSec;
+            float elapsedTime = (Stopwatch.GetTimestamp() - _lastUpdate) / (float)_frequencyInSec;
             ResetElapsedTimeCounter();
             return elapsedTime;
         }
 
-        public long QueryElapsedTime()
+        public float QueryElapsedTime()
         {
-            long elapsedTime = (Stopwatch.GetTimestamp() - _lastUpdate) / _frequencyInMiliSec;
+            float elapsedTime = (Stopwatch.GetTimestamp() - _lastUpdate) / (float)_frequencyInSec;
             return elapsedTime;
         }
 

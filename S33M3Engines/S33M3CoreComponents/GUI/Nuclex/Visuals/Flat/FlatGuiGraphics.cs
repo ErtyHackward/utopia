@@ -220,7 +220,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             _d3dEngine = d3dEngine;
             _resourceDirectory = resourceDirectory;
 
-            this.spriteRenderer = new SpriteRenderer(_d3dEngine);
+            this.spriteRenderer = new SpriteRenderer(_d3dEngine, true);
 
             this.openingLocator = new OpeningLocator();
             this.stringBuilder = new StringBuilder(64);

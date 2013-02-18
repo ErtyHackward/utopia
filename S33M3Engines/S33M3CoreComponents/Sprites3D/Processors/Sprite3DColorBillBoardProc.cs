@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3DXEngine.Main;
 using S33M3CoreComponents.Sprites2D;
 using S33M3CoreComponents.Sprites3D.Interfaces;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Effects.HLSLFramework;
-using S33M3DXEngine.Main;
 using S33M3Resources.Effects.Sprites;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
@@ -42,7 +42,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             _effect = ToDispose(new HLSLPointSpriteColor3DBillBoard(context.Device, @"Effects\Sprites\PointSpriteColor3DBillBoard.hlsl", VertexPointSprite3DExt1.VertexDeclaration, _frameSharedCB, _sharedCBIncludeHandler));
 
             _spritesCollection = new List<VertexPointSprite3DExt1>();
-            _vb = ToDispose(new VertexBuffer<VertexPointSprite3DExt1>(context.Device, 16, VertexPointSprite3DExt1.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DColorBillBoardProcessor", usage, 10));
+            _vb = ToDispose(new VertexBuffer<VertexPointSprite3DExt1>(context.Device, 16, PrimitiveTopology.PointList, "VB Sprite3DColorBillBoardProcessor", usage, 10));
             _isCollectionDirty = false;
         }
 

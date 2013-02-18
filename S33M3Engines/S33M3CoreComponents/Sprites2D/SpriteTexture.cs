@@ -40,7 +40,8 @@ namespace S33M3CoreComponents.Sprites2D
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
             CreateResource(device, tex,
                            new Vector2I((int)(currentViewPort.Width / 2) - (tex.Description.Width / 2),
-                                        (int)(currentViewPort.Height) / 2 - (tex.Description.Height / 2)));
+                                        (int)(currentViewPort.Height) / 2 - (tex.Description.Height / 2)),
+                           tex.Description.Format);
 
             _d3dEngine = d3dEngine;
             _d3dEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
@@ -64,7 +65,7 @@ namespace S33M3CoreComponents.Sprites2D
         public SpriteTexture(Device device, string texturePath, Vector2I screenPosition)
         {
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
-            CreateResource(device, tex, screenPosition);
+            CreateResource(device, tex, screenPosition, tex.Description.Format);
             tex.Dispose();
         }
 
@@ -72,12 +73,19 @@ namespace S33M3CoreComponents.Sprites2D
         {
             if (texture == null) throw new ArgumentNullException("texture");
 
-            CreateResource(texture.Device, texture, Vector2I.Zero);
+            CreateResource(texture.Device, texture, Vector2I.Zero, texture.Description.Format);
+        }
+
+        public SpriteTexture(Texture2D texture, SharpDX.DXGI.Format customFormat)
+        {
+            if (texture == null) throw new ArgumentNullException("texture");
+
+            CreateResource(texture.Device, texture, Vector2I.Zero, customFormat);
         }
 
         public SpriteTexture(Device device, Texture2D texture, Vector2I screenPosition)
         {
-            CreateResource(device, texture, screenPosition);
+            CreateResource(device, texture, screenPosition, texture.Description.Format);
         }
 
         public SpriteTexture(Texture2D texture, ShaderResourceView textureShader, Vector2 screenPosition)
@@ -197,14 +205,14 @@ namespace S33M3CoreComponents.Sprites2D
             texture2d.Dispose();
         }
 
-        private void CreateResource(Device device, Texture2D texture, Vector2I screenPosition)
+        private void CreateResource(Device device, Texture2D texture, Vector2I screenPosition, SharpDX.DXGI.Format format)
         {
 
             //By default all textures will need to be single array texture
 
             ShaderResourceViewDescription viewDesc = new ShaderResourceViewDescription()
             {
-                Format = texture.Description.Format,
+                Format = format,
                 Dimension = ShaderResourceViewDimension.Texture2DArray,
                 Texture2DArray = new ShaderResourceViewDescription.Texture2DArrayResource()
                 {

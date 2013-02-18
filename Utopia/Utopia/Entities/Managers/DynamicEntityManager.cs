@@ -208,8 +208,8 @@ namespace Utopia.Entities.Managers
             ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
             ToDispose(_cubeTextureView);
             //Create Vertex/Index Buffer to store the loaded cube mesh.
-            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, VertexMesh.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
-            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB"));
+            _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
+            _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, "Block IB"));
 
             _cubeToolEffect = ToDispose(new HLSLCubeTool(context.Device, ClientSettings.EffectPack + @"Entities/CubeTool.hlsl", VertexMesh.VertexDeclaration));
             _cubeToolEffect.DiffuseTexture.Value = _cubeTextureView;
@@ -250,11 +250,11 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             foreach (var entity in _dynamicEntitiesDico.Values)
             {
-                entity.Interpolation(interpolationHd, interpolationLd, timePassed);
+                entity.Interpolation(interpolationHd, interpolationLd, elapsedTime);
 
                 // update model color, get the cube where model is
                 var result = _chunkContainer.GetCube(entity.WorldPosition.ValueInterp);
@@ -269,7 +269,7 @@ namespace Utopia.Entities.Managers
 
                     if (entity.ModelLight.ValueInterp != entity.ModelLight.Value)
                     {
-                        Color3.Lerp(ref entity.ModelLight.ValueInterp, ref entity.ModelLight.Value, timePassed / 100f, out entity.ModelLight.ValueInterp);
+                        Color3.Lerp(ref entity.ModelLight.ValueInterp, ref entity.ModelLight.Value, elapsedTime * 10.0f, out entity.ModelLight.ValueInterp);
                     }
                 }
             }

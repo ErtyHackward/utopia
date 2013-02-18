@@ -1,5 +1,6 @@
 ﻿using System;
 using S33M3DXEngine.VertexFormat;
+using S33M3Resources.VertexFormats.Interfaces;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -9,7 +10,7 @@ namespace S33M3DXEngine.Buffers
 {
     public class InstancedVertexBuffer<FixedDataType, InstancedDataType> : IDisposable
         where FixedDataType : struct
-        where InstancedDataType : struct
+        where InstancedDataType : struct, IVertexType
     {
         #region Private variables
         BufferDescription _descriptionFixedData;
@@ -38,7 +39,7 @@ namespace S33M3DXEngine.Buffers
         public int VertexCountInstancedData { get { return _vertexCountInstancedData; } }
         #endregion
 
-        public InstancedVertexBuffer(Device device, VertexDeclaration vertexDeclatation, PrimitiveTopology primitiveTopology, string bufferName, bool withDynamicInstanceBuffer = false)
+        public InstancedVertexBuffer(Device device, PrimitiveTopology primitiveTopology, string bufferName, bool withDynamicInstanceBuffer = false)
         {
             _withDynamicInstanceBuffer = withDynamicInstanceBuffer;
             _bufferName = bufferName;
@@ -63,7 +64,7 @@ namespace S33M3DXEngine.Buffers
                 Usage = _withDynamicInstanceBuffer ? ResourceUsage.Dynamic : ResourceUsage.Default
             };
 
-            _vertexDeclatation = vertexDeclatation;
+            _vertexDeclatation = ((IVertexType)new InstancedDataType()).VertexDeclaration;
             _primitiveTopology = primitiveTopology;
             _device = device;
         }

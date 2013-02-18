@@ -54,7 +54,7 @@ namespace Utopia.Entities
         private HLSLBlur _blurHorisontalEffect;
         private HLSLBlur _blurVerticalEffect;
         private VertexBuffer<VertexPosition2Texture> _blurVertexBuffer;
-        private IndexBuffer<short> _iBuffer;
+        private IndexBuffer<ushort> _iBuffer;
         private HLSLColorOverlay _overlayEffect;
 
         private int _nbrCubeIcon;
@@ -82,8 +82,8 @@ namespace Utopia.Entities
 
         public override void LoadContent(DeviceContext context)
         {
-            _iBuffer = ToDispose(new IndexBuffer<short>(context.Device, 6, Format.R16_UInt, "Blur_iBuffer"));
-            _blurVertexBuffer = ToDispose(new VertexBuffer<VertexPosition2Texture>(context.Device, 4, VertexPosition2Texture.VertexDeclaration, PrimitiveTopology.TriangleList, "Blur_vBuffer", ResourceUsage.Immutable));
+            _iBuffer = ToDispose(new IndexBuffer<ushort>(context.Device, 6, "Blur_iBuffer"));
+            _blurVertexBuffer = ToDispose(new VertexBuffer<VertexPosition2Texture>(context.Device, 4, PrimitiveTopology.TriangleList, "Blur_vBuffer", ResourceUsage.Immutable));
 
             //Create Vertices for Icon Plane.
             VertexPosition2Texture[] vertices =
@@ -96,7 +96,7 @@ namespace Utopia.Entities
             _blurVertexBuffer.SetData(context, vertices); //Send the vertices inside the VBuffer
 
             //Create the Indices for icon plane
-            short[] indices = { 0, 3, 1, 1, 3, 2 };
+            ushort[] indices = { 0, 3, 1, 1, 3, 2 };
             _iBuffer.SetData(context, indices); //Send the vertices inside the IBuffer
 
             //Create the various Effect for rendering the icons
@@ -428,11 +428,10 @@ namespace Utopia.Entities
             meshfactory.LoadMesh(ClientSettings.PathRoot + @"\Meshes\block.txt", out meshBluePrint, 0);
             //Create Vertex/Index Buffer to store the loaded mesh.
             VertexBuffer<VertexMesh> vb = new VertexBuffer<VertexMesh>(_d3DEngine.Device,
-                                                                       meshBluePrint.Vertices.Length,
-                                                                       VertexMesh.VertexDeclaration,
+                                                                       meshBluePrint.Vertices.Length,                                                                       
                                                                        SharpDX.Direct3D.PrimitiveTopology.TriangleList,
                                                                        "Block VB");
-            IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine.Device, meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "Block IB");
+            IndexBuffer<ushort> ib = new IndexBuffer<ushort>(_d3DEngine.Device, meshBluePrint.Indices.Length, "Block IB");
 
             //Create the render texture
             RenderedTexture2D texture = ToDispose(new RenderedTexture2D(_d3DEngine, textureSize, textureSize, SharpDX.DXGI.Format.R8G8B8A8_UNorm)

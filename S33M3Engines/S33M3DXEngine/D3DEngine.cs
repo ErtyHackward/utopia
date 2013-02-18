@@ -401,7 +401,7 @@ namespace S33M3DXEngine
                 }
 
             }
-
+            
             logger.Info("SwapChain is using the GPU in mode : [{1}px * {2}px], format : {0}, RefreshRate : {3}hz, Scaling : {4}, ScanlineMode : {5}", _swapChain.Description.ModeDescription.Format, _swapChain.Description.ModeDescription.Width, _swapChain.Description.ModeDescription.Height, (float)_swapChain.Description.ModeDescription.RefreshRate.Numerator / _swapChain.Description.ModeDescription.RefreshRate.Denominator, _swapChain.Description.ModeDescription.Scaling, _swapChain.Description.ModeDescription.ScanlineOrdering);
             // Get the created BackBuffer
             BackBufferTex = Resource.FromSwapChain<Texture2D>(_swapChain, 0);
@@ -474,10 +474,10 @@ namespace S33M3DXEngine
                 Height = BackBufferTex.Description.Height,
                 MipLevels = 1,
                 ArraySize = 1,
-                Format = Format.D32_Float,
+                Format = Format.R32_Typeless,
                 SampleDescription = CurrentMSAASampling,
                 Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.DepthStencil,
+                BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
             };
@@ -491,7 +491,7 @@ namespace S33M3DXEngine
             //Create the Depth Stencil View + View
             DepthStencilViewDescription DepthStencilViewDescr = new DepthStencilViewDescription()
             {
-                Format = DepthStencilDescr.Format,
+                Format = Format.D32_Float,
                 Dimension = CurrentMSAASampling.Count <= 1 ? DepthStencilViewDimension.Texture2D : DepthStencilViewDimension.Texture2DMultisampled,
                 Texture2D = new DepthStencilViewDescription.Texture2DResource() { MipSlice = 0 }
             };

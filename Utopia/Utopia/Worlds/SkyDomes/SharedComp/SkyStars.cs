@@ -57,7 +57,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         public override void LoadContent(DeviceContext context)
         {
             VertexPosition3Color[] vertices = GenerateSpherePoints(_nbrStars, 1500);
-            _skyStarVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, vertices.Length, VertexPosition3Color.VertexDeclaration, PrimitiveTopology.PointList, "_skyStarVB");
+            _skyStarVB = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, vertices.Length, PrimitiveTopology.PointList, "_skyStarVB");
             _skyStarVB.SetData(context, vertices);
         }
 
@@ -72,7 +72,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         }
 
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
         }
 

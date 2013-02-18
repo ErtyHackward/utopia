@@ -73,5 +73,12 @@ namespace S33M3DXEngine.Effects.HLSLFramework
             if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetShaderResource(_slot[ShaderIDs.GS], _resourceView);
             if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetShaderResource(_slot[ShaderIDs.PS], _resourceView);
         }
+
+        public void UnBindAll(DeviceContext context)
+        {
+            if ((_shadersImpacted & Shaders.VS) == Shaders.VS) context.VertexShader.SetShaderResource(_slot[ShaderIDs.VS], null);
+            if ((_shadersImpacted & Shaders.GS) == Shaders.GS) context.GeometryShader.SetShaderResource(_slot[ShaderIDs.GS], null);
+            if ((_shadersImpacted & Shaders.PS) == Shaders.PS) context.PixelShader.SetShaderResource(_slot[ShaderIDs.PS], null);
+        }
     }
 }

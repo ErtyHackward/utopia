@@ -56,7 +56,13 @@ float4 SpritePS(in PSInput input) : SV_Target
     float4 texColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);    
 	clip(texColor.a < 0.01f ? -1:1 );
     texColor = texColor * input.Color;    
-    texColor.rgb *= texColor.a;
 	return texColor;
-	//return float4(1,1,1,1);
+}
+
+//[PS ENTRY POINT]
+float4 SpritePSNoClip(in PSInput input) : SV_Target
+{
+    float4 texColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);    
+    texColor = texColor * input.Color;    
+	return texColor;
 }

@@ -320,10 +320,10 @@ namespace Utopia.Shared.Entities.Models
         /// Updates current animation, should be done before each draw
         /// </summary>
         /// <param name="timePassed"></param>
-        public void Interpolation(long timePassed)
+        public void Interpolation(float elapsedTime)
         {
             if (!Playing) return;
-            var ms = (int)timePassed;
+            var ms = (int)elapsedTime * 1000;
 
             _elapsed += ms;
 

@@ -19,6 +19,6 @@ namespace S33M3DXEngine.Main.Interfaces
         /// <param name="interpolationHd">Value in range [0;1] that indicates factor of interpolation to create interpolation for FTSUpdate</param>
         /// <param name="interpolationLd">Value in range [0;1] that indicates factor of interpolation to create interpolation for FTSUpdate</param>
         /// <param name="elapsedTime">The Elapsed time between 2 call to the interpolation method</param>
-        void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime);
+        void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime);
     }
 }

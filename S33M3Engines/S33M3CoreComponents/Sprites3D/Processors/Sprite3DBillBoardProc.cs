@@ -50,7 +50,7 @@ namespace S33M3CoreComponents.Sprites3D.Processors
             _effect.SamplerDiffuse.Value = _spriteSampler;
 
             _spritesCollection = new List<VertexPointSprite3D>();
-            _vb = new VertexBuffer<VertexPointSprite3D>(context.Device, 16, VertexPointSprite3D.VertexDeclaration, PrimitiveTopology.PointList, "VB Sprite3DBillBoardProcessor", usage, 10);
+            _vb = new VertexBuffer<VertexPointSprite3D>(context.Device, 16, PrimitiveTopology.PointList, "VB Sprite3DBillBoardProcessor", usage, 10);
             _isCollectionDirty = false;
         }
 

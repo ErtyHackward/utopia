@@ -17,7 +17,7 @@ namespace Utopia.Components
     public class FadeComponent : DrawableGameComponent
     {
         private readonly D3DEngine _engine;
-        private IndexBuffer<short> _iBuffer;
+        private IndexBuffer<ushort> _iBuffer;
         private VertexBuffer<VertexPosition2> _vBuffer;
         HLSLScreenSpaceRect _effect;
 
@@ -34,10 +34,10 @@ namespace Utopia.Components
             _effect = ToDispose(new HLSLScreenSpaceRect(_engine.Device));
 
             // Create the vertex buffer => Thread safe, can be done here
-            _vBuffer = ToDispose(new VertexBuffer<VertexPosition2>(_engine.Device, 4, VertexPosition2.VertexDeclaration, PrimitiveTopology.TriangleList, "Fade_vBuffer", ResourceUsage.Immutable));
+            _vBuffer = ToDispose(new VertexBuffer<VertexPosition2>(_engine.Device, 4, PrimitiveTopology.TriangleList, "Fade_vBuffer", ResourceUsage.Immutable));
 
             // Create the index buffer => Thread safe, can be done here
-            _iBuffer = ToDispose(new IndexBuffer<short>(_engine.Device, 6, SharpDX.DXGI.Format.R16_UInt, "Fade_iBuffer"));
+            _iBuffer = ToDispose(new IndexBuffer<ushort>(_engine.Device, 6, "Fade_iBuffer"));
         }
 
         public override void LoadContent(DeviceContext context)
@@ -52,7 +52,7 @@ namespace Utopia.Components
             _vBuffer.SetData(context, vertices);
 
             //Load data into the IB => NOT Thread safe, MUST be done in the loadcontent
-            short[] indices = { 3, 0, 2, 0, 1, 2 };
+            ushort[] indices = { 3, 0, 2, 0, 1, 2 };
             _iBuffer.SetData(context, indices);
 
             base.LoadContent(context);

@@ -68,10 +68,9 @@ namespace Realms.Client.Components.GUI
             //Create Vertex/Index Buffer to store the rotating Cube
             _rotatingBlockVB = ToDispose(new VertexBuffer<VertexMesh>(_engine.Device,
                                                                        _meshBluePrint.Vertices.Length,
-                                                                       VertexMesh.VertexDeclaration,
                                                                        SharpDX.Direct3D.PrimitiveTopology.TriangleList,
                                                                        "rotatingBlockVB"));
-            _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, SharpDX.DXGI.Format.R16_UInt, "rotatingBlockIB"));
+            _rotatingBlockIB = ToDispose(new IndexBuffer<ushort>(_engine.Device, _meshBluePrint.Indices.Length, "rotatingBlockIB"));
 
             _loadingCube = new RotationCube
             {
@@ -142,7 +141,7 @@ namespace Realms.Client.Components.GUI
             base.FTSUpdate(timeSpent);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _loadingCube.Interpolation(interpolationLd);
 

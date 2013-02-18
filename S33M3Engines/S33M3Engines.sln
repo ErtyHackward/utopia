@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3DXEngine", "S33M3DXEngine\S33M3DXEngine.csproj", "{27574C31-E46C-4E4D-BA36-404346F897C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S33M3CoreComponents", "S33M3CoreComponents\S33M3CoreComponents.csproj", "{D0C4DB7F-547E-4A40-A5CA-41391A310938}"

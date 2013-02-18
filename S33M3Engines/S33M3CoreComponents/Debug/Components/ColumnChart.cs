@@ -125,10 +125,10 @@ namespace S33M3CoreComponents.Debug.Components
                                           new VertexPosition2(new Vector2(0.0f, 1.0f))
                                          };
 
-            _vBuffer = ToDispose(new VertexBuffer<VertexPosition2>(_engine.Device, vertices.Length, VertexPosition2.VertexDeclaration, PrimitiveTopology.LineList, "ColumnChart_vBuffer", ResourceUsage.Immutable));
+            _vBuffer = ToDispose(new VertexBuffer<VertexPosition2>(_engine.Device, vertices.Length, PrimitiveTopology.LineList, "ColumnChart_vBuffer", ResourceUsage.Immutable));
             _vBuffer.SetData(_engine.ImmediateContext, vertices);
 
-            _vBufferInstanced = ToDispose(new InstancedVertexBuffer<VertexPosition2, VertexColumnChart>(_engine.Device, VertexColumnChart.VertexDeclaration, PrimitiveTopology.LineList, "ColumnChart"));
+            _vBufferInstanced = ToDispose(new InstancedVertexBuffer<VertexPosition2, VertexColumnChart>(_engine.Device, PrimitiveTopology.LineList, "ColumnChart"));
             _vBufferInstanced.SetFixedData(vertices);
 
             base.LoadContent(context);

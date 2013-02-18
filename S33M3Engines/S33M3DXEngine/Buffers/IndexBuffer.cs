@@ -28,16 +28,28 @@ namespace S33M3DXEngine.Buffers
         #region Public Properties
         public int IndicesCount { get { return _indicesCount; } }
         #endregion
-        public IndexBuffer(Device device, int IndicesCount, Format indexFormat, string bufferName, int AutoResizePerc = 0, ResourceUsage usage = ResourceUsage.Default)
+        public IndexBuffer(Device device, int IndicesCount, string bufferName, int AutoResizePerc = 0, ResourceUsage usage = ResourceUsage.Default)
         {
             _indicesCount = 0;
             _bufferCount = IndicesCount + (IndicesCount * _autoResizePerc / 100);
 
+            TypeCode typeCode = Type.GetTypeCode(typeof(dataType));
+            switch (typeCode)
+            {
+                case TypeCode.UInt16:
+                    _indexFormat = Format.R16_UInt;
+                    break;
+                case TypeCode.UInt32:
+                    _indexFormat = Format.R32_UInt;
+                    break;
+                default:
+                    throw new Exception("Index type not supported for " + typeCode.ToString());
+            }
+
             _autoResizePerc = AutoResizePerc;
             _bufferName = bufferName;
             _device = device;
-            _indexFormat = indexFormat;
-            _indexStride = FormatSize.GetFormatSize(indexFormat);
+            _indexStride = FormatSize.GetFormatSize(_indexFormat);
 
             //Create the buffer description object
             _description = new BufferDescription()

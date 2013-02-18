@@ -90,7 +90,7 @@ namespace Utopia.Components
             _slideSwitch = DateTime.Now;
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (_slidShowFinished) return;
 

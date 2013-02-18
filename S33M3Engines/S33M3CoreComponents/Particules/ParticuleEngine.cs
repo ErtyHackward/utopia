@@ -52,7 +52,7 @@ namespace S33M3CoreComponents.Particules
             foreach (var emitter in _liveEmitter) emitter.FTSUpdate(timeSpent);
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             foreach (var emitter in _liveEmitter) emitter.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }

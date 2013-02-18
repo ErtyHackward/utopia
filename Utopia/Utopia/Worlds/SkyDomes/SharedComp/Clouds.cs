@@ -148,9 +148,9 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _effect = ToDispose(new HLSLClouds(_d3DEngine.Device, ClientSettings.EffectPack + @"Weather\Clouds.hlsl", VertexPosition2Cloud.VertexDeclaration, _sharedCB.CBPerFrame));
             _effect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipPoint);
 
-            _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud>(_d3DEngine.Device, VertexPosition2Cloud.VertexDeclaration, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Clouds"));
+            _instancedBuffer = ToDispose(new InstancedVertexBuffer<VertexPosition3Color, VertexPosition2Cloud>(_d3DEngine.Device, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Clouds"));
 
-            _indexBuffer = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 36, Format.R16_UInt, "_cloudIB", 10, ResourceUsage.Default));
+            _indexBuffer = ToDispose(new IndexBuffer<ushort>(_d3DEngine.Device, 36, "_cloudIB", 10, ResourceUsage.Default));
 
             _clouds = new List<VertexPosition2Cloud>();
             _newCloudGenerated = false;
@@ -254,7 +254,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             var cameraCurrent = new Vector2((float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.X, (float)_cameraManager.ActiveCamera.WorldPosition.ValueInterp.Z);
             _smallOffset += _cameraPrevious - cameraCurrent;

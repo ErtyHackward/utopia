@@ -21,7 +21,7 @@ namespace S33M3DXEngine.Main
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public delegate void RenderLoopFrozen(long frozenTime);
+        public delegate void RenderLoopFrozen(float frozenTime);
         public event RenderLoopFrozen OnRenderLoopFrozen;
 
         #region Public Properties
@@ -91,14 +91,15 @@ namespace S33M3DXEngine.Main
         private bool _debugActif = false;
         private readonly GameComponentCollection _gameComponents;
         private Color4 _backBufferColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
-        private GameTime _gameTime = new GameTime();
+        public static readonly GameTime GameTime = new GameTime();
         private int _vSync = 1;
 
         #endregion
 
         //Constructed Engine
-        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false)
+        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false, bool withFullDebug = false)
         {
+            D3DEngine.FULLDEBUGMODE = withFullDebug;
             Engine = ToDispose(new D3DEngine(startingWindowsSize, WindowsCaption, sampleDescription, ResolutionSize));
 
             Engine.GameWindow.FormClosing += GameWindow_FormClosing;
@@ -111,8 +112,9 @@ namespace S33M3DXEngine.Main
         }
 
         //Injected Engine
-        public Game(D3DEngine engine, bool withDebugObjectTracking = false)
+        public Game(D3DEngine engine, bool withDebugObjectTracking = false, bool withFullDebug = false)
         {
+            D3DEngine.FULLDEBUGMODE = withFullDebug;
             Engine = engine;
             Engine.GameWindow.FormClosing += GameWindow_FormClosing;
             _visibleDrawable = new List<DrawableComponentHolder>();
@@ -172,7 +174,7 @@ namespace S33M3DXEngine.Main
                 //In case, if too much time has passed, Skip the update for this time period
                 //(Help in case of a break point placed in inline working)
                 //Default is a "pause of more then 10 seconde".
-                if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > _gameTime.FTSSafeGuard)
+                if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > GameTime.FTSSafeGuard)
                 {
                     ResetTimers();
                 }
@@ -183,13 +185,13 @@ namespace S33M3DXEngine.Main
 #if DEBUG
                     if (_updateWithoutrenderingCount == 1 && ComponentsPerfMonitor.Updatable)
                     {
-                        logger.Debug("Frame skipped because too late for : {0:0.000}, Updt maximum Delta {1:0.000}", _gameTime.Tick2Ms(Stopwatch.GetTimestamp() - _nextGameUpdateTime), _gameTime.Tick2Ms(_gameTime.GameUpdateDelta));
-                        logger.Debug("Last     Update time {0:0.000}, Draw time {1:0.000}, Present wait for {2:0.000}", _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastUpdateTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastDrawTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastPresentTime));
-                        logger.Debug("Previous Update time {0:0.000}, Draw time {1:0.000}, Present wait for {2:0.000}", _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevUpdateTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevDrawTime), _gameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevPresentTime));
+                        logger.Debug("Frame skipped because too late for : {0:0.000}, Updt maximum Delta {1:0.000}", GameTime.Tick2Ms(Stopwatch.GetTimestamp() - _nextGameUpdateTime), GameTime.Tick2Ms(GameTime.GameUpdateDelta));
+                        logger.Debug("Last     Update time {0:0.000}, Draw time {1:0.000}, Present wait for {2:0.000}", GameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastUpdateTime), GameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastDrawTime), GameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetLastPresentTime));
+                        logger.Debug("Previous Update time {0:0.000}, Draw time {1:0.000}, Present wait for {2:0.000}", GameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevUpdateTime), GameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevDrawTime), GameTime.Tick2Ms(ComponentsPerfMonitor.PerfTimer.GetPrevPresentTime));
 
                         foreach (var result in ComponentsPerfMonitor.PerfTimer.GetComponentByDeltaPerf(5))
                         {
-                            logger.Debug("Perf problem could caused by {0:0.000}, Last duration {1:0.000}, previous duration {2:0.000}", result.Name,  _gameTime.Tick2Ms(result.LastValue), _gameTime.Tick2Ms(result.PrevValue));
+                            logger.Debug("Perf problem could caused by {0:0.000}, Last duration {1:0.000}, previous duration {2:0.000}", result.Name,  GameTime.Tick2Ms(result.LastValue), GameTime.Tick2Ms(result.PrevValue));
                         }
                         logger.Debug("=================================================================================");
 
@@ -200,23 +202,23 @@ namespace S33M3DXEngine.Main
                         //In case, if too much time has passed, Skip the update for this time period
                         //(Help in case of a break point placed in inline working)
                         //Default is a "pause of more then 10 seconde".
-                        if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > _gameTime.FTSSafeGuard)
+                        if (Stopwatch.GetTimestamp() - _nextGameUpdateTime > GameTime.FTSSafeGuard)
                         {
                             logger.Info("SafeGuard for FTS triggered");
-                            if (OnRenderLoopFrozen != null) OnRenderLoopFrozen(_gameTime.QueryElapsedTime());
+                            if (OnRenderLoopFrozen != null) OnRenderLoopFrozen(GameTime.QueryElapsedTime());
                             ResetTimers();
                         }
                     }
 
-                    FTSUpdate(_gameTime);
+                    FTSUpdate(GameTime);
 
-                    _nextGameUpdateTime += _gameTime.GameUpdateDelta;
+                    _nextGameUpdateTime += GameTime.GameUpdateDelta;
                     _updateWithoutrenderingCount++;
                 }
 
-                _interpolation_hd = (double)(Stopwatch.GetTimestamp() + _gameTime.GameUpdateDelta - _nextGameUpdateTime) / _gameTime.GameUpdateDelta;
+                _interpolation_hd = (double)(Stopwatch.GetTimestamp() + GameTime.GameUpdateDelta - _nextGameUpdateTime) / GameTime.GameUpdateDelta;
                 _interpolation_ld = (float)_interpolation_hd;
-                VTSUpdate(_interpolation_hd, _interpolation_ld, _gameTime.GetElapsedTime());
+                VTSUpdate(_interpolation_hd, _interpolation_ld, GameTime.GetElapsedTime());
                 Draw();
             });
         }
@@ -225,7 +227,7 @@ namespace S33M3DXEngine.Main
         {
             //Reset the fixed time step to avoid flickering
             _nextGameUpdateTime = Stopwatch.GetTimestamp();
-            _gameTime.ResetElapsedTimeCounter();
+            GameTime.ResetElapsedTimeCounter();
         }
 
         //Close Window to stop the Window Pump !
@@ -302,7 +304,7 @@ namespace S33M3DXEngine.Main
         /// <param name="interpolationHd">FTSUpdate interpolation variables</param>
         /// <param name="interpolationLd">FTSUpdate interpolation variables</param>
         /// <param name="elapsedTime">Amount if time elpased since last call in ms</param>
-        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, long elapsedTime)
+        public virtual void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             for (int i = 0; i < _currentlyUpdatingComponents.Count; i++)
             {

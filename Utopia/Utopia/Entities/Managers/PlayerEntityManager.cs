@@ -422,7 +422,7 @@ namespace Utopia.Entities.Managers
         }
 
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, long timePassed)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             CheckHeadUnderWater();      //Under water head test
         }

@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Buffers\IndexBuffer.cs" />
     <Compile Include="Buffers\InstancedVertexBuffer.cs" />
+    <Compile Include="Buffers\IVertexType.cs" />
     <Compile Include="Buffers\VertexBuffer.cs" />
     <Compile Include="D3DEngine.cs" />
     <Compile Include="Debug\DXResource.cs" />

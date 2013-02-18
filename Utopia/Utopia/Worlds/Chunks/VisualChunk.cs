@@ -332,14 +332,14 @@ namespace Utopia.Worlds.Chunks
 
             if (SolidCubeVB == null)
             {
-                SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine.Device, SolidCubeVertices.Count, VertexCubeSolid.VertexDeclaration, PrimitiveTopology.TriangleList, "SolidCubeVB", ResourceUsage.Default, 10);
+                SolidCubeVB = new VertexBuffer<VertexCubeSolid>(_d3dEngine.Device, SolidCubeVertices.Count, PrimitiveTopology.TriangleList, "SolidCubeVB", ResourceUsage.Default, 10);
             }
             SolidCubeVB.SetData(_d3dEngine.ImmediateContext ,SolidCubeVertices.ToArray());
             SolidCubeVertices.Clear();
 
             if (SolidCubeIB == null)
             {
-                SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, SolidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt , "SolidCubeIB");
+                SolidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, SolidCubeIndices.Count, "SolidCubeIB");
             }
             SolidCubeIB.SetData(_d3dEngine.ImmediateContext, SolidCubeIndices.ToArray());
             SolidCubeIndices.Clear();
@@ -359,14 +359,14 @@ namespace Utopia.Worlds.Chunks
 
             if (LiquidCubeVB == null)
             {
-                LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine.Device, LiquidCubeVertices.Count, VertexCubeLiquid.VertexDeclaration, PrimitiveTopology.TriangleList, "LiquidCubeVB", ResourceUsage.Default, 10);
+                LiquidCubeVB = new VertexBuffer<VertexCubeLiquid>(_d3dEngine.Device, LiquidCubeVertices.Count, PrimitiveTopology.TriangleList, "LiquidCubeVB", ResourceUsage.Default, 10);
             }
             LiquidCubeVB.SetData(_d3dEngine.ImmediateContext, LiquidCubeVertices.ToArray());
             LiquidCubeVertices.Clear();
 
             if (LiquidCubeIB == null)
             {
-                LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, LiquidCubeIndices.Count, SharpDX.DXGI.Format.R16_UInt,"LiquidCubeIB");
+                LiquidCubeIB = new IndexBuffer<ushort>(_d3dEngine.Device, LiquidCubeIndices.Count,"LiquidCubeIB");
             }
             LiquidCubeIB.SetData(_d3dEngine.ImmediateContext, LiquidCubeIndices.ToArray());
             LiquidCubeIndices.Clear();
