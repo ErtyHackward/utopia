@@ -94,17 +94,8 @@
     <Content Include="TexturesPacks\Default\Terran\ct26_Foliage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Config\FlatWorld.realm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Config\Island.realm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\Sandbox.realm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\World.realm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="EffectsPacks\Default\Entities\CubeTool.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
