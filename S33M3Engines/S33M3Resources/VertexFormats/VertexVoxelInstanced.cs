@@ -11,8 +11,6 @@ namespace S33M3Resources.Structs.Vertex
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public struct VertexVoxelInstanced
     {
-        public static readonly VertexDeclaration VertexDeclaration;
-
         public Vector4B Position; // x,y,z and color index
         public Vector4B FaceType; // facetype, light
 

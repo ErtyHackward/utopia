@@ -210,7 +210,6 @@ namespace Realms.Client.States
             var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
             var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>(new ConstructorArgument("camera", firstPersonCamera));
-            cameraManager.RegisterNewCamera(firstPersonCamera);
             cameraManager.RegisterNewCamera(thirdPersonCamera);
 
             var timerManager = _ioc.Get<TimerManager>();
