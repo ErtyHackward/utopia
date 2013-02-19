@@ -502,9 +502,13 @@ namespace Utopia.Editor.Forms
             {
                 if (node1.Tag == tag)
                     return node1;
+
+                var t = FindByTag(tag, node1);
+
+                if (t != null)
+                    return t;
             }
-
-
+            
             return null;
         }
 
@@ -556,7 +560,7 @@ namespace Utopia.Editor.Forms
 
         private void AddEntity()
         {
-            var form = new FrmEntityChoose { SelectedType = _lastType };
+            var form = new FrmEntityChoose(_configuration) { SelectedType = _lastType };
             if (form.ShowDialog() == DialogResult.OK)
             {
                 _lastType = form.SelectedType;
@@ -885,6 +889,19 @@ namespace Utopia.Editor.Forms
                 }
 
             }
+        }
+
+        private void tvMainCategories_MouseUp(object sender, MouseEventArgs e)
+        {
+            
+        }
+
+        private void tvMainCategories_MouseDown(object sender, MouseEventArgs e)
+        {
+            var node = tvMainCategories.GetNodeAt(e.Location);
+
+            if (node != null)
+                tvMainCategories.SelectedNode = node;
         }
 
     }

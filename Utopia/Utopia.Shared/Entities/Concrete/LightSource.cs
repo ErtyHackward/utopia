@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
+    [Description("Entity of this type will emit world light. Use it for torches, lamps, candles, etc")]
     public class LightSource : BlockLinkedItem, ILightEmitterEntity
     {
         private ByteColor _emittedLightColor = new ByteColor(255, 190, 94);

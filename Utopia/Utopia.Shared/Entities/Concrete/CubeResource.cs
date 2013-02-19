@@ -13,6 +13,7 @@ using Utopia.Shared.Entities.Concrete.Interface;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
+    [EditorHideAttribute]
     public class CubeResource : Item, ITool
     {
         [ProtoMember(1)]

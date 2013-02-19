@@ -14,6 +14,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// A block item that is rotated according to current player rotation
     /// </summary>
     [ProtoContract]
+    [Description("Entity of this type will have one of 4 orientations and occupy a block.")]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {
         public override ushort ClassId

@@ -28,20 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.comboBoxTypes = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOk = new System.Windows.Forms.Button();
+            this.listBoxTypes = new System.Windows.Forms.ListBox();
+            this.labelDescription = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // comboBoxTypes
-            // 
-            this.comboBoxTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxTypes.FormattingEnabled = true;
-            this.comboBoxTypes.Location = new System.Drawing.Point(12, 43);
-            this.comboBoxTypes.Name = "comboBoxTypes";
-            this.comboBoxTypes.Size = new System.Drawing.Size(317, 21);
-            this.comboBoxTypes.TabIndex = 0;
             // 
             // label1
             // 
@@ -55,7 +47,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(255, 81);
+            this.buttonCancel.Location = new System.Drawing.Point(255, 213);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -64,7 +56,7 @@
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(174, 81);
+            this.buttonOk.Location = new System.Drawing.Point(174, 213);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 3;
@@ -72,17 +64,35 @@
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
+            // listBoxTypes
+            // 
+            this.listBoxTypes.FormattingEnabled = true;
+            this.listBoxTypes.Location = new System.Drawing.Point(12, 43);
+            this.listBoxTypes.Name = "listBoxTypes";
+            this.listBoxTypes.Size = new System.Drawing.Size(120, 160);
+            this.listBoxTypes.TabIndex = 4;
+            this.listBoxTypes.SelectedIndexChanged += new System.EventHandler(this.listBoxTypes_SelectedIndexChanged);
+            // 
+            // labelDescription
+            // 
+            this.labelDescription.Location = new System.Drawing.Point(139, 43);
+            this.labelDescription.Name = "labelDescription";
+            this.labelDescription.Size = new System.Drawing.Size(191, 160);
+            this.labelDescription.TabIndex = 5;
+            this.labelDescription.Text = "Select an item to see the description";
+            // 
             // FrmEntityChoose
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(342, 118);
+            this.ClientSize = new System.Drawing.Size(342, 248);
+            this.Controls.Add(this.labelDescription);
+            this.Controls.Add(this.listBoxTypes);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBoxTypes);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -97,9 +107,10 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox comboBoxTypes;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOk;
+        private System.Windows.Forms.ListBox listBoxTypes;
+        private System.Windows.Forms.Label labelDescription;
     }
 }

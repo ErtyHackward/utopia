@@ -13,6 +13,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// Represents an two-state item, that can be switched between them by use operation
     /// </summary>
     [ProtoContract]
+    [Description("Provides door entity functionality. Can be opened or closed. Bind according model states to the class properties.")]
     public class Door : OrientedBlockItem, IUsableEntity, ISoundEmitterEntity
     {
         [Category("Door")]

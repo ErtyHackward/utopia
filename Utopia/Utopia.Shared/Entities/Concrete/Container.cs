@@ -11,6 +11,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// Represents a container block entity
     /// </summary>
     [ProtoContract]
+    [Description("Allows to store other entities inside this one.")]
     public class Container : OrientedBlockLinkedItem
     {
         SlotContainer<ContainedSlot> _content;

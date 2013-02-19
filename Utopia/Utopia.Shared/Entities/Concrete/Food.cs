@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Concrete
 {
+    [ProtoContract]
+    [Description("Food entity allows to restore player health and still hunger.")]
     public class Food : Item
     {
         /// <summary>
