@@ -114,7 +114,7 @@ namespace Utopia.GUI.Inventory
             if (_currentItem.HasValue)
             {
 
-                var delta = elapsedTime * 0.007f;
+                var delta = elapsedTime * 7f;
                 if (_hide)
                 {
                     if (_alpha > 0)

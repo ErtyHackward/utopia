@@ -57,7 +57,7 @@ namespace Utopia.Components
         private PlayerEntityManager _playerManager;
         private StaggingBackBuffer _backBuffer;
         private float _animationValue = 0.0f;
-        private float _animationSpeed = 0.0005f;
+        private float _animationSpeed = 0.5f;
 
 
         public SharedFrameCB(D3DEngine engine,
