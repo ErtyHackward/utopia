@@ -280,6 +280,8 @@
             this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
             this.tvMainCategories.TabIndex = 5;
             this.tvMainCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMainCategories_AfterSelect);
+            this.tvMainCategories.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseDown);
+            this.tvMainCategories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseUp);
             // 
             // imageList1
             // 

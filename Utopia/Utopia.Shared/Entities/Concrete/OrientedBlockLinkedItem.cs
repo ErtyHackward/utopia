@@ -11,6 +11,7 @@ using Utopia.Shared.Entities.Inventory;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
+    [Description("Entity of this type will have one of 4 orientations and will disappear if their linked block is removed.")]
     public class OrientedBlockLinkedItem : BlockLinkedItem, IOrientedSlope
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

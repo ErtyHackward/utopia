@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
@@ -6,6 +7,7 @@ using Utopia.Shared.Settings;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
+    [Description("Provides mine-tool functionality.")]
     public class BasicCollector : ResourcesCollector
     {
         public override ushort ClassId { get { return EntityClassId.BasicCollector; } }
