@@ -209,11 +209,11 @@ namespace Utopia.Particules
                 //Computation of the new dimension, its a simple deterministic computation using this formula :
                 // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
                 p = _particules[i];
-                p.Age += elapsedTime / 1000.0f; //Age in Seconds
+                p.Age += elapsedTime; //Age in Seconds
 
                 if (p.SizeGrowSpeed != 0) //Size
                 {
-                    float growsize = (elapsedTime / 1000.0f) * p.SizeGrowSpeed;
+                    float growsize = elapsedTime * p.SizeGrowSpeed;
                     p.Size.X += growsize;
                     p.Size.Y += growsize;
                 }

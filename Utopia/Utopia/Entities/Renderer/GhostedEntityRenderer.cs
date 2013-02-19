@@ -118,7 +118,7 @@ namespace Utopia.Entities.Renderer
                 Transform = null;
 
 
-            _alpha += ( _alphaRaise ? 0.0004f : -0.0004f ) * elapsedTime;
+            _alpha += ( _alphaRaise ? 0.4f : -0.4f ) * elapsedTime;
 
             if (_alpha < 0.2f)
                 _alphaRaise = true;

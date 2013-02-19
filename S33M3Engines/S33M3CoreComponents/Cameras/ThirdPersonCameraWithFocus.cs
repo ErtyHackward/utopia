@@ -28,7 +28,7 @@ namespace S33M3CoreComponents.Cameras
 
         private float _offsetDistance = 5.0f;
         private float _zoomingPower = 0;
-        private float _zoomingStep = 0.005f;
+        private float _zoomingStep = 5f;
 
         private bool _isbackLooking = true;
 

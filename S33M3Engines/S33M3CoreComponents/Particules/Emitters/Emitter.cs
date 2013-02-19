@@ -204,7 +204,7 @@ namespace S33M3CoreComponents.Particules.Emitters
                 //Computation of the new dimension, its a simple deterministic computation using this formula :
                 // Posi(t') = 1/2 * t² * (GravityVector) + t * (VelocityVector) + Posi(0)
                 p = _particules[i];
-                p.Age += (float)elapsedTime / 1000.0f; //Age in Seconds
+                p.Age += (float)elapsedTime; //Age in Seconds
                 
                 p.Position.Value = ((0.5 * p.Age * p.Age) * _forceOnEmittedParticules)    //Taking into account a specific force applied in a constant way to the particule (Generaly Gravity) = Acceleration Force
                               + (p.Age * p.Velocity)                                 //New position based on time and move vector

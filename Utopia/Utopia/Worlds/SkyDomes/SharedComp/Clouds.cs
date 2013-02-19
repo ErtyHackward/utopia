@@ -260,8 +260,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
             _smallOffset += _cameraPrevious - cameraCurrent;
             _cameraPrevious = cameraCurrent;
 
-            _smallOffset.X += (float)elapsedTime / 1000 * _weather.Wind.WindFlow.X;
-            _smallOffset.Y += (float)elapsedTime / 1000 * _weather.Wind.WindFlow.Z;
+            _smallOffset.X += elapsedTime * _weather.Wind.WindFlow.X;
+            _smallOffset.Y += elapsedTime * _weather.Wind.WindFlow.Z;
         }
 
         public override void Draw(DeviceContext context, int index)
