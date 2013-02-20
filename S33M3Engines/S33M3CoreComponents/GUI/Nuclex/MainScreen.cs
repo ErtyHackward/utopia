@@ -595,8 +595,6 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             if (!_toolTipActive && ((DateTime.Now - _tooltipTimeout).TotalMilliseconds >= TooltipTimeout))
             {
-
-
                 if (GetTopControl().ToolTipEnabled)
                 {
                     OnToolTipShow(new ToolTipEventArgs { Control = desktopControl.MouseOverControl, CursorPos = _prevMousePos });
@@ -605,6 +603,11 @@ namespace S33M3CoreComponents.GUI.Nuclex
             }
         }
 
+        /// <summary>
+        /// Returns the currently hovered control
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public Control GetTopControl(Control c = null)
         {
             if (c == null)

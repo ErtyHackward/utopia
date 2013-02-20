@@ -21,3 +21,4 @@ Utopia.Resources.pdb
 Utopia.Server.pdb
 Utopia.Shared.pdb
 Launcher.exe
+SharpDX.MediaFoundation.xml
