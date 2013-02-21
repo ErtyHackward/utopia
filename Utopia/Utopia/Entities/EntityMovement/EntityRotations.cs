@@ -38,6 +38,7 @@ namespace Utopia.Entities.EntityMovement
 
         private float _accumPitchDegrees;
         private float _rotationDelta;
+        private float _rotationDeltaAcum;
         #endregion
 
         #region Public Properties
@@ -123,9 +124,13 @@ namespace Utopia.Entities.EntityMovement
             float headingDegrees = 0.0f;
             float pitchDegree = 0.0f;
             float rollDegree = 0.0f;
+            bool hasRotated = false;
 
             if (_inputsManager.MouseManager.MouseCapture)
             {
+                _rotationDeltaAcum += _rotationDelta; //Accumulate time
+                if (_rotationDeltaAcum > 0.2f) _rotationDeltaAcum = _rotationDelta;
+
                 switch (_displacementMode)
                 {
                     case EntityDisplacementModes.Flying:
@@ -134,7 +139,7 @@ namespace Utopia.Entities.EntityMovement
                         headingDegrees = _inputsManager.MouseManager.MouseMoveDelta.X;
                         pitchDegree = _inputsManager.MouseManager.MouseMoveDelta.Y;
 
-                        Rotate2Axes(headingDegrees, pitchDegree);
+                        hasRotated = Rotate2Axes(headingDegrees, pitchDegree);
                         break;
                     case EntityDisplacementModes.FreeFlying:
                         //Get the movement direction from Keyboard input
@@ -144,23 +149,28 @@ namespace Utopia.Entities.EntityMovement
                         pitchDegree = _inputsManager.MouseManager.MouseMoveDelta.Y;
                         rollDegree = _inputsManager.MouseManager.MouseMoveDelta.X;
 
-                        Rotate3Axes(headingDegrees, pitchDegree, rollDegree);
+                        hasRotated = Rotate3Axes(headingDegrees, pitchDegree, rollDegree);
                         break;
                     default:
                         break;
                 }
-                UpdateLookAt();
+
+                if (hasRotated)
+                {
+                    UpdateLookAt();
+                    _rotationDeltaAcum = 0;
+                }
             }
         }
 
         //Flying rotation
-        private void Rotate3Axes(float headingDegrees, float pitchDegrees, float rollDegrees)
+        private bool Rotate3Axes(float headingDegrees, float pitchDegrees, float rollDegrees)
         {
-            if (headingDegrees == 0 && pitchDegrees == 0 && rollDegrees == 0) return;
+            if (headingDegrees == 0 && pitchDegrees == 0 && rollDegrees == 0) return false;
 
-            headingDegrees *= _rotationDelta;
-            pitchDegrees *= _rotationDelta;
-            rollDegrees *= _rotationDelta;
+            headingDegrees *= _rotationDeltaAcum;
+            pitchDegrees *= _rotationDeltaAcum;
+            rollDegrees *= _rotationDeltaAcum;
 
             _accumPitchDegrees += pitchDegrees;
 
@@ -176,17 +186,18 @@ namespace Utopia.Entities.EntityMovement
             Quaternion.RotationYawPitchRoll(heading, pitch, roll, out rotation);
             Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
 
+            return true;
         }
 
         //First Person rotation
         //Free flying rotation
         //Swimming rotation
-        private void Rotate2Axes(float headingDegrees, float pitchDegrees)
+        private bool Rotate2Axes(float headingDegrees, float pitchDegrees)
         {
-            if (headingDegrees == 0 && pitchDegrees == 0) return;
+            if (headingDegrees == 0 && pitchDegrees == 0) return false;
 
-            headingDegrees *= _rotationDelta;
-            pitchDegrees *= _rotationDelta;
+            headingDegrees *= _rotationDeltaAcum;
+            pitchDegrees *= _rotationDeltaAcum;
 
             _accumPitchDegrees += pitchDegrees;
 
@@ -224,6 +235,8 @@ namespace Utopia.Entities.EntityMovement
                 Quaternion.RotationAxis(ref MVector3.Right, pitch, out rotation);
                 Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
             }
+
+            return true;
         }
 
         private void UpdateLookAt()
