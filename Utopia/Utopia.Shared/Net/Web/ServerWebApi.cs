@@ -10,9 +10,9 @@ namespace Utopia.Shared.Net.Web
             return PostRequest<UserAuthenticateResponse>(ServerUrl + "/userauthentication", string.Format("login={0}&pass={1}", Uri.EscapeDataString(login), passwordHash));
         }
 
-        public void AliveUpdateAsync(string serverName, int port, uint usersCount)
+        public void AliveUpdateAsync(string serverName, int port, uint usersCount, Action<WebEventArgs> callback)
         {
-            PostRequestAsync<WebEventArgs>(ServerUrl + "/serveralive", string.Format("name={0}&port={1}&usersCount={2}", serverName, port, usersCount), null);
+            PostRequestAsync<WebEventArgs>(ServerUrl + "/api/servers", string.Format("name={0}&port={1}&count={2}", Uri.EscapeDataString(serverName), port, usersCount), callback);
         }
     }
 }

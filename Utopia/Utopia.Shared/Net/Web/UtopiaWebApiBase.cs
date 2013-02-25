@@ -49,7 +49,8 @@ namespace Utopia.Shared.Net.Web
                         ea.Exception = x;
                     }
 
-                    callback(ea);
+                    if (callback != null)
+                        callback(ea);
 
                 }, request);
             }
@@ -88,7 +89,8 @@ namespace Utopia.Shared.Net.Web
                         ea.Exception = x;
                     }
 
-                    callback(ea);
+                    if (callback != null)
+                        callback(ea);
 
                 }, request);
             }

@@ -184,7 +184,19 @@ namespace Realms.Server
         {
             var webApi = _iocContainer.Get<ServerWebApi>();
             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
-            //webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count);
+            webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count, ServerUpdateCompleted);
+        }
+
+        private static void ServerUpdateCompleted(WebEventArgs e)
+        {
+            if (e.Error != 0)
+            {
+                throw new ApplicationException("Api error: " + e.ErrorText);
+            }
+            if (e.Exception != null)
+            {
+                throw e.Exception;
+            }
         }
 
         static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
