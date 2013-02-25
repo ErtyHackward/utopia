@@ -8,7 +8,10 @@ namespace Utopia.Shared.Net.Web
         public Exception Exception { get; set; }
 
         [JsonProperty("error")]
-        public string Error { get; set; }
+        public int Error { get; set; }
+
+        [JsonProperty("error_description")]
+        public string ErrorText { get; set; }
     }
 
     public class WebEventArgs<T> : WebEventArgs
