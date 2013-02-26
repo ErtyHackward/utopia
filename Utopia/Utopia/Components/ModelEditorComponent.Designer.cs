@@ -437,7 +437,7 @@ namespace Utopia.Components
 
             #region Main tools
 
-            _mainToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 100), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
+            _mainToolsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 120), LeftTopMargin = new Vector2(), RightBottomMargin = new Vector2(), ControlsSpacing = new Vector2() };
 
             _mainToolsGroup.Children.Add(new LabelControl { Text = "Storage", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
             
@@ -454,11 +454,15 @@ namespace Utopia.Components
             var importAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import all" };
             importAllButton.Pressed += delegate { OnImportAll(); };
 
+            var publishButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish" };
+            publishButton.Pressed += delegate { OnPublish(); };
+
             _mainToolsGroup.Children.Add(_saveButton);
             _mainToolsGroup.Children.Add(importButton);
             _mainToolsGroup.Children.Add(exportButton);
             _mainToolsGroup.Children.Add(importAllButton);
             _mainToolsGroup.Children.Add(exportAllButton);
+            _mainToolsGroup.Children.Add(publishButton);
 
             #endregion
 
