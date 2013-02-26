@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Ninject;
 using S33M3Resources.Structs.Helpers;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -11,6 +12,7 @@ using Utopia.Entities;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Models;
+using Utopia.Shared.Net.Web;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
@@ -411,6 +413,13 @@ namespace Utopia.Components
             _needSave = false;
             OnBackPressed();
         }
+
+        #endregion
+
+        #region DI
+
+        [Inject]
+        public ClientWebApi WebApi { get; set; }
 
         #endregion
 
@@ -2799,6 +2808,39 @@ namespace Utopia.Components
                 _modelsList.SelectedItems.Add(index);
                 
                 _gui.MessageBox("Model imported", "Success");
+            }
+            catch (Exception x)
+            {
+                _gui.MessageBox(x.Message, "Error");
+            }
+        }
+
+        private void OnPublish()
+        {
+            if (_visualVoxelModel == null)
+            {
+                _gui.MessageBox("No model is selected to be published.", "Error");
+                return;
+            }
+            try
+            {
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia",
+                                        _visualVoxelModel.VoxelModel.Name + ".uvm");
+                var dir = Path.GetDirectoryName(path);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                _visualVoxelModel.VoxelModel.SaveToFile(path);
+
+                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new DrawingSize { Width = 256, Height = 256 }))
+                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, Path.ChangeExtension(path, ".png"));
+
+                WebApi.UploadModel(path);
+
+                _gui.MessageBox("Model published successfully.");
             }
             catch (Exception x)
             {

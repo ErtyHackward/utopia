@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Net;
 using Utopia.Shared.Net.Web.Responses;
 
 namespace Utopia.Shared.Net.Web
@@ -60,6 +64,33 @@ namespace Utopia.Shared.Net.Web
         {
             CheckToken();
             GetRequestAsync<ServerListResponse>(ServerUrl + string.Format("/api/servers?access_token={0}", Token), OnServerListReceived);
+        }
+
+        public void UploadModel(string filePath)
+        {
+            CheckToken();
+
+            var nvc = new NameValueCollection();
+
+            nvc.Add("name", Path.GetFileNameWithoutExtension(filePath));
+
+            List<UploadFileInfo> files = new List<UploadFileInfo>();
+
+            files.Add(new UploadFileInfo
+                {
+                    FilePath = filePath,
+                    ContentType = "application/octet-stream",
+                    ParamName = "File"
+                });
+
+            files.Add(new UploadFileInfo
+            {
+                FilePath = Path.ChangeExtension(filePath, ".png"),
+                ContentType = "image/png",
+                ParamName = "Screen"
+            });
+
+            HttpUploadFiles(ServerUrl + string.Format("/api/models?access_token={0}", Token), files, nvc);
         }
     }
 }
