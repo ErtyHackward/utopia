@@ -35,8 +35,11 @@ namespace Utopia.Server.Entities
         private Path3D _path;
         private int _targetPathNodeIndex = -1;
         Vector3D _pathTargetPoint;
+        private double _moveValue;
 
         public TestNpcState State { get; set; }
+
+        private Vector3D _prevPoint;
 
         public Vector3D MoveVector
         {
@@ -75,8 +78,37 @@ namespace Utopia.Server.Entities
                 _server.ChatManager.Broadcast(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
 
+                // fix the path
+                for (int i = 0; i < _path.Points.Count - 1; i++)
+                {
+                    var curPoint = _path.Points[i];
+                    var nextPoint = _path.Points[i + 1];
+
+                    if (curPoint.Y != nextPoint.Y && (curPoint.X != nextPoint.X || curPoint.Z != nextPoint.Z))
+                    {
+                        Vector3I pos;
+                        // add intermediate point
+                        if (nextPoint.Y < curPoint.Y)
+                        {
+                            // falling down
+                            pos = new Vector3I(nextPoint.X, curPoint.Y, nextPoint.Z);
+                        }
+                        else
+                        {
+                            // lifting up
+                            pos = new Vector3I(curPoint.X, nextPoint.Y+1, curPoint.Z);
+                        }
+                        _path.Points.Insert(i + 1, pos);
+                        i++;
+                    }
+                }
+
+
+
                 State = TestNpcState.FollowPath;
                 _targetPathNodeIndex = 0;
+                _moveValue = 0;
+                _prevPoint = DynamicEntity.Position;
                 _pathTargetPoint = new Vector3D(_path.Points[1].X, _path.Points[1].Y, _path.Points[1].Z) + CubeCenter;
                 _moveDirection = _pathTargetPoint - DynamicEntity.Position;
                 _moveDirection.Normalize();
@@ -101,7 +133,36 @@ namespace Utopia.Server.Entities
         {
             _mapAreas.Remove(area);
         }
-        
+
+        private void FollowNextPoint()
+        {
+            if (++_targetPathNodeIndex >= _path.Points.Count)
+            {
+                State = TestNpcState.Staying;
+                return;
+            }
+
+            var vec3d = _path.Points[_targetPathNodeIndex];
+
+            var dynPos = DynamicEntity.Position;
+
+            _prevPoint = _pathTargetPoint;
+            _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
+            _moveDirection = _pathTargetPoint - dynPos;
+            _moveDirection.Normalize();
+
+            if (Math.Abs(_moveDirection.Y) < 0.1f)
+            {
+                var q = Quaternion.RotationMatrix(Matrix.LookAtLH(dynPos.AsVector3(),
+                                                                  dynPos.AsVector3() +
+                                                                  _moveDirection.AsVector3(),
+                                                                  Vector3D.Up.AsVector3()));
+                DynamicEntity.HeadRotation = q;
+                //Transform the rotation from a world rotatino to a local rotation
+            }
+            _moveValue -= 1;
+        }
+
         /// <summary>
         /// Perform AI operations...
         /// </summary>
@@ -128,25 +189,12 @@ namespace Utopia.Server.Entities
 
             if (State == TestNpcState.FollowPath)
             {
-                if ((DynamicEntity.Position - _pathTargetPoint).LengthSquared() < 0.2d)
+                _moveValue += _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 3;
+                if (_moveValue >= 1)
                 {
-                    if (++_targetPathNodeIndex == _path.Points.Count)
-                    {
-                        State = TestNpcState.Staying;
-                        return;
-                    }
-                    else
-                    {
-                        var vec3d = _path.Points[_targetPathNodeIndex];
-                        _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
-                        _moveDirection = _pathTargetPoint - DynamicEntity.Position;
-                        _moveDirection.Normalize();
-                        var q = Quaternion.RotationMatrix(Matrix.LookAtLH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
-                        DynamicEntity.HeadRotation = q; //Transform the rotation from a world rotatino to a local rotation
-                    }
+                    FollowNextPoint();
                 }
-
-                DynamicEntity.Position += _moveDirection * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 3;
+                DynamicEntity.Position = Vector3D.Lerp(_prevPoint, _pathTargetPoint, _moveValue);
             }
             else
             {

@@ -33,7 +33,7 @@ namespace Utopia.Server.Sample
         /// <param name="name"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public TestNpc CreateZombie(string name, Vector3D position)
+        public TestNpc CreateNpc(string name, Vector3D position)
         {
             var z = new Zombie { CharacterName = name };
 
@@ -60,7 +60,7 @@ namespace Utopia.Server.Sample
             for (int i = 0; i < 1; i++)
             {
                 
-                var z = CreateZombie(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
+                var z = CreateNpc(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
                 //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
             }
@@ -84,14 +84,14 @@ namespace Utopia.Server.Sample
 
                     for (int i = 0; i < count; i++)
                     {
-                        var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
+                        var z = CreateNpc(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
                         z.Seed = r.Next(0, 100000);
                     }
                     _server.ChatManager.Broadcast(string.Format("{0} test NPC added ({1} total)", count, _aliveNpc.Count));
                 }
                 else
                 {
-                    var z = CreateZombie(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
+                    var z = CreateNpc(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
                     _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.Name,
                                                                 _aliveNpc.Count));
                 }

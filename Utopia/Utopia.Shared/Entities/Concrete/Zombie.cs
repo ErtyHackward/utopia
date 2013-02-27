@@ -15,7 +15,7 @@ namespace Utopia.Shared.Entities.Concrete
         {
             Type = EntityType.Dynamic;
             ModelName = "Girl";
-            Name = "Zombie";
+            Name = "NPC";
         }
 
     }

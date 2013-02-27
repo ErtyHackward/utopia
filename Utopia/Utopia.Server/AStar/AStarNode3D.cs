@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 
@@ -82,7 +81,7 @@ namespace Utopia.Server.AStar
 
         public override bool IsSameState(AStarNode3D aNode)
         {
-            return aNode.Cursor.GlobalPosition.X == Cursor.GlobalPosition.X && aNode.Cursor.GlobalPosition.Y == Cursor.GlobalPosition.Y && aNode.Cursor.GlobalPosition.Z == Cursor.GlobalPosition.Z;
+            return aNode.Cursor.GlobalPosition == Cursor.GlobalPosition;
         }
 
         public override int GetHashCode()
