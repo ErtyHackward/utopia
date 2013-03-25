@@ -252,7 +252,7 @@ namespace Utopia.Entities
 
             var tex2D = texture.CloneTexture(context, ResourceUsage.Default);
 
-            tex2D = DrawOuterShadow(context, texture, tex2D);
+            tex2D = DrawOuterShadow(context, texture, tex2D, iconSize.Width);
 
             _d3DEngine.SetRenderTargetsAndViewPort(context);
 
