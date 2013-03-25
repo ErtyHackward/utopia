@@ -457,12 +457,16 @@ namespace Utopia.Components
             var publishButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish" };
             publishButton.Pressed += delegate { OnPublish(); };
 
+            var publishAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish All" };
+            publishAllButton.Pressed += delegate { OnPublishAll(); };
+
             _mainToolsGroup.Children.Add(_saveButton);
             _mainToolsGroup.Children.Add(importButton);
             _mainToolsGroup.Children.Add(exportButton);
             _mainToolsGroup.Children.Add(importAllButton);
             _mainToolsGroup.Children.Add(exportAllButton);
             _mainToolsGroup.Children.Add(publishButton);
+            _mainToolsGroup.Children.Add(publishAllButton);
 
             #endregion
 

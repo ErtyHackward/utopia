@@ -2848,6 +2848,33 @@ namespace Utopia.Components
             }
         }
 
+        private void OnPublishAll()
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
+            var dir = Path.GetDirectoryName(path);
+
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            int count = 0;
+            foreach (var visualVoxelModel in _manager.Enumerate())
+            {
+                var modelPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".uvm");
+                var previewPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".png");
+                visualVoxelModel.VoxelModel.SaveToFile(modelPath);
+
+                // create icon
+
+                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new DrawingSize { Width = 256, Height = 256 }))
+                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
+
+                WebApi.UploadModel(modelPath);
+
+                count++;
+            }
+            _gui.MessageBox(count + " models uploaded", "Success");
+        }
+
         private void OnPartRotation(EditorAxis editorAxis)
         {
             if (SelectedPartIndex == -1)
