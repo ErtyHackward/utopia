@@ -140,7 +140,15 @@ namespace Realms.Client.States
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     serverComponent.BindingServer(_vars.CurrentServerAddress);
-                    serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, _vars.PasswordHash);
+
+                    // take server address without port to create server password hash
+                    var srvAddr = _vars.CurrentServerAddress.Contains(":")
+                                      ? _vars.CurrentServerAddress.Substring(0, _vars.CurrentServerAddress.IndexOf(':'))
+                                      : _vars.CurrentServerAddress;
+
+                    var userHash = ( _vars.PasswordHash + _vars.Login.ToLower() ).GetSHA1Hash();
+
+                    serverComponent.ConnectToServer(_vars.Login, _vars.DisplayName, (srvAddr + userHash).GetSHA1Hash());
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, _vars.Login, "Client", "Multiplayer", _vars.CurrentServerAddress.Replace(':', '_'), "ClientWorldCache.db");
                 }
             }

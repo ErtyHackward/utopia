@@ -113,10 +113,10 @@ namespace Utopia.Server.Managers
                     oldConnection.Disconnect();
                 }
 
-                connection.Authorized = true;
-                connection.UserId = loginData.UserId;
-                connection.UserRole = loginData.Role;
-                connection.Login = e.Message.Login;
+                connection.Authorized  = true;
+                connection.UserId      = loginData.UserId;
+                connection.UserRole    = loginData.Role;
+                connection.Login       = e.Message.Login;
                 connection.DisplayName = e.Message.DisplayName;
 
                 ServerDynamicEntity playerEntity;
