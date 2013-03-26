@@ -24,7 +24,7 @@ namespace Utopia.Shared.Net.Messages
         public string Login { get; set; }
 
         /// <summary>
-        /// Gets or sets a user password md5 hash
+        /// Gets or sets a user password sha1 hash
         /// </summary>
         [ProtoMember(2)]
         public string Password { get; set; }

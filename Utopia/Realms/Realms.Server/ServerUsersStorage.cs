@@ -16,8 +16,11 @@ namespace Realms.Server
 
         public ServerUsersStorage(SQLiteStorageManager storage, ServerWebApi webApi)
         {
-            if (storage == null) throw new ArgumentNullException("storage");
-            if (webApi == null) throw new ArgumentNullException("webApi");
+            if (storage == null) 
+                throw new ArgumentNullException("storage");
+            if (webApi == null) 
+                throw new ArgumentNullException("webApi");
+
             _storage = storage;
             _webApi = webApi;
         }
@@ -54,7 +57,7 @@ namespace Realms.Server
 
                 if (responce != null && responce.Valid)
                 {
-                    // create or update local registrantion 
+                    // create or update local registration 
                     return _storage.Register(login, passwordHash, Utopia.Shared.Structs.UserRole.Guest);
                 }
 
