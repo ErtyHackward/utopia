@@ -19,6 +19,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class LoginManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Server _server;
         private readonly EntityFactory _factory;
 
@@ -54,7 +56,7 @@ namespace Utopia.Server.Managers
             // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
 
-            TraceHelper.Write("{0} disconnected", e.Connection.RemoteAddress);
+            logger.Info("{0} disconnected", e.Connection.RemoteAddress);
 
             if (e.Connection.Authorized)
             {
@@ -142,7 +144,7 @@ namespace Utopia.Server.Managers
 
                     if (bytes == null)
                     {
-                        TraceHelper.Write("{0} entity was corrupted, creating new one...", e.Message.DisplayName);
+                        logger.Warn("{0} entity was corrupted, creating new one...", e.Message.DisplayName);
                         playerEntity = GetNewPlayerEntity(connection, state.EntityId);
                     }
                     else
@@ -161,7 +163,7 @@ namespace Utopia.Server.Managers
                 connection.ServerEntity = playerEntity;
 
                 connection.Send(new LoginResultMessage { Logged = true });
-                TraceHelper.Write("{1} {0} logged as {3} EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId, e.Message.DisplayName);
+                logger.Info("{1} {0} logged as {3} EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId, e.Message.DisplayName);
                 var gameInfo = new GameInformationMessage
                 {
                     ChunkSize = AbstractChunk.ChunkSize,
@@ -187,7 +189,7 @@ namespace Utopia.Server.Managers
                     Message = "Wrong login/password combination"
                 };
 
-                TraceHelper.Write("Incorrect login information {0} ({1})", e.Message.Login,
+                logger.Error("Incorrect login information {0} ({1})", e.Message.Login,
                                   connection.Id);
 
                 connection.Send(error, new LoginResultMessage { Logged = false });

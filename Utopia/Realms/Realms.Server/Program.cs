@@ -13,19 +13,16 @@ using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Web;
-using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.Processors.Utopia;
-using Utopia.Shared.World.WorldConfigs;
-using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 
 namespace Realms.Server
 {
     class Program
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static Utopia.Server.Server Server
         {
@@ -92,9 +89,6 @@ namespace Realms.Server
 
         static void Main(string[] args)
         {
-            // redirect all trace into the console
-            Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
-
             logger.Info("Utopia Realms game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "main.realm");

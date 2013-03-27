@@ -265,8 +265,7 @@ namespace Utopia.Server.Managers
             SaveChunks();
             if (ChunksSaved > 0)
             {
-                TraceHelper.Write("Chunks saved: {1} Took: {0} ms", SaveTime,
-                                  ChunksSaved);
+                logger.Info("Chunks saved: {1} Took: {0} ms", SaveTime, ChunksSaved);
             }
         }
 
