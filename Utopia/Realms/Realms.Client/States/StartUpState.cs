@@ -2,11 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using S33M3CoreComponents.States;
 using Ninject;
 using Utopia.Components;
 using System.IO;
 using S33M3CoreComponents.Inputs;
+using Utopia.Shared.Net.Web;
+using Utopia.Shared.Settings;
 
 namespace Realms.Client.States
 {
@@ -17,6 +20,10 @@ namespace Realms.Client.States
         #region Private variables
         private IKernel _iocContainer;
         private bool _systemComponentInitialized, _slideShowFinished;
+        private ClientWebApi _webApi;
+
+        // indicates if we could switch to next state
+        private string _nextState;
         #endregion
 
         #region Public variables/Properties
@@ -40,6 +47,7 @@ namespace Realms.Client.States
         {
             var startUpComponent = _iocContainer.Get<StartUpComponent>();
             var inputsManager = _iocContainer.Get<InputsManager>();
+            _webApi = _iocContainer.Get<ClientWebApi>();
 
             inputsManager.KeyboardManager.IsRunning = true;
 
@@ -52,32 +60,59 @@ namespace Realms.Client.States
 
             startUpComponent.SetSlideShows(slides.ToArray(), 3000);
 
-            startUpComponent.SlideShowFinished += startUpComponent_SlideShowFinished;
+            startUpComponent.SlideShowFinished += StartUpComponentSlideShowFinished;
 
             //Prepare Async SystemComponentState
             GameState systemComponentState = StatesManager.GetByName("SystemComponents");
-            systemComponentState.StateInitialized += systemComponentState_StateInitialized;
+            systemComponentState.StateInitialized += SystemComponentStateStateInitialized;
 
             StatesManager.PrepareStateAsync(systemComponentState);
+
+            _webApi.TokenVerified += WebApiTokenVerified;
+            if (!string.IsNullOrEmpty(ClientSettings.Current.Settings.Token))
+            {
+                _webApi.OauthVerifyTokenAsync(ClientSettings.Current.Settings.Token);
+            }
+            else
+            {
+                _nextState = "Login";
+            }
 
             AddComponent(startUpComponent);
             AddComponent(inputsManager);
             base.Initialize(context);
         }
+
+        void WebApiTokenVerified(object sender, Utopia.Shared.Net.Web.Responses.VerifyResponse e)
+        {
+            if (e.Error == 0 && e.Exception == null && !string.IsNullOrEmpty(e.DisplayName))
+            {
+                var vars = _iocContainer.Get<RealmRuntimeVariables>();
+
+                vars.Login = ClientSettings.Current.Settings.Login;
+                vars.PasswordHash = ClientSettings.Current.Settings.PasswordHash;
+                vars.DisplayName = e.DisplayName;
+
+                _nextState = "MainMenu";
+                return;
+            }
+
+            _nextState = "Login";
+        }
         #endregion
 
         #region Private methods
-        private void systemComponentState_StateInitialized(object sender, EventArgs e)
+        private void SystemComponentStateStateInitialized(object sender, EventArgs e)
         {
-            StatesManager.GetByName("SystemComponents").StateInitialized -= systemComponentState_StateInitialized;
+            StatesManager.GetByName("SystemComponents").StateInitialized -= SystemComponentStateStateInitialized;
             _systemComponentInitialized = true;
             CheckForLoginStartUp();
         }
 
-        private void startUpComponent_SlideShowFinished(object sender, EventArgs e)
+        private void StartUpComponentSlideShowFinished(object sender, EventArgs e)
         {
             var startUpComponent = _iocContainer.Get<StartUpComponent>();
-            startUpComponent.SlideShowFinished -= startUpComponent_SlideShowFinished;
+            startUpComponent.SlideShowFinished -= StartUpComponentSlideShowFinished;
 
             _slideShowFinished = true;
             CheckForLoginStartUp();
@@ -94,20 +129,12 @@ namespace Realms.Client.States
 
                     StatesManager.DeactivateSwitchComponent = false;
 
-#if DEBUG
-                    // first state will be the login state
-                    var vars = _iocContainer.Get<RealmRuntimeVariables>();
-                    vars.SinglePlayer = true;
-                    vars.Login = "test";
-                    vars.PasswordHash = "";
-                    vars.DisplayName = "s33m3";
+                    while (string.IsNullOrEmpty(_nextState))
+                    {
+                        Thread.Sleep(100);
+                    }
 
-                    //stateManager.ActivateGameStateAsync("LoadingGame");
-                    StatesManager.ActivateGameStateAsync("MainMenu");
-#else
-                    StatesManager.ActivateGameStateAsync("Login");
-#endif
-
+                    StatesManager.ActivateGameStateAsync(_nextState);
                 }
                 else
                 {
