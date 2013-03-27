@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
-using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Interfaces;
@@ -21,6 +20,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class AreaManager : IDisposable, IDynamicEntityManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Server _server;
         private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
         private readonly Dictionary<uint, ServerDynamicEntity> _dynamicEntities = new  Dictionary<uint, ServerDynamicEntity>();
@@ -182,7 +183,7 @@ namespace Utopia.Server.Managers
             }
             else
             {
-                TraceHelper.Write("Warning! Server is overloaded. Try to decrease dynamic entities count");
+                logger.Warn("Warning! Server is overloaded. Try to decrease dynamic entities count");
             }
         }
 

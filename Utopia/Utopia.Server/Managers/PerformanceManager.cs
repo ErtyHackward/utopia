@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Server.Managers
 {
@@ -11,6 +10,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class PerformanceManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Queue<double> _updateCyclesPerfomance = new Queue<double>();
         private readonly Stopwatch _updateStopwatch = new Stopwatch();
         private readonly DateTime _dateStart;
@@ -61,7 +62,7 @@ namespace Utopia.Server.Managers
             }
             catch (InvalidOperationException e)
             {
-                TraceHelper.Write("Exception {0}", e.Message);
+                logger.Error("Exception {0}", e.Message);
             }
 
             areaManager.BeforeUpdate += AreaManagerBeforeUpdate;

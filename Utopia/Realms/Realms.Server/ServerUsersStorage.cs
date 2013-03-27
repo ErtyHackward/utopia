@@ -2,7 +2,6 @@
 using Utopia.Server.Managers;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Web;
-using Utopia.Shared.Structs.Helpers;
 
 namespace Realms.Server
 {
@@ -11,6 +10,8 @@ namespace Realms.Server
     /// </summary>
     public class ServerUsersStorage : IUsersStorage
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly SQLiteStorageManager _storage;
         private readonly ServerWebApi _webApi;
 
@@ -66,7 +67,7 @@ namespace Realms.Server
             }
             catch (Exception x)
             {
-                TraceHelper.Write("Authentication exception of {0}: {1}", login, x.Message);
+                logger.Error("Authentication exception of {0}: {1}", login, x.Message);
                 return false;
             }
         }

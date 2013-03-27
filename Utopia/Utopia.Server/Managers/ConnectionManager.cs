@@ -15,6 +15,8 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class ConnectionManager : IDisposable
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly Dictionary<string, ClientConnection> _connections;
         private readonly object _syncRoot = new object();
 
@@ -88,7 +90,7 @@ namespace Utopia.Server.Managers
         public void Listen()
         {
             Listener.Start();
-            TraceHelper.Write("Listening at {0} port", Listener.Port);
+            logger.Info("Listening at {0} port", Listener.Port);
         }
 
         void ListenerIncomingConnection(object sender, IncomingConnectionEventArgs e)
@@ -103,7 +105,7 @@ namespace Utopia.Server.Managers
             
             var conn = new ClientConnection(e.Socket);
             
-            TraceHelper.Write("{0} connected", e.Socket.RemoteEndPoint);
+            logger.Info("{0} connected", e.Socket.RemoteEndPoint);
 
             e.Handled = Add(conn);
 
