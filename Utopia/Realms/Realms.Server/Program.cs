@@ -162,8 +162,8 @@ namespace Realms.Server
 
             serverFactory.LandscapeManager = _server.LandscapeManager;
             serverFactory.DynamicEntityManager = _server.AreaManager;
-            
-            _gameplay = new ServerGameplayProvider(_server, null);
+
+            _gameplay = new ServerGameplayProvider(_server, conf);
 
             _server.Services.Add(new TestNpcService());
             _server.Services.Add(new BlueprintRecorderService());

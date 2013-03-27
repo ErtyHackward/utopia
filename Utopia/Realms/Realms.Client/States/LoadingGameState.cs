@@ -175,9 +175,8 @@ namespace Realms.Client.States
         private void GameplayComponentsCreation()
         {
             //_ioc.Get<ServerComponent>().GameInformations is set by the MessageGameInformation received by the server
-            WorldParameters clientSideworldParam = _ioc.Get<WorldParameters>();
-
-            clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
+            
+            var clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
 
             var clientFactory = _ioc.Get<EntityFactory>("Client");
             clientFactory.Config = clientSideworldParam.Configuration;
@@ -205,6 +204,7 @@ namespace Realms.Client.States
 
             var worldGenerator = new WorldGenerator(clientSideworldParam, processor);
             _ioc.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
+            _ioc.Rebind<WorldParameters>().ToConstant(clientSideworldParam);
 
             var commonResources = _ioc.Get<SandboxCommonResources>();
             commonResources.LoadInventoryImages(_ioc.Get<D3DEngine>());

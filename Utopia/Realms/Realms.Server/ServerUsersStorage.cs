@@ -58,7 +58,8 @@ namespace Realms.Server
                 if (responce != null && responce.Valid)
                 {
                     // create or update local registration 
-                    return _storage.Register(login, passwordHash, Utopia.Shared.Structs.UserRole.Guest);
+                    _storage.Register(login, passwordHash, Utopia.Shared.Structs.UserRole.Guest);
+                    return _storage.Login(login, passwordHash, out data);
                 }
 
                 return false;
