@@ -14,12 +14,14 @@ namespace Realms.Client.Components.GUI
         public SpriteTexture StShadow;
         public SpriteTexture StLogo;
         public SpriteTexture StGameName;
+        public SpriteTexture StBackLabel;
         public SpriteTexture StCubesPattern;
         public SpriteTexture StLinenPattern;
         public SpriteTexture StInputBackground;
         public SpriteTexture StButtonBackground;
         public SpriteTexture StButtonBackgroundDown;
         public SpriteTexture StButtonBackgroundHover;
+        
 
         public SpriteFont FontBebasNeue50;
         public SpriteFont FontBebasNeue35;
@@ -47,12 +49,14 @@ namespace Realms.Client.Components.GUI
             StLogo =                    LoadTexture(engine, @"Images\logo.png");
             StShadow =                  LoadTexture(engine, @"Images\shadow.png");
             StGameName =                LoadTexture(engine, @"Images\version.png");
+            StBackLabel =               LoadTexture(engine, @"Images\back_label.png");
             StCubesPattern =            LoadTexture(engine, @"Images\cubes.png");
             StLinenPattern =            LoadTexture(engine, @"Images\black-linen.png");
             StInputBackground =         LoadTexture(engine, @"Images\Login\login_input_bg.png");
             StButtonBackground =        LoadTexture(engine, @"Images\MainMenu\menu_button.png");
             StButtonBackgroundDown =    LoadTexture(engine, @"Images\MainMenu\menu_button_down.png");
             StButtonBackgroundHover =   LoadTexture(engine, @"Images\MainMenu\menu_button_hover.png");
+            
 
             FontCollection = new PrivateFontCollection();
             FontCollection.AddFontFile("Images\\BebasNeue.ttf");

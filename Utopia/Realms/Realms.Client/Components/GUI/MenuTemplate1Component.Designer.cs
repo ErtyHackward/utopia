@@ -23,6 +23,7 @@ namespace Realms.Client.Components.GUI
         protected SpriteTexture _stMenuButton;
         protected SpriteTexture _stMenuHover;
         protected SpriteTexture _stMenuDown;
+        protected SpriteTexture _stMenuBackLabel;
 
         protected PanelControl _leftMenuPanel;
         protected ImageControl _cubesPatern;
@@ -47,6 +48,7 @@ namespace Realms.Client.Components.GUI
             _stMenuButton = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button.png", new Vector2I()));
             _stMenuHover = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button_hover.png", new Vector2I()));
             _stMenuDown = ToDispose(new SpriteTexture(_engine.Device, @"Images\MainMenu\menu_button_down.png", new Vector2I()));
+            _stMenuBackLabel = ToDispose(new SpriteTexture(_engine.Device, @"Images\back_label.png", new Vector2I()));
 
             _form = new Control();
 
@@ -70,6 +72,7 @@ namespace Realms.Client.Components.GUI
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stMenuBackLabel,
                 TextFontId = 1,
                 Text = "Back",
                 Color = new ByteColor(200, 200, 200, 255)

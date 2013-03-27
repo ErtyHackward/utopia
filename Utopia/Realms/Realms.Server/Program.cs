@@ -141,9 +141,21 @@ namespace Realms.Server
             IocBind(wp);
 
             var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
-            
+
+            Console.WriteLine();
+            Console.WriteLine("Please enter the name of the server:");
+            Console.Write("[{0}]>", settings.Settings.ServerName);
+            var name = Console.ReadLine();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                settings.Settings.ServerName = name;
+                settings.Save();
+            }
+
+
             _server = new Utopia.Server.Server(
-                _iocContainer.Get<XmlSettingsManager<ServerSettings>>(),
+                settings,
                 _iocContainer.Get<WorldGenerator>(),
                 _iocContainer.Get<IUsersStorage>(),
                 _iocContainer.Get<IChunksStorage>(),

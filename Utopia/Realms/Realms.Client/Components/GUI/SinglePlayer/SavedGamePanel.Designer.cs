@@ -15,8 +15,19 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         #region Public variable/properties
         protected LabelControl _panelLabel;
         protected ListControl _savedGameList;
-        public ButtonControl BtLoad;
+        protected ButtonControl _btLoad;
         protected ButtonControl _btDelete;
+
+        public ButtonControl BtLoad
+        {
+            get { return _btLoad; }
+        }
+
+        public ButtonControl BtDelete
+        {
+            get { return _btDelete; }
+        }
+
         #endregion
 
         #region Public methods
@@ -38,13 +49,13 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 CustomFont = _commonResources.FontBebasNeue25
             });
 
-            BtLoad = ToDispose(new ButtonControl()
+            _btLoad = ToDispose(new ButtonControl()
             {
                 Text = "Load",
                 Enabled = false,
                 TextFontId = 1
             });
-            BtLoad.Pressed += _btLoad_Pressed;
+            _btLoad.Pressed += _btLoad_Pressed;
 
             _btDelete = ToDispose(new ButtonControl()
             {
@@ -99,12 +110,12 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         {
             if (_savedGameList.SelectedItems.Count == 1 && _savedGameList.SelectedItem is LocalWorlds.LocalWorldsParam)
             {
-                BtLoad.Enabled = true;
+                _btLoad.Enabled = true;
                 _btDelete.Enabled = true;
             }
             else
             {
-                BtLoad.Enabled = false;
+                _btLoad.Enabled = false;
                 _btDelete.Enabled = false;
             }
         }
@@ -112,7 +123,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         private void BindComponents()
         {
             this.Children.Add(_btDelete);
-            this.Children.Add(BtLoad);
+            this.Children.Add(_btLoad);
             this.Children.Add(_panelLabel);
             this.Children.Add(_savedGameList);
         }
@@ -128,14 +139,14 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
             _savedGameList.Bounds = new UniRectangle(BorderMargin, YPosi,  500, 200);
             YPosi+= 220;
-            BtLoad.Bounds = new UniRectangle(BorderMargin, YPosi, 70, 30);
-            _btDelete.Bounds = new UniRectangle(BorderMargin + BtLoad.Bounds.Size.X.Offset + 10, YPosi, 70, 30);
+            _btLoad.Bounds = new UniRectangle(BorderMargin, YPosi, 100, 40);
+            _btDelete.Bounds = new UniRectangle(BorderMargin + _btLoad.Bounds.Size.X.Offset + 10, YPosi, 100, 40);
         }
 
         public override void BeforeDispose()
         {
             _btDelete.Pressed -= _btDelete_Pressed;
-            BtLoad.Pressed -= _btLoad_Pressed;
+            _btLoad.Pressed -= _btLoad_Pressed;
             _savedGameList.SelectionChanged -= _savedGameList_SelectionChanged;
         }
         #endregion
