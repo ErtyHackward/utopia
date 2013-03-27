@@ -64,7 +64,7 @@ namespace Utopia.Server.Managers
                 // tell everybody that this player is gone
                 _server.AreaManager.RemoveEntity(e.Connection.ServerEntity);
 
-                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} has left the game.", e.Connection.ServerEntity.DynamicEntity.Name), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} has left the game.", e.Connection.DisplayName), Operator = true });
 
                 e.Connection.ServerEntity.CurrentArea = null;
             }
@@ -142,7 +142,7 @@ namespace Utopia.Server.Managers
 
                     if (bytes == null)
                     {
-                        TraceHelper.Write("{0} entity was corrupted, creating new one...", e.Message.Login);
+                        TraceHelper.Write("{0} entity was corrupted, creating new one...", e.Message.DisplayName);
                         playerEntity = GetNewPlayerEntity(connection, state.EntityId);
                     }
                     else
@@ -161,7 +161,7 @@ namespace Utopia.Server.Managers
                 connection.ServerEntity = playerEntity;
 
                 connection.Send(new LoginResultMessage { Logged = true });
-                TraceHelper.Write("{1} ({3}) logged as ({0}) EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId, e.Message.DisplayName);
+                TraceHelper.Write("{1} {0} logged as {3} EntityId = {2} ", e.Message.Login, connection.Id, connection.ServerEntity.DynamicEntity.DynamicId, e.Message.DisplayName);
                 var gameInfo = new GameInformationMessage
                 {
                     ChunkSize = AbstractChunk.ChunkSize,
