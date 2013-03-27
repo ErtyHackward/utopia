@@ -160,13 +160,17 @@ namespace Utopia.Shared.Configuration
         {
             get
             {
-                if (_landscapeEntitiesDico == null)
+                lock (TreeBluePrints)
                 {
-                    _landscapeEntitiesDico = new Dictionary<int, LandscapeEntityBluePrint>();
-                    //Adding LandscapeEntityBluePrint trees
-                    foreach (var tree in TreeBluePrints) _landscapeEntitiesDico.Add(tree.Id, tree);
+                    if (_landscapeEntitiesDico == null)
+                    {
+                        _landscapeEntitiesDico = new Dictionary<int, LandscapeEntityBluePrint>();
+                        //Adding LandscapeEntityBluePrint trees
+                        foreach (var tree in TreeBluePrints) 
+                            _landscapeEntitiesDico.Add(tree.Id, tree);
+                    }
+                    return _landscapeEntitiesDico;
                 }
-                return _landscapeEntitiesDico;
             }
         }
         #endregion
@@ -176,8 +180,10 @@ namespace Utopia.Shared.Configuration
             int newId = int.MinValue;
             //Look into Tree landscape entities;
             int treeMaxId = 0;
-            if(TreeBluePrints.Count > 0) treeMaxId = TreeBluePrints.Max(x => x.Id);
-            if (newId < treeMaxId) newId = treeMaxId;
+            if (TreeBluePrints.Count > 0) 
+                treeMaxId = TreeBluePrints.Max(x => x.Id);
+            if (newId < treeMaxId) 
+                newId = treeMaxId;
 
             return newId + 1;
         }
