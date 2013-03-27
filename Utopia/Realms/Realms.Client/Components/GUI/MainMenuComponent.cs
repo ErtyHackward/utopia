@@ -34,6 +34,7 @@ namespace Realms.Client.Components.GUI
         private ButtonControl _settingsButton;
         private ButtonControl _editor;
         private ButtonControl _credits;
+        private ButtonControl _logoutButton;
         private ButtonControl _exitButton;
         private ImageControl _mainMenuLabel;
         private LabelControl _helloLabel;
@@ -43,47 +44,76 @@ namespace Realms.Client.Components.GUI
 
         #region Events
         public event EventHandler ContinuePressed;
-        private void OnContinuePressed()
+
+        protected virtual void OnContinuePressed()
         {
-            if (ContinuePressed != null) ContinuePressed(this, EventArgs.Empty);
+            var handler = ContinuePressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
+
 
         public event EventHandler SinglePlayerPressed;
-        private void OnSinglePlayerPressed()
+
+        protected virtual void OnSinglePlayerPressed()
         {
-            if (SinglePlayerPressed != null) SinglePlayerPressed(this, EventArgs.Empty);
+            var handler = SinglePlayerPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
+
 
         public event EventHandler SettingsButtonPressed;
-        private void OnSettingsButtonPressed()
+
+        protected virtual void OnSettingsButtonPressed()
         {
-            if (SettingsButtonPressed != null) SettingsButtonPressed(this, EventArgs.Empty);
+            var handler = SettingsButtonPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
+
 
         public event EventHandler MultiplayerPressed;
-        private void OnMultiplayerPressed()
+
+        protected virtual void OnMultiplayerPressed()
         {
-            if (MultiplayerPressed != null) MultiplayerPressed(this, EventArgs.Empty);
+            var handler = MultiplayerPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
+
         public event EventHandler EditorPressed;
-        private void OnEditorPressed()
+
+        protected virtual void OnEditorPressed()
         {
-            if (EditorPressed != null) EditorPressed(this, EventArgs.Empty);
+            var handler = EditorPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
+
 
         public event EventHandler CreditsPressed;
 
-        private void OnCreditsPressed()
+        protected virtual void OnCreditsPressed()
         {
-            if (CreditsPressed != null) CreditsPressed(this, EventArgs.Empty);
+            var handler = CreditsPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
 
-        public event EventHandler ExitPressed;
-        private void OnExitPressed()
+
+        public event EventHandler LogoutPressed;
+
+        protected virtual void OnLogoutPressed()
         {
-            if (ExitPressed != null) ExitPressed(this, EventArgs.Empty);
+            var handler = LogoutPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
+
+
+        public event EventHandler ExitPressed;
+
+        protected virtual void OnExitPressed()
+        {
+            var handler = ExitPressed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         #endregion
 
         public MainMenuComponent(D3DEngine engine, MainScreen screen, RealmRuntimeVariables runtime, SandboxCommonResources commonResources)
@@ -183,6 +213,16 @@ namespace Realms.Client.Components.GUI
             };
             _credits.Pressed += delegate { OnCreditsPressed(); };
 
+            _logoutButton = new ButtonControl
+            {
+                CustomImage = _commonResources.StButtonBackground,
+                CustomImageDown = _commonResources.StButtonBackgroundDown,
+                CustomImageHover = _commonResources.StButtonBackgroundHover,
+                CusomImageLabel = _stLabelLogOut,
+                Bounds = new UniRectangle(0, 0, buttonWidth, buttomHeight)
+            };
+            _logoutButton.Pressed += delegate { OnLogoutPressed(); };
+
             _exitButton = new ButtonControl
             {
                 CustomImage = _commonResources.StButtonBackground,
@@ -199,6 +239,7 @@ namespace Realms.Client.Components.GUI
             _buttonsGroup.Children.Add(_settingsButton);
             _buttonsGroup.Children.Add(_editor);
             _buttonsGroup.Children.Add(_credits);
+            _buttonsGroup.Children.Add(_logoutButton);
             _buttonsGroup.Children.Add(_exitButton);
             _buttonsGroup.ControlsSpacing = new SharpDX.Vector2(0, 0);
             

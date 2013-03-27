@@ -7,7 +7,5 @@ namespace Utopia.Shared.Net.Web.Responses
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }
-
-        public string DisplayName { get; set; }
     }
 }

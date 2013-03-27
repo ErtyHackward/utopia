@@ -264,6 +264,11 @@ namespace Utopia.Shared.Settings
         public string Token { get; set; }
 
         /// <summary>
+        /// SHA1 hash of the password
+        /// </summary>
+        public string PasswordHash { get; set; }
+
+        /// <summary>
         /// Compute the first time the engine is started
         /// </summary>
         public int DefaultAllocatedThreads { get; set; }

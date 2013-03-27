@@ -4,8 +4,7 @@ using Ninject;
 using Realms.Client.Components.GUI;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
-using Utopia.Components;
-using Utopia.Sounds;
+using Utopia.Shared.Settings;
 
 namespace Realms.Client.States
 {
@@ -34,7 +33,6 @@ namespace Realms.Client.States
             var bg = _iocContainer.Get<BlackBgComponent>();
             var gui = _iocContainer.Get<GuiManager>();
             var menu = _iocContainer.Get<MainMenuComponent>();
-            var sound = _iocContainer.Get<GeneralSoundManager>();
             _vars = _iocContainer.Get<RealmRuntimeVariables>();
 
             AddComponent(bg);
@@ -51,12 +49,15 @@ namespace Realms.Client.States
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
             menu.MultiplayerPressed += MenuMultiplayerPressed;
             menu.EditorPressed += MenuEditorPressed;
+            menu.SettingsButtonPressed += MenuSettingsButtonPressed;
+            menu.LogoutPressed += MenuLogoutPressed;
             menu.ExitPressed += MenuExitPressed;
-            menu.SettingsButtonPressed += menuSettingsButtonPressed;
 
             StatesManager.PrepareStateAsync("LoadingGame");
             base.OnEnabled(previousState);
         }
+
+
 
         public override void OnDisabled(GameState nextState)
         {
@@ -65,20 +66,28 @@ namespace Realms.Client.States
             menu.SinglePlayerPressed -= MenuSinglePlayerPressed;
             menu.MultiplayerPressed -= MenuMultiplayerPressed;
             menu.EditorPressed -= MenuEditorPressed;
+            menu.SettingsButtonPressed -= MenuSettingsButtonPressed;
+            menu.LogoutPressed -= MenuLogoutPressed;
             menu.ExitPressed -= MenuExitPressed;
-            menu.SettingsButtonPressed -= menuSettingsButtonPressed;
         }
 
-        void menuSettingsButtonPressed(object sender, EventArgs e)
+        void MenuSettingsButtonPressed(object sender, EventArgs e)
         {
             var state = StatesManager.GetByName("Settings");
-            state.
-            StatesManager.ActivateGameStateAsync(state);
+            state.StatesManager.ActivateGameStateAsync(state);
         }
 
         void MenuEditorPressed(object sender, EventArgs e)
         {
             StatesManager.ActivateGameStateAsync("Editor");
+        }
+
+        void MenuLogoutPressed(object sender, EventArgs e)
+        {
+            ClientSettings.Current.Settings.Token = null;
+            ClientSettings.Current.Save();
+
+            StatesManager.ActivateGameStateAsync("Login");
         }
 
         void MenuExitPressed(object sender, EventArgs e)
@@ -95,7 +104,6 @@ namespace Realms.Client.States
         void MenuSinglePlayerPressed(object sender, EventArgs e)
         {
             _vars.SinglePlayer = true;
-            //StatesManager.ActivateGameStateAsync("LoadingGame");
             StatesManager.ActivateGameStateAsync("SinglePlayerMenu");
         }
         

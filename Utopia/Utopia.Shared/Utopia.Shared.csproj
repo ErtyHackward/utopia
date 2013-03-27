@@ -242,6 +242,7 @@
     <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
       <DependentUpon>TreeBluePrint.cs</DependentUpon>
     </Compile>
+    <Compile Include="Net\Web\Responses\VerifyResponse.cs" />
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />

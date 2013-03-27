@@ -44,9 +44,10 @@ namespace Realms.Client.States
             login.Email = ClientSettings.Current.Settings.Login;
 
             login.Login += LoginLogin;
-            login.Register += delegate { try { Process.Start("http://api.cubiquest.com/register"); } catch { } };
+            login.Register += delegate { try { Process.Start("http://utopiarealms.com"); } catch { } };
 
-            _webApi.LoginCompleted += WebApiLoginCompleted;
+            _webApi.TokenReceived += WebApiTokenReceived;
+            _webApi.TokenVerified += WebApiTokenVerified;
 
             AddComponent(bg);
             AddComponent(gui);
@@ -55,7 +56,26 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
-        void WebApiLoginCompleted(object sender, TokenResponse e)
+        void WebApiTokenVerified(object sender, VerifyResponse e)
+        {
+            if (e.Error != 0 || e.Exception != null)
+            {
+                var login = _iocContainer.Get<LoginComponent>();
+                if (e.Exception != null)
+                    login.ShowErrorText("Error: " + e.Exception.Message);
+                else
+                    login.ShowErrorText("Error: " + e.ErrorText);
+                login.Locked = false;
+                return;
+            }
+
+            var vars = _iocContainer.Get<RealmRuntimeVariables>();
+            vars.DisplayName = e.DisplayName;
+
+            StatesManager.ActivateGameStateAsync("MainMenu");
+        }
+
+        void WebApiTokenReceived(object sender, TokenResponse e)
         {
             var login = _iocContainer.Get<LoginComponent>();
 
@@ -79,22 +99,19 @@ namespace Realms.Client.States
                 login.Locked = false;
                 return;
             }
+            
+            var vars = _iocContainer.Get<RealmRuntimeVariables>();
 
-            if (e != null && !string.IsNullOrEmpty(e.AccessToken))
-            {
-                var vars = _iocContainer.Get<RealmRuntimeVariables>();
-
-                vars.Login = login.Email;
-                vars.PasswordHash = login.Password.GetSHA1Hash();
-                vars.DisplayName = e.DisplayName;
-
-                ClientSettings.Current.Settings.Login = login.Email;
-                ClientSettings.Current.Settings.Token = e.AccessToken;
-                ClientSettings.Current.Save();
-
-                StatesManager.ActivateGameStateAsync("MainMenu");
-            }
-
+            vars.Login = login.Email;
+            vars.PasswordHash = login.Password.GetSHA1Hash();
+                
+            ClientSettings.Current.Settings.Login = login.Email;
+            ClientSettings.Current.Settings.Token = e.AccessToken;
+            ClientSettings.Current.Settings.PasswordHash = vars.PasswordHash;
+            ClientSettings.Current.Save();
+            
+            // verify token to receive nickname
+            _webApi.OauthVerifyTokenAsync(e.AccessToken);
         }
         
         
@@ -126,7 +143,7 @@ namespace Realms.Client.States
             login.Locked = true;
 
             // request our server for authorization
-            _webApi.UserLoginAsync(login.Email, (login.Password.GetSHA1Hash() + login.Email.ToLower()).GetSHA1Hash());
+            _webApi.OauthTokenAsync(login.Email, (login.Password.GetSHA1Hash() + login.Email.ToLower()).GetSHA1Hash());
         }
     }
 }
