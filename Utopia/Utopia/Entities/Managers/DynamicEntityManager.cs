@@ -441,6 +441,9 @@ namespace Utopia.Entities.Managers
 
         private void DrawCube(DeviceContext context, CubeResource cube, CharacterEntity charEntity)
         {
+            if (charEntity.ModelInstance == null)
+                return;
+
             //Get the cube profile.
             var blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.CubeId];
 
