@@ -156,7 +156,7 @@ namespace Utopia.Server.Managers
 
                         _server.Clock.SetCurrentTimeOfDay(time);
                         _server.ConnectionManager.Broadcast(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
-                        _server.ChatManager.Broadcast("Time updated by " + connection.Login );
+                        _server.ChatManager.Broadcast("Time updated by " + connection.DisplayName );
                     }
                     catch (Exception ex)
                     {
