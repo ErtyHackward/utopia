@@ -28,10 +28,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             this.IsVisible = true;
             this.IsRendable = false;
         }
-
-        #region Public methods
-        #endregion
-
+        
         #region Private methods
         private void DeleteWorld(LocalWorlds.LocalWorldsParam info)
         {

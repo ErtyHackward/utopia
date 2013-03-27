@@ -28,6 +28,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stNewGameLabel,
                 TextFontId = 1,
                 Text = "New Game",
                 Color = new ByteColor(200, 200, 200, 255)
@@ -39,6 +40,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stSavedGamesLabel,
                 TextFontId = 1,
                 Text = "Saved Games",
                 Color = new ByteColor(200, 200, 200, 255)
@@ -88,6 +90,12 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             {
                 _newGamePanel = new NewGamePanel(CommonResources, _currentWorldParameter, _vars, _guiManager) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
                 _newGamePanel.BtCreate.Pressed += _btCreate_Pressed;
+
+                _newGamePanel.BtCreate.CusomImageLabel = _stCreateLabel;
+                _newGamePanel.BtCreate.CustomImage = CommonResources.StButtonBackground;
+                _newGamePanel.BtCreate.CustomImageDown = CommonResources.StButtonBackgroundDown;
+                _newGamePanel.BtCreate.CustomImageHover = CommonResources.StButtonBackgroundHover;
+
             }
             if (_backPanel.Children.Contains(_newGamePanel) == false)
             {
@@ -102,6 +110,19 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             {
                 _savedGamePanel = new SavedGamePanel(CommonResources, _currentWorldParameter, _vars) { Bounds = new UniRectangle(0, 0, _backPanel.Bounds.Size.X.Offset, _backPanel.Bounds.Size.Y.Offset) };
                 _savedGamePanel.BtLoad.Pressed += _btLoad_Pressed;
+
+                _savedGamePanel.BtLoad.CusomImageLabel   = _stLoadLabel;
+                _savedGamePanel.BtLoad.CustomImage = CommonResources.StButtonBackground;
+                _savedGamePanel.BtLoad.CustomImageDown = CommonResources.StButtonBackgroundDown;
+                _savedGamePanel.BtLoad.CustomImageHover = CommonResources.StButtonBackgroundHover;
+                _savedGamePanel.BtLoad.CustomImageDisabled = CommonResources.StButtonBackground;
+
+                _savedGamePanel.BtDelete.CusomImageLabel = _stDeleteLabel;
+                _savedGamePanel.BtDelete.CustomImage = CommonResources.StButtonBackground;
+                _savedGamePanel.BtDelete.CustomImageDown = CommonResources.StButtonBackgroundDown;
+                _savedGamePanel.BtDelete.CustomImageHover = CommonResources.StButtonBackgroundHover;
+                _savedGamePanel.BtDelete.CustomImageDisabled = CommonResources.StButtonBackground;
+
             }
             if (_backPanel.Children.Contains(_savedGamePanel) == false)
             {

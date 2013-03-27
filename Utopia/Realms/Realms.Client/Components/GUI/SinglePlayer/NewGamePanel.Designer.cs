@@ -27,7 +27,13 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         protected InputControl _inputSeedName;
         protected LabelControl _configurationsFilesLabel;
         protected ListControl _configurationsFiles;
-        public ButtonControl BtCreate;
+        protected ButtonControl _btCreate;
+
+        public ButtonControl BtCreate
+        {
+            get { return _btCreate; }
+        }
+
         #endregion
 
         #region Public methods
@@ -93,7 +99,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             }
             _configurationsFiles.SelectItem = 0;
 
-            BtCreate = ToDispose(new ButtonControl()
+            _btCreate = ToDispose(new ButtonControl()
             {
                 Text = "Create",
                 TextFontId = 1
@@ -230,7 +236,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             _configurationsFiles.Bounds = new UniRectangle(_configurationsFilesLabel.Bounds.Location.X.Offset + _configurationsFilesLabel.Bounds.Size.X.Offset + 10, Yposi, 400, 200);
 
             Yposi += 240;
-            BtCreate.Bounds = new UniRectangle(BorderMargin, Yposi, 80, 30);
+            BtCreate.Bounds = new UniRectangle(BorderMargin, Yposi, 100, 40);
         }
         #endregion
     }
