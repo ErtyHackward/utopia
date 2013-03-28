@@ -27,6 +27,10 @@ namespace Utopia.GUI.Inventory
 
         protected readonly List<InventoryCell> _toolbarSlots;
 
+        public List<InventoryCell> Slots {
+            get { return _toolbarSlots; }
+        }
+
         /// <summary>
         /// Occurs when some slot get clicked
         /// </summary>
@@ -62,6 +66,14 @@ namespace Utopia.GUI.Inventory
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<InventoryWindowCellMouseEventArgs> SlotChanged;
+
+        protected virtual void OnSlotChanged(InventoryWindowCellMouseEventArgs e)
+        {
+            var handler = SlotChanged;
+            if (handler != null) handler(this, e);
+        }
+
 
         public ToolBarUi(PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, EntityFactory factory)
         {
@@ -81,6 +93,7 @@ namespace Utopia.GUI.Inventory
                 var btn = new InventoryCell(null, iconFactory, new Vector2I(0, x), inputManager)
                               {
                                   //Bounds = new UniRectangle(fromX + (x * ButtonSize), 0, ButtonSize, ButtonSize)
+                                  DrawCellBackground = false
                               };
                 btn.MouseDown  += BtnMouseDown;
                 btn.MouseUp    += btn_MouseUp;
@@ -129,6 +142,8 @@ namespace Utopia.GUI.Inventory
         public void SetSlot(int i, ContainedSlot slot)
         {
             _toolbarSlots[i].Slot = slot;
+
+            OnSlotChanged(new InventoryWindowCellMouseEventArgs { Cell = _toolbarSlots[i] });
         }
 
         public void Resized()

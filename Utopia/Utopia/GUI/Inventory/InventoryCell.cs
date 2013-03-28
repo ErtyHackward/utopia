@@ -39,7 +39,8 @@ namespace Utopia.GUI.Inventory
         {
             get
             {
-                if (_slot != null) return _slot;
+                if (_slot != null) 
+                    return _slot;
                 if(_container != null)
                     return _container.PeekSlot(InventoryPosition);
                 if (_player != null)

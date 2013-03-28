@@ -1,4 +1,6 @@
-﻿using S33M3CoreComponents.GUI.Nuclex;
+﻿using System.Collections.Generic;
+using S33M3CoreComponents.GUI.Nuclex;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
@@ -23,7 +25,14 @@ namespace Realms.Client.Components.GUI
         readonly SpriteTexture _stBackground;
         readonly SpriteTexture _stToolbarSlot;
         readonly SpriteTexture _stToolbatSlotHover;
-        
+
+        private readonly List<LabelControl> _numbersLabels = new List<LabelControl>();
+
+        public List<LabelControl> NumbersLabels
+        {
+            get { return _numbersLabels; }
+        }
+
         public SandboxToolBar(D3DEngine engine, PlayerCharacter player, IconFactory iconFactory, InputsManager inputManager, EntityFactory factory) : 
             base(player, iconFactory, inputManager, factory)
         {
@@ -31,7 +40,7 @@ namespace Realms.Client.Components.GUI
             _stToolbarSlot      = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot.png");
             _stToolbatSlotHover = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot_active.png");
 
-            background = _stBackground;
+            Background = _stBackground;
 
             Bounds = new UniRectangle(0, 0, 656, 116);
 
@@ -46,6 +55,31 @@ namespace Realms.Client.Components.GUI
                 inventoryCell.CustomBackgroundHover = _stToolbatSlotHover;
                 inventoryCell.DrawIconsGroupId = 3;
                 inventoryCell.DrawIconsActiveCellId = 4;
+                inventoryCell.Color = new ByteColor(255, 255, 255, 120);
+
+                var label = new LabelControl
+                    {
+                        Text = ( i + 1 ).ToString(),
+                        IsClickTransparent = true,
+                        Color = new ByteColor(255, 255, 255, 80),
+                        Bounds = new UniRectangle(offset.X + ( size.X ) * i + 18, offset.Y + 42, 10, 10),
+                        IsVisible = inventoryCell.Slot != null
+                    };
+                
+                _numbersLabels.Add(label);
+                Children.Add(label);
+            }
+
+            SlotChanged += SandboxToolBar_SlotChanged;
+
+        }
+
+        void SandboxToolBar_SlotChanged(object sender, InventoryWindowCellMouseEventArgs e)
+        {
+            if (!DisplayBackground)
+            {
+                var index = _toolbarSlots.IndexOf(e.Cell);
+                _numbersLabels[index].IsVisible = e.Cell.Slot != null;
             }
         }
     }

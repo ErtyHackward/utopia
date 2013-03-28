@@ -14,6 +14,8 @@ namespace Utopia.GUI.Inventory
         /// <summary>
         /// Optional background picture
         /// </summary>
-        public SpriteTexture background;
+        public SpriteTexture Background;
+
+        public bool DisplayBackground { get; set; }
     }
 }

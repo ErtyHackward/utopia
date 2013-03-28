@@ -85,7 +85,7 @@ namespace Utopia.GUI.Inventory
                         controlBounds.Height - innerBorder * 2
                         );
 
-                    ByteColor? color = null;
+                    ByteColor? color = control.Color;
 
                     if (control.IsDisabledCell)
                         color = new ByteColor(255, 255, 255, 30);

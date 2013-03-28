@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using Realms.Client.Components.GUI;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.States;
 using Utopia.Components;
@@ -36,6 +37,17 @@ namespace Realms.Client.States
             var notice = _iocContainer.Get<InventoryEventComponent>();
             notice.DisableComponent();
 
+            var toolBar = (SandboxToolBar)_iocContainer.Get<ToolBarUi>();
+            toolBar.DisplayBackground = true;
+
+            for (int i = 0; i < toolBar.Slots.Count; i++)
+            {
+                var inventoryCell = toolBar.Slots[i];
+                inventoryCell.DrawCellBackground = true;
+                inventoryCell.Color = new S33M3Resources.Structs.ByteColor(255, 255, 255, 255);
+                toolBar.NumbersLabels[i].IsVisible = false;
+            }
+
             base.OnEnabled(previousState);
         }
 
@@ -52,6 +64,17 @@ namespace Realms.Client.States
 
             var notice = _iocContainer.Get<InventoryEventComponent>();
             notice.EnableComponent();
+
+            var toolBar = (SandboxToolBar)_iocContainer.Get<ToolBarUi>();
+            toolBar.DisplayBackground = false;
+
+            for (int i = 0; i < toolBar.Slots.Count; i++)
+            {
+                var inventoryCell = toolBar.Slots[i];
+                inventoryCell.DrawCellBackground = false;
+                inventoryCell.Color = new S33M3Resources.Structs.ByteColor(255, 255, 255, 120);
+                toolBar.NumbersLabels[i].IsVisible = inventoryCell.Slot != null;
+            }
 
             base.OnDisabled(nextState);
         }

@@ -17,6 +17,7 @@ namespace Utopia.GUI.Inventory
     {
         protected readonly InputsManager _inputManager;
         private SlotContainer<ContainedSlot> _content;
+
         /// <summary>
         /// Array of inventory cells controls
         /// </summary>

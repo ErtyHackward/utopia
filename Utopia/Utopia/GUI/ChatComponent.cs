@@ -166,7 +166,7 @@ namespace Utopia.GUI
 
             if (Stopwatch.GetTimestamp() > _lastUpdateTime + _hideChatInTick)
             {
-                SetFontAlphaColor(50);
+                SetFontAlphaColor(0);
             }
             else
             {
