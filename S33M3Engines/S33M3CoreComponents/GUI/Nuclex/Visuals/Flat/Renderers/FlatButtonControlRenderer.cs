@@ -62,9 +62,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 }
             }
 
-            if (stateIndex == 0 && control.CustomImageDisabled != null)
+            if (stateIndex == 0)
             {
-                graphics.DrawCustomTexture(control.CustomImageDisabled, ref controlBounds);
+                if (control.CustomImageDisabled != null)
+                    graphics.DrawCustomTexture(control.CustomImageDisabled, ref controlBounds);
+                else if (control.CustomImage != null)
+                {
+                    graphics.DrawCustomTexture(control.CustomImage, ref controlBounds,0, control.DrawGroupId, new ByteColor(255,255,255,100));
+                }
             }
             else if (stateIndex == 1 && control.CustomImage != null)
             {
@@ -96,7 +101,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
                 if (stateIndex == 3)
                     imgRect.Y += 1;
 
-                graphics.DrawCustomTexture(control.CusomImageLabel, ref imgRect);
+                if (stateIndex == 0)
+                    graphics.DrawCustomTexture(control.CusomImageLabel, ref imgRect, 0, control.DrawGroupId, new ByteColor(255,255,255,100));
+                else
+                    graphics.DrawCustomTexture(control.CusomImageLabel, ref imgRect);
             }
             else if (!string.IsNullOrEmpty(control.Text))
             {
