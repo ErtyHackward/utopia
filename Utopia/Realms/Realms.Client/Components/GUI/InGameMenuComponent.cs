@@ -73,7 +73,7 @@ namespace Realms.Client.Components.GUI
         {
             base.Initialize();
 
-            _buttonsGroup = new ContainerControl { Bounds = new UniRectangle(0, 0, 417, 355), background = _stMenuBg };
+            _buttonsGroup = new ContainerControl { Bounds = new UniRectangle(0, 0, 417, 355), Background = _stMenuBg };
 
             const int buttonWidth = 212;
             const int buttomHeight = 40;
