@@ -47,7 +47,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         {
             _stNewGameLabel     = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\newgame_label.png"));
             _stSavedGamesLabel  = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\saved_games_label.png"));
-            _stLoadLabel         = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\load_label.png"));
+            _stLoadLabel        = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\load_label.png"));
             _stDeleteLabel      = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\delete_label.png"));
             _stCreateLabel      = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\create_label.png"));
 
