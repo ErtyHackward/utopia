@@ -107,6 +107,7 @@
       <DependentUpon>MenuTemplate1Component.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\GUI\Inventory\PlayerInventory.cs" />
+    <Compile Include="Components\GUI\RealmsHud.cs" />
     <Compile Include="Components\GUI\SandboxCommonResources.cs" />
     <Compile Include="Components\GUI\SandboxToolBar.cs" />
     <Compile Include="Components\GUI\Settings\CoreEngineSettingsPanel.cs" />

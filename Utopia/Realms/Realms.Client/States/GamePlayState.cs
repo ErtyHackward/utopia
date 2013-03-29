@@ -2,6 +2,7 @@
 using System.Linq;
 using Ninject;
 using Realms.Client.Components;
+using Realms.Client.Components.GUI;
 using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using Utopia.Entities;
@@ -68,7 +69,10 @@ namespace Realms.Client.States
             
             
             var chat = _ioc.Get<ChatComponent>();
-            var hud = _ioc.Get<Hud>();
+
+            var hud = (RealmsHud)_ioc.Get<Hud>();
+            hud.CraftingButton.Pressed += CraftingButton_Pressed;
+            hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -160,6 +164,16 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
+        void InventoryButton_Pressed(object sender, EventArgs e)
+        {
+            ActionsManager_KeyboardAction(null, new ActionsManagerEventArgs { Action = new KeyboardTriggeredAction { ActionId = UtopiaActions.OpenInventory } });
+        }
+
+        void CraftingButton_Pressed(object sender, EventArgs e)
+        {
+            ActionsManager_KeyboardAction(null, new ActionsManagerEventArgs { Action = new KeyboardTriggeredAction { ActionId = UtopiaActions.OpenCrafting } });
+        }
+
         private void InventoryOnItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             var iec = _ioc.Get<InventoryEventComponent>();
@@ -174,7 +188,8 @@ namespace Realms.Client.States
 
         void ActionsManager_KeyboardAction(object sender, S33M3CoreComponents.Inputs.Actions.ActionsManagerEventArgs e)
         {
-            if (StatesManager.CurrentState.Name == "Settings") return;
+            if (StatesManager.CurrentState.Name == "Settings") 
+                return;
 
             if (e.Action.ActionId == Actions.EngineExit)
             {
@@ -189,7 +204,8 @@ namespace Realms.Client.States
                 return;
             }
 
-            if (StatesManager.CurrentState.Name == "InGameMenu") return;
+            if (StatesManager.CurrentState.Name == "InGameMenu") 
+                return;
 
             if (e.Action.ActionId == UtopiaActions.OpenInventory)
             {
