@@ -40,9 +40,10 @@ namespace Utopia.GUI
         
         private readonly InputsManager _inputManager;
 
-        public event EventHandler<SlotClickedEventArgs> SlotClicked;
-        public bool IsHided { get; set; }
+        public bool IsHidden { get; set; }
 
+        public event EventHandler<SlotClickedEventArgs> SlotClicked;
+        
         private void OnSlotClicked(SlotClickedEventArgs e)
         {
             var handler = SlotClicked;
@@ -67,7 +68,7 @@ namespace Utopia.GUI
             _camManager = camManager;
 
             _inputManager.KeyboardManager.IsRunning = true;
-            IsHided = false;
+            IsHidden = false;
 
             _screen.ToolTipShow += _screen_ToolTipShow;
             _screen.ToolTipHide += _screen_ToolTipHide;
@@ -137,8 +138,8 @@ namespace Utopia.GUI
         {
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
             {
-                IsHided = !IsHided;
-                if (IsHided)
+                IsHidden = !IsHidden;
+                if (IsHidden)
                 {
                     _screen.HideAll();
                 }
@@ -212,7 +213,7 @@ namespace Utopia.GUI
         //Draw at 2d level ! (Last draw called)
         public override void Draw(DeviceContext context, int index)
         {
-            if (IsHided) return;
+            if (IsHidden) return;
             if (_camManager.ActiveCamera.CameraType == CameraType.FirstPerson)
             {
                 _spriteRender.Begin(false, context);

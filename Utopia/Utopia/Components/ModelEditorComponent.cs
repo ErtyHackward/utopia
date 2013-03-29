@@ -2712,6 +2712,10 @@ namespace Utopia.Components
 
                 _visualVoxelModel.VoxelModel.SaveToFile(path);
 
+                //var previewPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia", _visualVoxelModel.VoxelModel.Name + ".png");
+                //using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new DrawingSize { Width = 64, Height = 64 }))
+                //    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
+
                 _gui.MessageBox("Model saved at " + path, "Success");
             }
             catch (Exception x)
