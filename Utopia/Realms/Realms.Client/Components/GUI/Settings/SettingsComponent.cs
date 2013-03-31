@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
 using S33M3CoreComponents.GUI.Nuclex;
@@ -23,21 +24,32 @@ namespace Realms.Client.Components.GUI.Settings
 {
     public partial class SettingsComponent : MenuTemplate1Component
     {
-        #region Private variables
         private IKernel _iocContainer;
         private ISoundEngine _soundEngine;
-        #endregion
+        private SpriteTexture _stLabelGraphic;
+        private SpriteTexture _stLabelSound;
+        private SpriteTexture _stLabelCoreEngine;
+        private SpriteTexture _stLabelKeyBinding;
 
-        #region Public properties/methods
+
         public event EventHandler KeyBindingChanged;
         public bool isGameRunning { get; set; }
-        #endregion
 
         public SettingsComponent(Game game, D3DEngine engine, MainScreen screen, SandboxCommonResources commonResources, IKernel iocContainer, ISoundEngine soundEngine)
             :base(game, engine, screen, commonResources)
         {
             _iocContainer = iocContainer;
             _soundEngine = soundEngine;
+        }
+
+        public override void Initialize()
+        {
+            _stLabelGraphic = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\graphic_label.png"));
+            _stLabelSound = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\sound_label.png"));
+            _stLabelCoreEngine = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\core_engine_label.png"));
+            _stLabelKeyBinding = ToDispose(SandboxCommonResources.LoadTexture(_engine, "Images\\key_binding_label.png"));
+            
+            base.Initialize();
         }
 
         public override void BeforeDispose()

@@ -38,6 +38,7 @@ namespace Realms.Client.Components.GUI.Settings
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stLabelGraphic,
                 TextFontId = 1,
                 Text = "Graphic",
                 Color = new ByteColor(200,200,200,255)
@@ -49,6 +50,7 @@ namespace Realms.Client.Components.GUI.Settings
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stLabelSound,
                 TextFontId = 1,
                 Text = "Sound",
                 Color = new ByteColor(200, 200, 200, 255)
@@ -60,6 +62,7 @@ namespace Realms.Client.Components.GUI.Settings
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stLabelCoreEngine,
                 TextFontId = 1,
                 Text = "Core Engine",
                 Color = new ByteColor(200, 200, 200, 255)
@@ -71,6 +74,7 @@ namespace Realms.Client.Components.GUI.Settings
                 CustomImage = _stMenuButton,
                 CustomImageDown = _stMenuDown,
                 CustomImageHover = _stMenuHover,
+                CusomImageLabel = _stLabelKeyBinding,
                 TextFontId = 1,
                 Text = "Key Binding",
                 Color = new ByteColor(200, 200, 200, 255)
