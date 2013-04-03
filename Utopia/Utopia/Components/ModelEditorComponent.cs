@@ -2839,7 +2839,7 @@ namespace Utopia.Components
 
                 _visualVoxelModel.VoxelModel.SaveToFile(path);
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new DrawingSize { Width = 256, Height = 256 }))
+                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new DrawingSize { Width = 512, Height = 512 }))
                     Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, Path.ChangeExtension(path, ".png"));
 
                 WebApi.UploadModel(path);
@@ -2869,7 +2869,7 @@ namespace Utopia.Components
 
                 // create icon
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new DrawingSize { Width = 256, Height = 256 }))
+                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new DrawingSize { Width = 512, Height = 512 }))
                     Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
 
                 WebApi.UploadModel(modelPath);
