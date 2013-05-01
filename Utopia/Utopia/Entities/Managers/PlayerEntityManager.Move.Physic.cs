@@ -31,11 +31,12 @@ namespace Utopia.Entities.Managers
 
             switch (mode)
             {
+                case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     _physicSimu.Friction = 0f;
-#if !DEBUG
-                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
-#endif
+//#if !DEBUG
+//                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
+//#endif
                     break;
                 case EntityDisplacementModes.Swiming:
                     _physicSimu.Friction = 0.3f;

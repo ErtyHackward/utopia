@@ -5,6 +5,7 @@ namespace Utopia.Shared.Entities
         Flying,
         Walking,
         Swiming,
-        FreeFlying
+        FreeFlying,
+        God
     }
 }

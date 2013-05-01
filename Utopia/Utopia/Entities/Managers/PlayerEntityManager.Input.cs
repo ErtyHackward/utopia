@@ -17,13 +17,13 @@ namespace Utopia.Entities.Managers
         {
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
             {
-                if (Player.DisplacementMode == EntityDisplacementModes.Flying)
+                if (Player.DisplacementMode == EntityDisplacementModes.God)
                 {
                     DisplacementMode = EntityDisplacementModes.Walking;
                 }
                 else
                 {
-                    DisplacementMode = EntityDisplacementModes.Flying;
+                    DisplacementMode = EntityDisplacementModes.God;
                 }
             }
 

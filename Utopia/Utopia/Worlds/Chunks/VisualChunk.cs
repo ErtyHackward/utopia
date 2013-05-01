@@ -187,8 +187,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        [Inject]
-        public ISoundEngine SoundEngine { get; set; }
+        public int SliceValue { get; set; }
 
         //Use to display bounding box around chunk in debug mode only (Quite slow and not optimized)
 #if DEBUG
@@ -233,6 +232,8 @@ namespace Utopia.Worlds.Chunks
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
+
+            SliceValue = -1;
             _d3dEngine = d3dEngine;
             _worldChunkManager = worldChunkManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
