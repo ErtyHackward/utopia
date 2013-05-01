@@ -125,8 +125,6 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-
-                        
                         if (!link.IsDynamic)
                         {
                             if (entity is IUsableEntity)
