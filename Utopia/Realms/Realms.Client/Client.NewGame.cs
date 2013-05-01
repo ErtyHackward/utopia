@@ -207,6 +207,20 @@ namespace Realms.Client
                 Binding = MouseButton.ScrollWheel
             });
 
+            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
+                ActionId = UtopiaActions.LandscapeSlicerDown,
+                TriggerType = MouseTriggerMode.ScrollWheelForward,
+                Binding = MouseButton.ScrollWheel
+            });
+
+            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
+                ActionId = UtopiaActions.LandscapeSlicerUp,
+                TriggerType = MouseTriggerMode.ScrollWheelBackWard,
+                Binding = MouseButton.ScrollWheel
+            });
+
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
                 ActionId = UtopiaActions.EngineVSync,

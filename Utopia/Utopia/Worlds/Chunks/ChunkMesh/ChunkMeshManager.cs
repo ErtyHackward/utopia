@@ -93,6 +93,8 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
             int xNeight, yNeight, zNeight;
 
+            int yMax = chunk.SliceValue == -1 ? chunk.CubeRange.Size.Y : chunk.SliceValue;
+
             Dictionary<long, int> verticeDico = new Dictionary<long, int>();
 
             for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
@@ -115,7 +117,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         cubeIndex = cubeIndexZ;
                     }
 
-                    for (int y = 0; y < chunk.CubeRange.Size.Y; y++)
+                    for (int y = 0; y < yMax; y++)
                     {
 
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
@@ -187,7 +189,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                                 throw new NullReferenceException();
                         }
 
-                        if (YWorld + 1 < worldRangeMaxY)
+                        if (YWorld + 1 < worldRangeMaxY && (YWorld + 1 != chunk.SliceValue))
                         {
                             neightborCube = _cubesHolder.Cubes[neightborCubeIndex];
                         }
