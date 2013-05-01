@@ -26,12 +26,15 @@ namespace Utopia.Shared.Entities
         // blocks
         public const ushort ThinGlass = 2001;
 
-        //alive
+        // alive
         public const ushort PlayerCharacter = 3000;
         public const ushort NonPlayerCharacter = 3001;
         public const ushort Zombie = 3002;
 
         public const ushort Plant = 4000;
         public const ushort Food = 4001;
+
+        // special
+        public const ushort FocusEntity = 10000;
     }
 }

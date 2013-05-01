@@ -12,15 +12,6 @@ namespace Utopia.Entities.Managers
 {
     public partial class PlayerEntityManager
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
-        #endregion
-
-        #region Public Methods
-        #endregion
-
         #region Private Methods
         private void PhysicOnEntity(EntityDisplacementModes mode, ref GameTime timeSpent)
         {

@@ -11,7 +11,6 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
@@ -21,9 +20,7 @@ using Utopia.Shared.Settings;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras.Interfaces;
-using S33M3DXEngine;
 using S33M3CoreComponents.Cameras;
-using S33M3CoreComponents.WorldFocus;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
@@ -34,6 +31,7 @@ using Utopia.Shared.World;
 namespace Utopia.Entities.Managers
 {
     /// <summary>
+    /// Character entity manager. Allows to control a single character in the world.
     /// Responsible for:
     /// 1) current player physics interaction with the world. 
     /// 2) player movement input handling
@@ -49,9 +47,7 @@ namespace Utopia.Entities.Managers
 
         #region Private variables
         // Engine System variables
-        private D3DEngine _d3DEngine;
         private CameraManager<ICameraFocused> _cameraManager;
-        private WorldFocusManager _worldFocusManager;
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
         private LandscapeBufferManager _bufferManager;
@@ -251,9 +247,7 @@ namespace Utopia.Entities.Managers
 
         #endregion
 
-        public PlayerEntityManager(D3DEngine engine,
-                                   CameraManager<ICameraFocused> cameraManager,
-                                   WorldFocusManager worldFocusManager,
+        public PlayerEntityManager(CameraManager<ICameraFocused> cameraManager,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
                                    PlayerCharacter player,
@@ -264,9 +258,7 @@ namespace Utopia.Entities.Managers
                                    LandscapeBufferManager bufferManager
             )
         {
-            _d3DEngine = engine;
             _cameraManager = cameraManager;
-            _worldFocusManager = worldFocusManager;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
             _pickingRenderer = pickingRenderer;
@@ -310,7 +302,7 @@ namespace Utopia.Entities.Managers
         
         void InventoryComponentSwitchInventory(object sender, InventorySwitchEventArgs e)
         {
-            if (e.Closing && _lockedEntity != null && _lockedEntity is Container)
+            if (e.Closing && _lockedEntity is Container)
             {
                 _itemMessageTranslator.ReleaseLock();
                 _lockedEntity = null;
@@ -417,11 +409,8 @@ namespace Utopia.Entities.Managers
 
             // Refresh the player Bounding box
             VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
-            
-
         }
-
-
+        
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             CheckHeadUnderWater();      //Under water head test

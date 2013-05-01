@@ -123,6 +123,7 @@
     <Compile Include="Components\FadeSwitchComponent.cs" />
     <Compile Include="Components\VersionWatermark.cs" />
     <Compile Include="Entities\Managers\EntityPickResult.cs" />
+    <Compile Include="Entities\Managers\GodEntityManager.cs" />
     <Compile Include="GUI\Crafting\CraftingComponent.cs" />
     <Compile Include="GUI\Crafting\CraftingWindow.cs" />
     <Compile Include="GUI\Crafting\ModelControl.cs" />

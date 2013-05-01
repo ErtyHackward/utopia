@@ -18,16 +18,8 @@ namespace Utopia.Entities.Managers
 {
     public partial class PlayerEntityManager
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
         public double YForceApplying { get; set; }
         public Vector2I ChunkPosition { get; set; }
-        #endregion
-
-        #region Public Methods
-        #endregion
 
         #region Private Methods
         private void UpdateEntityMovementAndRotation(ref GameTime timeSpent)
