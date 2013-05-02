@@ -21,9 +21,9 @@ namespace S33M3CoreComponents.Cameras
 
         private Vector3 _xAxis, _yAxis, _zAxis;
 
-        private float _offsetDistance = 5.0f;
+        private float _offsetDistance = 35.0f;
         private float _zoomingPower = 0;
-        private float _zoomingStep = 5f;
+        private float _zoomingStep = 15f;
 
         private bool _isbackLooking = true;
 
@@ -31,6 +31,11 @@ namespace S33M3CoreComponents.Cameras
         #endregion
 
         #region Public Properties
+
+        public float MaxDistance { get; set; }
+
+        public float Distance { get { return _offsetDistance; } set { _offsetDistance = value; } }
+
         public FTSValue<Vector3D> FocusPoint
         {
             get { return _focusPoint; }
@@ -65,6 +70,8 @@ namespace S33M3CoreComponents.Cameras
             _inputManager = inputManager;
             _worldFocusManager = worldFocusManager;
             this.CameraType = Cameras.CameraType.ThirdPerson;
+
+            MaxDistance = 50f;
         }
 
         #region Public Methods
@@ -127,7 +134,7 @@ namespace S33M3CoreComponents.Cameras
                     _offsetDistance += _zoomingStep * (float)elapsedTime;
                     _zoomingPower += _zoomingStep * (float)elapsedTime;
                     if (_zoomingPower > 0.0f) _zoomingPower = 0.0f;
-                    if (_offsetDistance > 15.0f) _offsetDistance = 15.0f;
+                    if (_offsetDistance > MaxDistance) _offsetDistance = MaxDistance;
                 }
             }
 

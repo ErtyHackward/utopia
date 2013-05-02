@@ -84,8 +84,8 @@ namespace Realms.Client.States
             _captureMouse = inputManager.MouseManager.MouseCapture;
             inputManager.MouseManager.MouseCapture = false;
 
-            var inventory = _iocContainer.Get<InventoryComponent>();
-            inventory.DisableComponent();
+            //var inventory = _iocContainer.Get<InventoryComponent>();
+            //inventory.DisableComponent();
 
             base.OnEnabled(previousState);
         }

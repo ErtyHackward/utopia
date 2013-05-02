@@ -81,12 +81,11 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private ServerComponent _server;
-        private PlayerEntityManager _playerManager;
+        private IPlayerManager _playerManager;
         private IChunkStorageManager _chunkstorage;
         private ISkyDome _skydome;
         private IWeather _weather;
         private SharedFrameCB _sharedFrameCB;
-        private IEntityPickingManager _pickingManager;
         private int _readyToDrawCount;
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
@@ -140,9 +139,10 @@ namespace Utopia.Worlds.Chunks
         public event EventHandler LoadComplete;
         private void OnInitialLoadComplete()
         {
-            if (LoadComplete != null) LoadComplete(this, EventArgs.Empty);
-            _playerManager.LandscapeInitiazed = true;
+            if (LoadComplete != null) 
+                LoadComplete(this, EventArgs.Empty);
         }
+
         public bool IsInitialLoadCompleted { get; set; }
 
         [Inject]
@@ -161,9 +161,8 @@ namespace Utopia.Worlds.Chunks
                            ILightingManager lightingManager,
                            IChunkStorageManager chunkstorage,
                            ServerComponent server,
-                           PlayerEntityManager player,
+                           IPlayerManager player,
                            ISkyDome skydome,
-                           IEntityPickingManager pickingManager,
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
@@ -189,7 +188,6 @@ namespace Utopia.Worlds.Chunks
             _skydome = skydome;
             _weather = weather;
             _sharedFrameCB = sharedFrameCB;
-            _pickingManager = pickingManager;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
@@ -206,9 +204,7 @@ namespace Utopia.Worlds.Chunks
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
-            pickingManager.WorldChunks = this;
             lightingManager.WorldChunk = this;
-            _playerManager.WorldChunks = this;
             _chunkMeshManager.WorldChunks = this;
             landscapeManager.WorldChunks = this;
 
@@ -459,6 +455,12 @@ namespace Utopia.Worlds.Chunks
         /// <param name="previousPosition"></param>
         public void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
+            // dirty hack TODO: fix properly
+            var playerManager = _playerManager as PlayerEntityManager;
+
+            if (playerManager == null)
+                return;
+
             BoundingBox _boundingBox2Evaluate;
             Vector3D newPositionWithColliding = previousPosition;
             TerraCubeWithPosition _collidingCube;
@@ -480,13 +482,13 @@ namespace Utopia.Worlds.Chunks
                 //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
 
                 newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                if (_collidingCube.BlockProfile.YBlockOffset > 0 || playerManager.PlayerOnOffsettedBlock > 0)
                 {
                     float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
+                    if (playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - playerManager.PlayerOnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        _playerManager.OffsetBlockHitted = offsetValue;
+                        playerManager.OffsetBlockHitted = offsetValue;
                     }
                 }
             }
@@ -501,13 +503,13 @@ namespace Utopia.Worlds.Chunks
                 //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
 
                 newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
+                if (_collidingCube.BlockProfile.YBlockOffset > 0 || playerManager.PlayerOnOffsettedBlock > 0)
                 {
                     float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
+                    if (playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - playerManager.PlayerOnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        _playerManager.OffsetBlockHitted = offsetValue;
+                        playerManager.OffsetBlockHitted = offsetValue;
                     }
                 }
 
@@ -526,7 +528,7 @@ namespace Utopia.Worlds.Chunks
                     //If the movement between 2 Y is too large, use the GroundBelowEntity value
                     if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
                     {
-                        previousPosition.Y = _playerManager.GroundBelowEntity;
+                        previousPosition.Y = playerManager.GroundBelowEntity;
                     }
                     else
                     {
@@ -541,7 +543,7 @@ namespace Utopia.Worlds.Chunks
                         }
                     }
 
-                    _playerManager.OffsetBlockHitted = 0;
+                    playerManager.OffsetBlockHitted = 0;
                     _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
                     _isOnGround = true;
                 }
@@ -631,7 +633,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);

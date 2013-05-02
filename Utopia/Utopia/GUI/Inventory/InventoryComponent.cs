@@ -247,9 +247,9 @@ namespace Utopia.GUI.Inventory
             try
             {
                 _itemMessageTranslator.Enabled = true;
-                if (PlayerManager.Player.Toolbar[e.SlotIndex] != 0)
+                if (PlayerManager.PlayerCharacter.Toolbar[e.SlotIndex] != 0)
                 {
-                    var player = PlayerManager.Player;
+                    var player = PlayerManager.PlayerCharacter;
                     var blueprintId = player.Toolbar[e.SlotIndex];
                     
                     // find the entity
@@ -280,7 +280,7 @@ namespace Utopia.GUI.Inventory
             if (_dragControl.Slot == null)
                 return;
 
-            PlayerManager.Player.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.BluePrintId;
+            PlayerManager.PlayerCharacter.Toolbar[e.Cell.InventoryPosition.Y] = _dragControl.Slot.Item.BluePrintId;
             _toolBar.SetSlot(e.Cell.InventoryPosition.Y, new ContainedSlot
                 {
                     Item = _dragControl.Slot.Item,

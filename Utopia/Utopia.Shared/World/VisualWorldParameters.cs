@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.World;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Chunks;
@@ -37,7 +38,7 @@ namespace Utopia.Shared.World
             WorldParameters = new WorldParameters();
         }
 
-        public VisualWorldParameters(WorldParameters worldParameters, PlayerCharacter player, Vector2I visibleChunkInWorld)
+        public VisualWorldParameters(WorldParameters worldParameters, IDynamicEntity player, Vector2I visibleChunkInWorld)
         {
             VisibleChunkInWorld = visibleChunkInWorld;
             WorldParameters = worldParameters;

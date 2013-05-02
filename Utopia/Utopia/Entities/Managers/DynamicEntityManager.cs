@@ -120,7 +120,7 @@ namespace Utopia.Entities.Managers
 
         #region DI
         [Inject]
-        public PlayerEntityManager PlayerEntityManager
+        public IPlayerManager PlayerEntityManager
         {
             get { return _playerEntityManager; }
             set { _playerEntityManager = value; }
@@ -199,7 +199,7 @@ namespace Utopia.Entities.Managers
         private VertexBuffer<VertexMesh> _cubeVb;
         private IndexBuffer<ushort> _cubeIb;
         private Dictionary<int, int> _materialChangeMapping;
-        private PlayerEntityManager _playerEntityManager;
+        private IPlayerManager _playerEntityManager;
         private ISkyDome _skyDome;
         private SharedFrameCB _sharedFrameCB;
 
@@ -600,15 +600,15 @@ namespace Utopia.Entities.Managers
         #region Events handling
         private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
         {
-            if (e.Camera.CameraType == CameraType.FirstPerson)
-            {
-                PlayerEntity = null;
-            }
-            else
-            {
-                PlayerEntity = null;
-                PlayerEntity = _playerEntityManager.Player;
-            }
+            //if (e.Camera.CameraType == CameraType.FirstPerson)
+            //{
+            //    PlayerEntity = null;
+            //}
+            //else
+            //{
+            //    PlayerEntity = null;
+            //    PlayerEntity = _playerEntityManager.Player;
+            //}
         }
 
         private void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
