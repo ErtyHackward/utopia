@@ -15,5 +15,18 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             get { return EntityClassId.FocusEntity; }
         }
+
+        [ProtoMember(1)]
+        public override SharpDX.Quaternion HeadRotation
+        {
+            get
+            {
+                return base.HeadRotation;
+            }
+            set
+            {
+                base.HeadRotation = value;
+            }
+        }
     }
 }
