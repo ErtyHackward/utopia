@@ -127,7 +127,7 @@
     <Compile Include="Structs\ServerChunk.cs" />
     <Compile Include="Interfaces\IServerCommand.cs" />
     <Compile Include="Structs\ServerDynamicEntity.cs" />
-    <Compile Include="Structs\ServerPlayerCharacterEntity.cs" />
+    <Compile Include="Structs\ServerPlayerEntity.cs" />
     <Compile Include="Structs\UserState.cs" />
     <Compile Include="Utils\DynamicIdHelper.cs" />
     <Compile Include="Utils\IniSettings.cs" />

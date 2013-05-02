@@ -207,7 +207,8 @@ namespace Realms.Server
 
         static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
         {
-            e.PlayerEntity = _gameplay.CreateNewPlayerCharacter(e.Connection.DisplayName, e.EntityId);
+            //e.PlayerEntity = _gameplay.CreateNewPlayerCharacter(e.Connection.DisplayName, e.EntityId);
+            e.PlayerEntity = _gameplay.CreateNewPlayerFocusEntity(e.EntityId);
         }
     }
 }

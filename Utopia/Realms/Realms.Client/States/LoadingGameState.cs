@@ -156,18 +156,34 @@ namespace Realms.Client.States
         
         void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
-            ServerComponent serverComponent = _ioc.Get<ServerComponent>();
+            var serverComponent = _ioc.Get<ServerComponent>();
+            
+            IDynamicEntity entity = null;
 
-            var player = (PlayerCharacter)e.Message.Entity;
+            if (e.Message.Entity is PlayerCharacter)
+            {
+                var player = (PlayerCharacter)e.Message.Entity;
+                
+                _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
+                _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
+                
+                entity = player;
+            }
+            else if (e.Message.Entity is PlayerFocusEntity)
+            {
+                var player = (PlayerFocusEntity)e.Message.Entity;
+                
+                _ioc.Rebind<PlayerFocusEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope);
+                _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player");
+
+                entity = player;
+            }
+
+            serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
+            serverComponent.Player = entity;
 
             var factory = _ioc.Get<EntityFactory>();
-            factory.PrepareEntity(player);
-
-            _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
-            _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
-            
-            serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
-            serverComponent.Player = player;
+            factory.PrepareEntity(entity);
 
             GameplayComponentsCreation();
         }
@@ -254,7 +270,8 @@ namespace Realms.Client.States
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            var godEntityManager = _ioc.Get<GodEntityManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
@@ -269,8 +286,9 @@ namespace Realms.Client.States
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
-            playerEntityManager.HasMouseFocus = true;
-            cameraManager.SetCamerasPlugin(playerEntityManager);
+            //playerEntityManager.HasMouseFocus = true;
+            //cameraManager.SetCamerasPlugin(playerEntityManager);
+            cameraManager.SetCamerasPlugin(godEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
 
@@ -286,7 +304,8 @@ namespace Realms.Client.States
             AddComponent(iconFactory);
             AddComponent(timerManager);
             AddComponent(skyBackBuffer);
-            AddComponent(playerEntityManager);
+            //AddComponent(playerEntityManager);
+            AddComponent(godEntityManager);
             AddComponent(dynamicEntityManager);
             AddComponent(hud);
             AddComponent(guiManager);

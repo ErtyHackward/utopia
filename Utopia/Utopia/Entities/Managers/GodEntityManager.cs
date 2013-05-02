@@ -1,10 +1,12 @@
 ﻿using System;
+using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.Entities.Managers
@@ -18,6 +20,8 @@ namespace Utopia.Entities.Managers
     public class GodEntityManager : GameComponent, ICameraPlugin
     {
         private readonly InputsManager _inputsManager;
+        private readonly SingleArrayChunkContainer _cubesHolder;
+        private readonly CameraManager<ICameraFocused> _cameraManager;
 
         private Vector3 _moveVector;
         
@@ -44,14 +48,20 @@ namespace Utopia.Entities.Managers
         public int CameraUpdateOrder { get; private set; }
         #endregion
 
-        public GodEntityManager(PlayerFocusEntity playerEntity, InputsManager inputsManager)
+        public GodEntityManager(PlayerFocusEntity playerEntity, 
+                                InputsManager inputsManager, 
+                                SingleArrayChunkContainer cubesHolder,
+                                CameraManager<ICameraFocused> cameraManager)
         {
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
             if (inputsManager == null) throw new ArgumentNullException("inputsManager");
+            if (cubesHolder == null) throw new ArgumentNullException("cubesHolder");
+            if (cameraManager == null) throw new ArgumentNullException("cameraManager");
 
             FocusEntity = playerEntity;
             _inputsManager = inputsManager;
-
+            _cubesHolder = cubesHolder;
+            _cameraManager = cameraManager;
         }
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
@@ -66,6 +76,11 @@ namespace Utopia.Entities.Managers
             // validate new position if not in level mode
             if (!LevelMode)
             {
+                // slide by camera lookat vector
+                var lookVector = Vector3.Transform(Vector3.UnitZ, FocusEntity.HeadRotation);
+
+                //_cubesHolder.GetCube(FocusEntity.Position, false)
+
                 // TODO: check entity for surface collision, take into account camera position and view angle
             }
 

@@ -108,20 +108,26 @@ namespace Realms.Client.Components
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
         {
-            var dEntity = new PlayerCharacter();
-            dEntity.DynamicId = e.EntityId;
-            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
-            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
-            dEntity.CharacterName = "Local player";
+            var entity = new PlayerFocusEntity();
+            entity.DynamicId = e.EntityId;
+            entity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
 
-            // give start items to the player
-            var startSetName = _worldParam.Configuration.StartSet;
-            if (!string.IsNullOrEmpty(startSetName))
-            {
-                _serverFactory.FillContainer(startSetName, dEntity.Inventory);
-            }
+            e.PlayerEntity = entity;
             
-            e.PlayerEntity = dEntity;
+            //var dEntity = new PlayerCharacter();
+            //dEntity.DynamicId = e.EntityId;
+            //dEntity.DisplacementMode = EntityDisplacementModes.Walking;
+            //dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
+            //dEntity.CharacterName = "Local player";
+
+            //// give start items to the player
+            //var startSetName = _worldParam.Configuration.StartSet;
+            //if (!string.IsNullOrEmpty(startSetName))
+            //{
+            //    _serverFactory.FillContainer(startSetName, dEntity.Inventory);
+            //}
+            
+            //e.PlayerEntity = dEntity;
         }
 
         public void Dispose()
