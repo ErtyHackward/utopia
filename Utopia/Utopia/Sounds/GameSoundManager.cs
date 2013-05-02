@@ -60,7 +60,7 @@ namespace Utopia.Sounds
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private IWorldChunks _worldChunk;
         private IClock _gameClockTime;
-        private PlayerEntityManager _playerEntityManager;
+        private IPlayerManager _playerEntityManager;
         private VisualWorldParameters _visualWorldParameters;
         private UtopiaProcessorParams _biomesParams;
         private Dictionary<IItem, ISoundVoice> _staticEntityPlayingVoices = new Dictionary<IItem, ISoundVoice>();
@@ -101,7 +101,7 @@ namespace Utopia.Sounds
                                 IChunkEntityImpactManager chunkEntityImpactManager,
                                 IWorldChunks worldChunk,
                                 IClock gameClockTime,
-                                PlayerEntityManager playerEntityManager,
+                                IPlayerManager playerEntityManager,
                                 VisualWorldParameters visualWorldParameters,
                                 IClock worlClock)
         {
@@ -124,8 +124,7 @@ namespace Utopia.Sounds
             _player = player;
 
             //Register to Events
-            _playerEntityManager.OnLanding += playerEntityManager_OnLanding;
-
+            
             _dynamicEntityManager.EntityAdded += DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved += DynamicEntityManagerEntityRemoved;
             _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
@@ -140,7 +139,6 @@ namespace Utopia.Sounds
 
         public override void BeforeDispose()
         {
-            _playerEntityManager.OnLanding -= playerEntityManager_OnLanding;
             _dynamicEntityManager.EntityAdded -= DynamicEntityManagerEntityAdded;
             _dynamicEntityManager.EntityRemoved -= DynamicEntityManagerEntityRemoved;
             _chunkEntityImpactManager.BlockReplaced -= _chunkEntityImpactManager_BlockReplaced;
@@ -611,7 +609,6 @@ namespace Utopia.Sounds
 
         protected virtual void PlayBlockPut(Vector3I blockPos){}
         protected virtual void PlayBlockTake(Vector3I blockPos){}
-        protected virtual void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube){}
         #endregion
 
         #region StaticEntities Processing

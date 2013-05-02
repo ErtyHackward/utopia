@@ -13,6 +13,14 @@ namespace Utopia.Shared.Structs.Helpers
             return vec2;
         }
 
+        public static Vector2I EntityToChunkPosition(Vector3D blockPosition)
+        {
+            var vec2 = new Vector2I((int)(blockPosition.X / AbstractChunk.ChunkSize.X), (int)(blockPosition.Z / AbstractChunk.ChunkSize.Z));
+            if (blockPosition.X < 0 && blockPosition.X % AbstractChunk.ChunkSize.X != 0) vec2.X--;
+            if (blockPosition.Y < 0 && blockPosition.Y % AbstractChunk.ChunkSize.Z != 0) vec2.Y--;
+            return vec2;
+        }
+
         public static Vector3I GlobalToInternalChunkPosition(Vector3I globalPosition)
         {
             var vec3 = new Vector3I(globalPosition.X % AbstractChunk.ChunkSize.X, globalPosition.Y % AbstractChunk.ChunkSize.Y, globalPosition.Z % AbstractChunk.ChunkSize.Z);

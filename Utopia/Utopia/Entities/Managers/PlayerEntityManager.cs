@@ -37,7 +37,7 @@ namespace Utopia.Entities.Managers
     /// 2) player movement input handling
     /// 3) picking of the block
     /// </summary>
-    public partial class PlayerEntityManager : GameComponent, ICameraPlugin, IVisualVoxelEntityContainer, IDebugInfo
+    public partial class PlayerEntityManager : GameComponent, IPlayerManager, IVisualVoxelEntityContainer, IDebugInfo
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -99,7 +99,9 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// The Player
         /// </summary>
-        public readonly PlayerCharacter Player;
+        public readonly PlayerCharacter PlayerCharacter;
+
+        public IDynamicEntity Player { get { return PlayerCharacter; } }
 
         /// <summary>
         /// The Player Voxel body, its a class that will wrap the player character object with a Voxel Body
@@ -127,7 +129,7 @@ namespace Utopia.Entities.Managers
                 Player.DisplacementMode = value;
                 _entityRotations.SetDisplacementMode(Player.DisplacementMode, _worldPosition + _entityEyeOffset);
 #if DEBUG
-                logger.Info("{0} is now {1}", Player.CharacterName, value.ToString());
+                logger.Info("{0} is now {1}", PlayerCharacter.CharacterName, value.ToString());
 #endif
                 if (value == EntityDisplacementModes.Walking || value == EntityDisplacementModes.Swiming)
                 {
@@ -152,21 +154,14 @@ namespace Utopia.Entities.Managers
         public bool HasMouseFocus { get; set; }
 
         public float PlayerOnOffsettedBlock { get; set; }
+
         public double GroundBelowEntity
         {
             get { return _groundBelowEntity; }
             set { _groundBelowEntity = value; }
         }
-
-        public IWorldChunks WorldChunks { get; set; }
+        
         public bool MousepickDisabled { get; set; }
-
-        private bool _landscapeInitiazed;
-        public bool LandscapeInitiazed
-        {
-            get { return _landscapeInitiazed; }
-            set { _landscapeInitiazed = value; }
-        }
         
         public float OffsetBlockHitted { get; set; }
         
@@ -238,6 +233,9 @@ namespace Utopia.Entities.Managers
         [Inject]
         public GhostedEntityRenderer GhostedEntityRenderer { get; set; }
 
+        [Inject]
+        public IWorldChunks WorldChunks { get; set; }
+
         #endregion
 
         #region Events
@@ -267,9 +265,9 @@ namespace Utopia.Entities.Managers
             _handTool.EntityFactory = factory;
             _bufferManager = bufferManager;
 
-            Player = player;
+            PlayerCharacter = player;
 
-            Player.Equipment.ItemEquipped += Equipment_ItemEquipped;
+            PlayerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
 
             
             ShowDebugInfo = true;
@@ -331,7 +329,7 @@ namespace Utopia.Entities.Managers
             {
                 var usable = _lockedEntity as IUsableEntity;
                 // send use message to the server
-                Player.EntityUse();
+                PlayerCharacter.EntityUse();
 
                 usable.Use();
             }
@@ -395,7 +393,9 @@ namespace Utopia.Entities.Managers
 
         public override void FTSUpdate( GameTime timeSpend)
         {
-            if (_landscapeInitiazed == false) return;
+            // wait until landscape being loaded
+            if (!WorldChunks.IsInitialLoadCompleted) 
+                return;
 
             // Input handling
             inputHandler();
@@ -423,7 +423,7 @@ namespace Utopia.Entities.Managers
         
         public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", Player.CharacterName,
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", PlayerCharacter.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),

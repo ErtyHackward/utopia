@@ -31,11 +31,11 @@ namespace Utopia.Entities.Managers
 
                 if (newpicking)
                 {
-                    if(Player.EntityState.IsBlockPicked)
+                    if (PlayerCharacter.EntityState.IsBlockPicked)
                     {
                         if (Vector3D.Distance(_worldPosition + _entityEyeOffset, new Vector3D(Player.EntityState.PickedBlockPosition)) > 10.0)
                         {
-                            Player.EntityState.IsBlockPicked = false;
+                            PlayerCharacter.EntityState.IsBlockPicked = false;
                         }
                     }
                 }
@@ -46,7 +46,7 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref Player.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref PlayerCharacter.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
@@ -63,15 +63,15 @@ namespace Utopia.Entities.Managers
             // first we will check entities
             // after that we will check blocks because they can be closer than the entity
 
-            Player.EntityState.IsEntityPicked = false;
-            Player.EntityState.IsBlockPicked = false;
+            PlayerCharacter.EntityState.IsEntityPicked = false;
+            PlayerCharacter.EntityState.IsBlockPicked = false;
 
             //Check the Ray against all entity first
             var pickingRay = new Ray(pickingWorldPosition.AsVector3(), pickingLookAt);
 
             var epr = EntityPickingManager.CheckEntityPicking(pickingRay);
-            
-            var tool = Player.Equipment.RightTool ?? _handTool;
+
+            var tool = PlayerCharacter.Equipment.RightTool ?? _handTool;
 
             var nbrPointToSample = (int)(Math.Min(blockPickingDistance, epr.Distance) / 0.02);
 
@@ -102,16 +102,16 @@ namespace Utopia.Entities.Managers
                 if (pickType == PickType.Pick)
                 {
                     var blockPos = pickingWorldPosition.ToCubePosition();
-                    Player.EntityState.PickedBlockPosition = blockPos;
+                    PlayerCharacter.EntityState.PickedBlockPosition = blockPos;
 
                     var cubeBB = new BoundingBox(blockPos, blockPos + new Vector3(1, 1f - (float)yOffset, 1));
                     Vector3 faceInteresection;
                     if (cubeBB.Intersects(ref pickingRay, out faceInteresection))
                     {
-                        Player.EntityState.PickedBlockFaceOffset = Vector3.One - (PickedCube.Position - faceInteresection);
-                        Player.EntityState.PickPoint = faceInteresection;
-                        Player.EntityState.PickPointNormal = cubeBB.GetPointNormal(faceInteresection);
-                        Player.EntityState.IsBlockPicked = true;
+                        PlayerCharacter.EntityState.PickedBlockFaceOffset = Vector3.One - (PickedCube.Position - faceInteresection);
+                        PlayerCharacter.EntityState.PickPoint = faceInteresection;
+                        PlayerCharacter.EntityState.PickPointNormal = cubeBB.GetPointNormal(faceInteresection);
+                        PlayerCharacter.EntityState.IsBlockPicked = true;
                     }
 
                     bool newPlacechanged = false;
@@ -123,15 +123,15 @@ namespace Utopia.Entities.Managers
 
                         if (_cubesHolder.isPickable(ref pickingWorldPosition, out NewCube) == false)
                         {
-                            Player.EntityState.NewBlockPosition = NewCube.Position;
+                            PlayerCharacter.EntityState.NewBlockPosition = NewCube.Position;
                             newPlacechanged = true;
                             break;
                         }
                         ptNbr--;
                     }
 
-                    Player.EntityState.IsEntityPicked = false;
-                    Player.EntityState.IsBlockPicked = true;
+                    PlayerCharacter.EntityState.IsEntityPicked = false;
+                    PlayerCharacter.EntityState.IsBlockPicked = true;
                     if (PickedCube.Position == Player.EntityState.PickedBlockPosition)
                     {
                         if (!newPlacechanged) 
@@ -152,12 +152,12 @@ namespace Utopia.Entities.Managers
                 _pickedUpEntity = epr.PickedEntity;
                 _pickedUpEntityPosition = _pickedUpEntity.Entity.Position;
 
-                Player.EntityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
-                Player.EntityState.PickedEntityLink = _pickedUpEntity.Entity.GetLink();
-                Player.EntityState.PickPoint = epr.PickPoint;
-                Player.EntityState.PickPointNormal = epr.PickNormal;
-                Player.EntityState.IsEntityPicked = true;
-                Player.EntityState.IsBlockPicked = false;
+                PlayerCharacter.EntityState.PickedEntityPosition = _pickedUpEntity.Entity.Position;
+                PlayerCharacter.EntityState.PickedEntityLink = _pickedUpEntity.Entity.GetLink();
+                PlayerCharacter.EntityState.PickPoint = epr.PickPoint;
+                PlayerCharacter.EntityState.PickPointNormal = epr.PickNormal;
+                PlayerCharacter.EntityState.IsEntityPicked = true;
+                PlayerCharacter.EntityState.IsBlockPicked = false;
             }
             
             return Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked;

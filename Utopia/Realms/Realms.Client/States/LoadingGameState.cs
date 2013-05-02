@@ -231,10 +231,10 @@ namespace Realms.Client.States
             var wordParameters = _ioc.Get<WorldParameters>();
             var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
             
-            var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
+            //var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
             var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
-            var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>(new ConstructorArgument("camera", firstPersonCamera));
-            cameraManager.RegisterNewCamera(thirdPersonCamera);
+            var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>(new ConstructorArgument("camera", thirdPersonCamera));
+            //cameraManager.RegisterNewCamera(firstPersonCamera);
 
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
@@ -242,9 +242,9 @@ namespace Realms.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
-            var inventory = _ioc.Get<InventoryComponent>();
-            inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
-            inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
+            //var inventory = _ioc.Get<InventoryComponent>();
+            //inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
+            //inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
             
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -268,10 +268,9 @@ namespace Realms.Client.States
             fadeComponent.Visible = false;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
-            var entityPickingManager = _ioc.Get<IEntityPickingManager>();
+            //var entityPickingManager = _ioc.Get<IEntityPickingManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            var godEntityManager = _ioc.Get<GodEntityManager>();
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
@@ -287,8 +286,7 @@ namespace Realms.Client.States
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             //playerEntityManager.HasMouseFocus = true;
-            //cameraManager.SetCamerasPlugin(playerEntityManager);
-            cameraManager.SetCamerasPlugin(godEntityManager);
+            cameraManager.SetCamerasPlugin(playerEntityManager);
             ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
 
@@ -304,13 +302,12 @@ namespace Realms.Client.States
             AddComponent(iconFactory);
             AddComponent(timerManager);
             AddComponent(skyBackBuffer);
-            //AddComponent(playerEntityManager);
-            AddComponent(godEntityManager);
+            AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
             AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            AddComponent(inventory);
+            //AddComponent(inventory);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);

@@ -223,7 +223,6 @@ namespace Utopia.Worlds.Chunks
                             VisualWorldParameters visualWorldParameter, 
                             ref Range3I cubeRange, 
                             SingleArrayChunkContainer singleArrayContainer,
-                            IEntityPickingManager entityPickingManager,
                             CameraManager<ICameraFocused> cameraManager,
                             WorldChunks worldChunkManager,
                             VoxelModelManager voxelModelManager,
@@ -250,10 +249,8 @@ namespace Utopia.Worlds.Chunks
             EmitterStaticEntities = new List<EntityMetaData>();
             SoundStaticEntities = new List<IItem>();
             CubeRange = cubeRange;
-            _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
             isExistingMesh4Drawing = false;
-            Entities.CollectionDirty += Entities_CollectionDirty;
             Entities.EntityAdded += Entities_EntityAdded;
             Entities.EntityRemoved += Entities_EntityRemoved;
             Entities.CollectionCleared += Entities_CollectionCleared;
@@ -401,11 +398,6 @@ namespace Utopia.Worlds.Chunks
             ChunkBoundingBoxDisplay.Draw(context, _cameraManager.ActiveCamera);
         }
 #endif
-
-        private void Entities_CollectionDirty(object sender, EventArgs e)
-        {
-            _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
-        }
 
         void Entities_CollectionCleared(object sender, EventArgs e)
         {
@@ -655,7 +647,6 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
-            Entities.CollectionDirty -= Entities_CollectionDirty;
             Entities.EntityAdded -= Entities_EntityAdded;
             Entities.EntityRemoved -= Entities_EntityRemoved;
 #if DEBUG

@@ -164,7 +164,7 @@ namespace Utopia.Entities.Managers
             var result = new EntityPickResult();
             result.Distance = float.MaxValue;
 
-            var tool = Player.Player.Equipment.RightTool;
+            var tool = Player.PlayerCharacter.Equipment.RightTool;
 
             if (tool == null)
                 tool = _handTool;

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Utopia.Entities.Managers;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Shared.Chunks;
 using S33M3DXEngine.Threading;
@@ -56,8 +57,8 @@ namespace Utopia.Worlds.Chunks
                 transparentChunk.PopUpValue.Value -= 0.02f;
             }
 
-            //slicing view of the chunk only if player is in God mode !
-            if (_playerManager.DisplacementMode == Shared.Entities.EntityDisplacementModes.God)
+            // slicing view of the chunk only if player is in God mode !
+            if (_playerManager is GodEntityManager)
             {
                 SlicingUpdate(timeSpend);
             }

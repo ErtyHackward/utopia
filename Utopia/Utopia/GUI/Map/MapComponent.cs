@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Utopia.Entities.Managers;
+using Utopia.Entities.Managers.Interfaces;
 using Utopia.Network;
 using Utopia.Shared.World.PlanGenerator;
 using S33M3DXEngine.Main;
@@ -25,11 +26,16 @@ namespace Utopia.GUI.Map
         private readonly ServerComponent _server;
         private readonly WindowControl _mapWindow;
         private readonly WorldPlan _planGenerator;
-        private readonly PlayerEntityManager _playerManager;
+        private readonly IPlayerManager _playerManager;
         private Bitmap _mapImage;
         private MapControl _mapControl;
 
-        public MapComponent(D3DEngine engine, InputsManager inputManager, MainScreen screen, ServerComponent server, WorldPlan plan, PlayerEntityManager playerManager)
+        public MapComponent(D3DEngine engine, 
+                            InputsManager inputManager, 
+                            MainScreen screen, 
+                            ServerComponent server, 
+                            WorldPlan plan, 
+                            IPlayerManager playerManager)
         {
             this.IsDefferedLoadContent = true;
 
