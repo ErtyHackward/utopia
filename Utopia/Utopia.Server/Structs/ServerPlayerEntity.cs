@@ -16,7 +16,7 @@ namespace Utopia.Server.Structs
     /// <summary>
     /// This class sends all events from entity model to player
     /// </summary>
-    public class ServerPlayerCharacterEntity : ServerDynamicEntity
+    public class ServerPlayerEntity : ServerDynamicEntity
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -32,7 +32,7 @@ namespace Utopia.Server.Structs
         /// <param name="connection"></param>
         /// <param name="entity"></param>
         /// <param name="server"></param>
-        public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(entity)
+        public ServerPlayerEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(entity)
         {
             if (connection == null) 
                 throw new ArgumentNullException("connection");

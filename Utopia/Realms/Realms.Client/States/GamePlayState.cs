@@ -97,9 +97,10 @@ namespace Realms.Client.States
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
-            playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
+            //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            //playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
+            //playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
+            var godEntityManager = _ioc.Get<GodEntityManager>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
@@ -120,7 +121,8 @@ namespace Realms.Client.States
             AddComponent(iconFactory);
             AddComponent(timerManager);
             AddComponent(skyBackBuffer);
-            AddComponent(playerEntityManager);
+            //AddComponent(playerEntityManager);
+            AddComponent(godEntityManager);
             AddComponent(dynamicEntityManager);
             AddComponent(hud);
             AddComponent(guiManager);

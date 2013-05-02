@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3CoreComponents.Cameras.Interfaces;
+﻿using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.WorldFocus.Interfaces;
 using S33M3Resources.Structs;
 using SharpDX;
 using S33M3CoreComponents.WorldFocus;
 using S33M3DXEngine;
-using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using System.Windows.Forms;

@@ -92,6 +92,7 @@ namespace Utopia.Shared.Entities
             entityType.AddSubType(101, typeof(StaticEntity));
 
             dynEntityType.AddSubType(100, typeof(CharacterEntity));
+            dynEntityType.AddSubType(101, typeof(PlayerFocusEntity));
 
             charEntityType.AddSubType(100, typeof(RpgCharacterEntity));
             charEntityType.AddSubType(101, typeof(Zombie));
