@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using S33M3CoreComponents.Config;
 using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
@@ -111,6 +112,7 @@ namespace Realms.Client.Components
             var entity = new PlayerFocusEntity();
             entity.DynamicId = e.EntityId;
             entity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
+            entity.HeadRotation = Quaternion.RotationYawPitchRoll(0, -(float)Math.PI / 4, 0);
 
             e.PlayerEntity = entity;
             
