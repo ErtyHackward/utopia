@@ -34,7 +34,10 @@ namespace S33M3CoreComponents.Cameras
 
         public float MaxDistance { get; set; }
 
-        public float Distance { get { return _offsetDistance; } set { _offsetDistance = value; } }
+        public float Distance { 
+            get { return _offsetDistance; } 
+            set { _offsetDistance = value; } 
+        }
 
         public FTSValue<Vector3D> FocusPoint
         {
@@ -55,6 +58,8 @@ namespace S33M3CoreComponents.Cameras
         {
             get { return _view_focused; }
         }
+
+        public Vector3 CameraPosition { get; set; }
 
         public delegate bool CheckCameraPosition(ref Vector3D newPosition2Evaluate);
         public CheckCameraPosition CheckCamera;
@@ -198,23 +203,30 @@ namespace S33M3CoreComponents.Cameras
             Vector3 cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
             Vector3D evaluatedCameraWorldPosition;
             bool isCameraPositionCorrect = true;
-            while (isCameraPositionCorrect == true && _validatedOffsetDistance < _offsetDistance)
+            if (CheckCamera != null)
             {
-                isCameraPositionCorrect = true;
-                foreach (CheckCameraPosition fct in CheckCamera.GetInvocationList())
+                while (isCameraPositionCorrect == true && _validatedOffsetDistance < _offsetDistance)
                 {
-                    evaluatedCameraWorldPosition = _worldPosition.ValueInterp + cameraFocusedPosition;
-                    isCameraPositionCorrect = fct(ref evaluatedCameraWorldPosition);
-                    if (isCameraPositionCorrect == false)
-                        _validatedOffsetDistance -= 0.03f;
+                    isCameraPositionCorrect = true;
+                    foreach (CheckCameraPosition fct in CheckCamera.GetInvocationList())
+                    {
+                        evaluatedCameraWorldPosition = _worldPosition.ValueInterp + cameraFocusedPosition;
+                        isCameraPositionCorrect = fct(ref evaluatedCameraWorldPosition);
+                        if (isCameraPositionCorrect == false)
+                            _validatedOffsetDistance -= 0.03f;
                         break;
+                    }
+
+                    _validatedOffsetDistance += 0.01f;
+                    if (_validatedOffsetDistance > _offsetDistance) _validatedOffsetDistance = _offsetDistance;
+                    cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
                 }
-
-                _validatedOffsetDistance += 0.01f;
-                if (_validatedOffsetDistance > _offsetDistance) _validatedOffsetDistance = _offsetDistance;
-                cameraFocusedPosition = _zAxis * way * _validatedOffsetDistance;
             }
-
+            else
+            {
+                cameraFocusedPosition = _zAxis * way * _offsetDistance;
+            }
+            
             if (_isbackLooking == false)
             {
                 _view_focused = Matrix.LookAtLH(cameraFocusedPosition, cameraFocusedPosition - _zAxis, _yAxis);
@@ -228,6 +240,8 @@ namespace S33M3CoreComponents.Cameras
 
             //NOT Focused camera computation ============================================================
             Vector3 cameraPosition = _worldPosition.ValueInterp.AsVector3() + cameraFocusedPosition;
+
+            CameraPosition = cameraPosition;
 
             if (_isbackLooking == false)
             {
