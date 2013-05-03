@@ -8,7 +8,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// <summary>
     /// Represents a dynamic entity state. Hold view position, picked block, picked entity etc
     /// </summary>
-    public struct DynamicEntityState
+    public class DynamicEntityState
     {
         /// <summary>
         /// Global position of currently picked block

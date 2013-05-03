@@ -19,13 +19,25 @@ namespace Utopia.Worlds.Chunks
     {
         /// <summary> The chunk collection </summary>
         VisualChunk[] Chunks { get; set; }
-        VisualChunk[] SortedChunks { get; set; }
 
+        VisualChunk[] SortedChunks { get; set; }
+        
         /// <summary> the visible world border in world coordinate </summary>
         VisualWorldParameters VisualWorldParameters { get; set; }
 
         /// <summary> indicate wether the chunks needs to be sorted</summary>
         bool ChunkNeed2BeSorted { get; set; }
+
+        bool IsInitialLoadCompleted { get; set; }
+
+        int StaticEntityViewRange { get; set; }
+
+        /// <summary>
+        /// Gets or sets value indicating if static entities should be drawn using instancing
+        /// </summary>
+        bool DrawStaticInstanced { get; set; }
+
+        ILandscapeManager LandscapeManager { get; }
 
         /// <summary>
         /// Occurs when array of visual chunks get initialized
@@ -95,21 +107,20 @@ namespace Utopia.Worlds.Chunks
         /// <returns></returns>
         IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX);
 
-        ILandscapeManager LandscapeManager { get; }
+        /// <summary>
+        /// Enumerates all visible chunks by player (i.e. not frustum culled)
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<VisualChunk> VisibleChunks();
 
         void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
+
         byte isCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate);
-        bool IsInitialLoadCompleted { get; set;}
-
-        /// <summary>
-        /// Gets or sets value indicating if static entities should be drawn using instancing
-        /// </summary>
-        bool DrawStaticInstanced { get; set; }
-
+        
         void InitDrawComponents(DeviceContext context);
 
         bool ValidatePosition(ref Vector3D newPosition2Evaluate);
 
-        int StaticEntityViewRange { get; set; }
+
     }
 }

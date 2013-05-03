@@ -104,6 +104,11 @@ namespace Utopia.Entities.Managers
         public IDynamicEntity Player { get { return PlayerCharacter; } }
 
         /// <summary>
+        /// Gets active player tool or null
+        /// </summary>
+        public IItem ActiveTool { get { return PlayerCharacter.Equipment.RightTool; } }
+
+        /// <summary>
         /// The Player Voxel body, its a class that will wrap the player character object with a Voxel Body
         /// </summary>
         public VisualVoxelEntity VisualVoxelEntity { get; set; }
