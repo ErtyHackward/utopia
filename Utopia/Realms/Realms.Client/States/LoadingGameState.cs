@@ -287,7 +287,7 @@ namespace Realms.Client.States
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
             //playerEntityManager.HasMouseFocus = true;
             cameraManager.SetCamerasPlugin(playerEntityManager);
-            ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
+            //((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
 
             _ioc.Get<EntityFactory>().DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();

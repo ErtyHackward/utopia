@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -26,6 +27,24 @@ namespace Utopia.Shared.Entities.Dynamic
             set
             {
                 base.HeadRotation = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets position to fly to
+        /// </summary>
+        public Vector3D FinalPosition { get; set; }
+
+        public override Vector3D Position
+        {
+            get
+            {
+                return base.Position;
+            }
+            set
+            {
+                base.Position = value;
+                FinalPosition = value;
             }
         }
     }

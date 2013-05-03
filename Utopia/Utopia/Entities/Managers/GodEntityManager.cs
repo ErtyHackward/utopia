@@ -1,4 +1,5 @@
 ﻿using System;
+using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
@@ -14,6 +15,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Entities.Managers
 {
@@ -67,6 +69,9 @@ namespace Utopia.Entities.Managers
         public int CameraUpdateOrder { get; private set; }
         #endregion
 
+        [Inject]
+        public IWorldChunks Chunks { get; set; }
+
         public GodEntityManager(PlayerFocusEntity playerEntity, 
                                 InputsManager inputsManager, 
                                 SingleArrayChunkContainer cubesHolder,
@@ -95,6 +100,10 @@ namespace Utopia.Entities.Managers
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
+            // wait untill all chunks are loaded
+            if (!Chunks.IsInitialLoadCompleted)
+                return;
+
             #region handle movement of the focus point
 
             InputHandling();
@@ -104,20 +113,13 @@ namespace Utopia.Entities.Managers
             EntityRotation(elapsedTime);
 
             var speed = elapsedTime * 30;
-
+            
             // apply movement
-            FocusEntity.Position += _moveVector * speed;
+            FocusEntity.FinalPosition += _moveVector * speed;
 
-            // validate new position if not in level mode
-            if (!LevelMode)
-            {
-                // slide by camera lookat vector
-                var lookVector = Vector3.Transform(Vector3.UnitZ, FocusEntity.HeadRotation);
+            UpdateCameraPosition();
 
-                //_cubesHolder.GetCube(FocusEntity.Position, false)
-
-                // TODO: check entity for surface collision, take into account camera position and view angle
-            }
+            FocusEntity.Position = Vector3D.SmoothStep(FocusEntity.Position, FocusEntity.FinalPosition, elapsedTime * 20);
 
             #endregion
 
@@ -125,6 +127,69 @@ namespace Utopia.Entities.Managers
 
             base.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
+
+        private void UpdateCameraPosition()
+        {
+            if (LevelMode) 
+                return;
+
+            // in non-level mode we need to validate focus entity position depending on 
+            // the look vector of the camera untill it will cross with the surface
+
+            var camera = _cameraManager.ActiveCamera as ThirdPersonCameraWithFocus;
+
+            if (camera == null) 
+                return;
+
+            var pos = camera.CameraPosition;
+
+            // camera look vector
+            var checkVector = FocusEntity.FinalPosition.AsVector3() - pos;
+            checkVector.Normalize();
+
+            if (checkVector.Y >= 0 ) 
+                return;
+
+            // check from the camera pos to the focused entity
+
+            for (float d = 0; d < camera.Distance; d += 0.1f)
+            {
+                var cube = _cubesHolder.GetCube((Vector3I)(pos + checkVector * d), false);
+                if (cube.Cube.Id != 0)
+                {
+                    FocusEntity.FinalPosition = new Vector3D(pos + checkVector * (d - 0.1f));
+                    break;
+                }
+            }
+
+            var distance = 0f;
+
+            while (true)
+            {
+                distance += 0.1f;
+                var cubePos = FocusEntity.FinalPosition + checkVector * distance;
+
+                if (cubePos.Y <= 0)
+                {
+                    cubePos.Y = 0;
+                }
+
+                var cube = _cubesHolder.GetCube(cubePos);
+
+                if (cube.Cube.Id != 0)
+                {
+                    break;
+                }
+
+                FocusEntity.FinalPosition = cubePos;
+
+                if (cubePos.Y == 0)
+                {
+                    break;
+                }
+            }
+        }
+
 
         private void InputHandling()
         {
