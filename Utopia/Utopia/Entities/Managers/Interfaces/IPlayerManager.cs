@@ -24,5 +24,11 @@ namespace Utopia.Entities.Managers.Interfaces
         /// If camera is inside water
         /// </summary>
         bool IsHeadInsideWater { get; }
+
+        /// <summary>
+        /// Gets active player tool or null
+        /// Affects picking algo
+        /// </summary>
+        IItem ActiveTool { get; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using S33M3CoreComponents.Sound;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
@@ -409,6 +410,16 @@ namespace Utopia.Worlds.Chunks
                 X += AbstractChunk.ChunkSize.X;
             }
         }
+
+        /// <summary>
+        /// Enumerates all visible chunks by player (i.e. not frustum culled)
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<VisualChunk> VisibleChunks()
+        {
+            return SortedChunks.Where(chunk => !chunk.isFrustumCulled);
+        }
+
 
         /// <summary>
         /// indicate if the Chunk coordinate passed in is the border of the visible world

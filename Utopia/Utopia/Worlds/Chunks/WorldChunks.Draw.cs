@@ -52,7 +52,7 @@ namespace Utopia.Worlds.Chunks
                 chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.IntersectsWithoutFar(ref chunk.ChunkWorldBoundingBox);
             }
         }
-
+        
         public override void Draw(DeviceContext context, int index)
         {
 

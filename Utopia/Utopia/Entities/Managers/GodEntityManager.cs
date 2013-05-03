@@ -48,9 +48,20 @@ namespace Utopia.Entities.Managers
         /// </summary>
         public PlayerFocusEntity FocusEntity { get; set; }
 
+        /// <summary>
+        /// Gets main player entity (character or PlayerFocusEntity)
+        /// </summary>
         public IDynamicEntity Player { get { return FocusEntity; } }
 
+        /// <summary>
+        /// If camera is inside water
+        /// </summary>
         public bool IsHeadInsideWater { get { return false; } }
+
+        /// <summary>
+        /// Gets active player tool or null
+        /// </summary>
+        public IItem ActiveTool { get { return null; } }
 
         /// <summary>
         /// If enabled uses certain level for entity/block picking.
@@ -112,14 +123,14 @@ namespace Utopia.Entities.Managers
 
             EntityRotation(elapsedTime);
 
-            var speed = elapsedTime * 30;
-            
+            var speed = elapsedTime * 500;
+
             // apply movement
             FocusEntity.FinalPosition += _moveVector * speed;
 
             UpdateCameraPosition();
-
-            FocusEntity.Position = Vector3D.SmoothStep(FocusEntity.Position, FocusEntity.FinalPosition, elapsedTime * 20);
+            
+            FocusEntity.Position = Vector3D.SmoothStep(FocusEntity.Position, FocusEntity.FinalPosition, elapsedTime * 10);
 
             #endregion
 
