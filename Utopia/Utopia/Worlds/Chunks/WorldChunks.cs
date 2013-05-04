@@ -129,6 +129,11 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         public int SliceViewChunks { get; set; }
 
+        /// <summary>
+        /// Gets current slice value
+        /// </summary>
+        public int SliceValue { get { return _sliceValue; } }
+
         #endregion
 
         /// <summary>

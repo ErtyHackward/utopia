@@ -65,12 +65,6 @@ namespace Utopia.Entities.Managers
         /// Gets active player tool or null
         /// </summary>
         public IItem ActiveTool { get { return _handTool; } }
-
-        /// <summary>
-        /// If enabled uses certain level for entity/block picking.
-        /// Otherwise uses top most one.
-        /// </summary>
-        public bool LevelMode { get; set; }
         
         #region ICameraPlugin
 
@@ -144,8 +138,12 @@ namespace Utopia.Entities.Managers
 
         private void UpdateCameraPosition()
         {
-            if (LevelMode) 
+            if (Chunks.SliceValue != -1)
+            {
+                if (FocusEntity.Position.Y != Chunks.SliceValue)
+                    FocusEntity.Position = new Vector3D(FocusEntity.Position.X, Chunks.SliceValue, FocusEntity.Position.Z);
                 return;
+            }
 
             // in non-level mode we need to validate focus entity position depending on 
             // the look vector of the camera untill it will cross with the surface

@@ -34,15 +34,9 @@ namespace Utopia.Worlds.Chunks
         public static Perf perf = new Perf();
 
 #endif
-
-        #region Private variables
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
         private int _sliceValue = -1;
-        #endregion
-
-        #region Public variables/properties
-        #endregion
 
         #region public methods
         public override void FTSUpdate(GameTime timeSpend)
