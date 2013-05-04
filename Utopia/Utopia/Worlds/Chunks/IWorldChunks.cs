@@ -40,6 +40,11 @@ namespace Utopia.Worlds.Chunks
         ILandscapeManager LandscapeManager { get; }
 
         /// <summary>
+        /// Gets current leveling slice value
+        /// </summary>
+        int SliceValue { get; }
+
+        /// <summary>
         /// Occurs when array of visual chunks get initialized
         /// </summary>
         event EventHandler ChunksArrayInitialized;

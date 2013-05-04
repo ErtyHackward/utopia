@@ -22,6 +22,7 @@ using Utopia.Shared.Entities.Models;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Shared.World;
+using Utopia.Worlds.Chunks;
 using Utopia.Worlds.SkyDomes;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Entities.Concrete;
@@ -74,6 +75,7 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _chunkContainer;
+        private readonly IWorldChunks _worldChunks;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
 
@@ -147,12 +149,16 @@ namespace Utopia.Entities.Managers
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
-                                    SingleArrayChunkContainer chunkContainer)
+                                    SingleArrayChunkContainer chunkContainer,
+                                    IWorldChunks worldChunks)
         {
+            if (worldChunks == null) throw new ArgumentNullException("worldChunks");
+
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
             _chunkContainer = chunkContainer;
+            _worldChunks = worldChunks;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
 
@@ -275,6 +281,14 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        private bool IsEntityVisible(Vector3D pos)
+        {
+            if (_worldChunks.SliceValue == -1)
+                return true;
+
+            return pos.Y < _worldChunks.SliceValue + 1 && pos.Y > _worldChunks.SliceValue - 7;
+        }
+
         public override void Draw(DeviceContext context, int index)
         {
             if (index == VOXEL_DRAW)
@@ -336,6 +350,10 @@ namespace Utopia.Entities.Managers
                     {
                         modelInstance.World = Matrix.Zero;
                     }
+
+                    if (!IsEntityVisible(entityToRender.DynamicEntity.Position))
+                        modelInstance.World = Matrix.Zero;
+                    
                 }
 
                 if (modelAndInstances.Value.VisualModel != null && modelAndInstances.Value.Instances != null)

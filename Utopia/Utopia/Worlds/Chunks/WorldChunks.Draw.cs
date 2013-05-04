@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using SharpDX;
 using Utopia.Shared.Chunks;
@@ -118,20 +119,33 @@ namespace Utopia.Worlds.Chunks
         }
 #endif
 
+        private bool IsEntityVisible(Vector3D pos)
+        {
+            if (_sliceValue == -1)
+                return true;
+
+            return pos.Y < _sliceValue + 1 && pos.Y > _sliceValue - 6;
+        }
+
+        private IEnumerable<VisualChunk> ChunksToDraw()
+        {
+            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
+            
+            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
+            {
+                var chunk = SortedChunks[chunkIndice];
+                yield return chunk;
+            }
+        }
+
         private void DrawSolidFaces(DeviceContext context)
         {
-            VisualChunk chunk;
             Matrix worldFocus = Matrix.Identity;
 
             _terraEffect.Begin(context);
 
-            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
-            
-            //Foreach faces type
-            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
+            foreach (var chunk in ChunksToDraw())
             {
-                chunk = SortedChunks[chunkIndice];
-
                 if (chunk.isExistingMesh4Drawing)
                 {
                     if (!chunk.isFrustumCulled)
@@ -155,16 +169,10 @@ namespace Utopia.Worlds.Chunks
         {
             Matrix worldFocus = Matrix.Identity;
 
-            VisualChunk chunk;
-
             _liquidEffect.Begin(context);
 
-            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
-
-            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
+            foreach (var chunk in ChunksToDraw())
             {
-                chunk = SortedChunks[chunkIndice];
-
                 if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
                 {
                     //Only If I have something to draw !
@@ -198,8 +206,6 @@ namespace Utopia.Worlds.Chunks
 
         private void DrawStaticEntities(DeviceContext context)
         {
-            VisualChunk chunk;
-
             _staticEntityDrawTime = 0;
             _staticEntityDrawCalls = 0;
 
@@ -218,11 +224,10 @@ namespace Utopia.Worlds.Chunks
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
             }
 
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            foreach (var chunk in ChunksToDraw())
             {
-                chunk = SortedChunks[chunkIndice];
-
-                if (chunk.DistanceFromPlayer > StaticEntityViewRange) continue;
+                if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
+                    continue;
 
                 if (chunk.isExistingMesh4Drawing)
                 {
@@ -242,11 +247,14 @@ namespace Utopia.Worlds.Chunks
 
                                 if (!DrawStaticInstanced)
                                 {
-                                    var sw = Stopwatch.StartNew();
-                                    staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
-                                    sw.Stop();
-                                    _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
-                                    _staticEntityDrawCalls++;
+                                    if (IsEntityVisible(staticEntity.Entity.Position))
+                                    {
+                                        var sw = Stopwatch.StartNew();
+                                        staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
+                                        sw.Stop();
+                                        _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
+                                        _staticEntityDrawCalls++;
+                                    }
                                 }
                             }
 
@@ -255,7 +263,7 @@ namespace Utopia.Worlds.Chunks
                                 if (pair.Value.Count == 0) continue;
                                 var entity = pair.Value.First();
                                 var sw = Stopwatch.StartNew();
-                                entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+                                entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
                                 sw.Stop();
                                 _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
                                 _staticEntityDrawCalls++;
