@@ -137,6 +137,9 @@ namespace Utopia.Worlds.Chunks
             get { return _serverRequestTime; }
         }
 
+        /// <summary>
+        /// Dictionary by the model name of the entity
+        /// </summary>
         public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
 
         public List<EntityMetaData> EmitterStaticEntities;

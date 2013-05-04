@@ -325,6 +325,15 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
+        /// Get a world's chunk from a chunk position
+        /// </summary>
+        /// <param name="chunkPos">chunk space coordinate</param>
+        public VisualChunk GetChunkFromChunkCoord(Vector2I chunkPos)
+        {
+            return GetChunkFromChunkCoord(chunkPos.X, chunkPos.Y);
+        }
+
+        /// <summary>
         /// Get a world's chunk from a chunk location in world coordinate
         /// </summary>
         /// <param name="X">Chunk X coordinate</param>

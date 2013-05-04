@@ -109,7 +109,7 @@ namespace Realms.Client.Components
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
         {
-            var entity = new PlayerFocusEntity();
+            var entity = new GodEntity();
             entity.DynamicId = e.EntityId;
             entity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             entity.HeadRotation = Quaternion.RotationYawPitchRoll(0, -(float)Math.PI / 4, 0);

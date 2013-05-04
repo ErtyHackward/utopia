@@ -8,6 +8,7 @@ using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
 using System;
+using Utopia.Action;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
@@ -48,7 +49,7 @@ namespace Utopia.Entities.Managers
         /// Gets or sets current focus point. In level mode this entity could move only in horisontal plane.
         /// If level mode is disabled the entity will move over the top surface of the chunk.
         /// </summary>
-        public PlayerFocusEntity FocusEntity { get; set; }
+        public GodEntity FocusEntity { get; set; }
 
         /// <summary>
         /// Gets main player entity (character or PlayerFocusEntity)
@@ -85,7 +86,7 @@ namespace Utopia.Entities.Managers
         [Inject]
         public IWorldChunks Chunks { get; set; }
 
-        public GodEntityManager(PlayerFocusEntity playerEntity, 
+        public GodEntityManager(GodEntity playerEntity, 
                                 InputsManager inputsManager, 
                                 SingleArrayChunkContainer cubesHolder,
                                 CameraManager<ICameraFocused> cameraManager,
@@ -240,6 +241,11 @@ namespace Utopia.Entities.Managers
             inv.Normalize();
 
             _moveVector = Vector3.Transform(moveVector, inv);
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left))
+            {
+                _handTool.Use(FocusEntity);
+            }
         }
 
         private void EntityRotation(float elapsedTime)

@@ -169,11 +169,11 @@ namespace Realms.Client.States
                 
                 entity = player;
             }
-            else if (e.Message.Entity is PlayerFocusEntity)
+            else if (e.Message.Entity is GodEntity)
             {
-                var player = (PlayerFocusEntity)e.Message.Entity;
+                var player = (GodEntity)e.Message.Entity;
                 
-                _ioc.Rebind<PlayerFocusEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope);
+                _ioc.Rebind<GodEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope);
                 _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player");
 
                 entity = player;
