@@ -8,6 +8,7 @@ namespace Utopia.Shared.Entities
         // items
         public const ushort None = 0;
         public const ushort Hand = 1;
+        public const ushort GodHand = 2;
 
         // static
         public const ushort Container = 1000;

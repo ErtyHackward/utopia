@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
+using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
@@ -21,7 +23,7 @@ namespace Utopia.Entities.Managers
     /// <summary>
     /// Provides entity and block picking by the player
     /// </summary>
-    public class PickingManager
+    public class PickingManager : GameComponent
     {
         private readonly IPlayerManager _playerManager;
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
@@ -34,14 +36,12 @@ namespace Utopia.Entities.Managers
 
         private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
+        
+        private TerraCubeWithPosition _pickedCube;
         private TerraCubeWithPosition _newCube;
-
+        
         public IPlayerManager PlayerManager { get { return _playerManager; } }
-
-        public TerraCubeWithPosition PickedCube;
-
-        public TerraCubeWithPosition NewCube;
-
+        
         public PickingManager(IPlayerManager playerManager,
                               IVisualDynamicEntityManager dynamicEntityManager,
                               IWorldChunks worldChunks,
@@ -70,27 +70,11 @@ namespace Utopia.Entities.Managers
             _worldConfiguration = worldConfiguration;
         }
 
-        /// <summary>
-        /// Enumerates all possible entities for picking
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerable<VisualVoxelEntity> PossibleEntities()
+        public override void FTSUpdate(GameTime timeSpent)
         {
-            foreach (var containers in _dynamicEntityManager.DynamicEntities)
-            {
-                yield return containers.VisualVoxelEntity;
-            }
+            GetSelectedEntity();
 
-            foreach (var visibleChunk in _worldChunks.VisibleChunks())
-            {
-                foreach (var pair in visibleChunk.VisualVoxelEntities)
-                {
-                    foreach (var visualEntity in pair.Value)
-                    {
-                        yield return visualEntity;    
-                    }
-                }
-            }
+            base.FTSUpdate(timeSpent);
         }
 
         /// <summary>
@@ -100,8 +84,7 @@ namespace Utopia.Entities.Managers
         /// <returns></returns>
         public EntityPickResult CheckEntityPicking(Ray pickingRay)
         {
-            var result = new EntityPickResult();
-            result.Distance = float.MaxValue;
+            var result = new EntityPickResult { Distance = float.MaxValue };
 
             var tool = _playerManager.ActiveTool;
 
@@ -116,7 +99,7 @@ namespace Utopia.Entities.Managers
                     //Refresh entity bounding box world
                     if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
-                        var localStaticEntityBb = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
+                        var localStaticEntityBb = entity.VoxelEntity.ModelInstance.State.BoundingBox;
                         localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
                         //Recompute the World bounding box of the entity based on a new Entity BoundingBox
                         entity.SetEntityVoxelBB(localStaticEntityBb); //Will automaticaly apply a 1/16 scaling on the boundingbox
@@ -179,7 +162,6 @@ namespace Utopia.Entities.Managers
 
             var instance = visualVoxelEntity.VoxelEntity.ModelInstance;
 
-            int index;
             bool collisionDetected = false;
             //Check Against all existing "Sub-Cube" model
 
@@ -197,7 +179,6 @@ namespace Utopia.Entities.Managers
                 if (partState.ActiveFrame == byte.MaxValue)
                     continue;
 
-                VoxelModelPart part = visualModel.VoxelModel.Parts[partId];
                 BoundingBox frameBoundingBox = visualModel.VisualVoxelFrames[partState.ActiveFrame].BoundingBox;
 
                 //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
@@ -223,7 +204,7 @@ namespace Utopia.Entities.Managers
                 Vector3I chunkSize = activeframe.BlockData.ChunkSize;
                 byte[] data = activeframe.BlockData.BlockBytes;
 
-                index = -1;
+                int index = -1;
                 //Get all sub block not empty
                 for (var z = 0; z < chunkSize.Z; z++)
                 {
@@ -261,25 +242,58 @@ namespace Utopia.Entities.Managers
             return collisionDetected;
         }
 
+        /// <summary>
+        /// Enumerates all possible entities for picking
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<VisualVoxelEntity> PossibleEntities()
+        {
+            foreach (var containers in _dynamicEntityManager.DynamicEntities)
+            {
+                yield return containers.VisualVoxelEntity;
+            }
+
+            foreach (var visibleChunk in _worldChunks.VisibleChunks())
+            {
+                foreach (var pair in visibleChunk.VisualVoxelEntities)
+                {
+                    foreach (var visualEntity in pair.Value)
+                    {
+                        yield return visualEntity;
+                    }
+                }
+            }
+        }
+
         private void GetSelectedEntity()
         {
+            if (_playerManager.ActiveTool == null)
+                return;
+
             bool newpicking;
 
             Vector3D mouseWorldPosition;
             Vector3D mouseLookAtPosition;
 
+            var distance = 10f;
+
+            var thirdPersonCamera = _cameraManager.ActiveBaseCamera as ThirdPersonCameraWithFocus;
+
+            if (thirdPersonCamera != null)
+            {
+                distance = thirdPersonCamera.Distance * 2;
+            }
+
             if (_inputsManager.MouseManager.MouseCapture)
             {
                 _inputsManager.MouseManager.UnprojectMouseCursor(_cameraManager.ActiveBaseCamera, out mouseWorldPosition, out mouseLookAtPosition, true);
-                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), 10.0f);
+                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), distance);
             }
             else
             {
                 _inputsManager.MouseManager.UnprojectMouseCursor(_cameraManager.ActiveBaseCamera, out mouseWorldPosition, out mouseLookAtPosition);
-
-                var distance = Vector3D.Distance(mouseWorldPosition, PlayerManager.Player.Position);
-
-                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), (float)(10.0f + distance));
+                
+                newpicking = RefreshPicking(ref mouseWorldPosition, mouseLookAtPosition.AsVector3(), distance);
 
                 if (newpicking)
                 {
@@ -298,18 +312,24 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (PlayerManager.Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref PlayerManager.Player.EntityState.PickedBlockPosition, _worldConfiguration.BlockProfiles[PickedCube.Cube.Id].YBlockOffset);
+                    _pickingRenderer.SetPickedBlock(ref PlayerManager.Player.EntityState.PickedBlockPosition, _worldConfiguration.BlockProfiles[_pickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
-                    if (_cameraManager.ActiveBaseCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.ThirdPerson && _pickedUpEntity.Entity == PlayerManager.Player)
+                    if (_cameraManager.ActiveBaseCamera.CameraType == CameraType.ThirdPerson && _pickedUpEntity.Entity == PlayerManager.Player)
                         return;
                     _pickingRenderer.SetPickedEntity(_pickedUpEntity);
                 }
             }
         }
 
-        //Will return true if a new Item has been picked up !
+        /// <summary>
+        /// Update player picking
+        /// </summary>
+        /// <param name="pickingWorldPosition"></param>
+        /// <param name="pickingLookAt"></param>
+        /// <param name="blockPickingDistance"></param>
+        /// <returns>return true if a new Item has been picked up !</returns>
         private bool RefreshPicking(ref Vector3D pickingWorldPosition, Vector3 pickingLookAt, float blockPickingDistance)
         {
             // first we will check entities
@@ -360,7 +380,7 @@ namespace Utopia.Entities.Managers
                     Vector3 faceInteresection;
                     if (cubeBB.Intersects(ref pickingRay, out faceInteresection))
                     {
-                        PlayerManager.Player.EntityState.PickedBlockFaceOffset = Vector3.One - (PickedCube.Position - faceInteresection);
+                        PlayerManager.Player.EntityState.PickedBlockFaceOffset = Vector3.One - (_pickedCube.Position - faceInteresection);
                         PlayerManager.Player.EntityState.PickPoint = faceInteresection;
                         PlayerManager.Player.EntityState.PickPointNormal = cubeBB.GetPointNormal(faceInteresection);
                         PlayerManager.Player.EntityState.IsBlockPicked = true;
@@ -373,9 +393,9 @@ namespace Utopia.Entities.Managers
                     {
                         pickingWorldPosition -= new Vector3D(pickingLookAt * 0.02f);
 
-                        if (_cubesHolder.isPickable(ref pickingWorldPosition, out NewCube) == false)
+                        if (_cubesHolder.isPickable(ref pickingWorldPosition, out _newCube) == false)
                         {
-                            PlayerManager.Player.EntityState.NewBlockPosition = NewCube.Position;
+                            PlayerManager.Player.EntityState.NewBlockPosition = _newCube.Position;
                             newPlacechanged = true;
                             break;
                         }
@@ -384,7 +404,7 @@ namespace Utopia.Entities.Managers
 
                     PlayerManager.Player.EntityState.IsEntityPicked = false;
                     PlayerManager.Player.EntityState.IsBlockPicked = true;
-                    if (PickedCube.Position == PlayerManager.Player.EntityState.PickedBlockPosition)
+                    if (_pickedCube.Position == PlayerManager.Player.EntityState.PickedBlockPosition)
                     {
                         if (!newPlacechanged)
                             return false;

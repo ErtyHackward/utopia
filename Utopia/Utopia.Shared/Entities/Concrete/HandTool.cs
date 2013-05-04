@@ -8,7 +8,7 @@ using Utopia.Shared.Settings;
 namespace Utopia.Shared.Entities.Concrete
 {
     /// <summary>
-    /// Special tool used when no tool is set
+    /// Special tool used when no tool is set (character mode)
     /// </summary>
     [EditorHide]
     public class HandTool : Item, ITool
@@ -63,7 +63,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         public void Rollback(IToolImpact impact)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 

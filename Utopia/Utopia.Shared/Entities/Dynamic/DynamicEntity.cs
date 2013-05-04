@@ -60,6 +60,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             HeadRotation = Quaternion.Identity;
             BodyRotation = Quaternion.Identity;
+            EntityState = new DynamicEntityState();
         }
 
         #region Properties

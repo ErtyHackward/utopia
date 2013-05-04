@@ -55,6 +55,11 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         public Vector3I PickPointNormal;
 
+        public DynamicEntityState()
+        {
+            
+        }
+
         public DynamicEntityState(EntityUseMessage entityUseMessage)
         {
             IsBlockPicked = entityUseMessage.IsBlockPicked;

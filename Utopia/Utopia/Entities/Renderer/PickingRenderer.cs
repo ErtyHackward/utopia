@@ -89,7 +89,7 @@ namespace Utopia.Entities.Renderer
         {
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
-
+            
             if (_player.EntityState.IsBlockPicked || _player.EntityState.IsEntityPicked)
             {
                 _pickedCube.Draw(context, _camManager.ActiveCamera);

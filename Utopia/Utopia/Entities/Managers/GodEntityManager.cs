@@ -1,5 +1,4 @@
-﻿using System;
-using Ninject;
+﻿using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
@@ -8,9 +7,10 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
+using System;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs.Helpers;
@@ -42,6 +42,8 @@ namespace Utopia.Entities.Managers
         private float _rotationDelta;
         private float _rotationDeltaAcum;
 
+        private GodHandTool _handTool = new GodHandTool();
+
         /// <summary>
         /// Gets or sets current focus point. In level mode this entity could move only in horisontal plane.
         /// If level mode is disabled the entity will move over the top surface of the chunk.
@@ -61,7 +63,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Gets active player tool or null
         /// </summary>
-        public IItem ActiveTool { get { return null; } }
+        public IItem ActiveTool { get { return _handTool; } }
 
         /// <summary>
         /// If enabled uses certain level for entity/block picking.
