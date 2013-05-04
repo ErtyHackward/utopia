@@ -58,6 +58,12 @@ namespace Utopia.Worlds.Chunks
         VisualChunk GetChunk(int X, int Z);
 
         /// <summary>
+        /// Get a world's chunk from a chunk position
+        /// </summary>
+        /// <param name="chunkPos">chunk space coordinate</param>
+        VisualChunk GetChunkFromChunkCoord(Vector2I chunkPos);
+
+        /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>

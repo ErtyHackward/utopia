@@ -24,9 +24,9 @@ namespace Realms.Server
             _config = config;
         }
 
-        public PlayerFocusEntity CreateNewPlayerFocusEntity(uint entityId)
+        public GodEntity CreateNewPlayerFocusEntity(uint entityId)
         {
-            var entity = new PlayerFocusEntity();
+            var entity = new GodEntity();
             entity.DynamicId = entityId;
             entity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             return entity;

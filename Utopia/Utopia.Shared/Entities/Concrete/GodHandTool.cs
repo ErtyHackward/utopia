@@ -1,5 +1,6 @@
 ﻿using System;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
@@ -28,6 +29,17 @@ namespace Utopia.Shared.Entities.Concrete
 
         public IToolImpact Use(IDynamicEntity owner)
         {
+            var focusEntity = owner as GodEntity;
+
+            if (focusEntity == null)
+                throw new ArgumentException("Invalid owner entity, should be PlayerFocusEntity");
+
+            if (focusEntity.EntityState.IsEntityPicked)
+            {
+                focusEntity.SelectedEntities.Clear();
+                focusEntity.SelectedEntities.Add(focusEntity.EntityState.PickedEntityLink);
+            }
+
             return new ToolImpact();
         }
 

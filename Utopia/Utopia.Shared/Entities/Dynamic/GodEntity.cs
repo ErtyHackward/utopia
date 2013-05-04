@@ -1,5 +1,7 @@
-﻿using ProtoBuf;
+﻿using System.Collections.Generic;
+using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -10,7 +12,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// BodyRotation contains rotation in horisontal plane only
     /// </summary>
     [ProtoContract]
-    public class PlayerFocusEntity : DynamicEntity
+    public class GodEntity : DynamicEntity
     {
         public override ushort ClassId
         {
@@ -46,6 +48,16 @@ namespace Utopia.Shared.Entities.Dynamic
                 base.Position = value;
                 FinalPosition = value;
             }
+        }
+
+        /// <summary>
+        /// Gets list of selected entities by the god-entity
+        /// </summary>
+        public List<EntityLink> SelectedEntities { get; private set; }
+
+        public GodEntity()
+        {
+            SelectedEntities = new List<EntityLink>();
         }
     }
 }
