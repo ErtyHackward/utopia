@@ -115,6 +115,7 @@ namespace Realms.Client.States
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
+            var pickingManager = _ioc.Get<PickingManager>();
             
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -142,6 +143,7 @@ namespace Realms.Client.States
             AddComponent(ghostedRenderer);
             AddComponent(crafting);
             AddComponent(inventoryEvents);
+            AddComponent(pickingManager);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

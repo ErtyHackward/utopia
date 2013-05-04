@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ninject;
-using S33M3CoreComponents.Sound;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using SharpDX;
@@ -12,7 +9,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Shared.World;
 using Utopia.Resources.ModelComp;
-using Utopia.Entities.Managers.Interfaces;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
 using S33M3DXEngine;
@@ -51,7 +47,6 @@ namespace Utopia.Worlds.Chunks
         private CameraManager<ICameraFocused> _cameraManager;
         private WorldChunks _worldChunkManager;
         
-        private IEntityPickingManager _entityPickingManager;
         private VoxelModelManager _voxelModelManager;
 
         private IChunkEntityImpactManager _chunkEntityImpactManager;
@@ -84,17 +79,6 @@ namespace Utopia.Worlds.Chunks
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
 
         public ChunkState State;
-        //public ChunkState State
-        //{
-        //    get { return _s; }
-        //    set
-        //    {
-        //        _s = value;
-        //    }
-        //}
-
-        //public ChunkState State { get; set; }                 // Chunk State
-        
         
         public bool IsOutsideLightSourcePropagated { get; set; }
         public ThreadsManager.ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.

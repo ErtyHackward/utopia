@@ -169,6 +169,7 @@ namespace Realms.Client
             _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InScope(x => GameScope.CurrentGameScope);
 
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InScope(x => GameScope.CurrentGameScope);//Camera manager
+            _iocContainer.Bind<ICameraManager>().ToMethod(x => x.Kernel.Get<CameraManager<ICameraFocused>>()).InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
             _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer").WithConstructorArgument("Name", "SkyBuffer");
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
@@ -225,6 +226,7 @@ namespace Realms.Client
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             //_iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
             _iocContainer.Bind<IPlayerManager>().To<GodEntityManager>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<PickingManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
             _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode
