@@ -7,6 +7,8 @@ namespace S33M3Resources.Structs
     [StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, Pack = 1)]
     public struct ByteColor
     {
+        public static readonly ByteColor Zero = new ByteColor();
+
         public byte R;
         public byte G;
         public byte B;
@@ -53,6 +55,17 @@ namespace S33M3Resources.Structs
             B = color.B;
             A = color.A;
         }
+
+        public static bool operator ==(ByteColor a, ByteColor b)
+        {
+            return a.R == b.R && a.G == b.G && a.B == b.B && a.A == b.A;
+        }
+
+        public static bool operator !=(ByteColor a, ByteColor b)
+        {
+            return !( a == b );
+        }
+
 
         public static ByteColor operator +(ByteColor a, ByteColor b)
         {

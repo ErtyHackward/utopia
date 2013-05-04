@@ -125,8 +125,10 @@ namespace Utopia.Worlds.Chunks
 
             _terraEffect.Begin(context);
 
+            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
+            
             //Foreach faces type
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
 
@@ -157,7 +159,9 @@ namespace Utopia.Worlds.Chunks
 
             _liquidEffect.Begin(context);
 
-            for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
+
+            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
 

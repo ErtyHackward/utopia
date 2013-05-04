@@ -122,6 +122,13 @@ namespace Utopia.Worlds.Chunks
             get { return _landscapeManager; }
         }
 
+        public bool IsInitialLoadCompleted { get; set; }
+
+        /// <summary>
+        /// Gets or sets amount of chunks to display in leveled mode
+        /// </summary>
+        public int SliceViewChunks { get; set; }
+
         #endregion
 
         /// <summary>
@@ -144,7 +151,7 @@ namespace Utopia.Worlds.Chunks
                 LoadComplete(this, EventArgs.Empty);
         }
 
-        public bool IsInitialLoadCompleted { get; set; }
+        
 
         [Inject]
         public ISoundEngine SoundEngine { get; set; }
@@ -195,6 +202,8 @@ namespace Utopia.Worlds.Chunks
             _inputsManager = inputsManager;
 
             _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
+
+            SliceViewChunks = 25;
 
             DrawStaticInstanced = true;
 
