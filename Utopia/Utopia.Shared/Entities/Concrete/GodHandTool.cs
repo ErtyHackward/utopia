@@ -24,7 +24,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return PickType.Transparent;
 
             // don't allow to pick blocks by hand
-            return PickType.Stop;
+            return PickType.Pick;
         }
 
         public IToolImpact Use(IDynamicEntity owner)
