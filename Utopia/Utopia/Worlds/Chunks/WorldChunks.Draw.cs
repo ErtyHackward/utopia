@@ -119,7 +119,7 @@ namespace Utopia.Worlds.Chunks
         }
 #endif
 
-        private bool IsEntityVisible(Vector3D pos)
+        public bool IsEntityVisible(Vector3D pos)
         {
             if (_sliceValue == -1)
                 return true;

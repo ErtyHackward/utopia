@@ -132,6 +132,6 @@ namespace Utopia.Worlds.Chunks
 
         bool ValidatePosition(ref Vector3D newPosition2Evaluate);
 
-
+        bool IsEntityVisible(Vector3D pos);
     }
 }

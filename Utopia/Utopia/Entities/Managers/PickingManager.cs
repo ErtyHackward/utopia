@@ -250,7 +250,8 @@ namespace Utopia.Entities.Managers
         {
             foreach (var containers in _dynamicEntityManager.DynamicEntities)
             {
-                yield return containers.VisualVoxelEntity;
+                if (_worldChunks.IsEntityVisible(containers.VisualVoxelEntity.Entity.Position))
+                    yield return containers.VisualVoxelEntity;
             }
 
             foreach (var visibleChunk in _worldChunks.VisibleChunks())
@@ -259,7 +260,8 @@ namespace Utopia.Entities.Managers
                 {
                     foreach (var visualEntity in pair.Value)
                     {
-                        yield return visualEntity;
+                        if (_worldChunks.IsEntityVisible(visualEntity.Entity.Position))
+                            yield return visualEntity;
                     }
                 }
             }
@@ -347,11 +349,46 @@ namespace Utopia.Entities.Managers
 
             var nbrPointToSample = (int)(Math.Min(blockPickingDistance, epr.Distance) / 0.02);
 
+            float sliceLimitSquared = float.PositiveInfinity;
+
+            if (_worldChunks.SliceValue != -1)
+            {
+                var plane = new Plane(new Vector3(0, _worldChunks.SliceValue, 0), Vector3.UnitY);
+
+                Vector3 intersectPoint;
+
+                if (pickingRay.Intersects(ref plane, out intersectPoint))
+                {
+                    pickingWorldPosition = new Vector3D(intersectPoint);
+                }
+                
+                Vector3 bottomPoint;
+
+                plane = new Plane(new Vector3(0, _worldChunks.SliceValue - 5, 0), Vector3.UnitY);
+
+                if (pickingRay.Intersects(ref plane, out bottomPoint))
+                {
+                    sliceLimitSquared = Vector3.DistanceSquared(intersectPoint, bottomPoint);
+                }
+
+                if (epr.Found)
+                {
+                    sliceLimitSquared = Vector3.DistanceSquared(intersectPoint, epr.PickPoint);
+                    if (epr.PickPoint.Y > intersectPoint.Y)
+                        nbrPointToSample = 0;
+                }
+            }
+
+            var startPos = pickingWorldPosition;
+
             //Check for Cube Picking
             //Sample points in the view direction vector
             for (var ptNbr = 0; ptNbr < nbrPointToSample; ptNbr++)
             {
                 pickingWorldPosition += new Vector3D(pickingLookAt * 0.02f);
+
+                if (Vector3D.DistanceSquared(pickingWorldPosition, startPos) >= sliceLimitSquared)
+                    break;
 
                 //Check if a block is picked up !
                 var result = _cubesHolder.GetCube(pickingWorldPosition);
