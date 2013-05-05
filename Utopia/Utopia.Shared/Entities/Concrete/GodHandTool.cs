@@ -1,4 +1,5 @@
 ﻿using System;
+using ProtoBuf;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -11,6 +12,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// Special tool for god mode view, allows to pick entities
     /// </summary>
     [EditorHide]
+    [ProtoContract]
     public class GodHandTool : Item, ITool
     {
         public override ushort ClassId
@@ -24,7 +26,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return PickType.Transparent;
 
             // don't allow to pick blocks by hand
-            return PickType.Pick;
+            return PickType.Stop;
         }
 
         public IToolImpact Use(IDynamicEntity owner)
@@ -32,7 +34,7 @@ namespace Utopia.Shared.Entities.Concrete
             var focusEntity = owner as GodEntity;
 
             if (focusEntity == null)
-                throw new ArgumentException("Invalid owner entity, should be PlayerFocusEntity");
+                throw new ArgumentException("Invalid owner entity, should be GodEntity");
 
             if (focusEntity.EntityState.IsEntityPicked)
             {
