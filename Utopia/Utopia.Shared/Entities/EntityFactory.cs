@@ -107,6 +107,8 @@ namespace Utopia.Shared.Entities
             itemType.AddSubType(103, typeof(CubeResource));
             itemType.AddSubType(104, typeof(Food));
             itemType.AddSubType(105, typeof(Stuff));
+            itemType.AddSubType(106, typeof(GodHandTool));
+            itemType.AddSubType(107, typeof(GodBlockSelectorTool));
 
             blockItem.AddSubType(100, typeof(OrientedBlockItem));
 
