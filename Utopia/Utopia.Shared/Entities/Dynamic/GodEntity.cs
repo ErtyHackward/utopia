@@ -55,9 +55,15 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         public List<EntityLink> SelectedEntities { get; private set; }
 
+        /// <summary>
+        /// Gets list of selected blocks by the player
+        /// </summary>
+        public List<Vector3I> SelectedBlocks { get; private set; }
+
         public GodEntity()
         {
             SelectedEntities = new List<EntityLink>();
+            SelectedBlocks = new List<Vector3I>();
         }
     }
 }
