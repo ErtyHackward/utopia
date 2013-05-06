@@ -31,15 +31,15 @@ namespace Utopia.Shared.Entities.Concrete
 
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var focusEntity = owner as GodEntity;
+            var godEntity = owner as GodEntity;
 
-            if (focusEntity == null)
+            if (godEntity == null)
                 throw new ArgumentException("Invalid owner entity, should be GodEntity");
 
-            if (focusEntity.EntityState.IsEntityPicked)
+            if (godEntity.EntityState.IsEntityPicked)
             {
-                focusEntity.SelectedEntities.Clear();
-                focusEntity.SelectedEntities.Add(focusEntity.EntityState.PickedEntityLink);
+                godEntity.SelectedEntities.Clear();
+                godEntity.SelectedEntities.Add(godEntity.EntityState.PickedEntityLink);
             }
 
             return new ToolImpact();
