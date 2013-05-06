@@ -35,7 +35,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
-                ActionId = UtopiaActions.EndMove_Forward,
+                ActionId = UtopiaActions.EndMoveForward,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Forward
             }, rebindSettingsBasedAction);
@@ -56,7 +56,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
-                ActionId = UtopiaActions.EndMove_Backward,
+                ActionId = UtopiaActions.EndMoveBackward,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.Backward
             }, rebindSettingsBasedAction);
@@ -70,7 +70,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
-                ActionId = UtopiaActions.EndMove_StrafeLeft,
+                ActionId = UtopiaActions.EndMoveStrafeLeft,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeLeft
             }, rebindSettingsBasedAction);
@@ -84,7 +84,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
-                ActionId = UtopiaActions.EndMove_StrafeRight,
+                ActionId = UtopiaActions.EndMoveStrafeRight,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Move.StrafeRight
             }, rebindSettingsBasedAction);
@@ -142,8 +142,15 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.Use_Left,
+                ActionId = UtopiaActions.UseLeft,
                 TriggerType = MouseTriggerMode.ButtonPressed,
+                Binding = MouseButton.LeftButton
+            });
+
+            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
+                ActionId = UtopiaActions.UseLeftEnd,
+                TriggerType = MouseTriggerMode.ButtonReleased,
                 Binding = MouseButton.LeftButton
             });
 
@@ -156,14 +163,14 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.Use_Right,
+                ActionId = UtopiaActions.UseRight,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.RightButton
             });
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.Use_LeftWhileCursorLocked,
+                ActionId = UtopiaActions.UseLeftWhileCursorLocked,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.LeftButton,
                 WithCursorLocked = true
@@ -171,7 +178,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.Use_RightWhileCursorLocked,
+                ActionId = UtopiaActions.UseRightWhileCursorLocked,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.RightButton,
                 WithCursorLocked = true
@@ -179,7 +186,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.Use_LeftWhileCursorNotLocked,
+                ActionId = UtopiaActions.UseLeftWhileCursorNotLocked,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.LeftButton,
                 WithCursorLocked = false
@@ -187,7 +194,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.Use_RightWhileCursorNotLocked,
+                ActionId = UtopiaActions.UseRightWhileCursorNotLocked,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.RightButton,
                 WithCursorLocked = false
@@ -195,14 +202,14 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.ToolBar_SelectNext,
+                ActionId = UtopiaActions.ToolBarSelectNext,
                 TriggerType = MouseTriggerMode.ScrollWheelForward,
                 Binding = MouseButton.ScrollWheel
             });
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.ToolBar_SelectPrevious,
+                ActionId = UtopiaActions.ToolBarSelectPrevious,
                 TriggerType = MouseTriggerMode.ScrollWheelBackWard,
                 Binding = MouseButton.ScrollWheel
             });
@@ -244,7 +251,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.Toggle_Chat,
+                ActionId = UtopiaActions.ToggleChat,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Chat
             }, rebindSettingsBasedAction);
@@ -258,7 +265,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.Exit_Chat,
+                ActionId = UtopiaActions.ExitChat,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = new KeyWithModifier() { MainKey = Keys.Escape }
             });
@@ -286,7 +293,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
             {
-                ActionId = UtopiaActions.Toggle_Interface,
+                ActionId = UtopiaActions.ToggleInterface,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.ToggleInterface
             }, rebindSettingsBasedAction);

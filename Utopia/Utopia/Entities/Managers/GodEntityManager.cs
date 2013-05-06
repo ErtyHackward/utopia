@@ -14,6 +14,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
@@ -28,6 +29,8 @@ namespace Utopia.Entities.Managers
     /// </summary>
     public class GodEntityManager : GameComponent, IPlayerManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly InputsManager _inputsManager;
         private readonly SingleArrayChunkContainer _cubesHolder;
         private readonly CameraManager<ICameraFocused> _cameraManager;
@@ -43,18 +46,21 @@ namespace Utopia.Entities.Managers
         private float _rotationDelta;
         private float _rotationDeltaAcum;
 
-        private GodHandTool _handTool = new GodHandTool();
+        private readonly GodBlockSelectorTool _handTool = new GodBlockSelectorTool();
+
+        private bool _selectionNow;
+        private Vector3I _selectionStart;
 
         /// <summary>
         /// Gets or sets current focus point. In level mode this entity could move only in horisontal plane.
         /// If level mode is disabled the entity will move over the top surface of the chunk.
         /// </summary>
-        public GodEntity FocusEntity { get; set; }
+        public GodEntity GodEntity { get; set; }
 
         /// <summary>
         /// Gets main player entity (character or PlayerFocusEntity)
         /// </summary>
-        public IDynamicEntity Player { get { return FocusEntity; } }
+        public IDynamicEntity Player { get { return GodEntity; } }
 
         /// <summary>
         /// If camera is inside water
@@ -71,12 +77,35 @@ namespace Utopia.Entities.Managers
         // this region contain camera specific properties
         // these properties controlls the ThirdPerson camera position and rotation
 
-        public Vector3D CameraWorldPosition { get { return FocusEntity.Position; } }
-        public Quaternion CameraOrientation { get { return FocusEntity.HeadRotation; } }
-        public Quaternion CameraYAxisOrientation { get { return FocusEntity.BodyRotation; } }
+        public Vector3D CameraWorldPosition { get { return GodEntity.Position; } }
+        public Quaternion CameraOrientation { get { return GodEntity.HeadRotation; } }
+        public Quaternion CameraYAxisOrientation { get { return GodEntity.BodyRotation; } }
         public int CameraUpdateOrder { get; private set; }
         #endregion
 
+        /// <summary>
+        /// Gets range of block that player currently picking
+        /// </summary>
+        public Range3I? HoverRange
+        {
+            get
+            {
+                if (!_selectionNow || !GodEntity.EntityState.IsBlockPicked)
+                    return null;
+                return Range3I.FromTwoVectors(_selectionStart, GodEntity.EntityState.PickedBlockPosition);
+            }
+        }
+
+        /// <summary>
+        /// Gets value indicating if player selects new blocks (otherwise means deselect operation)
+        /// </summary>
+        public bool Selection { get {
+            if (!_selectionNow)
+                return false;
+
+            return !GodEntity.SelectedBlocks.Contains(_selectionStart);
+        } }
+        
         [Inject]
         public IWorldChunks Chunks { get; set; }
 
@@ -94,10 +123,10 @@ namespace Utopia.Entities.Managers
             if (bufferManager == null) throw new ArgumentNullException("bufferManager");
             if (visParameters == null) throw new ArgumentNullException("visualWorldParameters");
 
-            FocusEntity = playerEntity;
+            GodEntity = playerEntity;
 
-            _eyeOrientation  = FocusEntity.HeadRotation;
-            _bodyOrientation = FocusEntity.BodyRotation;
+            _eyeOrientation  = GodEntity.HeadRotation;
+            _bodyOrientation = GodEntity.BodyRotation;
 
             _inputsManager = inputsManager;
             _cubesHolder   = cubesHolder;
@@ -123,15 +152,15 @@ namespace Utopia.Entities.Managers
             var speed = elapsedTime * 500;
 
             // apply movement
-            FocusEntity.FinalPosition += _moveVector * speed;
+            GodEntity.FinalPosition += _moveVector * speed;
 
             UpdateCameraPosition();
             
-            FocusEntity.Position = Vector3D.SmoothStep(FocusEntity.Position, FocusEntity.FinalPosition, elapsedTime * 10);
+            GodEntity.Position = Vector3D.SmoothStep(GodEntity.Position, GodEntity.FinalPosition, elapsedTime * 10);
 
             #endregion
 
-            _bufferManager.CleanUpClient(BlockHelper.EntityToChunkPosition(FocusEntity.Position), _visParameters);
+            _bufferManager.CleanUpClient(BlockHelper.EntityToChunkPosition(GodEntity.Position), _visParameters);
 
             base.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
@@ -140,8 +169,8 @@ namespace Utopia.Entities.Managers
         {
             if (Chunks.SliceValue != -1)
             {
-                if (FocusEntity.Position.Y != Chunks.SliceValue)
-                    FocusEntity.Position = new Vector3D(FocusEntity.Position.X, Chunks.SliceValue, FocusEntity.Position.Z);
+                if (GodEntity.Position.Y != Chunks.SliceValue)
+                    GodEntity.Position = new Vector3D(GodEntity.Position.X, Chunks.SliceValue, GodEntity.Position.Z);
                 return;
             }
 
@@ -156,7 +185,7 @@ namespace Utopia.Entities.Managers
             var pos = camera.CameraPosition;
 
             // camera look vector
-            var checkVector = FocusEntity.FinalPosition.AsVector3() - pos;
+            var checkVector = GodEntity.FinalPosition.AsVector3() - pos;
             checkVector.Normalize();
 
             if (checkVector.Y >= 0 ) 
@@ -169,7 +198,7 @@ namespace Utopia.Entities.Managers
                 var cube = _cubesHolder.GetCube((Vector3I)(pos + checkVector * d), false);
                 if (cube.Cube.Id != 0)
                 {
-                    FocusEntity.FinalPosition = new Vector3D(pos + checkVector * (d - 0.1f));
+                    GodEntity.FinalPosition = new Vector3D(pos + checkVector * (d - 0.1f));
                     break;
                 }
             }
@@ -179,7 +208,7 @@ namespace Utopia.Entities.Managers
             while (true)
             {
                 distance += 0.1f;
-                var cubePos = FocusEntity.FinalPosition + checkVector * distance;
+                var cubePos = GodEntity.FinalPosition + checkVector * distance;
 
                 if (cubePos.Y <= 0)
                 {
@@ -193,7 +222,7 @@ namespace Utopia.Entities.Managers
                     break;
                 }
 
-                FocusEntity.FinalPosition = cubePos;
+                GodEntity.FinalPosition = cubePos;
 
                 if (cubePos.Y == 0)
                 {
@@ -229,7 +258,7 @@ namespace Utopia.Entities.Managers
 
             moveVector.Normalize();
 
-            Quaternion inv = FocusEntity.HeadRotation;
+            Quaternion inv = GodEntity.HeadRotation;
 
             inv.Invert();
 
@@ -240,9 +269,24 @@ namespace Utopia.Entities.Managers
 
             _moveVector = Vector3.Transform(moveVector, inv);
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
-                _handTool.Use(FocusEntity);
+                _handTool.SetSelectionStart(GodEntity);
+
+                if (GodEntity.EntityState.IsBlockPicked)
+                {
+                    _selectionStart = GodEntity.EntityState.PickedBlockPosition;
+                    _selectionNow = true;
+                }
+
+                logger.Warn("UseLeft");
+            }
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeftEnd))
+            {
+                _handTool.Use(GodEntity);
+                _selectionNow = false;
+                logger.Warn("UseLeftEnd");
             }
         }
 
@@ -286,8 +330,8 @@ namespace Utopia.Entities.Managers
             //Extract the Rotation Matrix
             Matrix.RotationQuaternion(ref _bodyOrientation, out orientation);
 
-            FocusEntity.HeadRotation = _eyeOrientation;
-            FocusEntity.BodyRotation = _bodyOrientation;
+            GodEntity.HeadRotation = _eyeOrientation;
+            GodEntity.BodyRotation = _bodyOrientation;
         }
 
         private bool Rotate2Axes(float headingDegrees, float pitchDegrees)
