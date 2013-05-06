@@ -173,8 +173,16 @@ namespace Utopia.Worlds.Chunks
                 throw new NotImplementedException();
             }
         }
-
+        
+        /// <summary>
+        /// Desired slice of the mesh
+        /// </summary>
         public int SliceValue { get; set; }
+
+        /// <summary>
+        /// Actual slice value of the chunk mesh
+        /// </summary>
+        public int SliceOfMesh { get; set; }
 
         //Use to display bounding box around chunk in debug mode only (Quite slow and not optimized)
 #if DEBUG
@@ -301,6 +309,7 @@ namespace Utopia.Worlds.Chunks
             //SendStaticEntitiesToGraphicalCard();    //Static Entities Sprite + Voxel
             State = ChunkState.DisplayInSyncWithMeshes;
             isExistingMesh4Drawing = true;
+            SliceOfMesh = SliceValue;
         }
 
         //Solid Cube

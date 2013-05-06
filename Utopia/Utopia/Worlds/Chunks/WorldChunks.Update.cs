@@ -124,15 +124,8 @@ namespace Utopia.Worlds.Chunks
 
         private void UpdateLeveled()
         {
-            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
-            
-            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
+            foreach (var chunk in ChunksToDraw(false))
             {
-                var chunk = SortedChunks[chunkIndice];
-
-                if (chunk.isFrustumCulled)
-                    continue;
-
                 if (chunk.SliceValue != _sliceValue)
                 {
                     chunk.SliceValue = _sliceValue;
@@ -313,7 +306,8 @@ namespace Utopia.Worlds.Chunks
         private void PlayerDisplacementChunkEvents()
         {
             double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, _playerManager.Player.Position);
-            if(distance > 8){
+            if (distance > 8)
+            {
                 _lastPlayerTriggeredPosition = _playerManager.Player.Position;
                 ChunkNeed2BeSorted = true;
             }
@@ -322,7 +316,7 @@ namespace Utopia.Worlds.Chunks
         #region Update WRAPPING
         private void CheckWrapping()
         {
-            if(SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
+            if (SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
@@ -376,29 +370,17 @@ namespace Utopia.Worlds.Chunks
             {
                 if (_sliceValue == -1) _sliceValue = (int)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y;
                 _sliceValue++;
-                //RefreshSlicedChunks();
             }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerDown))
             {
                 if (_sliceValue == -1) _sliceValue = (int)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y;
                 _sliceValue--;
-                //RefreshSlicedChunks();
             }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerOff))
             {
                 _sliceValue = -1;
-            }
-        }
-
-        private void RefreshSlicedChunks()
-        {
-            //Get all chunks to be sliced = SliceViewChunks first chunk that have been sorted from player position
-            for (int i = 0; i < SliceViewChunks; i++)
-            {
-                SortedChunks[i].SliceValue = _sliceValue;
-                SortedChunks[i].State = ChunkState.OuterLightSourcesProcessed;
             }
         }
         

@@ -26,7 +26,7 @@ namespace Utopia.Worlds.Chunks
     /// </summary>
     public partial class WorldChunks : IWorldChunks
     {
-        #region private variables
+        #region Private variables
         private HLSLTerran _terraEffect;
         private HLSLLiquid _liquidEffect;
 
@@ -127,15 +127,61 @@ namespace Utopia.Worlds.Chunks
             return pos.Y < _sliceValue + 1 && pos.Y > _sliceValue - 6;
         }
 
-        private IEnumerable<VisualChunk> ChunksToDraw()
+        private IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true)
         {
-            var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
+            //var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
             
-            for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
+            //for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
+            //{
+            //    var chunk = SortedChunks[chunkIndice];
+
+            //    if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled)
+            //        yield return chunk;
+            //}
+
+            if (_sliceValue == -1)
             {
-                var chunk = SortedChunks[chunkIndice];
-                yield return chunk;
+                for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+                {
+                    var chunk = SortedChunks[chunkIndice];
+
+                    if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled)
+                        yield return chunk;
+                }
             }
+            else
+            {
+                var pos = _playerManager.Player.Position.ToCubePosition();
+                var playerChunk = GetChunk(ref pos);
+
+                if (SliceViewChunks <= 9)
+                {
+                    for (int x = -1; x < 2; x++)
+                    {
+                        for (int z = -1; z < 2; z++)
+                        {
+                            var chunk = GetChunkFromChunkCoord(playerChunk.ChunkPosition + new Vector2I(x, z));
+
+                            if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled && (!sameSlice || chunk.SliceOfMesh == _sliceValue))
+                                yield return chunk;
+                        }
+                    }
+                }
+                else if (SliceViewChunks <= 25)
+                {
+                    for (int x = -2; x < 3; x++)
+                    {
+                        for (int z = -2; z < 3; z++)
+                        {
+                            var chunk = GetChunkFromChunkCoord(playerChunk.ChunkPosition + new Vector2I(x, z));
+
+                            if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled && (!sameSlice || chunk.SliceOfMesh == _sliceValue))
+                                yield return chunk;
+                        }
+                    }
+                }
+            }
+
         }
 
         private void DrawSolidFaces(DeviceContext context)
@@ -146,21 +192,15 @@ namespace Utopia.Worlds.Chunks
 
             foreach (var chunk in ChunksToDraw())
             {
-                if (chunk.isExistingMesh4Drawing)
-                {
-                    if (!chunk.isFrustumCulled)
-                    {
-                        _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
-                        _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
-                        _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
-                        _terraEffect.CBPerDraw.IsDirty = true;
-                        _terraEffect.Apply(context);
+                _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
+                _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
+                _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
+                _terraEffect.CBPerDraw.IsDirty = true;
+                _terraEffect.Apply(context);
 
-                        chunk.DrawSolidFaces(context);
+                chunk.DrawSolidFaces(context);
 
-                        _chunkDrawByFrame++;
-                    }
-                }
+                _chunkDrawByFrame++;
             }
         }
 
@@ -173,34 +213,31 @@ namespace Utopia.Worlds.Chunks
 
             foreach (var chunk in ChunksToDraw())
             {
-                if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
+                //Only If I have something to draw !
+                if (chunk.LiquidCubeVB != null)
                 {
-                    //Only If I have something to draw !
-                    if (chunk.LiquidCubeVB != null)
+                    _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
+                    _liquidEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
+
+                    switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
                     {
-                        _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
-                        _liquidEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
-
-                        switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
-                        {
-                            case "SkyFog":
-                                _liquidEffect.CBPerDraw.Values.FogType = 0.0f;
-                                break;
-                            case "SimpleFog":
-                                _liquidEffect.CBPerDraw.Values.FogType = 1.0f;
-                                break;
-                            case "NoFog":
-                            default:
-                                _liquidEffect.CBPerDraw.Values.FogType = 2.0f;
-                                break;
-                        }
-
-                        _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
-                        _liquidEffect.CBPerDraw.IsDirty = true;
-                        _liquidEffect.Apply(context);
-                        chunk.DrawLiquidFaces(context);
+                        case "SkyFog":
+                            _liquidEffect.CBPerDraw.Values.FogType = 0.0f;
+                            break;
+                        case "SimpleFog":
+                            _liquidEffect.CBPerDraw.Values.FogType = 1.0f;
+                            break;
+                        case "NoFog":
+                        default:
+                            _liquidEffect.CBPerDraw.Values.FogType = 2.0f;
+                            break;
                     }
-                }
+
+                    _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
+                    _liquidEffect.CBPerDraw.IsDirty = true;
+                    _liquidEffect.Apply(context);
+                    chunk.DrawLiquidFaces(context);
+                }   
             }
         }
 
@@ -228,47 +265,40 @@ namespace Utopia.Worlds.Chunks
             {
                 if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
                     continue;
-
-                if (chunk.isExistingMesh4Drawing)
+                
+                foreach (var pair in chunk.VisualVoxelEntities)
                 {
-                    if (!chunk.isFrustumCulled)
+                    // update instances data
+                    foreach (var staticEntity in pair.Value)
                     {
-                        //For each Voxel Items in the chunk
-                        foreach (var pair in chunk.VisualVoxelEntities)
+                        //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
+                        var sunPart = (float)staticEntity.BlockLight.A / 255;
+                        var sunColor = _skydome.SunColor * sunPart;
+                        var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
+                        staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
+
+                        if (!DrawStaticInstanced)
                         {
-                            // update instances data
-                            foreach (var staticEntity in pair.Value)
+                            if (IsEntityVisible(staticEntity.Entity.Position))
                             {
-                                //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
-                                var sunPart = (float)staticEntity.BlockLight.A / 255;
-                                var sunColor = _skydome.SunColor * sunPart;
-                                var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
-                                staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
-
-                                if (!DrawStaticInstanced)
-                                {
-                                    if (IsEntityVisible(staticEntity.Entity.Position))
-                                    {
-                                        var sw = Stopwatch.StartNew();
-                                        staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
-                                        sw.Stop();
-                                        _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
-                                        _staticEntityDrawCalls++;
-                                    }
-                                }
-                            }
-
-                            if (DrawStaticInstanced)
-                            {
-                                if (pair.Value.Count == 0) continue;
-                                var entity = pair.Value.First();
                                 var sw = Stopwatch.StartNew();
-                                entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+                                staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
                                 sw.Stop();
                                 _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
                                 _staticEntityDrawCalls++;
                             }
                         }
+                    }
+
+                    if (DrawStaticInstanced)
+                    {
+                        if (pair.Value.Count == 0) continue;
+                        var entity = pair.Value.First();
+                        var sw = Stopwatch.StartNew();
+                        entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+                        sw.Stop();
+                        _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
+                        _staticEntityDrawCalls++;
                     }
                 }
             }
