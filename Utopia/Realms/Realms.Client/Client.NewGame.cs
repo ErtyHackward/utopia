@@ -223,6 +223,13 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
             {
+                ActionId = UtopiaActions.LandscapeSlicerOff,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = new KeyWithModifier() { MainKey = Keys.Home }
+            });
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction()
+            {
                 ActionId = UtopiaActions.EngineVSync,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.System.VSync

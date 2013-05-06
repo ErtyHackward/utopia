@@ -28,5 +28,6 @@ namespace Utopia.Action
         public const int OpenCrafting                   = 52;
         public const int LandscapeSlicerUp              = 53;
         public const int LandscapeSlicerDown            = 54;
+        public const int LandscapeSlicerOff             = 55;
     }
 }
