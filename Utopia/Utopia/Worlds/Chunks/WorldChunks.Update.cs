@@ -385,6 +385,11 @@ namespace Utopia.Worlds.Chunks
                 _sliceValue--;
                 //RefreshSlicedChunks();
             }
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerOff))
+            {
+                _sliceValue = -1;
+            }
         }
 
         private void RefreshSlicedChunks()
