@@ -96,6 +96,7 @@ namespace Realms.Client.States
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
+            var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
             //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
             //playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
@@ -128,7 +129,7 @@ namespace Realms.Client.States
             AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            //AddComponent(inventory);
+            AddComponent(selectedBlocksRenderer);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);

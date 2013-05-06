@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Meshes;
 using S33M3CoreComponents.Meshes.Factories;
@@ -6,6 +9,7 @@ using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
+using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using Utopia.Entities.Managers;
@@ -22,7 +26,7 @@ namespace Utopia.Entities.Renderer
     public class SelectedBlocksRenderer : DrawableGameComponent
     {
         private readonly D3DEngine _engine;
-        private readonly ICameraManager _cameraManager;
+        private readonly CameraManager<ICameraFocused> _cameraManager;
         private readonly IPlayerManager _playerManager;
 
         protected VertexBuffer<VertexMesh> _staticBlockVB;
@@ -31,7 +35,7 @@ namespace Utopia.Entities.Renderer
         protected Mesh _meshBluePrint;
 
         public SelectedBlocksRenderer(D3DEngine engine,
-                                      ICameraManager cameraManager,
+                                      CameraManager<ICameraFocused> cameraManager,
                                       IPlayerManager playerManager)
         {
             if (engine == null) throw new ArgumentNullException("engine");
@@ -41,6 +45,8 @@ namespace Utopia.Entities.Renderer
             _engine = engine;
             _cameraManager = cameraManager;
             _playerManager = playerManager;
+
+            this.DrawOrders.UpdateIndex(0, 1020);
         }
 
         public override void Initialize()
@@ -79,24 +85,47 @@ namespace Utopia.Entities.Renderer
             if (playerManager == null)
                 throw new InvalidOperationException("Use this component only with GodEntityManager or disable it");
 
-            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthDisabled);
+            RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
 
             _cubeShader.Begin(context);
-            _cubeShader.CBPerFrame.Values.View = Matrix.Transpose(_cameraManager.ActiveBaseCamera.View);
-            _cubeShader.CBPerFrame.Values.Projection = Matrix.Transpose(_cameraManager.ActiveBaseCamera.Projection);
+            _cubeShader.CBPerFrame.Values.View = Matrix.Transpose(_cameraManager.ActiveCamera.View);
+            _cubeShader.CBPerFrame.Values.Projection = Matrix.Transpose(_cameraManager.ActiveCamera.Projection);
             _cubeShader.CBPerFrame.IsDirty = true;
 
             _staticBlockVB.SetToDevice(context, 0);
             _staticBlockIB.SetToDevice(context, 0);
 
-            _cubeShader.CBPerDraw.Values.Color = new Color4(0, 0, 150, 60);
+            _cubeShader.CBPerDraw.Values.Color = new Color4(0, 0, 1f, 0.2f);
 
-            foreach (var selectedBlock in playerManager.FocusEntity.SelectedBlocks)
+            var range = playerManager.HoverRange;
+
+            var select = playerManager.Selection;
+
+            var hoverBlocks = range.HasValue && select ? range.Value.ToList() : null;
+            
+            foreach (var selectedBlock in playerManager.GodEntity.SelectedBlocks)
             {
-                _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Translation(selectedBlock) * Matrix.Scaling(1.01f));
+                if (hoverBlocks != null && hoverBlocks.Contains(selectedBlock))
+                    hoverBlocks.Remove(selectedBlock);
+
+                if (!select && range.HasValue && range.Value.Contains(selectedBlock))
+                    continue;
+
+                _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(selectedBlock + new Vector3(0.5f)));
                 _cubeShader.CBPerDraw.IsDirty = true;
                 _cubeShader.Apply(context);
                 context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+            }
+
+            if (hoverBlocks != null)
+            {
+                foreach (var hoverBlock in hoverBlocks)
+                {
+                    _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(hoverBlock + new Vector3(0.5f)));
+                    _cubeShader.CBPerDraw.IsDirty = true;
+                    _cubeShader.Apply(context);
+                    context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+                }
             }
 
             base.Draw(context, index);

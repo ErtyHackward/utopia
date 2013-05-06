@@ -136,7 +136,7 @@ namespace Utopia.GUI
 
         public override void FTSUpdate(GameTime timeSpend)
         {
-            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToggleInterface))
             {
                 IsHidden = !IsHidden;
                 if (IsHidden)
@@ -169,7 +169,7 @@ namespace Utopia.GUI
                 }
             }
 
-            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBar_SelectPrevious))
+            if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBarSelectPrevious))
             {
                 if (Player.Toolbar.Count(i => i != 0) < 2)
                     return;
@@ -188,7 +188,7 @@ namespace Utopia.GUI
                 SelectSlot(_selectedSlot);
             }
 
-            else if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBar_SelectNext))
+            else if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBarSelectNext))
             {
                 if (Player.Toolbar.Count(i => i != 0) < 2)
                     return;

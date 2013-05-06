@@ -157,10 +157,10 @@ namespace Utopia.Entities.Managers
 
             float jumpPower;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_Forward) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_Backward) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_StrafeLeft) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_StrafeRight))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveForward) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveBackward) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeLeft) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeRight))
             {
                 _stopMovedAction = true;
             }

@@ -267,6 +267,7 @@ namespace Realms.Client.States
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
+            var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             //var entityPickingManager = _ioc.Get<IEntityPickingManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
