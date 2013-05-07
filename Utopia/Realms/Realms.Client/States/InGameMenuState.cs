@@ -81,8 +81,10 @@ namespace Realms.Client.States
             fade.Visible = true;
 
             var inputManager = _iocContainer.Get<InputsManager>();
-            _captureMouse = inputManager.MouseManager.MouseCapture;
-            inputManager.MouseManager.MouseCapture = false;
+            //_captureMouse = inputManager.MouseManager.MouseCapture;
+            //inputManager.MouseManager.MouseCapture = false;
+
+            inputManager.MouseManager.StrategyMode = false;
 
             //var inventory = _iocContainer.Get<InventoryComponent>();
             //inventory.DisableComponent();
@@ -109,7 +111,8 @@ namespace Realms.Client.States
             else
             {
                 var inputManager = _iocContainer.Get<InputsManager>();
-                inputManager.MouseManager.MouseCapture = _captureMouse;
+                //inputManager.MouseManager.MouseCapture = _captureMouse;
+                inputManager.MouseManager.StrategyMode = true;
             }
         }
 

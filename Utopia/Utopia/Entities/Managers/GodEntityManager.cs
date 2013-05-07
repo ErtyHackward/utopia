@@ -1,9 +1,11 @@
-﻿using Ninject;
+﻿using System.Windows.Forms;
+using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Inputs.Actions;
 using S33M3CoreComponents.Maths;
+using S33M3DXEngine;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -11,6 +13,7 @@ using System;
 using Utopia.Action;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -18,6 +21,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
+using ButtonState = S33M3CoreComponents.Inputs.MouseHandler.ButtonState;
 
 namespace Utopia.Entities.Managers
 {
@@ -31,6 +35,7 @@ namespace Utopia.Entities.Managers
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly D3DEngine _engine;
         private readonly InputsManager _inputsManager;
         private readonly SingleArrayChunkContainer _cubesHolder;
         private readonly CameraManager<ICameraFocused> _cameraManager;
@@ -109,33 +114,39 @@ namespace Utopia.Entities.Managers
         [Inject]
         public IWorldChunks Chunks { get; set; }
 
-        public GodEntityManager(GodEntity playerEntity, 
+        public GodEntityManager(D3DEngine engine,
+                                GodEntity playerEntity, 
                                 InputsManager inputsManager, 
                                 SingleArrayChunkContainer cubesHolder,
                                 CameraManager<ICameraFocused> cameraManager,
                                 LandscapeBufferManager bufferManager,
-                                VisualWorldParameters visParameters)
+                                VisualWorldParameters visParameters,
+                                EntityFactory factory)
         {
+            if (engine == null) throw new ArgumentNullException("engine");
             if (playerEntity  == null) throw new ArgumentNullException("playerEntity");
             if (inputsManager == null) throw new ArgumentNullException("inputsManager");
             if (cubesHolder   == null) throw new ArgumentNullException("cubesHolder");
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
             if (bufferManager == null) throw new ArgumentNullException("bufferManager");
-            if (visParameters == null) throw new ArgumentNullException("visualWorldParameters");
+            if (visParameters == null) throw new ArgumentNullException("visParameters");
 
             GodEntity = playerEntity;
 
             _eyeOrientation  = GodEntity.HeadRotation;
             _bodyOrientation = GodEntity.BodyRotation;
 
+            _engine = engine;
             _inputsManager = inputsManager;
             _cubesHolder   = cubesHolder;
             _cameraManager = cameraManager;
             _bufferManager = bufferManager;
             _visParameters = visParameters;
+
+            _handTool.EntityFactory = factory;
         }
 
-        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
+        public override void FTSUpdate(GameTime timeSpent)
         {
             // wait untill all chunks are loaded
             if (!Chunks.IsInitialLoadCompleted)
@@ -145,24 +156,26 @@ namespace Utopia.Entities.Managers
 
             InputHandling();
 
-            _rotationDelta = 2f * elapsedTime;
+            _rotationDelta = 6f * timeSpent.ElapsedGameTimeInS_LD;
 
-            EntityRotation(elapsedTime);
+            EntityRotation(timeSpent.ElapsedGameTimeInS_LD);
 
-            var speed = elapsedTime * 500;
+            var camera = _cameraManager.ActiveCamera as ThirdPersonCameraWithFocus;
+
+            var speed = timeSpent.ElapsedGameTimeInS_LD * 500 * camera.Distance / camera.MaxDistance;
 
             // apply movement
             GodEntity.FinalPosition += _moveVector * speed;
 
             UpdateCameraPosition();
-            
-            GodEntity.Position = Vector3D.SmoothStep(GodEntity.Position, GodEntity.FinalPosition, elapsedTime * 10);
 
+            GodEntity.Position = Vector3D.SmoothStep(GodEntity.Position, GodEntity.FinalPosition, timeSpent.ElapsedGameTimeInS_LD * 10);
+            
             #endregion
 
             _bufferManager.CleanUpClient(BlockHelper.EntityToChunkPosition(GodEntity.Position), _visParameters);
-
-            base.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+            
+            base.FTSUpdate(timeSpent);
         }
 
         private void UpdateCameraPosition()
@@ -179,7 +192,7 @@ namespace Utopia.Entities.Managers
 
             var camera = _cameraManager.ActiveCamera as ThirdPersonCameraWithFocus;
 
-            if (camera == null) 
+            if (camera == null)
                 return;
 
             var pos = camera.CameraPosition;
@@ -188,7 +201,7 @@ namespace Utopia.Entities.Managers
             var checkVector = GodEntity.FinalPosition.AsVector3() - pos;
             checkVector.Normalize();
 
-            if (checkVector.Y >= 0 ) 
+            if (checkVector.Y >= 0) 
                 return;
 
             // check from the camera pos to the focused entity
@@ -208,26 +221,29 @@ namespace Utopia.Entities.Managers
             while (true)
             {
                 distance += 0.1f;
-                var cubePos = GodEntity.FinalPosition + checkVector * distance;
+
+                var cubePos = GodEntity.FinalPosition.AsVector3() + checkVector * distance;
 
                 if (cubePos.Y <= 0)
                 {
                     cubePos.Y = 0;
                 }
 
-                var cube = _cubesHolder.GetCube(cubePos);
+                var cube = _cubesHolder.GetCube((Vector3I)cubePos, false);
 
                 if (cube.Cube.Id != 0)
                 {
                     break;
                 }
 
-                GodEntity.FinalPosition = cubePos;
+                GodEntity.FinalPosition = new Vector3D(GodEntity.FinalPosition.AsVector3() + checkVector * (distance));
 
                 if (cubePos.Y == 0)
                 {
                     break;
                 }
+
+                
             }
         }
 
@@ -235,6 +251,24 @@ namespace Utopia.Entities.Managers
         private void InputHandling()
         {
             var moveVector = Vector3.Zero;
+
+            if (_inputsManager.MouseManager.StrategyMode)
+            {
+                var ms = _inputsManager.MouseManager.CurMouseState;
+                
+                if (ms.X == 0)
+                    moveVector.X = -1;
+
+                if (ms.X == _engine.ViewPort.Width - 1)
+                    moveVector.X = 1;
+
+                if (ms.Y == 0)
+                    moveVector.Z = 1;
+
+                if (ms.Y == _engine.ViewPort.Height - 1)
+                    moveVector.Z = -1;
+            }
+
 
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Forward))
             {
@@ -297,7 +331,7 @@ namespace Utopia.Entities.Managers
             float rollDegree = 0.0f;
             bool hasRotated = false;
 
-            if (_inputsManager.MouseManager.MouseCapture)
+            if (_inputsManager.MouseManager.CurMouseState.MiddleButton == ButtonState.Pressed)
             {
                 _rotationDeltaAcum += _rotationDelta; //Accumulate time
                 if (_rotationDeltaAcum > 0.2f) _rotationDeltaAcum = _rotationDelta;

@@ -250,7 +250,7 @@ namespace Realms.Client.States
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
 
             var chat = _ioc.Get<ChatComponent>();
-            var hud = _ioc.Get<Hud>();
+            //var hud = _ioc.Get<Hud>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
             var clouds = _ioc.Get<IDrawableComponent>("Clouds");
             var skyDome = _ioc.Get<ISkyDome>();
@@ -305,7 +305,7 @@ namespace Realms.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
-            AddComponent(hud);
+            //AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
             //AddComponent(inventory);
@@ -330,7 +330,7 @@ namespace Realms.Client.States
             worldChunks.LoadComplete += worldChunks_LoadComplete;
 
             var engine = _ioc.Get<D3DEngine>();
-            inputsManager.MouseManager.MouseCapture = true;
+            //inputsManager.MouseManager.MouseCapture = true;
         }
 
         void worldChunks_LoadComplete(object sender, EventArgs e)

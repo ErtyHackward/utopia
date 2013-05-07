@@ -1,6 +1,7 @@
 ﻿using System;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -34,8 +35,15 @@ namespace Utopia.Shared.Entities.Concrete
 
                 var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
 
+                var cursor = EntityFactory.LandscapeManager.GetCursor(range.Position);
+
                 foreach (var vector in range)
                 {
+                    cursor.GlobalPosition = vector;
+
+                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                        continue;
+
                     if (select)
                     {
                         if (!godEntity.SelectedBlocks.Contains(vector))
