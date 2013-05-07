@@ -19,7 +19,6 @@ using S33M3CoreComponents.Cameras.Interfaces;
 
 namespace Utopia.GUI
 {
-
     /// <summary>
     /// Heads up display = crosshair + toolbar(s) / icons + life + mana + ... 
     /// </summary>

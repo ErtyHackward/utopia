@@ -52,7 +52,7 @@ namespace Realms.Client.States
             :base(stateManager)
         {
             _ioc = ioc;
-            AllowMouseCaptureChange = true;
+            AllowMouseCaptureChange = false;
         }
 
         public override void Initialize(DeviceContext context)
@@ -70,9 +70,9 @@ namespace Realms.Client.States
             
             var chat = _ioc.Get<ChatComponent>();
 
-            var hud = (RealmsHud)_ioc.Get<Hud>();
-            hud.CraftingButton.Pressed += CraftingButton_Pressed;
-            hud.InventoryButton.Pressed += InventoryButton_Pressed;
+            //var hud = (RealmsHud)_ioc.Get<Hud>();
+            //hud.CraftingButton.Pressed += CraftingButton_Pressed;
+            //hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -126,7 +126,7 @@ namespace Realms.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
-            AddComponent(hud);
+            //AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
             AddComponent(selectedBlocksRenderer);
@@ -145,6 +145,8 @@ namespace Realms.Client.States
             AddComponent(crafting);
             AddComponent(inventoryEvents);
             AddComponent(pickingManager);
+            
+            inputsManager.MouseManager.StrategyMode = true;
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
