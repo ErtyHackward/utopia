@@ -1,9 +1,7 @@
 using ProtoBuf;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Net.Interfaces;
-using Utopia.Shared.Structs;
-using S33M3Resources.Structs;
-using SharpDX;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -19,67 +17,34 @@ namespace Utopia.Shared.Net.Messages
         [ProtoMember(1)]
         public uint DynamicEntityId { get; set; }
 
+        /// <summary>
+        /// Supplied entity state at the use moment
+        /// </summary>
         [ProtoMember(2)]
-        public Vector3I PickedBlockPosition { get; set; }
-
-        [ProtoMember(3)]
-        public Vector3I NewBlockPosition { get; set; }
-
+        public DynamicEntityState State { get; set; }
+        
         /// <summary>
         /// Gets or sets Tool Entity Id that performs action
         /// </summary>
-        [ProtoMember(4)]
+        [ProtoMember(3)]
         public uint ToolId { get; set; }
-
-        /// <summary>
-        /// Picked entity position (optional)
-        /// </summary>
-        [ProtoMember(5)]
-        public Vector3D PickedEntityPosition { get; set; }
-
-        /// <summary>
-        /// Picked entity link (optional)
-        /// </summary>
-        [ProtoMember(6)]
-        public EntityLink PickedEntityLink { get; set; }
-
-        [ProtoMember(7)]
-        public bool IsBlockPicked { get; set; }
-
-        [ProtoMember(8)]
-        public bool IsEntityPicked { get; set; }
-
-        [ProtoMember(9)]
-        public Vector3 PickedBlockFaceOffset { get; set; }
 
         /// <summary>
         /// Identification token of the use operation
         /// </summary>
-        [ProtoMember(10)]
+        [ProtoMember(4)]
         public int Token { get; set; }
-
-        /// <summary>
-        /// Surface point of an entity or a block where user point to
-        /// </summary>
-        [ProtoMember(11)]
-        public Vector3 PickPoint { get; set; }
-
-        /// <summary>
-        /// Normal vector at the pick point
-        /// </summary>
-        [ProtoMember(12)]
-        public Vector3I PickNormal { get; set; }
 
         /// <summary>
         /// Gets the use type (put, or use)
         /// </summary>
-        [ProtoMember(13)]
+        [ProtoMember(5)]
         public UseType UseType { get; set; }
 
         /// <summary>
         /// Get config recipe index to craft
         /// </summary>
-        [ProtoMember(14)]
+        [ProtoMember(6)]
         public int RecipeIndex { get; set; }
 
         /// <summary>
@@ -97,16 +62,9 @@ namespace Utopia.Shared.Net.Messages
 
         public EntityUseMessage(EntityUseEventArgs e)
         {
-            IsEntityPicked = e.IsEntityPicked;
-            IsBlockPicked = e.IsBlockPicked;
+            State = e.State;
             DynamicEntityId = e.Entity.DynamicId;
-            NewBlockPosition = e.NewBlockPosition;
-            PickedBlockPosition = e.PickedBlockPosition;
-            PickedEntityLink = e.PickedEntityLink;
-            PickedBlockFaceOffset = e.PickedBlockFaceOffset;
             ToolId = e.Tool == null ? 0 : e.Tool.StaticId;
-            PickPoint = e.PickPosition;
-            PickNormal = e.PickNormal;
             UseType = e.UseType;
             RecipeIndex = e.RecipeIndex;
         }

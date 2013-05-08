@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using Ninject;
+﻿using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
@@ -14,7 +13,6 @@ using Utopia.Action;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
@@ -51,8 +49,6 @@ namespace Utopia.Entities.Managers
         private float _rotationDelta;
         private float _rotationDeltaAcum;
 
-        private readonly GodBlockSelectorTool _handTool = new GodBlockSelectorTool();
-
         private bool _selectionNow;
         private Vector3I _selectionStart;
 
@@ -75,7 +71,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Gets active player tool or null
         /// </summary>
-        public IItem ActiveTool { get { return _handTool; } }
+        public IItem ActiveTool { get { return GodEntity.GodHand; } }
         
         #region ICameraPlugin
 
@@ -120,8 +116,7 @@ namespace Utopia.Entities.Managers
                                 SingleArrayChunkContainer cubesHolder,
                                 CameraManager<ICameraFocused> cameraManager,
                                 LandscapeBufferManager bufferManager,
-                                VisualWorldParameters visParameters,
-                                EntityFactory factory)
+                                VisualWorldParameters visParameters)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (playerEntity  == null) throw new ArgumentNullException("playerEntity");
@@ -142,8 +137,6 @@ namespace Utopia.Entities.Managers
             _cameraManager = cameraManager;
             _bufferManager = bufferManager;
             _visParameters = visParameters;
-
-            _handTool.EntityFactory = factory;
         }
 
         public override void FTSUpdate(GameTime timeSpent)
@@ -313,22 +306,19 @@ namespace Utopia.Entities.Managers
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
-                _handTool.SetSelectionStart(GodEntity);
+                GodEntity.GodHand.SetSelectionStart(GodEntity);
 
                 if (GodEntity.EntityState.IsBlockPicked)
                 {
                     _selectionStart = GodEntity.EntityState.PickedBlockPosition;
                     _selectionNow = true;
                 }
-
-                logger.Warn("UseLeft");
             }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeftEnd))
             {
-                _handTool.Use(GodEntity);
+                GodEntity.ToolUse();
                 _selectionNow = false;
-                logger.Warn("UseLeftEnd");
             }
         }
 

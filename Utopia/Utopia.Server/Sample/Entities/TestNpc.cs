@@ -102,9 +102,7 @@ namespace Utopia.Server.Entities
                         i++;
                     }
                 }
-
-
-
+                
                 State = TestNpcState.FollowPath;
                 _targetPathNodeIndex = 0;
                 _moveValue = 0;

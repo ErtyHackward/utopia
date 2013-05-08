@@ -108,7 +108,6 @@ namespace Utopia.Shared.Entities
             itemType.AddSubType(104, typeof(Food));
             itemType.AddSubType(105, typeof(Stuff));
             itemType.AddSubType(106, typeof(GodHandTool));
-            itemType.AddSubType(107, typeof(GodBlockSelectorTool));
 
             blockItem.AddSubType(100, typeof(OrientedBlockItem));
 
@@ -315,6 +314,9 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.BasicCollector:
                         entity = new BasicCollector();
                         break;
+                    case EntityClassId.GodEntity:
+                        entity = new GodEntity();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
                 }
@@ -476,6 +478,14 @@ namespace Utopia.Shared.Entities
                 {
                     InjectFields(slot.Item); //Inject Inventory fields
                 }
+
+                InjectFields(charEntity.HandTool);
+            }
+
+            if (entity is GodEntity)
+            {
+                var godEntity = (GodEntity)entity;
+                InjectFields(godEntity.GodHand);
             }
         }
         

@@ -48,12 +48,12 @@ namespace Utopia.Entities.Managers
                     var item = PlayerCharacter.Equipment.RightTool;
 
                     if (item == null)
-                        item = _handTool;
+                        item = PlayerCharacter.HandTool;
 
                     if (_putMode || !(item is ITool))
                     {
                         // can't put the hand!
-                        if (item == _handTool)
+                        if (item == PlayerCharacter.HandTool)
                             return;
 
                         // send put message to the server
@@ -142,7 +142,7 @@ namespace Utopia.Entities.Managers
                                 PlayerCharacter.ToolUse(true);
 
                                 //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
-                                _handTool.Use(Player);
+                                PlayerCharacter.HandTool.Use(Player);
                             }
                         }
                     }

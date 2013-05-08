@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -51,6 +51,11 @@ namespace Utopia.Shared.Entities.Dynamic
         public EntityFactory EntityFactory { get; set; }
 
         /// <summary>
+        /// Gets a special tool of the character to use when no tool is set
+        /// </summary>
+        public HandTool HandTool { get; private set; }
+
+        /// <summary>
         /// Indicates if this charater controlled by real human
         /// </summary>
         public bool IsRealPlayer { get; set; }
@@ -63,6 +68,8 @@ namespace Utopia.Shared.Entities.Dynamic
             // we need to have single id scope with two of these containers
             Equipment.JoinIdScope(Inventory);
             Inventory.JoinIdScope(Equipment);
+
+            HandTool = new HandTool();
         }
         
         /// <summary>
@@ -148,7 +155,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <param name="recipeIndex"></param>
         public void CraftUse(int recipeIndex)
         {
-            var args = EntityUseEventArgs.FromState(EntityState, this);
+            var args = EntityUseEventArgs.FromState(this);
             args.UseType = UseType.Craft;
             args.RecipeIndex = recipeIndex;
             OnUse(args);
