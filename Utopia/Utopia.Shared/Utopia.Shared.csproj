@@ -133,7 +133,6 @@
     <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
     <Compile Include="Entities\Concrete\Food.cs" />
-    <Compile Include="Entities\Concrete\GodBlockSelectorTool.cs" />
     <Compile Include="Entities\Concrete\GodHandTool.cs" />
     <Compile Include="Entities\Concrete\HandTool.cs" />
     <Compile Include="Entities\Concrete\ItemOrientation.cs" />

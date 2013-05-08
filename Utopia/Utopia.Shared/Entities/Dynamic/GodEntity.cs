@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Dynamic
@@ -16,9 +18,12 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public override ushort ClassId
         {
-            get { return EntityClassId.FocusEntity; }
+            get { return EntityClassId.GodEntity; }
         }
 
+        /// <summary>
+        /// Gets or sets camera rotation
+        /// </summary>
         [ProtoMember(1)]
         public override SharpDX.Quaternion HeadRotation
         {
@@ -33,10 +38,19 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         /// <summary>
+        /// Gets list of selected blocks by the player
+        /// </summary>
+        [ProtoMember(2)]
+        public List<Vector3I> SelectedBlocks { get; private set; }
+
+        /// <summary>
         /// Gets or sets position to fly to
         /// </summary>
         public Vector3D FinalPosition { get; set; }
 
+        /// <summary>
+        /// Gets or sets entity position
+        /// </summary>
         public override Vector3D Position
         {
             get
@@ -54,16 +68,24 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Gets list of selected entities by the god-entity
         /// </summary>
         public List<EntityLink> SelectedEntities { get; private set; }
-
+        
         /// <summary>
-        /// Gets list of selected blocks by the player
+        /// Gets god main tool
         /// </summary>
-        public List<Vector3I> SelectedBlocks { get; private set; }
+        public GodHandTool GodHand { get; private set; }
         
         public GodEntity()
         {
             SelectedEntities = new List<EntityLink>();
             SelectedBlocks = new List<Vector3I>();
+
+            GodHand = new GodHandTool();
+        }
+
+        public void ToolUse()
+        {
+            GodHand.Use(this);
+            OnUse(EntityUseEventArgs.FromState(this));
         }
     }
 }

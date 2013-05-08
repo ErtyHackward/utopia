@@ -44,8 +44,6 @@ namespace Utopia.Entities.Managers
         private IWorldChunks _worldChunks;
         private PlayerEntityManager _playerManager;
         private bool? _onEntityTop = null;
-        private HandTool _handTool = new HandTool();
-
         #endregion
 
         #region public variables
@@ -68,12 +66,6 @@ namespace Utopia.Entities.Managers
         {
             get { return _dynamicEntityManager; }
             set { _dynamicEntityManager = value; }
-        }
-
-        [Inject]
-        public EntityFactory EntityFactory
-        {
-            set { _handTool.EntityFactory = value; }
         }
 
         #endregion
@@ -167,7 +159,7 @@ namespace Utopia.Entities.Managers
             var tool = Player.PlayerCharacter.Equipment.RightTool;
 
             if (tool == null)
-                tool = _handTool;
+                tool = Player.PlayerCharacter.HandTool;
 
             var pickedEntityDistance = float.MaxValue;
             foreach (var entity in _entitiesNearPlayer)

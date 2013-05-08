@@ -71,7 +71,7 @@ namespace Utopia.Entities.Managers
 
             var epr = EntityPickingManager.CheckEntityPicking(pickingRay);
 
-            var tool = PlayerCharacter.Equipment.RightTool ?? _handTool;
+            var tool = PlayerCharacter.Equipment.RightTool ?? PlayerCharacter.HandTool;
 
             var nbrPointToSample = (int)(Math.Min(blockPickingDistance, epr.Distance) / 0.02);
 
