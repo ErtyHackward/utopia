@@ -58,7 +58,7 @@ namespace Utopia.Server.Entities
             }
         }
         
-        public TestNpc(Server server, Zombie z) : base(z)
+        public TestNpc(Server server, Dwarf z) : base(z)
         {
             _server = server;
             Seed = 0;

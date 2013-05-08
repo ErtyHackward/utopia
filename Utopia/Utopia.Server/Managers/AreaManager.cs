@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
+using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Interfaces;
@@ -266,7 +267,7 @@ namespace Utopia.Server.Managers
             // maybe we need to generate new unique entity id
             if (entity.DynamicEntity.DynamicId == 0)
             {
-
+                entity.DynamicEntity.DynamicId = DynamicIdHelper.GetNextUniqueId();
             }
 
             lock (_dynamicEntities)

@@ -7,6 +7,8 @@ namespace Utopia.Server.Structs
     /// </summary>
     public class ServerPlayerGodEntity : ServerPlayerEntity
     {
+        GodEntity GodEntity { get { return (GodEntity)DynamicEntity; } }
+
         public ServerPlayerGodEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(connection, entity, server)
         {
 
@@ -16,7 +18,7 @@ namespace Utopia.Server.Structs
         {
             base.Use(entityUseMessage);
             
-
+            GodEntity.ToolUse();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Utopia.Server.Sample
         /// <returns></returns>
         public TestNpc CreateNpc(string name, Vector3D position)
         {
-            var z = new Zombie { CharacterName = name };
+            var z = new Dwarf { CharacterName = name };
 
             var zombie = new TestNpc(_server, z);
             

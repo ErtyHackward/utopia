@@ -316,9 +316,11 @@ namespace Utopia.Entities.Managers
                         _selectionNow = true;
                     }
                 }
+                else
+                    _selectionNow = false;
 
                 GodEntity.ToolUse();
-                _selectionNow = false;
+                
             }
         }
 

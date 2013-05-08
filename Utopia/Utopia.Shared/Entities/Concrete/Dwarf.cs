@@ -4,17 +4,17 @@ using Utopia.Shared.Entities.Dynamic;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
-    public class Zombie : CharacterEntity
+    public class Dwarf : CharacterEntity
     {
         public override ushort ClassId
         {
-            get { return EntityClassId.Zombie; }
+            get { return EntityClassId.Dwarf; }
         }
 
-        public Zombie()
+        public Dwarf()
         {
             Type = EntityType.Dynamic;
-            ModelName = "Girl";
+            ModelName = "Dwarf";
             Name = "NPC";
         }
 

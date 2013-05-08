@@ -515,6 +515,8 @@ namespace Utopia.Entities.Managers
 
         public void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation)
         {
+            Trace.Assert(entity.DynamicId != 0);
+
             //Do we already have this entity ??
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
             {

@@ -244,9 +244,19 @@ namespace Realms.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
 
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
+            playerEntityManager.EnableComponent();
+
             base.OnEnabled(previousState);
         }
 
+        public override void OnDisabled(GameState nextState)
+        {
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
+            playerEntityManager.DisableComponent();
+
+            base.OnDisabled(nextState);
+        }
 
     }
 }
