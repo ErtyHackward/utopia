@@ -149,7 +149,7 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.UseLeftEnd,
+                ActionId = UtopiaActions.UseLeft,
                 TriggerType = MouseTriggerMode.ButtonReleased,
                 Binding = MouseButton.LeftButton
             });

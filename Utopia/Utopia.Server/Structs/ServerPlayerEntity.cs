@@ -37,14 +37,14 @@ namespace Utopia.Server.Structs
 
         public override void AddArea(MapArea area)
         {
-            area.EntityView += AreaEntityView;
-            area.EntityMoved += AreaEntityMoved;
-            area.EntityUse += AreaEntityUse;
-            area.BlocksChanged += AreaBlocksChanged;
-            area.EntityEquipment += AreaEntityEquipment;
-            area.StaticEntityAdded += AreaStaticEntityAdded;
+            area.EntityView          += AreaEntityView;
+            area.EntityMoved         += AreaEntityMoved;
+            area.EntityUse           += AreaEntityUse;
+            area.BlocksChanged       += AreaBlocksChanged;
+            area.EntityEquipment     += AreaEntityEquipment;
+            area.StaticEntityAdded   += AreaStaticEntityAdded;
             area.StaticEntityRemoved += AreaStaticEntityRemoved;
-            area.EntityLockChanged += AreaEntityLockChanged;
+            area.EntityLockChanged   += AreaEntityLockChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -58,14 +58,14 @@ namespace Utopia.Server.Structs
 
         public override void RemoveArea(MapArea area)
         {
-            area.EntityView -= AreaEntityView;
-            area.EntityMoved -= AreaEntityMoved;
-            area.EntityUse -= AreaEntityUse;
-            area.BlocksChanged -= AreaBlocksChanged;
-            area.EntityEquipment -= AreaEntityEquipment;
-            area.StaticEntityAdded -= AreaStaticEntityAdded;
+            area.EntityView          -= AreaEntityView;
+            area.EntityMoved         -= AreaEntityMoved;
+            area.EntityUse           -= AreaEntityUse;
+            area.BlocksChanged       -= AreaBlocksChanged;
+            area.EntityEquipment     -= AreaEntityEquipment;
+            area.StaticEntityAdded   -= AreaStaticEntityAdded;
             area.StaticEntityRemoved -= AreaStaticEntityRemoved;
-            area.EntityLockChanged -= AreaEntityLockChanged;
+            area.EntityLockChanged   -= AreaEntityLockChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {

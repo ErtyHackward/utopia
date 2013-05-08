@@ -64,6 +64,12 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(9)]
         public Vector3I PickPointNormal;
+
+        /// <summary>
+        /// Indicates if current use operation is happened on mouse up event (or down if the value is false)
+        /// </summary>
+        [ProtoMember(10)]
+        public bool MouseUp;
     }
 
 }

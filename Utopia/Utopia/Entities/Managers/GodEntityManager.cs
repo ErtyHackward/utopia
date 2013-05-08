@@ -306,17 +306,17 @@ namespace Utopia.Entities.Managers
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
-                GodEntity.GodHand.SetSelectionStart(GodEntity);
+                GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.LeftButton == ButtonState.Released;
 
-                if (GodEntity.EntityState.IsBlockPicked)
+                if (!GodEntity.EntityState.MouseUp)
                 {
-                    _selectionStart = GodEntity.EntityState.PickedBlockPosition;
-                    _selectionNow = true;
+                    if (GodEntity.EntityState.IsBlockPicked)
+                    {
+                        _selectionStart = GodEntity.EntityState.PickedBlockPosition;
+                        _selectionNow = true;
+                    }
                 }
-            }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeftEnd))
-            {
                 GodEntity.ToolUse();
                 _selectionNow = false;
             }
