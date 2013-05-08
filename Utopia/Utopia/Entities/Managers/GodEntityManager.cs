@@ -201,28 +201,40 @@ namespace Utopia.Entities.Managers
             var checkVector = GodEntity.FinalPosition.AsVector3() - pos;
             checkVector.Normalize();
 
+            var inverted = GodEntity.HeadRotation;
+            inverted.Invert();
+
+            var entityLook = Vector3.Transform(Vector3.One, inverted);
+            entityLook.Normalize();
+
+            var posCalc = GodEntity.FinalPosition + entityLook * camera.Distance;
+
+
             if (checkVector.Y >= 0) 
                 return;
 
-            // check from the camera pos to the focused entity
+            // check from the camera pos to the focused entity (fly back)
 
-            for (float d = 0; d < camera.Distance; d += 0.1f)
+            var entityPos = GodEntity.FinalPosition.AsVector3();
+            
+            for (var d = 0f; d < camera.Distance; d += 0.1f)
             {
                 var cube = _cubesHolder.GetCube((Vector3I)(pos + checkVector * d), false);
                 if (cube.Cube.Id != 0)
                 {
                     GodEntity.FinalPosition = new Vector3D(pos + checkVector * (d - 0.1f));
-                    break;
+                    return;
                 }
             }
 
-            var distance = 0f;
+            // falling down until we find the surface
 
+            var distance = 0f;
             while (true)
             {
                 distance += 0.1f;
 
-                var cubePos = GodEntity.FinalPosition.AsVector3() + checkVector * distance;
+                var cubePos = entityPos + checkVector * distance;
 
                 if (cubePos.Y <= 0)
                 {
@@ -236,15 +248,15 @@ namespace Utopia.Entities.Managers
                     break;
                 }
 
-                GodEntity.FinalPosition = new Vector3D(GodEntity.FinalPosition.AsVector3() + checkVector * (distance));
+                entityPos = entityPos + checkVector * (distance);
 
                 if (cubePos.Y == 0)
                 {
                     break;
                 }
-
-                
             }
+
+            GodEntity.FinalPosition = new Vector3D(entityPos);
         }
 
 
