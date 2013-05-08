@@ -164,10 +164,10 @@ namespace Utopia.Entities.Managers
 
             var speed = timeSpent.ElapsedGameTimeInS_LD * 500 * camera.Distance / camera.MaxDistance;
 
+            UpdateCameraPosition();
+
             // apply movement
             GodEntity.FinalPosition += _moveVector * speed;
-
-            UpdateCameraPosition();
 
             GodEntity.Position = Vector3D.SmoothStep(GodEntity.Position, GodEntity.FinalPosition, timeSpent.ElapsedGameTimeInS_LD * 10);
             
@@ -197,17 +197,13 @@ namespace Utopia.Entities.Managers
 
             var pos = camera.CameraPosition;
 
-            // camera look vector
-            var checkVector = GodEntity.FinalPosition.AsVector3() - pos;
-            checkVector.Normalize();
-
             var inverted = GodEntity.HeadRotation;
             inverted.Invert();
+            
+            var checkVector = Vector3.Transform(Vector3.UnitZ, inverted);
+            checkVector.Normalize();
 
-            var entityLook = Vector3.Transform(Vector3.One, inverted);
-            entityLook.Normalize();
-
-            var posCalc = GodEntity.FinalPosition + entityLook * camera.Distance;
+            var posCalc = GodEntity.FinalPosition - checkVector * camera.Distance;
 
 
             if (checkVector.Y >= 0) 
