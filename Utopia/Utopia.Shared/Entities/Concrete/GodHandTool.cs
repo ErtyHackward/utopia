@@ -40,6 +40,15 @@ namespace Utopia.Shared.Entities.Concrete
             if (godEntity == null)
                 throw new ArgumentException("Invalid owner entity, should be GodEntity");
 
+            if (!godEntity.EntityState.MouseUp)
+            {
+                if (owner.EntityState.IsBlockPicked)
+                {
+                    _selectionStart = owner.EntityState.PickedBlockPosition;
+                }
+                return new ToolImpact();
+            }
+            
             if (godEntity.EntityState.IsBlockPicked)
             {
                 var select = !godEntity.SelectedBlocks.Contains(godEntity.EntityState.PickedBlockPosition);
@@ -75,20 +84,6 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             return new ToolImpact();
-        }
-
-        public void SetSelectionStart(IDynamicEntity owner)
-        {
-            var godEntity = owner as GodEntity;
-
-            if (godEntity == null)
-                throw new ArgumentException("Invalid owner entity, should be GodEntity");
-
-            if (owner.EntityState.IsBlockPicked)
-            {
-                _selectionStart = owner.EntityState.PickedBlockPosition;
-            }
-
         }
 
         public void Rollback(IToolImpact impact)

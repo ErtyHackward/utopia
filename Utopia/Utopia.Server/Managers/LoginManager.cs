@@ -9,7 +9,6 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.World.PlanGenerator;
 
 namespace Utopia.Server.Managers
@@ -138,7 +137,7 @@ namespace Utopia.Server.Managers
                 {
                     var state = UserState.Load(loginData.State);
                     // load new player entity
-                    playerEntity = new ServerPlayerEntity(connection, new GodEntity(), _server);
+                    playerEntity = new ServerPlayerGodEntity(connection, new GodEntity(), _server);
 
                     var bytes = _server.EntityStorage.LoadEntityBytes(state.EntityId);
 
@@ -201,7 +200,7 @@ namespace Utopia.Server.Managers
             var eArgs = new NewPlayerEntityNeededEventArgs { Connection = clientConnection, EntityId = entityId };
             OnPlayerEntityNeeded(eArgs);
 
-            return new ServerPlayerEntity(
+            return new ServerPlayerGodEntity(
                 clientConnection,
                 eArgs.PlayerEntity,
                 _server

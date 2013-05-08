@@ -11,5 +11,12 @@ namespace Utopia.Server.Structs
         {
 
         }
+
+        public override void Use(Shared.Net.Messages.EntityUseMessage entityUseMessage)
+        {
+            base.Use(entityUseMessage);
+            
+
+        }
     }
 }
