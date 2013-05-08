@@ -162,7 +162,7 @@
     <Compile Include="Entities\Inventory\BlueprintSlot.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\CubeResource.cs" />
-    <Compile Include="Entities\Concrete\Zombie.cs" />
+    <Compile Include="Entities\Concrete\Dwarf.cs" />
     <Compile Include="Entities\BlockLinkedItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntity.cs" />
