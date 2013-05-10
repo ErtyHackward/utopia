@@ -170,6 +170,13 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
+                ActionId = UtopiaActions.UseRight,
+                TriggerType = MouseTriggerMode.ButtonReleased,
+                Binding = MouseButton.RightButton
+            });
+
+            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
+            {
                 ActionId = UtopiaActions.UseLeftWhileCursorLocked,
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.LeftButton,

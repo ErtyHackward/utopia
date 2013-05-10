@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Inputs.Actions;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
@@ -40,47 +42,70 @@ namespace Utopia.Shared.Entities.Concrete
             if (godEntity == null)
                 throw new ArgumentException("Invalid owner entity, should be GodEntity");
 
-            if (!godEntity.EntityState.MouseUp)
+            if (godEntity.EntityState.MouseButton == MouseButton.LeftButton)
             {
-                if (owner.EntityState.IsBlockPicked)
+
+                if (!godEntity.EntityState.MouseUp)
                 {
-                    _selectionStart = owner.EntityState.PickedBlockPosition;
+                    if (owner.EntityState.IsBlockPicked)
+                    {
+                        _selectionStart = owner.EntityState.PickedBlockPosition;
+                    }
+                    return new ToolImpact();
                 }
-                return new ToolImpact();
-            }
-            
-            if (godEntity.EntityState.IsBlockPicked)
-            {
-                var select = !godEntity.SelectedBlocks.Contains(godEntity.EntityState.PickedBlockPosition);
 
-                var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
-
-                var cursor = EntityFactory.LandscapeManager.GetCursor(range.Position);
-
-                foreach (var vector in range)
+                if (godEntity.EntityState.IsBlockPicked)
                 {
-                    cursor.GlobalPosition = vector;
+                    var select = !godEntity.SelectedBlocks.Contains(godEntity.EntityState.PickedBlockPosition);
 
-                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
-                        continue;
+                    var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
 
-                    if (select)
+                    var cursor = EntityFactory.LandscapeManager.GetCursor(range.Position);
+
+                    foreach (var vector in range)
                     {
-                        if (!godEntity.SelectedBlocks.Contains(vector))
-                            godEntity.SelectedBlocks.Add(vector);
+                        cursor.GlobalPosition = vector;
+
+                        if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                            continue;
+
+                        if (select)
+                        {
+                            if (!godEntity.SelectedBlocks.Contains(vector))
+                                godEntity.SelectedBlocks.Add(vector);
+                        }
+                        else
+                        {
+                            if (godEntity.SelectedBlocks.Contains(vector))
+                                godEntity.SelectedBlocks.Remove(vector);
+                        }
                     }
-                    else
-                    {
-                        if (godEntity.SelectedBlocks.Contains(vector))
-                            godEntity.SelectedBlocks.Remove(vector);
-                    }
+                }
+
+                if (godEntity.EntityState.IsEntityPicked)
+                {
+                    godEntity.SelectedEntities.Clear();
+                    godEntity.SelectedEntities.Add(godEntity.EntityState.PickedEntityLink);
                 }
             }
 
-            if (godEntity.EntityState.IsEntityPicked)
+            if (godEntity.EntityState.MouseButton == MouseButton.RightButton)
             {
-                godEntity.SelectedEntities.Clear();
-                godEntity.SelectedEntities.Add(godEntity.EntityState.PickedEntityLink);
+                if (godEntity.EntityState.MouseUp)
+                {
+                    foreach (var entityLink in godEntity.SelectedEntities.Where(e => e.IsDynamic))
+                    {
+                        var entity = EntityFactory.DynamicEntityManager.FindEntity(entityLink);
+
+                        var controller = entity.Controller as INpc;
+
+                        if (controller != null && godEntity.EntityState.IsBlockPicked &&
+                            godEntity.EntityState.PickPointNormal == Vector3I.Up)
+                        {
+                            controller.Goto(godEntity.EntityState.PickedBlockPosition + Vector3I.Up);
+                        }
+                    }
+                }
             }
 
             return new ToolImpact();

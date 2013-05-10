@@ -21,6 +21,7 @@ using SharpDX.Direct3D11;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.SkyDomes;
@@ -616,6 +617,18 @@ namespace Utopia.Entities.Managers
             return null;
         }
 
+        /// <summary>
+        /// Returns entity by a link or null
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
+        public IDynamicEntity FindEntity(EntityLink link)
+        {
+            if (!link.IsDynamic)
+                throw new ArgumentException("The link is not pointing to a dynamic entity");
+
+            return GetEntityById(link.DynamicEntityId);
+        }
 
         #region Events handling
         private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)

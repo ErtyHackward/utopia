@@ -67,7 +67,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// This entity is mandatory for the system to run properly
         /// </summary>
-        bool isSystemEntity { get; set; }
+        bool IsSystemEntity { get; set; }
 
         /// <summary>
         /// Indicates that the entity must be locked to be used
@@ -89,5 +89,11 @@ namespace Utopia.Shared.Entities.Interfaces
         EntityLink GetLink();
 
         EntityParticule[] Particules { get; set; }
+
+        /// <summary>
+        /// Gets an optional entity controller
+        /// Controller is a class that provides gameplay specific logic
+        /// </summary>
+        object Controller { get; set; }
     }
 }

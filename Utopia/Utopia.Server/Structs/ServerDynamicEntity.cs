@@ -100,7 +100,7 @@ namespace Utopia.Server.Structs
         protected ServerDynamicEntity(IDynamicEntity entity)
         {
             DynamicEntity = entity;
-            
+            DynamicEntity.Controller = this;
         }
 
         void EntityPositionChanged(object sender, EntityMoveEventArgs e)

@@ -97,8 +97,8 @@
     <Compile Include="Managers\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Managers\WeatherManager.cs" />
     <Compile Include="Sample\BlueprintRecorderService.cs" />
-    <Compile Include="Sample\Entities\TestNpc.cs" />
-    <Compile Include="Sample\Entities\TestNpcState.cs" />
+    <Compile Include="Structs\Npc.cs" />
+    <Compile Include="Structs\NpcState.cs" />
     <Compile Include="Events\AreaEntityEventArgs.cs" />
     <Compile Include="Events\AreaVoxelModelEventArgs.cs" />
     <Compile Include="Events\ConnectionEventArgs.cs" />
@@ -121,7 +121,7 @@
     <Compile Include="Services\Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Sample\TestNpcService.cs" />
+    <Compile Include="Services\NpcService.cs" />
     <Compile Include="Services\WaterDynamicService.cs" />
     <Compile Include="Structs\MapArea.cs" />
     <Compile Include="Structs\ServerChunk.cs" />
