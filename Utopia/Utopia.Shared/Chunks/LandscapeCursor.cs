@@ -51,7 +51,7 @@ namespace Utopia.Shared.Chunks
                 _currentChunk = _manager.GetChunk(new Vector2I((int)Math.Floor((double)_position.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)_position.Z / AbstractChunk.ChunkSize.Z)));
             }
         }
-
+        
         /// <summary>
         /// Reads current block type at the cursor position
         /// </summary>

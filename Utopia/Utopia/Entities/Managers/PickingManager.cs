@@ -256,13 +256,10 @@ namespace Utopia.Entities.Managers
 
             foreach (var visibleChunk in _worldChunks.VisibleChunks())
             {
-                foreach (var pair in visibleChunk.VisualVoxelEntities)
+                foreach (var visualEntity in visibleChunk.AllEntities())
                 {
-                    foreach (var visualEntity in pair.Value)
-                    {
-                        if (_worldChunks.IsEntityVisible(visualEntity.Entity.Position))
-                            yield return visualEntity;
-                    }
+                    if (_worldChunks.IsEntityVisible(visualEntity.Entity.Position))
+                        yield return visualEntity;
                 }
             }
         }

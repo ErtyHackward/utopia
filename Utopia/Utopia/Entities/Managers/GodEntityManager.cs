@@ -208,7 +208,7 @@ namespace Utopia.Entities.Managers
             
             for (var d = 0f; d < camera.Distance; d += 0.1f)
             {
-                var cube = _cubesHolder.GetCube((Vector3I)(pos + checkVector * d), false);
+                var cube = _cubesHolder.GetCube((Vector3I)(pos + checkVector * d));
                 if (cube.Cube.Id != 0)
                 {
                     GodEntity.FinalPosition = new Vector3D(pos + checkVector * (d - 0.1f));
@@ -230,7 +230,7 @@ namespace Utopia.Entities.Managers
                     cubePos.Y = 0;
                 }
 
-                var cube = _cubesHolder.GetCube((Vector3I)cubePos, false);
+                var cube = _cubesHolder.GetCube((Vector3I)cubePos);
 
                 if (cube.Cube.Id != 0)
                 {

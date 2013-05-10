@@ -37,6 +37,8 @@ namespace Utopia.Worlds.Chunks
     public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IChunkLayout2D, IDisposable
     {
         #region Private variables
+        private readonly object _syncRoot = new object();
+
         private VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _singleArrayContainer;
         private WorldFocusManager _worldFocusManager;
@@ -140,7 +142,7 @@ namespace Utopia.Worlds.Chunks
         /// <summary>
         /// Dictionary by the model name of the entity
         /// </summary>
-        public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
+        private Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
 
         public List<EntityMetaData> EmitterStaticEntities;
         public List<IItem> SoundStaticEntities;
@@ -497,14 +499,17 @@ namespace Utopia.Worlds.Chunks
                     voxelEntity.ModelInstance.Play("Idle", true);
                 }
 
-                List<VisualVoxelEntity> list;
-                if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
+                lock (_syncRoot)
                 {
-                    list.Add(visualVoxelEntity);
-                }
-                else
-                {
-                    VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                    List<VisualVoxelEntity> list;
+                    if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
+                    {
+                        list.Add(visualVoxelEntity);
+                    }
+                    else
+                    {
+                        VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                    }
                 }
 
                 ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
@@ -519,6 +524,7 @@ namespace Utopia.Worlds.Chunks
                 }
             }
         }
+
         private void RemoveVoxelEntity(EntityCollectionEventArgs e)
         {
             //Remove the entity from Visual Model
@@ -566,6 +572,52 @@ namespace Utopia.Worlds.Chunks
         {
             if (e.Entity.Particules == null) return;
             EmitterStaticEntities.RemoveAll(x => x.Entity == e.Entity);
+        }
+
+        /// <summary>
+        /// Allows to enumerate entities in threadsafe way
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<VisualVoxelEntity> AllEntities()
+        {
+            lock (_syncRoot)
+            {
+                foreach (var pair in VisualVoxelEntities)
+                {
+                    foreach (var entity in pair.Value)
+                    {
+                        yield return entity;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allows to enumerate a group of entity with the given model name in a threadsafe way
+        /// </summary>
+        /// <param name="modelName"></param>
+        /// <returns></returns>
+        public IEnumerable<VisualVoxelEntity> AllEntities(string modelName)
+        {
+            lock (_syncRoot)
+            {
+                foreach (var entity in VisualVoxelEntities[modelName])
+                {
+                    yield return entity;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allows to enumerate entities grouped by model in a threadsafe way
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, List<VisualVoxelEntity>>> AllPairs()
+        {
+            lock (_syncRoot)
+            {
+                return VisualVoxelEntities;
+            }
         }
 
         #endregion
@@ -619,23 +671,12 @@ namespace Utopia.Worlds.Chunks
             RefreshWorldMatrix();
 
             SoundStaticEntities.Clear();
-            VisualVoxelEntities.Clear();
+            lock (_syncRoot)
+                VisualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
         }
 
         #endregion
-
-        protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
-        {
-            //State = ChunkState.LandscapeCreated; Don't raise it here !
-            base.BlockBufferChanged(sender, e);
-        }
-
-        protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
-        {
-            //State = ChunkState.LandscapeCreated;
-            base.BlockDataChanged(sender, e);
-        }
 
         public void Dispose()
         {

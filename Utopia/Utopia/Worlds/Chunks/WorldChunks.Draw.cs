@@ -266,7 +266,7 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
                     continue;
                 
-                foreach (var pair in chunk.VisualVoxelEntities)
+                foreach (var pair in chunk.AllPairs())
                 {
                     // update instances data
                     foreach (var staticEntity in pair.Value)

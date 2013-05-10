@@ -35,11 +35,11 @@ namespace Utopia.Server.Services
         {
             var z = new Dwarf { CharacterName = name };
 
+            z.Position = position;
+            z.DefaultSize = new SharpDX.Vector3(1f, 1f, 1f);
+
             var zombie = new Npc(_server, z);
             
-            zombie.DynamicEntity.Position = position;
-            zombie.DynamicEntity.DefaultSize = new SharpDX.Vector3(1f, 1f, 1f);
-
             _aliveNpc.Add(zombie);
             _server.AreaManager.AddEntity(zombie);
             return zombie;

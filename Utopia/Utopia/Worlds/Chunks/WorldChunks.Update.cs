@@ -91,12 +91,9 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (chunk.DistanceFromPlayer > StaticEntityViewRange) continue;
 
-                    foreach (var pair in chunk.VisualVoxelEntities)
+                    foreach (var staticEntity in chunk.AllEntities())
                     {
-                        foreach (var staticEntity in pair.Value)
-                        {
-                            staticEntity.VoxelEntity.ModelInstance.Interpolation(elapsedTime);
-                        }
+                        staticEntity.VoxelEntity.ModelInstance.Interpolation(elapsedTime);
                     }
                 }
             }

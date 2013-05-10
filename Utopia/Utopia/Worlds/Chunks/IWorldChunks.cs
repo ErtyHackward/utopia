@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SharpDX.Direct3D11;
-using Utopia.Worlds.Chunks;
 using Utopia.Shared.World;
-using Utopia.Shared.Structs;
 using Utopia.Worlds.Chunks.ChunkLandscape;
-using SharpDX;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Main.Interfaces;
 using S33M3DXEngine.Debug.Interfaces;
-using S33M3CoreComponents.Physics.Verlet;
 
 namespace Utopia.Worlds.Chunks
 {
-    public interface IWorldChunks : IDrawableComponent, IGameComponent, IDebugInfo
+    public interface IWorldChunks : IDrawableComponent, IDebugInfo
     {
         /// <summary> The chunk collection </summary>
         VisualChunk[] Chunks { get; set; }
@@ -123,10 +117,6 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         /// <returns></returns>
         IEnumerable<VisualChunk> VisibleChunks();
-
-        void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
-
-        byte isCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate);
         
         void InitDrawComponents(DeviceContext context);
 

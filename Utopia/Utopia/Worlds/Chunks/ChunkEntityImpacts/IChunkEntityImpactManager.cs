@@ -26,7 +26,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         IWorldChunks WorldChunks { get; set; }
         bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
-        void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager, VisualWorldParameters visualWorldParameters);
+        void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager, VisualWorldParameters wp);
         void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk);
 
         void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);

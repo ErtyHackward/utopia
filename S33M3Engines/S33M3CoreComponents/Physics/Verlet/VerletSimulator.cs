@@ -38,6 +38,10 @@ namespace S33M3CoreComponents.Physics.Verlet
         public bool OnGround { get { return _onGround; } set { _onGround = value; } }
         public bool AllowJumping { get; set; }
 
+        public float OnOffsettedBlock { get; set; }
+        public float OffsetBlockHitted { get; set; }
+        public double GroundBelowEntity { get; set; }
+
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
         public float AirFriction { get; set; }
@@ -58,11 +62,18 @@ namespace S33M3CoreComponents.Physics.Verlet
             Friction = 1;
         }
 
-        public void StartSimulation(ref Vector3D StartingPosition, ref Vector3D PreviousPosition)
+        public void StartSimulation(Vector3D startingPosition)
+        {
+            _isRunning = true;
+            _prevPosition = startingPosition;
+            _curPosition = startingPosition;
+        }
+
+        public void StartSimulation(ref Vector3D startingPosition, ref Vector3D PreviousPosition)
         {
             _isRunning = true;
             _prevPosition = PreviousPosition;
-            _curPosition = StartingPosition;
+            _curPosition = startingPosition;
         }
 
         public void StopSimulation()
@@ -79,15 +90,15 @@ namespace S33M3CoreComponents.Physics.Verlet
             //_impulses.Clear();
         }
 
-        public void Simulate(ref GameTime dt, out Vector3D newPosition)
+        public void Simulate(float elapsedTimeS, out Vector3D newPosition)
         {
             if (_isRunning)
             {
                 AllowJumping = false;
                 if (ConstraintOnlyMode == false)
                 {
-                    AccumulateForce(ref dt);                                //Add the force currently applied
-                    Verlet(ref dt, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
+                    AccumulateForce(elapsedTimeS);                                //Add the force currently applied
+                    Verlet(elapsedTimeS, out newPosition);                        //Compute the next location based taken into account the accumulated force, the time , ...
                 }
                 else
                 {
@@ -101,7 +112,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             }
         }
 
-        private void AccumulateForce(ref GameTime dt)
+        private void AccumulateForce(float elapsedTimeS)
         {
             _forcesAccum.X = 0;
             _forcesAccum.Y = 0;
@@ -120,7 +131,7 @@ namespace S33M3CoreComponents.Physics.Verlet
                 if (_impulses[ImpulseIndex].IsActive)
                 {
                     _forcesAccum += (_impulses[ImpulseIndex].ForceApplied);
-                    _impulses[ImpulseIndex].AmountOfTime -= dt.ElapsedGameTimeInS_LD;
+                    _impulses[ImpulseIndex].AmountOfTime -= elapsedTimeS;
                 }
             }
 
@@ -128,7 +139,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             _impulses.RemoveAll(x => x.IsActive == false);
         }
 
-        private void Verlet(ref GameTime dt, out Vector3D newPosition)
+        private void Verlet(float elapsedTimeS, out Vector3D newPosition)
         {
             if (Friction > 0.0f)
             {
@@ -142,7 +153,7 @@ namespace S33M3CoreComponents.Physics.Verlet
                 _curPosition += SideForces * AirFriction;
             }
 
-            newPosition = _curPosition + _curPosition - _prevPosition + (_forcesAccum * dt.ElapsedGameTimeInS_HD * dt.ElapsedGameTimeInS_HD);
+            newPosition = _curPosition + _curPosition - _prevPosition + (_forcesAccum * elapsedTimeS * elapsedTimeS);
             _prevPosition = _curPosition;
             _curPosition = newPosition;
         }

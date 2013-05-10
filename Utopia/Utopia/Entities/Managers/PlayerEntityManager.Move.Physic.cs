@@ -73,10 +73,10 @@ namespace Utopia.Entities.Managers
             //Half cube below me ??
             _groundCubeProgile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id];
             BlockOffset = _groundCubeProgile.YBlockOffset;
-            _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
-            PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;
+            _physicSimu.GroundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
+            _physicSimu.OnOffsettedBlock = (float)BlockOffset;
 
-            _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
+            _physicSimu.Simulate(timeSpent.ElapsedGameTimeInS_LD, out newWorldPosition);
             _worldPosition = newWorldPosition;
         }
         #endregion
