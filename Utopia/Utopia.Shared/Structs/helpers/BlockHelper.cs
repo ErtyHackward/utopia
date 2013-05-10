@@ -1,3 +1,4 @@
+using System;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
 
@@ -33,6 +34,18 @@ namespace Utopia.Shared.Structs.Helpers
                 vec3.Z = AbstractChunk.ChunkSize.Z + vec3.Z;
 
             return vec3;
+        }
+
+        public static void GlobalToLocalAndChunkPos(Vector3I globalPos, out Vector3I internalPos, out Vector2I chunkPos)
+        {
+            internalPos = new Vector3I(globalPos.X % AbstractChunk.ChunkSize.X, globalPos.Y, globalPos.Z % AbstractChunk.ChunkSize.Z);
+
+            if (internalPos.X < 0)
+                internalPos.X = AbstractChunk.ChunkSize.X + internalPos.X;
+            if (internalPos.Z < 0)
+                internalPos.Z = AbstractChunk.ChunkSize.Z + internalPos.Z;
+
+            chunkPos = new Vector2I((int)Math.Floor((double)globalPos.X / AbstractChunk.ChunkSize.X), (int)Math.Floor((double)globalPos.Z / AbstractChunk.ChunkSize.Z));
         }
 
         /// <summary>

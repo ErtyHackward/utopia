@@ -11,6 +11,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Entities.Renderer.Interfaces;
@@ -51,6 +52,7 @@ namespace Utopia.Entities.Managers
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
         private LandscapeBufferManager _bufferManager;
+        private readonly ILandscapeManager2D _landscapeManager;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -71,7 +73,6 @@ namespace Utopia.Entities.Managers
         // Mouvement handling variables
         private VerletSimulator _physicSimu;
         private float _gravityInfluence;
-        private double _groundBelowEntity;
         private float _moveDelta;
         private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
@@ -136,7 +137,7 @@ namespace Utopia.Entities.Managers
 #endif
                 if (value == EntityDisplacementModes.Walking || value == EntityDisplacementModes.Swiming)
                 {
-                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                    _physicSimu.StartSimulation(_worldPosition);
                     _physicSimu.ConstraintOnlyMode = false;
                 }
                 //Collision detection not activated oustide debug mode when flying !
@@ -155,18 +156,8 @@ namespace Utopia.Entities.Managers
         }
 
         public bool HasMouseFocus { get; set; }
-
-        public float PlayerOnOffsettedBlock { get; set; }
-
-        public double GroundBelowEntity
-        {
-            get { return _groundBelowEntity; }
-            set { _groundBelowEntity = value; }
-        }
         
         public bool MousepickDisabled { get; set; }
-        
-        public float OffsetBlockHitted { get; set; }
         
         public SingleArrayChunkContainer CubesHolder
         {
@@ -256,7 +247,8 @@ namespace Utopia.Entities.Managers
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
                                    EntityFactory factory,
-                                   LandscapeBufferManager bufferManager
+                                   LandscapeBufferManager bufferManager,
+                                   ILandscapeManager2D landscapeManager
             )
         {
             _cameraManager = cameraManager;
@@ -266,6 +258,7 @@ namespace Utopia.Entities.Managers
             _visualWorldParameters = visualWorldParameters;
             _factory = factory;
             _bufferManager = bufferManager;
+            _landscapeManager = landscapeManager;
 
             PlayerCharacter = player;
 
@@ -369,7 +362,7 @@ namespace Utopia.Entities.Managers
             // Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
             _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity; //Check against entities first
-            _physicSimu.ConstraintFct += WorldChunks.isCollidingWithTerrain;         //Landscape cheking after
+            _physicSimu.ConstraintFct += _landscapeManager.IsCollidingWithTerrain;         //Landscape cheking after
 
             _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
             _entityRotations.EntityRotationSpeed = Player.RotationSpeed;

@@ -131,15 +131,12 @@ namespace Utopia.Entities.Managers
             for (int i = 0; i < 9; i++)
             {
                 chunk = _worldChunks.SortedChunks[i];
-                foreach (var pair in chunk.VisualVoxelEntities)
+                foreach (var entity in chunk.AllEntities())
                 {
-                    foreach (var entity in pair.Value)
+                    //Add entity only if at <= 10 block distance !
+                    if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
                     {
-                        //Add entity only if at <= 10 block distance !
-                        if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
-                        {
-                            _entitiesNearPlayer.Add(entity);
-                        }
+                        _entitiesNearPlayer.Add(entity);
                     }
                 }
             }

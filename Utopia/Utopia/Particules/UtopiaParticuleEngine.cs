@@ -12,6 +12,7 @@ using Utopia.Action;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.Particules.Interfaces;
 using S33M3DXEngine.Textures;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using SharpDX;
 using S33M3Resources.Structs;
@@ -49,6 +50,7 @@ namespace Utopia.Particules
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private CubeEmitter _cubeEmitter;
         private IWorldChunks _worldChunks;
+        private readonly ILandscapeManager2D _landscapeManager;
 
         private SpriteEmitter _staticEntityEmitter;
         private IWeather _weather;
@@ -68,6 +70,7 @@ namespace Utopia.Particules
                              VisualWorldParameters worldParameters,
                              IChunkEntityImpactManager chunkEntityImpactManager,
                              IWorldChunks worldChunks,
+                             ILandscapeManager2D landscapeManager,
                              IWeather weather)
             : base(d3dEngine, sharedFrameCB.CBPerFrame)
         {
@@ -77,6 +80,7 @@ namespace Utopia.Particules
             _worldParameters = worldParameters;
             _chunkEntityImpactManager = chunkEntityImpactManager;
             _worldChunks = worldChunks;
+            _landscapeManager = landscapeManager;
             _weather = weather;
 
             _chunkEntityImpactManager.BlockReplaced += _chunkEntityImpactManager_BlockReplaced;
@@ -93,7 +97,7 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, 32));
+            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, _landscapeManager, 32));
             AddEmitter(_d3dEngine.ImmediateContext, _cubeEmitter);
 
             base.Initialize();

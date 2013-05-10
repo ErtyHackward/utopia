@@ -1,4 +1,6 @@
+using S33M3CoreComponents.Physics.Verlet;
 using S33M3Resources.Structs;
+using SharpDX;
 
 namespace Utopia.Shared.Interfaces
 {
@@ -34,5 +36,21 @@ namespace Utopia.Shared.Interfaces
         /// <param name="entityPosition"></param>
         /// <returns></returns>
         ILandscapeCursor GetCursor(Vector3D entityPosition);
+
+        /// <summary>
+        /// "Simple" collision detection check against landscape, send back the cube being collided
+        /// </summary>
+        /// <param name="localEntityBoundingBox"></param>
+        /// <param name="newPosition2Evaluate"></param>
+        byte IsCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate);
+
+        /// <summary>
+        /// Validate player move against surrounding landscape, if move not possible, it will be "rollbacked"
+        /// It's used by the physic engine
+        /// </summary>
+        /// <param name="physicSimu"></param>
+        /// <param name="localEntityBoundingBox"></param>
+        /// <param name="newPosition2Evaluate"></param>
+        void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
     }
 }

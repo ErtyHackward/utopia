@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using S33M3CoreComponents.Physics.Verlet;
 using SharpDX;
 using Utopia.Server.AStar;
 using Utopia.Shared.Entities.Concrete;
@@ -40,6 +40,8 @@ namespace Utopia.Server.Structs
         /// Gets current NPC state
         /// </summary>
         public NpcState State { get; private set; }
+
+        public VerletSimulator VerletSimulator { get; private set; }
         
         public Vector3D MoveVector
         {
@@ -62,6 +64,12 @@ namespace Utopia.Server.Structs
         {
             _server = server;
             Seed = 0;
+
+            var bb = new BoundingBox(Vector3.Zero, new Vector3(0.8f, 1.2f, 0.8f));
+
+            VerletSimulator = new VerletSimulator(ref bb);
+            VerletSimulator.ConstraintFct += _server.LandscapeManager.IsCollidingWithTerrain;
+            VerletSimulator.StartSimulation(z.Position);
         }
 
         public void Goto(Vector3I location)
@@ -170,20 +178,11 @@ namespace Utopia.Server.Structs
             if (gameTime.ElapsedTime.TotalSeconds < 2)
                 return;
             if (gameTime.ElapsedTime.TotalSeconds > 100)
-            {
                 return;
-            }
 
-            #region Falling
-            var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            if (State == NpcState.Idle && !current.PeekProfile(Vector3I.Down).IsSolidToEntity)
-            {
-                var pos = DynamicEntity.Position;
-                pos.Y = Math.Round(DynamicEntity.Position.Y);
-                pos += new Vector3D(0, -1, 0);
-                DynamicEntity.Position = pos;
-            }
-            #endregion
+            Vector3D newPos;
+            VerletSimulator.Simulate((float)_server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds, out newPos);
+            DynamicEntity.Position = newPos;
 
             if (State == NpcState.FollowingPath)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -134,9 +135,8 @@ namespace Utopia.Entities.Renderer
                         var entity = chunk.Entities.Entities[link.Tail[0]];
 
                         var voxelEntity = entity as IVoxelEntity;
-                        var staticEntity = entity as IStaticEntity;
 
-                        var visualEntity = chunk.VisualVoxelEntities[voxelEntity.ModelName].Find(v => (v.Entity as IStaticEntity).StaticId == staticEntity.StaticId);
+                        var visualEntity = chunk.AllEntities(voxelEntity.ModelName).First(v => ((IStaticEntity)v.Entity).StaticId == entity.StaticId);
 
                         _selectedBox.Update(ref visualEntity.WorldBBox);
                         _selectedBox.Draw(context, _camManager.ActiveCamera);

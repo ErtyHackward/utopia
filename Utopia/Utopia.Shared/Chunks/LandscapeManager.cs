@@ -1,8 +1,11 @@
 using System;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Structs;
-using S33M3Resources.Structs;
+using S33M3CoreComponents.Physics.Verlet;
+using SharpDX;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Interfaces;
+using S33M3Resources.Structs;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using S33M3CoreComponents.Maths;
 
@@ -11,18 +14,18 @@ namespace Utopia.Shared.Chunks
     /// <summary>
     /// Base class for chunk landscape management with 2d layout
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class LandscapeManager<T> : ILandscapeManager2D where T : AbstractChunk, IChunkLayout2D
+    /// <typeparam name="TChunk"></typeparam>
+    public abstract class LandscapeManager<TChunk> : ILandscapeManager2D 
+        where TChunk : AbstractChunk, IChunkLayout2D
     {
-
-        private WorldParameters _wp;
+        protected WorldParameters _wp;
 
         /// <summary>
         /// Gets chunk from chunk global position
         /// </summary>
         /// <param name="globalPosition"></param>
         /// <returns></returns>
-        public T GetChunk(Vector3D globalPosition)
+        public TChunk GetChunk(Vector3D globalPosition)
         {
             return
                 GetChunk(new Vector2I(MathHelper.Floor(globalPosition.X / AbstractChunk.ChunkSize.X),
@@ -30,14 +33,14 @@ namespace Utopia.Shared.Chunks
         }
 
 
-        public T GetChunk(Vector3I blockPosition)
+        public TChunk GetChunk(Vector3I blockPosition)
         {
             return
                 GetChunk(new Vector2I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
                                       MathHelper.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
         }
 
-        public LandscapeManager(WorldParameters wp)
+        protected LandscapeManager(WorldParameters wp)
         {
             _wp = wp;
         }
@@ -47,7 +50,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="position">chunk position</param>
         /// <returns></returns>
-        public abstract T GetChunk(Vector2I position);
+        public abstract TChunk GetChunk(Vector2I position);
 
         IChunkLayout2D ILandscapeManager2D.GetChunk(Vector2I position)
         {
@@ -64,14 +67,203 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="blockPosition">global block position</param>
         /// <returns></returns>
-        public ILandscapeCursor GetCursor(Vector3I blockPosition)
-        {
-            return new LandscapeCursor(this, blockPosition, _wp);
-        }
-
+        public abstract ILandscapeCursor GetCursor(Vector3I blockPosition);
+        
         public ILandscapeCursor GetCursor(Vector3D entityPosition)
         {
             return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
+        }
+
+        public abstract TerraCube GetCubeAt(Vector3I vector3I);
+
+        public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount, out TerraCubeWithPosition collidingcube)
+        {
+            //Get ground surface 4 blocks below the Bounding box
+            int Xmin = MathHelper.Floor(bb.Minimum.X);
+            int Zmin = MathHelper.Floor(bb.Minimum.Z);
+            int Ymin = MathHelper.Floor(bb.Minimum.Y);
+            int Xmax = MathHelper.Floor(bb.Maximum.X);
+            int Zmax = MathHelper.Floor(bb.Maximum.Z);
+            int Ymax = MathHelper.Floor(bb.Maximum.Y);
+
+            for (var x = Xmin; x <= Xmax; x++)
+            {
+                for (var z = Zmin; z <= Zmax; z++)
+                {
+                    for (var y = Ymin; y <= Ymax; y++)
+                    {
+                        var cube = GetCubeAt(new Vector3I(x, y, z));
+                        var profile = _wp.Configuration.BlockProfiles[cube.Id];
+                        
+                        if (!profile.IsSolidToEntity) 
+                            continue;
+
+                        collidingcube.Cube = cube;
+                        collidingcube.Position = new Vector3I(x, y, z);
+                        collidingcube.BlockProfile = profile;
+
+                        //Block with Offset case
+                        if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
+                        {
+                            //If my "Feet" are below the height of the offseted cube, then colliding true
+                            FloatAsInt FeetLevel = bb.Minimum.Y;
+                            FloatAsInt OffsetedCubeLevel = 1;// profile.YBlockOffset;
+                            OffsetedCubeLevel -= profile.YBlockOffset;
+
+                            //if (bb.Minimum.Y < (y + (1-profile.YBlockOffset)))
+                            if (FeetLevel < (y + OffsetedCubeLevel))
+                            {
+                                return true;
+                            }
+
+                            //check the head when On a Offseted Block
+                            cube = GetCubeAt(new Vector3I(x, MathHelper.Floor(bb.Maximum.Y + profile.YBlockOffset), z));
+                            profile = _wp.Configuration.BlockProfiles[cube.Id];
+                            if (profile.IsSolidToEntity) 
+                                return true;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            collidingcube = new TerraCubeWithPosition();
+            return false;
+        }
+        
+        /// <summary>
+        /// "Simple" collision detection check against landscape, send back the cube being collided
+        /// </summary>
+        /// <param name="localEntityBoundingBox"></param>
+        /// <param name="newPosition2Evaluate"></param>
+        public byte IsCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate)
+        {
+            TerraCubeWithPosition _collidingCube;
+
+            BoundingBox boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), localEntityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            {
+                return _collidingCube.Cube.Id;
+            }
+
+            return WorldConfiguration.CubeId.Air;
+        }
+
+        /// <summary>
+        /// Validate player move against surrounding landscape, if move not possible, it will be "rollbacked"
+        /// It's used by the physic engine
+        /// </summary>
+        /// <param name="physicSimu"></param>
+        /// <param name="localEntityBoundingBox"></param>
+        /// <param name="newPosition2Evaluate"></param>
+        public void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        {
+            Vector3D newPositionWithColliding = previousPosition;
+            TerraCubeWithPosition _collidingCube;
+
+            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
+            //X Testing =====================================================
+            newPositionWithColliding.X = newPosition2Evaluate.X;
+            BoundingBox boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new X position, make me placed "inside" a block, then invalid the new position
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            {
+                //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
+
+                newPositionWithColliding.X = previousPosition.X;
+                if (_collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
+                {
+                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
+                    if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
+                    if (offsetValue <= 0.5)
+                    {
+                        physicSimu.OffsetBlockHitted = offsetValue;
+                    }
+                }
+            }
+
+            //Z Testing =========================================================
+            newPositionWithColliding.Z = newPosition2Evaluate.Z;
+            boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new Z position, make me placed "inside" a block, then invalid the new position
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            {
+                //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
+
+                newPositionWithColliding.Z = previousPosition.Z;
+                if (_collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
+                {
+                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
+                    if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
+                    if (offsetValue <= 0.5)
+                    {
+                        physicSimu.OffsetBlockHitted = offsetValue;
+                    }
+                }
+
+            }
+
+            //Y Testing ======================================================
+            newPositionWithColliding.Y = newPosition2Evaluate.Y;
+            boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+
+            //If my new Y position, make me placed "inside" a block, then invalid the new position
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            {
+                //If was Jummping "before" entering inside the cube
+                if (previousPosition.Y >= newPositionWithColliding.Y)
+                {
+                    //If the movement between 2 Y is too large, use the GroundBelowEntity value
+                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
+                    {
+                        previousPosition.Y = physicSimu.GroundBelowEntity;
+                    }
+                    else
+                    {
+                        //Raise Up until the Ground, next the previous position
+                        if (_collidingCube.BlockProfile.YBlockOffset > 0)
+                        {
+                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
+                        }
+                        else
+                        {
+                            previousPosition.Y = MathHelper.Floor(previousPosition.Y);
+                        }
+                    }
+
+                    physicSimu.OffsetBlockHitted = 0;
+                    physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                }
+
+                //logger.Debug("ModelCollisionDetection Y detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Y, previousPosition.Y);
+
+                newPositionWithColliding.Y = previousPosition.Y;
+            }
+            else
+            {
+                //No collision with Y, is the block below me solid to entity ?
+                boundingBox2Evaluate.Minimum.Y -= 0.01f;
+                if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+                {
+                    physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
+                }
+            }
+            
+            //Check to see if new destination is not blocking me
+            boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            {
+                //logger.Debug("STUCK tested {0}, assigned {1}, last Good position tested : {2}", newPositionWithColliding, previousPosition, memo);
+                newPositionWithColliding = previousPosition;
+                newPositionWithColliding.Y += 0.1;
+            }
+
+            newPosition2Evaluate = newPositionWithColliding;
         }
     }
 }
