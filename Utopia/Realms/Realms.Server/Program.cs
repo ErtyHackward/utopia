@@ -9,6 +9,7 @@ using Utopia.Server;
 using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
+using Utopia.Server.Services;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
@@ -171,7 +172,7 @@ namespace Realms.Server
 
             _gameplay = new ServerGameplayProvider(_server, conf);
 
-            _server.Services.Add(new TestNpcService());
+            _server.Services.Add(new NpcService());
             _server.Services.Add(new BlueprintRecorderService());
             
             _server.ConnectionManager.Listen();

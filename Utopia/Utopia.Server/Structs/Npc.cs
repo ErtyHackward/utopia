@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SharpDX;
 using Utopia.Server.AStar;
-using Utopia.Server.Managers;
-using Utopia.Server.Structs;
-using Utopia.Shared.Chunks;
-using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
-namespace Utopia.Server.Entities
+namespace Utopia.Server.Structs
 {
     /// <summary>
-    /// Sample server mob
+    /// Basic NPC server logic
     /// </summary>
-    public class TestNpc : ServerDynamicEntity
+    public class Npc : ServerDynamicEntity, INpc
     {
         public static Vector3D CubeCenter = new Vector3D(0.5d, 0.0d, 0.5d);
         public static Vector3D Near = new Vector3D(0.02d);
@@ -36,11 +34,13 @@ namespace Utopia.Server.Entities
         private int _targetPathNodeIndex = -1;
         Vector3D _pathTargetPoint;
         private double _moveValue;
-
-        public TestNpcState State { get; set; }
-
         private Vector3D _prevPoint;
-
+        
+        /// <summary>
+        /// Gets current NPC state
+        /// </summary>
+        public NpcState State { get; private set; }
+        
         public Vector3D MoveVector
         {
             get { return _moveDirection; }
@@ -58,7 +58,7 @@ namespace Utopia.Server.Entities
             }
         }
         
-        public TestNpc(Server server, Dwarf z) : base(z)
+        public Npc(Server server, Dwarf z) : base(z)
         {
             _server = server;
             Seed = 0;
@@ -103,7 +103,7 @@ namespace Utopia.Server.Entities
                     }
                 }
                 
-                State = TestNpcState.FollowPath;
+                State = NpcState.FollowingPath;
                 _targetPathNodeIndex = 0;
                 _moveValue = 0;
                 _prevPoint = DynamicEntity.Position;
@@ -136,7 +136,7 @@ namespace Utopia.Server.Entities
         {
             if (++_targetPathNodeIndex >= _path.Points.Count)
             {
-                State = TestNpcState.Staying;
+                State = NpcState.Idle;
                 return;
             }
 
@@ -176,7 +176,7 @@ namespace Utopia.Server.Entities
 
             #region Falling
             var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            if (State == TestNpcState.Staying && !current.PeekProfile(Vector3I.Down).IsSolidToEntity)
+            if (State == NpcState.Idle && !current.PeekProfile(Vector3I.Down).IsSolidToEntity)
             {
                 var pos = DynamicEntity.Position;
                 pos.Y = Math.Round(DynamicEntity.Position.Y);
@@ -185,7 +185,7 @@ namespace Utopia.Server.Entities
             }
             #endregion
 
-            if (State == TestNpcState.FollowPath)
+            if (State == NpcState.FollowingPath)
             {
                 _moveValue += _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 3;
                 if (_moveValue >= 1)
@@ -214,110 +214,23 @@ namespace Utopia.Server.Entities
                     if (_checkCounter++ > 10)
                     {
                         _checkCounter = 0;
-                        // try to find target
-                        _mapAreas.Find(area =>
-                                           {
-                                               foreach (var serverEntity in area.Enumerate())
-                                               {
-                                                   if (serverEntity.GetType() != this.GetType() &&
-                                                       Vector3D.Distance(serverEntity.DynamicEntity.Position, DynamicEntity.Position) < 10)
-                                                   {
-                                                       _target = serverEntity.DynamicEntity;
-                                                       return true;
-                                                   }
-                                               }
-                                               return false;
-                                           });
+                        //// try to find target
+                        //_mapAreas.Find(area =>
+                        //                   {
+                        //                       foreach (var serverEntity in area.Enumerate())
+                        //                       {
+                        //                           if (serverEntity.GetType() != this.GetType() &&
+                        //                               Vector3D.Distance(serverEntity.DynamicEntity.Position, DynamicEntity.Position) < 10)
+                        //                           {
+                        //                               _target = serverEntity.DynamicEntity;
+                        //                               return true;
+                        //                           }
+                        //                       }
+                        //                       return false;
+                        //                   });
                     }
                 }
             }
-
-
-            #region old
-            //if (gameTime.ElapsedTime.TotalSeconds < 2)
-            //    return;
-            //if (gameTime.ElapsedTime.TotalSeconds > 100)
-            //{
-            //    return;
-            //}
-
-            //if (_target != null)
-            //{
-            //    if (DVector3.Distance(_target.Position, DynamicEntity.Position) < 10)
-            //    {
-            //        _moveDirection = new Vector2((float)(_target.Position.X - DynamicEntity.Position.X),
-            //                                     (float)(_target.Position.Z - DynamicEntity.Position.Z));
-            //        _moveDirection.Normalize();
-            //        DynamicEntity.Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
-            //        DynamicEntity.Rotation = Quaternion.Invert(DynamicEntity.Rotation); //Transform the rotation from a world rotatino to a local rotation
-            //    }
-            //    else
-            //    {
-            //        _target = null;
-            //        _moveDirection = Vector2.Zero;
-            //        _moveDirection.Normalize();
-            //    }
-            //}
-            //else
-            //{
-            //    if (_checkCounter++ > 20)
-            //    {
-            //        _checkCounter = 0;
-            //        // try to find target
-            //        _mapAreas.Find(area =>
-            //                           {
-            //                               foreach (var serverEntity in area.Enumerate())
-            //                               {
-            //                                   if (serverEntity.GetType() != this.GetType() &&
-            //                                       DVector3.Distance(serverEntity.DynamicEntity.Position, DynamicEntity.Position) < 10)
-            //                                   {
-            //                                       _target = serverEntity.DynamicEntity;
-            //                                       return true;
-            //                                   }
-            //                               }
-            //                               return false;
-            //                           });
-            //    }
-            //}
-
-            //if(_moveDirection.X == 0 && _moveDirection.Y == 0)
-            //{
-            //    _moveDirection = new Vector2(_random.Next(-100, 100) / 100f, _random.Next(-100, 100) / 100f);
-            //    _moveDirection.Normalize();
-            //    DynamicEntity.Rotation = Quaternion.RotationMatrix(Matrix.LookAtRH(DynamicEntity.Position.AsVector3(), DynamicEntity.Position.AsVector3() + new Vector3(_moveDirection.X, 0, _moveDirection.Y), DVector3.Up.AsVector3()));
-            //    DynamicEntity.Rotation = Quaternion.Invert(DynamicEntity.Rotation);
-            //}
-
-            //var nextPosition = DynamicEntity.Position + new DVector3(_moveDirection.X, 0, _moveDirection.Y) * _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 1.5;
-
-            //// check if we can go to desired position
-            //var cursor = _server.LandscapeManager.GetCursor(nextPosition);
-
-            //var next = cursor.Value;
-            //var nextDown = cursor.PeekDown();
-            //var nextUp = cursor.PeekUp();
-
-            //var current = _server.LandscapeManager.GetCursor(DynamicEntity.Position);
-            //if (!RealmConfiguration.CubeProfiles[current.PeekDown()].IsSolidToEntity)
-            //{
-            //    var pos = DynamicEntity.Position;
-            //    pos.Y = Math.Round(DynamicEntity.Position.Y);
-            //    pos += new DVector3(0, -1, 0);
-            //    DynamicEntity.Position = pos;
-            //}
-
-
-            //// next down cube should be solid, and two upper cubes should be transparent
-            //if (!RealmConfiguration.CubeProfiles[next].IsSolidToEntity && RealmConfiguration.CubeProfiles[nextDown].IsSolidToEntity && !RealmConfiguration.CubeProfiles[nextUp].IsSolidToEntity)
-            //{
-            //    // move 
-            //    DynamicEntity.Position = nextPosition;
-            //}
-            //else
-            //{
-            //    _moveDirection = new Vector2();
-            //}
-            #endregion
         }
     }
 }

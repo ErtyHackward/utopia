@@ -8,6 +8,7 @@ using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace Utopia.Server.Managers
     /// </summary>
     public class AreaManager : IDisposable, IDynamicEntityManager
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly Server _server;
         private readonly ConcurrentDictionary<Vector2I, MapArea> _areas = new ConcurrentDictionary<Vector2I, MapArea>();
@@ -32,7 +33,7 @@ namespace Utopia.Server.Managers
 
         #region Properties
 #if DEBUG
-        public int entityAreaChangesCount;
+        public int EntityAreaChangesCount;
 
         /// <summary>
         /// Use only for test purposes. Thread safty is NOT guaranteed.
@@ -216,7 +217,7 @@ namespace Utopia.Server.Managers
         {
 #if DEBUG
             // temp counter
-            Interlocked.Increment(ref entityAreaChangesCount);
+            Interlocked.Increment(ref EntityAreaChangesCount);
 #endif
             // we need to tell entity which areas are far away and not need to listen anymore
 
@@ -375,11 +376,27 @@ namespace Utopia.Server.Managers
             return result;
         }
 
-        public IEnumerable<Shared.Entities.Interfaces.IDynamicEntity> EnumerateAround(SharpDX.Vector3 pos)
+        public IEnumerable<IDynamicEntity> EnumerateAround(SharpDX.Vector3 pos)
         {
             var area = GetArea(new Vector3D(pos));
 
             return area.Enumerate().Select(s => s.DynamicEntity);
+        }
+
+        /// <summary>
+        /// Returns entity by a link or null
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
+        public IDynamicEntity FindEntity(EntityLink link)
+        {
+            if (!link.IsDynamic)
+                throw new ArgumentException("The link is not pointing to a dynamic entity");
+            
+            ServerDynamicEntity entity;
+            _dynamicEntities.TryGetValue(link.DynamicEntityId, out entity);
+
+            return entity == null ? null : entity.DynamicEntity;
         }
     }
 }

@@ -1,4 +1,5 @@
 using ProtoBuf;
+using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -70,6 +71,12 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(10)]
         public bool MouseUp;
+
+        /// <summary>
+        /// Active mouse button
+        /// </summary>
+        [ProtoMember(11)]
+        public MouseButton MouseButton;
     }
 
 }

@@ -104,7 +104,7 @@ namespace Realms.Client.Components
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
             //_server.Services.Add(new WaterDynamicService());
-            _server.Services.Add(new TestNpcService());
+            _server.Services.Add(new NpcService());
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)

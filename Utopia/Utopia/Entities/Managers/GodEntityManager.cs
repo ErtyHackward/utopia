@@ -307,6 +307,7 @@ namespace Utopia.Entities.Managers
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.LeftButton == ButtonState.Released;
+                GodEntity.EntityState.MouseButton = MouseButton.LeftButton;
 
                 if (!GodEntity.EntityState.MouseUp)
                 {
@@ -321,6 +322,14 @@ namespace Utopia.Entities.Managers
 
                 GodEntity.ToolUse();
                 
+            }
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseRight))
+            {
+                GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.RightButton == ButtonState.Released;
+                GodEntity.EntityState.MouseButton = MouseButton.RightButton;
+
+                GodEntity.ToolUse();
             }
         }
 
