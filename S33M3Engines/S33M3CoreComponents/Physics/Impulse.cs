@@ -12,30 +12,30 @@ namespace S33M3CoreComponents.Physics
     {
         private Vector3 _forceApplied;
         private float _amountOfTime = 0.00001f;
-        private GameTime _timeStep;
+        private float _elapsedTime;
 
         public bool IsActive
         {
             get { return _amountOfTime > 0; }
         }
 
-        public Impulse(GameTime timeStep)
+        public Impulse(float elapsedTime)
         {
-            _timeStep = timeStep;
+            _elapsedTime = elapsedTime;
         }
 
         public Impulse()
-            :this(null)
         {
+
         }
 
         public Vector3 ForceApplied
         {
             get
             {
-                if (_timeStep != null)
+                if (_elapsedTime != 0f)
                 {
-                    return _amountOfTime != 0.00001 ? _forceApplied / (_timeStep.ElapsedGameTimeInS_LD) : _forceApplied;
+                    return _amountOfTime != 0.00001 ? _forceApplied / (_elapsedTime) : _forceApplied;
                 }
                 else
                 {

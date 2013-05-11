@@ -68,5 +68,15 @@ namespace S33M3DXEngine.Main
             return (double)ticks / TickPerMS;
         }
 
+        public static implicit operator float(GameTime time)
+        {
+            return time.ElapsedGameTimeInS_LD;
+        }
+
+        public static implicit operator double(GameTime time)
+        {
+            return time.ElapsedGameTimeInS_HD;
+        }
+
     }
 }

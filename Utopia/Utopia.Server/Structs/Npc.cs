@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using S33M3CoreComponents.Physics;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX;
 using Utopia.Server.AStar;
@@ -22,6 +23,7 @@ namespace Utopia.Server.Structs
         private readonly Server _server;
         private List<MapArea> _mapAreas = new List<MapArea>();
         private Vector3D _moveDirection;
+        private bool _jump = false;
 
         private int _seed;
 
@@ -65,8 +67,14 @@ namespace Utopia.Server.Structs
             _server = server;
             Seed = 0;
 
-            var bb = new BoundingBox(Vector3.Zero, new Vector3(0.8f, 1.2f, 0.8f));
+            var size = z.DefaultSize;
 
+            var bb = new BoundingBox(Vector3.Zero, size);
+
+            size.Y = 0;
+
+            bb = bb.Offset(-size / 2);
+            
             VerletSimulator = new VerletSimulator(ref bb);
             VerletSimulator.ConstraintFct += _server.LandscapeManager.IsCollidingWithTerrain;
             VerletSimulator.StartSimulation(z.Position);
@@ -92,23 +100,23 @@ namespace Utopia.Server.Structs
                     var curPoint = _path.Points[i];
                     var nextPoint = _path.Points[i + 1];
 
-                    if (curPoint.Y != nextPoint.Y && (curPoint.X != nextPoint.X || curPoint.Z != nextPoint.Z))
-                    {
-                        Vector3I pos;
-                        // add intermediate point
-                        if (nextPoint.Y < curPoint.Y)
-                        {
-                            // falling down
-                            pos = new Vector3I(nextPoint.X, curPoint.Y, nextPoint.Z);
-                        }
-                        else
-                        {
-                            // lifting up
-                            pos = new Vector3I(curPoint.X, nextPoint.Y+1, curPoint.Z);
-                        }
-                        _path.Points.Insert(i + 1, pos);
-                        i++;
-                    }
+                    //if (curPoint.Y != nextPoint.Y && (curPoint.X != nextPoint.X || curPoint.Z != nextPoint.Z))
+                    //{
+                    //    Vector3I pos;
+                    //    // add intermediate point
+                    //    if (nextPoint.Y < curPoint.Y)
+                    //    {
+                    //        // falling down
+                    //        pos = new Vector3I(nextPoint.X, curPoint.Y, nextPoint.Z);
+                    //    }
+                    //    else
+                    //    {
+                    //        // lifting up
+                    //        pos = new Vector3I(curPoint.X, nextPoint.Y + 1, curPoint.Z);
+                    //    }
+                    //    _path.Points.Insert(i + 1, pos);
+                    //    i++;
+                    //}
                 }
                 
                 State = NpcState.FollowingPath;
@@ -155,13 +163,14 @@ namespace Utopia.Server.Structs
             _prevPoint = _pathTargetPoint;
             _pathTargetPoint = new Vector3D(vec3d.X, vec3d.Y, vec3d.Z) + CubeCenter;
             _moveDirection = _pathTargetPoint - dynPos;
+            _jump = _moveDirection.Y > 0;
+            _moveDirection.Y = 0;
             _moveDirection.Normalize();
-
+            
             if (Math.Abs(_moveDirection.Y) < 0.1f)
             {
                 var q = Quaternion.RotationMatrix(Matrix.LookAtLH(dynPos.AsVector3(),
-                                                                  dynPos.AsVector3() +
-                                                                  _moveDirection.AsVector3(),
+                                                                  _pathTargetPoint.AsVector3(),
                                                                   Vector3D.Up.AsVector3()));
                 DynamicEntity.HeadRotation = q;
                 //Transform the rotation from a world rotatino to a local rotation
@@ -180,18 +189,38 @@ namespace Utopia.Server.Structs
             if (gameTime.ElapsedTime.TotalSeconds > 100)
                 return;
 
+            var elapsedS = (float)_server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds;
+
             Vector3D newPos;
-            VerletSimulator.Simulate((float)_server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds, out newPos);
+            VerletSimulator.Simulate(elapsedS, out newPos);
             DynamicEntity.Position = newPos;
+
+            VerletSimulator.CurPosition = DynamicEntity.Position;
 
             if (State == NpcState.FollowingPath)
             {
-                _moveValue += _server.Clock.GameToReal(gameTime.ElapsedTime).TotalSeconds * 3;
-                if (_moveValue >= 1)
-                {
+                if (Vector3D.DistanceSquared(_pathTargetPoint, DynamicEntity.Position) < 0.3d)
                     FollowNextPoint();
+
+                _moveDirection = _pathTargetPoint - DynamicEntity.Position;
+                _jump = _moveDirection.Y > 0;
+                _moveDirection.Y = 0;
+
+                if (Vector3D.DistanceSquared(VerletSimulator.PrevPosition, VerletSimulator.CurPosition) < 0.01f)
+                {
+                    if (Math.Abs(_moveDirection.X) < Math.Abs(_moveDirection.Z))
+                        _moveDirection.Z = 0.1f * Math.Sign(_moveDirection.Z);
+                    else
+                        _moveDirection.X = 0.1f * Math.Sign(_moveDirection.X); ;
+
                 }
-                DynamicEntity.Position = Vector3D.Lerp(_prevPoint, _pathTargetPoint, _moveValue);
+
+                _moveDirection.Normalize();
+
+                VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = _moveDirection.AsVector3() * 1.6f });
+
+                if (_jump && VerletSimulator.OnGround)
+                    VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = Vector3.UnitY * 22 });
             }
             else
             {
@@ -230,6 +259,8 @@ namespace Utopia.Server.Structs
                     }
                 }
             }
+
+
         }
     }
 }

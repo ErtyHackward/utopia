@@ -49,7 +49,10 @@ namespace S33M3CoreComponents.Physics.Verlet
         public Vector3D CurPosition
         {
             get { return _curPosition; }
-            set { _curPosition = value; }
+            set {
+                PrevPosition = _curPosition;
+                _curPosition = value; 
+            }
         }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
 
