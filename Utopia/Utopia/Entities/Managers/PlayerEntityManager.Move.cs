@@ -147,7 +147,6 @@ namespace Utopia.Entities.Managers
             {
                 _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
             }
-            _physicSimu.PrevPosition = _physicSimu.CurPosition;
             _physicSimu.CurPosition = _worldPosition;
         }
 

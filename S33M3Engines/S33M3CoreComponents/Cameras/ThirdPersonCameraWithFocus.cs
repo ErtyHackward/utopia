@@ -90,12 +90,14 @@ namespace S33M3CoreComponents.Cameras
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelBackward))
             {
-                _zoomingPower = -0.5f;
+                _zoomingPower = -1f * 8 * _offsetDistance / MaxDistance;
+                _zoomingStep = 30f * _offsetDistance / MaxDistance;
             }
 
             if (_inputManager.ActionsManager.isTriggered(Actions.ScrollWheelForward))
             {
-                _zoomingPower = 0.5f;
+                _zoomingPower = 1f * 8 * _offsetDistance / MaxDistance;
+                _zoomingStep = 30f * _offsetDistance / MaxDistance;
             }
 
             if (CameraPlugin == null) return;
