@@ -329,6 +329,8 @@ namespace Utopia.Entities.Managers
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.RightButton == ButtonState.Released;
                 GodEntity.EntityState.MouseButton = MouseButton.RightButton;
 
+                logger.Warn("Right use " + GodEntity.EntityState.MouseUp);
+
                 GodEntity.ToolUse();
             }
         }

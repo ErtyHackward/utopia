@@ -203,17 +203,20 @@ namespace Utopia.Server.Structs
                     FollowNextPoint();
 
                 _moveDirection = _pathTargetPoint - DynamicEntity.Position;
+
+                
+
                 _jump = _moveDirection.Y > 0;
                 _moveDirection.Y = 0;
 
-                if (Vector3D.DistanceSquared(VerletSimulator.PrevPosition, VerletSimulator.CurPosition) < 0.01f)
-                {
-                    if (Math.Abs(_moveDirection.X) < Math.Abs(_moveDirection.Z))
-                        _moveDirection.Z = 0.1f * Math.Sign(_moveDirection.Z);
-                    else
-                        _moveDirection.X = 0.1f * Math.Sign(_moveDirection.X); ;
+                //if (Vector3D.DistanceSquared(VerletSimulator.PrevPosition, VerletSimulator.CurPosition) < 0.01f)
+                //{
+                //    if (Math.Abs(_moveDirection.X) < Math.Abs(_moveDirection.Z))
+                //        _moveDirection.Z = 0.1f * Math.Sign(_moveDirection.Z);
+                //    else
+                //        _moveDirection.X = 0.1f * Math.Sign(_moveDirection.X); ;
 
-                }
+                //}
 
                 _moveDirection.Normalize();
 
