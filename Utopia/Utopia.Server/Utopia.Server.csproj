@@ -86,7 +86,6 @@
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="AStar\AStarNode.cs" />
     <Compile Include="AStar\AStarNode3D.cs" />
-    <Compile Include="AStar\Path3D.cs" />
     <Compile Include="AStar\AStarList.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="Commands\AdministratorCommand.cs" />
@@ -97,6 +96,8 @@
     <Compile Include="Managers\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Managers\WeatherManager.cs" />
     <Compile Include="Sample\BlueprintRecorderService.cs" />
+    <Compile Include="Structs\FocusAI.cs" />
+    <Compile Include="Structs\MoveAI.cs" />
     <Compile Include="Structs\Npc.cs" />
     <Compile Include="Structs\NpcState.cs" />
     <Compile Include="Events\AreaEntityEventArgs.cs" />
