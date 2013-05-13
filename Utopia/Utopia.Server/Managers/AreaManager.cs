@@ -173,6 +173,8 @@ namespace Utopia.Server.Managers
                         CurrentTime = _server.Clock.Now
                     };
 
+                    state.RealTime = _server.Clock.GameToReal(state.ElapsedTime);
+
                     _lastUpdate = _server.Clock.Now;
 
                     Update(state);

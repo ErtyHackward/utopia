@@ -106,7 +106,12 @@ namespace Utopia.Shared.Entities.Concrete
                         if (controller != null && godEntity.EntityState.IsBlockPicked &&
                             godEntity.EntityState.PickPointNormal == Vector3I.Up)
                         {
-                            controller.Goto(godEntity.EntityState.PickedBlockPosition + Vector3I.Up);
+                            controller.Movement.Goto(godEntity.EntityState.PickedBlockPosition + Vector3I.Up);
+                        }
+
+                        if (controller != null && godEntity.EntityState.IsEntityPicked && godEntity.EntityState.PickedEntityLink.IsDynamic)
+                        {
+                            controller.Movement.Leader = EntityFactory.DynamicEntityManager.FindEntity(godEntity.EntityState.PickedEntityLink);
                         }
                     }
                 }

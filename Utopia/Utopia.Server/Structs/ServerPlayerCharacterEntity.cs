@@ -86,7 +86,7 @@ namespace Utopia.Server.Structs
             else
             {
                 var link = entityUseMessage.State.PickedEntityLink;
-                var entity = link.ResolveStatic(_server.LandscapeManager);
+                var entity = link.ResolveStatic(Server.LandscapeManager);
 
                 if (entity is IUsableEntity)
                 {
@@ -116,7 +116,7 @@ namespace Utopia.Server.Structs
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
                     ServerChunk chunk;
-                    if ((chunk = _server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
+                    if ((chunk = Server.LandscapeManager.SurroundChunks(playerCharacter.Position).First(c => c.Entities.ContainsId(itemTransferMessage.ItemEntityId))) != null)
                     {
                         IStaticEntity entity;
                         chunk.Entities.RemoveById(itemTransferMessage.ItemEntityId, playerCharacter.DynamicId, out entity);
@@ -189,7 +189,7 @@ namespace Utopia.Server.Structs
                 if (itemTransferMessage.ItemEntityId != 0)
                 {
                     // check if entity have this item
-                    var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
+                    var chunk = Server.LandscapeManager.GetChunk(playerCharacter.Position);
 
                     // check if we have correct entityId
                     if (_itemTaken.Item.StaticId == itemTransferMessage.ItemEntityId)
@@ -250,7 +250,7 @@ namespace Utopia.Server.Structs
             }
             if (link.IsStatic)
             {
-                var entity = link.ResolveStatic(_server.LandscapeManager);
+                var entity = link.ResolveStatic(Server.LandscapeManager);
                 return (entity as Container).Content;
             }
             return null;

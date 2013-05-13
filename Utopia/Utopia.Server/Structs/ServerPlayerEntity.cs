@@ -13,8 +13,6 @@ namespace Utopia.Server.Structs
     public class ServerPlayerEntity : ServerDynamicEntity
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        protected readonly Server _server;
         
         public ClientConnection Connection { get; private set; }
 
@@ -24,7 +22,7 @@ namespace Utopia.Server.Structs
         /// <param name="connection"></param>
         /// <param name="entity"></param>
         /// <param name="server"></param>
-        public ServerPlayerEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(entity)
+        public ServerPlayerEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(server, entity)
         {
             if (connection == null) 
                 throw new ArgumentNullException("connection");
@@ -32,7 +30,6 @@ namespace Utopia.Server.Structs
                 throw new ArgumentNullException("entity");
 
             Connection = connection;
-            _server = server;
         }
 
         public override void AddArea(MapArea area)

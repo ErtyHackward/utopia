@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Utopia.Shared.Structs;
+using System.Collections.Generic;
 using S33M3Resources.Structs;
 
-namespace Utopia.Server.AStar
+namespace Utopia.Shared.Entities
 {
     /// <summary>
     /// Defines a path between two 3d points

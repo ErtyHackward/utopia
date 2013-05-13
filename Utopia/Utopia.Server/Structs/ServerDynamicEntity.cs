@@ -13,6 +13,7 @@ namespace Utopia.Server.Structs
     /// </summary>
     public abstract class ServerDynamicEntity
     {
+        private readonly Server _server;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public event EventHandler<ServerDynamicEntityMoveEventArgs> PositionChanged;
@@ -28,6 +29,8 @@ namespace Utopia.Server.Structs
         /// </summary>
         public IEntity LockedEntity { get; set; }
 
+        public Server Server { get { return _server; } }
+        
         /// <summary>
         /// Gets wrapped entity
         /// </summary>
@@ -98,8 +101,9 @@ namespace Utopia.Server.Structs
         }
 
 
-        protected ServerDynamicEntity(IDynamicEntity entity)
+        protected ServerDynamicEntity(Server server, IDynamicEntity entity)
         {
+            _server = server;
             DynamicEntity = entity;
             DynamicEntity.Controller = this;
         }
