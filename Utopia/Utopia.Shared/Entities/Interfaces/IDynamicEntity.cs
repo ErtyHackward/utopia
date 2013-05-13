@@ -48,7 +48,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Gets an unique entity identificator
         /// </summary>
-        uint DynamicId { get; set;  }
+        uint DynamicId { get; set; }
 
         /// <summary>
         /// Gets or sets entity head rotation

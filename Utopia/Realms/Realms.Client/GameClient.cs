@@ -67,7 +67,7 @@ namespace Realms.Client
             GameScope.StateManager = stateManager;
 
             var fade = _iocContainer.Get<FadeSwitchComponent>();
-            fade.Color = new SharpDX.Color4(0,0,0,1);
+            fade.Color = new SharpDX.Color4(0, 0, 0, 1);
             stateManager.RegisterState(_iocContainer.Get<LoginState>());
             stateManager.RegisterState(_iocContainer.Get<CreditsState>());
             stateManager.RegisterState(_iocContainer.Get<SettingsState>());

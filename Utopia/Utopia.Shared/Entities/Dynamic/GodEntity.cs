@@ -16,6 +16,8 @@ namespace Utopia.Shared.Entities.Dynamic
     [ProtoContract]
     public class GodEntity : DynamicEntity
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public override ushort ClassId
         {
             get { return EntityClassId.GodEntity; }
@@ -84,6 +86,8 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public void ToolUse()
         {
+            logger.Warn("ToolUse EP:" + this.EntityState.IsEntityPicked + " BP:" + this.EntityState.IsBlockPicked);
+
             GodHand.Use(this);
             OnUse(EntityUseEventArgs.FromState(this));
         }
