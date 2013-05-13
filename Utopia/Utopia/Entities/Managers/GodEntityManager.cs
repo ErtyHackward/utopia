@@ -309,6 +309,8 @@ namespace Utopia.Entities.Managers
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.LeftButton == ButtonState.Released;
                 GodEntity.EntityState.MouseButton = MouseButton.LeftButton;
 
+                logger.Warn("Left use MouseUp=" + GodEntity.EntityState.MouseUp);
+
                 if (!GodEntity.EntityState.MouseUp)
                 {
                     if (GodEntity.EntityState.IsBlockPicked)
@@ -329,7 +331,7 @@ namespace Utopia.Entities.Managers
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.RightButton == ButtonState.Released;
                 GodEntity.EntityState.MouseButton = MouseButton.RightButton;
 
-                logger.Warn("Right use " + GodEntity.EntityState.MouseUp);
+                logger.Warn("Right use MouseUp=" + GodEntity.EntityState.MouseUp);
 
                 GodEntity.ToolUse();
             }

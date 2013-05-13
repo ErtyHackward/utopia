@@ -34,6 +34,9 @@ namespace Realms.Client
             //Load Client config XML file
             LoadClientsSettings();
 
+            if (!ClientSettings.Current.Settings.GraphicalParameters.WindowSize.IsEmpty)
+                Program.StartUpResolution = ClientSettings.Current.Settings.GraphicalParameters.WindowSize;
+
             //Bings all components
             IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version, Program.StartUpResolution);
             
@@ -91,6 +94,8 @@ namespace Realms.Client
 
             game.Run(); //Start the Main render loop
 
+            SaveWindowSettings();
+
             _iocContainer.Dispose();
 
             GC.Collect();
@@ -112,6 +117,18 @@ namespace Realms.Client
             TexturePackConfig.Current.Load();
         }
 
+        private void SaveWindowSettings()
+        {
+            ClientSettings.Current.Settings.GraphicalParameters.Fullscreen = _d3dEngine.IsFullScreen;
+
+            if (!ClientSettings.Current.Settings.GraphicalParameters.Fullscreen)
+            {
+                ClientSettings.Current.Settings.GraphicalParameters.WindowPos = _d3dEngine.GameWindow.Location;
+                ClientSettings.Current.Settings.GraphicalParameters.WindowSize = _d3dEngine.GameWindow.Size;
+            }
+
+            ClientSettings.Current.Save();
+        }
 
         private void ApplySystemSettings()
         {

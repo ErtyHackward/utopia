@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using Ninject;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
@@ -75,6 +76,15 @@ namespace Realms.Client
             // Application LifeTime Binding configuration = Singleton Scope ================================================================================================
             // =============================================================================================================================================================
             _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription, resolutionSize);
+
+            _d3dEngine.IsFullScreen = ClientSettings.Current.Settings.GraphicalParameters.Fullscreen;
+
+            if (!ClientSettings.Current.Settings.GraphicalParameters.WindowPos.IsEmpty)
+            {
+                _d3dEngine.GameWindow.StartPosition = FormStartPosition.Manual;
+                _d3dEngine.GameWindow.Location = ClientSettings.Current.Settings.GraphicalParameters.WindowPos;
+            }
+
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();

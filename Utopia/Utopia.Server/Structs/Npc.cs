@@ -199,12 +199,10 @@ namespace Utopia.Server.Structs
 
             if (State == NpcState.FollowingPath)
             {
-                if (Vector3D.DistanceSquared(_pathTargetPoint, DynamicEntity.Position) < 0.3d)
+                if (Vector3D.DistanceSquared(_pathTargetPoint, DynamicEntity.Position) < 0.1d)
                     FollowNextPoint();
 
                 _moveDirection = _pathTargetPoint - DynamicEntity.Position;
-
-                
 
                 _jump = _moveDirection.Y > 0;
                 _moveDirection.Y = 0;
