@@ -19,6 +19,8 @@ namespace Utopia.Shared.Entities.Concrete
     [ProtoContract]
     public class GodHandTool : Item, ITool
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private Vector3I _selectionStart;
 
         public override ushort ClassId
@@ -86,6 +88,8 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     godEntity.SelectedEntities.Clear();
                     godEntity.SelectedEntities.Add(godEntity.EntityState.PickedEntityLink);
+
+                    logger.Warn("Selected entity " + godEntity.EntityState.PickedEntityLink);
                 }
             }
 

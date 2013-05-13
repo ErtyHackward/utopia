@@ -90,7 +90,7 @@ namespace Utopia
             //Switch full screen state
             if (_inputManager.ActionsManager.isTriggered(Actions.EngineFullScreen))
             {
-                Engine.isFullScreen = !Engine.isFullScreen;
+                Engine.IsFullScreen = !Engine.IsFullScreen;
             }
 
             //Mouse capture mode

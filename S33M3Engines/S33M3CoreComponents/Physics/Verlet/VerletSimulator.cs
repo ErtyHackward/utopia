@@ -124,7 +124,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             //Vertical velocity if not on ground, to make the entity fall !
             if (_subjectToGravity && !_onGround)
             {
-                _forcesAccum.Y += -((SimulatorCst.Gravity));
+                _forcesAccum.Y += -SimulatorCst.Gravity;
             }
 
             OnGround = false;

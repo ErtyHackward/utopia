@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
@@ -148,6 +149,12 @@ namespace Utopia.Shared.Settings
         public bool VSync { get; set; }
         [ParameterAttribute("Multisampling", "MSAA", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
         public SampleDescriptionSetting MSAA { get; set; }
+
+        public Point WindowPos { get; set; }
+
+        public Size WindowSize { get; set; }
+
+        public bool Fullscreen { get; set; }
     }
 
     /// <summary>
