@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using S33M3CoreComponents.Config;
 using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Server;
 using Utopia.Server.Managers;
 using Utopia.Server.Sample;
@@ -103,25 +104,32 @@ namespace Realms.Client.Components
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
             //_server.Services.Add(new WaterDynamicService());
-            _server.Services.Add(new TestNpcService());
+            _server.Services.Add(new NpcService());
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
         {
-            var dEntity = new PlayerCharacter();
-            dEntity.DynamicId = e.EntityId;
-            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
-            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
-            dEntity.CharacterName = "Local player";
+            var entity = new GodEntity();
+            entity.DynamicId = e.EntityId;
+            entity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
+            entity.HeadRotation = Quaternion.RotationYawPitchRoll(0, -(float)Math.PI / 4, 0);
 
-            // give start items to the player
-            var startSetName = _worldParam.Configuration.StartSet;
-            if (!string.IsNullOrEmpty(startSetName))
-            {
-                _serverFactory.FillContainer(startSetName, dEntity.Inventory);
-            }
+            e.PlayerEntity = entity;
             
-            e.PlayerEntity = dEntity;
+            //var dEntity = new PlayerCharacter();
+            //dEntity.DynamicId = e.EntityId;
+            //dEntity.DisplacementMode = EntityDisplacementModes.Walking;
+            //dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
+            //dEntity.CharacterName = "Local player";
+
+            //// give start items to the player
+            //var startSetName = _worldParam.Configuration.StartSet;
+            //if (!string.IsNullOrEmpty(startSetName))
+            //{
+            //    _serverFactory.FillContainer(startSetName, dEntity.Inventory);
+            //}
+            
+            //e.PlayerEntity = dEntity;
         }
 
         public void Dispose()

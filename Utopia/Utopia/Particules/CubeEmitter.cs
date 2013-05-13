@@ -17,6 +17,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Shared.GameDXStates;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
 using Color = SharpDX.Color;
@@ -48,6 +49,7 @@ namespace Utopia.Particules
         private Dictionary<int, Color[]> _cubeColorSampled;
         private VisualWorldParameters _visualWorldParameters;
         private IWorldChunks _worldChunk;
+        private readonly ILandscapeManager2D _landscapeManager;
         private BoundingBox _cubeBB;
 
         private double _maxRenderingDistanceSquared;
@@ -86,8 +88,11 @@ namespace Utopia.Particules
                            float size,
                            VisualWorldParameters visualWorldParameters,
                            IWorldChunks worldChunk,
+                           ILandscapeManager2D landscapeManager,
                            double maxRenderingDistance)
         {
+            if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
+
             _cubeColorSampled = new Dictionary<int, Color[]>();
             _fileNamePatern = fileNamePatern;
             _cubeTexturePath = cubeTexturePath;
@@ -96,6 +101,7 @@ namespace Utopia.Particules
 
             MaxRenderingDistance = maxRenderingDistance;
             _worldChunk = worldChunk;
+            _landscapeManager = landscapeManager;
             _isStopped = false;
             _maximumAge = maximumAge;
             _particules = new List<ColoredParticule>();
@@ -340,8 +346,7 @@ namespace Utopia.Particules
 
         private void CollisionCheck(ColoredParticule p)
         {
-
-            if (_worldChunk.isCollidingWithTerrain(ref _cubeBB, ref p.Position.Value) > 0)
+            if (_landscapeManager.IsCollidingWithTerrain(ref _cubeBB, ref p.Position.Value) > 0)
             {
                 if (!p.isFrozen)
                 {

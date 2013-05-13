@@ -52,7 +52,7 @@ namespace Realms.Client.States
             :base(stateManager)
         {
             _ioc = ioc;
-            AllowMouseCaptureChange = true;
+            AllowMouseCaptureChange = false;
         }
 
         public override void Initialize(DeviceContext context)
@@ -65,14 +65,14 @@ namespace Realms.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
-            var inventory = _ioc.Get<InventoryComponent>();
+            //var inventory = _ioc.Get<InventoryComponent>();
             
             
             var chat = _ioc.Get<ChatComponent>();
 
-            var hud = (RealmsHud)_ioc.Get<Hud>();
-            hud.CraftingButton.Pressed += CraftingButton_Pressed;
-            hud.InventoryButton.Pressed += InventoryButton_Pressed;
+            //var hud = (RealmsHud)_ioc.Get<Hud>();
+            //hud.CraftingButton.Pressed += CraftingButton_Pressed;
+            //hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -96,10 +96,13 @@ namespace Realms.Client.States
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
+            var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
-            playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
+            //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            //playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
+            //playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
+
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
@@ -113,6 +116,7 @@ namespace Realms.Client.States
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
+            var pickingManager = _ioc.Get<PickingManager>();
             
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -122,10 +126,10 @@ namespace Realms.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
-            AddComponent(hud);
+            //AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            AddComponent(inventory);
+            AddComponent(selectedBlocksRenderer);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);
@@ -140,6 +144,9 @@ namespace Realms.Client.States
             AddComponent(ghostedRenderer);
             AddComponent(crafting);
             AddComponent(inventoryEvents);
+            AddComponent(pickingManager);
+            
+            inputsManager.MouseManager.StrategyMode = true;
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
@@ -237,9 +244,19 @@ namespace Realms.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
 
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
+            playerEntityManager.EnableComponent();
+
             base.OnEnabled(previousState);
         }
 
+        public override void OnDisabled(GameState nextState)
+        {
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
+            playerEntityManager.DisableComponent();
+
+            base.OnDisabled(nextState);
+        }
 
     }
 }

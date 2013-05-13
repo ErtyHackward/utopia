@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SharpDX;
 using SharpDX.Direct3D;
-using Utopia.Shared.Structs;
 using S33M3DXEngine;
 using S33M3CoreComponents.WorldFocus;
 using S33M3Resources.Effects.Basics;
 using S33M3DXEngine.Buffers;
-using S33M3Resources.Structs.Vertex;
 using S33M3Resources.VertexFormats;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -25,11 +20,7 @@ namespace Utopia.Resources.ModelComp
         private HLSLVertexPositionColor _wrappedEffect;
         //Buffer _vertexBuffer;
         private VertexBuffer<VertexPosition3Color> _vertexBuffer;
-        private Line3D[] _lines = new Line3D[12];
         public Matrix BB3dworld;
-        #endregion
-
-        #region Public properties
         #endregion
 
         public BoundingBox3D(D3DEngine d3dEngine, WorldFocusManager worldFocusManager, Vector3 BBDimension, HLSLVertexPositionColor effect, ByteColor color)

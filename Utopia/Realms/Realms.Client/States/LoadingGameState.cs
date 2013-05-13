@@ -156,18 +156,34 @@ namespace Realms.Client.States
         
         void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
-            ServerComponent serverComponent = _ioc.Get<ServerComponent>();
+            var serverComponent = _ioc.Get<ServerComponent>();
+            
+            IDynamicEntity entity = null;
 
-            var player = (PlayerCharacter)e.Message.Entity;
+            if (e.Message.Entity is PlayerCharacter)
+            {
+                var player = (PlayerCharacter)e.Message.Entity;
+                
+                _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
+                _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
+                
+                entity = player;
+            }
+            else if (e.Message.Entity is GodEntity)
+            {
+                var player = (GodEntity)e.Message.Entity;
+                
+                _ioc.Rebind<GodEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope);
+                _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player");
+
+                entity = player;
+            }
+
+            serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
+            serverComponent.Player = entity;
 
             var factory = _ioc.Get<EntityFactory>();
-            factory.PrepareEntity(player);
-
-            _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
-            _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
-            
-            serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
-            serverComponent.Player = player;
+            factory.PrepareEntity(entity);
 
             GameplayComponentsCreation();
         }
@@ -215,10 +231,10 @@ namespace Realms.Client.States
             var wordParameters = _ioc.Get<WorldParameters>();
             var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
             
-            var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
+            //var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
             var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
-            var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>(new ConstructorArgument("camera", firstPersonCamera));
-            cameraManager.RegisterNewCamera(thirdPersonCamera);
+            var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>(new ConstructorArgument("camera", thirdPersonCamera));
+            //cameraManager.RegisterNewCamera(firstPersonCamera);
 
             var timerManager = _ioc.Get<TimerManager>();
             var inputsManager = _ioc.Get<InputsManager>();
@@ -226,15 +242,15 @@ namespace Realms.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
-            var inventory = _ioc.Get<InventoryComponent>();
-            inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
-            inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
+            //var inventory = _ioc.Get<InventoryComponent>();
+            //inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
+            //inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
             
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
 
             var chat = _ioc.Get<ChatComponent>();
-            var hud = _ioc.Get<Hud>();
+            //var hud = _ioc.Get<Hud>();
             var stars = _ioc.Get<IDrawableComponent>("Stars");
             var clouds = _ioc.Get<IDrawableComponent>("Clouds");
             var skyDome = _ioc.Get<ISkyDome>();
@@ -251,10 +267,11 @@ namespace Realms.Client.States
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
+            var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
-            var entityPickingManager = _ioc.Get<IEntityPickingManager>();
+            //var entityPickingManager = _ioc.Get<IEntityPickingManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            var playerEntityManager = _ioc.Get<IPlayerManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
@@ -269,9 +286,9 @@ namespace Realms.Client.States
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
 
             landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
-            playerEntityManager.HasMouseFocus = true;
+            //playerEntityManager.HasMouseFocus = true;
             cameraManager.SetCamerasPlugin(playerEntityManager);
-            ((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
+            //((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
 
             _ioc.Get<EntityFactory>().DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
@@ -288,10 +305,10 @@ namespace Realms.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
-            AddComponent(hud);
+            //AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            AddComponent(inventory);
+            //AddComponent(inventory);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);
@@ -313,7 +330,7 @@ namespace Realms.Client.States
             worldChunks.LoadComplete += worldChunks_LoadComplete;
 
             var engine = _ioc.Get<D3DEngine>();
-            inputsManager.MouseManager.MouseCapture = true;
+            //inputsManager.MouseManager.MouseCapture = true;
         }
 
         void worldChunks_LoadComplete(object sender, EventArgs e)

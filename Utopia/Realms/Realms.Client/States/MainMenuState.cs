@@ -53,7 +53,6 @@ namespace Realms.Client.States
             menu.LogoutPressed += MenuLogoutPressed;
             menu.ExitPressed += MenuExitPressed;
 
-            StatesManager.PrepareStateAsync("LoadingGame");
             base.OnEnabled(previousState);
         }
 

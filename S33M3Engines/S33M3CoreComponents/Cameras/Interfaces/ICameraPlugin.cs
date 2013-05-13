@@ -19,9 +19,9 @@ namespace S33M3CoreComponents.Cameras.Interfaces
         /// </summary>
         Quaternion CameraOrientation { get; }
 
-        ///// <summary>
-        ///// Must point to the real Orientation, not the interpolated one !
-        ///// </summary>
+        /// <summary>
+        /// Must point to the real Orientation, not the interpolated one !
+        /// </summary>
         Quaternion CameraYAxisOrientation { get; }
 
         /// <summary>

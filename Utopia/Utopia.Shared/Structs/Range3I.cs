@@ -119,5 +119,19 @@ namespace Utopia.Shared.Structs
                 return (Position.GetHashCode() * 397) ^ Size.GetHashCode();
             }
         }
+
+        /// <summary>
+        /// Creates a range from any two Vector3I objects
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
+        public static Range3I FromTwoVectors(Vector3I one, Vector3I two)
+        {
+            var min = Vector3I.Min(one, two);
+            var max = Vector3I.Max(one, two);
+
+            return new Range3I(min, max - min + Vector3I.One);
+        }
     }
 }

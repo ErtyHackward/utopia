@@ -8,6 +8,7 @@ namespace Utopia.Shared.Entities
         // items
         public const ushort None = 0;
         public const ushort Hand = 1;
+        public const ushort GodHand = 2;
 
         // static
         public const ushort Container = 1000;
@@ -26,12 +27,15 @@ namespace Utopia.Shared.Entities
         // blocks
         public const ushort ThinGlass = 2001;
 
-        //alive
+        // alive
         public const ushort PlayerCharacter = 3000;
         public const ushort NonPlayerCharacter = 3001;
-        public const ushort Zombie = 3002;
+        public const ushort Dwarf = 3002;
 
         public const ushort Plant = 4000;
         public const ushort Food = 4001;
+
+        // special
+        public const ushort GodEntity = 10000;
     }
 }

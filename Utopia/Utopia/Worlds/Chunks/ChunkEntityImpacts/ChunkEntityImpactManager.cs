@@ -20,7 +20,7 @@ using Utopia.Shared.Entities;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
-    public class ChunkEntityImpactManager : IChunkEntityImpactManager
+    public class ChunkEntityImpactManager : LandscapeManager<VisualChunk>, IChunkEntityImpactManager
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -72,6 +72,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
 
         public ChunkEntityImpactManager()
+            : base(null)
         {
             _initialized = false;
         }
@@ -81,16 +82,18 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                                         IWorldChunks worldChunks,
                                         IChunkStorageManager chunkStorageManager,
                                         ILightingManager lightManager,
-                                        VisualWorldParameters visualWorldParameters)
+                                        VisualWorldParameters visualWorldParameters
+                                        )
         {
             _server = server;
             _lightManager = lightManager;
             _worldChunks = worldChunks;
             _chunkStorageManager = chunkStorageManager;
             _server.MessageBlockChange += ServerConnection_MessageBlockChange;
-
-            _cubesHolder = cubesHolder;
             _visualWorldParameters = visualWorldParameters;
+            _wp = _visualWorldParameters.WorldParameters;
+            _cubesHolder = cubesHolder;
+            
 
             _initialized = true;
         }
@@ -393,26 +396,21 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 #endif
         }
 
-        public IChunkLayout2D GetChunk(Vector2I chunkPosition)
+        public override VisualChunk GetChunk(Vector2I position)
         {
-            //From Chunk Position to Cube Position
-            return _worldChunks.GetChunk(chunkPosition.X * AbstractChunk.ChunkSize.X, chunkPosition.Y * AbstractChunk.ChunkSize.Z);
+            return _worldChunks.GetChunkFromChunkCoord(position);
         }
 
-        public IChunkLayout2D GetChunk(Vector3I blockPosition)
+        public override TerraCube GetCubeAt(Vector3I vector3I)
         {
-            return _worldChunks.GetChunk(ref blockPosition);
+            return _cubesHolder.GetCube(vector3I).Cube;
         }
 
-        public ILandscapeCursor GetCursor(Vector3I blockPosition)
+        public override ILandscapeCursor GetCursor(Vector3I blockPosition)
         {
-            return new SingleArrayLandscapeCursor(this, blockPosition, _visualWorldParameters.WorldParameters.Configuration);
+            return new SingleArrayLandscapeCursor(this, blockPosition, _wp.Configuration);
         }
 
-        public ILandscapeCursor GetCursor(Vector3D entityPosition)
-        {
-            return GetCursor(new Vector3I((int)Math.Floor(entityPosition.X), (int)entityPosition.Y, (int)Math.Floor(entityPosition.Z)));
-        }
         #endregion
 
     }

@@ -8,8 +8,11 @@ namespace Utopia.Entities.Managers.Interfaces
     public interface IEntityPickingManager
     {
         void Update();
+
         bool isDirty { get; set; }
+
         PlayerEntityManager Player { get; set; }
+
         IWorldChunks WorldChunks { get; set; }
 
         /// <summary>

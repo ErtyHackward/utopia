@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using SharpDX;
+using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Shared.World;
 using Utopia.Entities.Managers;
@@ -54,7 +55,7 @@ namespace Utopia.Components
         private CameraManager<ICameraFocused> _cameraManager;
         private ISkyDome _skydome;
         private VisualWorldParameters _visualWorldParam;
-        private PlayerEntityManager _playerManager;
+        private IPlayerManager _playerManager;
         private StaggingBackBuffer _backBuffer;
         private float _animationValue = 0.0f;
         private float _animationSpeed = 0.5f;
@@ -64,7 +65,7 @@ namespace Utopia.Components
                              CameraManager<ICameraFocused> cameraManager,
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
-                             PlayerEntityManager playerManager,
+                             IPlayerManager playerManager,
                              [Named("SkyBuffer")] StaggingBackBuffer backBuffer)
             
         {

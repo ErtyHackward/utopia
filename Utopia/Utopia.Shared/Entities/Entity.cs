@@ -68,7 +68,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [Browsable(false)]
         [ProtoMember(7)]
-        public bool isSystemEntity { get; set; }
+        public bool IsSystemEntity { get; set; }
 
         /// <summary>
         /// Gets or sets model collision type
@@ -94,7 +94,6 @@ namespace Utopia.Shared.Entities
             get { return _name; }
             set { _name = value; }
         }
-
         
         [ProtoMember(11, OverwriteList=true)]
         [Category("Entity")]
@@ -129,6 +128,13 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [Browsable(false)]
         public virtual bool Locked { get; set; }
+
+        /// <summary>
+        /// Gets an optional entity controller
+        /// Controller is a class that provides gameplay specific logic
+        /// </summary>
+        [Browsable(false)]
+        public object Controller { get; set; }
 
         /// <summary>
         /// Returns link to the entity

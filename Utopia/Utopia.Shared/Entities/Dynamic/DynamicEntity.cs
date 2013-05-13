@@ -60,6 +60,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             HeadRotation = Quaternion.Identity;
             BodyRotation = Quaternion.Identity;
+            EntityState = new DynamicEntityState();
         }
 
         #region Properties
@@ -106,7 +107,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets or sets entity head rotation
         /// </summary>
-        public Quaternion HeadRotation 
+        public virtual Quaternion HeadRotation 
         {
             get 
             {

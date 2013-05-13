@@ -33,7 +33,7 @@ namespace Realms.Client.Components
                                     IChunkEntityImpactManager chunkEntityImpactManager,
                                     IWorldChunks worldChunk,
                                     IClock gameClockTime,
-                                    PlayerEntityManager playerEntityManager,
+                                    IPlayerManager playerEntityManager,
                                     VisualWorldParameters visualWorldParameters,
                                     IClock worlClock)
             : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager, worldChunk, gameClockTime, playerEntityManager, visualWorldParameters, worlClock)
@@ -41,6 +41,12 @@ namespace Realms.Client.Components
             PreLoadSound("Put", @"Sounds\Blocks\put.adpcm.wav", 0.3f, 12.0f);
             PreLoadSound("Take", @"Sounds\Blocks\take.adpcm.wav", 0.3f, 12.0f);
             PreLoadSound("Hurt", @"Sounds\Events\hurt.adpcm.wav", 0.3f, 16.0f);
+
+            if (playerEntityManager is PlayerEntityManager)
+            {
+                var playerManager = playerEntityManager as PlayerEntityManager;
+                playerManager.OnLanding += playerEntityManager_OnLanding;
+            }
         }
 
         #region Sound on Events
@@ -55,7 +61,7 @@ namespace Realms.Client.Components
             SoundEngine.StartPlay3D("Take", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
         }
 
-        protected override void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube)
+        protected void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube)
         {
             if (fallHeight > 3 && fallHeight <= 10)
             {

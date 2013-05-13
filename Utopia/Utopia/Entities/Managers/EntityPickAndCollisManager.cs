@@ -44,8 +44,6 @@ namespace Utopia.Entities.Managers
         private IWorldChunks _worldChunks;
         private PlayerEntityManager _playerManager;
         private bool? _onEntityTop = null;
-        private HandTool _handTool = new HandTool();
-
         #endregion
 
         #region public variables
@@ -68,12 +66,6 @@ namespace Utopia.Entities.Managers
         {
             get { return _dynamicEntityManager; }
             set { _dynamicEntityManager = value; }
-        }
-
-        [Inject]
-        public EntityFactory EntityFactory
-        {
-            set { _handTool.EntityFactory = value; }
         }
 
         #endregion
@@ -139,15 +131,12 @@ namespace Utopia.Entities.Managers
             for (int i = 0; i < 9; i++)
             {
                 chunk = _worldChunks.SortedChunks[i];
-                foreach (var pair in chunk.VisualVoxelEntities)
+                foreach (var entity in chunk.AllEntities())
                 {
-                    foreach (var entity in pair.Value)
+                    //Add entity only if at <= 10 block distance !
+                    if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
                     {
-                        //Add entity only if at <= 10 block distance !
-                        if (Vector3D.Distance(entity.Entity.Position, _player.Player.Position) <= 10)
-                        {
-                            _entitiesNearPlayer.Add(entity);
-                        }
+                        _entitiesNearPlayer.Add(entity);
                     }
                 }
             }
@@ -164,10 +153,10 @@ namespace Utopia.Entities.Managers
             var result = new EntityPickResult();
             result.Distance = float.MaxValue;
 
-            var tool = Player.Player.Equipment.RightTool;
+            var tool = Player.PlayerCharacter.Equipment.RightTool;
 
             if (tool == null)
-                tool = _handTool;
+                tool = Player.PlayerCharacter.HandTool;
 
             var pickedEntityDistance = float.MaxValue;
             foreach (var entity in _entitiesNearPlayer)

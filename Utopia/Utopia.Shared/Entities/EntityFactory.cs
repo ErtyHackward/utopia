@@ -92,9 +92,10 @@ namespace Utopia.Shared.Entities
             entityType.AddSubType(101, typeof(StaticEntity));
 
             dynEntityType.AddSubType(100, typeof(CharacterEntity));
+            dynEntityType.AddSubType(101, typeof(GodEntity));
 
             charEntityType.AddSubType(100, typeof(RpgCharacterEntity));
-            charEntityType.AddSubType(101, typeof(Zombie));
+            charEntityType.AddSubType(101, typeof(Dwarf));
 
             rpgCharType.AddSubType(100, typeof(PlayerCharacter));
 
@@ -106,6 +107,7 @@ namespace Utopia.Shared.Entities
             itemType.AddSubType(103, typeof(CubeResource));
             itemType.AddSubType(104, typeof(Food));
             itemType.AddSubType(105, typeof(Stuff));
+            itemType.AddSubType(106, typeof(GodHandTool));
 
             blockItem.AddSubType(100, typeof(OrientedBlockItem));
 
@@ -285,8 +287,8 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.PlayerCharacter:
                         entity = new PlayerCharacter();
                         break;
-                    case EntityClassId.Zombie:
-                        entity = new Zombie();
+                    case EntityClassId.Dwarf:
+                        entity = new Dwarf();
                         break;
                     case EntityClassId.Plant:
                         entity = new Plant();
@@ -311,6 +313,9 @@ namespace Utopia.Shared.Entities
                         break;
                     case EntityClassId.BasicCollector:
                         entity = new BasicCollector();
+                        break;
+                    case EntityClassId.GodEntity:
+                        entity = new GodEntity();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("classId");
@@ -473,6 +478,14 @@ namespace Utopia.Shared.Entities
                 {
                     InjectFields(slot.Item); //Inject Inventory fields
                 }
+
+                InjectFields(charEntity.HandTool);
+            }
+
+            if (entity is GodEntity)
+            {
+                var godEntity = (GodEntity)entity;
+                InjectFields(godEntity.GodHand);
             }
         }
         

@@ -159,7 +159,7 @@ namespace Utopia.GUI
         public override void FTSUpdate(GameTime timeSpend)
         {
 
-            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Interface))
+            if (_imanager.ActionsManager.isTriggered(UtopiaActions.ToggleInterface))
             {
                 IsHided = !IsHided;
             }
@@ -174,7 +174,7 @@ namespace Utopia.GUI
             }
 
 
-            if (Activated && _imanager.ActionsManager.isTriggered(UtopiaActions.Exit_Chat, CatchExclusiveActions))
+            if (Activated && _imanager.ActionsManager.isTriggered(UtopiaActions.ExitChat, CatchExclusiveActions))
             {
                 Activated = false;
                 _textInput.Clear();
@@ -182,7 +182,7 @@ namespace Utopia.GUI
                 _refreshDisplay = true;
             }
 
-            if (_imanager.ActionsManager.isTriggered(UtopiaActions.Toggle_Chat, CatchExclusiveActions))
+            if (_imanager.ActionsManager.isTriggered(UtopiaActions.ToggleChat, CatchExclusiveActions))
             {
                 if (Activated == false)
                 {

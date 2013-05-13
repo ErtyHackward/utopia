@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Utopia.Shared.Entities;
+using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
@@ -9,164 +9,29 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
-using S33M3Resources.Structs;
 
 namespace Utopia.Server.Structs
 {
     /// <summary>
-    /// This class sends all events from entity model to player
+    /// Contains PlayerCharacter server logic
     /// </summary>
-    public class ServerPlayerCharacterEntity : ServerDynamicEntity
+    public class ServerPlayerCharacterEntity : ServerPlayerEntity
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly Server _server;
+        private ContainedSlot _itemTaken;
 
-        private HandTool _handTool = new HandTool();
+        public PlayerCharacter PlayerCharacter { get { return (PlayerCharacter)DynamicEntity; } }
 
-        public ClientConnection Connection { get; private set; }
-
-        /// <summary>
-        /// Creates new instance of Server player entity that translates Entity Object Model events to player via network
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="entity"></param>
-        /// <param name="server"></param>
-        public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(entity)
+        public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(connection, entity, server)
         {
-            if (connection == null) 
-                throw new ArgumentNullException("connection");
-            if (entity == null) 
-                throw new ArgumentNullException("entity");
 
-            Connection = connection;
-            _server = server;
-
-            _handTool.EntityFactory = server.EntityFactory;
-        }
-
-        public override void AddArea(MapArea area)
-        {
-            area.EntityView += AreaEntityView;
-            area.EntityMoved += AreaEntityMoved;
-            area.EntityUse += AreaEntityUse;
-            area.BlocksChanged += AreaBlocksChanged;
-            area.EntityEquipment += AreaEntityEquipment;
-            area.StaticEntityAdded += AreaStaticEntityAdded;
-            area.StaticEntityRemoved += AreaStaticEntityRemoved;
-            area.EntityLockChanged += AreaEntityLockChanged;
-
-            foreach (var serverEntity in area.Enumerate())
-            {
-                if (serverEntity != this)
-                {
-                    //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.Send(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
-                }
-            }
-        }
-
-        public override void RemoveArea(MapArea area)
-        {
-            area.EntityView -= AreaEntityView;
-            area.EntityMoved -= AreaEntityMoved;
-            area.EntityUse -= AreaEntityUse;
-            area.BlocksChanged -= AreaBlocksChanged;
-            area.EntityEquipment -= AreaEntityEquipment;
-            area.StaticEntityAdded -= AreaStaticEntityAdded;
-            area.StaticEntityRemoved -= AreaStaticEntityRemoved;
-            area.EntityLockChanged -= AreaEntityLockChanged;
-
-            foreach (var serverEntity in area.Enumerate())
-            {
-                if (serverEntity != DynamicEntity)
-                {
-                    //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.Send(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = serverEntity.DynamicEntity.GetLink() });
-                }
-            }
-        }
-
-        void AreaEntityLockChanged(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<EntityLockMessage> e)
-        {
-            Connection.Send(e.Message);
-        }
-        
-        void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
-        {
-            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = e.Entity.Type, Link = e.Entity.GetLink() });
-        }
-
-        void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
-        {
-            Connection.Send(new EntityInMessage { Entity = e.Entity, SourceEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
-        }
-
-        void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                Connection.Send(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.EquippedItem.Item) } });
-            }
-        }
-
-        protected override void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.Send(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = e.Entity.DynamicEntity.GetLink() });
-            }
-        }
-
-        protected override void AreaEntityInViewRange(object sender, ServerDynamicEntityEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.Send(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
-            }
-        }
-
-        public override void Update(DynamicUpdateState gameTime)
-        {
-            // no need to update something on real player
-        }
-
-        void AreaEntityUse(object sender, EntityUseEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                Connection.Send(new EntityUseMessage (e));
-            }
-        }
-
-        void AreaEntityMoved(object sender, EntityMoveEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                Connection.Send(new EntityPositionMessage { EntityId = e.Entity.DynamicId, Position = e.Entity.Position });
-            }
-        }
-
-        void AreaEntityView(object sender, EntityViewEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                Connection.Send(new EntityHeadDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.HeadRotation });
-            }
-        }
-
-        void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
-        {
-            Connection.Send(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations, Tags = e.Tags });
         }
 
         public override void Use(EntityUseMessage entityUseMessage)
         {
-            // update entity state
             base.Use(entityUseMessage);
-            
+
             var playerCharacter = (PlayerCharacter)DynamicEntity;
 
             if (entityUseMessage.UseType == UseType.Craft)
@@ -193,36 +58,35 @@ namespace Utopia.Server.Structs
                         var toolImpact = tool.Use(playerCharacter);
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
-                            {
-                                Token = entityUseMessage.Token,
-                                EntityImpactBytes = toolImpact.Serialize()
-                            });
+                                            {
+                                                Token = entityUseMessage.Token,
+                                                EntityImpactBytes = toolImpact.Serialize()
+                                            });
                     }
                     if (entityUseMessage.UseType == UseType.Put)
                     {
                         var toolImpact = item.Put(playerCharacter);
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
-                            {
-                                Token = entityUseMessage.Token,
-                                EntityImpactBytes = toolImpact.Serialize()
-                            });
+                                            {
+                                                Token = entityUseMessage.Token,
+                                                EntityImpactBytes = toolImpact.Serialize()
+                                            });
                     }
                 }
                 else
                 {
                     Connection.Send(new ChatMessage
-                        {
-                            DisplayName = "toolsystem",
-                            Message = "Invalid toolid provided. Can not use the tool"
-                        });
+                                        {
+                                            DisplayName = "toolsystem",
+                                            Message = "Invalid toolid provided. Can not use the tool"
+                                        });
                 }
             }
             else
             {
-
-                var link = entityUseMessage.PickedEntityLink;
-                var entity = link.ResolveStatic(_server.LandscapeManager); 
+                var link = entityUseMessage.State.PickedEntityLink;
+                var entity = link.ResolveStatic(_server.LandscapeManager);
 
                 if (entity is IUsableEntity)
                 {
@@ -231,27 +95,20 @@ namespace Utopia.Server.Structs
                 }
                 else
                 {
-                    var toolImpact = _handTool.Use(playerCharacter);
+                    var toolImpact = playerCharacter.HandTool.Use(playerCharacter);
                     // returning tool feedback
                     Connection.Send(new UseFeedbackMessage
-                    {
-                        Token = entityUseMessage.Token,
-                        EntityImpactBytes = toolImpact.Serialize()
-                    });
+                                        {
+                                            Token = entityUseMessage.Token,
+                                            EntityImpactBytes = toolImpact.Serialize()
+                                        });
                 }
             }
         }
-
-        public override void Equip(EntityEquipmentMessage entityEquipmentMessage)
-        {
-
-        }
-
-        private ContainedSlot _itemTaken;
-
+        
         private bool TakeItem(ItemTransferMessage itemTransferMessage)
         {
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
+            var playerCharacter = PlayerCharacter;
 
             #region Take from world
             if (itemTransferMessage.SourceContainerEntityLink.IsEmpty && itemTransferMessage.DestinationContainerEntityLink.IsPointsTo(playerCharacter))
@@ -270,7 +127,7 @@ namespace Utopia.Server.Structs
                 }
             }
             #endregion
-            
+
             // detect the container
             SlotContainer<ContainedSlot> container = null;
 
@@ -278,7 +135,7 @@ namespace Utopia.Server.Structs
             var srcLink = itemTransferMessage.SourceContainerEntityLink;
 
             container = FindContainer(srcLink, position, out position);
-            
+
             if (container == null)
                 return false;
 
@@ -299,7 +156,7 @@ namespace Utopia.Server.Structs
         {
             if (_itemTaken != null)
             {
-                var playerCharacter = (PlayerCharacter)DynamicEntity;
+                var playerCharacter = PlayerCharacter;
                 var position = itm.SourceContainerSlot;
                 SlotContainer<ContainedSlot> container = null;
                 if (itm.SourceContainerEntityLink.IsPointsTo(playerCharacter))
@@ -324,7 +181,7 @@ namespace Utopia.Server.Structs
 
         private bool PutItem(ItemTransferMessage itemTransferMessage)
         {
-            var playerCharacter = (PlayerCharacter)DynamicEntity;
+            var playerCharacter = PlayerCharacter;
 
             #region Throw to world
             if (itemTransferMessage.SourceContainerEntityLink.IsPointsTo(playerCharacter) && itemTransferMessage.DestinationContainerEntityLink.IsEmpty)
@@ -333,7 +190,7 @@ namespace Utopia.Server.Structs
                 {
                     // check if entity have this item
                     var chunk = _server.LandscapeManager.GetChunk(playerCharacter.Position);
-                    
+
                     // check if we have correct entityId
                     if (_itemTaken.Item.StaticId == itemTransferMessage.ItemEntityId)
                     {
@@ -378,7 +235,7 @@ namespace Utopia.Server.Structs
         /// <returns></returns>
         public SlotContainer<ContainedSlot> FindContainer(EntityLink link, Vector2I position, out Vector2I newPosition)
         {
-            var playerCharacter = (PlayerCharacter) DynamicEntity;
+            var playerCharacter = PlayerCharacter;
 
             newPosition = position;
 
@@ -390,7 +247,7 @@ namespace Utopia.Server.Structs
                     return playerCharacter.Equipment;
                 }
                 return playerCharacter.Inventory;
-            } 
+            }
             if (link.IsStatic)
             {
                 var entity = link.ResolveStatic(_server.LandscapeManager);
@@ -398,7 +255,6 @@ namespace Utopia.Server.Structs
             }
             return null;
         }
-
 
         public override void ItemTransfer(ItemTransferMessage itm)
         {
@@ -429,12 +285,12 @@ namespace Utopia.Server.Structs
                     return;
                 }
 
-                if(!srcContainer.TakeItem(srcSlot.GridPosition, srcSlot.ItemsCount))
+                if (!srcContainer.TakeItem(srcSlot.GridPosition, srcSlot.ItemsCount))
                 {
                     ItemError();
                     return;
                 }
-                if(!dstContainer.TakeItem(dstSlot.GridPosition, dstSlot.ItemsCount))
+                if (!dstContainer.TakeItem(dstSlot.GridPosition, dstSlot.ItemsCount))
                 {
                     ItemError();
                     return;
@@ -454,11 +310,11 @@ namespace Utopia.Server.Structs
                 return;
             }
             #endregion
-            
+
             if (itm.SourceContainerSlot.X == -2)
             {
                 // set toolbar slot
-                var playerCharacter = (PlayerCharacter)DynamicEntity;
+                var playerCharacter = PlayerCharacter;
 
                 var item = playerCharacter.FindItemById(itm.ItemEntityId);
 

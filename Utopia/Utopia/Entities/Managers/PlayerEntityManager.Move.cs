@@ -18,22 +18,15 @@ namespace Utopia.Entities.Managers
 {
     public partial class PlayerEntityManager
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
         public double YForceApplying { get; set; }
         public Vector2I ChunkPosition { get; set; }
-        #endregion
-
-        #region Public Methods
-        #endregion
 
         #region Private Methods
         private void UpdateEntityMovementAndRotation(ref GameTime timeSpent)
         {
             switch (Player.DisplacementMode)
             {
+                case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     _gravityInfluence = 3;  // We will move 6 times faster if flying
                     break;
@@ -113,6 +106,7 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Swiming:
                     SwimmingFreeFirstPersonMove(ref timeSpent);
                     break;
+                case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     FreeFirstPersonMove();
                     break;
@@ -153,7 +147,6 @@ namespace Utopia.Entities.Managers
             {
                 _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
             }
-            _physicSimu.PrevPosition = _physicSimu.CurPosition;
             _physicSimu.CurPosition = _worldPosition;
         }
 
@@ -163,10 +156,10 @@ namespace Utopia.Entities.Managers
 
             float jumpPower;
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_Forward) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_Backward) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_StrafeLeft) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMove_StrafeRight))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveForward) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveBackward) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeLeft) ||
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeRight))
             {
                 _stopMovedAction = true;
             }
@@ -177,12 +170,12 @@ namespace Utopia.Entities.Managers
                 if (!_physicSimu.OnGround) _moveDelta /= 2f;
 
                 //Do a small "Jump" if hitted a offset wall
-                if (OffsetBlockHitted > 0 && _physicSimu.OnGround)
+                if (_physicSimu.OffsetBlockHitted > 0 && _physicSimu.OnGround)
                 {
                     //Force of 8 for 0.5 offset
                     //Force of 2 for 0.1 offset
-                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, OffsetBlockHitted), 0) });
-                    OffsetBlockHitted = 0;
+                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, _physicSimu.OffsetBlockHitted), 0) });
+                    _physicSimu.OffsetBlockHitted = 0;
                 }
 
                 if (YForceApplying > 0)
@@ -247,7 +240,7 @@ namespace Utopia.Entities.Managers
         private void CheckForEventRaising()
         {
             //Landing on ground after falling event
-            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying)
+            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying || Player.DisplacementMode == EntityDisplacementModes.God)
             {
                 //New "trigger"
                 if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;

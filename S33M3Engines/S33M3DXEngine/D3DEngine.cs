@@ -85,7 +85,7 @@ namespace S33M3DXEngine
 
         public bool HasFocus;
 
-        public bool isFullScreen
+        public bool IsFullScreen
         {
             get
             {
@@ -163,7 +163,7 @@ namespace S33M3DXEngine
 
         public DeviceContext CreateDeviceContext()
         {
-            DeviceContext dc = new DeviceContext(this.Device);
+            DeviceContext dc = new DeviceContext(Device);
             _registeredDC.Add(dc);
             return dc;
         }
@@ -172,9 +172,9 @@ namespace S33M3DXEngine
         public void ShuttingDownProcess()
         {
             //Check for fullscreen state
-            if (isFullScreen)
+            if (IsFullScreen)
             {
-                isFullScreen = false;
+                IsFullScreen = false;
                 return;
             }
 
@@ -391,7 +391,7 @@ namespace S33M3DXEngine
             }
             else
             {
-                if (RenderResolution == default(Size) || isFullScreen)
+                if (RenderResolution == default(Size) || IsFullScreen)
                 {
                     _swapChain.ResizeBuffers(1, _renderForm.ClientSize.Width, _renderForm.ClientSize.Height, Format.R8G8B8A8_UNorm, (int)SwapChainFlags.None);
                 }

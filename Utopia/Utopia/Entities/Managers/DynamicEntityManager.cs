@@ -21,7 +21,9 @@ using SharpDX.Direct3D11;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World;
+using Utopia.Worlds.Chunks;
 using Utopia.Worlds.SkyDomes;
 using S33M3CoreComponents.Maths;
 using Utopia.Shared.Entities.Concrete;
@@ -74,6 +76,7 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _chunkContainer;
+        private readonly IWorldChunks _worldChunks;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
 
@@ -120,7 +123,7 @@ namespace Utopia.Entities.Managers
 
         #region DI
         [Inject]
-        public PlayerEntityManager PlayerEntityManager
+        public IPlayerManager PlayerEntityManager
         {
             get { return _playerEntityManager; }
             set { _playerEntityManager = value; }
@@ -147,12 +150,16 @@ namespace Utopia.Entities.Managers
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
-                                    SingleArrayChunkContainer chunkContainer)
+                                    SingleArrayChunkContainer chunkContainer,
+                                    IWorldChunks worldChunks)
         {
+            if (worldChunks == null) throw new ArgumentNullException("worldChunks");
+
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
             _chunkContainer = chunkContainer;
+            _worldChunks = worldChunks;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
 
@@ -199,7 +206,7 @@ namespace Utopia.Entities.Managers
         private VertexBuffer<VertexMesh> _cubeVb;
         private IndexBuffer<ushort> _cubeIb;
         private Dictionary<int, int> _materialChangeMapping;
-        private PlayerEntityManager _playerEntityManager;
+        private IPlayerManager _playerEntityManager;
         private ISkyDome _skyDome;
         private SharedFrameCB _sharedFrameCB;
 
@@ -275,6 +282,14 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        private bool IsEntityVisible(Vector3D pos)
+        {
+            if (_worldChunks.SliceValue == -1)
+                return true;
+
+            return pos.Y < _worldChunks.SliceValue + 1 && pos.Y > _worldChunks.SliceValue - 7;
+        }
+
         public override void Draw(DeviceContext context, int index)
         {
             if (index == VOXEL_DRAW)
@@ -336,6 +351,10 @@ namespace Utopia.Entities.Managers
                     {
                         modelInstance.World = Matrix.Zero;
                     }
+
+                    if (!IsEntityVisible(entityToRender.DynamicEntity.Position))
+                        modelInstance.World = Matrix.Zero;
+                    
                 }
 
                 if (modelAndInstances.Value.VisualModel != null && modelAndInstances.Value.Instances != null)
@@ -497,6 +516,8 @@ namespace Utopia.Entities.Managers
 
         public void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation)
         {
+            Trace.Assert(entity.DynamicId != 0);
+
             //Do we already have this entity ??
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
             {
@@ -596,19 +617,31 @@ namespace Utopia.Entities.Managers
             return null;
         }
 
+        /// <summary>
+        /// Returns entity by a link or null
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
+        public IDynamicEntity FindEntity(EntityLink link)
+        {
+            if (!link.IsDynamic)
+                throw new ArgumentException("The link is not pointing to a dynamic entity");
+
+            return GetEntityById(link.DynamicEntityId);
+        }
 
         #region Events handling
         private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
         {
-            if (e.Camera.CameraType == CameraType.FirstPerson)
-            {
-                PlayerEntity = null;
-            }
-            else
-            {
-                PlayerEntity = null;
-                PlayerEntity = _playerEntityManager.Player;
-            }
+            //if (e.Camera.CameraType == CameraType.FirstPerson)
+            //{
+            //    PlayerEntity = null;
+            //}
+            //else
+            //{
+            //    PlayerEntity = null;
+            //    PlayerEntity = _playerEntityManager.Player;
+            //}
         }
 
         private void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)

@@ -15,6 +15,7 @@ using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
+using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
@@ -325,7 +326,24 @@ namespace Utopia.Server.Managers
             }
             return chunk;
         }
-        
+
+        public override TerraCube GetCubeAt(Vector3I vector3I)
+        {
+            Vector3I internalPos;
+            Vector2I chunkPos;
+
+            BlockHelper.GlobalToLocalAndChunkPos(vector3I, out internalPos, out chunkPos);
+
+            var chunk = GetChunk(chunkPos);
+
+            return new TerraCube(chunk.BlockData[internalPos]);
+        }
+
+        public override ILandscapeCursor GetCursor(Vector3I blockPosition)
+        {
+            return new LandscapeCursor(this, blockPosition, _wp);
+        }
+
         public void CleanUp(int chunkAgeMinutes)
         {
             var chunksToRemove = new List<ServerChunk>();
@@ -380,24 +398,6 @@ namespace Utopia.Server.Managers
                 ChunksSaved = positions.Length;
 
             }
-        }
-
-        /// <summary>
-        /// Provides chunk and internal chunk position of global Vector3
-        /// </summary>
-        /// <param name="position">Global position</param>
-        /// <param name="chunk">a chunk containing this position</param>
-        /// <param name="cubePosition">a cube position inside the chunk</param>
-        public void GetBlockAndChunk(Vector3D position, out ServerChunk chunk, out Vector3I cubePosition)
-        {
-            cubePosition.x = (int)Math.Floor(position.X);
-            cubePosition.y = (int)Math.Floor(position.Y);
-            cubePosition.z = (int)Math.Floor(position.Z);
-
-            chunk = GetChunk(new Vector2I(cubePosition.X / AbstractChunk.ChunkSize.X, cubePosition.Z / AbstractChunk.ChunkSize.Z));
-
-            cubePosition.X = cubePosition.X % AbstractChunk.ChunkSize.X;
-            cubePosition.Z = cubePosition.Z % AbstractChunk.ChunkSize.Z;
         }
 
         /// <summary>

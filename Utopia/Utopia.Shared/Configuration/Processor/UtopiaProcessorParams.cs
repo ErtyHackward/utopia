@@ -694,7 +694,7 @@ namespace Utopia.Shared.Configuration
             cactusFlower.MountPoint = BlockFace.Top;
             cactusFlower.RndRotationAroundY = true;
             cactusFlower.ModelName = "Flower4";
-            cactusFlower.isSystemEntity = true;      // Cannot de removed, mandatory Entity
+            cactusFlower.IsSystemEntity = true;      // Cannot de removed, mandatory Entity
             cactusFlower.MaxStackSize = 99;
             yield return cactusFlower;
         }

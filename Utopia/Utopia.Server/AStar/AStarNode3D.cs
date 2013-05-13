@@ -51,6 +51,20 @@ namespace Utopia.Server.AStar
             if (cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
                 return;
 
+            // diagonal move requires blocks to be empty
+            if (move.x != 0 && move.z != 0)
+            {
+                if (cursor.PeekProfile(new Vector3I(move.X, 0, 0)).IsSolidToEntity)
+                    return;
+                if (cursor.PeekProfile(new Vector3I(move.X, 1, 0)).IsSolidToEntity)
+                    return;
+                if (cursor.PeekProfile(new Vector3I(0, 0, move.Z)).IsSolidToEntity)
+                    return;
+                if (cursor.PeekProfile(new Vector3I(0, 1, move.Z)).IsSolidToEntity)
+                    return;
+            }
+
+
             if (!cursor.PeekProfile().IsSolidToEntity)
             {
                 // simple move?

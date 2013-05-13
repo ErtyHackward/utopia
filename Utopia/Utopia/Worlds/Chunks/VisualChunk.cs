@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ninject;
-using S33M3CoreComponents.Sound;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
 using SharpDX;
@@ -12,7 +9,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Shared.World;
 using Utopia.Resources.ModelComp;
-using Utopia.Entities.Managers.Interfaces;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Threading;
 using S33M3DXEngine;
@@ -41,6 +37,8 @@ namespace Utopia.Worlds.Chunks
     public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IChunkLayout2D, IDisposable
     {
         #region Private variables
+        private readonly object _syncRoot = new object();
+
         private VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _singleArrayContainer;
         private WorldFocusManager _worldFocusManager;
@@ -51,7 +49,6 @@ namespace Utopia.Worlds.Chunks
         private CameraManager<ICameraFocused> _cameraManager;
         private WorldChunks _worldChunkManager;
         
-        private IEntityPickingManager _entityPickingManager;
         private VoxelModelManager _voxelModelManager;
 
         private IChunkEntityImpactManager _chunkEntityImpactManager;
@@ -84,17 +81,6 @@ namespace Utopia.Worlds.Chunks
         public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
 
         public ChunkState State;
-        //public ChunkState State
-        //{
-        //    get { return _s; }
-        //    set
-        //    {
-        //        _s = value;
-        //    }
-        //}
-
-        //public ChunkState State { get; set; }                 // Chunk State
-        
         
         public bool IsOutsideLightSourcePropagated { get; set; }
         public ThreadsManager.ThreadStatus ThreadStatus { get; set; }        // Thread status of the chunk, used for sync.
@@ -153,7 +139,10 @@ namespace Utopia.Worlds.Chunks
             get { return _serverRequestTime; }
         }
 
-        public Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
+        /// <summary>
+        /// Dictionary by the model name of the entity
+        /// </summary>
+        private Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
 
         public List<EntityMetaData> EmitterStaticEntities;
         public List<IItem> SoundStaticEntities;
@@ -186,9 +175,16 @@ namespace Utopia.Worlds.Chunks
                 throw new NotImplementedException();
             }
         }
+        
+        /// <summary>
+        /// Desired slice of the mesh
+        /// </summary>
+        public int SliceValue { get; set; }
 
-        [Inject]
-        public ISoundEngine SoundEngine { get; set; }
+        /// <summary>
+        /// Actual slice value of the chunk mesh
+        /// </summary>
+        public int SliceOfMesh { get; set; }
 
         //Use to display bounding box around chunk in debug mode only (Quite slow and not optimized)
 #if DEBUG
@@ -224,7 +220,6 @@ namespace Utopia.Worlds.Chunks
                             VisualWorldParameters visualWorldParameter, 
                             ref Range3I cubeRange, 
                             SingleArrayChunkContainer singleArrayContainer,
-                            IEntityPickingManager entityPickingManager,
                             CameraManager<ICameraFocused> cameraManager,
                             WorldChunks worldChunkManager,
                             VoxelModelManager voxelModelManager,
@@ -233,6 +228,8 @@ namespace Utopia.Worlds.Chunks
         {
             ((SingleArrayDataProvider)base.BlockData).DataProviderUser = this; //Didn't find a way to pass it inside the constructor
 
+
+            SliceValue = -1;
             _d3dEngine = d3dEngine;
             _worldChunkManager = worldChunkManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
@@ -249,10 +246,8 @@ namespace Utopia.Worlds.Chunks
             EmitterStaticEntities = new List<EntityMetaData>();
             SoundStaticEntities = new List<IItem>();
             CubeRange = cubeRange;
-            _entityPickingManager = entityPickingManager;
             State = ChunkState.Empty;
             isExistingMesh4Drawing = false;
-            Entities.CollectionDirty += Entities_CollectionDirty;
             Entities.EntityAdded += Entities_EntityAdded;
             Entities.EntityRemoved += Entities_EntityRemoved;
             Entities.CollectionCleared += Entities_CollectionCleared;
@@ -316,6 +311,7 @@ namespace Utopia.Worlds.Chunks
             //SendStaticEntitiesToGraphicalCard();    //Static Entities Sprite + Voxel
             State = ChunkState.DisplayInSyncWithMeshes;
             isExistingMesh4Drawing = true;
+            SliceOfMesh = SliceValue;
         }
 
         //Solid Cube
@@ -400,11 +396,6 @@ namespace Utopia.Worlds.Chunks
             ChunkBoundingBoxDisplay.Draw(context, _cameraManager.ActiveCamera);
         }
 #endif
-
-        private void Entities_CollectionDirty(object sender, EventArgs e)
-        {
-            _entityPickingManager.isDirty = true; //Tell the Picking manager that it must force the picking entity list !
-        }
 
         void Entities_CollectionCleared(object sender, EventArgs e)
         {
@@ -508,14 +499,17 @@ namespace Utopia.Worlds.Chunks
                     voxelEntity.ModelInstance.Play("Idle", true);
                 }
 
-                List<VisualVoxelEntity> list;
-                if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
+                lock (_syncRoot)
                 {
-                    list.Add(visualVoxelEntity);
-                }
-                else
-                {
-                    VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                    List<VisualVoxelEntity> list;
+                    if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
+                    {
+                        list.Add(visualVoxelEntity);
+                    }
+                    else
+                    {
+                        VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                    }
                 }
 
                 ILightEmitterEntity lightEntity = e.Entity as ILightEmitterEntity;
@@ -530,6 +524,7 @@ namespace Utopia.Worlds.Chunks
                 }
             }
         }
+
         private void RemoveVoxelEntity(EntityCollectionEventArgs e)
         {
             //Remove the entity from Visual Model
@@ -577,6 +572,52 @@ namespace Utopia.Worlds.Chunks
         {
             if (e.Entity.Particules == null) return;
             EmitterStaticEntities.RemoveAll(x => x.Entity == e.Entity);
+        }
+
+        /// <summary>
+        /// Allows to enumerate entities in threadsafe way
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<VisualVoxelEntity> AllEntities()
+        {
+            lock (_syncRoot)
+            {
+                foreach (var pair in VisualVoxelEntities)
+                {
+                    foreach (var entity in pair.Value)
+                    {
+                        yield return entity;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allows to enumerate a group of entity with the given model name in a threadsafe way
+        /// </summary>
+        /// <param name="modelName"></param>
+        /// <returns></returns>
+        public IEnumerable<VisualVoxelEntity> AllEntities(string modelName)
+        {
+            lock (_syncRoot)
+            {
+                foreach (var entity in VisualVoxelEntities[modelName])
+                {
+                    yield return entity;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Allows to enumerate entities grouped by model in a threadsafe way
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, List<VisualVoxelEntity>>> AllPairs()
+        {
+            lock (_syncRoot)
+            {
+                return VisualVoxelEntities;
+            }
         }
 
         #endregion
@@ -630,23 +671,12 @@ namespace Utopia.Worlds.Chunks
             RefreshWorldMatrix();
 
             SoundStaticEntities.Clear();
-            VisualVoxelEntities.Clear();
+            lock (_syncRoot)
+                VisualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
         }
 
         #endregion
-
-        protected override void BlockBufferChanged(object sender, ChunkDataProviderBufferChangedEventArgs e)
-        {
-            //State = ChunkState.LandscapeCreated; Don't raise it here !
-            base.BlockBufferChanged(sender, e);
-        }
-
-        protected override void BlockDataChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
-        {
-            //State = ChunkState.LandscapeCreated;
-            base.BlockDataChanged(sender, e);
-        }
 
         public void Dispose()
         {
@@ -654,7 +684,6 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
-            Entities.CollectionDirty -= Entities_CollectionDirty;
             Entities.EntityAdded -= Entities_EntityAdded;
             Entities.EntityRemoved -= Entities_EntityRemoved;
 #if DEBUG
