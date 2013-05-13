@@ -35,7 +35,7 @@ namespace Utopia.Shared.Entities.Events
         /// <returns></returns>
         public static EntityUseEventArgs FromState(IDynamicEntity owner)
         {
-            var state = owner.EntityState;
+            var state = owner.EntityState.Clone();
 
             var e = new EntityUseEventArgs
                         {

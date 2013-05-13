@@ -13,6 +13,7 @@ namespace Utopia.Server.Structs
     /// </summary>
     public abstract class ServerDynamicEntity
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public event EventHandler<ServerDynamicEntityMoveEventArgs> PositionChanged;
 
@@ -146,6 +147,8 @@ namespace Utopia.Server.Structs
         {
             // update entity state
             DynamicEntity.EntityState = entityUseMessage.State;
+
+            logger.Warn("SRV use EP:" + DynamicEntity.EntityState.IsEntityPicked + " BP:" + DynamicEntity.EntityState.IsBlockPicked);
         }
 
         /// <summary>

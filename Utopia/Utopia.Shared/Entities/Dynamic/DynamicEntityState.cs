@@ -77,6 +77,11 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(11)]
         public MouseButton MouseButton;
+
+        public DynamicEntityState Clone()
+        {
+            return (DynamicEntityState)this.MemberwiseClone();
+        }
     }
 
 }
