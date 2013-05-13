@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using Utopia.Server.Commands;
-using Utopia.Server.Entities;
 using Utopia.Server.Events;
-using Utopia.Server.Services;
-using Utopia.Shared.Chunks;
+using Utopia.Server.Structs;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Concrete;
 using S33M3Resources.Structs;
 
-namespace Utopia.Server.Sample
+namespace Utopia.Server.Services
 {
     /// <summary>
     /// Provides sample service to performs test
     /// </summary>
-    public class TestNpcService : Service
+    public class NpcService : Service
     {
         private Server _server;
-        //private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
-        private string[] _names = new[] { "Katia", "Sveta", "Lena", "Dasha" };
+        private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
+        //private string[] _names = new[] { "Katia", "Sveta", "Lena", "Dasha" };
 
-        private List<TestNpc> _aliveNpc = new List<TestNpc>();
+        private List<Npc> _aliveNpc = new List<Npc>();
 
         public override string ServiceName
         {
@@ -33,15 +31,14 @@ namespace Utopia.Server.Sample
         /// <param name="name"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public TestNpc CreateNpc(string name, Vector3D position)
+        public Npc CreateNpc(string name, Vector3D position)
         {
-            var z = new Zombie { CharacterName = name };
+            var z = new Dwarf { CharacterName = name };
 
-            var zombie = new TestNpc(_server, z);
+            z.Position = position;
+
+            var zombie = new Npc(_server, z);
             
-            zombie.DynamicEntity.Position = position;
-            zombie.DynamicEntity.DefaultSize = new SharpDX.Vector3(1f, 1f, 1f);
-
             _aliveNpc.Add(zombie);
             _server.AreaManager.AddEntity(zombie);
             return zombie;
@@ -57,10 +54,10 @@ namespace Utopia.Server.Sample
 
             _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
             var r = new Random();
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 2; i++)
             {
-                
-                var z = CreateNpc(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
+
+                var z = CreateNpc(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + 2 * i, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
                 //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
             }

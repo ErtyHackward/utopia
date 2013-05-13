@@ -17,13 +17,13 @@ namespace Utopia.Entities.Managers
         {
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
             {
-                if (Player.DisplacementMode == EntityDisplacementModes.Flying)
+                if (Player.DisplacementMode == EntityDisplacementModes.God)
                 {
                     DisplacementMode = EntityDisplacementModes.Walking;
                 }
                 else
                 {
-                    DisplacementMode = EntityDisplacementModes.Flying;
+                    DisplacementMode = EntityDisplacementModes.God;
                 }
             }
 
@@ -33,31 +33,31 @@ namespace Utopia.Entities.Managers
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.DropMode, CatchExclusiveAction))
             {
                 // switch the drop mode if possible
-                var tool = Player.Equipment.RightTool;
+                var tool = PlayerCharacter.Equipment.RightTool;
                 if (tool != null && tool is ITool)
                 {
                     PutMode = !PutMode;
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Use_Left, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, CatchExclusiveAction))
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
 
-                    var item = Player.Equipment.RightTool;
+                    var item = PlayerCharacter.Equipment.RightTool;
 
                     if (item == null)
-                        item = _handTool;
+                        item = PlayerCharacter.HandTool;
 
                     if (_putMode || !(item is ITool))
                     {
                         // can't put the hand!
-                        if (item == _handTool)
+                        if (item == PlayerCharacter.HandTool)
                             return;
 
                         // send put message to the server
-                        Player.PutUse();
+                        PlayerCharacter.PutUse();
 
                         // client sync
                         item.Put(Player);
@@ -67,7 +67,7 @@ namespace Utopia.Entities.Managers
                         var tool = (ITool)item;
 
                         //sends the client server event that does tool.use on server
-                        Player.ToolUse();
+                        PlayerCharacter.ToolUse();
 
                         //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
                         tool.Use(Player);
@@ -125,14 +125,12 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-
-                        
                         if (!link.IsDynamic)
                         {
                             if (entity is IUsableEntity)
                             {
                                 // send use message to the server
-                                Player.EntityUse();
+                                PlayerCharacter.EntityUse();
 
                                 var usableEntity = entity as IUsableEntity;
                                 usableEntity.Use();
@@ -141,10 +139,10 @@ namespace Utopia.Entities.Managers
                             {
                                 // hand use
                                 //sends the client server event that does tool.use on server
-                                Player.ToolUse(true);
+                                PlayerCharacter.ToolUse(true);
 
                                 //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
-                                _handTool.Use(Player);
+                                PlayerCharacter.HandTool.Use(Player);
                             }
                         }
                     }

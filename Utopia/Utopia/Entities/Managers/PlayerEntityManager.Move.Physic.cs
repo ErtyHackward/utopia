@@ -12,15 +12,6 @@ namespace Utopia.Entities.Managers
 {
     public partial class PlayerEntityManager
     {
-        #region Private Variables
-        #endregion
-
-        #region Public Properties
-        #endregion
-
-        #region Public Methods
-        #endregion
-
         #region Private Methods
         private void PhysicOnEntity(EntityDisplacementModes mode, ref GameTime timeSpent)
         {
@@ -31,11 +22,12 @@ namespace Utopia.Entities.Managers
 
             switch (mode)
             {
+                case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     _physicSimu.Friction = 0f;
-#if !DEBUG
-                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
-#endif
+//#if !DEBUG
+//                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
+//#endif
                     break;
                 case EntityDisplacementModes.Swiming:
                     _physicSimu.Friction = 0.3f;
@@ -81,10 +73,10 @@ namespace Utopia.Entities.Managers
             //Half cube below me ??
             _groundCubeProgile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id];
             BlockOffset = _groundCubeProgile.YBlockOffset;
-            _groundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
-            PlayerOnOffsettedBlock = (float)BlockOffset;//BlockOffset != 0;
+            _physicSimu.GroundBelowEntity = _groundCube.Position.Y + (1 - BlockOffset);
+            _physicSimu.OnOffsettedBlock = (float)BlockOffset;
 
-            _physicSimu.Simulate(ref timeSpent, out newWorldPosition);
+            _physicSimu.Simulate(timeSpent.ElapsedGameTimeInS_LD, out newWorldPosition);
             _worldPosition = newWorldPosition;
         }
         #endregion

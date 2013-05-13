@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using Ninject;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
@@ -75,6 +76,15 @@ namespace Realms.Client
             // Application LifeTime Binding configuration = Singleton Scope ================================================================================================
             // =============================================================================================================================================================
             _d3dEngine = new D3DEngine(windowStartingSize, WindowsCaption, ClientSettings.Current.Settings.GraphicalParameters.MSAA.SampleDescription, resolutionSize);
+
+            _d3dEngine.IsFullScreen = ClientSettings.Current.Settings.GraphicalParameters.Fullscreen;
+
+            if (!ClientSettings.Current.Settings.GraphicalParameters.WindowPos.IsEmpty)
+            {
+                _d3dEngine.GameWindow.StartPosition = FormStartPosition.Manual;
+                _d3dEngine.GameWindow.Location = ClientSettings.Current.Settings.GraphicalParameters.WindowPos;
+            }
+
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
             _iocContainer.Bind<GameStatesManager>().ToSelf().InSingletonScope().WithConstructorArgument("allocatedThreadPool", 3); //Application shared states
             _iocContainer.Bind<SpriteRenderer>().ToSelf().InSingletonScope();
@@ -169,6 +179,7 @@ namespace Realms.Client
             _iocContainer.Bind<ICamera>().ToMethod(x => x.Kernel.Get<ICameraFocused>()).InScope(x => GameScope.CurrentGameScope);
 
             _iocContainer.Bind<CameraManager<ICameraFocused>>().ToSelf().InScope(x => GameScope.CurrentGameScope);//Camera manager
+            _iocContainer.Bind<ICameraManager>().ToMethod(x => x.Kernel.Get<CameraManager<ICameraFocused>>()).InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
             _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer").WithConstructorArgument("Name", "SkyBuffer");
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
@@ -197,7 +208,7 @@ namespace Realms.Client
             _iocContainer.Bind<CraftingWindow>().To<CraftingInventory>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryEventComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<Hud>().To<RealmsHud>().InScope(x => GameScope.CurrentGameScope);
+            //_iocContainer.Bind<Hud>().To<RealmsHud>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);
@@ -220,10 +231,13 @@ namespace Realms.Client
 
             //Entities related stuff ====================================================
             _iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InScope(x => GameScope.CurrentGameScope);         // Use to display the picking cursor on block
-            _iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
+            _iocContainer.Bind<SelectedBlocksRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            //_iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
             _iocContainer.Bind<IVisualDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
-            _iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
+            //_iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
+            _iocContainer.Bind<IPlayerManager>().To<GodEntityManager>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<PickingManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
             _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode

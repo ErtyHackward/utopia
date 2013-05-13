@@ -133,9 +133,12 @@
     <Compile Include="Entities\BlockItem.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
     <Compile Include="Entities\Concrete\Food.cs" />
+    <Compile Include="Entities\Concrete\GodHandTool.cs" />
     <Compile Include="Entities\Concrete\HandTool.cs" />
     <Compile Include="Entities\Concrete\ItemOrientation.cs" />
     <Compile Include="Entities\Concrete\Stuff.cs" />
+    <Compile Include="Entities\Dynamic\GodEntity.cs" />
+    <Compile Include="Entities\Dynamic\INpc.cs" />
     <Compile Include="Entities\EntityParticule.cs" />
     <Compile Include="Entities\Events\UseType.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
@@ -160,7 +163,7 @@
     <Compile Include="Entities\Inventory\BlueprintSlot.cs" />
     <Compile Include="Entities\Models\ColorMapping.cs" />
     <Compile Include="Entities\Concrete\CubeResource.cs" />
-    <Compile Include="Entities\Concrete\Zombie.cs" />
+    <Compile Include="Entities\Concrete\Dwarf.cs" />
     <Compile Include="Entities\BlockLinkedItem.cs" />
     <Compile Include="Entities\Dynamic\CharacterEntity.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntity.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using S33M3CoreComponents.Sound;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
@@ -34,6 +35,7 @@ using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Ninject;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.LandscapeEntities;
+using S33M3CoreComponents.Inputs;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -80,18 +82,18 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private ServerComponent _server;
-        private PlayerEntityManager _playerManager;
+        private IPlayerManager _playerManager;
         private IChunkStorageManager _chunkstorage;
         private ISkyDome _skydome;
         private IWeather _weather;
         private SharedFrameCB _sharedFrameCB;
-        private IEntityPickingManager _pickingManager;
         private int _readyToDrawCount;
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
         private VoxelModelManager _voxelModelManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private UtopiaProcessorParams _utopiaProcessorParam;
+        private InputsManager _inputsManager;
         /// <summary>
         /// List of chunks that still _slowly_ appearing
         /// </summary>
@@ -120,6 +122,18 @@ namespace Utopia.Worlds.Chunks
             get { return _landscapeManager; }
         }
 
+        public bool IsInitialLoadCompleted { get; set; }
+
+        /// <summary>
+        /// Gets or sets amount of chunks to display in leveled mode
+        /// </summary>
+        public int SliceViewChunks { get; set; }
+
+        /// <summary>
+        /// Gets current slice value
+        /// </summary>
+        public int SliceValue { get { return _sliceValue; } }
+
         #endregion
 
         /// <summary>
@@ -138,10 +152,11 @@ namespace Utopia.Worlds.Chunks
         public event EventHandler LoadComplete;
         private void OnInitialLoadComplete()
         {
-            if (LoadComplete != null) LoadComplete(this, EventArgs.Empty);
-            _playerManager.LandscapeInitiazed = true;
+            if (LoadComplete != null) 
+                LoadComplete(this, EventArgs.Empty);
         }
-        public bool IsInitialLoadCompleted { get; set; }
+
+        
 
         [Inject]
         public ISoundEngine SoundEngine { get; set; }
@@ -159,14 +174,14 @@ namespace Utopia.Worlds.Chunks
                            ILightingManager lightingManager,
                            IChunkStorageManager chunkstorage,
                            ServerComponent server,
-                           PlayerEntityManager player,
+                           IPlayerManager player,
                            ISkyDome skydome,
-                           IEntityPickingManager pickingManager,
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
-                           IChunkEntityImpactManager chunkEntityImpactManager
+                           IChunkEntityImpactManager chunkEntityImpactManager,
+                           InputsManager inputsManager
             )
         {
             _server = server;
@@ -186,12 +201,14 @@ namespace Utopia.Worlds.Chunks
             _skydome = skydome;
             _weather = weather;
             _sharedFrameCB = sharedFrameCB;
-            _pickingManager = pickingManager;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
+            _inputsManager = inputsManager;
 
             _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
+
+            SliceViewChunks = 25;
 
             DrawStaticInstanced = true;
 
@@ -202,9 +219,7 @@ namespace Utopia.Worlds.Chunks
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
-            pickingManager.WorldChunks = this;
             lightingManager.WorldChunk = this;
-            _playerManager.WorldChunks = this;
             _chunkMeshManager.WorldChunks = this;
             landscapeManager.WorldChunks = this;
 
@@ -324,6 +339,15 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
+        /// Get a world's chunk from a chunk position
+        /// </summary>
+        /// <param name="chunkPos">chunk space coordinate</param>
+        public VisualChunk GetChunkFromChunkCoord(Vector2I chunkPos)
+        {
+            return GetChunkFromChunkCoord(chunkPos.X, chunkPos.Y);
+        }
+
+        /// <summary>
         /// Get a world's chunk from a chunk location in world coordinate
         /// </summary>
         /// <param name="X">Chunk X coordinate</param>
@@ -411,6 +435,16 @@ namespace Utopia.Worlds.Chunks
         }
 
         /// <summary>
+        /// Enumerates all visible chunks by player (i.e. not frustum culled)
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<VisualChunk> VisibleChunks()
+        {
+            return SortedChunks.Where(chunk => !chunk.isFrustumCulled);
+        }
+
+
+        /// <summary>
         /// indicate if the Chunk coordinate passed in is the border of the visible world
         /// </summary>
         /// <returns></returns>
@@ -426,158 +460,7 @@ namespace Utopia.Worlds.Chunks
             return false;
         }
 
-        bool _isOnGround;
-
-
-        /// <summary>
-        /// "Simple" collision detection check against landscape, send back the cube being collided
-        /// </summary>
-        /// <param name="newPosition2Evaluate"></param>
-        /// <param name="previousPosition"></param>
-        public byte isCollidingWithTerrain(ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate)
-        {
-            TerraCubeWithPosition _collidingCube;
-
-            BoundingBox boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), localEntityBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
-            if (_cubesHolder.IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
-            {
-                return _collidingCube.Cube.Id;
-            }
-
-            return WorldConfiguration.CubeId.Air;
-        }
-
-        /// <summary>
-        /// Validate player move against surrounding landscape, if move not possible, it will be "rollbacked"
-        /// It's used by the physic engine
-        /// </summary>
-        /// <param name="newPosition2Evaluate"></param>
-        /// <param name="previousPosition"></param>
-        public void isCollidingWithTerrain(VerletSimulator _physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
-        {
-            BoundingBox _boundingBox2Evaluate;
-            Vector3D newPositionWithColliding = previousPosition;
-            TerraCubeWithPosition _collidingCube;
-
-            //if (Vector3D.Distance(previousPosition, newPosition2Evaluate) < 0.01)
-            //{
-            //    if (_isOnGround) _physicSimu.OnGround = true;
-            //    return;
-            //}
-
-            //Create a Bounding box with my new suggested position, taking only the X that has been changed !
-            //X Testing =====================================================
-            newPositionWithColliding.X = newPosition2Evaluate.X;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new X position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-            {
-                //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
-
-                newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
-                {
-                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
-                    if (offsetValue <= 0.5)
-                    {
-                        _playerManager.OffsetBlockHitted = offsetValue;
-                    }
-                }
-            }
-
-            //Z Testing =========================================================
-            newPositionWithColliding.Z = newPosition2Evaluate.Z;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new Z position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-            {
-                //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
-
-                newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || _playerManager.PlayerOnOffsettedBlock > 0)
-                {
-                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
-                    if (_playerManager.PlayerOnOffsettedBlock > 0) offsetValue -= (1 - _playerManager.PlayerOnOffsettedBlock);
-                    if (offsetValue <= 0.5)
-                    {
-                        _playerManager.OffsetBlockHitted = offsetValue;
-                    }
-                }
-
-            }
-
-            //Y Testing ======================================================
-            newPositionWithColliding.Y = newPosition2Evaluate.Y;
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-
-            //If my new Y position, make me placed "inside" a block, then invalid the new position
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-            {
-                //If was Jummping "before" entering inside the cube
-                if (previousPosition.Y >= newPositionWithColliding.Y)
-                {
-                    //If the movement between 2 Y is too large, use the GroundBelowEntity value
-                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
-                    {
-                        previousPosition.Y = _playerManager.GroundBelowEntity;
-                    }
-                    else
-                    {
-                        //Raise Up until the Ground, next the previous position
-                        if (_collidingCube.BlockProfile.YBlockOffset > 0)
-                        {
-                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
-                        }
-                        else
-                        {
-                            previousPosition.Y = MathHelper.Floor(previousPosition.Y);
-                        }
-                    }
-
-                    _playerManager.OffsetBlockHitted = 0;
-                    _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
-                    _isOnGround = true;
-                }
-
-                //logger.Debug("ModelCollisionDetection Y detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Y, previousPosition.Y);
-
-                newPositionWithColliding.Y = previousPosition.Y;
-            }
-            else
-            {
-                //No collision with Y, is the block below me solid to entity ?
-                if (_isOnGround) //I was on ground previously, I'm still on ground ?
-                {
-                    _boundingBox2Evaluate.Minimum.Y -= 0.01f;
-                    if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-                    {
-                        _physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
-                        _isOnGround = true;
-                    }
-                    else
-                    {
-                        _isOnGround = false;
-                    }
-                }
-            }
-
-
-            //Check to see if new destination is not blocking me
-            _boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (_cubesHolder.IsSolidToPlayer(ref _boundingBox2Evaluate, true, out _collidingCube))
-            {
-                //logger.Debug("STUCK tested {0}, assigned {1}, last Good position tested : {2}", newPositionWithColliding, previousPosition, memo);
-                newPositionWithColliding = previousPosition;
-                newPositionWithColliding.Y += 0.1;
-            }
-
-            newPosition2Evaluate = newPositionWithColliding;
-        }
-
-
+        
         //Return true if the position is not solid to player
         public bool ValidatePosition(ref Vector3D newPosition2Evaluate)
         {
@@ -627,8 +510,7 @@ namespace Utopia.Worlds.Chunks
                     arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
                     //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _pickingManager, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
-                    chunk.SoundEngine = SoundEngine;
+                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.ChunkID);

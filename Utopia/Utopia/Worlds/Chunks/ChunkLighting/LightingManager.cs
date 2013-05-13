@@ -346,20 +346,17 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Propagate the light inside the chunk entities
         private void PropagateLightInsideStaticEntities(VisualChunk chunk)
         {
-            foreach (var pair in chunk.VisualVoxelEntities)
+            foreach (var voxelEntity in chunk.AllEntities())
             {
-                foreach (var voxelEntity in pair.Value)
+                if (voxelEntity.Entity is BlockLinkedItem)
                 {
-                    if (voxelEntity.Entity is BlockLinkedItem)
-                    {
-                        voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(((BlockLinkedItem)voxelEntity.Entity).BlockLocationRoot)].EmissiveColor;
-                    }
-                    else
-                    {
-                        //Find the Cube where the entity is placed, and assign its color to the entity
-                        voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Floor(voxelEntity.Entity.Position.X), MathHelper.Floor(voxelEntity.Entity.Position.Y), MathHelper.Floor(voxelEntity.Entity.Position.Z))].EmissiveColor;
-                    }
+                    voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(((BlockLinkedItem)voxelEntity.Entity).BlockLocationRoot)].EmissiveColor;
                 }
+                else
+                {
+                    //Find the Cube where the entity is placed, and assign its color to the entity
+                    voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Floor(voxelEntity.Entity.Position.X), MathHelper.Floor(voxelEntity.Entity.Position.Y), MathHelper.Floor(voxelEntity.Entity.Position.Z))].EmissiveColor;
+                }   
             }
         }
         #endregion

@@ -48,7 +48,7 @@ namespace Utopia.Shared.Entities.Dynamic
         
         public void ToolUse(bool handUse = false)
         {
-            var args = EntityUseEventArgs.FromState(EntityState, this);
+            var args = EntityUseEventArgs.FromState(this);
             
             if (!handUse && Equipment.RightTool != null)
             {
@@ -62,7 +62,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             if (Equipment.RightTool != null)
             {
-                var args = EntityUseEventArgs.FromState(EntityState, this);
+                var args = EntityUseEventArgs.FromState(this);
                 args.Tool = Equipment.RightTool;
                 args.UseType = UseType.Put;
                 OnUse(args);
@@ -73,7 +73,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             if (EntityState.IsEntityPicked)
             {
-                var args = EntityUseEventArgs.FromState(EntityState, this);
+                var args = EntityUseEventArgs.FromState(this);
                 OnUse(args);
             }
         }

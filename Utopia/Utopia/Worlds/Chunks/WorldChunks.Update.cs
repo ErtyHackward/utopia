@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Utopia.Entities.Managers;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Shared.Chunks;
 using S33M3DXEngine.Threading;
@@ -8,6 +9,7 @@ using S33M3Resources.Structs;
 using System;
 using System.Diagnostics;
 using Utopia.Shared.LandscapeEntities;
+using Utopia.Action;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -32,14 +34,9 @@ namespace Utopia.Worlds.Chunks
         public static Perf perf = new Perf();
 
 #endif
-
-        #region Private variables
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
-        #endregion
-
-        #region Public variables/properties
-        #endregion
+        private int _sliceValue = -1;
 
         #region public methods
         public override void FTSUpdate(GameTime timeSpend)
@@ -52,6 +49,12 @@ namespace Utopia.Worlds.Chunks
                 var transparentChunk = _transparentChunks[i];
                 transparentChunk.PopUpValue.BackUpValue();
                 transparentChunk.PopUpValue.Value -= 0.02f;
+            }
+
+            // slicing view of the chunk only if player is in God mode !
+            if (_playerManager is GodEntityManager)
+            {
+                SlicingUpdate(timeSpend);
             }
         }
 
@@ -88,12 +91,9 @@ namespace Utopia.Worlds.Chunks
                 {
                     if (chunk.DistanceFromPlayer > StaticEntityViewRange) continue;
 
-                    foreach (var pair in chunk.VisualVoxelEntities)
+                    foreach (var staticEntity in chunk.AllEntities())
                     {
-                        foreach (var staticEntity in pair.Value)
-                        {
-                            staticEntity.VoxelEntity.ModelInstance.Interpolation(elapsedTime);
-                        }
+                        staticEntity.VoxelEntity.ModelInstance.Interpolation(elapsedTime);
                     }
                 }
             }
@@ -112,17 +112,31 @@ namespace Utopia.Worlds.Chunks
         private void ChunkUpdateManager()
         {
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
+            UpdateLeveled();
             CreateNewChunk();
             PropagateOuterChunkLights();
             CreateChunkMeshes(maximumUpdateOrderPossible);
             SendMeshesToGC(maximumUpdateOrderPossible);
         }
 
+        private void UpdateLeveled()
+        {
+            foreach (var chunk in ChunksToDraw(false))
+            {
+                if (chunk.SliceValue != _sliceValue)
+                {
+                    chunk.SliceValue = _sliceValue;
+                    chunk.State = ChunkState.OuterLightSourcesProcessed;
+                }
+            }
+        }
+
+
         //Will create new chunks based on chunks with state = Empty
         private void CreateNewChunk()
         {
             //Process each chunk that are in Empty state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty ||x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty || x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
                 VisualChunk localChunk = chunk;
 
@@ -146,7 +160,7 @@ namespace Utopia.Worlds.Chunks
 #endif
 
             //Create the landscape, by updating the "Big Array" area under the chunk
-            if(chunk.State == ChunkState.Empty) _landscapeManager.CreateLandScape(chunk);
+            if (chunk.State == ChunkState.Empty) _landscapeManager.CreateLandScape(chunk);
 
             //Was my landscape Creation, if not it means that the chunk has been requested to the server, waiting for server answer
             if (chunk.State == ChunkState.LandscapeCreated)
@@ -289,7 +303,8 @@ namespace Utopia.Worlds.Chunks
         private void PlayerDisplacementChunkEvents()
         {
             double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, _playerManager.Player.Position);
-            if(distance > 8){
+            if (distance > 8)
+            {
                 _lastPlayerTriggeredPosition = _playerManager.Player.Position;
                 ChunkNeed2BeSorted = true;
             }
@@ -298,17 +313,17 @@ namespace Utopia.Worlds.Chunks
         #region Update WRAPPING
         private void CheckWrapping()
         {
-            if(SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
+            if (SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
             var resultmin = new Vector3D(_playerManager.Player.Position.X - VisualWorldParameters.WorldRange.Position.X,
-                                        _playerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Position.Y,
-                                        _playerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Position.Z);
+                                         _playerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Position.Y,
+                                         _playerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Position.Z);
 
             var resultmax = new Vector3D(VisualWorldParameters.WorldRange.Max.X - _playerManager.Player.Position.X,
-                                        VisualWorldParameters.WorldRange.Max.Y - _playerManager.Player.Position.Y,
-                                        VisualWorldParameters.WorldRange.Max.Z - _playerManager.Player.Position.Z);
+                                         VisualWorldParameters.WorldRange.Max.Y - _playerManager.Player.Position.Y,
+                                         VisualWorldParameters.WorldRange.Max.Z - _playerManager.Player.Position.Z);
 
             float wrapOrder = float.MaxValue;
             ChunkWrapType operation = ChunkWrapType.Z_Plus1;
@@ -342,6 +357,30 @@ namespace Utopia.Worlds.Chunks
         }
         #endregion
 
+
+        //Landscape chunk Slicing visualization Handling
+        private void SlicingUpdate(GameTime timeSpend)
+        {
+            if (SortedChunks.Count(x => x.State != ChunkState.DisplayInSyncWithMeshes) > 0) return;
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerUp))
+            {
+                if (_sliceValue == -1) _sliceValue = (int)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y;
+                _sliceValue++;
+            }
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerDown))
+            {
+                if (_sliceValue == -1) _sliceValue = (int)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y;
+                _sliceValue--;
+            }
+
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.LandscapeSlicerOff))
+            {
+                _sliceValue = -1;
+            }
+        }
+        
         #endregion
     }
 }

@@ -126,7 +126,7 @@ namespace LtreeVisualizer
         {
             if (e.KeyCode == Keys.F11)
             {
-                this.Engine.isFullScreen = !this.Engine.isFullScreen;
+                this.Engine.IsFullScreen = !this.Engine.IsFullScreen;
             }
         }
 

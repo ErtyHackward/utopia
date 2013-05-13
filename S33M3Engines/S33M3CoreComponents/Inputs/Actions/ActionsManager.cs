@@ -439,7 +439,11 @@ namespace S33M3CoreComponents.Inputs.Actions
                 {
                     case KeyboardTriggerMode.KeyDown:
                         //Set the Action Flag if required
-                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding)) { _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true; _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard; }
+                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding)) 
+                        { 
+                            _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true; 
+                            _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard; 
+                        }
                         break;
                     case KeyboardTriggerMode.KeyReleased:
                         //Set start Action Flag if required

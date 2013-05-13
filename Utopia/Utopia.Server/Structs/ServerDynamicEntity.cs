@@ -100,7 +100,7 @@ namespace Utopia.Server.Structs
         protected ServerDynamicEntity(IDynamicEntity entity)
         {
             DynamicEntity = entity;
-            
+            DynamicEntity.Controller = this;
         }
 
         void EntityPositionChanged(object sender, EntityMoveEventArgs e)
@@ -131,7 +131,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Perform dynamic update (AI logic)
         /// </summary>
-        public abstract void Update(DynamicUpdateState gameTime);
+        public virtual void Update(DynamicUpdateState gameTime) { }
 
         public override int GetHashCode()
         {
@@ -145,8 +145,7 @@ namespace Utopia.Server.Structs
         public virtual void Use(EntityUseMessage entityUseMessage)
         {
             // update entity state
-            var state = new DynamicEntityState(entityUseMessage);
-            DynamicEntity.EntityState = state;
+            DynamicEntity.EntityState = entityUseMessage.State;
         }
 
         /// <summary>

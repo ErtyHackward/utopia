@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Interfaces
 {
@@ -15,5 +16,12 @@ namespace Utopia.Shared.Interfaces
         /// <param name="pos"></param>
         /// <returns></returns>
         IEnumerable<IDynamicEntity> EnumerateAround(Vector3 pos);
+
+        /// <summary>
+        /// Returns entity by a link or null
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
+        IDynamicEntity FindEntity(EntityLink link);
     }
 }

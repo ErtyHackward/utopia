@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using S33M3DXEngine.Main;
 using SharpDX;
 using S33M3Resources.Structs;
@@ -9,6 +11,7 @@ using S33M3DXEngine;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace S33M3CoreComponents.Inputs.MouseHandler
 {
@@ -23,6 +26,7 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
         private bool _mouseCapture;
         private int _mouseHideCount;
         private bool _isRunning;
+        private bool _strategyMode;
         #endregion
 
         #region Public variables/properties
@@ -56,6 +60,29 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
                         RestoreMousePosition();
                         ShowMouseCursor();
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Strategy mode shows the cursor and locks it inside the viewport
+        /// </summary>
+        public bool StrategyMode
+        {
+            get { return _strategyMode; }
+            set
+            {
+                _strategyMode = value;
+
+                if (_strategyMode)
+                {
+                    MouseCapture = false;
+                    
+                    Cursor.Clip = (Rectangle)_engine.GameWindow.Invoke(new Func<Rectangle>(() => _engine.GameWindow.RectangleToScreen(_engine.GameWindow.ClientRectangle))); ;
+                }
+                else
+                {
+                    Cursor.Clip = new Rectangle();
                 }
             }
         }

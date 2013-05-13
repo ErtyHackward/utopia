@@ -23,7 +23,7 @@ namespace Utopia.Entities.Managers.Interfaces
 
         void RemoveEntity(IDynamicEntity entity);
 
-        void RemoveEntityById(uint entityId,bool dispose=true);
+        void RemoveEntityById(uint entityId, bool dispose=true);
 
         IDynamicEntity GetEntityById(uint p);
     

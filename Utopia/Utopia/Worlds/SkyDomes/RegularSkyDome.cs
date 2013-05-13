@@ -1,4 +1,5 @@
 ﻿using System;
+using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.GameClocks;
 using SharpDX.Direct3D11;
 using SharpDX;
@@ -32,7 +33,7 @@ namespace Utopia.Worlds.SkyDomes
         private WorldFocusManager _worldFocusManager;
         private IDrawableComponent _skyStars;
         private IDrawableComponent _clouds;
-        private PlayerEntityManager _playerManager;
+        
 
         private VertexBuffer<VertexPositionNormalTexture> _domeVertexBuffer;
         private VertexBuffer<VertexPositionTexture> _moonVertexBuffer;
@@ -57,6 +58,9 @@ namespace Utopia.Worlds.SkyDomes
         #region Public properties/Variables
         #endregion
 
+        [Inject]
+        public IPlayerManager PlayerManager { get; set; }
+
         /// <summary>
         /// Regular Skydome loading
         /// </summary>
@@ -75,12 +79,7 @@ namespace Utopia.Worlds.SkyDomes
             cloudDrawIndex = this.DrawOrders.AddIndex(989, "Clouds");
         }
 
-        [Inject]
-        public PlayerEntityManager PlayerManager
-        {
-            get { return _playerManager; }
-            set { _playerManager = value; }
-        }
+        
 
         #region Public Methods
         public override void Initialize()

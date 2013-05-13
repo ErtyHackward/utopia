@@ -46,6 +46,17 @@ namespace S33M3Resources.Structs
         }
 
         /// <summary>
+        /// Creates new bounding box with given offset
+        /// </summary>
+        /// <param name="box"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public static BoundingBox Offset(this BoundingBox box, Vector3 offset)
+        {
+            return new BoundingBox(box.Minimum + offset, box.Maximum + offset);
+        }
+
+        /// <summary>
         /// Returns the volume of the bounding box
         /// </summary>
         /// <param name="box"></param>
@@ -55,7 +66,7 @@ namespace S33M3Resources.Structs
             var size = box.GetSize();
             return size.X * size.Y * size.Z;
         }
-
+        
         /// <summary>
         /// Calculates normal vector from given surface point
         /// </summary>

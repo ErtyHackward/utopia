@@ -533,71 +533,7 @@ namespace Utopia.Shared.Chunks
             }
             return false;
         }
-
-        public bool IsSolidToPlayer(ref BoundingBox bb, bool withCubeOffSetAccount,out TerraCubeWithPosition collidingcube)
-        {
-            int index;
-            BlockProfile profile;
-
-            //Get ground surface 4 blocks below the Bounding box
-            int Xmin = MathHelper.Floor(bb.Minimum.X);
-            int Zmin = MathHelper.Floor(bb.Minimum.Z);
-            int Ymin = MathHelper.Floor(bb.Minimum.Y);
-            int Xmax = MathHelper.Floor(bb.Maximum.X);
-            int Zmax = MathHelper.Floor(bb.Maximum.Z);
-            int Ymax = MathHelper.Floor(bb.Maximum.Y);
-
-            for (int x = Xmin; x <= Xmax; x++)
-            {
-                for (int z = Zmin; z <= Zmax; z++)
-                {
-                    //for (int y = Ymax; y >= Ymin; y--)
-                    for (int y = Ymin; y <= Ymax; y++)
-                    {
-                        if (IndexSafe(x, y, z, out index))
-                        {
-                            profile = _config.BlockProfiles[Cubes[index].Id];
-                            if (profile.IsSolidToEntity)
-                            {
-                                collidingcube.Cube = Cubes[index];
-                                collidingcube.Position = new Vector3I(x, y, z);
-                                collidingcube.BlockProfile = profile;
-
-                                //Block with Offset case
-                                if (withCubeOffSetAccount && profile.YBlockOffset > 0.0f)
-                                {
-                                    //If my "Feet" are below the height of the offseted cube, then colliding true
-                                    FloatAsInt FeetLevel = bb.Minimum.Y;
-                                    FloatAsInt OffsetedCubeLevel = 1;// profile.YBlockOffset;
-                                    OffsetedCubeLevel -= profile.YBlockOffset;
-                                    
-                                    //if (bb.Minimum.Y < (y + (1-profile.YBlockOffset)))
-                                    if(FeetLevel < (y + OffsetedCubeLevel))
-                                    {
-                                        return true;
-                                    }
-                                    else
-                                    {
-                                        //check the head when On a Offseted Block
-                                        IndexSafe(x, MathHelper.Floor(bb.Maximum.Y + profile.YBlockOffset), z, out index);
-                                        profile = _config.BlockProfiles[Cubes[index].Id];
-                                        if (profile.IsSolidToEntity) return true;
-                                    }
-                                }
-                                else
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            collidingcube = new TerraCubeWithPosition();
-            return false;
-        }
-
+        
         public void GetNextSolidBlockToPlayer(ref Vector3 FromPosition, ref Vector3I Direction, out TerraCubeWithPosition cubeWithPosition)
         {
             int index = 0;
@@ -652,47 +588,27 @@ namespace Utopia.Shared.Chunks
 
 
         /// <summary>
-        /// Tells wich cube is at this cube position
+        /// Tells which cube is at this cube position
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public TerraCubeResult GetCube(Vector3I pos, bool withYCheck = true)
+        public TerraCubeResult GetCube(Vector3I pos)
         {
-            TerraCubeResult result = new TerraCubeResult();
+            var result = new TerraCubeResult();
             int cubeIndex;
-            if (withYCheck)
-            {
-                if (!IndexSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
-                {
-                    return result;
-                }
-            }
-            else
-            {
-                cubeIndex = Index(pos.X, pos.Y, pos.Z);
-            }
 
+            if (!IndexSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
+            {
+                return result;
+            }
+            
             result.Cube = Cubes[cubeIndex];
 
-            var offset = _config.BlockProfiles[result.Cube.Id].YBlockOffset;
-
-            if (offset != 0f && (1 - offset) <= (pos.Y % 1) + 0.001)
-            {
-                //I'm inside an offsetted block in the Air part, then send back the block above this one !
-                pos.Y++;
-                if (pos.Y < AbstractChunk.ChunkSize.Y)
-                {
-                    cubeIndex++; //Going Up one block
-                    result.Cube = Cubes[cubeIndex];
-                }
-            }
-
-            result.isValid = true;
             return result;
         }
 
         /// <summary>
-        /// Tells wich cube is at this absolute position, takes into account the fact of non full size blocks
+        /// Tells which cube is at this absolute position, takes into account the fact of non full size blocks
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
@@ -733,15 +649,15 @@ namespace Utopia.Shared.Chunks
             return result;
         }
 
-        public bool CheckCube(Vector3D pos, byte cubeId ,bool withYCheck = true)
+        public bool CheckCube(Vector3D pos, byte cubeId, bool withYCheck = true)
         {
-            TerraCubeResult result = this.GetCube(pos, withYCheck);
+            TerraCubeResult result = GetCube(pos, withYCheck);
             return (result.isValid && result.Cube.Id == cubeId);
         }
 
-        public bool CheckCube(Vector3I pos, byte cubeId, bool withYCheck = true)
+        public bool CheckCube(Vector3I pos, byte cubeId)
         {
-            TerraCubeResult result = this.GetCube(pos, withYCheck);
+            TerraCubeResult result = GetCube(pos);
             return (result.isValid && result.Cube.Id == cubeId);
         }
 

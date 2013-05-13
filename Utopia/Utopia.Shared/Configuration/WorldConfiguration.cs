@@ -370,7 +370,7 @@ namespace Utopia.Shared.Configuration
                 newId = (ushort)(BluePrints.Values.Select(x => x.BluePrintId).Max() + 1);
 
             entityInstance.BluePrintId = newId;
-            entityInstance.isSystemEntity = false;
+            entityInstance.IsSystemEntity = false;
 
             BluePrints.Add(newId, (Entity)entityInstance);
         }
