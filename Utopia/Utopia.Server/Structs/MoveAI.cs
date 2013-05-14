@@ -230,6 +230,9 @@ namespace Utopia.Server.Structs
 
             if (_leader != null && Vector3D.Distance(_leader.Position, Npc.DynamicEntity.Position) > FollowStayDistance)
             {
+                if (IsMooving && Vector3D.Distance(new Vector3D( _path.Goal) + CubeCenter, _leader.Position) < FollowStayDistance)
+                    return;
+
                 MoveTo(_leader.Position.ToCubePosition());
             }
         }
