@@ -69,7 +69,7 @@ namespace Utopia.Server.Structs
                 if (serverEntity != DynamicEntity)
                 {
                     //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
-                    Connection.Send(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = serverEntity.DynamicEntity.GetLink() });
+                    Connection.Send(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace Utopia.Server.Structs
         
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
-            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, EntityType = e.Entity.Type, Link = e.Entity.GetLink() });
+            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
         }
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
@@ -102,7 +102,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.Send(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, EntityType = EntityType.Dynamic, Link = e.Entity.DynamicEntity.GetLink() });
+                Connection.Send(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 

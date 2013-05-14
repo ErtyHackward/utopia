@@ -35,7 +35,6 @@ namespace Utopia.Shared.Entities.Concrete
 
         public OrientedBlockLinkedItem()
         {
-            Type = EntityType.Static;
             Name = "Oriented Block linked Entity";
             MountPoint = BlockFace.Top;
             IsPlayerCollidable = false;

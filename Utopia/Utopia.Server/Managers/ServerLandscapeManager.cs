@@ -13,7 +13,6 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
@@ -39,7 +38,7 @@ namespace Utopia.Server.Managers
         private readonly Timer _cleanUpTimer;
         private readonly Timer _saveTimer;
 
-        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal);
+        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal, HashSet<Vector3I> goals = null);
         public delegate void PathCalculatedDeleagte(Path3D path);
 
         /// <summary>
@@ -406,10 +405,10 @@ namespace Utopia.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <param name="callback"></param>
-        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback)
+        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback, HashSet<Vector3I> goals = null)
         {
             var d = new CalculatePathDelegate(CalculatePath);
-            d.BeginInvoke(start, goal, PathCalculated, callback);
+            d.BeginInvoke(start, goal, goals, PathCalculated, callback);
         }
 
         private void PathCalculated(IAsyncResult result)
@@ -426,7 +425,7 @@ namespace Utopia.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <returns></returns>
-        public Path3D CalculatePath(Vector3I start, Vector3I goal)
+        public Path3D CalculatePath(Vector3I start, Vector3I goal, HashSet<Vector3I> goals = null)
         {
             AStar<AStarNode3D> calculator = null;
             lock (_pathPool)

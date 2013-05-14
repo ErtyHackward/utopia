@@ -1,9 +1,6 @@
 ﻿using System;
 using Ninject;
-using Utopia.Shared;
-using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;

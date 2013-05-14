@@ -285,13 +285,15 @@ namespace Realms.Client.States
             var crafting = _ioc.Get<CraftingComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
 
-            landscapeManager.EntityFactory = _ioc.Get<EntityFactory>();
+
+            landscapeManager.EntityFactory = clientFactory;
             //playerEntityManager.HasMouseFocus = true;
             cameraManager.SetCamerasPlugin(playerEntityManager);
             //((ThirdPersonCameraWithFocus)thirdPersonCamera).CheckCamera += worldChunks.ValidatePosition;
             chunkEntityImpactManager.LateInitialization(serverComponent, singleArrayChunkContainer, worldChunks, chunkStorageManager, lightingManager, visualWorldParameters);
-
-            _ioc.Get<EntityFactory>().DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
+            
+            clientFactory.DynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
+            clientFactory.GlobalStateManager = _ioc.Get<IGlobalStateManager>();
 
             //Late Inject PlayerCharacter into VisualWorldParameters
             var c = clouds as Clouds;

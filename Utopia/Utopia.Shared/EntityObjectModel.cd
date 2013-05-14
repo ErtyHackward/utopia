@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Utopia.Shared.Entities.Entity" Collapsed="true">
-    <Position X="4" Y="0.5" Width="1.5" />
+    <Position X="13.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEAAIAAgAAQAAAAkIJAAgAQAAAgAAAAACQAAAAAAABA=</HashCode>
+      <HashCode>AEAAIAAgAQQAAAAkIJAIgAQAAAgAAAAACQAAAAgAEBE=</HashCode>
       <FileName>Entities\Entity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Dynamic.DynamicEntity" Collapsed="true">
-    <Position X="2.5" Y="1.75" Width="1.5" />
+    <Position X="3.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AGAAgAAAAACAQBAgAQAAACDgEAAFAIAAAKAAAAgAQAA=</HashCode>
       <FileName>Entities\Dynamic\DynamicEntity.cs</FileName>
@@ -17,7 +17,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.StaticEntity" Collapsed="true">
-    <Position X="6.75" Y="1.75" Width="1.5" />
+    <Position X="17" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QEAAAAQAAAAAAoAAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\StaticEntity.cs</FileName>
@@ -25,141 +25,141 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Inventory.Item" Collapsed="true">
-    <Position X="6" Y="3.25" Width="1.5" />
+    <Position X="15.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAAQCAgAAAAAgAAAABAAAAAAAAAAAAAAAwAAAA=</HashCode>
+      <HashCode>AAQgIAAAQCAgAgAAAgAAAABAEAAAAgAAAEAAAAyAgAg=</HashCode>
       <FileName>Entities\Inventory\Item.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Dynamic.CharacterEntity" Collapsed="true">
-    <Position X="2.5" Y="3" Width="1.5" />
+    <Position X="2.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAACAAAAAAACAgAAAQAAAQAAAAEAAAAAAAAAgAAAAA=</HashCode>
+      <HashCode>AAAACAAAAAABCAoAAAQQAAQAAAAAwAAAAgAAAgAAgAA=</HashCode>
       <FileName>Entities\Dynamic\CharacterEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Entities.Concrete.Zombie" Collapsed="true">
-    <Position X="1" Y="4.5" Width="1.5" />
+  <Class Name="Utopia.Shared.Entities.Concrete.Dwarf" Collapsed="true">
+    <Position X="1" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Entities\Concrete\Zombie.cs</FileName>
+      <FileName>Entities\Concrete\Dwarf.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Entities.Dynamic.RpgCharacterEntity" Collapsed="true">
-    <Position X="3" Y="4.5" Width="1.75" />
+    <Position X="3.25" Y="4.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAACAAAAAAAAAAEAQAA=</HashCode>
       <FileName>Entities\Dynamic\RpgCharacterEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Entities.Dynamic.PlayerCharacter" Collapsed="true">
-    <Position X="3" Y="6" Width="1.75" />
+    <Position X="3.25" Y="6.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>ACAAAAAgAAAAQAAAAAAAAAACAAAAAAAAAAAAAAgAAAE=</HashCode>
+      <HashCode>AKAAAAAgAAAAQAAAAAAAAAACAAAAAAAAAAAAAAgAAAE=</HashCode>
       <FileName>Entities\Dynamic\PlayerCharacter.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Entities.Inventory.Armor" Collapsed="true">
-    <Position X="6" Y="4.5" Width="1.5" />
+    <Position X="8" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Inventory\Armor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Utopia.Shared.Entities.MetaEntity" Collapsed="true">
-    <Position X="8.25" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Entities\MetaEntity.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Utopia.Shared.Entities.BlockItem" Collapsed="true">
-    <Position X="8.25" Y="5" Width="1.5" />
+    <Position X="10.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgACkAAAAAAAgAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAACAAAAAAEAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\BlockItem.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.BlockLinkedItem" Collapsed="true">
-    <Position X="10.75" Y="5" Width="1.5" />
+    <Position X="18" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAIAgACkAABAAAAgAAEAAAAAAABAAAAAAA=</HashCode>
+      <HashCode>AAABAAAAACAIAAAAEAABAAAAAAAAAgAAAAABAAAAAAA=</HashCode>
       <FileName>Entities\BlockLinkedItem.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.ResourcesCollector" Collapsed="true">
-    <Position X="17.5" Y="5" Width="1.5" />
+    <Position X="23.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAgACAAAAAAAAwAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAQAAAAAAAAACAAAAAAAAQAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\ResourcesCollector.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.OrientedBlockItem" Collapsed="true">
-    <Position X="8" Y="6.25" Width="2" />
+    <Position X="10.25" Y="6.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAgAQAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <HashCode>AAAAAAAgASAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAACA=</HashCode>
       <FileName>Entities\Concrete\OrientedBlockItem.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.OrientedBlockLinkedItem" Collapsed="true">
-    <Position X="10.5" Y="6.5" Width="2.5" />
+    <Position X="15.25" Y="6.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAgAQAAAAACgAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <HashCode>AAAAAAAgASAAAAACAAAAAAAAAAAAAgAAAAAAAAAAACA=</HashCode>
       <FileName>Entities\Concrete\OrientedBlockLinkedItem.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.Plant" Collapsed="true">
-    <Position X="13.25" Y="6.5" Width="1.5" />
+    <Position X="18.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Concrete\Plant.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Utopia.Shared.Entities.Concrete.SideLightSource" Collapsed="true">
-    <Position X="15.25" Y="6.5" Width="1.75" />
+  <Class Name="Utopia.Shared.Entities.Concrete.LightSource" Collapsed="true">
+    <Position X="20.75" Y="6.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
-      <FileName>Entities\Concrete\SideLightSource.cs</FileName>
+      <HashCode>AAAAAABgAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Entities\Concrete\LightSource.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.BasicCollector" Collapsed="true">
-    <Position X="17.25" Y="6.5" Width="2" />
+    <Position X="23.25" Y="6.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
       <FileName>Entities\Concrete\BasicCollector.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.Door" Collapsed="true">
-    <Position X="8.25" Y="7.5" Width="1.5" />
+    <Position X="10.5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAAAAQAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAAAAACA=</HashCode>
+      <HashCode>IAAAASAgAAAAAAAAAgAAAAIAEAAEAAAAAAAQACAAACA=</HashCode>
       <FileName>Entities\Concrete\Door.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.Container" Collapsed="true">
-    <Position X="11" Y="7.5" Width="1.5" />
+    <Position X="15.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAQQgAgAAAAABIgAAAAAAAAAAAAAAAAAAAAAAADA=</HashCode>
       <FileName>Entities\Concrete\Container.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Utopia.Shared.Entities.Concrete.CubeResource" Collapsed="true">
-    <Position X="10.5" Y="3.25" Width="1.5" />
+    <Position X="13" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIQAgQAAgAkACAAAAQAAAgAAEAAAAAAAAAAUAAAA=</HashCode>
+      <HashCode>AAAAAQAgAAAAAEACAAAAQAAAAAAEAAAAAAAAAAEAAAg=</HashCode>
       <FileName>Entities\Concrete\CubeResource.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Utopia.Shared.Entities.Dynamic.GodEntity" Collapsed="true">
+    <Position X="5.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAgAAAAAAAiAQAAAAAAAAICAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Entities\Dynamic\GodEntity.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Lucida Console" Size="10" />
 </ClassDiagram>

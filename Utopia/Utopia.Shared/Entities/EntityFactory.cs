@@ -44,6 +44,11 @@ namespace Utopia.Shared.Entities
         public IDynamicEntityManager DynamicEntityManager { get; set; }
 
         /// <summary>
+        /// Gets faction manager
+        /// </summary>
+        public IGlobalStateManager GlobalStateManager { get; set; }
+
+        /// <summary>
         /// Gets or sets optional sound manager used by ISoundEmitterEntities
         /// </summary>
         [Inject]

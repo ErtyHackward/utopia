@@ -23,7 +23,6 @@ namespace Utopia.Shared.Entities.Concrete
         
         public Plant()
         {
-            Type = EntityType.Static;
             Name = "Plant";
             MountPoint = BlockFace.Top;
             IsPlayerCollidable = false;

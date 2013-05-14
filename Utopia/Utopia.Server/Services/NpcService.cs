@@ -4,6 +4,7 @@ using Utopia.Server.Commands;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
 using Utopia.Shared.ClassExt;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using S33M3Resources.Structs;
 
@@ -53,13 +54,18 @@ namespace Utopia.Server.Services
             _server.CommandsManager.RegisterCommand(new ComeHereCommand());
 
             _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
+
+            var faction = new Faction { Name = "Player faction", FactionId = 1 };
+
+            _server.GlobalStateManager.GlobalState.Factions.Add(faction);
+
             var r = new Random();
             for (int i = 0; i < 2; i++)
             {
-
                 var z = CreateNpc(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + 2 * i, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
                 //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
                 z.Seed = r.Next(0, 100000);
+                z.SetFaction(faction);
             }
         }
 

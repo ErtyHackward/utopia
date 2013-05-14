@@ -181,6 +181,16 @@ namespace System.IO
             }
         }
 
+        public static byte[] ProtoSerialize(this object item)
+        {
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, item);
+                return ms.ToArray();
+            }
+        }
+
         public static T Deserialize<T>(this byte[] array)
         {
             using (var ms = new MemoryStream(array))

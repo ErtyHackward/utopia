@@ -69,7 +69,7 @@ namespace Utopia.Server.AStar {
 			_fOpenList.Add(_fStartNode);
             _fOpenSet.Add(_fStartNode, _fStartNode);
 
-			while(_fOpenList.Count > 0) 
+			while (_fOpenList.Count > 0) 
 			{
                 if (_iterations++ > IterationsLimit)
                     break;
@@ -79,9 +79,9 @@ namespace Utopia.Server.AStar {
                 _fOpenSet.Remove(nodeCurrent);
 
 				// If the node is the goal copy the path to the solution array
-				if(nodeCurrent.IsGoal()) {
+				if (nodeCurrent.IsGoal()) {
                     Solution = new List<T>();
-                    while(nodeCurrent != null) {
+                    while (nodeCurrent != null) {
                         Solution.Add(nodeCurrent);
 						nodeCurrent = nodeCurrent.Parent;
 					}
@@ -92,9 +92,9 @@ namespace Utopia.Server.AStar {
 				// Get successors to the current node
                 _fSuccessors.Clear();
 				nodeCurrent.GetSuccessors(_fSuccessors);
-				foreach(var nodeSuccessor in _fSuccessors) 
+				foreach (var nodeSuccessor in _fSuccessors) 
 				{
-					// Test if the currect successor node is on the open list, if it is and
+					// Test if the current successor node is on the open list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
 					T nodeOpen;
                     if (_fOpenSet.TryGetValue(nodeSuccessor, out nodeOpen))

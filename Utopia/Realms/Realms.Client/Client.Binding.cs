@@ -11,6 +11,7 @@ using Realms.Client.States;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.Crafting;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Web;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
@@ -235,6 +236,7 @@ namespace Realms.Client
             //_iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
             _iocContainer.Bind<IVisualDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
+            _iocContainer.Bind<IGlobalStateManager>().To<GlobalStateManager>().InScope(x => GameScope.CurrentGameScope);
             //_iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
             _iocContainer.Bind<IPlayerManager>().To<GodEntityManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PickingManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);

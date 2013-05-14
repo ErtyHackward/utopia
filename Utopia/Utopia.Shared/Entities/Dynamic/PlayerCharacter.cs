@@ -40,7 +40,6 @@ namespace Utopia.Shared.Entities.Dynamic
             RotationSpeed = 10f;          //Default Player Rotation Speed
             DefaultSize = new Vector3(0.5f, 1.9f, 0.5f); //Default player size
             
-            Type = EntityType.Dynamic;
             BodyRotation = Quaternion.Identity;
             ModelName = "Girl";
             Name = "Player";

@@ -414,6 +414,8 @@ namespace Utopia.Entities.Managers
                     Vector3 faceInteresection;
                     if (cubeBB.Intersects(ref pickingRay, out faceInteresection))
                     {
+                        _pickedCube = new TerraCubeWithPosition { Position = blockPos, BlockProfile = blockProfile, Cube = result.Cube };
+
                         PlayerManager.Player.EntityState.PickedBlockFaceOffset = Vector3.One - (_pickedCube.Position - faceInteresection);
                         PlayerManager.Player.EntityState.PickPoint = faceInteresection;
                         PlayerManager.Player.EntityState.PickPointNormal = cubeBB.GetPointNormal(faceInteresection);

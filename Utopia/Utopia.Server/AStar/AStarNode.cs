@@ -74,10 +74,10 @@ namespace Utopia.Server.AStar
         #region Public Methods
 
         /// <summary>
-        /// Determines wheather the current node is the goal.
+        /// Determines whether the current node is the goal.
         /// </summary>
         /// <returns>Returns true if current node is the goal</returns>
-        public bool IsGoal()
+        public virtual bool IsGoal()
         {
             return IsSameState(GoalNode);
         }

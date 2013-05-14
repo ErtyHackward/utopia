@@ -37,7 +37,6 @@ namespace Utopia.Shared.Entities.Concrete
         
         public OrientedBlockItem()
         {
-            Type = EntityType.Static;
             Name = "Oriented Entity";
             IsPlayerCollidable = true;
             IsPickable = true;

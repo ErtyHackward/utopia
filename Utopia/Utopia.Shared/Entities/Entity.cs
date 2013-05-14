@@ -29,13 +29,6 @@ namespace Utopia.Shared.Entities
         public ushort BluePrintId { get; set; }
 
         /// <summary>
-        /// Gets current entity type
-        /// </summary>
-        [Category("Entity")]
-        [ProtoMember(2)]
-        public EntityType Type { get; protected set; }
-
-        /// <summary>
         /// Entity maximum size
         /// </summary>
         [Category("Entity")]
@@ -109,6 +102,13 @@ namespace Utopia.Shared.Entities
         [Category("Entity")]
         [Description("Allows to put entity in special group")]
         public string GroupName { get; set; }
+
+        /// <summary>
+        /// Faction of the entity (0 if not applicable)
+        /// </summary>
+        [ProtoMember(13)]
+        [Browsable(false)]
+        public uint FactionId { get; set; }
 
         /// <summary>
         /// Gets entity class id

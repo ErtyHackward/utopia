@@ -45,6 +45,11 @@ namespace Utopia.Shared.Entities.Interfaces
         ushort BluePrintId { get; set; }
 
         /// <summary>
+        /// Faction of the entity (0 if not applicable)
+        /// </summary>
+        uint FactionId { get; set; }
+
+        /// <summary>
         /// Entity size
         /// </summary>
         Vector3 DefaultSize { get; set; }
@@ -58,11 +63,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets a displayed entity name
         /// </summary>
         string Name { get; set; }
-
-        /// <summary>
-        /// Gets current entity type
-        /// </summary>
-        EntityType Type { get; }
 
         /// <summary>
         /// This entity is mandatory for the system to run properly
