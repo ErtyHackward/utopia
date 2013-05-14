@@ -13,13 +13,9 @@ namespace Utopia.Server.Structs
     public class Npc : ServerDynamicEntity, INpc
     {
         public static Vector3D Near = new Vector3D(0.02d);
-
         private List<MapArea> _mapAreas = new List<MapArea>();
         private int _seed;
-
         private Random _random;
-
-
         
         /// <summary>
         /// Gets current NPC state
@@ -92,7 +88,10 @@ namespace Utopia.Server.Structs
         /// </summary>
         private void AISelect()
         {
-            
+            if (!Movement.IsMooving && Movement.Leader == null)
+            {
+                
+            }
         }
     }
 }

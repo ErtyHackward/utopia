@@ -40,12 +40,6 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         /// <summary>
-        /// Gets list of selected blocks by the player
-        /// </summary>
-        [ProtoMember(2)]
-        public List<Vector3I> SelectedBlocks { get; private set; }
-
-        /// <summary>
         /// Gets or sets position to fly to
         /// </summary>
         public Vector3D FinalPosition { get; set; }
@@ -79,15 +73,11 @@ namespace Utopia.Shared.Entities.Dynamic
         public GodEntity()
         {
             SelectedEntities = new List<EntityLink>();
-            SelectedBlocks = new List<Vector3I>();
-
             GodHand = new GodHandTool();
         }
 
         public void ToolUse()
         {
-            logger.Warn("ToolUse EP:" + this.EntityState.IsEntityPicked + " BP:" + this.EntityState.IsBlockPicked);
-
             GodHand.Use(this);
             OnUse(EntityUseEventArgs.FromState(this));
         }

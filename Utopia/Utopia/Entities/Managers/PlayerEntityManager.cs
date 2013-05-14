@@ -91,6 +91,8 @@ namespace Utopia.Entities.Managers
         // Will be used to compute entity rotation movements
         private EntityRotations _entityRotations;
         private InventoryComponent _inventoryComponent;
+
+        private Faction _faction;
         #endregion
 
         #region Public variables/properties
@@ -99,8 +101,10 @@ namespace Utopia.Entities.Managers
         /// The Player
         /// </summary>
         public readonly PlayerCharacter PlayerCharacter;
-
+        
         public IDynamicEntity Player { get { return PlayerCharacter; } }
+
+        public Faction Faction { get { return _faction; } }
 
         /// <summary>
         /// Gets active player tool or null
@@ -261,9 +265,9 @@ namespace Utopia.Entities.Managers
             _landscapeManager = landscapeManager;
 
             PlayerCharacter = player;
-
             PlayerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
 
+            _faction = _factory.GlobalStateManager.GlobalState.GetFaction(player.FactionId);
             
             ShowDebugInfo = true;
 

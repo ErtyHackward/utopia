@@ -15,9 +15,9 @@ namespace Utopia.Shared.Entities.Concrete
         public Dwarf()
         {
             DefaultSize = new Vector3(0.8f, 1.4f, 0.8f);
-            Type = EntityType.Dynamic;
             ModelName = "Dwarf";
             Name = "NPC";
+            MoveSpeed = 2.2f;
         }
 
     }

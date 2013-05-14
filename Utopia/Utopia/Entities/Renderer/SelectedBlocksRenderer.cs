@@ -103,7 +103,7 @@ namespace Utopia.Entities.Renderer
 
             var hoverBlocks = range.HasValue && select ? range.Value.ToList() : null;
             
-            foreach (var selectedBlock in playerManager.GodEntity.SelectedBlocks)
+            foreach (var selectedBlock in playerManager.Faction.BlocksToRemove)
             {
                 if (hoverBlocks != null && hoverBlocks.Contains(selectedBlock))
                     hoverBlocks.Remove(selectedBlock);

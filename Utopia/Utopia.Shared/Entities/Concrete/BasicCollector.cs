@@ -14,7 +14,6 @@ namespace Utopia.Shared.Entities.Concrete
 
         public BasicCollector()
         {
-            Type = EntityType.Gear;
             Name = "Basic Collector Tool";
             IsPlayerCollidable = false;
             IsPickable = true;

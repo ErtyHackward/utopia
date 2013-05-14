@@ -36,8 +36,8 @@ namespace Utopia.Server.Managers
             dbCreate.Append(@"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);");
             dbCreate.Append(@"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
             dbCreate.Append(@"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
-            //dbCreate.Append(@"CREATE TABLE [WorldParameters] ([WorldName] varchar(120) PRIMARY KEY NOT NULL, [SeedName] varchar(120) NOT NULL, [RealmConfiguration] blob NOT NULL);");
-            dbCreate.Append(@"CREATE TABLE [WorldParameters] ([WorldName] varchar(120) PRIMARY KEY NOT NULL, [SeedName] varchar(120) NOT NULL);");
+            //dbCreate.Append(@"CREATE TABLE [worldparameters] ([name] varchar(120) PRIMARY KEY NOT NULL, [seed] varchar(120) NOT NULL, [configuration] blob NOT NULL);");
+            dbCreate.Append(@"CREATE TABLE [worldparameters] ([name] varchar(120) PRIMARY KEY NOT NULL, [seed] varchar(120) NOT NULL, [state] blob NULL);");
             return dbCreate.ToString();
         }
 
@@ -46,10 +46,10 @@ namespace Utopia.Server.Managers
             string SqlStatment;
             //Upsert a specific chunk
             //SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName], [RealmConfiguration]) VALUES (@WorldName, @SeedName, @realmConfiguration)";
-            SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName]) VALUES (@WorldName, @SeedName)";
+            SqlStatment = "INSERT OR REPLACE INTO worldparameters ([name], [seed]) VALUES (@name, @seed)";
             _worldParametersInsertCmd = new SQLiteCommand(SqlStatment, Connection);
-            _worldParametersInsertCmd.Parameters.Add("@WorldName", System.Data.DbType.String);
-            _worldParametersInsertCmd.Parameters.Add("@SeedName", System.Data.DbType.String);
+            _worldParametersInsertCmd.Parameters.Add("@name", System.Data.DbType.String);
+            _worldParametersInsertCmd.Parameters.Add("@seed", System.Data.DbType.String);
             //_worldParametersInsertCmd.Parameters.Add("@realmConfiguration", System.Data.DbType.Binary);
         }
 
@@ -57,7 +57,7 @@ namespace Utopia.Server.Managers
         {
             _worldParametersInsertCmd.Parameters[0].Value = worldParam.WorldName;
             _worldParametersInsertCmd.Parameters[1].Value = worldParam.SeedName;
-
+            
             //Binary serialize the Configuration object into an array of byte[]
             //using (var ms = new MemoryStream())
             //{
@@ -208,14 +208,7 @@ namespace Utopia.Server.Managers
 
         public void SaveDynamicEntity(IDynamicEntity entity)
         {
-            byte[] bytes;
-            using (var ms = new MemoryStream())
-            {
-                Serializer.Serialize(ms, entity);
-                bytes = ms.ToArray();
-            }
-
-            SaveEntity(entity.DynamicId, bytes);
+            SaveEntity(entity.DynamicId, entity.ProtoSerialize());
         }
 
         public void SaveEntity(uint entityId, byte[] bytes)
@@ -235,6 +228,20 @@ namespace Utopia.Server.Managers
             {
                 reader.Read();
                 return reader.IsDBNull(0) ? null : (byte[])reader.GetValue(0);
+            }
+        }
+
+        public void SaveState(GlobalState state)
+        {
+            InsertBlob("UPDATE worldparameters SET state = @blob", state.ProtoSerialize());
+        }
+
+        public GlobalState LoadState()
+        {
+            using (var reader = Query("SELECT state FROM worldparameters"))
+            {
+                reader.Read();
+                return reader.IsDBNull(0) ? null : ((byte[])reader.GetValue(0)).Deserialize<GlobalState>();
             }
         }
 

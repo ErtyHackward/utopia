@@ -52,6 +52,8 @@ namespace Utopia.Entities.Managers
         private bool _selectionNow;
         private Vector3I _selectionStart;
 
+        private Faction _faction;
+
         /// <summary>
         /// Gets or sets current focus point. In level mode this entity could move only in horisontal plane.
         /// If level mode is disabled the entity will move over the top surface of the chunk.
@@ -72,6 +74,11 @@ namespace Utopia.Entities.Managers
         /// Gets active player tool or null
         /// </summary>
         public IItem ActiveTool { get { return GodEntity.GodHand; } }
+
+        /// <summary>
+        /// Gets player faction
+        /// </summary>
+        public Faction Faction { get { return _faction; } }
         
         #region ICameraPlugin
 
@@ -100,12 +107,16 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Gets value indicating if player selects new blocks (otherwise means deselect operation)
         /// </summary>
-        public bool Selection { get {
-            if (!_selectionNow)
-                return false;
+        public bool Selection
+        {
+            get
+            {
+                if (!_selectionNow)
+                    return false;
 
-            return !GodEntity.SelectedBlocks.Contains(_selectionStart);
-        } }
+                return !Faction.BlocksToRemove.Contains(_selectionStart);
+            }
+        }
         
         [Inject]
         public IWorldChunks Chunks { get; set; }
@@ -116,7 +127,8 @@ namespace Utopia.Entities.Managers
                                 SingleArrayChunkContainer cubesHolder,
                                 CameraManager<ICameraFocused> cameraManager,
                                 LandscapeBufferManager bufferManager,
-                                VisualWorldParameters visParameters)
+                                VisualWorldParameters visParameters,
+                                IGlobalStateManager globalStateManager)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (playerEntity  == null) throw new ArgumentNullException("playerEntity");
@@ -127,6 +139,8 @@ namespace Utopia.Entities.Managers
             if (visParameters == null) throw new ArgumentNullException("visParameters");
 
             GodEntity = playerEntity;
+
+            _faction = globalStateManager.GlobalState.GetFaction(GodEntity.FactionId);
 
             _eyeOrientation  = GodEntity.HeadRotation;
             _bodyOrientation = GodEntity.BodyRotation;
@@ -309,8 +323,6 @@ namespace Utopia.Entities.Managers
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.LeftButton == ButtonState.Released;
                 GodEntity.EntityState.MouseButton = MouseButton.LeftButton;
 
-                logger.Warn("Left use MouseUp=" + GodEntity.EntityState.MouseUp);
-
                 if (!GodEntity.EntityState.MouseUp)
                 {
                     if (GodEntity.EntityState.IsBlockPicked)
@@ -330,8 +342,6 @@ namespace Utopia.Entities.Managers
             {
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.RightButton == ButtonState.Released;
                 GodEntity.EntityState.MouseButton = MouseButton.RightButton;
-
-                logger.Warn("Right use MouseUp=" + GodEntity.EntityState.MouseUp);
 
                 GodEntity.ToolUse();
             }

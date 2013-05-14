@@ -113,43 +113,34 @@ namespace Utopia.Network
 
         void ServerMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            logger.Debug("Entity Removed {0}", e.Message.EntityType);
+            logger.Debug("Entity Removed Dyn:{0}", e.Message.Link.IsDynamic);
 
-            switch (e.Message.EntityType)
+            if (e.Message.Link.IsDynamic)
             {
-                case EntityType.Block:
-                    break;
-                case EntityType.Gear:
-                case EntityType.Static:
-                    if (e.Message.TakerEntityId != PlayerEntity.DynamicId)
-                    {
-                        _landscapeManager.ProcessMessageEntityOut(e);
-                    }
-                    break;
-                case EntityType.Dynamic:
-                    _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
-                    break;
+                _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);
+            }
+            else
+            {
+                if (e.Message.TakerEntityId != PlayerEntity.DynamicId)
+                {
+                    _landscapeManager.ProcessMessageEntityOut(e);
+                }
             }
         }
 
         void ServerMessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
-            switch (e.Message.Entity.Type)
+            if (e.Message.Link.IsDynamic)
             {
-                case EntityType.Block:
-                    break;
-                case EntityType.Gear:
-                case EntityType.Static:
-                    // skip the message if the source is our entity (because we already have added the entity)
-                    if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
-                    {
-                        _landscapeManager.ProcessMessageEntityIn(e);
-                    }
-
-                    break;
-                case EntityType.Dynamic:
-                    _dynamicEntityManager.AddEntity((IDynamicEntity) e.Message.Entity, true);
-                    break;
+                _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity, true);
+            }
+            else
+            {
+                // skip the message if the source is our entity (because we already have added the entity)
+                if (e.Message.SourceEntityId != PlayerEntity.DynamicId)
+                {
+                    _landscapeManager.ProcessMessageEntityIn(e);
+                }
             }
         }
 

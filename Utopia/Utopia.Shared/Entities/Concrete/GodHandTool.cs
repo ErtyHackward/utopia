@@ -33,7 +33,7 @@ namespace Utopia.Shared.Entities.Concrete
             if (blockProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
 
-            // don't allow to pick blocks by hand
+            // allow to pick blocks by hand
             return PickType.Pick;
         }
 
@@ -58,7 +58,9 @@ namespace Utopia.Shared.Entities.Concrete
 
                 if (godEntity.EntityState.IsBlockPicked)
                 {
-                    var select = !godEntity.SelectedBlocks.Contains(godEntity.EntityState.PickedBlockPosition);
+                    Faction faction = EntityFactory.GlobalStateManager.GlobalState.GetFaction(godEntity.FactionId);
+                    
+                    var select = !faction.BlocksToRemove.Contains(godEntity.EntityState.PickedBlockPosition);
 
                     var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
 
@@ -73,13 +75,13 @@ namespace Utopia.Shared.Entities.Concrete
 
                         if (select)
                         {
-                            if (!godEntity.SelectedBlocks.Contains(vector))
-                                godEntity.SelectedBlocks.Add(vector);
+                            if (!faction.BlocksToRemove.Contains(vector))
+                                faction.BlocksToRemove.Add(vector);
                         }
                         else
                         {
-                            if (godEntity.SelectedBlocks.Contains(vector))
-                                godEntity.SelectedBlocks.Remove(vector);
+                            if (faction.BlocksToRemove.Contains(vector))
+                                faction.BlocksToRemove.Remove(vector);
                         }
                     }
                 }

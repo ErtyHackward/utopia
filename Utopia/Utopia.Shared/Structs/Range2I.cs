@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SharpDX;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Structs

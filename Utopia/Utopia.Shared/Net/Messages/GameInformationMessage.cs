@@ -1,4 +1,5 @@
 using ProtoBuf;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Net.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.World;
@@ -36,5 +37,11 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         [ProtoMember(3)]
         public WorldParameters WorldParameter { get; set; }
+
+        /// <summary>
+        /// Contains gameplay global stuff like list of factions
+        /// </summary>
+        [ProtoMember(4)]
+        public GlobalState GlobalState { get; set; }
     }
 }

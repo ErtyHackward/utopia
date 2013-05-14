@@ -103,6 +103,11 @@ namespace Utopia.Server
         /// </summary>
         public WeatherManager Weather { get; private set; }
 
+        /// <summary>
+        /// Contains global gameplay variables, like factions list
+        /// </summary>
+        public GlobalStateManager GlobalStateManager { get; private set; }
+
         public WorldParameters WorldParameters { get; private set; }
 
         #endregion
@@ -155,6 +160,8 @@ namespace Utopia.Server
             ChatManager = new ChatManager(this);
 
             Weather = new WeatherManager(this);
+
+            GlobalStateManager = new GlobalStateManager(this);
             
             LoginManager = new LoginManager(this, EntityFactory);
         }
@@ -168,6 +175,7 @@ namespace Utopia.Server
             ConnectionManager.Dispose();
             LandscapeManager.Dispose();
             Services.Dispose();
+            GlobalStateManager.Dispose();
         }
     }
 }

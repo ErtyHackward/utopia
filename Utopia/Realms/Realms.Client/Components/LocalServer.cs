@@ -5,23 +5,16 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Server;
 using Utopia.Server.Managers;
-using Utopia.Server.Sample;
 using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors.Utopia;
-using System.Linq;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
-using Utopia.Shared.LandscapeEntities;
 
 namespace Realms.Client.Components
 {
@@ -97,6 +90,7 @@ namespace Realms.Client.Components
             _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _serverFactory.DynamicEntityManager = _server.AreaManager;
+            _serverFactory.GlobalStateManager = _server.GlobalStateManager;
 
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();
@@ -113,6 +107,7 @@ namespace Realms.Client.Components
             entity.DynamicId = e.EntityId;
             entity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             entity.HeadRotation = Quaternion.RotationYawPitchRoll(0, -(float)Math.PI / 4, 0);
+            entity.FactionId = _server.GlobalStateManager.GlobalState.Factions[0].FactionId;
 
             e.PlayerEntity = entity;
             

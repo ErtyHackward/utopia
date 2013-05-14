@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -51,6 +53,14 @@ namespace Utopia.Server.Structs
                 if (_dynamicEntity != null)
                 {
                     _dynamicEntity.PositionChanged += EntityPositionChanged;
+
+                    if (_dynamicEntity.FactionId != 0)
+                    {
+                        var faction = _server.GlobalStateManager.GlobalState.Factions.First(f => f.FactionId == _dynamicEntity.FactionId);
+
+                        if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
+                            faction.MembersIds.Add(_dynamicEntity.DynamicId);
+                    }
                 }
             }
         }
@@ -99,13 +109,26 @@ namespace Utopia.Server.Structs
                 }
             }
         }
-
-
+        
         protected ServerDynamicEntity(Server server, IDynamicEntity entity)
         {
             _server = server;
             DynamicEntity = entity;
             DynamicEntity.Controller = this;
+        }
+
+        public void SetFaction(Faction faction)
+        {
+            if (_dynamicEntity.FactionId != 0)
+            {
+                throw new InvalidOperationException("already has a faction");
+            }
+
+            if (_dynamicEntity.FactionId != faction.FactionId)
+            {
+                _dynamicEntity.FactionId = faction.FactionId;
+                faction.MembersIds.Add(_dynamicEntity.DynamicId);
+            }
         }
 
         void EntityPositionChanged(object sender, EntityMoveEventArgs e)

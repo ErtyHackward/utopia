@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using S33M3CoreComponents.Physics;
 using S33M3CoreComponents.Physics.Verlet;
 using S33M3Resources.Structs;
@@ -84,6 +85,18 @@ namespace Utopia.Server.Structs
 
             FollowKeepDistance = 3;
             FollowStayDistance = 5;
+        }
+
+        /// <summary>
+        /// Forces the entity to find a path to the location or alternative locations
+        /// And move there
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="alternativeLocations"></param>
+        public void Goto(Vector3I location, IEnumerable<Vector3I> alternativeLocations)
+        {
+            _leader = null;
+            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated, new HashSet<Vector3I>(alternativeLocations));
         }
 
         public void Goto(Vector3I location)
@@ -222,7 +235,7 @@ namespace Utopia.Server.Structs
 
                 _moveDirection.Normalize();
 
-                VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = _moveDirection.AsVector3() * 1.6f });
+                VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = _moveDirection.AsVector3() * Npc.DynamicEntity.MoveSpeed });
 
                 if (_jump && VerletSimulator.OnGround)
                     VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = Vector3.UnitY * 22 });

@@ -39,8 +39,8 @@ namespace Utopia.Shared.Structs
         public bool Contains(Vector3I point)
         {
             return Position.X <= point.X && Position.X + Size.X > point.X &&
-                    Position.Y <= point.Y && Position.Y + Size.Y > point.Y &&
-                    Position.Z <= point.Z && Position.Z + Size.Z > point.Z;
+                   Position.Y <= point.Y && Position.Y + Size.Y > point.Y &&
+                   Position.Z <= point.Z && Position.Z + Size.Z > point.Z;
         }
 
         /// <summary>

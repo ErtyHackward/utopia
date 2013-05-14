@@ -148,8 +148,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public void ProcessMessageEntityOut(ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            //Only take into account static entity
-            if (e.Message.EntityType == Shared.Entities.EntityType.Static)
+            // Only take into account static entity
+            if (e.Message.Link.IsStatic)
             {
                 //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
                 ThreadsManager.RunAsync(() => RemoveEntity(e.Message.Link, e.Message.Link.DynamicEntityId), singleConcurrencyRun: true);
@@ -159,7 +159,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public void ProcessMessageEntityIn(ProtocolMessageEventArgs<EntityInMessage> e)
         {
             //Only take into account static entity
-            if (e.Message.Entity.Type == Shared.Entities.EntityType.Static)
+            if (e.Message.Link.IsStatic)
             {
                 ThreadsManager.RunAsync(() => AddEntity((IStaticEntity)e.Message.Entity, e.Message.SourceEntityId), singleConcurrencyRun: true);
             }

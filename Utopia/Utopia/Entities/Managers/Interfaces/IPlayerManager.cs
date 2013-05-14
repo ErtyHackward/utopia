@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using S33M3CoreComponents.Cameras.Interfaces;
+﻿using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
-using S33M3Resources.Structs;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Entities.Managers.Interfaces
 {
@@ -19,6 +16,11 @@ namespace Utopia.Entities.Managers.Interfaces
         /// Gets main player entity (character or PlayerFocusEntity)
         /// </summary>
         IDynamicEntity Player { get; }
+
+        /// <summary>
+        /// Gets player's faction
+        /// </summary>
+        Faction Faction { get; }
 
         /// <summary>
         /// If camera is inside water

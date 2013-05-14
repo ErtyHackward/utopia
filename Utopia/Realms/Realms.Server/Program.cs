@@ -56,10 +56,10 @@ namespace Realms.Server
             IWorldProcessor processor = null;
             switch (param.Configuration.WorldProcessor)
             {
-                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Flat:
+                case WorldConfiguration.WorldProcessors.Flat:
                     processor = new FlatWorldProcessor();
                     break;
-                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
+                case WorldConfiguration.WorldProcessors.Utopia:
                     processor = new UtopiaProcessor(param, _iocContainer.Get<EntityFactory>(), _iocContainer.Get<LandscapeBufferManager>());
                     break;
                 default:
@@ -169,6 +169,7 @@ namespace Realms.Server
 
             serverFactory.LandscapeManager = _server.LandscapeManager;
             serverFactory.DynamicEntityManager = _server.AreaManager;
+            serverFactory.GlobalStateManager = _server.GlobalStateManager;
 
             _gameplay = new ServerGameplayProvider(_server, conf);
 

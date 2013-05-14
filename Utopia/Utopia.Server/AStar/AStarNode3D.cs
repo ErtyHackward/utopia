@@ -17,12 +17,27 @@ namespace Utopia.Server.AStar
             Cursor = cursor;
         }
 
+        /// <summary>
+        /// Possible goal nodes 
+        /// </summary>
+        public HashSet<Vector3I> GoalNodes;
+
         public override double Estimate()
         {
-            if(GoalNode == null)
+            if (GoalNode == null)
                 return double.PositiveInfinity;
 
             return Vector3I.Distance(Cursor.GlobalPosition, GoalNode.Cursor.GlobalPosition);
+        }
+
+        public override bool IsGoal()
+        {
+            if (GoalNode.GoalNodes != null)
+            {
+                return GoalNode.GoalNodes.Contains(Cursor.GlobalPosition);
+            }
+            
+            return base.IsGoal();
         }
 
         public override void GetSuccessors(List<AStarNode3D> aSuccessors)
@@ -47,6 +62,16 @@ namespace Utopia.Server.AStar
             // get landscape cursor of possible position
             var cursor = Cursor.Clone().Move(move);
 
+            if (GoalNode.GoalNodes != null)
+            {
+                // this could be a goal node
+                if (GoalNode.GoalNodes.Contains(cursor.GlobalPosition))
+                {
+                    CreateNode(aSuccessors, cursor, 1);
+                    return;
+                }
+            }
+
             // do we have a blocking cube in front of our face?
             if (cursor.PeekProfile(Vector3I.Up).IsSolidToEntity)
                 return;
@@ -63,8 +88,7 @@ namespace Utopia.Server.AStar
                 if (cursor.PeekProfile(new Vector3I(0, 1, move.Z)).IsSolidToEntity)
                     return;
             }
-
-
+            
             if (!cursor.PeekProfile().IsSolidToEntity)
             {
                 // simple move?

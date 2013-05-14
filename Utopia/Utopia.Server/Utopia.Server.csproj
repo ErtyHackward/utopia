@@ -92,6 +92,7 @@
     <Compile Include="Commands\ServerCommands.cs" />
     <Compile Include="Interfaces\IEntityStorage.cs" />
     <Compile Include="Interfaces\IRoleRestrictedCommand.cs" />
+    <Compile Include="Managers\FactionManager.cs" />
     <Compile Include="Managers\LoginManager.cs" />
     <Compile Include="Managers\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Managers\WeatherManager.cs" />

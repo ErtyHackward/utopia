@@ -26,7 +26,7 @@ namespace Utopia.Shared.Net.Messages
         public uint EntityId { get; set; }
 
         /// <summary>
-        /// A link for an entity
+        /// A link to the entity
         /// </summary>
         [ProtoMember(2)]
         public EntityLink Link { get; set; }
@@ -36,11 +36,5 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         [ProtoMember(3)]
         public uint TakerEntityId { get; set; }
-
-        /// <summary>
-        /// The type of the entity that was removed
-        /// </summary>
-        [ProtoMember(4)]
-        public EntityType EntityType { get; set; }
     }
 }

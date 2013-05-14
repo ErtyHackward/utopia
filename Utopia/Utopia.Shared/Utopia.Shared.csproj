@@ -140,6 +140,8 @@
     <Compile Include="Entities\Dynamic\GodEntity.cs" />
     <Compile Include="Entities\EntityParticule.cs" />
     <Compile Include="Entities\Events\UseType.cs" />
+    <Compile Include="Entities\GlobalState.cs" />
+    <Compile Include="Entities\Interfaces\IGlobalStateManager.cs" />
     <Compile Include="Entities\Interfaces\IMoveAI.cs" />
     <Compile Include="Entities\Interfaces\INpc.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
@@ -177,7 +179,6 @@
     <Compile Include="Entities\EntityCollection.cs" />
     <Compile Include="Entities\EntityDisplacementModes.cs" />
     <Compile Include="Entities\EntityFactory.cs" />
-    <Compile Include="Entities\EntityType.cs" />
     <Compile Include="Entities\Events\BlocksChangedEventArgs.cs" />
     <Compile Include="Entities\Events\DynamicEntityCollectionEventArgs.cs" />
     <Compile Include="Entities\Events\DynamicEntityEventArgs.cs" />
@@ -217,7 +218,6 @@
     <Compile Include="Entities\Inventory\ToolImpact.cs" />
     <Compile Include="Entities\Inventory\ToolSlot.cs" />
     <Compile Include="Entities\Inventory\Item.cs" />
-    <Compile Include="Entities\MetaEntity.cs" />
     <Compile Include="Entities\Models\VoxelModelAnimation.cs" />
     <Compile Include="Entities\Models\VoxelModelInstance.cs" />
     <Compile Include="Entities\Models\VoxelModelPartState.cs" />
@@ -250,6 +250,7 @@
     <Compile Include="Net\Web\Responses\VerifyResponse.cs" />
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
+    <Compile Include="Entities\Faction.cs" />
     <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
     <Compile Include="World\LandscapeBufferManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntity.cs" />
