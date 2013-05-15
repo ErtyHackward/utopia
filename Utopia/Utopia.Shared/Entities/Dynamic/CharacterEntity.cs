@@ -103,14 +103,18 @@ namespace Utopia.Shared.Entities.Dynamic
             return slot;
         }
 
-        public IEnumerable<ContainedSlot> FindAll(Func<ContainedSlot, bool> pred)
+        /// <summary>
+        /// Enumerates all slots of the character (Inventory and Equipment)
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ContainedSlot> Slots()
         {
-            foreach (var slot in Equipment.Where(pred))
+            foreach (var slot in Equipment)
             {
                 yield return slot;
             }
 
-            foreach (var slot in Inventory.Where(pred))
+            foreach (var slot in Inventory)
             {
                 yield return slot;
             }
@@ -175,7 +179,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 // check if we have all ingredients
                 foreach (var ingredient in recipe.Ingredients)
                 {
-                    var count = FindAll(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
+                    var count = Slots().Where(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
                     if (count < ingredient.Count)
                         return false;
                 }

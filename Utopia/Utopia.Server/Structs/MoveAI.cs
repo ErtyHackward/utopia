@@ -36,6 +36,8 @@ namespace Utopia.Server.Structs
 
         public bool IsMooving { get; private set; }
 
+        public bool IsActive { get { return IsMooving || WaitingForPath || _leader != null; } }
+
         public Path3D CurrentPath { get { return _path; } }
 
         /// <summary>
@@ -47,6 +49,11 @@ namespace Utopia.Server.Structs
         /// Gets or sets the max distance from the leader to start the movement
         /// </summary>
         public float FollowStayDistance { get; set; }
+
+        /// <summary>
+        /// Indicates that path was requested and should arrive soon
+        /// </summary>
+        public bool WaitingForPath { get; private set; }
 
         /// <summary>
         /// Gets or sets the entity to follow
@@ -96,7 +103,8 @@ namespace Utopia.Server.Structs
         public void Goto(Vector3I location, IEnumerable<Vector3I> alternativeLocations)
         {
             _leader = null;
-            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated, new HashSet<Vector3I>(alternativeLocations));
+            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated, alternativeLocations is HashSet<Vector3I> ? (HashSet<Vector3I>)alternativeLocations : new HashSet<Vector3I>(alternativeLocations));
+            WaitingForPath = true;
         }
 
         public void Goto(Vector3I location)
@@ -108,53 +116,24 @@ namespace Utopia.Server.Structs
         private void MoveTo(Vector3I location)
         {
             Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated);
+            WaitingForPath = true;
         }
         
         private void PathCalculated(Path3D path)
         {
+            WaitingForPath = false;
+
             if (path.Exists)
             {
                 _path = path;
 #if DEBUG
                 Npc.Server.ChatManager.Broadcast(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
-
-                // fix the path
-                for (int i = 0; i < _path.Points.Count - 1; i++)
-                {
-                    var curPoint = _path.Points[i];
-                    var nextPoint = _path.Points[i + 1];
-
-                    //if (curPoint.Y != nextPoint.Y && (curPoint.X != nextPoint.X || curPoint.Z != nextPoint.Z))
-                    //{
-                    //    Vector3I pos;
-                    //    // add intermediate point
-                    //    if (nextPoint.Y < curPoint.Y)
-                    //    {
-                    //        // falling down
-                    //        pos = new Vector3I(nextPoint.X, curPoint.Y, nextPoint.Z);
-                    //    }
-                    //    else
-                    //    {
-                    //        // lifting up
-                    //        pos = new Vector3I(curPoint.X, nextPoint.Y + 1, curPoint.Z);
-                    //    }
-                    //    _path.Points.Insert(i + 1, pos);
-                    //    i++;
-                    //}
-                }
-
                 IsMooving = true;
-                _targetPathNodeIndex = 0;
-                _prevPoint = Npc.DynamicEntity.Position;
-                _pathTargetPoint = new Vector3D(_path.Points[1].X, _path.Points[1].Y, _path.Points[1].Z) + CubeCenter;
-                _moveDirection = _pathTargetPoint - Npc.DynamicEntity.Position;
-                _moveDirection.Normalize();
-                var q = Quaternion.RotationMatrix(Matrix.LookAtLH(Npc.DynamicEntity.Position.AsVector3(),
-                                                                  Npc.DynamicEntity.Position.AsVector3() +
-                                                                  _moveDirection.AsVector3(), Vector3D.Up.AsVector3()));
-                Npc.DynamicEntity.HeadRotation = q;
-                //Transform the rotation from a world rotatino to a local rotation
+                _targetPathNodeIndex = -1;
+                _pathTargetPoint = Npc.DynamicEntity.Position;
+
+                FollowNextPoint();
             }
             else
             {
@@ -175,6 +154,16 @@ namespace Utopia.Server.Structs
             if (_leader != null)
             {
                 if (Vector3D.Distance(_leader.Position, Npc.DynamicEntity.Position) <= FollowKeepDistance)
+                {
+                    IsMooving = false;
+                    return;
+                }
+            }
+
+            // check for job reaching
+            if (Npc.State == NpcState.GoingToWork)
+            {
+                if (_targetPathNodeIndex == _path.Points.Count - 1)
                 {
                     IsMooving = false;
                     return;

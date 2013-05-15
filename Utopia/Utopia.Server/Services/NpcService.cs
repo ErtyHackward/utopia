@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utopia.Server.Commands;
 using Utopia.Server.Events;
 using Utopia.Server.Structs;
@@ -35,6 +36,17 @@ namespace Utopia.Server.Services
         public Npc CreateNpc(string name, Vector3D position)
         {
             var z = new Dwarf { CharacterName = name };
+
+            var collector = _server.WorldParameters.Configuration.BluePrints.Select(p => p.Value).FirstOrDefault(t => t is BasicCollector);
+
+            if (collector != null)
+            {
+                var item = (BasicCollector)collector.Clone();
+
+                _server.EntityFactory.PrepareEntity(item);
+
+                z.Inventory.PutItem(item);
+            }
 
             z.Position = position;
 

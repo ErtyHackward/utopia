@@ -603,6 +603,7 @@ namespace Utopia.Shared.Chunks
             }
             
             result.Cube = Cubes[cubeIndex];
+            result.IsValid = true;
 
             return result;
         }
@@ -645,20 +646,20 @@ namespace Utopia.Shared.Chunks
                 }
             }
 
-            result.isValid = true;
+            result.IsValid = true;
             return result;
         }
 
         public bool CheckCube(Vector3D pos, byte cubeId, bool withYCheck = true)
         {
             TerraCubeResult result = GetCube(pos, withYCheck);
-            return (result.isValid && result.Cube.Id == cubeId);
+            return (result.IsValid && result.Cube.Id == cubeId);
         }
 
         public bool CheckCube(Vector3I pos, byte cubeId)
         {
             TerraCubeResult result = GetCube(pos);
-            return (result.isValid && result.Cube.Id == cubeId);
+            return (result.IsValid && result.Cube.Id == cubeId);
         }
 
     }

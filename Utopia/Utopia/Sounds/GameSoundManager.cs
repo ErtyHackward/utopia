@@ -368,7 +368,7 @@ namespace Utopia.Sounds
                 Vector3D underTheFeets = entity.Position;
                 underTheFeets.Y -= 0.01f;
                 var result = _singleArray.GetCube(underTheFeets);
-                if (result.isValid == false) return;
+                if (result.IsValid == false) return;
                 BlockProfile cubeUnderFeet = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[result.Cube.Id]; 
 
                 // no need to play step if the entity is in air or not in walking displacement mode
@@ -394,7 +394,7 @@ namespace Utopia.Sounds
                 {
                     byte soundIndex = 0;
                     var cubeResult = _singleArray.GetCube(entity.Position);
-                    if (cubeResult.isValid) //Valid cube retrieved
+                    if (cubeResult.IsValid) //Valid cube retrieved
                     {
                         BlockProfile currentCube = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cubeResult.Cube.Id];
 

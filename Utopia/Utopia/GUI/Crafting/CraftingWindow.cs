@@ -158,7 +158,7 @@ namespace Utopia.GUI.Crafting
                     var bpId = recipe.Ingredients[i].BlueprintId;
 
                     var needItems = recipe.Ingredients[i].Count;
-                    var haveItems = _player.FindAll(s => s.Item.BluePrintId == bpId).Sum(s => s.ItemsCount);
+                    var haveItems = _player.Slots().Where(s => s.Item.BluePrintId == bpId).Sum(s => s.ItemsCount);
 
                     if (haveItems < needItems)
                         _canCraft = false;

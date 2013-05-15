@@ -437,7 +437,7 @@ namespace Utopia.Server.Managers
             if (calculator == null)
                 calculator = new AStar<AStarNode3D>();
 
-            var goalNode = new AStarNode3D(GetCursor(goal), null, null, 1);
+            var goalNode = new AStarNode3D(GetCursor(goal), null, null, 1) { GoalNodes = goals };
             var startNode = new AStarNode3D(GetCursor(start), null, goalNode, 1);
 
 #if DEBUG

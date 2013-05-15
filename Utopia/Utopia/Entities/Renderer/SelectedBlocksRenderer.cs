@@ -15,8 +15,11 @@ using SharpDX;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Entities.Renderer
 {
@@ -28,6 +31,7 @@ namespace Utopia.Entities.Renderer
         private readonly D3DEngine _engine;
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private readonly IPlayerManager _playerManager;
+        private readonly SingleArrayChunkContainer _cubesHolder;
 
         protected VertexBuffer<VertexMesh> _staticBlockVB;
         protected IndexBuffer<ushort> _staticBlockIB;
@@ -36,15 +40,18 @@ namespace Utopia.Entities.Renderer
 
         public SelectedBlocksRenderer(D3DEngine engine,
                                       CameraManager<ICameraFocused> cameraManager,
-                                      IPlayerManager playerManager)
+                                      IPlayerManager playerManager,
+                                      SingleArrayChunkContainer cubesHolder)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
             if (playerManager == null) throw new ArgumentNullException("playerManager");
+            if (cubesHolder == null) throw new ArgumentNullException("cubesHolder");
 
             _engine = engine;
             _cameraManager = cameraManager;
             _playerManager = playerManager;
+            _cubesHolder = cubesHolder;
 
             this.DrawOrders.UpdateIndex(0, 1020);
         }
@@ -111,20 +118,30 @@ namespace Utopia.Entities.Renderer
                 if (!select && range.HasValue && range.Value.Contains(selectedBlock))
                     continue;
 
-                _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(selectedBlock + new Vector3(0.5f)));
-                _cubeShader.CBPerDraw.IsDirty = true;
-                _cubeShader.Apply(context);
-                context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+                var cube = _cubesHolder.GetCube(selectedBlock);
+
+                if (cube.IsValid && cube.Cube.Id != WorldConfiguration.CubeId.Air)
+                {
+                    _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(selectedBlock + new Vector3(0.5f)));
+                    _cubeShader.CBPerDraw.IsDirty = true;
+                    _cubeShader.Apply(context);
+                    context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+                }
             }
 
             if (hoverBlocks != null)
             {
                 foreach (var hoverBlock in hoverBlocks)
                 {
-                    _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(hoverBlock + new Vector3(0.5f)));
-                    _cubeShader.CBPerDraw.IsDirty = true;
-                    _cubeShader.Apply(context);
-                    context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+                    var cube = _cubesHolder.GetCube(hoverBlock);
+
+                    if (cube.IsValid && cube.Cube.Id != WorldConfiguration.CubeId.Air)
+                    {
+                        _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(hoverBlock + new Vector3(0.5f)));
+                        _cubeShader.CBPerDraw.IsDirty = true;
+                        _cubeShader.Apply(context);
+                        context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
+                    }
                 }
             }
 

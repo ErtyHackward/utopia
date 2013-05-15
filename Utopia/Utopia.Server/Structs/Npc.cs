@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
@@ -16,6 +19,8 @@ namespace Utopia.Server.Structs
         private List<MapArea> _mapAreas = new List<MapArea>();
         private int _seed;
         private Random _random;
+
+        private CharacterEntity _character;
         
         /// <summary>
         /// Gets current NPC state
@@ -33,6 +38,8 @@ namespace Utopia.Server.Structs
 
         public Random Random { get { return _random; } }
 
+        public CharacterEntity Character { get { return _character; } }
+
         public int Seed
         {
             get { return _seed; }
@@ -42,10 +49,13 @@ namespace Utopia.Server.Structs
                 _random = new Random(_seed);
             }
         }
-        
-        public Npc(Server server, Dwarf z) : base(server, z)
+
+        public Npc(Server server, CharacterEntity z)
+            : base(server, z)
         {
             Seed = 0;
+
+            _character = z;
 
             Movement = new MoveAI(this);
             Focus = new FocusAI(this);
@@ -88,9 +98,49 @@ namespace Utopia.Server.Structs
         /// </summary>
         private void AISelect()
         {
-            if (!Movement.IsMooving && Movement.Leader == null)
+            if (!Movement.IsActive)
             {
-                
+                if (Faction.BlocksToRemove.Count > 0)
+                {
+                    // we have a job guys!
+
+                    var collectorSlot = _character.Slots().FirstOrDefault(s => s.Item is BasicCollector);
+
+                    if (collectorSlot == null)
+                        return; // but we haven't tools to do it
+
+                    // verify that the tool is equipped
+                    if (!(_character.Equipment.RightTool is BasicCollector))
+                    {
+                        ContainedSlot slot;
+
+                        if (!_character.Equipment.Equip(EquipmentSlotType.Hand, collectorSlot, out slot))
+                            return;
+
+                        if (slot != null)
+                            _character.Equipment.PutItem(slot.Item, slot.ItemsCount);
+                    }
+
+                    // check whether we close enough to start working
+                    if (Movement.CurrentPath != null && Faction.BlocksToRemove.Contains(Movement.CurrentPath.Goal) && Vector3D.Distance(MoveAI.CubeCenter + Movement.CurrentPath.Goal, DynamicEntity.Position) < 1.5d)
+                    {
+                        DynamicEntity.EntityState.IsBlockPicked = true;
+                        DynamicEntity.EntityState.PickedBlockPosition = Movement.CurrentPath.Goal;
+
+                        var tool = collectorSlot.Item as BasicCollector;
+                        tool.Use(DynamicEntity);
+
+                        Faction.BlocksToRemove.Remove(Movement.CurrentPath.Goal);
+                    }
+                    else
+                    {
+                        // will try to go to the closest block to remove
+
+                        State = NpcState.GoingToWork;
+                        var location = Faction.BlocksToRemove.OrderBy(v => Vector3I.DistanceSquared(v, (Vector3I)_character.Position)).First();
+                        Movement.Goto(location, Faction.BlocksToRemove);
+                    }
+                }
             }
         }
     }
