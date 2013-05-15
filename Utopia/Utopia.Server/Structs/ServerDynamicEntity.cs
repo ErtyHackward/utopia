@@ -18,6 +18,8 @@ namespace Utopia.Server.Structs
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly Server _server;
+
+        private Faction _faction;
         
         public event EventHandler<ServerDynamicEntityMoveEventArgs> PositionChanged;
 
@@ -33,6 +35,8 @@ namespace Utopia.Server.Structs
         public IEntity LockedEntity { get; set; }
 
         public Server Server { get { return _server; } }
+
+        public Faction Faction { get { return _faction; } }
         
         /// <summary>
         /// Gets wrapped entity
@@ -61,6 +65,8 @@ namespace Utopia.Server.Structs
 
                         if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
                             faction.MembersIds.Add(_dynamicEntity.DynamicId);
+
+                        _faction = faction;
                     }
                 }
             }
@@ -130,6 +136,8 @@ namespace Utopia.Server.Structs
                 _dynamicEntity.FactionId = faction.FactionId;
                 if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
                     faction.MembersIds.Add(_dynamicEntity.DynamicId);
+
+                _faction = faction;
             }
         }
 

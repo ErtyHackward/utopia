@@ -479,7 +479,7 @@ namespace Utopia.Worlds.Chunks
                     result = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position);
                 }
 
-                if (result.isValid)
+                if (result.IsValid)
                 {
                     visualVoxelEntity.BlockLight = result.Cube.EmissiveColor;
                 }

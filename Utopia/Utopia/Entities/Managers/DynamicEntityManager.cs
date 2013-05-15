@@ -265,7 +265,7 @@ namespace Utopia.Entities.Managers
 
                 // update model color, get the cube where model is
                 var result = _chunkContainer.GetCube(entity.WorldPosition.ValueInterp);
-                if (result.isValid && result.Cube.Id == WorldConfiguration.CubeId.Air)
+                if (result.IsValid && result.Cube.Id == WorldConfiguration.CubeId.Air)
                 {
                     // we take the max color
                     var sunPart = (float)result.Cube.EmissiveColor.A / 255;

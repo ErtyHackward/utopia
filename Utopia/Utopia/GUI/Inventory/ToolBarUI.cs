@@ -173,7 +173,7 @@ namespace Utopia.GUI.Inventory
                     if (_toolbarSlots[i].IsDisabledCell)
                         _toolbarSlots[i].Slot.ItemsCount = 1;
                     else
-                        _toolbarSlots[i].Slot.ItemsCount = _player.FindAll(s => s.Item.BluePrintId == _player.Toolbar[i]).Sum(x => x.ItemsCount);
+                        _toolbarSlots[i].Slot.ItemsCount = _player.Slots().Where(s => s.Item.BluePrintId == _player.Toolbar[i]).Sum(x => x.ItemsCount);
                 }
             }
 
