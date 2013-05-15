@@ -55,9 +55,17 @@ namespace Utopia.Server.Services
 
             _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
 
-            var faction = new Faction { Name = "Player faction", FactionId = 1 };
+            Faction faction = null;
 
-            _server.GlobalStateManager.GlobalState.Factions.Add(faction);
+            if (_server.GlobalStateManager.GlobalState.Factions.Count == 0)
+            {
+                faction = new Faction { Name = "Player faction", FactionId = 1 };
+                _server.GlobalStateManager.GlobalState.Factions.Add(faction);
+            }
+            else
+            {
+                faction = _server.GlobalStateManager.GlobalState.Factions[1];
+            }
 
             var r = new Random();
             for (int i = 0; i < 2; i++)

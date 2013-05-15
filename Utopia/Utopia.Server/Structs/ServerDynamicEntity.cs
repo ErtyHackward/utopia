@@ -15,9 +15,10 @@ namespace Utopia.Server.Structs
     /// </summary>
     public abstract class ServerDynamicEntity
     {
-        private readonly Server _server;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly Server _server;
+        
         public event EventHandler<ServerDynamicEntityMoveEventArgs> PositionChanged;
 
         private void OnPositionChanged(ServerDynamicEntityMoveEventArgs e)
@@ -127,7 +128,8 @@ namespace Utopia.Server.Structs
             if (_dynamicEntity.FactionId != faction.FactionId)
             {
                 _dynamicEntity.FactionId = faction.FactionId;
-                faction.MembersIds.Add(_dynamicEntity.DynamicId);
+                if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
+                    faction.MembersIds.Add(_dynamicEntity.DynamicId);
             }
         }
 
@@ -141,20 +143,14 @@ namespace Utopia.Server.Structs
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected virtual void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e)
-        {
-
-        }
+        protected virtual void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e) { }
 
         /// <summary>
         /// Called when some entity get closer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected virtual void AreaEntityInViewRange(object sender, ServerDynamicEntityEventArgs e)
-        {
-
-        }
+        protected virtual void AreaEntityInViewRange(object sender, ServerDynamicEntityEventArgs e) { }
 
         /// <summary>
         /// Perform dynamic update (AI logic)
@@ -174,24 +170,15 @@ namespace Utopia.Server.Structs
         {
             // update entity state
             DynamicEntity.EntityState = entityUseMessage.State;
-
-            logger.Warn("SRV use EP:" + DynamicEntity.EntityState.IsEntityPicked + " BP:" + DynamicEntity.EntityState.IsBlockPicked);
         }
 
         /// <summary>
         /// Perform equipment change
         /// </summary>
         /// <param name="entityEquipmentMessage"></param>
-        public virtual void Equip(EntityEquipmentMessage entityEquipmentMessage)
-        {
-            
+        public virtual void Equip(EntityEquipmentMessage entityEquipmentMessage) { }
 
-        }
-
-        public virtual void ItemTransfer(ItemTransferMessage itemTransferMessage)
-        {
-            
-        }
+        public virtual void ItemTransfer(ItemTransferMessage itemTransferMessage) { }
     }
 
     public class ServerDynamicEntityMoveEventArgs : EventArgs
