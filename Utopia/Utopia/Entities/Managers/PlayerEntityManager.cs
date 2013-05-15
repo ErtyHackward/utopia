@@ -267,7 +267,7 @@ namespace Utopia.Entities.Managers
             PlayerCharacter = player;
             PlayerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
 
-            _faction = _factory.GlobalStateManager.GlobalState.GetFaction(player.FactionId);
+            _faction = _factory.GlobalStateManager.GlobalState.Factions[player.FactionId];
             
             ShowDebugInfo = true;
 

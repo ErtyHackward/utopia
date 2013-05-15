@@ -140,7 +140,7 @@ namespace Utopia.Entities.Managers
 
             GodEntity = playerEntity;
 
-            _faction = globalStateManager.GlobalState.GetFaction(GodEntity.FactionId);
+            _faction = globalStateManager.GlobalState.Factions[GodEntity.FactionId];
 
             _eyeOrientation  = GodEntity.HeadRotation;
             _bodyOrientation = GodEntity.BodyRotation;

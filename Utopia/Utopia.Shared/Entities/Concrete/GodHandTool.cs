@@ -58,7 +58,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                 if (godEntity.EntityState.IsBlockPicked)
                 {
-                    Faction faction = EntityFactory.GlobalStateManager.GlobalState.GetFaction(godEntity.FactionId);
+                    Faction faction = EntityFactory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
                     
                     var select = !faction.BlocksToRemove.Contains(godEntity.EntityState.PickedBlockPosition);
 
