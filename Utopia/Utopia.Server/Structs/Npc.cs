@@ -60,11 +60,6 @@ namespace Utopia.Server.Structs
             Movement = new MoveAI(this);
             Focus = new FocusAI(this);
         }
-
-        public void Goto(Vector3I location)
-        {
-            
-        }
         
         public override void AddArea(MapArea area)
         {

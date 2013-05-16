@@ -63,7 +63,6 @@ namespace Utopia.Server.Services
 
             _server.CommandsManager.RegisterCommand(new AddTestNpcCommand());
             _server.CommandsManager.RegisterCommand(new RemoveTestNpcCommand());
-            _server.CommandsManager.RegisterCommand(new ComeHereCommand());
 
             _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
 
@@ -130,24 +129,6 @@ namespace Utopia.Server.Services
 
                 _server.ChatManager.Broadcast("All test npc removed");
             }
-
-            if (e.Command is ComeHereCommand)
-            {
-                var blockPos = _server.LandscapeManager.GetCursor(e.Connection.ServerEntity.DynamicEntity.Position);
-
-                if (!blockPos.PeekProfile().IsSolidToEntity && blockPos.PeekProfile(Vector3I.Down).IsSolidToEntity)
-                {
-                    foreach (var serverZombie in _aliveNpc)
-                    {
-                        serverZombie.Goto(blockPos.GlobalPosition);
-                    }
-                }
-                else
-                {
-                    _server.ChatManager.Broadcast(string.Format("Error: you need to stay on solid block to use this command"));
-                }
-            }
-
         }
     }
 
@@ -174,19 +155,6 @@ namespace Utopia.Server.Services
         public override string Description
         {
             get { return "Removes all test NPC from the world"; }
-        }
-    }
-
-    public class ComeHereCommand : AdministratorCommand
-    {
-        public override string Id
-        {
-            get { return "comehere"; }
-        }
-
-        public override string Description
-        {
-            get { return "Tells every test npc to go to current player position"; }
         }
     }
 }
