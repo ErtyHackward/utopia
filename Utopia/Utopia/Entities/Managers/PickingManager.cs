@@ -36,7 +36,9 @@ namespace Utopia.Entities.Managers
 
         private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
-        
+
+        private TerraCubeWithPosition _prevCube;
+
         private TerraCubeWithPosition _pickedCube;
         private TerraCubeWithPosition _newCube;
         
@@ -350,30 +352,53 @@ namespace Utopia.Entities.Managers
 
             if (_worldChunks.SliceValue != -1)
             {
-                var plane = new Plane(new Vector3(0, _worldChunks.SliceValue, 0), Vector3.UnitY);
+                var topPlane = new Plane(new Vector3(0, _worldChunks.SliceValue, 0), Vector3.UnitY);
+                var bottomPlane = new Plane(new Vector3(0, _worldChunks.SliceValue - 5, 0), Vector3.UnitY);
 
-                Vector3 intersectPoint;
+                Vector3 topIntersectionPoint;
+                Vector3 bottomIntersectionPoint;
 
-                if (pickingRay.Intersects(ref plane, out intersectPoint))
-                {
-                    pickingWorldPosition = new Vector3D(intersectPoint);
-                }
+                var topIntersection = pickingRay.Intersects(ref topPlane, out topIntersectionPoint);
+                var bottomIntersection = pickingRay.Intersects(ref bottomPlane, out bottomIntersectionPoint);
                 
-                Vector3 bottomPoint;
+                if (!topIntersection && !bottomIntersection)
+                    return false;
 
-                plane = new Plane(new Vector3(0, _worldChunks.SliceValue - 5, 0), Vector3.UnitY);
-
-                if (pickingRay.Intersects(ref plane, out bottomPoint))
+                if (topIntersection && bottomIntersection)
                 {
-                    sliceLimitSquared = Vector3.DistanceSquared(intersectPoint, bottomPoint);
+                    // find the closest one to the camera
+
+                    var topIsCloser = Vector3D.DistanceSquared(pickingWorldPosition, new Vector3D(topIntersectionPoint)) < Vector3D.DistanceSquared(pickingWorldPosition, new Vector3D(bottomIntersectionPoint));
+                    
+                    if (topIsCloser)
+                    {
+                        pickingWorldPosition = new Vector3D(topIntersectionPoint);
+                    }
+                    else
+                    {
+                        pickingWorldPosition = new Vector3D(bottomIntersectionPoint);
+                    }
+
+                    sliceLimitSquared = Vector3.DistanceSquared(topIntersectionPoint, bottomIntersectionPoint);
+                }
+                else if (topIntersection)
+                {
+                    sliceLimitSquared = (float)Vector3D.DistanceSquared(pickingWorldPosition, new Vector3D(topIntersectionPoint));
+                }
+                else
+                {
+                    sliceLimitSquared = (float)Vector3D.DistanceSquared(pickingWorldPosition, new Vector3D(bottomIntersectionPoint));
                 }
 
                 if (epr.Found)
                 {
-                    sliceLimitSquared = Vector3.DistanceSquared(intersectPoint, epr.PickPoint);
-                    if (epr.PickPoint.Y > intersectPoint.Y)
+                    sliceLimitSquared = (float)Vector3D.DistanceSquared(pickingWorldPosition, new Vector3D(epr.PickPoint));
+                    if (epr.PickPoint.Y > topIntersectionPoint.Y)
                         nbrPointToSample = 0;
                 }
+
+                //if (Vector3D.DistanceSquared(prevPosition, prevPosition) > Vector3D.DistanceSquared(prevPosition, new Vector3D(bottomPoint)))
+                //    pickingWorldPosition = new Vector3D(intersectPoint);
             }
 
             var startPos = pickingWorldPosition;
@@ -414,12 +439,12 @@ namespace Utopia.Entities.Managers
                     Vector3 faceInteresection;
                     if (cubeBB.Intersects(ref pickingRay, out faceInteresection))
                     {
+                        _prevCube = _pickedCube;
                         _pickedCube = new TerraCubeWithPosition { Position = blockPos, BlockProfile = blockProfile, Cube = result.Cube };
 
                         PlayerManager.Player.EntityState.PickedBlockFaceOffset = Vector3.One - (_pickedCube.Position - faceInteresection);
                         PlayerManager.Player.EntityState.PickPoint = faceInteresection;
                         PlayerManager.Player.EntityState.PickPointNormal = cubeBB.GetPointNormal(faceInteresection);
-                        PlayerManager.Player.EntityState.IsBlockPicked = true;
                     }
 
                     bool newPlacechanged = false;
@@ -440,7 +465,7 @@ namespace Utopia.Entities.Managers
 
                     PlayerManager.Player.EntityState.IsEntityPicked = false;
                     PlayerManager.Player.EntityState.IsBlockPicked = true;
-                    if (_pickedCube.Position == PlayerManager.Player.EntityState.PickedBlockPosition)
+                    if (_prevCube.Position == PlayerManager.Player.EntityState.PickedBlockPosition)
                     {
                         if (!newPlacechanged)
                             return false;
