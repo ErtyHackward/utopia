@@ -38,7 +38,7 @@ namespace Utopia.Server.Managers
         private readonly Timer _cleanUpTimer;
         private readonly Timer _saveTimer;
 
-        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal, HashSet<Vector3I> goals = null);
+        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoal = null);
         public delegate void PathCalculatedDeleagte(Path3D path);
 
         /// <summary>
@@ -405,10 +405,10 @@ namespace Utopia.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <param name="callback"></param>
-        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback, HashSet<Vector3I> goals = null)
+        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback, Predicate<AStarNode3D> isGoal = null)
         {
             var d = new CalculatePathDelegate(CalculatePath);
-            d.BeginInvoke(start, goal, goals, PathCalculated, callback);
+            d.BeginInvoke(start, goal, isGoal, PathCalculated, callback);
         }
 
         private void PathCalculated(IAsyncResult result)
@@ -425,7 +425,7 @@ namespace Utopia.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <returns></returns>
-        public Path3D CalculatePath(Vector3I start, Vector3I goal, HashSet<Vector3I> goals = null)
+        public Path3D CalculatePath(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoalNode = null)
         {
             AStar<AStarNode3D> calculator = null;
             lock (_pathPool)
@@ -437,13 +437,13 @@ namespace Utopia.Server.Managers
             if (calculator == null)
                 calculator = new AStar<AStarNode3D>();
 
-            var goalNode = new AStarNode3D(GetCursor(goal), null, null, 1) { GoalNodes = goals };
+            var goalNode = new AStarNode3D(GetCursor(goal), null, null, 1);
             var startNode = new AStarNode3D(GetCursor(start), null, goalNode, 1);
 
 #if DEBUG
             var sw = Stopwatch.StartNew();
 #endif
-            calculator.FindPath(startNode);
+            calculator.FindPath(startNode, isGoalNode);
 #if DEBUG
             sw.Stop();
 #endif

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utopia.Server.AStar;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -116,16 +117,18 @@ namespace Utopia.Server.Structs
                             _character.Equipment.PutItem(slot.Item, slot.ItemsCount);
                     }
 
+                    Vector3I pos;
+
                     // check whether we close enough to start working
-                    if (Movement.CurrentPath != null && Faction.BlocksToRemove.Contains(Movement.CurrentPath.Goal) && Vector3D.Distance(MoveAI.CubeCenter + Movement.CurrentPath.Goal, DynamicEntity.Position) < 1.5d)
+                    if (Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(Movement.CurrentPath.Goal, out pos))
                     {
                         DynamicEntity.EntityState.IsBlockPicked = true;
-                        DynamicEntity.EntityState.PickedBlockPosition = Movement.CurrentPath.Goal;
+                        DynamicEntity.EntityState.PickedBlockPosition = pos;
 
                         var tool = collectorSlot.Item as BasicCollector;
                         tool.Use(DynamicEntity);
 
-                        Faction.BlocksToRemove.Remove(Movement.CurrentPath.Goal);
+                        Faction.BlocksToRemove.Remove(pos);
                     }
                     else
                     {
@@ -133,10 +136,42 @@ namespace Utopia.Server.Structs
 
                         State = NpcState.GoingToWork;
                         var location = Faction.BlocksToRemove.OrderBy(v => Vector3I.DistanceSquared(v, (Vector3I)_character.Position)).First();
-                        Movement.Goto(location, Faction.BlocksToRemove);
+                        Movement.Goto(location, IsGoalNode);
                     }
                 }
             }
+        }
+
+        private bool IsGoalNode(AStarNode3D node)
+        {
+            var pos = node.Cursor.GlobalPosition;
+            Vector3I res;
+            return IsGoalNodeNear(pos, out res);
+        }
+
+        private bool IsGoalNodeNear(Vector3I pos, out Vector3I result)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int z = -1; z <= 1; z++)
+                {
+                    if (x != 0 && z != 0)
+                        continue;
+
+                    for (int y = 0; y <= 1; y++)
+                    {
+                        result = pos + new Vector3I(x, y, z);
+                        if (Faction.BlocksToRemove.Contains(result))
+                            return true;
+                    }
+                }
+            }
+
+            result = pos + new Vector3I(0, 2, 0);
+            if (Faction.BlocksToRemove.Contains(result))
+                return true;
+
+            return false;
         }
     }
 }

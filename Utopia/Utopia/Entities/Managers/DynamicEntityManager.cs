@@ -434,6 +434,9 @@ namespace Utopia.Entities.Managers
 
         private void DrawTool(IVoxelEntity voxelTool, CharacterEntity charEntity)
         {
+            if (charEntity.ModelInstance == null)
+                return;
+
             // get the model and instance
             KeyValuePair<VisualVoxelModel, VoxelModelInstance> mPair;
             if (!_toolsModels.TryGetValue(voxelTool.ModelName, out mPair))

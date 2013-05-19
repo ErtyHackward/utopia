@@ -99,11 +99,11 @@ namespace Utopia.Server.Structs
         /// And move there
         /// </summary>
         /// <param name="location"></param>
-        /// <param name="alternativeLocations"></param>
-        public void Goto(Vector3I location, IEnumerable<Vector3I> alternativeLocations)
+        /// <param name="isGoal"></param>
+        public void Goto(Vector3I location, Predicate<AStarNode3D> isGoal)
         {
             _leader = null;
-            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated, alternativeLocations is HashSet<Vector3I> ? (HashSet<Vector3I>)alternativeLocations : new HashSet<Vector3I>(alternativeLocations));
+            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated, isGoal);
             WaitingForPath = true;
         }
 
@@ -160,16 +160,6 @@ namespace Utopia.Server.Structs
                 }
             }
 
-            // check for job reaching
-            if (Npc.State == NpcState.GoingToWork)
-            {
-                if (_targetPathNodeIndex == _path.Points.Count - 1)
-                {
-                    IsMooving = false;
-                    return;
-                }
-            }
-
             var vec3d = _path.Points[_targetPathNodeIndex];
 
             var dynPos = Npc.DynamicEntity.Position;
@@ -218,8 +208,7 @@ namespace Utopia.Server.Structs
                 //    if (Math.Abs(_moveDirection.X) < Math.Abs(_moveDirection.Z))
                 //        _moveDirection.Z = 0.1f * Math.Sign(_moveDirection.Z);
                 //    else
-                //        _moveDirection.X = 0.1f * Math.Sign(_moveDirection.X); ;
-
+                //        _moveDirection.X = 0.1f * Math.Sign(_moveDirection.X);
                 //}
 
                 _moveDirection.Normalize();
@@ -232,7 +221,7 @@ namespace Utopia.Server.Structs
 
             if (_leader != null && Vector3D.Distance(_leader.Position, Npc.DynamicEntity.Position) > FollowStayDistance)
             {
-                if (IsMooving && Vector3D.Distance(new Vector3D( _path.Goal) + CubeCenter, _leader.Position) < FollowStayDistance)
+                if (IsMooving && Vector3D.Distance(new Vector3D(_path.Goal) + CubeCenter, _leader.Position) < FollowStayDistance)
                     return;
 
                 MoveTo(_leader.Position.ToCubePosition());

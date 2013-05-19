@@ -79,7 +79,7 @@ namespace Utopia.Server.Services
             }
 
             var r = new Random();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var z = CreateNpc(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + 2 * i, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
                 //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
