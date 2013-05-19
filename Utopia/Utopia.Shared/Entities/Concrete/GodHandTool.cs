@@ -46,7 +46,6 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (godEntity.EntityState.MouseButton == MouseButton.LeftButton)
             {
-
                 if (!godEntity.EntityState.MouseUp)
                 {
                     if (owner.EntityState.IsBlockPicked)
@@ -62,6 +61,9 @@ namespace Utopia.Shared.Entities.Concrete
                     
                     var select = !faction.BlocksToRemove.Contains(godEntity.EntityState.PickedBlockPosition);
 
+                    if (_selectionStart.Y == godEntity.EntityState.SliceValue-1)
+                        _selectionStart.y--;
+
                     var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
 
                     var cursor = EntityFactory.LandscapeManager.GetCursor(range.Position);
@@ -69,7 +71,7 @@ namespace Utopia.Shared.Entities.Concrete
                     foreach (var vector in range)
                     {
                         cursor.GlobalPosition = vector;
-
+                        
                         if (cursor.Read() == WorldConfiguration.CubeId.Air)
                             continue;
 

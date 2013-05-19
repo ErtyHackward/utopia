@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Utopia.Server.AStar {
@@ -13,7 +14,7 @@ namespace Utopia.Server.AStar {
         private readonly AStarList<T> _fOpenList = new AStarList<T>();
         private readonly List<T> _fSuccessors = new List<T>();
 
-        private readonly Dictionary<T, T> _fClosedList = new Dictionary<T,T>();
+        private readonly Dictionary<T, T> _fClosedList = new Dictionary<T, T>();
         private readonly Dictionary<T, T> _fOpenSet = new Dictionary<T, T>();
 
         /// <summary>
@@ -53,11 +54,12 @@ namespace Utopia.Server.AStar {
 		
 		#region Public Methods
 
-		/// <summary>
-		/// Finds the shortest path from the start node to the goal node
-		/// </summary>
-		/// <param name="aStartNode">Start node</param>
-		public void FindPath(T aStartNode)
+        /// <summary>
+        /// Finds the shortest path from the start node to the goal node
+        /// </summary>
+        /// <param name="aStartNode">Start node</param>
+        /// <param name="isGoalNode"></param>
+        public void FindPath(T aStartNode, Predicate<T> isGoalNode = null)
 		{
             Solution = null;
             _fClosedList.Clear();
@@ -79,9 +81,11 @@ namespace Utopia.Server.AStar {
                 _fOpenSet.Remove(nodeCurrent);
 
 				// If the node is the goal copy the path to the solution array
-				if (nodeCurrent.IsGoal()) {
+                if (nodeCurrent.IsGoal() || (isGoalNode != null && isGoalNode(nodeCurrent)))
+                {
                     Solution = new List<T>();
-                    while (nodeCurrent != null) {
+                    while (nodeCurrent != null) 
+                    {
                         Solution.Add(nodeCurrent);
 						nodeCurrent = nodeCurrent.Parent;
 					}

@@ -318,6 +318,8 @@ namespace Utopia.Entities.Managers
 
             _moveVector = Vector3.Transform(moveVector, inv);
 
+            GodEntity.EntityState.SliceValue = Chunks.SliceValue;
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.LeftButton == ButtonState.Released;
