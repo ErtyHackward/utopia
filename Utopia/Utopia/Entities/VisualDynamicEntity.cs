@@ -25,7 +25,8 @@ namespace Utopia.Entities
         /// <summary>
         /// The Player
         /// </summary>
-        public readonly IDynamicEntity DynamicEntity;
+        public IDynamicEntity DynamicEntity;
+
         /// <summary>
         /// The Player Voxel body
         /// </summary>

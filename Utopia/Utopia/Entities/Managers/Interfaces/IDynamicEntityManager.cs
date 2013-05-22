@@ -34,5 +34,11 @@ namespace Utopia.Entities.Managers.Interfaces
         /// Set to null in first person mode
         /// </summary>
         IDynamicEntity PlayerEntity { get; set; }
+
+        /// <summary>
+        /// Updates existing entity object (in case of visual or equipment changes)
+        /// </summary>
+        /// <param name="entity"></param>
+        void UpdateEntity(IDynamicEntity entity);
     }
 }

@@ -59,6 +59,11 @@ namespace Utopia.Shared.Entities
         [Inject]
         public ISoundEngine SoundEngine { get; set; }
 
+        /// <summary>
+        /// Gets or sets value that indicates if this server side factory 
+        /// </summary>
+        public bool ServerSide { get; set; }
+
         public static void InitializeProtobufInheritanceHierarchy()
         {
             var protoTypeModel = RuntimeTypeModel.Default;
@@ -452,12 +457,23 @@ namespace Utopia.Shared.Entities
             switch ((MessageTypes)imsg.MessageId)
             {
                 case MessageTypes.EntityIn:
-
-                    var msg = (EntityInMessage)imsg;
-
-                    if (msg.Entity != null)
                     {
-                        PrepareEntity(msg.Entity);
+                        var msg = (EntityInMessage)imsg;
+
+                        if (msg.Entity != null)
+                        {
+                            PrepareEntity(msg.Entity);
+                        }
+                    }
+                    break;
+                case MessageTypes.EntityEquipment:
+                    {
+                        var msg = (EntityEquipmentMessage)imsg;
+
+                        if (msg.Entity != null)
+                        {
+                            PrepareEntity(msg.Entity);
+                        }
                     }
                     break;
             }

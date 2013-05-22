@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Utopia.Server.AStar;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -120,15 +121,40 @@ namespace Utopia.Server.Structs
                     Vector3I pos;
 
                     // check whether we close enough to start working
-                    if (Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(Movement.CurrentPath.Goal, out pos))
+                    if (State != NpcState.Idle && Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(Movement.CurrentPath.Goal, out pos))
                     {
-                        DynamicEntity.EntityState.IsBlockPicked = true;
-                        DynamicEntity.EntityState.PickedBlockPosition = pos;
+                        if (State == NpcState.GoingToWork)
+                        {
+                            DynamicEntity.EntityState.IsBlockPicked = true;
+                            DynamicEntity.EntityState.PickedBlockPosition = pos;
+                            DynamicEntity.EntityState.MouseUp = false;
 
-                        var tool = collectorSlot.Item as BasicCollector;
-                        tool.Use(DynamicEntity);
+                            var tool = (BasicCollector)collectorSlot.Item;
+                            State = NpcState.Digging;
+                            
+                            // start digging this block
+                            DynamicEntity.ToolUse(tool);
+                        }
 
-                        Faction.BlocksToRemove.Remove(pos);
+                        if (State == NpcState.Digging)
+                        {
+                            var cursor = Server.LandscapeManager.GetCursor(DynamicEntity.EntityState.PickedBlockPosition);
+
+                            if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                            {
+                                // stop digging
+
+                                DynamicEntity.EntityState.IsBlockPicked = false;
+                                DynamicEntity.EntityState.PickedBlockPosition = pos;
+                                DynamicEntity.EntityState.MouseUp = true;
+                                
+                                var tool = (BasicCollector)collectorSlot.Item;
+                                DynamicEntity.ToolUse(tool);
+
+                                Faction.BlocksToRemove.Remove(pos);
+                                State = NpcState.Idle;
+                            }
+                        }
                     }
                     else
                     {

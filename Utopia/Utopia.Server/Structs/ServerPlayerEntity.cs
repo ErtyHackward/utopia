@@ -93,7 +93,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.Send(new EntityEquipmentMessage { Items = new[] { new EquipmentItem(e.Slot, e.EquippedItem.Item) } });
+                Connection.Send(new EntityEquipmentMessage { Entity = e.Entity });
             }
         }
 
@@ -111,7 +111,7 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
-                Connection.Send(new EntityInMessage { Entity = (Entity)e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
+                Connection.Send(new EntityInMessage { Entity = e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 

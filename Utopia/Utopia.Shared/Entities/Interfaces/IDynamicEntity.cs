@@ -59,5 +59,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets or sets entity body rotation
         /// </summary>
         Quaternion BodyRotation { get; set; }
+
+        /// <summary>
+        /// Fires use event from current entity state
+        /// </summary>
+        void ToolUse(ITool tool);
     }
 }

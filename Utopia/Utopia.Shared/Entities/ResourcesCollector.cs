@@ -14,8 +14,9 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     public abstract class ResourcesCollector : Item, ITool
     {
-        private IDynamicEntity _owner;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private IDynamicEntity _owner;
         private ScheduleTask _task;
 
         /// <summary>
@@ -25,12 +26,28 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public IToolImpact Use(IDynamicEntity owner)
         {
-            _owner = owner;
-
             var impact = new ToolImpact { Success = false };
-
-            if (EntityFactory.ScheduleManager == null)
+            
+            if (!EntityFactory.ServerSide)
+            {
+                // client run
+                if (owner.ModelInstance != null)
+                {
+                    if (owner.EntityState.MouseUp)
+                    {
+                        owner.ModelInstance.Stop(); 
+                    }
+                    else if (owner.EntityState.IsBlockPicked)
+                    {
+                        owner.ModelInstance.TryPlay("Dig", true);                        
+                    }
+                }
                 return impact;
+            }
+
+            // server side logic
+
+            _owner = owner;
 
             if (owner.EntityState.MouseUp)
             {
@@ -72,7 +89,7 @@ namespace Utopia.Shared.Entities
             {
                 if (damage == null)
                 {
-                    damage = new DamageTag { Strength = 5 };
+                    damage = new DamageTag { Strength = 4 };
                 }
 
                 damage.Strength--;

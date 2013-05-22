@@ -570,6 +570,21 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        public void UpdateEntity(IDynamicEntity entity)
+        {
+            Trace.Assert(entity.DynamicId != 0);
+
+            var visualEntity = _dynamicEntitiesDico[entity.DynamicId];
+
+            var oldEntity = visualEntity.DynamicEntity;
+
+            entity.ModelInstance = oldEntity.ModelInstance;
+            
+            visualEntity.DynamicEntity = entity;
+            visualEntity.VisualVoxelEntity.Entity = entity;
+            
+        }
+
         public void RemoveEntity(IDynamicEntity entity)
         {
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
@@ -664,7 +679,10 @@ namespace Utopia.Entities.Managers
                     {
                         var instance = model.VoxelModel.CreateInstance();
                         modelAndInstances.Value.Instances[id] = instance;
-                        _dynamicEntitiesDico[id].ModelInstance = instance;
+
+                        var vde = _dynamicEntitiesDico[id];
+                        vde.ModelInstance = instance;
+                        vde.DynamicEntity.ModelInstance = instance;
                     }
                 }
             }

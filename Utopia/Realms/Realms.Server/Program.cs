@@ -171,6 +171,7 @@ namespace Realms.Server
             serverFactory.DynamicEntityManager = _server.AreaManager;
             serverFactory.GlobalStateManager = _server.GlobalStateManager;
             serverFactory.ScheduleManager = _server.Scheduler;
+            serverFactory.ServerSide = true;
 
             _gameplay = new ServerGameplayProvider(_server, conf);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
@@ -66,6 +67,8 @@ namespace Utopia.Network
             _server.MessagePosition += ServerMessagePosition; 
             _server.MessageDirection += ServerMessageDirection;
             _server.MessageEntityLock += ServerMessageEntityLock;
+            _server.MessageEntityUse += _server_MessageEntityUse;
+            _server.MessageEntityEquipment += _server_MessageEntityEquipment;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
@@ -76,7 +79,6 @@ namespace Utopia.Network
             PlayerEntity = playerEntity;
         }
 
-
         public void Dispose()
         {
             PlayerEntity = null;  
@@ -86,6 +88,8 @@ namespace Utopia.Network
             _server.MessagePosition -= ServerMessagePosition;
             _server.MessageDirection -= ServerMessageDirection;
             _server.MessageEntityLock -= ServerMessageEntityLock;
+            _server.MessageEntityUse -= _server_MessageEntityUse;
+            _server.MessageEntityEquipment -= _server_MessageEntityEquipment;
         }
 
         //IN Going Server Data concering entities =================================================================
@@ -158,6 +162,29 @@ namespace Utopia.Network
                 var entity = _dynamicEntityManager.GetEntityById(link.DynamicEntityId);
                 entity.Locked = e.Message.Lock;
             }
+        }
+
+        void _server_MessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
+        {
+            var entity = (CharacterEntity)_dynamicEntityManager.GetEntityById(e.Message.DynamicEntityId);
+            
+
+            if (entity != null)
+            {
+                entity.EntityState = e.Message.State;
+
+                if (e.Message.ToolId != 0)
+                    entity.ToolUse((ITool)entity.FindItemById(e.Message.ToolId));
+                else
+                {
+                    entity.ToolUse(entity.HandTool);
+                }
+            }
+        }
+
+        void _server_MessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
+        {
+            _dynamicEntityManager.UpdateEntity((IDynamicEntity)e.Message.Entity);
         }
         
         //OUT Going Server Data concering current player =================================================================
