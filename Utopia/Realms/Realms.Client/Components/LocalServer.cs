@@ -93,6 +93,7 @@ namespace Realms.Client.Components
             _serverFactory.DynamicEntityManager = _server.AreaManager;
             _serverFactory.GlobalStateManager = _server.GlobalStateManager;
             _serverFactory.ScheduleManager = _server.Scheduler;
+            _serverFactory.ServerSide = true;
 
             _server.ConnectionManager.LocalMode = true;
             _server.ConnectionManager.Listen();

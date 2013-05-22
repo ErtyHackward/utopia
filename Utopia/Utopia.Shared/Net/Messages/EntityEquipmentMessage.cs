@@ -1,8 +1,5 @@
-using System;
 using ProtoBuf;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -14,10 +11,10 @@ namespace Utopia.Shared.Net.Messages
     public class EntityEquipmentMessage : IBinaryMessage
     {
         /// <summary>
-        /// Array of items are equipped.
+        /// New entity object
         /// </summary>
         [ProtoMember(1)]
-        public EquipmentItem[] Items { get; set; }
+        public IEntity Entity { get; set; }
 
         /// <summary>
         /// Gets a message identification number
@@ -25,34 +22,6 @@ namespace Utopia.Shared.Net.Messages
         public byte MessageId
         {
             get { return (byte)MessageTypes.EntityEquipment; }
-        }
-    }
-
-    [ProtoContract]
-    public struct EquipmentItem
-    {
-        private IEntity _entity;
-        private EquipmentSlotType _slot;
-
-        [ProtoMember(1)]
-        public EquipmentSlotType Slot
-        {
-            get { return _slot; }
-            set { _slot = value; }
-        }
-
-        [ProtoMember(2)]
-        public IEntity Entity
-        {
-            get { return _entity; }
-            set { _entity = value; }
-        }
-
-        public EquipmentItem(EquipmentSlotType slot, IEntity entity)
-        {
-            if (entity == null) throw new ArgumentNullException("entity");
-            _slot = slot;
-            _entity = entity;
         }
     }
 }

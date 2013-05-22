@@ -45,16 +45,16 @@ namespace Utopia.Shared.Entities.Dynamic
             Name = "Player";
         }
         
-        public void ToolUse(bool handUse = false)
+        public void ToolUse()
         {
-            var args = EntityUseEventArgs.FromState(this);
-            
-            if (!handUse && Equipment.RightTool != null)
-            {
-                args.Tool = Equipment.RightTool;
-            }
-            
-            OnUse(args);
+            ToolUse((ITool)Equipment.RightTool);
+        }
+
+        public void HandUse()
+        {
+            HandTool.Use(this);
+
+            ToolUse(null);
         }
 
         public void PutUse()

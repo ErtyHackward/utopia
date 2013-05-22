@@ -11,14 +11,14 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VisualVoxelEntity : VisualEntity, IDisposable
     {
-        private readonly IVoxelEntity _voxelEntity;
+        private IVoxelEntity _voxelEntity;
         private readonly VoxelModelManager _manager;
         private VisualVoxelModel _visualVoxelModel;
 
         /// <summary>
         /// Gets wrapped VoxelEntity
         /// </summary>
-        public IVoxelEntity VoxelEntity { get { return _voxelEntity; } }
+        public IVoxelEntity VoxelEntity { get { return _voxelEntity; } set { _voxelEntity = value; } }
 
         /// <summary>
         /// Gets current visualmodel instance

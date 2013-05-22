@@ -64,13 +64,8 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-                        var tool = (ITool)item;
-
-                        //sends the client server event that does tool.use on server
+                        // raise DynamicEntity.Use event and calls current tool Use method
                         PlayerCharacter.ToolUse();
-
-                        //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
-                        tool.Use(Player);
                     }
                 }
             }
@@ -138,11 +133,8 @@ namespace Utopia.Entities.Managers
                             else
                             {
                                 // hand use
-                                //sends the client server event that does tool.use on server
-                                PlayerCharacter.ToolUse(true);
-
-                                //client invocation to keep the client inventory in synch => This way we don't have to wait for the server back event. (This event will be dropped)
-                                PlayerCharacter.HandTool.Use(Player);
+                                // raise DynamicEntity.Use event that will invoke local tool and send a use-message to the server
+                                PlayerCharacter.HandUse();
                             }
                         }
                     }

@@ -42,6 +42,20 @@ namespace Utopia.Shared.Entities.Dynamic
             var handler = Use;
             if (handler != null) handler(this, e);
         }
+
+        /// <summary>
+        /// Calls tool use and fires use event from current entity state
+        /// </summary>
+        public void ToolUse(ITool tool)
+        {
+            if (tool != null)
+                tool.Use(this);
+            
+            var arg = EntityUseEventArgs.FromState(this);
+            arg.Tool = tool;
+
+            OnUse(arg);
+        }
         
         /// <summary>
         /// Occurs when entity changes its position
