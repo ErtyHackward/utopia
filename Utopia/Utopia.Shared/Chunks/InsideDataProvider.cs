@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ProtoBuf;
-using Utopia.Shared.Entities;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 

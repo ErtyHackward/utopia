@@ -1,16 +1,13 @@
 using System;
 using System.Threading;
 
-namespace Utopia.Server.Managers
+namespace Utopia.Shared.Structs
 {
     /// <summary>
     /// Represents a single scheduled task
     /// </summary>
     public class ScheduleTask
     {
-        private readonly object _syncRoot = new object();
-        private bool _taskIsRunning;
-
         /// <summary>
         /// Gets or sets task name for debug purposes
         /// </summary>
@@ -39,35 +36,21 @@ namespace Utopia.Server.Managers
         /// <summary>
         /// Delegate that should be called
         /// </summary>
-        public ThreadStart CallDelegate { get; set; }
+        public Action CallDelegate { get; set; }
 
         /// <summary>
         /// Gets time of last execution
         /// </summary>
         public DateTime LastExecuted { get; set; }
-
+        
         /// <summary>
         /// Performs task. Prevents task to be executed more than one simultaneously
         /// </summary>
         public void Call(DateTime now)
         {
-            lock (_syncRoot)
-            {
-                if(_taskIsRunning)
-                    return;
+            CallDelegate();
 
-                _taskIsRunning = true;
-
-                LastExecuted = now;
-
-                CallDelegate.BeginInvoke(TaskIsDone, null);
-            }
-        }
-
-        private void TaskIsDone(IAsyncResult result)
-        {
-            // allows task to be performed again
-            _taskIsRunning = false;
+            LastExecuted = now;
         }
     }
 }

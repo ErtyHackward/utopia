@@ -69,6 +69,10 @@ namespace Utopia.Shared.Chunks
             return _currentChunk.BlockData.GetTag(_internalPosition);
         }
 
+        /// <summary>
+        /// Reads current block and tag at the cursor position
+        /// </summary>
+        /// <returns></returns>
         public byte Read<T>(out T tag) where T : BlockTag
         {
             BlockTag tmptag;
@@ -213,8 +217,7 @@ namespace Utopia.Shared.Chunks
             tag = tmpTag as T;
             return value;
         }
-
-
+        
         /// <summary>
         /// Return peek cube profile
         /// </summary>
@@ -225,6 +228,10 @@ namespace Utopia.Shared.Chunks
             return _wp.Configuration.BlockProfiles[PeekValue(moveVector)];
         }
 
+        /// <summary>
+        /// Return Cube profile
+        /// </summary>
+        /// <returns></returns>
         public BlockProfile PeekProfile()
         {
             return _wp.Configuration.BlockProfiles[Read()];
@@ -296,8 +303,7 @@ namespace Utopia.Shared.Chunks
 
             entityChunk.Entities.Add(entity, sourceDynamicId);
         }
-
-
+        
         /// <summary>
         /// Remove a static entity from the world
         /// </summary>
@@ -321,6 +327,5 @@ namespace Utopia.Shared.Chunks
         {
             return _wp.Configuration.BlockProfiles[Read()].IsSolidToEntity;
         }
-
     }
 }

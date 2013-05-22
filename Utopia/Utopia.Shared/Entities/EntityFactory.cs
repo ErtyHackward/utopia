@@ -49,6 +49,11 @@ namespace Utopia.Shared.Entities
         public IGlobalStateManager GlobalStateManager { get; set; }
 
         /// <summary>
+        /// Gets main schedule manager (presented only on the server side)
+        /// </summary>
+        public IScheduleManager ScheduleManager { get; set; }
+
+        /// <summary>
         /// Gets or sets optional sound manager used by ISoundEmitterEntities
         /// </summary>
         [Inject]
@@ -402,11 +407,6 @@ namespace Utopia.Shared.Entities
                 PrepareEntity(entity);
                 return entity;
             }
-        }
-
-        public static BlockTag CreateTagFromBytes(BinaryReader reader)
-        {
-            return (BlockTag)RuntimeTypeModel.Default.Deserialize(reader.BaseStream, null, typeof(BlockTag));
         }
 
         /// <summary>

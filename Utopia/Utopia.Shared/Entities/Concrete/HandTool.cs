@@ -59,12 +59,6 @@ namespace Utopia.Shared.Entities.Concrete
 
             return impact;
         }
-
-
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     /// <summary>

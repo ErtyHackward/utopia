@@ -5,6 +5,7 @@ using Utopia.Server.Services;
 using Utopia.Server.Utils;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using S33M3CoreComponents.Config;
 using Utopia.Shared.Configuration;
@@ -139,7 +140,7 @@ namespace Utopia.Server
 
             ConnectionManager = new ConnectionManager(SettingsManager.Settings.ServerPort);
 
-            Clock = new Clock(this, DateTime.Now, TimeSpan.FromMinutes(20));
+            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
 
             Scheduler = new ScheduleManager(Clock);
 

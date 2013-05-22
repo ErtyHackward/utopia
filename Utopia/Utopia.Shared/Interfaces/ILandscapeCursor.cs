@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Utopia.Shared.Chunks;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities;
@@ -70,7 +69,6 @@ namespace Utopia.Shared.Interfaces
         /// <summary>
         /// Return Cube profile
         /// </summary>
-        /// <param name="moveVector"></param>
         /// <returns></returns>
         BlockProfile PeekProfile();
 
