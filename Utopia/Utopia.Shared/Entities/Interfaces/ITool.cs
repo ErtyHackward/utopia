@@ -8,11 +8,5 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <param name="owner"></param>
         /// <returns></returns>
         IToolImpact Use(IDynamicEntity owner);
-
-        /// <summary>
-        /// Performs actions to rollback preliminary made actions on the client side
-        /// </summary>
-        /// <param name="impact"></param>
-        void Rollback(IToolImpact impact);
     }
 }

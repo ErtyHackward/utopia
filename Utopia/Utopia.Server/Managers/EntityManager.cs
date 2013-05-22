@@ -44,6 +44,7 @@ namespace Utopia.Server.Managers
             e.Connection.MessageItemTransfer -= ConnectionMessageItemTransfer;
             e.Connection.MessageEntityEquipment -= ConnectionMessageEntityEquipment;
             e.Connection.MessageEntityLock -= ConnectionMessageEntityLock;
+            e.Connection.MessageRequestDateTimeSync -= ConnectionOnMessageRequestDateTimeSync;
 
             if (e.Connection.Authorized)
             {
@@ -75,12 +76,19 @@ namespace Utopia.Server.Managers
 
         void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessagePosition        += ConnectionMessagePosition;
-            e.Connection.MessageDirection       += ConnectionMessageDirection;
-            e.Connection.MessageEntityUse       += ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer    += ConnectionMessageItemTransfer;
-            e.Connection.MessageEntityEquipment += ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock      += ConnectionMessageEntityLock;
+            e.Connection.MessagePosition            += ConnectionMessagePosition;
+            e.Connection.MessageDirection           += ConnectionMessageDirection;
+            e.Connection.MessageEntityUse           += ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer        += ConnectionMessageItemTransfer;
+            e.Connection.MessageEntityEquipment     += ConnectionMessageEntityEquipment;
+            e.Connection.MessageEntityLock          += ConnectionMessageEntityLock;
+            e.Connection.MessageRequestDateTimeSync += ConnectionOnMessageRequestDateTimeSync;
+        }
+
+        private void ConnectionOnMessageRequestDateTimeSync(object sender, ProtocolMessageEventArgs<RequestDateTimeSyncMessage> protocolMessageEventArgs)
+        {
+            var connection = (ClientConnection)sender;
+            connection.Send(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
         }
 
         private void ConnectionMessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)

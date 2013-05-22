@@ -91,12 +91,6 @@ namespace Utopia.Shared.Entities.Concrete
             impact.Message = "Pick a cube to use this tool";
             return impact;
         }
-
-
-        public void Rollback(IToolImpact impact)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class CubeChangedEventArgs : EventArgs

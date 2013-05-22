@@ -1,4 +1,4 @@
-namespace Utopia.Server.Managers
+namespace Utopia.Shared.Structs
 {
     public enum ScheduleCallType
     {

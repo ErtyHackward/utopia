@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using Utopia.Server.Services;
 using System.Threading;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Managers
 {
     /// <summary>
     /// Provides possibility to schedule tasks. Each task will be executed in separate thread
     /// </summary>
-    public class ScheduleManager : IDisposable
+    public class ScheduleManager : IDisposable, IScheduleManager
     {
         private readonly object _syncRoot = new object();
         private readonly List<ScheduleTask> _tasks = new List<ScheduleTask>();
@@ -36,7 +37,7 @@ namespace Utopia.Server.Managers
             {
                 var currentTime = Clock.Now;
 
-                for (int i = _tasks.Count - 1; i >= 0 ; i--)
+                for (int i = _tasks.Count - 1; i >= 0; i--)
                 {
                     var scheduleTask = _tasks[i];
                     
@@ -91,11 +92,13 @@ namespace Utopia.Server.Managers
         /// <param name="startAt"></param>
         /// <param name="callAt"></param>
         /// <param name="callDelegate"></param>
-        public void AddTaskOnce(string name, DateTime startAt, TimeSpan callAt, ThreadStart callDelegate)
+        public ScheduleTask AddTaskOnce(string name, DateTime startAt, TimeSpan callAt, Action callDelegate)
         {
             var task = new ScheduleTask{ Name = name, CallDelegate = callDelegate, CallType = ScheduleCallType.Once, ExecuteAt = callAt, StartDateTime = startAt };
 
             AddTask(task);
+
+            return task;
         }
 
         /// <summary>
@@ -105,11 +108,13 @@ namespace Utopia.Server.Managers
         /// <param name="startAt"></param>
         /// <param name="interval">interval of execution</param>
         /// <param name="callDelegate"></param>
-        public void AddTaskPeriodic(string name, DateTime startAt, TimeSpan interval, ThreadStart callDelegate)
+        public ScheduleTask AddTaskPeriodic(string name, DateTime startAt, TimeSpan interval, Action callDelegate)
         {
             var task = new ScheduleTask { CallType = ScheduleCallType.Periodic, Name = name, CallDelegate = callDelegate, CallInterval = interval, StartDateTime = startAt };
 
             AddTask(task);
+
+            return task;
         }
 
         /// <summary>
@@ -121,7 +126,7 @@ namespace Utopia.Server.Managers
         /// <param name="callAt"></param>
         /// <param name="startTaskAt"></param>
         /// <param name="callDelegate"></param>
-        public void AddTask(string taskName, ScheduleCallType callType, TimeSpan callInterval, TimeSpan callAt, DateTime startTaskAt, ThreadStart callDelegate)
+        public ScheduleTask AddTask(string taskName, ScheduleCallType callType, TimeSpan callInterval, TimeSpan callAt, DateTime startTaskAt, Action callDelegate)
         {
             var task = new ScheduleTask 
             { 
@@ -134,6 +139,8 @@ namespace Utopia.Server.Managers
             };
 
             AddTask(task);
+
+            return task;
         }
 
         /// <summary>
@@ -146,6 +153,28 @@ namespace Utopia.Server.Managers
             {
                 _tasks.Add(task);
             }
+        }
+
+        /// <summary>
+        /// Adds a periodic task that will be started after the interval
+        /// </summary>
+        /// <param name="interval"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public ScheduleTask AddPeriodic(TimeSpan interval, Action action)
+        {
+            var task = new ScheduleTask 
+            { 
+                CallType = ScheduleCallType.Periodic, 
+                CallDelegate = action, 
+                CallInterval = interval, 
+                StartDateTime = Clock.Now,
+                ExecuteAt = Clock.Now.Add(interval).TimeOfDay
+            };
+
+            AddTask(task);
+
+            return task;
         }
 
         /// <summary>

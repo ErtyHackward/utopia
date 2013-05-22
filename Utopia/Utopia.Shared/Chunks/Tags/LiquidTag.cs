@@ -2,6 +2,9 @@
 
 namespace Utopia.Shared.Chunks.Tags
 {
+    /// <summary>
+    /// Holds water amount information at the block
+    /// </summary>
     [ProtoContract]
     public class LiquidTag : BlockTag, ICubeYOffsetModifier
     {
@@ -22,15 +25,10 @@ namespace Utopia.Shared.Chunks.Tags
 
         [ProtoMember(3)]
         public bool Sourced;
-
-        public override byte Id
-        {
-            get { return 1; }
-        }
-
+        
         public override int GetHashCode()
         {
-            return Pressure.GetHashCode() ^ LiquidType.GetHashCode() ^ Sourced.GetHashCode() ^ Id.GetHashCode();
+            return Pressure.GetHashCode() ^ LiquidType.GetHashCode() ^ Sourced.GetHashCode();
         }
     }
 }
