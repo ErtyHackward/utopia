@@ -124,7 +124,7 @@ namespace Utopia.Entities
             if (_walking && distanceSquared < threshold)
             {
                 if (ModelInstance != null) 
-                    ModelInstance.Stop();
+                    ModelInstance.Stop("Walk");
                 _walking = false;
             }
 
