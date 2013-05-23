@@ -177,6 +177,7 @@ namespace Utopia.Server
             LandscapeManager.Dispose();
             Services.Dispose();
             GlobalStateManager.Dispose();
+            Scheduler.Dispose();
         }
     }
 }

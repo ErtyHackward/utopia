@@ -121,7 +121,7 @@ namespace Utopia.Server.Structs
                     Vector3I pos;
 
                     // check whether we close enough to start working
-                    if (State != NpcState.Idle && Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(Movement.CurrentPath.Goal, out pos))
+                    if (State != NpcState.Idle && Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(_character.Position.ToCubePosition(), out pos))
                     {
                         if (State == NpcState.GoingToWork)
                         {
@@ -134,6 +134,7 @@ namespace Utopia.Server.Structs
                             
                             // start digging this block
                             DynamicEntity.ToolUse(tool);
+                            Focus.LookAt(pos);
                         }
 
                         if (State == NpcState.Digging)

@@ -62,5 +62,12 @@ namespace Utopia.Server.Structs
                 }
             }
         }
+        
+        public void LookAt(Vector3D pos)
+        {
+            var lookDirection = pos - Npc.DynamicEntity.Position;
+            lookDirection.Normalize();
+            Npc.DynamicEntity.HeadRotation = Quaternion.RotationMatrix(Matrix.LookAtLH(Npc.DynamicEntity.Position.AsVector3(), Npc.DynamicEntity.Position.AsVector3() + lookDirection.AsVector3(), Vector3D.Up.AsVector3()));
+        }
     }
 }

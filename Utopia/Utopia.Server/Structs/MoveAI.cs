@@ -171,14 +171,7 @@ namespace Utopia.Server.Structs
             _moveDirection.Y = 0;
             _moveDirection.Normalize();
 
-            if (Math.Abs(_moveDirection.Y) < 0.1f)
-            {
-                var q = Quaternion.RotationMatrix(Matrix.LookAtLH(dynPos.AsVector3(),
-                                                                  _pathTargetPoint.AsVector3(),
-                                                                  Vector3D.Up.AsVector3()));
-                Npc.DynamicEntity.HeadRotation = q;
-                //Transform the rotation from a world rotatino to a local rotation
-            }
+            Npc.Focus.LookAt(_pathTargetPoint);
         }
 
         public void Update(DynamicUpdateState gameTime)
