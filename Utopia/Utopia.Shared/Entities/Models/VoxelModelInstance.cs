@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using System.Linq;
 using SharpDX;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -11,7 +9,7 @@ namespace Utopia.Shared.Entities.Models
     /// Represents instance data container of the voxel model.
     /// Head and Body rotation, animation state
     /// </summary>
-    public class VoxelModelInstance : IBinaryStorable
+    public class VoxelModelInstance
     {
         #region Private Variables
         // cached intermediate state of the model
@@ -286,9 +284,12 @@ namespace Utopia.Shared.Entities.Models
         /// <returns></returns>
         public bool TryPlayForced(string animationName, bool repeat)
         {
-
-
-
+            if (CanPlay(animationName))
+            {
+                Play(animationName, repeat);
+                return true;
+            }
+            
             return false;
         }
 
@@ -441,36 +442,6 @@ namespace Utopia.Shared.Entities.Models
                 _stopping = true;
                 _repeat = false;
             }
-        }
-
-        /// <summary>
-        /// Saves current object state to binary form
-        /// </summary>
-        /// <param name="writer"></param>
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(VoxelModel.Hash);
-            writer.Write(_rotation);
-            writer.Write(_repeat);
-            writer.Write(_elapsed);
-            writer.Write((byte)_animationIndex);
-            writer.Write((byte)_animationStepIndexFrom);
-            writer.Write((byte)_animationStepIndexTo);
-        }
-
-        /// <summary>
-        /// Loads current object from binary form
-        /// </summary>
-        /// <param name="reader"></param>
-        public void Load(BinaryReader reader)
-        {
-            _modelHash = reader.ReadMd5Hash();
-            _rotation = reader.ReadQuaternion();
-            _repeat = reader.ReadBoolean();
-            _elapsed = reader.ReadInt32();
-            _animationIndex = reader.ReadByte();
-            _animationStepIndexFrom = reader.ReadByte();
-            _animationStepIndexTo = reader.ReadByte();
         }
         #endregion
 

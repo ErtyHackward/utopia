@@ -13,5 +13,11 @@ namespace Utopia.Shared.Chunks.Tags
         /// </summary>
         [ProtoMember(1)]
         public int Strength { get; set; }
+
+        /// <summary>
+        /// Gets max strength of the block
+        /// </summary>
+        [ProtoMember(2)]
+        public int TotalStrength { get; set; }
     }
 }

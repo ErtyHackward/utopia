@@ -127,7 +127,7 @@ namespace Utopia.Worlds.Chunks
             return pos.Y < _sliceValue + 1 && pos.Y > _sliceValue - 6;
         }
 
-        private IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true)
+        public IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true)
         {
             //var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
             

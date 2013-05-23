@@ -123,5 +123,12 @@ namespace Utopia.Worlds.Chunks
         bool ValidatePosition(ref Vector3D newPosition2Evaluate);
 
         bool IsEntityVisible(Vector3D pos);
+
+        /// <summary>
+        /// Enumerates chunks to draw
+        /// </summary>
+        /// <param name="sameSlice">in case of slice mode set this parameter to process only chunks with the same slice mesh, set this to false to process all visible chunks</param>
+        /// <returns></returns>
+        IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true);
     }
 }
