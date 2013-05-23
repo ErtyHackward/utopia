@@ -39,7 +39,7 @@ namespace Utopia.Shared.Entities
                     }
                     else if (owner.EntityState.IsBlockPicked)
                     {
-                        owner.ModelInstance.TryPlay("Dig", true);                        
+                        owner.ModelInstance.TryPlayForced("Dig", true);                        
                     }
                 }
                 return impact;

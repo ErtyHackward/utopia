@@ -183,7 +183,7 @@ namespace Utopia.Entities
                 MoveDirection.Value = DynamicEntity.BodyRotation;
             }
 
-            CheckWalkingAnimation(ref WorldPosition.ValuePrev, ref WorldPosition.Value, 0.001);
+            CheckWalkingAnimation(ref WorldPosition.ValuePrev, ref WorldPosition.Value, 0.0001);
         }
 
         //Draw interpolation (Before each Drawing)

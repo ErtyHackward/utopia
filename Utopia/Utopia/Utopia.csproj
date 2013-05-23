@@ -127,6 +127,7 @@
     <Compile Include="Entities\Managers\GodEntityManager.cs" />
     <Compile Include="Entities\Managers\Interfaces\IPlayerManager.cs" />
     <Compile Include="Entities\Managers\PickingManager.cs" />
+    <Compile Include="Entities\Renderer\CracksRenderer.cs" />
     <Compile Include="Entities\Renderer\SelectedBlocksRenderer.cs" />
     <Compile Include="GUI\Crafting\CraftingComponent.cs" />
     <Compile Include="GUI\Crafting\CraftingWindow.cs" />
