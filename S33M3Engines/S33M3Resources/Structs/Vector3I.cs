@@ -140,6 +140,17 @@ namespace S33M3Resources.Structs
             return new Vector3I(Math.Floor(vec.X), Math.Floor(vec.Y), Math.Floor(vec.Z));
         }
 
+        public static implicit operator Vector3D(Vector3I pos)
+        {
+            Vector3D vec;
+
+            vec.X = pos.x;
+            vec.Y = pos.y;
+            vec.Z = pos.z;
+
+            return vec;
+        }
+
         public static explicit operator Vector3I(Vector3D vec)
         {
             return new Vector3I(Math.Floor(vec.X), Math.Floor(vec.Y), Math.Floor(vec.Z));

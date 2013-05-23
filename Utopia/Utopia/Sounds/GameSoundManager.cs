@@ -402,7 +402,7 @@ namespace Utopia.Sounds
                         if (currentCube.CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid && cubeUnderFeet.IsSolidToEntity)
                         {
                             //If my Head is not inside a Water block (Meaning = I've only the feet inside water)
-                            if (_singleArray.CheckCube(entity.Position + new Vector3I(0, entity.DefaultSize.Y, 0), WorldConfiguration.CubeId.Air))
+                            if (_singleArray.CheckCube(entity.Position + new Vector3D(0, entity.DefaultSize.Y, 0), WorldConfiguration.CubeId.Air))
                             {
                                 soundIndex = PlayWalkingSound(currentCube.Id, entityTrack);
                             }
