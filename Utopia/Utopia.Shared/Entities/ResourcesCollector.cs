@@ -35,7 +35,7 @@ namespace Utopia.Shared.Entities
                 {
                     if (owner.EntityState.MouseUp)
                     {
-                        owner.ModelInstance.Stop(); 
+                        owner.ModelInstance.Stop("Dig"); 
                     }
                     else if (owner.EntityState.IsBlockPicked)
                     {
@@ -89,7 +89,7 @@ namespace Utopia.Shared.Entities
             {
                 if (damage == null)
                 {
-                    damage = new DamageTag { Strength = 4 };
+                    damage = new DamageTag { Strength = 15 };
                 }
 
                 damage.Strength--;

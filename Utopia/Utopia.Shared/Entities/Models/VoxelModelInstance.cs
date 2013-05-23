@@ -259,18 +259,35 @@ namespace Utopia.Shared.Entities.Models
         }
 
         /// <summary>
-        /// Checks if the entity have an animation
-        /// And if it is plays it.
+        /// Checks if the entity have an animation and no one animation is playing right now
+        /// And if has plays it.
         /// </summary>
         /// <param name="animationName"></param>
         /// <returns>true if animation is started to play otherwise false</returns>
         public bool TryPlay(string animationName, bool repeat = false)
         {
+            if (_animationIndex != -1)
+                return false;
+
             if (CanPlay(animationName))
             {
                 Play(animationName, repeat);
                 return true;
             }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="animationName"></param>
+        /// <param name="repeat"></param>
+        /// <returns></returns>
+        public bool TryPlayForced(string animationName, bool repeat)
+        {
+
+
 
             return false;
         }
@@ -405,10 +422,20 @@ namespace Utopia.Shared.Entities.Models
             }
         }
         /// <summary>
-        /// Stops current animation smoothly
+        /// Stops specified animation smoothly
         /// </summary>
-        public void Stop()
+        public void Stop(string animationName = null)
         {
+            if (!string.IsNullOrEmpty(animationName))
+            {
+                var animation = VoxelModel.Animations.FindIndex(a => a.Name == animationName);
+                if (animation == -1)
+                    throw new ArgumentOutOfRangeException("animationName", "Model have not animation called " + animationName);
+
+                if (_animationIndex != animation)
+                    return;
+            }
+            
             if (_animationIndex != -1)
             {
                 _stopping = true;
