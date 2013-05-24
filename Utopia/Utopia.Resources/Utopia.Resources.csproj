@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effects\Entities\HLSLCracks.cs" />
     <Compile Include="Effects\Entities\HLSLCubeTool.cs" />
     <Compile Include="Effects\Entities\HLSLColorLine.cs" />
     <Compile Include="Effects\Entities\HLSLIcons.cs" />

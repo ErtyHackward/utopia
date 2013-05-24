@@ -63,5 +63,16 @@ namespace Utopia.Shared.Structs.Helpers
                 blocksPositions[i].Z += dz;
             }
         }
+
+        public static Vector3I ConvertToGlobal(Vector2I chunkPosition, Vector3I internalPosition)
+        {
+            var dx = chunkPosition.X * AbstractChunk.ChunkSize.X;
+            var dz = chunkPosition.Y * AbstractChunk.ChunkSize.Z;
+
+            internalPosition.X += dx;
+            internalPosition.Z += dz;
+
+            return internalPosition;
+        }
     }
 }
