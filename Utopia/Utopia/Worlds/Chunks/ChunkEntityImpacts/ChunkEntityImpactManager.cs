@@ -238,23 +238,25 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             {
                 if (blockProfile.IsTaggable)
                 {
-                    BlockTag ExistingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-                    if (ExistingTag == blockTag)
+                    BlockTag existingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+                    if (existingTag == blockTag)
                     {
                         return true; // The block & tags are the sames !
                     }
                 }
-                else return true; // The block are the sames !
+                else
+                {
+                    impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+                    return true; // The block are the sames !
+                }
             }
 
             // Change the cube in the big array
             impactedChunk.BlockData.SetBlock(cubeCoordinates, replacementCubeId);
 
             // Update chunk tag collection if needed
-            if (blockProfile.IsTaggable)
-            {
-                impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-            }
+            impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+            
 
             // Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId, _visualWorldParameters.WorldParameters.Configuration);

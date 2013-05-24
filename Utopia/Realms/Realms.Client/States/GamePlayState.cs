@@ -117,6 +117,7 @@ namespace Realms.Client.States
             var crafting = _ioc.Get<CraftingComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var pickingManager = _ioc.Get<PickingManager>();
+            var cracksRenderer = _ioc.Get<CracksRenderer>();
             
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -145,6 +146,7 @@ namespace Realms.Client.States
             AddComponent(crafting);
             AddComponent(inventoryEvents);
             AddComponent(pickingManager);
+            AddComponent(cracksRenderer);
             
             inputsManager.MouseManager.StrategyMode = true;
 

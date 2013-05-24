@@ -284,6 +284,7 @@ namespace Realms.Client.States
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
+            var cracksRenderer = _ioc.Get<CracksRenderer>();
 
 
             landscapeManager.EntityFactory = clientFactory;
@@ -325,6 +326,7 @@ namespace Realms.Client.States
             AddComponent(ghostedRenderer);
             AddComponent(crafting);
             AddComponent(inventoryEvents);
+            AddComponent(cracksRenderer);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

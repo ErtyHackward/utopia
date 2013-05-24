@@ -89,7 +89,7 @@ namespace Utopia.Shared.Entities
             {
                 if (damage == null)
                 {
-                    damage = new DamageTag { Strength = 15 };
+                    damage = new DamageTag { Strength = 15, TotalStrength = 15 };
                 }
 
                 damage.Strength--;
