@@ -23,6 +23,9 @@ using Utopia.Worlds.Chunks;
 
 namespace Utopia.Entities.Renderer
 {
+    /// <summary>
+    /// Responsible to draw cracks on the blocks
+    /// </summary>
     public class CracksRenderer : DrawableGameComponent
     {
         private readonly D3DEngine _engine;

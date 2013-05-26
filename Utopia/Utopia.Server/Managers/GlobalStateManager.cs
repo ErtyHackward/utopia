@@ -43,6 +43,7 @@ namespace Utopia.Server.Managers
 
         public void Dispose()
         {
+            _saveTimer.Dispose();
             Save();
         }
     }
