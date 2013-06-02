@@ -6,11 +6,11 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Server;
 using Utopia.Server.Managers;
-using Utopia.Server.Services;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors.Utopia;
@@ -100,8 +100,6 @@ namespace Realms.Client.Components
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
             _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
-            //_server.Services.Add(new WaterDynamicService());
-            _server.Services.Add(new NpcService());
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)

@@ -1,6 +1,6 @@
 ﻿namespace Utopia.Server.Structs
 {
-    public enum NpcState
+    public enum ServerNpcState
     {
         Idle,
         FollowingPath,

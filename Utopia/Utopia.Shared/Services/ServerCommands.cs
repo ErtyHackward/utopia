@@ -1,6 +1,6 @@
-﻿using Utopia.Server.Structs;
+using Utopia.Shared.Services.Interfaces;
 
-namespace Utopia.Server.Commands
+namespace Utopia.Shared.Services
 {
     /// <summary>
     /// Server command for status information

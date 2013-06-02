@@ -13,6 +13,7 @@ using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Shared.Tools;
@@ -70,6 +71,7 @@ namespace Utopia.Editor.Forms
                     containerEditor.Icons = _icons;
                     ContainerSetSelector.Configuration = _configuration;
                     BlueprintSelector.Configuration = _configuration;
+                    CharacterBlueprintSelector.Configuration = _configuration;
 
                     UpdateImageList();
 
@@ -435,6 +437,21 @@ namespace Utopia.Editor.Forms
 
             #endregion
 
+            #region Services
+
+            var servicesNode = tvMainCategories.Nodes["Services"];
+            servicesNode.Nodes.Clear();
+
+            foreach (var service in _configuration.Services)
+            {
+                var node = AddSubNode(servicesNode, service.GetType().Name, service);
+                node.ContextMenuStrip = contextMenuEntity;
+                node.ImageIndex = 12;
+                node.SelectedImageIndex = 12;
+            }
+
+            #endregion
+
             if (selectedTag != null)
             {
                 tvMainCategories.SelectedNode = FindByTag(selectedTag);
@@ -545,6 +562,18 @@ namespace Utopia.Editor.Forms
                     _configuration.TreeBluePrints.Add(tree);
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(tree);
+                    break;
+                case "Services":
+                    var frmServiceAdd = new FrmServiceAdd(_configuration);
+
+                    if (frmServiceAdd.ShowDialog() == DialogResult.OK)
+                    {
+                        var service = (Service)Activator.CreateInstance(frmServiceAdd.SelectedType);
+                        _configuration.Services.Add(service);
+                        UpdateTree();
+                        tvMainCategories.SelectedNode = FindByTag(service);
+                    }
+                    
                     break;
                 default:
                     break;

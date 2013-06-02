@@ -30,7 +30,6 @@ namespace Utopia.Shared.Entities
         // alive
         public const ushort PlayerCharacter = 3000;
         public const ushort NonPlayerCharacter = 3001;
-        public const ushort Dwarf = 3002;
 
         public const ushort Plant = 4000;
         public const ushort Food = 4001;

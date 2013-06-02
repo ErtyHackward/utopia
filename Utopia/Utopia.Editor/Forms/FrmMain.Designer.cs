@@ -38,6 +38,7 @@
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
             System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Recipes", 8, 8);
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Services", 11, 11);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -268,6 +269,11 @@
             treeNode8.Name = "Recipes";
             treeNode8.SelectedImageIndex = 8;
             treeNode8.Text = "Recipes";
+            treeNode9.ContextMenuStrip = this.contextMenuCategories;
+            treeNode9.ImageIndex = 11;
+            treeNode9.Name = "Services";
+            treeNode9.SelectedImageIndex = 11;
+            treeNode9.Text = "Services";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
@@ -275,7 +281,8 @@
             treeNode5,
             treeNode6,
             treeNode7,
-            treeNode8});
+            treeNode8,
+            treeNode9});
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
             this.tvMainCategories.TabIndex = 5;
@@ -298,6 +305,8 @@
             this.imageList1.Images.SetKeyName(8, "script.png");
             this.imageList1.Images.SetKeyName(9, "folder.png");
             this.imageList1.Images.SetKeyName(10, "folder_opened.png");
+            this.imageList1.Images.SetKeyName(11, "services.png");
+            this.imageList1.Images.SetKeyName(12, "gear.png");
             // 
             // label1
             // 
@@ -360,7 +369,7 @@
             // 
             // largeImageList
             // 
-            this.largeImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.largeImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             this.largeImageList.ImageSize = new System.Drawing.Size(32, 32);
             this.largeImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 

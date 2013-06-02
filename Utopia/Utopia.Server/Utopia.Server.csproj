@@ -88,25 +88,19 @@
     <Compile Include="AStar\AStarNode3D.cs" />
     <Compile Include="AStar\AStarList.cs" />
     <Compile Include="ClientConnection.cs" />
-    <Compile Include="Commands\AdministratorCommand.cs" />
-    <Compile Include="Commands\ServerCommands.cs" />
     <Compile Include="Interfaces\IEntityStorage.cs" />
-    <Compile Include="Interfaces\IRoleRestrictedCommand.cs" />
     <Compile Include="Managers\GlobalStateManager.cs" />
     <Compile Include="Managers\LoginManager.cs" />
-    <Compile Include="Managers\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Managers\WeatherManager.cs" />
-    <Compile Include="Sample\BlueprintRecorderService.cs" />
     <Compile Include="Structs\FocusAI.cs" />
     <Compile Include="Structs\MoveAI.cs" />
-    <Compile Include="Structs\Npc.cs" />
-    <Compile Include="Structs\NpcState.cs" />
+    <Compile Include="Structs\ServerNpc.cs" />
+    <Compile Include="Structs\ServerNpcState.cs" />
     <Compile Include="Events\AreaEntityEventArgs.cs" />
     <Compile Include="Events\AreaVoxelModelEventArgs.cs" />
     <Compile Include="Events\ConnectionEventArgs.cs" />
     <Compile Include="Events\EntityLeaveAreaEventArgs.cs" />
     <Compile Include="Events\LandscapeManagerChunkEventArgs.cs" />
-    <Compile Include="Events\PlayerCommandEventArgs.cs" />
     <Compile Include="Managers\CommandsManager.cs" />
     <Compile Include="Managers\ConnectionManager.cs" />
     <Compile Include="Managers\AreaManager.cs" />
@@ -117,14 +111,10 @@
     <Compile Include="Managers\ScheduleManager.cs" />
     <Compile Include="Managers\ServiceManager.cs" />
     <Compile Include="ServerSettings.cs" />
-    <Compile Include="Services\Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Services\NpcService.cs" />
-    <Compile Include="Services\WaterDynamicService.cs" />
     <Compile Include="Structs\MapArea.cs" />
     <Compile Include="Structs\ServerChunk.cs" />
-    <Compile Include="Interfaces\IServerCommand.cs" />
     <Compile Include="Structs\ServerDynamicEntity.cs" />
     <Compile Include="Structs\ServerPlayerCharacterEntity.cs" />
     <Compile Include="Structs\ServerPlayerEntity.cs" />
@@ -185,6 +175,9 @@
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

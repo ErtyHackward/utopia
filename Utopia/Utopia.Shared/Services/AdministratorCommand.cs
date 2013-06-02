@@ -1,8 +1,7 @@
-﻿using Utopia.Server.Interfaces;
-using Utopia.Server.Structs;
+using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs;
 
-namespace Utopia.Server.Commands
+namespace Utopia.Shared.Services
 {
     /// <summary>
     /// Base administrator command class 

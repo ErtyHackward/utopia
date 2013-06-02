@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Services;
+using Utopia.Shared.Services.Interfaces;
 
 namespace Utopia.Server.Managers
 {
-
-    public class ChatManager
+    public class ChatManager : IChatManager
     {
         private readonly Server _server;
 

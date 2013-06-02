@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using S33M3Resources.Structs;
-using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs.Helpers;
 
-namespace Utopia.Server.Managers
+namespace Utopia.Shared.Services
 {
     public class ServerLandscapeManagerBlockChangedEventArgs : EventArgs
     {

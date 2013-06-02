@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
-using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
@@ -16,7 +15,7 @@ namespace Utopia.Shared.Entities
         /// Gets or sets list of recipe ingredients
         /// </summary>
         [ProtoMember(1)]
-        public List<RecipeIngredient> Ingredients { get; set; }
+        public List<InitSlot> Ingredients { get; set; }
 
         /// <summary>
         /// Gets or sets recipe result item
@@ -39,7 +38,7 @@ namespace Utopia.Shared.Entities
 
         public Recipe()
         {
-            Ingredients = new List<RecipeIngredient>();
+            Ingredients = new List<InitSlot>();
             ResultCount = 1;
             Name = "Noname";
         }
@@ -51,10 +50,10 @@ namespace Utopia.Shared.Entities
     }
 
     /// <summary>
-    /// Describes items required 
+    /// Contains blueprint id with items count
     /// </summary>
     [ProtoContract]
-    public struct RecipeIngredient
+    public struct InitSlot
     {
         /// <summary>
         /// Item blueprint id
@@ -68,5 +67,17 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [ProtoMember(2)]
         public int Count { get; set; }
+
+        /// <summary>
+        /// Optional initialization set for containers
+        /// </summary>
+        [ProtoMember(3)]
+        [TypeConverter(typeof(ContainerSetSelector))]
+        public string SetName { get; set; }
+        
+        public override string ToString()
+        {
+            return "Slot";
+        }
     }
 }

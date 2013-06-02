@@ -36,7 +36,28 @@ namespace Utopia.Server.Structs
 
         public Server Server { get { return _server; } }
 
-        public Faction Faction { get { return _faction; } }
+        public Faction Faction 
+        { 
+            get { return _faction; }
+            set 
+            {
+                var faction = value;
+
+                if (_dynamicEntity.FactionId != 0)
+                {
+                    throw new InvalidOperationException("already has a faction");
+                }
+
+                if (_dynamicEntity.FactionId != faction.FactionId)
+                {
+                    _dynamicEntity.FactionId = faction.FactionId;
+                    if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
+                        faction.MembersIds.Add(_dynamicEntity.DynamicId);
+
+                    _faction = faction;
+                }
+            }
+        }
         
         /// <summary>
         /// Gets wrapped entity
@@ -122,23 +143,6 @@ namespace Utopia.Server.Structs
             _server = server;
             DynamicEntity = entity;
             DynamicEntity.Controller = this;
-        }
-
-        public void SetFaction(Faction faction)
-        {
-            if (_dynamicEntity.FactionId != 0)
-            {
-                throw new InvalidOperationException("already has a faction");
-            }
-
-            if (_dynamicEntity.FactionId != faction.FactionId)
-            {
-                _dynamicEntity.FactionId = faction.FactionId;
-                if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
-                    faction.MembersIds.Add(_dynamicEntity.DynamicId);
-
-                _faction = faction;
-            }
         }
 
         void EntityPositionChanged(object sender, EntityMoveEventArgs e)

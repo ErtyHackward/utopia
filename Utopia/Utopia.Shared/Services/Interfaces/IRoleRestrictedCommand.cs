@@ -1,6 +1,6 @@
-﻿using Utopia.Shared.Structs;
+using Utopia.Shared.Structs;
 
-namespace Utopia.Server.Interfaces
+namespace Utopia.Shared.Services.Interfaces
 {
     /// <summary>
     /// Allows to restrict command usage to specified user group

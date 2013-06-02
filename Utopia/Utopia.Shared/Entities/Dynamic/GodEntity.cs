@@ -14,6 +14,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// BodyRotation contains rotation in horisontal plane only
     /// </summary>
     [ProtoContract]
+    [EditorHide]
     public class GodEntity : DynamicEntity
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
