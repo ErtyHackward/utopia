@@ -8,9 +8,12 @@ using Utopia.Server.Structs;
 using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Services;
+using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs;
 using System.Threading;
 using Utopia.Shared.Structs.Helpers;
@@ -21,7 +24,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Manages the dynamic entites
     /// </summary>
-    public class AreaManager : IDisposable, IDynamicEntityManager
+    public class AreaManager : IDisposable, IDynamicEntityManager, IAreaManager
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -266,6 +269,20 @@ namespace Utopia.Server.Managers
             currentArea.AddEntity(e.Entity);
         }
 
+        /// <summary>
+        /// Creates and adds ServerNpc wrapper to the world
+        /// </summary>
+        /// <param name="characterEntity"></param>
+        /// <returns></returns>
+        public INpc CreateNpc(CharacterEntity characterEntity)
+        {
+            var entity = new ServerNpc(_server, characterEntity);
+
+            AddEntity(entity);
+
+            return entity;
+        }
+
         public void AddEntity(ServerDynamicEntity entity)
         {
             // maybe we need to generate new unique entity id
@@ -305,6 +322,20 @@ namespace Utopia.Server.Managers
             OnEntityAdded(new AreaEntityEventArgs { Entity = entity });
         }
 
+        public void RemoveNpc(INpc npc)
+        {
+            ServerDynamicEntity sde;
+            lock (_dynamicEntities)
+            {
+                _dynamicEntities.TryGetValue(npc.Character.DynamicId, out sde);
+            }
+
+            if (sde != null)
+            {
+                RemoveEntity(sde);
+            }
+        }
+
         public void RemoveEntity(ServerDynamicEntity entity)
         {
             bool removed;
@@ -313,7 +344,8 @@ namespace Utopia.Server.Managers
                 removed = _dynamicEntities.Remove(entity.DynamicEntity.DynamicId);
             }
 
-            if (!removed) return;
+            if (!removed) 
+                return;
 
             // remove entity from areas
             for (int x = -1; x < 2; x++)

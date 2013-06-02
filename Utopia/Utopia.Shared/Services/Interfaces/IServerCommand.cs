@@ -1,4 +1,4 @@
-﻿namespace Utopia.Server.Structs
+namespace Utopia.Shared.Services.Interfaces
 {
     public interface IServerCommand
     {

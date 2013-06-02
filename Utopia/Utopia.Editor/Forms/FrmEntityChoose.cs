@@ -31,21 +31,13 @@ namespace Utopia.Editor.Forms
             var type = typeof(IEntity);
 
             var query = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                        from t in assembly.GetTypes()
+                        from t in assembly.GetLoadableTypes()
                         where
                             type.IsAssignableFrom(t) && !t.IsAbstract &&
                             t.GetCustomAttributes(typeof(EditorHideAttribute), true).Length == 0
                         select t;
-
-
-
-            // 
-
+            
             _possibleTypes = query.Select(t => new TypeWrapper{ Type = t }).ToList();
-
-            //_possibleTypes = AppDomain.CurrentDomain.GetAssemblies().ToList()
-            //    .SelectMany(s => s.GetTypes())
-            //    .Where(p => type.IsAssignableFrom(p) && !p.IsAbstract).ToList();
         }
 
         public Type SelectedType { get; set; }

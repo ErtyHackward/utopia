@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Utopia.Server.Services;
+using Utopia.Shared.Services;
+using Utopia.Shared.Services.Interfaces;
 
 namespace Utopia.Server.Managers
 {
@@ -16,13 +17,22 @@ namespace Utopia.Server.Managers
 
         public ServiceManager(Server parentServer)
         {
-            if (parentServer == null) throw new ArgumentNullException("parentServer");
+            if (parentServer == null) 
+                throw new ArgumentNullException("parentServer");
             _parentServer = parentServer;
+        }
+
+        public void Initialize()
+        {
+            foreach (var service in _parentServer.WorldParameters.Configuration.Services)
+            {
+                Add(service);
+            }
         }
 
         public void Add(Service s)
         {
-            logger.Info("Activating {0} service...", s.ServiceName);
+            logger.Info("Activating {0} service...", s.GetType().Name);
             _services.Add(s);
             s.Initialize(_parentServer);
         }

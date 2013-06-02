@@ -10,14 +10,14 @@ namespace Utopia.Server.Structs
     /// </summary>
     public class FocusAI
     {
-        private readonly Npc _parentNpc;
+        private readonly ServerNpc _parentNpc;
         private int _checkCounter = 0;
 
         private IDynamicEntity _target;
 
-        public Npc Npc { get { return _parentNpc; } }
+        public ServerNpc Npc { get { return _parentNpc; } }
 
-        public FocusAI(Npc parentNpc)
+        public FocusAI(ServerNpc parentNpc)
         {
             _parentNpc = parentNpc;
             _checkCounter = _parentNpc.Random.Next(0, 20);

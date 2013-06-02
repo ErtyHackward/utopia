@@ -1,23 +1,23 @@
 ﻿using System;
 using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
-using Utopia.Server.Services;
 using Utopia.Server.Utils;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Services;
+using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using S33M3CoreComponents.Config;
-using Utopia.Shared.Configuration;
 
 namespace Utopia.Server
 {
     /// <summary>
     /// Main Utopia server class
     /// </summary>
-    public class Server : IDisposable
+    public class Server : IServer
     {
-
         /// <summary>
         /// Modify this constant to actual value
         /// </summary>
@@ -48,6 +48,7 @@ namespace Utopia.Server
         /// Gets entity manager
         /// </summary>
         public AreaManager AreaManager { get; private set; }
+        IAreaManager IServer.AreaManager { get { return AreaManager; } }
 
         /// <summary>
         /// Gets server game services
@@ -58,6 +59,7 @@ namespace Utopia.Server
         /// Gets landscape manager
         /// </summary>
         public ServerLandscapeManager LandscapeManager { get; private set; }
+        IServerLandscapeManager IServer.LandscapeManager { get { return LandscapeManager; } }
 
         /// <summary>
         /// Gets schedule manager for dalayed and periodic operations.
@@ -78,11 +80,13 @@ namespace Utopia.Server
         /// Gets command processor
         /// </summary>
         public CommandsManager CommandsManager { get; private set; }
+        ICommandsManager IServer.CommandsManager { get { return CommandsManager; } }
 
         /// <summary>
         /// Gets chat manager
         /// </summary>
         public ChatManager ChatManager { get; private set; }
+        IChatManager IServer.ChatManager { get { return ChatManager; } }
 
         /// <summary>
         /// Gets entity manager
@@ -108,6 +112,7 @@ namespace Utopia.Server
         /// Contains global gameplay variables, like factions list
         /// </summary>
         public GlobalStateManager GlobalStateManager { get; private set; }
+        IGlobalStateManager IServer.GlobalStateManager { get { return GlobalStateManager; } }
 
         public WorldParameters WorldParameters { get; private set; }
 
@@ -165,6 +170,8 @@ namespace Utopia.Server
             GlobalStateManager = new GlobalStateManager(this);
             
             LoginManager = new LoginManager(this, EntityFactory);
+
+            Services.Initialize();
         }
 
         /// <summary>

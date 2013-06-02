@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Server.Commands;
-using Utopia.Server.Events;
-using Utopia.Server.Interfaces;
-using Utopia.Server.Structs;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Services;
+using Utopia.Shared.Services.Interfaces;
 
 namespace Utopia.Server.Managers
 {
-    public class CommandsManager
+    public class CommandsManager : ICommandsManager
     {
         private readonly Server _server;
 
@@ -139,7 +137,7 @@ namespace Utopia.Server.Managers
                 #region Services command
                 if (command is ServicesCommand)
                 {
-                    connection.Send(new ChatMessage { DisplayName = "server", Message = "Currenty active services: " + string.Join(", ", (from s in _server.Services select s.ServiceName)) });
+                    connection.Send(new ChatMessage { DisplayName = "server", Message = "Currenty active services: " + string.Join(", ", (from s in _server.Services select s.GetType().Name)) });
                     
                     return true;
                 }
@@ -168,7 +166,9 @@ namespace Utopia.Server.Managers
                 }
                 #endregion
 
-                OnPlayerCommand(new PlayerCommandEventArgs { Connection = connection, Command = command, Params = pars });
+
+
+                OnPlayerCommand(new PlayerCommandEventArgs { Command = command, Params = pars, PlayerEntity = connection.ServerEntity.DynamicEntity });
                 return true;
             }
             return false;

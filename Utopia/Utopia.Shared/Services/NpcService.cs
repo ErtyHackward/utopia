@@ -1,30 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using Utopia.Server.Commands;
-using Utopia.Server.Events;
-using Utopia.Server.Structs;
+using ProtoBuf;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Services.Interfaces;
+using Container = Utopia.Shared.Entities.Concrete.Container;
 
-namespace Utopia.Server.Services
+namespace Utopia.Shared.Services
 {
     /// <summary>
     /// Provides sample service to performs test
     /// </summary>
+    [ProtoContract]
     public class NpcService : Service
     {
-        private Server _server;
+        private IServer _server;
         private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
         //private string[] _names = new[] { "Katia", "Sveta", "Lena", "Dasha" };
 
-        private List<Npc> _aliveNpc = new List<Npc>();
+        private List<INpc> _aliveNpc = new List<INpc>();
 
-        public override string ServiceName
+        [ProtoMember(1, OverwriteList = true)]
+        [Description("Initial start stuff")]
+        public List<InitSlot> StartItems { get; set; }
+
+        public NpcService()
         {
-            get { return "Test NPC"; }
+            StartItems = new List<InitSlot>();
         }
 
         /// <summary>
@@ -33,10 +40,8 @@ namespace Utopia.Server.Services
         /// <param name="name"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public Npc CreateNpc(string name, Vector3D position)
+        public INpc CreateNpc(Npc npc, Vector3D position)
         {
-            var z = new Dwarf { CharacterName = name };
-
             var collector = _server.WorldParameters.Configuration.BluePrints.Select(p => p.Value).FirstOrDefault(t => t is BasicCollector);
 
             if (collector != null)
@@ -45,19 +50,16 @@ namespace Utopia.Server.Services
 
                 _server.EntityFactory.PrepareEntity(item);
 
-                z.Inventory.PutItem(item);
+                npc.Inventory.PutItem(item);
             }
 
-            z.Position = position;
-
-            var zombie = new Npc(_server, z);
-            
-            _aliveNpc.Add(zombie);
-            _server.AreaManager.AddEntity(zombie);
-            return zombie;
+            npc.Position = position;
+            var srvNpc = _server.AreaManager.CreateNpc(npc);
+            _aliveNpc.Add(srvNpc);
+            return srvNpc;
         }
 
-        public override void Initialize(Server server)
+        public override void Initialize(IServer server)
         {
             _server = server;
 
@@ -66,7 +68,7 @@ namespace Utopia.Server.Services
 
             _server.CommandsManager.PlayerCommand += ServerPlayerCommand;
 
-            Faction faction = null;
+            Faction faction;
 
             if (_server.GlobalStateManager.GlobalState.Factions.Count == 0)
             {
@@ -78,13 +80,51 @@ namespace Utopia.Server.Services
                 faction = _server.GlobalStateManager.GlobalState.Factions[1];
             }
 
+            int move = 0;
             var r = new Random();
-            for (int i = 0; i < 1; i++)
+
+            foreach (var startItem in StartItems)
             {
-                var z = CreateNpc(r.Next(_names), _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + 2 * i, 72, 30))); //  new DVector3(r.Next(-200, 200), 125, r.Next(-200, 200));
-                //z.MoveVector = new Vector2(r.Next(-100, 100) / 100f, r.Next(-100, 100) / 100f);
-                z.Seed = r.Next(0, 100000);
-                z.SetFaction(faction);
+                for (int i = 0; i < startItem.Count; i++)
+                {
+                    var item = _server.EntityFactory.CreateFromBluePrint(startItem.BlueprintId);
+
+                    if (!string.IsNullOrEmpty(startItem.SetName))
+                    {
+                        var container = (Container)item;
+                        _server.EntityFactory.FillContainer(startItem.SetName, container.Content);
+                    }
+
+                    if (item is Npc)
+                    {
+                        var n = (Npc)item;
+
+                        n.Name = r.Next(_names);
+
+                        var npc = CreateNpc(n, _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + move, 72, 30)));
+                        npc.Faction = faction;
+                    }
+                    else if (item is StaticEntity)
+                    {
+                        var staticEntity = (StaticEntity)item;
+                        staticEntity.FactionId = faction.FactionId;
+
+                        var pos = _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + move, 72, 30));
+
+                        var cursor = _server.LandscapeManager.GetCursor(pos);
+
+                        var chunk = _server.LandscapeManager.GetChunk(new Vector3I(-50 + move, 72, 30));
+
+                        if (!chunk.Entities.EnumerateFast().Any(e => e.Position == pos))
+                        {
+                            staticEntity.Position = pos;
+                            cursor.AddEntity(staticEntity);
+                            faction.Stuff.Add(staticEntity.GetLink());
+                        }
+                    }
+
+                    move++;
+                }
             }
         }
 
@@ -106,16 +146,14 @@ namespace Utopia.Server.Services
 
                     for (int i = 0; i < count; i++)
                     {
-                        var z = CreateNpc(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                        z.Seed = r.Next(0, 100000);
+                        //var z = CreateNpc(r.Next(_names), e.PlayerEntity.Position);
                     }
                     _server.ChatManager.Broadcast(string.Format("{0} test NPC added ({1} total)", count, _aliveNpc.Count));
                 }
                 else
                 {
-                    var z = CreateNpc(r.Next(_names), e.Connection.ServerEntity.DynamicEntity.Position);
-                    _server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.DynamicEntity.Name,
-                                                                _aliveNpc.Count));
+                    //var z = CreateNpc(r.Next(_names), e.PlayerEntity.Position);
+                    //_server.ChatManager.Broadcast(string.Format("Test NPC {0} added {1}", z.Character.Name, _aliveNpc.Count));
                 }
             }
 
@@ -123,7 +161,7 @@ namespace Utopia.Server.Services
             {
                 for (int i = _aliveNpc.Count - 1; i >= 0; i--)
                 {
-                    _server.AreaManager.RemoveEntity(_aliveNpc[i]);
+                    _server.AreaManager.RemoveNpc(_aliveNpc[i]);
                 }
                 _aliveNpc.Clear();
 

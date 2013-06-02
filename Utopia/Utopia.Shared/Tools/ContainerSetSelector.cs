@@ -23,7 +23,8 @@ namespace Utopia.Shared.Tools
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(Configuration.ContainerSets.Keys.ToArray());
+            var collection = new StandardValuesCollection( new string[] { null }.Concat(Configuration.ContainerSets.Keys).ToArray());
+            return collection;
         }
 
     }

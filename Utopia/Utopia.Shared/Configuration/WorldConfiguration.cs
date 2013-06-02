@@ -8,6 +8,7 @@ using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Tools;
@@ -31,8 +32,7 @@ namespace Utopia.Shared.Configuration
         private const int RealmFormat = 1;
 
         private const string FormatMagic = "s33m3&Erty Hackward";
-
-
+        
         #region Public Properties
 
         public abstract WorldProcessors ConfigType { get; }
@@ -100,15 +100,11 @@ namespace Utopia.Shared.Configuration
         public BlockProfile[] BlockProfiles { get; set; }
 
         /// <summary>
-        /// Holds a server services list with parameters
-        /// The key is a type name
-        /// The value is a initializarion string
-        /// 
-        /// You can see strings here instead of Services itself because of need to link server library here
+        /// Holds server's services list 
         /// </summary>
         [Browsable(false)]
-        [ProtoMember(10)]
-        public List<KeyValuePair<string,string>> Services { get; set; }
+        [ProtoMember(10, OverwriteList = true)]
+        public List<Service> Services { get; set; }
 
         /// <summary>
         /// Key is a set Id
@@ -346,7 +342,7 @@ namespace Utopia.Shared.Configuration
         {
             BluePrints = new Dictionary<ushort, Entity>();
             BlockProfiles = new BlockProfile[255];
-            Services = new List<KeyValuePair<string, string>>();
+            Services = new List<Service>();
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
             Recipes = new List<Recipe>();
             TreeBluePrints = new List<TreeBluePrint>();

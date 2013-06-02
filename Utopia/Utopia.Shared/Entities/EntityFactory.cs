@@ -110,7 +110,7 @@ namespace Utopia.Shared.Entities
             dynEntityType.AddSubType(101, typeof(GodEntity));
 
             charEntityType.AddSubType(100, typeof(RpgCharacterEntity));
-            charEntityType.AddSubType(101, typeof(Dwarf));
+            charEntityType.AddSubType(101, typeof(Npc));
 
             rpgCharType.AddSubType(100, typeof(PlayerCharacter));
 
@@ -302,8 +302,8 @@ namespace Utopia.Shared.Entities
                     case EntityClassId.PlayerCharacter:
                         entity = new PlayerCharacter();
                         break;
-                    case EntityClassId.Dwarf:
-                        entity = new Dwarf();
+                    case EntityClassId.NonPlayerCharacter:
+                        entity = new Npc();
                         break;
                     case EntityClassId.Plant:
                         entity = new Plant();

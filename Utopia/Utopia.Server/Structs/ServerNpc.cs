@@ -15,7 +15,7 @@ namespace Utopia.Server.Structs
     /// <summary>
     /// Basic NPC server logic
     /// </summary>
-    public class Npc : ServerDynamicEntity, INpc
+    public class ServerNpc : ServerDynamicEntity, INpc
     {
         public static Vector3D Near = new Vector3D(0.02d);
         private List<MapArea> _mapAreas = new List<MapArea>();
@@ -27,7 +27,7 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Gets current NPC state
         /// </summary>
-        public NpcState State { get; private set; }
+        public ServerNpcState State { get; private set; }
         
         public MoveAI Movement { get; private set; }
 
@@ -40,6 +40,9 @@ namespace Utopia.Server.Structs
 
         public Random Random { get { return _random; } }
 
+        /// <summary>
+        /// Gets wrapped character
+        /// </summary>
         public CharacterEntity Character { get { return _character; } }
 
         public int Seed
@@ -52,12 +55,13 @@ namespace Utopia.Server.Structs
             }
         }
 
-        public Npc(Server server, CharacterEntity z)
+        public ServerNpc(Server server, CharacterEntity z)
             : base(server, z)
         {
             Seed = 0;
 
             _character = z;
+            _random = new Random();
 
             Movement = new MoveAI(this);
             Focus = new FocusAI(this);
@@ -121,23 +125,23 @@ namespace Utopia.Server.Structs
                     Vector3I pos;
 
                     // check whether we close enough to start working
-                    if (State != NpcState.Idle && Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(_character.Position.ToCubePosition(), out pos))
+                    if (State != ServerNpcState.Idle && Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(_character.Position.ToCubePosition(), out pos))
                     {
-                        if (State == NpcState.GoingToWork)
+                        if (State == ServerNpcState.GoingToWork)
                         {
                             DynamicEntity.EntityState.IsBlockPicked = true;
                             DynamicEntity.EntityState.PickedBlockPosition = pos;
                             DynamicEntity.EntityState.MouseUp = false;
 
                             var tool = (BasicCollector)collectorSlot.Item;
-                            State = NpcState.Digging;
+                            State = ServerNpcState.Digging;
                             
                             // start digging this block
                             DynamicEntity.ToolUse(tool);
                             Focus.LookAt(pos);
                         }
 
-                        if (State == NpcState.Digging)
+                        if (State == ServerNpcState.Digging)
                         {
                             var cursor = Server.LandscapeManager.GetCursor(DynamicEntity.EntityState.PickedBlockPosition);
 
@@ -153,7 +157,7 @@ namespace Utopia.Server.Structs
                                 DynamicEntity.ToolUse(tool);
 
                                 Faction.BlocksToRemove.Remove(pos);
-                                State = NpcState.Idle;
+                                State = ServerNpcState.Idle;
                             }
                         }
                     }
@@ -161,7 +165,7 @@ namespace Utopia.Server.Structs
                     {
                         // will try to go to the closest block to remove
 
-                        State = NpcState.GoingToWork;
+                        State = ServerNpcState.GoingToWork;
                         var location = Faction.BlocksToRemove.OrderBy(v => Vector3I.DistanceSquared(v, (Vector3I)_character.Position)).First();
                         Movement.Goto(location, IsGoalNode);
                     }

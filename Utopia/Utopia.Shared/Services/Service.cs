@@ -1,17 +1,17 @@
 ﻿using System;
+using ProtoBuf;
+using Utopia.Shared.Services.Interfaces;
 
-namespace Utopia.Server.Services
+namespace Utopia.Shared.Services
 {
     /// <summary>
     /// Represents a game service. It can be anything game logic
     /// </summary>
+    [ProtoContract]
+    [ProtoInclude(100, typeof(NpcService))]
+    [ProtoInclude(101, typeof(WaterDynamicService))]
     public abstract class Service : IDisposable
     {
-        /// <summary>
-        /// Gets service name
-        /// </summary>
-        public abstract string ServiceName { get; }
-
         /// <summary>
         /// Stops the service and releases all resources
         /// </summary>
@@ -20,6 +20,6 @@ namespace Utopia.Server.Services
             
         }
 
-        public abstract void Initialize(Server server);
+        public abstract void Initialize(IServer server);
     }
 }

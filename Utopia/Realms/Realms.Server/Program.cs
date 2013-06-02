@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -8,12 +7,11 @@ using S33M3CoreComponents.Sound;
 using Utopia.Server;
 using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
-using Utopia.Server.Sample;
-using Utopia.Server.Services;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Web;
+using Utopia.Shared.Services;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.Processors.Utopia;
@@ -174,9 +172,6 @@ namespace Realms.Server
             serverFactory.ServerSide = true;
 
             _gameplay = new ServerGameplayProvider(_server, conf);
-
-            _server.Services.Add(new NpcService());
-            _server.Services.Add(new BlueprintRecorderService());
             
             _server.ConnectionManager.Listen();
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;

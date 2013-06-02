@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ProtoBuf;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 
@@ -11,6 +12,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// </summary>
     /// <remarks></remarks>
     [ProtoContract]
+    [EditorHide]
     public sealed class PlayerCharacter : RpgCharacterEntity
     {
         public static float DefaultMoveSpeed = 5f;

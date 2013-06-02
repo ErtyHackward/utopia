@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
+using ProtoBuf;
 using S33M3Resources.Structs;
-using Utopia.Server.Managers;
-using Utopia.Server.Utils;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs.Helpers;
 using System.Linq;
 
-
-namespace Utopia.Server.Services
+namespace Utopia.Shared.Services
 {
     /// <summary>
     /// Handles dynamic water
     /// </summary>
+    [ProtoContract]
+    [Description("Provides water flow feature to the game")]
     public class WaterDynamicService : Service
     {
         private readonly LinkedList<Vector3I> _updateList = new LinkedList<Vector3I>();
@@ -25,20 +27,21 @@ namespace Utopia.Server.Services
         private readonly Dictionary<Vector2I, InsideDataProvider> _affectedChunks = new Dictionary<Vector2I, InsideDataProvider>();
         
         private bool _updating;
-        private Server _server;
+        private IServer _server;
         private Timer _updateTimer;
 
         private byte _stillWater;
         private byte _dynamicWater;
 
-        private Vector3I[] directions = new[] { new Vector3I(1, 0, 0), new Vector3I(0, 0, 1), new Vector3I(-1, 0, 0), new Vector3I(0, 0, -1) };
+        private Vector3I[] directions = new[] 
+        { 
+            new Vector3I(1, 0, 0), 
+            new Vector3I(0, 0, 1), 
+            new Vector3I(-1, 0, 0), 
+            new Vector3I(0, 0, -1) 
+        };
 
-        public override string ServiceName
-        {
-            get { return "Dynamic water"; }
-        }
-
-        public override void Initialize(Server server)
+        public override void Initialize(IServer server)
         {
             _server = server;
             _server.LandscapeManager.BlockChanged += LandscapeManagerBlockChanged;

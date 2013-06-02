@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
@@ -19,24 +20,28 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Gets character name
         /// </summary>
         [ProtoMember(1)]
+        [Browsable(false)]
         public string CharacterName { get; set; }
 
         /// <summary>
         /// Gets character equipment
         /// </summary>
         [ProtoMember(2)]
+        [Browsable(false)]
         public CharacterEquipment Equipment { get; private set; }
 
         /// <summary>
         /// Gets character inventory
         /// </summary>
         [ProtoMember(3)]
+        [Browsable(false)]
         public SlotContainer<ContainedSlot> Inventory { get; private set; }
 
         /// <summary>
         /// Gets current health points of the entity
         /// </summary>
         [ProtoMember(4)]
+        [Browsable(false)]
         public int Health { get; set; }
 
         /// <summary>
@@ -48,16 +53,19 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
+        [Browsable(false)]
         public EntityFactory EntityFactory { get; set; }
 
         /// <summary>
         /// Gets a special tool of the character to use when no tool is set
         /// </summary>
+        [Browsable(false)]
         public HandTool HandTool { get; private set; }
 
         /// <summary>
         /// Indicates if this charater controlled by real human
         /// </summary>
+        [Browsable(false)]
         public bool IsRealPlayer { get; set; }
         
         protected CharacterEntity()

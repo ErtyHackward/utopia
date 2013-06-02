@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Drawing.Design;
 using ProtoBuf;
 using SharpDX;
 using Utopia.Shared.Entities.Concrete;
@@ -7,6 +9,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -14,7 +17,6 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Represents dynamic voxel entity (players, robots, animals, NPC)
     /// </summary>
     [ProtoContract]
-    [EditorHide]
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
         public DynamicEntityState EntityState;
@@ -82,11 +84,13 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets voxel entity model
         /// </summary>
+        [Browsable(false)]
         public VoxelModelInstance ModelInstance { get; set; }
         
         /// <summary>
         /// Gets or sets entity state (this field should be refreshed before using the tool)
         /// </summary>
+        [Browsable(false)]
         DynamicEntityState IDynamicEntity.EntityState
         {
             get { return EntityState; }
@@ -94,13 +98,9 @@ namespace Utopia.Shared.Entities.Dynamic
         }
         
         /// <summary>
-        /// Gets or sets current voxel model name
-        /// </summary>
-        public virtual string ModelName { get; set; } 
-
-        /// <summary>
         /// Gets or sets entity position
         /// </summary>
+        [Browsable(false)]
         public override Vector3D Position
         {
             get
@@ -121,6 +121,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets or sets entity head rotation
         /// </summary>
+        [Browsable(false)]
         public virtual Quaternion HeadRotation 
         {
             get 
@@ -162,12 +163,14 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Gets or sets entity body rotation
         /// </summary>
+        [Browsable(false)]
         public Quaternion BodyRotation { get; set; }
 
         /// <summary>
         /// Gets or sets dynamic entity id
         /// </summary>
         [ProtoMember(1)]
+        [Browsable(false)]
         public uint DynamicId { get; set; }
 
         /// <summary>
@@ -187,6 +190,13 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(4)]
         public float RotationSpeed { get; set; }
+
+        /// <summary>
+        /// Gets or sets current voxel model name
+        /// </summary>
+        [ProtoMember(5)]
+        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        public virtual string ModelName { get; set; } 
 
         #endregion
 

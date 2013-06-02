@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Windows.Forms;
 using Utopia.Editor.Forms;
@@ -25,9 +23,6 @@ namespace Utopia.Editor
         [STAThread]
         static void Main()
         {
-
-
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

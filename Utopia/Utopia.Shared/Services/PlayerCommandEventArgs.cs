@@ -1,11 +1,11 @@
 using System;
-using Utopia.Server.Structs;
+using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Services.Interfaces;
 
-namespace Utopia.Server.Events
+namespace Utopia.Shared.Services
 {
     public class PlayerCommandEventArgs : EventArgs
     {
-        public ClientConnection Connection { get; set; }
         public IServerCommand Command { get; set; }
         public string[] Params { get; set; }
 
@@ -13,5 +13,7 @@ namespace Utopia.Server.Events
         {
             get { return Params != null; }
         }
+
+        public IDynamicEntity PlayerEntity { get; set; }
     }
 }

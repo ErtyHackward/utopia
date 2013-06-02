@@ -13,6 +13,8 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Services;
+using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
@@ -24,7 +26,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Provides functions to work with chunk based landscape
     /// </summary>
-    public class ServerLandscapeManager : LandscapeManager<ServerChunk>, IDisposable
+    public class ServerLandscapeManager : LandscapeManager<ServerChunk>, IDisposable, IServerLandscapeManager
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -511,28 +513,6 @@ namespace Utopia.Server.Managers
                     }
                 }
             }
-        }
-
-        public Vector3D GetHighestPoint(Vector3D vector2)
-        {
-            var chunk = GetChunk(vector2);
-
-            var cx = (int)vector2.X % AbstractChunk.ChunkSize.X;
-            var cz = (int)vector2.Z % AbstractChunk.ChunkSize.Z;
-
-            if (cx < 0) cx = AbstractChunk.ChunkSize.X + cx;
-            if (cz < 0) cz = AbstractChunk.ChunkSize.Z + cz;
-
-            int y;
-
-            for (y = 127; y >= 0; y--)
-            {
-                if(chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != WorldConfiguration.CubeId.Air)
-                    break;
-                
-            }
-
-            return new Vector3D(vector2.X, y + 1, vector2.Z); 
         }
     }
 }

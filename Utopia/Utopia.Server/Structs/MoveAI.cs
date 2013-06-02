@@ -20,7 +20,7 @@ namespace Utopia.Server.Structs
     {
         public static Vector3D CubeCenter = new Vector3D(0.5d, 0.0d, 0.5d);
 
-        private readonly Npc _parentNpc;
+        private readonly ServerNpc _parentNpc;
         
         private Path3D _path;
         private int _targetPathNodeIndex = -1;
@@ -30,7 +30,7 @@ namespace Utopia.Server.Structs
         private Vector3D _moveDirection;
         private IDynamicEntity _leader;
 
-        public Npc Npc { get { return _parentNpc; } }
+        public ServerNpc Npc { get { return _parentNpc; } }
 
         public VerletSimulator VerletSimulator { get; private set; }
 
@@ -77,7 +77,7 @@ namespace Utopia.Server.Structs
             set { _moveDirection = value; }
         }
 
-        public MoveAI(Npc parentNpc)
+        public MoveAI(ServerNpc parentNpc)
         {
             _parentNpc = parentNpc;
             
