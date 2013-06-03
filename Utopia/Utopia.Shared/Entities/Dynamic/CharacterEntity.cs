@@ -211,5 +211,23 @@ namespace Utopia.Shared.Entities.Dynamic
                 return false;
             }
         }
+
+        public override object Clone()
+        {
+            var obj = base.Clone();
+
+            var cont = obj as CharacterEntity;
+
+            if (cont != null)
+            {
+                cont.Equipment = new CharacterEquipment(cont);
+                cont.Inventory = new SlotContainer<ContainedSlot>(cont);
+
+                cont.Equipment.JoinIdScope(Inventory);
+                cont.Inventory.JoinIdScope(Equipment);
+            }
+
+            return obj;
+        }
     }
 }

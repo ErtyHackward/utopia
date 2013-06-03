@@ -124,7 +124,7 @@ namespace Realms.Client
             if (!ClientSettings.Current.Settings.GraphicalParameters.Fullscreen)
             {
                 ClientSettings.Current.Settings.GraphicalParameters.WindowPos = _d3dEngine.GameWindow.Location;
-                ClientSettings.Current.Settings.GraphicalParameters.WindowSize = _d3dEngine.GameWindow.Size;
+                ClientSettings.Current.Settings.GraphicalParameters.WindowSize = _d3dEngine.GameWindow.ClientSize;
             }
 
             ClientSettings.Current.Save();

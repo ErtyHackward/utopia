@@ -47,9 +47,7 @@ namespace Utopia.Shared.Services
             if (collector != null)
             {
                 var item = (BasicCollector)collector.Clone();
-
                 _server.EntityFactory.PrepareEntity(item);
-
                 npc.Inventory.PutItem(item);
             }
 
@@ -117,7 +115,15 @@ namespace Utopia.Shared.Services
 
                         if (!chunk.Entities.EnumerateFast().Any(e => e.Position == pos))
                         {
-                            staticEntity.Position = pos;
+                            staticEntity.Position = pos + new Vector3D(0.5f, 0, 0.5f);
+
+                            var ble = staticEntity as IBlockLinkedEntity;
+
+                            if (ble != null)
+                            {
+                                ble.LinkedCube = (Vector3I)staticEntity.Position + new Vector3I(0, -1, 0);
+                            }
+
                             cursor.AddEntity(staticEntity);
                             faction.Stuff.Add(staticEntity.GetLink());
                         }

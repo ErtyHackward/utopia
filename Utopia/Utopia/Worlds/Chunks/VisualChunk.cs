@@ -469,15 +469,15 @@ namespace Utopia.Worlds.Chunks
                 visualVoxelEntity.VoxelEntity.ModelInstance.Rotation = instanceRotation;
 
                 TerraCubeResult result;
-                if (visualVoxelEntity.Entity is BlockLinkedItem)
-                {
-                    result = _singleArrayContainer.GetCube(((BlockLinkedItem)visualVoxelEntity.Entity).BlockLocationRoot);
-                }
-                else
-                {
+                //if (visualVoxelEntity.Entity is BlockLinkedItem)
+                //{
+                //    result = _singleArrayContainer.GetCube(((BlockLinkedItem)visualVoxelEntity.Entity).BlockLocationRoot);
+                //}
+                //else
+                //{
                     //Find the Cube where the entity is placed, and assign its color to the entity
                     result = _singleArrayContainer.GetCube(visualVoxelEntity.VoxelEntity.Position);
-                }
+                //}
 
                 if (result.IsValid)
                 {
