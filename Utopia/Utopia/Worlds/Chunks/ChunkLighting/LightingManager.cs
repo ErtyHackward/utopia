@@ -348,7 +348,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             foreach (var voxelEntity in chunk.AllEntities())
             {
-                if (voxelEntity.Entity is BlockLinkedItem)
+                if (false /* voxelEntity.Entity is BlockLinkedItem*/)
                 {
                     voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(((BlockLinkedItem)voxelEntity.Entity).BlockLocationRoot)].EmissiveColor;
                 }

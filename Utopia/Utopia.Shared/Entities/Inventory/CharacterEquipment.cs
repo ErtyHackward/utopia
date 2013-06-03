@@ -35,9 +35,8 @@ namespace Utopia.Shared.Entities.Inventory
             ItemPut += CharacterEquipmentItemPut;
             ItemTaken += CharacterEquipmentItemTaken;
             ItemExchanged += CharacterEquipmentItemExchanged;
-
         }
-
+        
         void CharacterEquipmentItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             OnItemEquipped(new CharacterEquipmentEventArgs { EquippedItem = e.Slot, Slot = (EquipmentSlotType)e.Slot.GridPosition.Y, UnequippedItem = e.Exchanged });
