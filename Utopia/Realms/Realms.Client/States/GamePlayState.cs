@@ -70,7 +70,7 @@ namespace Realms.Client.States
             
             var chat = _ioc.Get<ChatComponent>();
 
-            //var hud = (RealmsHud)_ioc.Get<Hud>();
+            var hud = (RealmsHud)_ioc.Get<Hud>();
             //hud.CraftingButton.Pressed += CraftingButton_Pressed;
             //hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
@@ -127,7 +127,7 @@ namespace Realms.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(playerEntityManager);
             AddComponent(dynamicEntityManager);
-            //AddComponent(hud);
+            AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
             AddComponent(selectedBlocksRenderer);

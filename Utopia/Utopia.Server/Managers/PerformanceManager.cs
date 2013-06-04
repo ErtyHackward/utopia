@@ -50,9 +50,9 @@ namespace Utopia.Server.Managers
             get { return _ramCounter.NextValue(); }
         }
 
+        [DebuggerStepThrough]
         public PerformanceManager(AreaManager areaManager)
         {
-
             _dateStart = DateTime.Now;
 
             _cpuCounter = new PerformanceCounter { CategoryName = "Processor", CounterName = "% Processor Time", InstanceName = "_Total" };
@@ -67,8 +67,6 @@ namespace Utopia.Server.Managers
 
             areaManager.BeforeUpdate += AreaManagerBeforeUpdate;
             areaManager.AfterUpdate += AreaManagerAfterUpdate;
-
-            
         }
 
         private void AreaManagerBeforeUpdate(object sender, EventArgs e)

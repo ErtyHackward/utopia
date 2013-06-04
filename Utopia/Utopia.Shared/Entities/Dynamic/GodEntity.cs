@@ -65,6 +65,11 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Gets list of selected entities by the god-entity
         /// </summary>
         public List<EntityLink> SelectedEntities { get; private set; }
+
+        /// <summary>
+        /// Gets or sets selected entity type to create designation to place item somewhere
+        /// </summary>
+        public ushort DesignationBlueprintId { get; set; }
         
         /// <summary>
         /// Gets god main tool

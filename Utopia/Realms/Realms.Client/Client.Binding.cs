@@ -189,14 +189,10 @@ namespace Realms.Client
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
             _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
 
-            //_iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-
             _iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("Client");
 
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            //Local Server in case of Single Player
-            //_iocContainer.Bind<SQLiteStorageManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Game Componenents =========================================
@@ -209,7 +205,7 @@ namespace Realms.Client
             _iocContainer.Bind<CraftingWindow>().To<CraftingInventory>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryEventComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            //_iocContainer.Bind<Hud>().To<RealmsHud>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<Hud>().To<RealmsHud>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IDrawableComponent>().To<SkyStars>().InScope(x => GameScope.CurrentGameScope).Named("Stars");
             _iocContainer.Bind<ISkyDome>().To<RegularSkyDome>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IWeather>().To<Weather>().InScope(x => GameScope.CurrentGameScope);

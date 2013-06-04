@@ -318,7 +318,16 @@ namespace Utopia.Entities.Managers
 
             _moveVector = Vector3.Transform(moveVector, inv);
 
-            GodEntity.EntityState.SliceValue = Chunks.SliceValue;
+            var godHandToolState = GodEntity.EntityState.ToolState as GodHandToolState;
+
+            if (godHandToolState == null)
+            {
+                godHandToolState = new GodHandToolState();
+                GodEntity.EntityState.ToolState = godHandToolState;
+            }
+            
+            godHandToolState.SliceValue = Chunks.SliceValue;
+            
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
