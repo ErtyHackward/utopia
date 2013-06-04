@@ -471,7 +471,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             }
             if (ds.HasFlag(ControlDock.HorisontalCenter))
             {
-                Bounds.Location.X = parent.Bounds.Location.X.Offset + (parent.Bounds.Size.X.Offset - Bounds.Size.X.Offset) / 2;
+                Bounds.Location.X = parent.Bounds.Location.X + (parent.Bounds.Size.X - Bounds.Size.X) / 2;
             }
             if (ds.HasFlag(ControlDock.HorisontalRight))
             {
@@ -487,7 +487,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
             }
             if (ds.HasFlag(ControlDock.VerticalBottom))
             {
-                Bounds.Location.Y = parent.Bounds.Location.Y.Offset + (parent.Bounds.Size.Y.Offset - Bounds.Size.Y.Offset);
+                Bounds.Location.Y = parent.Bounds.Location.Y + (parent.Bounds.Size.Y - Bounds.Size.Y);
             }
         }
 

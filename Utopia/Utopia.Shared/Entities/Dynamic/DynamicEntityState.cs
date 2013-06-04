@@ -79,15 +79,14 @@ namespace Utopia.Shared.Entities.Dynamic
         public MouseButton MouseButton;
 
         /// <summary>
-        /// Current slice level (-1 if disabled)
+        /// Tool specific data here
         /// </summary>
         [ProtoMember(12)]
-        public int SliceValue;
+        public ToolState ToolState;
 
         public DynamicEntityState Clone()
         {
             return (DynamicEntityState)this.MemberwiseClone();
         }
     }
-
 }

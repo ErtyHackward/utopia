@@ -44,6 +44,8 @@ namespace Utopia.Shared.Entities.Concrete
             if (godEntity == null)
                 throw new ArgumentException("Invalid owner entity, should be GodEntity");
 
+            var godHandToolState = godEntity.EntityState.ToolState as GodHandToolState;
+
             if (godEntity.EntityState.MouseButton == MouseButton.LeftButton)
             {
                 if (!godEntity.EntityState.MouseUp)
@@ -60,8 +62,8 @@ namespace Utopia.Shared.Entities.Concrete
                     Faction faction = EntityFactory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
                     
                     var select = !faction.BlocksToRemove.Contains(godEntity.EntityState.PickedBlockPosition);
-
-                    if (_selectionStart.Y == godEntity.EntityState.SliceValue-1)
+                    
+                    if (godHandToolState != null && _selectionStart.Y == godHandToolState.SliceValue - 1)
                         _selectionStart.y--;
 
                     var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);

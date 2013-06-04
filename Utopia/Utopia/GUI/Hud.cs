@@ -121,7 +121,8 @@ namespace Utopia.GUI
         private void D3DEngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
-            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
+            ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
+            //ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
         }
 
         public override void BeforeDispose()

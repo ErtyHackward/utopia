@@ -56,6 +56,7 @@ namespace S33M3CoreComponents.Debug.Components
             _inputsManager = inputsManager;
         }
 
+        [DebuggerStepThrough]
         public override void Initialize()
         {
             _cpuCounter = ToDispose(new PerformanceCounter());

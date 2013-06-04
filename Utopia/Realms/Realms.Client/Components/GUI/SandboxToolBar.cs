@@ -41,8 +41,9 @@ namespace Realms.Client.Components.GUI
             _stToolbatSlotHover = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot_active.png");
 
             Background = _stBackground;
+            DisplayBackground = true;
 
-            Bounds = new UniRectangle(0, 0, 656, 116);
+            Bounds = new UniRectangle(0, 0, new UniScalar(1,0), 163);
 
             var offset = new Vector2I(50, 48);
             var size = new Vector2I(57, 57);
