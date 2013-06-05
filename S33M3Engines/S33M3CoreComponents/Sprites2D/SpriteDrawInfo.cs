@@ -36,17 +36,34 @@ namespace S33M3CoreComponents.Sprites2D
         }
 
         #region Public methods
+
         public void AddWrappingSprite(ref Vector2 position, ref Vector2 size, Vector2 textureSize, int textureArrayIndex, ref ByteColor color, float depth)
+        {
+            RectangleF rect = new RectangleF(0,0, textureSize.X, textureSize.Y);
+            AddWrappingSprite(ref position, ref size, ref rect, textureArrayIndex, ref color, depth);
+        }
+
+        public void AddWrappingSprite(ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, int textureArrayIndex, ref ByteColor color, float depth)
         {
             ushort indiceVertexOffset = (ushort)Vertices.Count;
 
-            Vector2 wrappingSize = new Vector2(size.X / textureSize.X, size.Y / textureSize.Y);
-
+            RectangleF sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)sourceRect.Width,
+                                                             sourceRect.Top / (float)sourceRect.Height,
+                                                             size.X / (float)sourceRect.Width,
+                                                             size.Y / (float)sourceRect.Height);
+            
             //Create the vertices
-            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth), new Vector3(0.0f, 0.0f, textureArrayIndex), color));
-            Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y, depth), new Vector3(wrappingSize.X, 0.0f, textureArrayIndex), color));
-            Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y + size.Y, depth), new Vector3(wrappingSize.X, wrappingSize.Y, textureArrayIndex), color));
-            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y + size.Y, depth), new Vector3(0.0f, wrappingSize.Y, textureArrayIndex), color));
+            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth),
+                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top, textureArrayIndex), color));
+
+            Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y, depth),
+                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top, textureArrayIndex), color));
+
+            Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y + size.Y, depth),
+                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
+
+            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y + size.Y, depth),
+                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
 
             //Create the indices
             Indices.Add((ushort)(0 + indiceVertexOffset));
@@ -76,48 +93,11 @@ namespace S33M3CoreComponents.Sprites2D
             Indices.Add((ushort)(2 + indiceVertexOffset));
         }
 
-        /// <summary>
-        /// Add a spritefor drawing
-        /// </summary>
-        /// <param name="position">The sprite location in screen coordinate</param>
-        /// <param name="sourceRect">The texture sources, will also be used as Sprite target size (= scaling of 1)</param>
-        /// <param name="textureArrayIndex"></param>
-        /// <param name="color"></param>
-        /// <param name="depth"></param>
         public void AddSprite(ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float depth)
         {
-            ushort indiceVertexOffset = (ushort)Vertices.Count;
+            var size = new Vector2(sourceRect.Width, sourceRect.Height);
 
-            RectangleF sourceRectInTexCoord;
-            if (sourceRectInTextCoord)
-            {
-                sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)Texture.Width, sourceRect.Top / (float)Texture.Height, sourceRect.Right / (float)Texture.Width, sourceRect.Bottom / (float)Texture.Height);
-            }
-            else
-            {
-                sourceRectInTexCoord = new RectangleF(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
-            }
-
-            //Create the vertices
-            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth),
-                                           new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top, textureArrayIndex), color));
-
-            Vertices.Add(new VertexSprite2(new Vector3(position.X + sourceRect.Width, position.Y, depth),
-                                           new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top, textureArrayIndex), color));
-
-            Vertices.Add(new VertexSprite2(new Vector3(position.X + sourceRect.Width, position.Y + sourceRect.Height, depth),
-                                           new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
-
-            Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y + sourceRect.Height, depth),
-                                           new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
-
-            //Create the indices
-            Indices.Add((ushort)(0 + indiceVertexOffset));
-            Indices.Add((ushort)(1 + indiceVertexOffset));
-            Indices.Add((ushort)(2 + indiceVertexOffset));
-            Indices.Add((ushort)(3 + indiceVertexOffset));
-            Indices.Add((ushort)(0 + indiceVertexOffset));
-            Indices.Add((ushort)(2 + indiceVertexOffset));
+            AddSprite(ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, depth);
         }
 
         public void AddSprite(ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float depth)

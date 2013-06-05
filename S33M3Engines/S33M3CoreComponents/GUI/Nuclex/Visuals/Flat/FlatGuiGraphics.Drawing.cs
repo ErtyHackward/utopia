@@ -147,7 +147,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                 var region = t;
                 Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref region.DestinationRegion);
                 Rectangle sourceRegion = region.SourceRegion;
-                spriteRenderer.Draw(region.Texture, ref destinationRegion, ref sourceRegion, ref color, groupId, region.Tiled);
+
+                if (region.Tiled)
+                    spriteRenderer.DrawWithWrapping(region.Texture, ref destinationRegion, ref sourceRegion, ref color, 0, true, groupId);
+                else
+                    spriteRenderer.Draw(region.Texture, ref destinationRegion, ref sourceRegion, ref color, 0, true, groupId);
             }
         }
 
