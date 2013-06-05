@@ -107,6 +107,10 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                 public Rectangle SourceRegion;
                 /// <summary>Location in the frame where the picture region will be drawn</summary>
                 public UniRectangle DestinationRegion;
+                /// <summary>
+                /// Indicates if the texture should be tiled or stretched
+                /// </summary>
+                public bool Tiled;
             }
 
             /// <summary>Describes where within the frame text should be drawn</summary>

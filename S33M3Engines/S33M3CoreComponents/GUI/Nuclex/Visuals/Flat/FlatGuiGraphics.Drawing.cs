@@ -137,16 +137,17 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// </remarks>
         public void DrawElement(string frameName, ref RectangleF bounds, ref ByteColor color, int groupId = 0)
         {
-            Frame frame = lookupFrame(frameName);
+            var frame = lookupFrame(frameName);
 
             // Draw all the regions defined for the element. Each region is a small bitmap
             // that needs to be blit somewhere into the element to form the element's
             // visual representation step by step.
-            for (int index = 0; index < frame.Regions.Length; ++index)
+            foreach (var t in frame.Regions)
             {
-                Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref frame.Regions[index].DestinationRegion);
-                Rectangle sourceRegion = frame.Regions[index].SourceRegion;
-                spriteRenderer.Draw(frame.Regions[index].Texture, ref destinationRegion, ref sourceRegion, ref color, groupId);
+                var region = t;
+                Rectangle destinationRegion = calculateDestinationRectangle(ref bounds, ref region.DestinationRegion);
+                Rectangle sourceRegion = region.SourceRegion;
+                spriteRenderer.Draw(region.Texture, ref destinationRegion, ref sourceRegion, ref color, groupId, region.Tiled);
             }
         }
 

@@ -136,11 +136,15 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                     string w = element.Attribute("w").Value;
                     string h = element.Attribute("h").Value;
 
+                    var tiledAttribute = element.Attribute("tiled");
+                    bool tiled = (tiledAttribute != null) && bool.Parse(tiledAttribute.Value);
+                    
                     // Assign the trivial attributes
                     var region = new Frame.Region()
                     {
                         Id = id,
-                        Texture = bitmaps[source]
+                        Texture = bitmaps[source],
+                        Tiled = tiled
                     };
                     //region.SourceRegion.X = int.Parse(x);
                     //region.SourceRegion.Y = int.Parse(y);
