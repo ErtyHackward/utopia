@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
@@ -43,7 +44,7 @@ namespace Realms.Client.Components.GUI
             Background = _stBackground;
             DisplayBackground = true;
 
-            Bounds = new UniRectangle(0, 0, new UniScalar(1,0), 163);
+            Bounds = new UniRectangle(0, new UniScalar(0.8f, 0), new UniScalar(1, 0), new UniScalar(0.2f, 0));
 
             var offset = new Vector2I(50, 48);
             var size = new Vector2I(57, 57);
@@ -81,6 +82,18 @@ namespace Realms.Client.Components.GUI
             {
                 var index = _toolbarSlots.IndexOf(e.Cell);
                 _numbersLabels[index].IsVisible = e.Cell.Slot != null;
+            }
+        }
+    }
+
+    public class ContainerRenderer : IFlatControlRenderer<SandboxToolBar>
+    {
+        public void Render(SandboxToolBar control, IFlatGuiGraphics graphics)
+        {
+            if (control.DisplayBackground)
+            {
+                var absoluteBounds = control.GetAbsoluteBounds();
+                graphics.DrawElement("toolbar", ref absoluteBounds);
             }
         }
     }
