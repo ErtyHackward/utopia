@@ -42,47 +42,58 @@ namespace S33M3CoreComponents.Sprites2D
             _spritesByTexture.Clear();
         }
 
-        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, int drawGroupId)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, int drawGroupId, float spriteDepth = float.NaN)
         {
-            AddSprite(texture, sampler, ref position, ref size, textureArrayIndex, ref color, AutoDepth, drawGroupId);
-            if (_enableDepthSprite) AutoDepth -= 0.0001f;
-        }
+            if (float.IsNaN(spriteDepth))
+            {
+                spriteDepth = AutoDepth;
+                if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            }
 
-        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
-        {
             GetSpriteDrawInfo(texture, sampler, drawGroupId).AddSprite(ref position, ref size, textureArrayIndex, ref color, spriteDepth);
         }
 
-        public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, int drawGroupId)
+        public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, int drawGroupId, float spriteDepth = float.NaN)
         {
-            GetSpriteDrawInfo(texture, sampler, drawGroupId).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, AutoDepth);
-            if (_enableDepthSprite) AutoDepth -= 0.0001f;
-        }
+            if (float.IsNaN(spriteDepth))
+            {
+                spriteDepth = AutoDepth;
+                if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            }
 
-        public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
-        {
             GetSpriteDrawInfo(texture, sampler, drawGroupId).AddWrappingSprite(ref position, ref size, new Vector2(texture.Width, texture.Height), textureArrayIndex, ref color, spriteDepth);
         }
 
-        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId)
+        public void AddWrappingSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF srcRect, int textureArrayIndex, ref ByteColor color, int drawGroupId, float spriteDepth = float.NaN)
         {
-            AddSprite(texture, sampler, ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth, drawGroupId);
-            if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            if (float.IsNaN(spriteDepth))
+            {
+                spriteDepth = AutoDepth;
+                if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            }
+
+            GetSpriteDrawInfo(texture, sampler, drawGroupId).AddWrappingSprite(ref position, ref size, ref srcRect, textureArrayIndex, ref color, spriteDepth);
         }
 
-        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId, float spriteDepth = float.NaN)
         {
+            if (float.IsNaN(spriteDepth))
+            {
+                spriteDepth = AutoDepth;
+                if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            }
+
             GetSpriteDrawInfo(texture, sampler, drawGroupId).AddSprite(ref position, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
         }
 
-        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId)
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId, float spriteDepth = float.NaN)
         {
-            AddSprite(texture, sampler, ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, AutoDepth, drawGroupId);
-            if (_enableDepthSprite) AutoDepth -= 0.0001f;
-        }
+            if (float.IsNaN(spriteDepth))
+            {
+                spriteDepth = AutoDepth;
+                if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            }
 
-        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, float spriteDepth, int drawGroupId)
-        {
             GetSpriteDrawInfo(texture, sampler, drawGroupId).AddSprite(ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
         }
 

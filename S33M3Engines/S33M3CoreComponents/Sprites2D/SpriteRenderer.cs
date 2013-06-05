@@ -194,17 +194,25 @@ namespace S33M3CoreComponents.Sprites2D
         {
             _spriteBuffer.AddWrappingSprite(spriteTexture, _spriteSamplerWrap, ref position, ref size, textureArrayIndex, ref color, drawGroupId);
         }
-        
-        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true, int drawGroupId = 0, bool wrapping = false)
+
+        public void DrawWithWrapping(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true, int drawGroupId = 0)
         {
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
 
             var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
 
-            SamplerState samplerState = wrapping ? _spriteSamplerWrap : _spriteSamplerClamp;
+            _spriteBuffer.AddWrappingSprite(spriteTexture, _spriteSamplerWrap, ref position, ref size, ref src, textureArrayIndex, ref color, drawGroupId);
+        }
 
-            _spriteBuffer.AddSprite(spriteTexture, samplerState, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color, drawGroupId);
+        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true, int drawGroupId = 0)
+        {
+            Vector2 position = new Vector2(destRect.Left, destRect.Top);
+            Vector2 size = new Vector2(destRect.Width, destRect.Height);
+
+            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
+            
+            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color, drawGroupId);
         }
 
         public void DrawText(SpriteFont spriteFont, string text, ref Vector2 position, ref ByteColor color, float maxWidth = -1, int withCarret = -1, TextFontPosition textFontPosition = TextFontPosition.RelativeToFontUp, int drawGroupId = 0)
