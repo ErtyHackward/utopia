@@ -72,7 +72,9 @@ namespace S33M3CoreComponents.Sprites2D
                 if (_enableDepthSprite) AutoDepth -= 0.0001f;
             }
 
-            GetSpriteDrawInfo(texture, sampler, drawGroupId).AddWrappingSprite(ref position, ref size, ref srcRect, textureArrayIndex, ref color, spriteDepth);
+            Vector2 textureSize = new Vector2(texture.Width, texture.Height);
+
+            GetSpriteDrawInfo(texture, sampler, drawGroupId).AddWrappingSprite(ref position, ref size, ref srcRect, ref textureSize, textureArrayIndex, ref color, spriteDepth);
         }
 
         public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId, float spriteDepth = float.NaN)

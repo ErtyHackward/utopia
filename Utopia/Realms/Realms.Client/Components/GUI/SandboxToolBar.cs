@@ -44,7 +44,7 @@ namespace Realms.Client.Components.GUI
             Background = _stBackground;
             DisplayBackground = true;
 
-            Bounds = new UniRectangle(0, new UniScalar(0.8f, 0), new UniScalar(1, 0), new UniScalar(0.2f, 0));
+            Bounds = new UniRectangle(0, new UniScalar(0.8f, 0), new UniScalar(1, 0), new UniScalar(0.21f, 0));
 
             var offset = new Vector2I(50, 48);
             var size = new Vector2I(57, 57);
