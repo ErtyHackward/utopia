@@ -40,17 +40,17 @@ namespace S33M3CoreComponents.Sprites2D
         public void AddWrappingSprite(ref Vector2 position, ref Vector2 size, Vector2 textureSize, int textureArrayIndex, ref ByteColor color, float depth)
         {
             RectangleF rect = new RectangleF(0,0, textureSize.X, textureSize.Y);
-            AddWrappingSprite(ref position, ref size, ref rect, textureArrayIndex, ref color, depth);
+            AddWrappingSprite(ref position, ref size, ref rect, ref textureSize, textureArrayIndex, ref color, depth);
         }
 
-        public void AddWrappingSprite(ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, int textureArrayIndex, ref ByteColor color, float depth)
+        public void AddWrappingSprite(ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, ref Vector2 textureSize, int textureArrayIndex, ref ByteColor color, float depth)
         {
             ushort indiceVertexOffset = (ushort)Vertices.Count;
 
-            RectangleF sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)sourceRect.Width,
-                                                             sourceRect.Top / (float)sourceRect.Height,
-                                                             size.X / (float)sourceRect.Width,
-                                                             size.Y / (float)sourceRect.Height);
+            RectangleF sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)textureSize.X,
+                                                             sourceRect.Top / (float)textureSize.Y,
+                                                             size.X / (float)textureSize.X,
+                                                             size.Y / (float)textureSize.Y);
             
             //Create the vertices
             Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth),
