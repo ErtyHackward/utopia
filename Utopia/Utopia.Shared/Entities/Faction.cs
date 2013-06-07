@@ -33,11 +33,18 @@ namespace Utopia.Shared.Entities
         [ProtoMember(5)]
         public HashSet<EntityLink> Stuff { get; set; }
 
+        /// <summary>
+        /// List of items designations
+        /// </summary>
+        [ProtoMember(6)]
+        public List<Designation> Designations { get; set; }
+
         public Faction()
         {
             BlocksToRemove = new HashSet<Vector3I>();
             MembersIds = new HashSet<uint>();
             Stuff = new HashSet<EntityLink>();
+            Designations = new List<Designation>();
         }
     }
 }

@@ -138,6 +138,7 @@
     <Compile Include="Entities\Concrete\HandTool.cs" />
     <Compile Include="Entities\Concrete\ItemOrientation.cs" />
     <Compile Include="Entities\Concrete\Stuff.cs" />
+    <Compile Include="Entities\Designation.cs" />
     <Compile Include="Entities\Dynamic\GodEntity.cs" />
     <Compile Include="Entities\Dynamic\GodHandToolState.cs" />
     <Compile Include="Entities\Dynamic\ToolState.cs" />
