@@ -23,7 +23,12 @@ namespace Utopia.Server.Structs
         private Random _random;
 
         private CharacterEntity _character;
-        
+
+        /// <summary>
+        /// Indicates if the npc is going to the aim (true) or alredy near it (false)
+        /// </summary>
+        public bool Coming { get; set; }
+
         /// <summary>
         /// Gets current NPC state
         /// </summary>
@@ -94,34 +99,60 @@ namespace Utopia.Server.Structs
             AISelect();
         }
 
+        private bool EquipItem<T>() where T : Item
+        {
+            if (_character.Equipment.RightTool is T)
+                return true;
+
+            // we have a job guys!
+            var collectorSlot = _character.Slots().FirstOrDefault(s => s.Item is T);
+
+            if (collectorSlot == null)
+                return false; // but we haven't tools to do it
+
+            ContainedSlot slot;
+
+            if (!_character.Equipment.Equip(EquipmentSlotType.Hand, collectorSlot, out slot))
+                return false;
+
+            if (slot != null)
+                _character.Equipment.PutItem(slot.Item, slot.ItemsCount);
+
+            return true;            
+        }
+
         /// <summary>
         /// Choose what to do next
         /// </summary>
         private void AISelect()
         {
+            if (State == ServerNpcState.Idle)
+            {
+                // we need to find a job
+                
+            }
+
+            switch (State)
+            {
+                case ServerNpcState.Idle:
+                    break;
+                case ServerNpcState.UsingItem:
+                    break;
+                case ServerNpcState.UsingBlock:
+                    break;
+                case ServerNpcState.Following:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
             if (!Movement.IsActive)
             {
                 if (Faction.BlocksToRemove.Count > 0)
                 {
-                    // we have a job guys!
-
-                    var collectorSlot = _character.Slots().FirstOrDefault(s => s.Item is BasicCollector);
-
-                    if (collectorSlot == null)
-                        return; // but we haven't tools to do it
-
-                    // verify that the tool is equipped
-                    if (!(_character.Equipment.RightTool is BasicCollector))
-                    {
-                        ContainedSlot slot;
-
-                        if (!_character.Equipment.Equip(EquipmentSlotType.Hand, collectorSlot, out slot))
-                            return;
-
-                        if (slot != null)
-                            _character.Equipment.PutItem(slot.Item, slot.ItemsCount);
-                    }
-
+                    if (!EquipItem<BasicCollector>())
+                        return;
+                    
                     Vector3I pos;
 
                     // check whether we close enough to start working
