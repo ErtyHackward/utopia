@@ -34,9 +34,12 @@ namespace Utopia.Server.Structs
 
         public VerletSimulator VerletSimulator { get; private set; }
 
-        public bool IsMooving { get; private set; }
+        public bool IsMoving { get; private set; }
 
-        public bool IsActive { get { return IsMooving || WaitingForPath || _leader != null; } }
+        /// <summary>
+        /// Active means that entity is waiting for a path or has a leader or just moving
+        /// </summary>
+        public bool IsActive { get { return IsMoving || WaitingForPath || _leader != null; } }
 
         public Path3D CurrentPath { get { return _path; } }
 
@@ -103,7 +106,7 @@ namespace Utopia.Server.Structs
         public void Goto(Vector3I location, Predicate<AStarNode3D> isGoal)
         {
             _leader = null;
-            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated, isGoal);
+            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, FollowPath, isGoal);
             WaitingForPath = true;
         }
 
@@ -115,11 +118,11 @@ namespace Utopia.Server.Structs
 
         private void MoveTo(Vector3I location)
         {
-            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, PathCalculated);
+            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, FollowPath);
             WaitingForPath = true;
         }
         
-        private void PathCalculated(Path3D path)
+        public void FollowPath(Path3D path)
         {
             WaitingForPath = false;
 
@@ -129,7 +132,7 @@ namespace Utopia.Server.Structs
 #if DEBUG
                 Npc.Server.ChatManager.Broadcast(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
-                IsMooving = true;
+                IsMoving = true;
                 _targetPathNodeIndex = -1;
                 _pathTargetPoint = Npc.DynamicEntity.Position;
 
@@ -146,7 +149,7 @@ namespace Utopia.Server.Structs
             // check for the end of the path
             if (++_targetPathNodeIndex >= _path.Points.Count)
             {
-                IsMooving = false;
+                IsMoving = false;
                 return;
             }
 
@@ -155,7 +158,7 @@ namespace Utopia.Server.Structs
             {
                 if (Vector3D.Distance(_leader.Position, Npc.DynamicEntity.Position) <= FollowKeepDistance)
                 {
-                    IsMooving = false;
+                    IsMoving = false;
                     return;
                 }
             }
@@ -184,7 +187,7 @@ namespace Utopia.Server.Structs
 
             VerletSimulator.CurPosition = Npc.DynamicEntity.Position;
 
-            if (IsMooving)
+            if (IsMoving)
             {
                 if (Vector3D.DistanceSquared(_pathTargetPoint, Npc.DynamicEntity.Position) < 0.1d)
                 {
@@ -214,7 +217,7 @@ namespace Utopia.Server.Structs
 
             if (_leader != null && Vector3D.Distance(_leader.Position, Npc.DynamicEntity.Position) > FollowStayDistance)
             {
-                if (IsMooving && Vector3D.Distance(new Vector3D(_path.Goal) + CubeCenter, _leader.Position) < FollowStayDistance)
+                if (IsMoving && Vector3D.Distance(new Vector3D(_path.Goal) + CubeCenter, _leader.Position) < FollowStayDistance)
                     return;
 
                 MoveTo(_leader.Position.ToCubePosition());

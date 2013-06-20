@@ -61,7 +61,7 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     Faction faction = EntityFactory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
                     
-                    var select = !faction.BlocksToRemove.Contains(godEntity.EntityState.PickedBlockPosition);
+                    var select = !faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == godEntity.EntityState.PickedBlockPosition);
                     
                     if (godHandToolState != null && _selectionStart.Y == godHandToolState.SliceValue - 1)
                         _selectionStart.y--;
@@ -79,13 +79,13 @@ namespace Utopia.Shared.Entities.Concrete
 
                         if (select)
                         {
-                            if (!faction.BlocksToRemove.Contains(vector))
-                                faction.BlocksToRemove.Add(vector);
+                            if (!faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
+                                faction.Designations.Add(new DigDesignation { BlockPosition = vector });
                         }
                         else
                         {
-                            if (faction.BlocksToRemove.Contains(vector))
-                                faction.BlocksToRemove.Remove(vector);
+                            if (!faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
+                                faction.Designations.RemoveAll(d => d is DigDesignation && ((DigDesignation)d).BlockPosition == vector);
                         }
                     }
                 }

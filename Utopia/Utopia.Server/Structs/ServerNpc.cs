@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Utopia.Server.AStar;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -23,6 +24,7 @@ namespace Utopia.Server.Structs
         private Random _random;
 
         private CharacterEntity _character;
+        private Designation _designation;
 
         /// <summary>
         /// Indicates if the npc is going to the aim (true) or alredy near it (false)
@@ -49,6 +51,34 @@ namespace Utopia.Server.Structs
         /// Gets wrapped character
         /// </summary>
         public CharacterEntity Character { get { return _character; } }
+
+        /// <summary>
+        /// Gets or sets current designation
+        /// </summary>
+        public Designation Designation
+        {
+            get { return _designation; }
+            set {
+
+                if (_designation == value)
+                    return;
+
+                if (_designation != null)
+                {
+                    _designation.Owner = 0;
+                }
+
+                if (value != null && value.Owner != 0 && value.Owner != _character.DynamicId)
+                    throw new InvalidOperationException("Current designation is already assigned to someone else");
+
+                _designation = value;
+                
+                if (_designation != null)
+                {
+                    _designation.Owner = _character.DynamicId;
+                }
+            }
+        }
 
         public int Seed
         {
@@ -97,6 +127,7 @@ namespace Utopia.Server.Structs
             Focus.Update(gameTime);
 
             AISelect();
+            DoAction();
         }
 
         private bool EquipItem<T>() where T : Item
@@ -126,93 +157,117 @@ namespace Utopia.Server.Structs
         /// </summary>
         private void AISelect()
         {
-            if (State == ServerNpcState.Idle)
+            if (State != ServerNpcState.Idle)
+                return;
+            
+            if (Faction.Designations.Any(d => d is DigDesignation))
             {
-                // we need to find a job
-                
+                if (!EquipItem<BasicCollector>())
+                    return;
+                    
+                Vector3I pos;
+
+                State = ServerNpcState.UsingBlock;
             }
+            
+        }
+
+        /// <summary>
+        /// Perform choosed action
+        /// </summary>
+        private void DoAction()
+        {
+            if (State == ServerNpcState.Idle)
+                return;
 
             switch (State)
             {
-                case ServerNpcState.Idle:
-                    break;
                 case ServerNpcState.UsingItem:
                     break;
                 case ServerNpcState.UsingBlock:
+
+                    if (Designation == null)
+                    {
+                        var designation = Faction.Designations.OfType<DigDesignation>().Where(d => d.Owner == 0).OrderBy(d => Vector3I.DistanceSquared(d.BlockPosition, (Vector3I)_character.Position)).First();
+                        var path = Server.LandscapeManager.CalculatePath(_character.Position.ToCubePosition(), designation.BlockPosition, IsGoalNode);
+
+                        if (path.Exists)
+                        {
+                            // reserve all nearby nodes
+                            var near = DigDesignationsNear(path.Goal).ToArray();
+
+                            Designation = near[0];
+
+                            foreach (var des in near)
+                            {
+                                des.Owner = _character.DynamicId;
+                            }
+
+                            Movement.FollowPath(path);
+                            Coming = true;
+                        }
+                        return;
+                    }
+
+                    // we need to wait until we will be at the position to start mining
+                    if (Movement.IsActive)
+                        return;
+
+                    if (Coming)
+                    {
+                        Coming = false;
+
+                        var firstDes = DigDesignationsNear(_character.Position.ToCubePosition(), _character.DynamicId).First();
+                        Designation = firstDes;
+
+                        DynamicEntity.EntityState.IsBlockPicked = true;
+                        DynamicEntity.EntityState.PickedBlockPosition = firstDes.BlockPosition;
+                        DynamicEntity.EntityState.MouseUp = false;
+
+                        var tool = (BasicCollector)_character.Equipment.RightTool;
+
+                        // start digging this block
+                        DynamicEntity.ToolUse(tool);
+                        Focus.LookAt(firstDes.BlockPosition);
+                        return;
+                    }
+
+                    var cursor = Server.LandscapeManager.GetCursor(DynamicEntity.EntityState.PickedBlockPosition);
+
+                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                    {
+                        // stop digging
+                        DynamicEntity.EntityState.IsBlockPicked = false;
+                        DynamicEntity.EntityState.MouseUp = true;
+
+                        var tool = (BasicCollector)_character.Equipment.RightTool;
+                        DynamicEntity.ToolUse(tool);
+
+                        Faction.Designations.Remove(Designation);
+
+                        if (DigDesignationsNear(_character.Position.ToCubePosition(), _character.DynamicId).Any())
+                            Coming = true;
+                        else
+                            State = ServerNpcState.Idle;
+                    }
+
                     break;
                 case ServerNpcState.Following:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            if (!Movement.IsActive)
-            {
-                if (Faction.BlocksToRemove.Count > 0)
-                {
-                    if (!EquipItem<BasicCollector>())
-                        return;
-                    
-                    Vector3I pos;
-
-                    // check whether we close enough to start working
-                    if (State != ServerNpcState.Idle && Movement.CurrentPath != null && Movement.CurrentPath.Exists && IsGoalNodeNear(_character.Position.ToCubePosition(), out pos))
-                    {
-                        if (State == ServerNpcState.GoingToWork)
-                        {
-                            DynamicEntity.EntityState.IsBlockPicked = true;
-                            DynamicEntity.EntityState.PickedBlockPosition = pos;
-                            DynamicEntity.EntityState.MouseUp = false;
-
-                            var tool = (BasicCollector)collectorSlot.Item;
-                            State = ServerNpcState.Digging;
-                            
-                            // start digging this block
-                            DynamicEntity.ToolUse(tool);
-                            Focus.LookAt(pos);
-                        }
-
-                        if (State == ServerNpcState.Digging)
-                        {
-                            var cursor = Server.LandscapeManager.GetCursor(DynamicEntity.EntityState.PickedBlockPosition);
-
-                            if (cursor.Read() == WorldConfiguration.CubeId.Air)
-                            {
-                                // stop digging
-
-                                DynamicEntity.EntityState.IsBlockPicked = false;
-                                DynamicEntity.EntityState.PickedBlockPosition = pos;
-                                DynamicEntity.EntityState.MouseUp = true;
-                                
-                                var tool = (BasicCollector)collectorSlot.Item;
-                                DynamicEntity.ToolUse(tool);
-
-                                Faction.BlocksToRemove.Remove(pos);
-                                State = ServerNpcState.Idle;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // will try to go to the closest block to remove
-
-                        State = ServerNpcState.GoingToWork;
-                        var location = Faction.BlocksToRemove.OrderBy(v => Vector3I.DistanceSquared(v, (Vector3I)_character.Position)).First();
-                        Movement.Goto(location, IsGoalNode);
-                    }
-                }
             }
         }
 
         private bool IsGoalNode(AStarNode3D node)
         {
             var pos = node.Cursor.GlobalPosition;
-            Vector3I res;
-            return IsGoalNodeNear(pos, out res);
+            return DigDesignationsNear(pos).Any();
         }
 
-        private bool IsGoalNodeNear(Vector3I pos, out Vector3I result)
+        private IEnumerable<DigDesignation> DigDesignationsNear(Vector3I pos, uint ownerId = 0)
         {
+            Vector3I result;
+            DigDesignation des;
+
             for (int x = -1; x <= 1; x++)
             {
                 for (int z = -1; z <= 1; z++)
@@ -223,17 +278,20 @@ namespace Utopia.Server.Structs
                     for (int y = 0; y <= 1; y++)
                     {
                         result = pos + new Vector3I(x, y, z);
-                        if (Faction.BlocksToRemove.Contains(result))
-                            return true;
+                        des = Faction.Designations.OfType<DigDesignation>().FirstOrDefault(d => d.Owner == ownerId && d.BlockPosition == result);
+                        
+                        if (des != null)
+                            yield return des;
                     }
                 }
             }
 
             result = pos + new Vector3I(0, 2, 0);
-            if (Faction.BlocksToRemove.Contains(result))
-                return true;
 
-            return false;
+            des = Faction.Designations.OfType<DigDesignation>().FirstOrDefault(d => d.Owner == ownerId && d.BlockPosition == result);
+
+            if (des != null)
+                yield return des;
         }
     }
 }

@@ -17,6 +17,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.Chunks;
@@ -110,19 +111,19 @@ namespace Utopia.Entities.Renderer
 
             var hoverBlocks = range.HasValue && select ? range.Value.ToList() : null;
             
-            foreach (var selectedBlock in playerManager.Faction.BlocksToRemove)
+            foreach (var digDes in playerManager.Faction.Designations.OfType<DigDesignation>())
             {
-                if (hoverBlocks != null && hoverBlocks.Contains(selectedBlock))
-                    hoverBlocks.Remove(selectedBlock);
+                if (hoverBlocks != null && hoverBlocks.Contains(digDes.BlockPosition))
+                    hoverBlocks.Remove(digDes.BlockPosition);
 
-                if (!select && range.HasValue && range.Value.Contains(selectedBlock))
+                if (!select && range.HasValue && range.Value.Contains(digDes.BlockPosition))
                     continue;
 
-                var cube = _cubesHolder.GetCube(selectedBlock);
+                var cube = _cubesHolder.GetCube(digDes.BlockPosition);
 
                 if (cube.IsValid && cube.Cube.Id != WorldConfiguration.CubeId.Air)
                 {
-                    _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(selectedBlock + new Vector3(0.5f)));
+                    _cubeShader.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(digDes.BlockPosition + new Vector3(0.5f)));
                     _cubeShader.CBPerDraw.IsDirty = true;
                     _cubeShader.Apply(context);
                     context.DrawIndexed(_staticBlockIB.IndicesCount, 0, 0);
