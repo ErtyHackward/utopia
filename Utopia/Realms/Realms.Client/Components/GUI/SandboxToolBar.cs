@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
@@ -10,6 +12,7 @@ using Utopia.Entities;
 using Utopia.GUI.Inventory;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Realms.Client.Components.GUI
 {
@@ -49,6 +52,29 @@ namespace Realms.Client.Components.GUI
             var offset = new Vector2I(50, 48);
             var size = new Vector2I(57, 57);
 
+            int buttonIndex = 0;
+
+            foreach (var entity in factory.Config.BluePrints.Values.Where(e => e.ShowInToolbar))
+            {
+                var button = new ButtonControl { 
+                    Bounds = new UniRectangle(
+                        new UniScalar(0.1f, 0), 
+                        new UniScalar(0.1f, 0), 
+                        new UniScalar(0.8f, 0), 
+                        new UniScalar(0.8f, 0))
+                };
+
+                int arrayIndex;
+                SpriteTexture texture;
+
+                iconFactory.Lookup((IItem)entity, out texture, out arrayIndex);
+
+                button.CusomImageLabel = texture;
+
+                Children.Add(button);
+                buttonIndex++;
+            }
+
             for (int i = 0; i < _toolbarSlots.Count; i++)
             {
                 var inventoryCell = _toolbarSlots[i];
@@ -86,7 +112,7 @@ namespace Realms.Client.Components.GUI
         }
     }
 
-    public class ContainerRenderer : IFlatControlRenderer<SandboxToolBar>
+    public class SandboxToolBarRenderer : IFlatControlRenderer<SandboxToolBar>
     {
         public void Render(SandboxToolBar control, IFlatGuiGraphics graphics)
         {
