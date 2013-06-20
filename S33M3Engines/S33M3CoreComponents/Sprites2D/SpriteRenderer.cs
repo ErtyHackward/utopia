@@ -1,15 +1,13 @@
-﻿using System.IO;
-using S33M3CoreComponents.Sprites2D;
-using S33M3DXEngine.Main;
-using SharpDX;
-using S33M3CoreComponents.Sprites2D.Interfaces;
+﻿using S33M3CoreComponents.Sprites2D.Interfaces;
 using S33M3DXEngine;
-using SharpDX.Direct3D11;
-using S33M3Resources.Effects.Sprites;
-using S33M3DXEngine.RenderStates;
-using S33M3Resources.Structs;
 using S33M3DXEngine.Buffers;
+using S33M3DXEngine.Main;
+using S33M3DXEngine.RenderStates;
+using S33M3Resources.Effects.Sprites;
+using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
+using SharpDX;
+using SharpDX.Direct3D11;
 using Rectangle = SharpDX.Rectangle;
 
 namespace S33M3CoreComponents.Sprites2D
@@ -108,8 +106,7 @@ namespace S33M3CoreComponents.Sprites2D
 
         public void EndWithCustomProjection(DeviceContext context, ref Matrix Projection2D)
         {
-            //ForEach sprite group
-            foreach (SpriteDrawInfo spriteGroup in _spriteBuffer.GetAllSpriteGroups())
+            foreach (var spriteGroup in _spriteBuffer.GetAllSpriteGroups())
             {
                 _vb.SetData(context, spriteGroup.Vertices.ToArray());
                 _ib.SetData(context, spriteGroup.Indices.ToArray());
@@ -243,7 +240,7 @@ namespace S33M3CoreComponents.Sprites2D
             }
             if (maxWidth == -1)
             {
-                infos = new SpriteFont.WordInfo[] { new SpriteFont.WordInfo() { IndexStart = 0, Length = numCharsToDraw } };
+                infos = new[] { new SpriteFont.WordInfo { IndexStart = 0, Length = numCharsToDraw } };
             }
             else
             {

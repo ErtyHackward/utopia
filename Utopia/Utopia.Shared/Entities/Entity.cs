@@ -111,6 +111,12 @@ namespace Utopia.Shared.Entities
         public uint FactionId { get; set; }
 
         /// <summary>
+        /// Tells if the entity should be displayed in the toolbar
+        /// </summary>
+        [ProtoMember(14)]
+        public bool ShowInToolbar { get; set; }
+
+        /// <summary>
         /// Gets entity class id
         /// </summary>
         [Category("Entity")]
