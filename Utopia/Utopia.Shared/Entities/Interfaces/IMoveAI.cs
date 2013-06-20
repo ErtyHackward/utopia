@@ -6,7 +6,7 @@ namespace Utopia.Shared.Entities.Interfaces
     public interface IMoveAI
     {
         VerletSimulator VerletSimulator { get; }
-        bool IsMooving { get; }
+        bool IsMoving { get; }
         Path3D CurrentPath { get; }
 
         /// <summary>

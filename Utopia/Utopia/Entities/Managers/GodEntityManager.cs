@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using System.Linq;
+using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
@@ -114,7 +115,7 @@ namespace Utopia.Entities.Managers
                 if (!_selectionNow)
                     return false;
 
-                return !Faction.BlocksToRemove.Contains(_selectionStart);
+                return !Faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == _selectionStart);
             }
         }
         

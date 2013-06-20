@@ -18,9 +18,6 @@ namespace Utopia.Shared.Entities
         [ProtoMember(2)]
         public string Name { get; set; }
 
-        [ProtoMember(3)]
-        public HashSet<Vector3I> BlocksToRemove { get; set; }
-
         /// <summary>
         /// Set of members dynamic entities ids
         /// </summary>
@@ -34,14 +31,13 @@ namespace Utopia.Shared.Entities
         public HashSet<EntityLink> Stuff { get; set; }
 
         /// <summary>
-        /// List of items designations
+        /// List of designations
         /// </summary>
         [ProtoMember(6)]
         public List<Designation> Designations { get; set; }
-
+        
         public Faction()
         {
-            BlocksToRemove = new HashSet<Vector3I>();
             MembersIds = new HashSet<uint>();
             Stuff = new HashSet<EntityLink>();
             Designations = new List<Designation>();

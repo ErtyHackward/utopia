@@ -33,7 +33,7 @@ namespace Utopia.Shared.Entities
         #endregion
 
         /// <summary>
-        /// List of points from start to goal or null if path 
+        /// List of points from start to goal or null if path is not exists
         /// </summary>
         public List<Vector3I> Points { get; set; }
 
