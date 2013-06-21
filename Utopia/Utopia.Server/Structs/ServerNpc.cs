@@ -28,6 +28,7 @@ namespace Utopia.Server.Structs
 
         /// <summary>
         /// Indicates if the npc is going to the aim (true) or alredy near it (false)
+        /// Used as a trigger to start action when the NPC will reach the target
         /// </summary>
         public bool Coming { get; set; }
 
@@ -164,12 +165,9 @@ namespace Utopia.Server.Structs
             {
                 if (!EquipItem<BasicCollector>())
                     return;
-                    
-                Vector3I pos;
 
                 State = ServerNpcState.UsingBlock;
-            }
-            
+            }            
         }
 
         /// <summary>
@@ -217,6 +215,14 @@ namespace Utopia.Server.Structs
                     {
                         Coming = false;
 
+                        // in case user changed his mind to remove the block
+                        if (!DigDesignationsNear(_character.Position.ToCubePosition(), _character.DynamicId).Any())
+                        {
+                            Designation = null;
+                            State = ServerNpcState.Idle;
+                            return;
+                        }
+
                         var firstDes = DigDesignationsNear(_character.Position.ToCubePosition(), _character.DynamicId).First();
                         Designation = firstDes;
 
@@ -249,6 +255,8 @@ namespace Utopia.Server.Structs
                             Coming = true;
                         else
                             State = ServerNpcState.Idle;
+
+                        Designation = null;
                     }
 
                     break;

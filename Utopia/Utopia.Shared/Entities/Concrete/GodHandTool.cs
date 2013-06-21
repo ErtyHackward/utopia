@@ -84,7 +84,7 @@ namespace Utopia.Shared.Entities.Concrete
                         }
                         else
                         {
-                            if (!faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
+                            if (faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
                                 faction.Designations.RemoveAll(d => d is DigDesignation && ((DigDesignation)d).BlockPosition == vector);
                         }
                     }
