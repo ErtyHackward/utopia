@@ -1,5 +1,6 @@
 ﻿using System;
 using ProtoBuf;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -135,7 +136,7 @@ namespace Utopia.Shared.Structs
             {
                 for (int i = 0; i < _tail.Length; i++)
                 {
-                    hash += (int)_tail[i] << (32 * (i + 1) / _tail.Length);
+                    hash += (int)_tail[i] << (int)(32 * ((float)i + 1) / _tail.Length);
                 }
             }
 
@@ -178,6 +179,12 @@ namespace Utopia.Shared.Structs
             return (EntityLink)obj == this;
         }
 
+        /// <summary>
+        /// Finds exact static entity that links points to
+        /// Supports container-in-container extraction
+        /// </summary>
+        /// <param name="landscapeManager"></param>
+        /// <returns></returns>
         public IStaticEntity ResolveStatic(ILandscapeManager2D landscapeManager)
         {
             if (IsDynamic)
@@ -198,6 +205,26 @@ namespace Utopia.Shared.Structs
             }
 
             return sEntity;
+        }
+
+        /// <summary>
+        /// Resolves entity object using factory fields: 
+        /// DynamicEntityManager for dynamic entity
+        /// LandscapeManager for static ones
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        public T Resolve<T>(EntityFactory factory) where T : class, IEntity 
+        {
+            if (IsDynamic)
+                return factory.DynamicEntityManager.FindEntity(this) as T;
+            return ResolveStatic(factory.LandscapeManager) as T;
+        }
+
+        public IEntity Resolve(EntityFactory factory)
+        {
+            return Resolve<IEntity>(factory);
         }
 
         public override string ToString()

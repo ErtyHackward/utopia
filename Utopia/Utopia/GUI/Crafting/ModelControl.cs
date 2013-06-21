@@ -57,8 +57,19 @@ namespace Utopia.GUI.Crafting
 
         public void SetModel(string modelName)
         {
-            VisualVoxelModel = _manager.GetModel(modelName);
-            ModelInstance = VisualVoxelModel.VoxelModel.CreateInstance();
+            if (VisualVoxelModel != null && VisualVoxelModel.VoxelModel.Name == modelName)
+                return;
+
+            if (!string.IsNullOrEmpty(modelName))
+            {
+                VisualVoxelModel = _manager.GetModel(modelName);
+                ModelInstance = VisualVoxelModel.VoxelModel.CreateInstance();
+            }
+            else
+            {
+                VisualVoxelModel = null;
+                ModelInstance = null;
+            }
         }
     }
 }
