@@ -8,8 +8,10 @@ using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
+using S33M3Resources.Structs.Vertex;
 using Utopia.GUI;
 using Utopia.GUI.Inventory;
+using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Settings;
 
 namespace Realms.Client.Components.GUI
@@ -18,6 +20,7 @@ namespace Realms.Client.Components.GUI
     {
         private readonly MainScreen _screen;
         private readonly D3DEngine _d3DEngine;
+        private HLSLVoxelModel _voxelEffect;
 
         [Inject]
         public SettingsComponent SettignsComponent
@@ -52,6 +55,32 @@ namespace Realms.Client.Components.GUI
             UpdateLayout(_d3DEngine.ViewPort, _d3DEngine.BackBufferTex.Description);
             
             base.Initialize();
+        }
+
+        public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
+        {
+            var sbToolbar = ToolbarUi as SandboxToolBar;
+
+            if (sbToolbar != null)
+            {
+                _voxelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
+                sbToolbar.VoxelEffect = _voxelEffect;
+            }
+
+            
+            base.LoadContent(context);
+        }
+
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
+        {
+            var sbToolbar = ToolbarUi as SandboxToolBar;
+
+            if (sbToolbar != null)
+            {
+                sbToolbar.Update();
+            }
+
+            base.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         public override void EnableComponent(bool forced)

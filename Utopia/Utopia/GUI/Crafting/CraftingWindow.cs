@@ -55,7 +55,8 @@ namespace Utopia.GUI.Crafting
             get { return _player; }
         }
 
-        public HLSLVoxelModel VoxelEffect {
+        public HLSLVoxelModel VoxelEffect 
+        {
             get { return _resultModel.VoxelEffect; }
             set { _resultModel.VoxelEffect = value; }
         }
