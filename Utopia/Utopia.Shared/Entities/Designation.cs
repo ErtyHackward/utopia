@@ -1,9 +1,14 @@
 ﻿using ProtoBuf;
 using S33M3Resources.Structs;
-using SharpDX;
+using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Shared.Entities
 {
+    /// <summary>
+    /// Base class for designations
+    /// Contains order information for minions to execute
+    /// </summary>
     [ProtoContract]
     [ProtoInclude(100, typeof(PlaceDesignation))]
     [ProtoInclude(101, typeof(DigDesignation))]
@@ -30,16 +35,15 @@ namespace Utopia.Shared.Entities
         public ushort BlueprintId { get; set; }
 
         /// <summary>
-        /// Desired entity position
+        /// Desired entity position 
         /// </summary>
         [ProtoMember(2)]
-        public Vector3D Position { get; set; }
+        public EntityPosition Position { get; set; }
 
         /// <summary>
-        /// Desired entity rotation
+        /// Cached instance to display ghosted model
         /// </summary>
-        [ProtoMember(3)]
-        public Quaternion Rotation { get; set; }
+        public VoxelModelInstance ModelInstance { get; set; }
     }
 
     /// <summary>

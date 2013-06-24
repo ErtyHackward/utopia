@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using System.Linq;
+using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main;
@@ -7,11 +8,13 @@ using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities.Renderer
 {
@@ -20,8 +23,13 @@ namespace Utopia.Entities.Renderer
     /// </summary>
     public class GhostedEntityRenderer : DrawableGameComponent
     {
+        private readonly IDynamicEntity _playerEntity;
+        private readonly VoxelModelManager _voxelModelManager;
+        private readonly CameraManager<ICameraFocused> _cameraManager;
+        private readonly WorldParameters _worldParameters;
+        private readonly EntityFactory _factory;
+
         private HLSLVoxelModel _voxelModelEffect;
-        private PlayerCharacter _player;
         private VisualVoxelModel _toolVoxelModel;
         private VoxelModelInstance _toolVoxelInstance;
         private float _alpha = 0.4f;
@@ -38,55 +46,38 @@ namespace Utopia.Entities.Renderer
         /// Gets or sets world item transformation
         /// </summary>
         public Matrix? Transform { get; set; }
+       
 
-        #region DI
-        [Inject]
-        public PlayerCharacter Player
+        public GhostedEntityRenderer(
+            IDynamicEntity playerEntity, 
+            VoxelModelManager voxelModelManager,
+            CameraManager<ICameraFocused> cameraManager,
+            WorldParameters worldParameters,
+            EntityFactory factory
+            )
         {
-            get { return _player; }
-            set { 
-                _player = value;
-                _player.Equipment.ItemEquipped += Equipment_ItemEquipped;
-            }
-        }
-
-        [Inject]
-        public VoxelModelManager VoxelModelManager { get; set; }
-
-        [Inject]
-        public CameraManager<ICameraFocused> CameraManager { get; set; }
-        #endregion
-
-        public GhostedEntityRenderer()
-        {
+            _playerEntity = playerEntity;
+            _voxelModelManager = voxelModelManager;
+            _cameraManager = cameraManager;
+            _worldParameters = worldParameters;
+            _factory = factory;
             Transform = Matrix.Identity;
             Display = true;
 
             DrawOrders.UpdateIndex(0, 1070);
         }
 
-        void Equipment_ItemEquipped(object sender, Shared.Entities.Inventory.CharacterEquipmentEventArgs e)
+        private void PrepareModel()
         {
-            if (e.EquippedItem == null)
-            {
-                Tool = null;
-                _toolVoxelModel = null;
-                return;
-            }
-
-            Tool = e.EquippedItem.Item;
-
-            // prepare voxel model to render
-
             var voxelEntity = (IVoxelEntity)Tool;
 
-            if (string.IsNullOrEmpty(voxelEntity.ModelName))
+            if (voxelEntity == null || string.IsNullOrEmpty(voxelEntity.ModelName))
             {
                 _toolVoxelModel = null;
                 return;
             }
 
-            _toolVoxelModel = VoxelModelManager.GetModel(voxelEntity.ModelName);
+            _toolVoxelModel = _voxelModelManager.GetModel(voxelEntity.ModelName);
 
             if (_toolVoxelModel != null)
             {
@@ -107,10 +98,32 @@ namespace Utopia.Entities.Renderer
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
+            IItem tool = null;
+
+            if (_playerEntity is PlayerCharacter)
+                tool = ((PlayerCharacter)_playerEntity).Equipment.RightTool;
+
+            if (_playerEntity is GodEntity)
+            {
+                var godEntity = (GodEntity)_playerEntity;
+
+                if (godEntity.DesignationBlueprintId != 0)
+                {
+                    tool = (IItem)_worldParameters.Configuration.BluePrints[godEntity.DesignationBlueprintId];
+                    _factory.PrepareEntity(tool);
+                }
+            }
+
+            if (tool != Tool)
+            {
+                Tool = tool;
+                PrepareModel();
+            }
+            
             if (Tool == null)
                 return;
 
-            var pos = Tool.GetPosition(Player);
+            var pos = Tool.GetPosition(_playerEntity);
 
             if (pos.Valid)
                 Transform = Matrix.RotationQuaternion(pos.Rotation) * Matrix.Translation(pos.Position.AsVector3());
@@ -133,7 +146,7 @@ namespace Utopia.Entities.Renderer
                 RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
 
                 _voxelModelEffect.Begin(context);
-                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(CameraManager.ActiveCamera.ViewProjection3D);
+                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
 
                 _toolVoxelInstance.World = Matrix.Scaling(1f / 16) * Transform.Value; 
@@ -141,6 +154,54 @@ namespace Utopia.Entities.Renderer
                 _toolVoxelInstance.Alpha = _alpha;
 
                 _toolVoxelModel.Draw(context, _voxelModelEffect, _toolVoxelInstance);
+            }
+
+            var godEntity = _playerEntity as GodEntity;
+
+            if (godEntity != null)
+            {
+                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
+                var faction = _factory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
+
+                foreach (var placement in faction.Designations.OfType<PlaceDesignation>())
+                {
+                    if (placement.ModelInstance == null)
+                    {
+                        var voxelEntity = (IVoxelEntity)_factory.Config.BluePrints[placement.BlueprintId];
+
+                        if (voxelEntity != null)
+                        {
+                            var voxelModel = _voxelModelManager.GetModel(voxelEntity.ModelName);
+
+                            if (voxelModel != null)
+                            {
+                                if (!voxelModel.Initialized)
+                                {
+                                    voxelModel.BuildMesh();
+                                }
+
+                                placement.ModelInstance = voxelModel.VoxelModel.CreateInstance();
+                                placement.ModelInstance.SetState(voxelModel.VoxelModel.GetMainState());
+
+                                var pos = placement.Position;
+                                placement.ModelInstance.World =  Matrix.Scaling(1f / 16) * Matrix.RotationQuaternion(pos.Rotation) * Matrix.Translation(pos.Position.AsVector3());
+                            }
+                        }
+                    }
+
+                    if (placement.ModelInstance != null)
+                    {
+                        _voxelModelEffect.Begin(context);
+                        _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
+                        _voxelModelEffect.CBPerFrame.IsDirty = true;
+
+                        placement.ModelInstance.LightColor = new Color3(0, 0, 1);
+                        placement.ModelInstance.Alpha = _alpha;
+
+                        var visualVoxelModel = _voxelModelManager.GetModel(placement.ModelInstance.VoxelModel.Name);
+                        visualVoxelModel.Draw(context, _voxelModelEffect, placement.ModelInstance);
+                    }
+                }
             }
         }
     }

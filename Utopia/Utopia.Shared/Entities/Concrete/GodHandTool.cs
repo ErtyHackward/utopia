@@ -13,7 +13,7 @@ using Utopia.Shared.Structs;
 namespace Utopia.Shared.Entities.Concrete
 {
     /// <summary>
-    /// Special tool for god mode view, allows to pick entities and mark blocks
+    /// Special tool for god mode view, allows to pick entities, mark blocks and make items designations
     /// </summary>
     [EditorHide]
     [ProtoContract]
@@ -44,81 +44,118 @@ namespace Utopia.Shared.Entities.Concrete
             if (godEntity == null)
                 throw new ArgumentException("Invalid owner entity, should be GodEntity");
 
-            var godHandToolState = godEntity.EntityState.ToolState as GodHandToolState;
+            var godHandToolState = (GodHandToolState)godEntity.EntityState.ToolState;
 
             if (godEntity.EntityState.MouseButton == MouseButton.LeftButton)
             {
-                if (!godEntity.EntityState.MouseUp)
+                if (godHandToolState.DesignationBlueprintId != 0)
                 {
-                    if (owner.EntityState.IsBlockPicked)
-                    {
-                        _selectionStart = owner.EntityState.PickedBlockPosition;
-                    }
-                    return new ToolImpact();
+                    return ItemPlacement(godEntity, godHandToolState);
                 }
 
-                if (godEntity.EntityState.IsBlockPicked)
-                {
-                    Faction faction = EntityFactory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
-                    
-                    var select = !faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == godEntity.EntityState.PickedBlockPosition);
-                    
-                    if (godHandToolState != null && _selectionStart.Y == godHandToolState.SliceValue - 1)
-                        _selectionStart.y--;
-
-                    var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
-
-                    var cursor = EntityFactory.LandscapeManager.GetCursor(range.Position);
-
-                    foreach (var vector in range)
-                    {
-                        cursor.GlobalPosition = vector;
-                        
-                        if (cursor.Read() == WorldConfiguration.CubeId.Air)
-                            continue;
-
-                        if (select)
-                        {
-                            if (!faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
-                                faction.Designations.Add(new DigDesignation { BlockPosition = vector });
-                        }
-                        else
-                        {
-                            if (faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
-                                faction.Designations.RemoveAll(d => d is DigDesignation && ((DigDesignation)d).BlockPosition == vector);
-                        }
-                    }
-                }
-
-                if (godEntity.EntityState.IsEntityPicked)
-                {
-                    godEntity.SelectedEntities.Clear();
-                    godEntity.SelectedEntities.Add(godEntity.EntityState.PickedEntityLink);
-
-                    logger.Warn("Selected entity " + godEntity.EntityState.PickedEntityLink);
-                }
+                return Selection(owner, godEntity, godHandToolState);
             }
 
             if (godEntity.EntityState.MouseButton == MouseButton.RightButton)
             {
-                if (godEntity.EntityState.MouseUp)
+                return UnitMoveOrder(godEntity);
+            }
+
+            return new ToolImpact();
+        }
+
+        private ToolImpact ItemPlacement(GodEntity godEntity, GodHandToolState godHandToolState)
+        {
+            Faction faction = EntityFactory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
+            var item = (IItem)EntityFactory.Config.BluePrints[godHandToolState.DesignationBlueprintId];
+
+            var pos = item.GetPosition(godEntity);
+
+            if (pos.Valid)
+            {
+                faction.Designations.Add(new PlaceDesignation
                 {
-                    foreach (var entityLink in godEntity.SelectedEntities.Where(e => e.IsDynamic))
+                    BlueprintId = godHandToolState.DesignationBlueprintId,
+                    Position = pos
+                });
+            }
+
+            return new ToolImpact();
+        }
+
+        private ToolImpact Selection(IDynamicEntity owner, GodEntity godEntity, GodHandToolState godHandToolState)
+        {
+            if (!godEntity.EntityState.MouseUp)
+            {
+                if (owner.EntityState.IsBlockPicked)
+                {
+                    _selectionStart = owner.EntityState.PickedBlockPosition;
+                }
+                return new ToolImpact();
+            }
+
+            if (godEntity.EntityState.IsBlockPicked)
+            {
+                Faction faction = EntityFactory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
+
+                var select = !faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == godEntity.EntityState.PickedBlockPosition);
+
+                if (godHandToolState != null && _selectionStart.Y == godHandToolState.SliceValue - 1)
+                    _selectionStart.y--;
+
+                var range = Range3I.FromTwoVectors(_selectionStart, godEntity.EntityState.PickedBlockPosition);
+
+                var cursor = EntityFactory.LandscapeManager.GetCursor(range.Position);
+
+                foreach (var vector in range)
+                {
+                    cursor.GlobalPosition = vector;
+
+                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                        continue;
+
+                    if (select)
                     {
-                        var entity = EntityFactory.DynamicEntityManager.FindEntity(entityLink);
+                        if (!faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
+                            faction.Designations.Add(new DigDesignation { BlockPosition = vector });
+                    }
+                    else
+                    {
+                        if (faction.Designations.OfType<DigDesignation>().Any(d => d.BlockPosition == vector))
+                            faction.Designations.RemoveAll(d => d is DigDesignation && ((DigDesignation)d).BlockPosition == vector);
+                    }
+                }
+            }
 
-                        var controller = entity.Controller as INpc;
+            if (godEntity.EntityState.IsEntityPicked)
+            {
+                godEntity.SelectedEntities.Clear();
+                godEntity.SelectedEntities.Add(godEntity.EntityState.PickedEntityLink);
 
-                        if (controller != null && godEntity.EntityState.IsBlockPicked &&
-                            godEntity.EntityState.PickPointNormal == Vector3I.Up)
-                        {
-                            controller.Movement.Goto(godEntity.EntityState.PickedBlockPosition + Vector3I.Up);
-                        }
+                logger.Warn("Selected entity " + godEntity.EntityState.PickedEntityLink);
+            }
+            return new ToolImpact();
+        }
 
-                        if (controller != null && godEntity.EntityState.IsEntityPicked && godEntity.EntityState.PickedEntityLink.IsDynamic)
-                        {
-                            controller.Movement.Leader = EntityFactory.DynamicEntityManager.FindEntity(godEntity.EntityState.PickedEntityLink);
-                        }
+        private ToolImpact UnitMoveOrder(GodEntity godEntity)
+        {
+            if (godEntity.EntityState.MouseUp)
+            {
+                foreach (var entityLink in godEntity.SelectedEntities.Where(e => e.IsDynamic))
+                {
+                    var entity = EntityFactory.DynamicEntityManager.FindEntity(entityLink);
+
+                    var controller = entity.Controller as INpc;
+
+                    if (controller != null && godEntity.EntityState.IsBlockPicked &&
+                        godEntity.EntityState.PickPointNormal == Vector3I.Up)
+                    {
+                        controller.Movement.Goto(godEntity.EntityState.PickedBlockPosition + Vector3I.Up);
+                    }
+
+                    if (controller != null && godEntity.EntityState.IsEntityPicked && godEntity.EntityState.PickedEntityLink.IsDynamic)
+                    {
+                        controller.Movement.Leader = EntityFactory.DynamicEntityManager.FindEntity(godEntity.EntityState.PickedEntityLink);
                     }
                 }
             }
