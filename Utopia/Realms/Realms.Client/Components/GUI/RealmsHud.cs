@@ -9,6 +9,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs.Vertex;
+using Utopia.Entities.Managers;
 using Utopia.GUI;
 using Utopia.GUI.Inventory;
 using Utopia.Resources.Effects.Entities;
@@ -20,6 +21,7 @@ namespace Realms.Client.Components.GUI
     {
         private readonly MainScreen _screen;
         private readonly D3DEngine _d3DEngine;
+        private readonly GodEntityManager _godEntityManager;
         private HLSLVoxelModel _voxelEffect;
 
         [Inject]
@@ -31,11 +33,17 @@ namespace Realms.Client.Components.GUI
             }
         }
 
-        public RealmsHud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager, CameraManager<ICameraFocused> camManager) : 
+        public RealmsHud(MainScreen screen, 
+                         D3DEngine d3DEngine, 
+                         ToolBarUi toolbar, 
+                         InputsManager inputManager, 
+                         CameraManager<ICameraFocused> camManager,
+                         GodEntityManager godEntityManager) : 
             base(screen, d3DEngine, toolbar, inputManager, camManager)
         {
             _screen = screen;
             _d3DEngine = d3DEngine;
+            _godEntityManager = godEntityManager;
 
             _d3DEngine.ViewPort_Updated += UpdateLayout;
         }
@@ -65,10 +73,16 @@ namespace Realms.Client.Components.GUI
             {
                 _voxelEffect = ToDispose(new HLSLVoxelModel(context.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
                 sbToolbar.VoxelEffect = _voxelEffect;
-            }
 
+                sbToolbar.EntitySelected += SbToolbarOnEntitySelected;
+            }
             
             base.LoadContent(context);
+        }
+
+        private void SbToolbarOnEntitySelected(object sender, ToolBarEventArgs e)
+        {
+            _godEntityManager.GodEntity.DesignationBlueprintId = e.Entity == null ? (ushort)0 : e.Entity.BluePrintId;
         }
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)

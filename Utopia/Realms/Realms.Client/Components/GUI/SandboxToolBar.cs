@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
@@ -40,6 +41,17 @@ namespace Realms.Client.Components.GUI
 
         private readonly List<LabelControl> _numbersLabels = new List<LabelControl>();
         private ModelControl _modelControl;
+
+        /// <summary>
+        /// Occurs when user picks an entity
+        /// </summary>
+        public event EventHandler<ToolBarEventArgs> EntitySelected;
+
+        protected virtual void OnEntitySelected(ToolBarEventArgs e)
+        {
+            var handler = EntitySelected;
+            if (handler != null) handler(this, e);
+        }
 
         public HLSLVoxelModel VoxelEffect
         {
@@ -114,6 +126,9 @@ namespace Realms.Client.Components.GUI
                         new UniScalar(1f - sideOffset * 2, 0))
                 };
 
+                button.Tag = entity;
+                button.Pressed += button_Pressed;
+
                 int arrayIndex;
                 SpriteTexture texture;
 
@@ -126,6 +141,12 @@ namespace Realms.Client.Components.GUI
             }
 
             SlotChanged += SandboxToolBar_SlotChanged;
+        }
+
+        void button_Pressed(object sender, EventArgs e)
+        {
+            var button = (ButtonControl)sender;
+            OnEntitySelected(new ToolBarEventArgs { Entity = (Entity)button.Tag });
         }
 
         public void Update()
@@ -150,6 +171,11 @@ namespace Realms.Client.Components.GUI
                 _numbersLabels[index].IsVisible = e.Cell.Slot != null;
             }
         }
+    }
+
+    public class ToolBarEventArgs : EventArgs
+    {
+        public Entity Entity { get; set; }
     }
 
     public class SandboxToolBarRenderer : IFlatControlRenderer<SandboxToolBar>

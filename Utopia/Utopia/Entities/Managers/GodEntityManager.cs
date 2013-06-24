@@ -328,8 +328,8 @@ namespace Utopia.Entities.Managers
             }
             
             godHandToolState.SliceValue = Chunks.SliceValue;
+            godHandToolState.DesignationBlueprintId = GodEntity.DesignationBlueprintId;
             
-
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft))
             {
                 GodEntity.EntityState.MouseUp = _inputsManager.MouseManager.CurMouseState.LeftButton == ButtonState.Released;
