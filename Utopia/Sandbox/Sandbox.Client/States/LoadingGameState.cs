@@ -47,6 +47,7 @@ using Sandbox.Client.Components.GUI;
 using Utopia.Shared.Settings;
 using Utopia.Worlds.SkyDomes.SharedComp;
 using Utopia.Shared.World.Processors.Utopia;
+using Utopia.Worlds.Shadows;
 
 namespace Sandbox.Client.States
 {
@@ -210,6 +211,7 @@ namespace Sandbox.Client.States
             var lightingManager = _ioc.Get<ILightingManager>();
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
+            var worldShadowMap = _ioc.Get<WorldShadowMap>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
@@ -257,6 +259,7 @@ namespace Sandbox.Client.States
             AddComponent(soundManager);
             AddComponent(staggingBackBuffer);
             AddComponent(voxelModelManager);
+            AddComponent(worldShadowMap);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

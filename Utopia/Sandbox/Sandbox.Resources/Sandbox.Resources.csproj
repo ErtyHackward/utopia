@@ -80,6 +80,9 @@
     <None Include="EffectsPacks\Default\Entities\VoxelModel.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="EffectsPacks\Default\Terran\ShadowMap.hlsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="EffectsPacks\Default\Weather\Clouds.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

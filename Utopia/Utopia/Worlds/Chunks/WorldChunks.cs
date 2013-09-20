@@ -29,6 +29,7 @@ using S33M3Resources.Structs;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
 using Utopia.Components;
+using Utopia.Worlds.Shadows;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -84,6 +85,7 @@ namespace Utopia.Worlds.Chunks
         private int _readyToDrawCount;
         private StaggingBackBuffer _solidBackBuffer;
         private StaggingBackBuffer _skyBackBuffer;
+        private WorldShadowMap _shadowMap;
         private readonly object _counterLock = new object();
 
         /// <summary>
@@ -149,7 +151,8 @@ namespace Utopia.Worlds.Chunks
                            IWeather weather,
                            SharedFrameCB sharedFrameCB,
                            StaggingBackBuffer solidBackBuffer,
-                           StaggingBackBuffer skyBackBuffer
+                           StaggingBackBuffer skyBackBuffer,
+                           WorldShadowMap shadowMap
             )
         {
             _server = server;
@@ -172,6 +175,7 @@ namespace Utopia.Worlds.Chunks
             _pickingManager = pickingManager;
             _solidBackBuffer = solidBackBuffer;
             _skyBackBuffer = skyBackBuffer;
+            _shadowMap = shadowMap;
 
             //Self injecting inside components, to avoid circular dependency
             _chunkWrapper.WorldChunks = this;
@@ -179,6 +183,7 @@ namespace Utopia.Worlds.Chunks
             lightingManager.WorldChunk = this;
             _playerManager.WorldChunks = this;
             _chunkMeshManager.WorldChunks = this;
+            _shadowMap.WorldChunks = this;
 
             DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");

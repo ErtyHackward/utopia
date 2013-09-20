@@ -5,6 +5,7 @@
 cbuffer PerDraw
 {
 	matrix World;
+	matrix LightViewProjection;
 	float popUpYOffset;
 	float Opaque;
 };
@@ -18,6 +19,9 @@ cbuffer PerFrame
 	float2 Various;               //.x = 1 if head under water
 };
 
+static const float SHADOW_EPSILON = 0.001f;
+static const float SMAP_SIZE = 2048.0f;
+static const float SMAP_DX = 1.0f / SMAP_SIZE;
 
 static const float foglength = 20;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
@@ -45,6 +49,7 @@ static const float4 faceSpecialOffset[6] = { {0.0f,0.0f,0.0625f,0.0f} , {0.0f,0.
 Texture2DArray TerraTexture;
 Texture2D SkyBackBuffer;
 Texture2DArray BiomesColors;
+Texture2D ShadowMap;
 SamplerState SamplerBackBuffer;
 SamplerState SamplerDiffuse;
 
@@ -67,6 +72,7 @@ struct PS_IN
 	float3 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
 	uint2 Various				: BIOMEDATAVARIOUS0;  
+	float4 projTexC			    : TEXCOORD1;
 };
 
 struct PS_OUT
@@ -99,6 +105,9 @@ PS_IN VS(VS_IN input)
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection);
 
+	// Generate projective tex-coords to project shadow map onto scene.
+	output.projTexC = mul(worldPosition, LightViewProjection);
+
 	int facetype = input.VertexInfo.y;
 	//Compute the texture mapping
 	output.UVW = float3(
@@ -116,6 +125,72 @@ PS_IN VS(VS_IN input)
 
     return output;
 }
+
+
+// ============================================================================
+// Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
+// ============================================================================
+ float CalcShadowFactor(float4 projTexC)
+ {
+ 	// Complete projection by doing division by w.
+ 	projTexC.xyz /= projTexC.w;
+
+	// Points outside the light volume are in shadow.
+	if( projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 0.0f;
+ 	
+ 	// Transform from NDC space to texture space.
+ 	projTexC.x = +0.5f*projTexC.x + 0.5f;
+ 	projTexC.y = -0.5f*projTexC.y + 0.5f;
+ 	
+ 	// Depth in NDC space.
+ 	float depth = projTexC.z;
+ 	
+ 	// Sample shadow map to get nearest depth to light.
+ 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
+	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0)).r;
+	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
+	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
+
+	// Is the pixel depth <= shadow map value?
+	float result0 = depth <= s0 + SHADOW_EPSILON;
+	float result1 = depth <= s1 + SHADOW_EPSILON;
+	float result2 = depth <= s2 + SHADOW_EPSILON;
+	float result3 = depth <= s3 + SHADOW_EPSILON;
+ 	
+	// Transform to texel space.
+	float2 texelPos = SMAP_SIZE*projTexC.xy;
+ 
+	// Determine the interpolation amounts.
+	float2 t = frac( texelPos );
+
+ 	// Interpolate results.
+	return lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
+}
+
+// ============================================================================
+// Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
+// ============================================================================
+ float CalcShadowFactorSimple(float4 projTexC)
+ {
+ 	// Complete projection by doing division by w.
+ 	projTexC.xyz /= projTexC.w;
+ 	
+ 	// Transform from NDC space to texture space.
+ 	projTexC.x = +0.5f*projTexC.x + 0.5f;
+ 	projTexC.y = -0.5f*projTexC.y + 0.5f;
+ 	
+ 	// Depth in NDC space.
+ 	float depth = projTexC.z;
+ 	
+ 	// Sample shadow map to get nearest depth to light.
+ 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
+ 		
+ 	// Is the pixel depth <= shadow map value?
+ 	float result0 = depth <= s0 + SHADOW_EPSILON;
+ 
+ 	// Interpolate results.
+ 	return result0;
+ }
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
@@ -159,8 +234,15 @@ PS_OUT PS(PS_IN input)
 		finalColor.a = fogvalue;
 	}
 
+   float shadowFactor = CalcShadowFactor(input.projTexC);
+   finalColor.rbg *= clamp(shadowFactor, 0.3, 1);
+
 	// Apply fog on output color
 	output.Color = finalColor;
+
     return output;
 }
+
+
+
 

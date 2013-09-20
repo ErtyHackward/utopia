@@ -79,12 +79,11 @@
     <Compile Include="Effects\Debug\DebugEffect.cs" />
     <Compile Include="Effects\Debug\HLSLColumnChart.cs" />
     <Compile Include="Effects\Sprites\HLSLPointSprite3D.cs" />
-    <Compile Include="Effects\Sprites\HLSLSprites.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionColor.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionColorTexture.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionNormalTexture.cs" />
     <Compile Include="Effects\Basics\HLSLVertexPositionTexture.cs" />
-    <Compile Include="Effects\Sprites\HLSLSprites2.cs" />
+    <Compile Include="Effects\Sprites\HLSLSprites.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\ByteColor.cs" />
     <Compile Include="Structs\FloatAsInt.cs" />
@@ -138,10 +137,10 @@
     <None Include="Effects\Sprites\Billboard.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Effects\Sprites\PointSprite3D.hlsl">
+    <None Include="Effects\Sprites\Sprites.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Effects\Sprites\Sprites.hlsl">
+    <None Include="Effects\Sprites\PointSprite3D.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Basics\VertexPositionColor.hlsl">
@@ -157,7 +156,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Effects\Basics\VertexPositionTextureArrays.fx" />
-    <None Include="Effects\Sprites\Sprites2.hlsl">
+    <None Include="Effects\Sprites\SpritesTexArray.hlsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using SharpDX;
-using SharpDX.Direct3D11;
-using Buffer = SharpDX.Direct3D11.Buffer;
-using S33M3DXEngine.Effects.HLSLFramework;
 using S33M3DXEngine.VertexFormat;
-using S33M3DXEngine;
-using S33M3Resources.Structs.Vertex;
+using S33M3DXEngine.Effects.HLSLFramework;
+using SharpDX.Direct3D11;
 
-namespace S33M3Resources.Effects.Sprites
+namespace Utopia.Resources.Effects.Terran
 {
 
-    public class HLSLSprites2 : HLSLShaderWrap
+    public class HLSLTerranShadow : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -30,46 +27,45 @@ namespace S33M3Resources.Effects.Sprites
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
-            public Matrix OrthoProjection;
+            public Matrix LightWVP;
         }
-
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion
 
         #region Resources
-        public ShaderResource SpriteTexture;
+        public ShaderResource TerraTexture;
         #endregion
 
         #region Sampler
-        public ShaderSampler SpriteSampler;
+        public ShaderSampler SamplerDiffuse;
         #endregion
 
         #region Define Shaders EntryPoints Names
         //Default Entry points names for this HLSL file
         EntryPoints _shadersEntryPoint = new EntryPoints()
         {
-            VertexShader_EntryPoint = "SpriteVS",
-            PixelShader_EntryPoint = "SpritePS"
+            VertexShader_EntryPoint = "VS",
+            PixelShader_EntryPoint = "PS"
         };
         #endregion
 
-        public HLSLSprites2(Device device)
-            : base(device, @"Effects\Sprites\Sprites2.hlsl", VertexSprite2.VertexDeclaration)
+        public HLSLTerranShadow(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
+            : base(device, shaderPath, VertexDeclaration)
         {
-            //Create Constant Buffers interfaces ==================================================
+            //Create Contstant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
             //Create the resource interfaces ==================================================
-            SpriteTexture = new ShaderResource("SpriteTexture") { IsStaticResource = false };
-            ShaderResources.Add(SpriteTexture);
+            TerraTexture = new ShaderResource("TerraTexture");
+            ShaderResources.Add(TerraTexture);
 
             //Create the Sampler interface ==================================================
-            SpriteSampler = new ShaderSampler("SpriteSampler") { IsStaticResource = false };
-            ShaderSamplers.Add(SpriteSampler);
+            SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
+            ShaderSamplers.Add(SamplerDiffuse);
 
             //Load the shaders
-            base.LoadShaders(_shadersEntryPoint);
+            base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
         }
 
     }

@@ -71,6 +71,7 @@
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />
     <Compile Include="Effects\Terran\HLSLLiquid.cs" />
     <Compile Include="Effects\Terran\HLSLTerran.cs" />
+    <Compile Include="Effects\Terran\HLSLTerranShadow.cs" />
     <Compile Include="Effects\Weather\HLSLClouds.cs" />
     <Compile Include="ModelComp\BoundingBox3D.cs" />
     <Compile Include="ModelComp\Interfaces.cs" />
