@@ -64,7 +64,7 @@ namespace Utopia.Entities
             Texture2D[] spriteTextures;
             ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, ClientSettings.TexturePack + @"Sprites/", @"*.png", FilterFlags.Point, "ArrayTexture_WorldChunk", out spriteTextures, 1);
 
-            icons.AddRange(spriteTextures);
+            //icons.AddRange(spriteTextures);
             CreateTextureArray(context, icons);
 
             //Array created i can dispose the various icons
