@@ -20,7 +20,7 @@ cbuffer PerFrame
 };
 
 static const float SHADOW_EPSILON = 0.001f;
-static const float SMAP_SIZE = 2048.0f;
+static const float SMAP_SIZE = 4096.0f;
 static const float SMAP_DX = 1.0f / SMAP_SIZE;
 
 static const float foglength = 20;
@@ -40,6 +40,7 @@ static const float texmul2[6] = {  0,  0,  0,  0, -1,  1};
 static const float texmul3[6] = { -1, -1,  0,  0, -1, -1};		
 static const float texmul4[6] = {  0,  0,  1,  1,  0,  0};
 static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
+static const float2 poissonDisk[4] = { {-0.94201624, -0.39906216}, {0.94558609, -0.76890725}, {-0.094184101, -0.92938870}, {0.34495938, 0.29387760} };
 
 static const float4 faceSpecialOffset[6] = { {0.0f,0.0f,0.0625f,0.0f} , {0.0f,0.0f,-0.0625f,0.0f}, {0.0f,0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f,0.0f}, {0.0625f,0.0f,0.0f,0.0f}, {-0.0625f,0.0f,0.0f,0.0f} };
 
@@ -126,7 +127,6 @@ PS_IN VS(VS_IN input)
     return output;
 }
 
-
 // ============================================================================
 // Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
 // ============================================================================
@@ -136,7 +136,7 @@ PS_IN VS(VS_IN input)
 
  	projTexC.xyz /= projTexC.w;
 
-	// Points outside the light volume are in shadow.
+	// Points outside the light volume are lit.
 	if( projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 1.0f;
  	
  	// Transform from NDC space to texture space.
@@ -146,11 +146,28 @@ PS_IN VS(VS_IN input)
  	// Depth in NDC space.
  	float depth = projTexC.z;
  	
+	float visibility = 1.0f;
+
+	if (ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[0]/2000.0f).r + SHADOW_EPSILON <= depth)
+			visibility -= 0.2f;
+	if (ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[1]/2000.0f).r + SHADOW_EPSILON <= depth)
+			visibility -= 0.2f;
+	if (ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[2]/2000.0f).r + SHADOW_EPSILON <= depth)
+			visibility -= 0.2f;
+	if (ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[3]/2000.0f).r + SHADOW_EPSILON <= depth)
+			visibility -= 0.2f;
+
+	//for (uint i=0; i < 4; i++)
+	//{
+	//	if (ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[i]/700.0f).r + SHADOW_EPSILON >= depth)
+	//		visibility -= 0.2f;
+	//}
+	/*
  	// Sample shadow map to get nearest depth to light.
- 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
-	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0)).r;
-	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
-	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
+ 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[0]/700.0).r;
+	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[1]/700.0 ).r; //float2(SMAP_DX, 0)
+	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[2]/700.0).r; //float2(0, SMAP_DX)
+	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + poissonDisk[3]/700.0).r; //float2(SMAP_DX, SMAP_DX)
 
 	// Is the pixel depth <= shadow map value?
 	float result0 = depth <= s0 + SHADOW_EPSILON;
@@ -158,6 +175,7 @@ PS_IN VS(VS_IN input)
 	float result2 = depth <= s2 + SHADOW_EPSILON;
 	float result3 = depth <= s3 + SHADOW_EPSILON;
  	
+	*/
 	// Transform to texel space.
 	float2 texelPos = SMAP_SIZE*projTexC.xy;
  
@@ -165,7 +183,7 @@ PS_IN VS(VS_IN input)
 	float2 t = frac( texelPos );
 
  	// Interpolate results.
-	return lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
+	return visibility; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y); // depth - SHADOW_EPSILON < s0; //
 }
 
 //--------------------------------------------------------------------------------------

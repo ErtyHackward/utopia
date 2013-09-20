@@ -41,6 +41,7 @@ namespace Utopia.Worlds.Shadows
         private IClock _clock;
 
         public Matrix LightViewProjection;
+        private const int ShadowMapSize = 4096;
         #endregion
 
         #region Public Properties
@@ -76,7 +77,7 @@ namespace Utopia.Worlds.Shadows
         public override void LoadContent(DeviceContext context)
         {
             _shadowMap = ToDispose(new DrawableTex2D(_d3dEngine));
-            _shadowMap.Init(2048, 2048, false, SharpDX.DXGI.Format.R32_Float);
+            _shadowMap.Init(ShadowMapSize, ShadowMapSize, false, SharpDX.DXGI.Format.R32_Float);
 
             _shadowMapEffect = new HLSLTerranShadow(context.Device, ClientSettings.EffectPack + @"Terran/ShadowMap.hlsl", VertexCubeSolid.VertexDeclaration);
 
@@ -183,7 +184,6 @@ namespace Utopia.Worlds.Shadows
 
             Matrix shadowMatrix = shadowViewMatrix * shadowProjMatrix;
 
-            float ShadowMapSize = 2048.0f; // Set this to the size of your shadow map
             Vector4 shadowOrigin = Vector3.Transform(Vector3.Zero, shadowMatrix);
             shadowOrigin *= (ShadowMapSize / 2.0f);
             Vector2 roundedOrigin = new Vector2((float)Math.Round(shadowOrigin.X), (float)Math.Round(shadowOrigin.Y));
