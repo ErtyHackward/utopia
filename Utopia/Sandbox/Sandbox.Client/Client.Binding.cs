@@ -60,6 +60,7 @@ using Sandbox.Client.Components.GUI.Settings;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Net.Messages;
 using Sandbox.Client.Components.GUI.SinglePlayer;
+using Utopia.Worlds.Shadows;
 
 namespace Sandbox.Client
 {
@@ -209,6 +210,8 @@ namespace Sandbox.Client
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope).
                 WithConstructorArgument("skyBackBuffer", _iocContainer.Get<StaggingBackBuffer>("SkyBuffer")).
                 WithConstructorArgument("solidBackBuffer", _iocContainer.Get<StaggingBackBuffer>("SolidBuffer"));             //Chunk Management (Update/Draw)
+
+            _iocContainer.Bind<WorldShadowMap>().ToSelf().InScope(x => GameScope.CurrentGameScope); //Shadow Map Drawing Component
 
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
             //=============================================================

@@ -26,6 +26,7 @@ using Utopia.GUI.Inventory;
 using Utopia.Components;
 using Utopia.Shared.Settings;
 using System.Linq;
+using Utopia.Worlds.Shadows;
 
 namespace Sandbox.Client.States
 {
@@ -64,6 +65,7 @@ namespace Sandbox.Client.States
             skyDome.DrawOrders.UpdateIndex(0, 40);
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
+            var worldShadowMap = _ioc.Get<WorldShadowMap>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var dynamicEntityManager = _ioc.Get<IDynamicEntityManager>();
             var playerEntityManager = _ioc.Get<PlayerEntityManager>();
@@ -102,6 +104,7 @@ namespace Sandbox.Client.States
             AddComponent(skyBackBuffer);
             AddComponent(fadeComponent);
             AddComponent(voxelModelManager);
+            AddComponent(worldShadowMap);
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

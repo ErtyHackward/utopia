@@ -23,22 +23,25 @@ namespace Utopia.Resources.Effects.Terran
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        [StructLayout(LayoutKind.Explicit, Size = 144)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
             public Matrix World;
 
+            [FieldOffset(64)]
+            public Matrix LightViewProjection;
+
             /// <summary>
             /// Allows to create chunk pop-up effect
             /// </summary>
-            [FieldOffset(64)]
+            [FieldOffset(128)]
             public float popUpYOffset;
 
             /// <summary>
             /// Allows to create chunk slowly appear effect
             /// </summary>
-            [FieldOffset(68)]
+            [FieldOffset(132)]
             public float Opaque;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
@@ -48,6 +51,7 @@ namespace Utopia.Resources.Effects.Terran
         public ShaderResource TerraTexture;
         public ShaderResource SkyBackBuffer;
         public ShaderResource BiomesColors;
+        public ShaderResource ShadowMap;
         #endregion
 
         #region Sampler
@@ -83,6 +87,9 @@ namespace Utopia.Resources.Effects.Terran
 
             BiomesColors = new ShaderResource("BiomesColors");
             ShaderResources.Add(BiomesColors);
+
+            ShadowMap = new ShaderResource("ShadowMap", false);
+            ShaderResources.Add(ShadowMap);
 
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
