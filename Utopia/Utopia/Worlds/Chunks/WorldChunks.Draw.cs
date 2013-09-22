@@ -140,7 +140,8 @@ namespace Utopia.Worlds.Chunks
                         _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                         _terraEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                         _terraEffect.CBPerDraw.Values.popUpYOffset = 0;
-                        _terraEffect.CBPerDraw.Values.LightViewProjection = Matrix.Transpose(_shadowMap.LightViewProjection); 
+                        _terraEffect.CBPerDraw.Values.LightViewProjection = Matrix.Transpose(_shadowMap.LightViewProjection);
+                        _terraEffect.CBPerDraw.Values.LightDirection = _shadowMap.BackUpLightDirection;
                         _terraEffect.CBPerDraw.Values.Opaque = chunk.Opaque;
                         _terraEffect.CBPerDraw.IsDirty = true;
                         _terraEffect.Apply(context);

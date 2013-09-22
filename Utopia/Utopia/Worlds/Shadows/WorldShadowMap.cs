@@ -24,7 +24,6 @@ namespace Utopia.Worlds.Shadows
 {
     public class WorldShadowMap : DrawableGameComponent
     {
-        #region Private Variables
         private int _smDrawID;
 
         private Color4 _whiteColor = new Color4(255, 255, 255, 255);
@@ -40,16 +39,14 @@ namespace Utopia.Worlds.Shadows
         private WorldFocusManager _worldFocusManager;
         private IClock _clock;
 
+        public Vector3 BackUpLightDirection;
         public Matrix LightViewProjection;
         private const int ShadowMapSize = 4096;
-        #endregion
 
-        #region Public Properties
         public DrawableTex2D ShadowMap
         {
             get { return _shadowMap; }
         }
-        #endregion
 
         public WorldShadowMap(
                                 ISkyDome skydome,
@@ -129,7 +126,7 @@ namespace Utopia.Worlds.Shadows
 
         #region Private Methods
         private float lastLightUpdate = -100.0f;
-        private Vector3 BackUpLightDirection;
+        
 
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {

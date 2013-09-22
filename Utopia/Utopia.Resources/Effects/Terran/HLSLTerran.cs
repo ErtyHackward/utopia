@@ -23,7 +23,7 @@ namespace Utopia.Resources.Effects.Terran
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 144)]
+        [StructLayout(LayoutKind.Explicit, Size = 160)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
@@ -43,6 +43,9 @@ namespace Utopia.Resources.Effects.Terran
             /// </summary>
             [FieldOffset(132)]
             public float Opaque;
+
+            [FieldOffset(136)]
+            public Vector3 LightDirection;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion
