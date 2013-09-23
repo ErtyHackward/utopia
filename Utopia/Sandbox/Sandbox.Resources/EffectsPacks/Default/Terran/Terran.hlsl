@@ -133,22 +133,19 @@ PS_IN VS(VS_IN input)
 	output.BiomeData = input.BiomeData;
 	output.Various = input.Various;
 
-	if (SunVector.x == 0)
+	if (SunVector.y < 0)
 	{
-		output.Bias = 0;
-	}
-	else
-	{
-		output.Bias = 1;
-	}
+		if (facetype == 0 || facetype == 1)
+			facetype = 4;
 
-	//// compute variable bias for the shadow map
-	//float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
-	//
-	//float cosTheta = dot(norm, SunVector);
-	//float bias = tan(acos(cosTheta)) * 0.00003;
-	//output.Bias = clamp( abs(bias), 0.0003, 0.005);
+		// compute variable bias for the shadow map
+		float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
 	
+		float cosTheta = dot(norm, SunVector);
+		float bias = tan(acos(cosTheta)) * 0.00024;
+		output.Bias = clamp( abs(bias), 0.0002, 0.006);
+	}
+		
     return output;
 }
 
@@ -170,10 +167,10 @@ float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 {
 	
 	// if the sun is under the horisont => dark
-	//if (SunVector.y > 0)
-	//{
-	//	return 0.0f;
-	//}
+	if (SunVector.y > 0)
+	{
+		return 0.0f;
+	}
 
  	// Complete projection by doing division by w.
 
@@ -275,7 +272,7 @@ float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 	float2 t = frac(texelPos);
 
  	// Interpolate results
-	return shadowBias; // depth - shadowBias < s0; // depth - bias < s0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y); // depth - SHADOW_EPSILON < s0; //
+	return depth - shadowBias < s0; // depth - bias < s0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y); // depth - SHADOW_EPSILON < s0; //
 }
 
 //--------------------------------------------------------------------------------------
@@ -321,7 +318,7 @@ PS_OUT PS(PS_IN input)
 	}
 	
     float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
-    finalColor.rbg *= shadowFactor; // clamp(shadowFactor, 0.5, 1);
+    finalColor.rbg *= clamp(shadowFactor, 0.5, 1);
 
 	// Apply fog on output color
 	output.Color = finalColor;
