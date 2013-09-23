@@ -45,7 +45,7 @@ namespace Utopia.Resources.Effects.Terran
             public float Opaque;
 
             [FieldOffset(136)]
-            public Vector3 LightDirection;
+            public Vector3 SunVector;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion

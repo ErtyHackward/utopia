@@ -8,7 +8,7 @@ cbuffer PerDraw
 	matrix LightViewProjection;
 	float popUpYOffset;
 	float Opaque;
-	float3 LightDirection;
+	float3 SunVector;
 };
 
 cbuffer PerFrame
@@ -133,17 +133,22 @@ PS_IN VS(VS_IN input)
 	output.BiomeData = input.BiomeData;
 	output.Various = input.Various;
 
-	// compute variable bias for the shadow map
-	float3 normal = normalize(float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]));
-	float3 sunlight = normalize(LightDirection);
+	if (SunVector.x == 0)
+	{
+		output.Bias = 0;
+	}
+	else
+	{
+		output.Bias = 1;
+	}
 
-	float cosTheta = clamp(dot(normal, sunlight), 0, 1);
-
-	float bias = tan(acos(cosTheta));
-	bias = clamp(bias, 0.0002, 0.0007);
-
-	output.Bias = bias;
-
+	//// compute variable bias for the shadow map
+	//float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
+	//
+	//float cosTheta = dot(norm, SunVector);
+	//float bias = tan(acos(cosTheta)) * 0.00003;
+	//output.Bias = clamp( abs(bias), 0.0003, 0.005);
+	
     return output;
 }
 
@@ -161,8 +166,15 @@ uint rndInd(uint max, float4 pos)
 // ============================================================================
 // Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
 // ============================================================================
- float CalcShadowFactor(float4 projTexC, float2 worldPos, float bias)
- {
+float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
+{
+	
+	// if the sun is under the horisont => dark
+	//if (SunVector.y > 0)
+	//{
+	//	return 0.0f;
+	//}
+
  	// Complete projection by doing division by w.
 
  	projTexC.xyz /= projTexC.w;
@@ -233,25 +245,37 @@ uint rndInd(uint max, float4 pos)
 	
  	// Sample shadow map to get nearest depth to light.
  	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
-	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r; 
-	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r; 
-	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r; 
+	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r;
+	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
+	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
+	float s4 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(-SMAP_DX, 0) ).r;
+	float s5 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, -SMAP_DX)).r;
+	float s6 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(-SMAP_DX, -SMAP_DX)).r;
+	float s7 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, -SMAP_DX)).r;
+	float s8 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(-SMAP_DX, SMAP_DX)).r;
+
 
 	// Is the pixel depth <= shadow map value?
-	float result0 = depth <= s0 + bias;
-	float result1 = depth <= s1 + bias;
-	float result2 = depth <= s2 + bias;
-	float result3 = depth <= s3 + bias;
+	float result0 = depth <= s0 + shadowBias;
+	float result1 = depth <= s1 + shadowBias;
+	float result2 = depth <= s2 + shadowBias;
+	float result3 = depth <= s3 + shadowBias;
+	float result4 = depth <= s4 + shadowBias;
+	float result5 = depth <= s5 + shadowBias;
+	float result6 = depth <= s6 + shadowBias;
+	float result7 = depth <= s7 + shadowBias;
+	float result8 = depth <= s8 + shadowBias;
  	
+	float avg = (result0 + result1 + result2 + result3 + result4 + result5 + result6 + result7 + result8) / 9.0;
 	
-	// Transform to texel space.
-	float2 texelPos = SMAP_SIZE*projTexC.xy;
+	// Transform to texel space
+	float2 texelPos = SMAP_SIZE * projTexC.xy;
  
-	// Determine the interpolation amounts.
-	float2 t = frac( texelPos );
+	// Determine the interpolation amounts
+	float2 t = frac(texelPos);
 
- 	// Interpolate results.
-	return depth - bias < s0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y); // depth - SHADOW_EPSILON < s0; //
+ 	// Interpolate results
+	return shadowBias; // depth - shadowBias < s0; // depth - bias < s0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y); // depth - SHADOW_EPSILON < s0; //
 }
 
 //--------------------------------------------------------------------------------------
@@ -297,7 +321,7 @@ PS_OUT PS(PS_IN input)
 	}
 	
     float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
-    finalColor.rbg *= clamp(shadowFactor, 0.5, 1);
+    finalColor.rbg *= shadowFactor; // clamp(shadowFactor, 0.5, 1);
 
 	// Apply fog on output color
 	output.Color = finalColor;
