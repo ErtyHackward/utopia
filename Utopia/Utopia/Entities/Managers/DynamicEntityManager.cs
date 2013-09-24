@@ -294,7 +294,7 @@ namespace Utopia.Entities.Managers
         {
             if (index == VOXEL_DRAW)
             {
-                VoxelDraw(context);
+                VoxelDraw(context, _camManager.ActiveCamera.ViewProjection3D);
                 return;
             }
 
@@ -322,13 +322,13 @@ namespace Utopia.Entities.Managers
 
         #region Private Methods
 
-        private void VoxelDraw(DeviceContext context)
+        public void VoxelDraw(DeviceContext context, Matrix viewProjection)
         {
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _voxelModelEffect.Begin(context);
             _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
-            _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
 
@@ -366,7 +366,7 @@ namespace Utopia.Entities.Managers
 
             _voxelToolEffect.Begin(context);
             _voxelToolEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
-            _voxelToolEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+            _voxelToolEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
             _voxelToolEffect.CBPerFrame.IsDirty = true;
             _voxelToolEffect.Apply(context);
 
