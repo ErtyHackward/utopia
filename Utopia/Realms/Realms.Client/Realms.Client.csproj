@@ -253,7 +253,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)PacksOptimize\bin\Release\PacksOptimize.exe" "$(TargetDir)" /Y
-PacksOptimize.exe action=Compilation "'path=$(TargetDir)'" "'includePath=$(TargetDir)Effects'" debugcompil=0
+PacksOptimize.exe action=Compilation "'path=$(TargetDir)'" "'includePath=$(TargetDir)Effects'" debugcompil=1
 xcopy "$(SolutionDir)Utopia.Updater\bin\Release\Launcher.exe" "$(TargetDir)" /Y
 xcopy "$(SolutionDir)Utopia.Editor\bin\Release\Utopia.Editor.exe" "$(TargetDir)" /Y
 </PostBuildEvent>

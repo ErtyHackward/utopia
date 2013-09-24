@@ -33,6 +33,7 @@ using Utopia.Shared.Settings;
 using Utopia.Particules;
 using Utopia.Sounds;
 using Utopia.Shared.World;
+using Utopia.Worlds.Shadows;
 
 namespace Realms.Client.States
 {
@@ -95,6 +96,7 @@ namespace Realms.Client.States
 
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
+            var worldShadowMap = _ioc.Get<WorldShadowMap>();
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
@@ -147,6 +149,7 @@ namespace Realms.Client.States
             AddComponent(inventoryEvents);
             AddComponent(pickingManager);
             AddComponent(cracksRenderer);
+            AddComponent(worldShadowMap);
             
             inputsManager.MouseManager.StrategyMode = true;
 

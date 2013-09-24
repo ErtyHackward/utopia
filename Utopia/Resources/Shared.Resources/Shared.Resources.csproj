@@ -85,6 +85,9 @@
     <None Include="EffectsPacks\Default\Terran\Cracks.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="EffectsPacks\Default\Terran\ShadowMap.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="GUI\Skins\SandBox\BottomPanel.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -5,10 +5,16 @@
 cbuffer PerDraw
 {
 	matrix World;
+	matrix LightViewProjection;
 	float PopUpValue;
+	float3 SunVector;
 };
 
 #include <SharedFrameCB.hlsl>
+
+static const float SHADOW_EPSILON = 0.0002f;
+static const float SMAP_SIZE = 4096.0f;
+static const float SMAP_DX = 1.0f / SMAP_SIZE;
 
 static const float foglength = 20;
 static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
@@ -30,12 +36,19 @@ static const float faceshades[6] = { 0.6, 0.6, 0.8, 1.0, 0.7, 0.8 };
 
 static const float4 faceSpecialOffset[6] = { {0.0f,0.0f,0.0625f,0.0f} , {0.0f,0.0f,-0.0625f,0.0f}, {0.0f,0.0f,0.0f,0.0f}, {0.0f,0.0f,0.0f,0.0f}, {0.0625f,0.0f,0.0f,0.0f}, {-0.0625f,0.0f,0.0f,0.0f} };
 
+//	cube face						ba	F	Bo	T	L   R
+static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
+static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
+static const float normalsZ[6] = { -1,  1,  0,  0,  0,  0};	
+
+
 //--------------------------------------------------------------------------------------
 // Texture Samplers
 //--------------------------------------------------------------------------------------
 Texture2DArray TerraTexture;
 Texture2D SkyBackBuffer;
 Texture2DArray BiomesColors;
+Texture2D ShadowMap;
 SamplerState SamplerBackBuffer;
 SamplerState SamplerDiffuse;
 
@@ -58,6 +71,8 @@ struct PS_IN
 	float3 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
 	uint2 Various				: BIOMEDATAVARIOUS0;  
+	float4 projTexC			    : TEXCOORD1;
+	float Bias					: VARIOUS1;
 };
 
 struct PS_OUT
@@ -90,6 +105,9 @@ PS_IN VS(VS_IN input)
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection_focused);
 
+	// Generate projective tex-coords to project shadow map onto scene.
+	output.projTexC = mul(worldPosition, LightViewProjection);
+
 	int facetype = input.VertexInfo.y;
 	//Compute the texture mapping
 	output.UVW = float3(
@@ -104,8 +122,69 @@ PS_IN VS(VS_IN input)
 	output.BiomeData = input.BiomeData;
 	output.Various = input.Various;
 
+	if (SunVector.y < 0)
+	{
+		// commented for debug reason
+		//if (facetype == 0 || facetype == 1)
+		//	facetype = 4;
+
+		// compute variable bias for the shadow map
+		float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
+	
+		float cosTheta = dot(norm, SunVector);
+		float bias = tan(acos(cosTheta)) * 0.00024;
+		output.Bias = clamp( abs(bias), 0.0002, 0.006);
+	}
+	
     return output;
 }
+
+// ============================================================================
+// Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
+// ============================================================================
+float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
+{
+	// if the sun is under the horisont => dark
+	if (SunVector.y > 0)
+	{
+		return 0.0f;
+	}
+
+ 	// Complete projection by doing division by w.
+	projTexC.xyz /= projTexC.w;
+
+	// Points outside the light volume are lit.
+	if( projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 1.0f;
+ 	
+ 	// Transform from NDC space to texture space.
+ 	projTexC.x = +0.5f*projTexC.x + 0.5f;
+ 	projTexC.y = -0.5f*projTexC.y + 0.5f;
+ 	
+ 	// Depth in NDC space.
+ 	float depth = projTexC.z;
+	
+ 	// Sample shadow map to get nearest depth to light.
+ 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
+	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r;
+	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
+	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
+	
+	// Is the pixel depth <= shadow map value?
+	float result0 = depth <= s0 + shadowBias;
+	float result1 = depth <= s1 + shadowBias;
+	float result2 = depth <= s2 + shadowBias;
+	float result3 = depth <= s3 + shadowBias;
+		
+	// Transform to texel space
+	float2 texelPos = SMAP_SIZE * projTexC.xy;
+ 
+	// Determine the interpolation amounts
+	float2 t = frac(texelPos);
+
+ 	// Interpolate results
+	return lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
+}
+
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
@@ -163,6 +242,10 @@ PS_OUT PS(PS_IN input)
 		}
 
 	}
+
+    float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
+    finalColor.rbg *= clamp(shadowFactor, 0.5, 1);
+
 
 	// Apply fog on output color
 	output.Color = finalColor;

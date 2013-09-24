@@ -54,6 +54,7 @@ using S33M3CoreComponents.Particules;
 using Utopia.Particules;
 using Utopia.Sounds;
 using Utopia.Shared.LandscapeEntities;
+using Utopia.Worlds.Shadows;
 
 namespace Realms.Client.States
 {
@@ -263,6 +264,7 @@ namespace Realms.Client.States
             var lightingManager = _ioc.Get<ILightingManager>();
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
+            var worldShadowMap = _ioc.Get<WorldShadowMap>();
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
@@ -327,6 +329,7 @@ namespace Realms.Client.States
             AddComponent(crafting);
             AddComponent(inventoryEvents);
             AddComponent(cracksRenderer);
+            AddComponent(worldShadowMap);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

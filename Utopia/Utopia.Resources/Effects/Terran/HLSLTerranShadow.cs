@@ -11,7 +11,7 @@ using SharpDX.Direct3D11;
 namespace Utopia.Resources.Effects.Terran
 {
 
-    public class HLSLTerran : HLSLShaderWrap
+    public class HLSLTerranShadow : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !
         // follow the packing rules from here:
@@ -23,38 +23,21 @@ namespace Utopia.Resources.Effects.Terran
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 144)]
+        [StructLayout(LayoutKind.Explicit, Size = 64)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
-            public Matrix World;
-
-            [FieldOffset(64)]
-            public Matrix LightViewProjection;
-
-            /// <summary>
-            /// Allows to create chunk pop-up effect
-            /// </summary>
-            [FieldOffset(128)]
-            public float PopUpValue;
-
-            [FieldOffset(132)]
-            public Vector3 SunVector;
-
+            public Matrix LightWVP;
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion
 
         #region Resources
         public ShaderResource TerraTexture;
-        public ShaderResource SkyBackBuffer;
-        public ShaderResource BiomesColors;
-        public ShaderResource ShadowMap;
         #endregion
 
         #region Sampler
         public ShaderSampler SamplerDiffuse;
-        public ShaderSampler SamplerBackBuffer;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -66,34 +49,20 @@ namespace Utopia.Resources.Effects.Terran
         };
         #endregion
 
-        public HLSLTerran(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
+        public HLSLTerranShadow(Device device, string shaderPath, VertexDeclaration VertexDeclaration, iCBuffer CBPerFrame = null, EntryPoints shadersEntryPoint = null)
             : base(device, shaderPath, VertexDeclaration, new UtopiaIncludeHandler())
         {
             //Create Contstant Buffers interfaces ==================================================
             CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
 
-            if (CBPerFrame != null) CBuffers.Add(CBPerFrame.Clone());
-
             //Create the resource interfaces ==================================================
             TerraTexture = new ShaderResource("TerraTexture");
             ShaderResources.Add(TerraTexture);
 
-            SkyBackBuffer = new ShaderResource("SkyBackBuffer");
-            ShaderResources.Add(SkyBackBuffer);
-
-            BiomesColors = new ShaderResource("BiomesColors");
-            ShaderResources.Add(BiomesColors);
-
-            ShadowMap = new ShaderResource("ShadowMap");
-            ShaderResources.Add(ShadowMap);
-
             //Create the Sampler interface ==================================================
             SamplerDiffuse = new ShaderSampler("SamplerDiffuse");
             ShaderSamplers.Add(SamplerDiffuse);
-
-            SamplerBackBuffer = new ShaderSampler("SamplerBackBuffer");
-            ShaderSamplers.Add(SamplerBackBuffer);
 
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
