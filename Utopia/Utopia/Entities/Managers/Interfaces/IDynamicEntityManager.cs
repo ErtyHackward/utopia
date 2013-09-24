@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using SharpDX;
+using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
@@ -40,5 +42,7 @@ namespace Utopia.Entities.Managers.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         void UpdateEntity(IDynamicEntity entity);
+
+        void VoxelDraw(DeviceContext context, Matrix viewProjection);
     }
 }

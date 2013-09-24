@@ -90,7 +90,6 @@ namespace Utopia.Worlds.Chunks
         private SharedFrameCB _sharedFrameCB;
         private int _readyToDrawCount;
         private StaggingBackBuffer _skyBackBuffer;
-        private WorldShadowMap _shadowMap;
         private readonly object _counterLock = new object();
         private VoxelModelManager _voxelModelManager;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
@@ -163,6 +162,9 @@ namespace Utopia.Worlds.Chunks
         [Inject]
         public ISoundEngine SoundEngine { get; set; }
 
+        [Inject]
+        public WorldShadowMap ShadowMap { get; set; }
+
         public WorldChunks(D3DEngine d3dEngine,
                            CameraManager<ICameraFocused> camManager,
                            VisualWorldParameters visualWorldParameters,
@@ -183,8 +185,7 @@ namespace Utopia.Worlds.Chunks
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
                            IChunkEntityImpactManager chunkEntityImpactManager,
-                           InputsManager inputsManager,
-                           WorldShadowMap shadowMap
+                           InputsManager inputsManager
             )
         {
             _server = server;
@@ -208,7 +209,6 @@ namespace Utopia.Worlds.Chunks
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
             _inputsManager = inputsManager;
-            _shadowMap = shadowMap;
 
             _skyBackBuffer.OnStaggingBackBufferChanged += _skyBackBuffer_OnStaggingBackBufferChanged;
 
@@ -226,8 +226,7 @@ namespace Utopia.Worlds.Chunks
             lightingManager.WorldChunk = this;
             _chunkMeshManager.WorldChunks = this;
             landscapeManager.WorldChunks = this;
-            _shadowMap.WorldChunks = this;
-
+            
             DrawOrders.UpdateIndex(SOLID_DRAW, 100, "SOLID_DRAW");
             TRANSPARENT_DRAW = DrawOrders.AddIndex(1050, "TRANSPARENT_DRAW");
             ENTITIES_DRAW = DrawOrders.AddIndex(101, "ENTITIES_DRAW");

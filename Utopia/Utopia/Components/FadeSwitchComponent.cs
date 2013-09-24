@@ -107,13 +107,13 @@ namespace Utopia.Components
             base.LoadContent(context);
         }
 
-        public override void FTSUpdate(S33M3DXEngine.Main.GameTime timeSpent)
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (_targetAlpha != _color.Alpha)
             {
                 if (_targetAlpha > _color.Alpha)
                 {
-                    _color.Alpha += timeSpent.ElapsedGameTimeInS_LD / FadeTimeS;
+                    _color.Alpha += elapsedTime / FadeTimeS;
                     if (_targetAlpha <= _color.Alpha)
                     {
                         _color.Alpha = _targetAlpha;
@@ -122,7 +122,7 @@ namespace Utopia.Components
                 }
                 else
                 {
-                    _color.Alpha -= timeSpent.ElapsedGameTimeInS_LD / FadeTimeS;
+                    _color.Alpha -= elapsedTime / FadeTimeS;
                     if (_targetAlpha >= _color.Alpha)
                     {
                         _color.Alpha = _targetAlpha;
