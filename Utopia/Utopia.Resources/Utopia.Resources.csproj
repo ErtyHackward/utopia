@@ -91,6 +91,7 @@
     <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DImpostor.cs" />
     <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DText.cs" />
     <Compile Include="Effects\Sprites\HLSLUtopiaPointSpriteColor3DBillBoard.cs" />
+    <Compile Include="Effects\Terran\HLSLTerranShadow.cs" />
     <Compile Include="Effects\UtopiaIncludeHandler.cs" />
     <Compile Include="Effects\SkyDome\HLSLPlanetSkyDome.cs" />
     <Compile Include="Effects\SkyDome\HLSLStars.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Buffer = SharpDX.Direct3D11.Buffer;
@@ -25,32 +26,13 @@ namespace S33M3Resources.Effects.Sprites
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 16)]
-        public struct CBPerBatch_Struct
+        [StructLayout(LayoutKind.Explicit, Size = 64)]
+        public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
-            public Vector2 TextureSize;
-            [FieldOffset(8)]
-            public Vector2 ViewportSize;
+            public Matrix OrthoProjection;
         }
-        public CBuffer<CBPerBatch_Struct> CBPerDraw;
-
-        [StructLayout(LayoutKind.Explicit, Size = 112)]
-        public struct CBPerInstance_Struct
-        {
-            [FieldOffset(0)]
-            public Matrix Transform;
-            [FieldOffset(64)]
-            public Color4 Color;
-            [FieldOffset(80)]
-            public RectangleF SourceRect;
-            [FieldOffset(96)]
-            public uint TextureArrayIndex;
-            [FieldOffset(100)]
-            public float Depth;
-        }
-
-        public CBuffer<CBPerInstance_Struct> CBPerInstance;
+        public CBuffer<CBPerDraw_Struct> CBPerDraw;
         #endregion
 
         #region Resources
@@ -70,15 +52,12 @@ namespace S33M3Resources.Effects.Sprites
         };
         #endregion
 
-        public HLSLSprites(Device device, string shaderPath, VertexDeclaration VertexDeclaration, EntryPoints shadersEntryPoint = null)
-            : base(device, shaderPath, VertexDeclaration, null)
+        public HLSLSprites(Device device, string FileName)
+            : base(device, @"Effects\Sprites\" + FileName, VertexSprite2.VertexDeclaration, null)
         {
             //Create Constant Buffers interfaces ==================================================
-            CBPerDraw = ToDispose(new CBuffer<CBPerBatch_Struct>(device, "PerBatch"));
+            CBPerDraw = ToDispose(new CBuffer<CBPerDraw_Struct>(device, "PerDraw"));
             CBuffers.Add(CBPerDraw);
-
-            CBPerInstance = ToDispose(new CBuffer<CBPerInstance_Struct>(device, "PerInstance"));
-            CBuffers.Add(CBPerInstance);
 
             //Create the resource interfaces ==================================================
             SpriteTexture = new ShaderResource("SpriteTexture");
@@ -89,7 +68,7 @@ namespace S33M3Resources.Effects.Sprites
             ShaderSamplers.Add(SpriteSampler);
 
             //Load the shaders
-            base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);
+            base.LoadShaders(_shadersEntryPoint);
         }
 
     }

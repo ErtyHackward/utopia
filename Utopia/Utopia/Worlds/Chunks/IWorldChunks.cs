@@ -15,6 +15,8 @@ namespace Utopia.Worlds.Chunks
         VisualChunk[] Chunks { get; set; }
 
         VisualChunk[] SortedChunks { get; set; }
+
+        ShaderResourceView Terra_View { get; }
         
         /// <summary> the visible world border in world coordinate </summary>
         VisualWorldParameters VisualWorldParameters { get; set; }

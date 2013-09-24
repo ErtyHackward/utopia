@@ -1,126 +1,59 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer PerBatch 
+cbuffer PerDraw 
 {
-    float2 TextureSize;
-    float2 ViewportSize;
-};
-
-cbuffer PerInstance  
-{
-    matrix Transform;
-    float4 Color;
-    float4 SourceRect; //Top, Left, Width, Height
-	uint TexIndex;
-	float Depth;
+    matrix OrthoProjection;
 };
 
 //======================================================================================
 // Samplers
 //======================================================================================
-Texture2DArray SpriteTexture;
+Texture2D SpriteTexture;
 SamplerState SpriteSampler;
 
 //--------------------------------------------------------------------------------------
 //Vertex shader Input
 struct VSInput
 {
-    float2 Position : POSITION;
-    float2 TexCoord : TEXCOORD;
-};
-
-//Vertex shader Input - Instanced
-struct VSInputInstanced
-{
-    float2 Position : POSITION;
-    float2 TexCoord : TEXCOORD;
-    float4x4 Transform : TRANSFORM;
-    float4 Color : COLOR;
-    float4 SourceRect : SOURCERECT;	//Top, Left, Width, Height
-	uint TexIndex : TEXINDEX;
-	float Depth : DEPTH;
+    float3 Position : POSITION;
+    float3 TexCoord : TEXCOORD;
+	float4 Color    : COLOR;
 };
 
 //Pixel Shader input
-struct VSOutput
+struct PSInput
 {
     float4 Position : SV_Position;
     float3 TexCoord : TEXCOORD;
     float4 Color : COLOR;
 };
 
-//-------------------------------------------------------------------------------------
-// Functionality common to both vertex shaders
-//-------------------------------------------------------------------------------------
-VSOutput SpriteVSCommon(float2 position, 
-                        float2 texCoord, 
-                        float4x4 transform, 
-                        float4 color, 
-                        float4 sourceRect,
-						uint texIndex,
-						float depth)
-{
-    // Scale the quad so that it's texture-sized    
-    float4 positionSS = float4(position * sourceRect.zw, 0.0f, 1.0f);
-    
-    // Apply transforms in screen space
-    positionSS = mul(positionSS, transform); // == Simple translation
-
-	positionSS.z = depth;
-	positionSS.w = 1;
-
-    // Scale by the viewport size, flip Y, then rescale to device coordinates
-    float4 positionDS = positionSS;
-    positionDS.xy /= ViewportSize;
-    positionDS.xy = positionDS.xy * 2 - 1;
-    positionDS.y *= -1;
-
-    // Figure out the texture coordinates
-    float3 outTexCoord = float3(
-						texCoord.x, 
-						texCoord.y,
-						texIndex
-						);
-
-    outTexCoord.xy *= sourceRect.zw / TextureSize;
-    outTexCoord.xy += sourceRect.xy / TextureSize;
-
-    VSOutput output;
-    output.Position = positionDS;
-    output.TexCoord = outTexCoord;
-    output.Color = color;
-
-    return output;
-}
-
 //======================================================================================
 // Vertex Shader, non-instanced
 //======================================================================================
 //[VS ENTRY POINT]
-VSOutput SpriteVS(in VSInput input)
+PSInput SpriteVS(in VSInput input)
 {
-    return SpriteVSCommon(input.Position, input.TexCoord, Transform, Color, SourceRect, TexIndex, Depth);
-}
+	PSInput output;
 
-//======================================================================================
-// Vertex Shader, instanced
-//======================================================================================
-//[VS ENTRY POINT]
-VSOutput SpriteInstancedVS(in VSInputInstanced input)
-{
-    return SpriteVSCommon(input.Position, input.TexCoord, 
-                            transpose(input.Transform), input.Color, input.SourceRect,input.TexIndex,input.Depth); 
+	float4 Posi = float4(input.Position.xyz, 1);
+	
+	output.Position = mul(Posi, OrthoProjection);
+	output.TexCoord = input.TexCoord.xyz;
+	output.Color = input.Color;
+
+	return output;
 }
 
 //======================================================================================
 // Pixel Shader
 //======================================================================================
 //[PS ENTRY POINT]
-float4 SpritePS(in VSOutput input) : SV_Target
+float4 SpritePS(in PSInput input) : SV_Target
 {
     float4 texColor = SpriteTexture.Sample(SpriteSampler, input.TexCoord);    
-	clip(texColor.a < 0.1f ? -1:1 );
+	clip(texColor.a < 0.001f ? -1:1 );
     texColor = texColor * input.Color;    
     texColor.rgb *= texColor.a;
 	return texColor;

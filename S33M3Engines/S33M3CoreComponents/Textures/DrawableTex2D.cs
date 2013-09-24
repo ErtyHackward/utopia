@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3CoreComponents.Sprites2D;
+using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Direct3D11;
@@ -16,6 +18,7 @@ namespace S33M3DXEngine.Textures
         #region Private Variable
         private int _width;
         private int _height;
+        private Vector2 _size;
         private Format _colorMapFormat;
         private D3DEngine _d3dEngine;
         private RenderTargetView _colorMapRTV;
@@ -26,6 +29,9 @@ namespace S33M3DXEngine.Textures
         private Color4 _whiteColor = new Color4(0, 0, 0, 1);
         private Texture2DDescription _colorMaptexDesc;
         private Texture2DDescription _depthMapDesc;
+
+        private SpriteRenderer _depthBufferRender;
+        private SpriteTexture _depthStencilSprite;
         #endregion
 
         #region Public Properties
@@ -53,12 +59,16 @@ namespace S33M3DXEngine.Textures
         public DrawableTex2D(D3DEngine d3dEngine)
         {
             _d3dEngine = d3dEngine;
+            _depthBufferRender = ToDispose(new SpriteRenderer(d3dEngine, false));
         }
+
         #region Public Methods
         public void Init(int width, int height, bool isColorMap, Format colorFormat)
         {
             _width = width;
             _height = height;
+            _size = new Vector2I(_width, _height);
+
             _colorMapFormat = colorFormat;
             buildDepthMap();
             if (isColorMap) buildColorMap();
@@ -74,7 +84,15 @@ namespace S33M3DXEngine.Textures
         public void Begin()
         {
             //Set the Depth Buffer and Render texture target to the outputMerger
-            _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthMapDSV, _colorMapRTV);
+            if (_colorMapRTV != null)
+            {
+                _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthMapDSV, _colorMapRTV);
+            }
+            else
+            {
+                _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthMapDSV);
+            }
+
             //Set the viewport associated to the Texture renderer
             _d3dEngine.ImmediateContext.Rasterizer.SetViewports(_viewport);
 
@@ -86,6 +104,20 @@ namespace S33M3DXEngine.Textures
         {
             if (_colorMapSRV != null) _d3dEngine.ImmediateContext.GenerateMips(_colorMapSRV);
         }
+
+        private Vector2 _posi = new Vector2(0, 20);
+        private ByteColor _color = Color.Wheat;
+        public void DrawDepthBuffer(DeviceContext context, ref Vector2 size)
+        {
+            if (_depthStencilSprite == null)
+            {
+                _depthStencilSprite = new SpriteTexture(_width, _height, _depthMapSRV, new Vector2I(0, 0));
+            }
+            _depthBufferRender.Begin(false, context);
+            _depthBufferRender.Draw(_depthStencilSprite, ref _posi, ref size, ref _color);
+            _depthBufferRender.End(context);
+        }
+
         #endregion
 
         #region Private Methods

@@ -216,6 +216,7 @@
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\Shadows\WorldShadowMap.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
     <Compile Include="Worlds\Storage\Structs\ChunkDataStorage.cs" />
