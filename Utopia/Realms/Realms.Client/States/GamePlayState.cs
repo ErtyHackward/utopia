@@ -96,7 +96,7 @@ namespace Realms.Client.States
 
             var weather = _ioc.Get<IWeather>();
             var worldChunks = _ioc.Get<IWorldChunks>();
-            var worldShadowMap = _ioc.Get<WorldShadowMap>();
+            var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
@@ -149,7 +149,9 @@ namespace Realms.Client.States
             AddComponent(inventoryEvents);
             AddComponent(pickingManager);
             AddComponent(cracksRenderer);
-            AddComponent(worldShadowMap);
+
+            if (worldShadowMap != null)
+                AddComponent(worldShadowMap);
             
             inputsManager.MouseManager.StrategyMode = true;
 
