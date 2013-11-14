@@ -8,6 +8,7 @@ cbuffer PerDraw
 	matrix LightViewProjection;
 	float PopUpValue;
 	float3 SunVector;
+	bool UseShadowMap;
 };
 
 #include <SharedFrameCB.hlsl>
@@ -106,7 +107,8 @@ PS_IN VS(VS_IN input)
 	output.Position = mul(worldPosition, ViewProjection_focused);
 
 	// Generate projective tex-coords to project shadow map onto scene.
-	output.projTexC = mul(worldPosition, LightViewProjection);
+	if (UseShadowMap)
+		output.projTexC = mul(worldPosition, LightViewProjection);
 
 	int facetype = input.VertexInfo.y;
 	//Compute the texture mapping
@@ -144,6 +146,9 @@ PS_IN VS(VS_IN input)
 // ============================================================================
 float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 {
+	if (!UseShadowMap)
+		return 1.0f;
+	
 	// if the sun is under the horisont => dark
 	if (SunVector.y > 0)
 	{

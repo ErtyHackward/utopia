@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
@@ -15,11 +13,16 @@ namespace Utopia.Shared.Settings
     {
         public static IEnumerable<ParamRow> CreateComponentsRows(object settingParameter, SpriteFont customFont, SpriteTexture customInputBackgroundTexture, SpriteTexture customButton, SpriteTexture customButtonDown, SpriteTexture customButtonHover)
         {
-            foreach (PropertyInfo data in GetParameters(settingParameter))
+            foreach (var data in GetParameters(settingParameter))
             {
                 var value = data.GetValue(settingParameter, null);
 
-                ParameterAttribute attrib = (ParameterAttribute)data.GetCustomAttributes(typeof(ParameterAttribute), true)[0];
+                var attributes = data.GetCustomAttributes(typeof(ParameterAttribute), true);
+
+                if (attributes.Length == 0)
+                    continue;
+
+                var attrib = (ParameterAttribute)attributes[0];
 
                 switch (attrib.InputMethod)
                 {

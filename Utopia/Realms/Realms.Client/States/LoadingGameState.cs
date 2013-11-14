@@ -207,10 +207,10 @@ namespace Realms.Client.States
             IWorldProcessor processor = null;
             switch (clientSideworldParam.Configuration.WorldProcessor)
             {
-                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Flat:
+                case WorldConfiguration.WorldProcessors.Flat:
                     processor = new FlatWorldProcessor();
                     break;
-                case Utopia.Shared.Configuration.WorldConfiguration.WorldProcessors.Utopia:
+                case WorldConfiguration.WorldProcessors.Utopia:
                     processor = new UtopiaProcessor(clientSideworldParam, _ioc.Get<EntityFactory>("Client"), landscapeEntityManager);
                     break;
                 default:
@@ -264,7 +264,7 @@ namespace Realms.Client.States
             var lightingManager = _ioc.Get<ILightingManager>();
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();
-            var worldShadowMap = _ioc.Get<WorldShadowMap>();
+            var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
@@ -329,7 +329,9 @@ namespace Realms.Client.States
             AddComponent(crafting);
             AddComponent(inventoryEvents);
             AddComponent(cracksRenderer);
-            AddComponent(worldShadowMap);
+
+            if (ClientSettings.Current.Settings.GraphicalParameters.ShadowMap)
+                AddComponent(worldShadowMap);
 
             //Will start the initialization of the newly added Components on the states, and Activate them
             StatesManager.ActivateGameStateAsync(this);           

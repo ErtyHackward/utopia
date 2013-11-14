@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using SharpDX;
 using S33M3DXEngine.VertexFormat;
 using S33M3DXEngine.Effects.HLSLFramework;
@@ -23,7 +19,7 @@ namespace Utopia.Resources.Effects.Terran
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 144)]
+        [StructLayout(LayoutKind.Explicit, Size = 160)]
         public struct CBPerDraw_Struct
         {
             [FieldOffset(0)]
@@ -40,6 +36,12 @@ namespace Utopia.Resources.Effects.Terran
 
             [FieldOffset(132)]
             public Vector3 SunVector;
+
+            /// <summary>
+            /// Indicates if shadow map is enabled
+            /// </summary>
+            [FieldOffset(144)]
+            public bool UseShadowMap;
 
         }
         public CBuffer<CBPerDraw_Struct> CBPerDraw;

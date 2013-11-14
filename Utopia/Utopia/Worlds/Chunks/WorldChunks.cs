@@ -12,12 +12,10 @@ using Utopia.Worlds.Chunks.ChunkMesh;
 using Utopia.Worlds.Chunks.ChunkWrapper;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Network;
-using Utopia.Entities.Managers;
 using Utopia.Worlds.Storage;
 using Utopia.Worlds.SkyDomes;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Weather;
-using SharpDX;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
@@ -27,14 +25,12 @@ using S33M3CoreComponents.States;
 using S33M3CoreComponents.WorldFocus;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
-using S33M3CoreComponents.Physics.Verlet;
 using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
 using Ninject;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.LandscapeEntities;
 using S33M3CoreComponents.Inputs;
 using Utopia.Worlds.Shadows;
 
@@ -273,8 +269,6 @@ namespace Utopia.Worlds.Chunks
                 }
             }
 
-            Chunks = null;
-            SortedChunks = null;
             _skyBackBuffer.OnStaggingBackBufferChanged -= _skyBackBuffer_OnStaggingBackBufferChanged;
             DisposeDrawComponents();
 
@@ -292,6 +286,9 @@ namespace Utopia.Worlds.Chunks
                     chunk.Dispose();
                 }
             }
+
+            Chunks = null;
+            SortedChunks = null;
 
             this.IsInitialLoadCompleted = false;
             this.IsInitialized = false;

@@ -145,16 +145,17 @@ namespace Utopia.Shared.Settings
         public string LandscapeFog { get; set; }
         [ParameterAttribute("Textures pack", "Textures used in-game", null, ParamInputMethod.ButtonList, true, "CLIST_TexturePacks")]
         public string TexturePack { get; set; }
-        [ParameterAttribute("VSync enabled", "Vertical refresh synchronization", null, ParamInputMethod.CheckBox, false)]
+        [ParameterAttribute("Vertical synchronization", "Vertical refresh synchronization", null, ParamInputMethod.CheckBox, false)]
         public bool VSync { get; set; }
         [ParameterAttribute("Multisampling", "MSAA", null, ParamInputMethod.ButtonList, true, "CLIST_MSAA")]
         public SampleDescriptionSetting MSAA { get; set; }
-
-        public Point WindowPos { get; set; }
-
-        public Size WindowSize { get; set; }
-
+        [ParameterAttribute("Full-screen", "Show game in full screen", null, ParamInputMethod.CheckBox, false)]
         public bool Fullscreen { get; set; }
+        [ParameterAttribute("Shadow map", "Direct sun shadows", null, ParamInputMethod.CheckBox, true)]
+        public bool ShadowMap { get; set; }
+        
+        public Point WindowPos { get; set; }
+        public Size WindowSize { get; set; }
     }
 
     /// <summary>

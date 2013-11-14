@@ -192,9 +192,12 @@ namespace Utopia.Worlds.Chunks
 
             _terraEffect.Begin(context);
 
-            //Depth Shadow Mapping !
-            _terraEffect.ShadowMap.Value = ShadowMap.ShadowMap.DepthMap;
-            _terraEffect.ShadowMap.IsDirty = true;
+            if (ShadowMap.ShadowMap != null)
+            {
+                //Depth Shadow Mapping !
+                _terraEffect.ShadowMap.Value = ShadowMap.ShadowMap.DepthMap;
+                _terraEffect.ShadowMap.IsDirty = true;
+            }
 
             foreach (var chunk in ChunksToDraw())
             {
@@ -203,6 +206,7 @@ namespace Utopia.Worlds.Chunks
                 _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
                 _terraEffect.CBPerDraw.Values.LightViewProjection = Matrix.Transpose(ShadowMap.LightViewProjection);
                 _terraEffect.CBPerDraw.Values.SunVector = ShadowMap.BackUpLightDirection;
+                _terraEffect.CBPerDraw.Values.UseShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap;
                 _terraEffect.CBPerDraw.IsDirty = true;
                 _terraEffect.Apply(context);
 
