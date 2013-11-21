@@ -281,7 +281,7 @@ namespace Utopia.Shared.Chunks
 
             int y;
 
-            for (y = AbstractChunk.ChunkSize.Y; y >= 0; y--)
+            for (y = AbstractChunk.ChunkSize.Y-1; y >= 0; y--)
             {
                 if (chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != WorldConfiguration.CubeId.Air)
                     break;
