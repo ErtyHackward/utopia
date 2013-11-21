@@ -172,7 +172,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash = impactedChunk.GetMd5Hash();
             byte[] chunkDataCompressed = impactedChunk.Compress();
-            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.ChunkPosition.X, ChunkZ = impactedChunk.ChunkPosition.Y, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
+            _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkId = impactedChunk.ChunkID, ChunkX = impactedChunk.Position.X, ChunkZ = impactedChunk.Position.Z, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
 
         }
         #endregion
@@ -398,7 +398,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 #endif
         }
 
-        public override VisualChunk GetChunk(Vector2I position)
+        public override VisualChunk GetChunk(Vector3I position)
         {
             return _worldChunks.GetChunkFromChunkCoord(position);
         }

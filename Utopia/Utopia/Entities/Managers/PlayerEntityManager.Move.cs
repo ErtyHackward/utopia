@@ -19,7 +19,7 @@ namespace Utopia.Entities.Managers
     public partial class PlayerEntityManager
     {
         public double YForceApplying { get; set; }
-        public Vector2I ChunkPosition { get; set; }
+        public Vector3I ChunkPosition { get; set; }
 
         #region Private Methods
         private void UpdateEntityMovementAndRotation(ref GameTime timeSpent)
@@ -81,7 +81,8 @@ namespace Utopia.Entities.Managers
             Player.Position = _worldPosition; //Send the newly compute location to the playercharacter dynamicEntity
             
             //Compute player chunk Position
-            ChunkPosition = new Vector2I(MathHelper.Floor(Player.Position.X / AbstractChunk.ChunkSize.X),
+            ChunkPosition = new Vector3I(MathHelper.Floor(Player.Position.X / AbstractChunk.ChunkSize.X),
+                                         0,
                                          MathHelper.Floor(Player.Position.Z / AbstractChunk.ChunkSize.Z));
 
             if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.FirstPerson)

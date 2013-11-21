@@ -188,7 +188,7 @@ namespace Realms.Client
 
             //Network Related =============================================
             _iocContainer.Bind<IChunkEntityImpactManager>().To<ChunkEntityImpactManager>().InScope(x => GameScope.CurrentGameScope); //Impact on player action (From server events)
-            _iocContainer.Bind<ILandscapeManager2D>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<ILandscapeManager>().ToMethod(x => x.Kernel.Get<IChunkEntityImpactManager>()).InScope(x => GameScope.CurrentGameScope);
 
             _iocContainer.Bind<EntityFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("Client");
 
@@ -219,7 +219,7 @@ namespace Realms.Client
             _iocContainer.Bind<ICubeMeshFactory>().To<SolidCubeMeshFactory>().InScope(x => GameScope.CurrentGameScope).Named("SolidCubeMeshFactory");
             _iocContainer.Bind<ICubeMeshFactory>().To<LiquidCubeMeshFactory>().InScope(x => GameScope.CurrentGameScope).Named("LiquidCubeMeshFactory");
             _iocContainer.Bind<SingleArrayChunkContainer>().ToSelf().InScope(x => GameScope.CurrentGameScope);         //The client  "Big" Array
-            _iocContainer.Bind<ILandscapeManager>().To<LandscapeManager>().InScope(x => GameScope.CurrentGameScope);   //Interface betwee the big array and landscape processors
+            _iocContainer.Bind<ILandscapeManager2D>().To<LandscapeManager>().InScope(x => GameScope.CurrentGameScope);   //Interface betwee the big array and landscape processors
             _iocContainer.Bind<ILightingManager>().To<LightingManager>().InScope(x => GameScope.CurrentGameScope);     //Landscape lightings
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
             _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)

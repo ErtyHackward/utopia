@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProtoBuf;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Structs
@@ -7,6 +8,7 @@ namespace Utopia.Shared.Structs
     /// <summary>
     /// Represents two component range
     /// </summary>
+    [ProtoContract]
     public struct Range2I : IEnumerable<Vector2I>
     {
         private Vector2I _position;
@@ -26,6 +28,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets or sets top left position of the range
         /// </summary>
+        [ProtoMember(1)]
         public Vector2I Position
         {
             get { return _position; }
@@ -35,6 +38,7 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets or sets size of this range
         /// </summary>
+        [ProtoMember(2)]
         public Vector2I Size
         {
             get { return _size; }

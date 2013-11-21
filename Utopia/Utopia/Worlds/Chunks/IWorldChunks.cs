@@ -33,7 +33,7 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         bool DrawStaticInstanced { get; set; }
 
-        ILandscapeManager LandscapeManager { get; }
+        ILandscapeManager2D LandscapeManager { get; }
 
         /// <summary>
         /// Gets current leveling slice value
@@ -62,7 +62,7 @@ namespace Utopia.Worlds.Chunks
         /// Get a world's chunk from a chunk position
         /// </summary>
         /// <param name="chunkPos">chunk space coordinate</param>
-        VisualChunk GetChunkFromChunkCoord(Vector2I chunkPos);
+        VisualChunk GetChunkFromChunkCoord(Vector3I chunkPos);
 
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate

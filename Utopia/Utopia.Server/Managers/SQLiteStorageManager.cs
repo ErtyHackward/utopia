@@ -32,7 +32,7 @@ namespace Utopia.Server.Managers
         {
             var dbCreate = new StringBuilder();
 
-            dbCreate.Append(@"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL,[data] blob NOT NULL, PRIMARY KEY(X,Y)); ");
+            dbCreate.Append(@"CREATE TABLE [chunks] ([X] integer NOT NULL, [Y] integer NOT NULL, [Z] integer NOT NULL, [data] blob NOT NULL, PRIMARY KEY(X,Y,Z)); ");
             dbCreate.Append(@"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);");
             dbCreate.Append(@"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
             dbCreate.Append(@"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
@@ -79,9 +79,9 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="pos">Chunk position</param>
         /// <param name="data">Chunk data</param>
-        public void SaveChunk(Vector2I pos, byte[] data)
+        public void SaveChunk(Vector3I pos, byte[] data)
         {
-            InsertBlob(string.Format("INSERT OR REPLACE INTO chunks (X,Y,data) VALUES ({0},{1},@blob)",pos.X,pos.Y), data);
+            InsertBlob(string.Format("INSERT OR REPLACE INTO chunks (X,Y,Z,data) VALUES ({0},{1},{2},@blob)", pos.X, pos.Y, pos.Z), data);
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="pos">Position of the block</param>
         /// <returns></returns>
-        public byte[] LoadChunkData(Vector2I pos)
+        public byte[] LoadChunkData(Vector3I pos)
         {
-            using (var reader = Query(string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1}", pos.X, pos.Y)))
+            using (var reader = Query(string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1} AND Z={2}", pos.X, pos.Y, pos.Z)))
             {
                 reader.Read();
                 return reader.IsDBNull(0) ? null : (byte[])reader.GetValue(0);
@@ -104,7 +104,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="positions">Array of chunks positions</param>
         /// <param name="blocksData">corresponding array of chunks data</param>
-        public void SaveChunksData(Vector2I[] positions, byte[][] blocksData)
+        public void SaveChunksData(Vector3I[] positions, byte[][] blocksData)
         {
             using (var trans = Connection.BeginTransaction())
             {

@@ -27,6 +27,6 @@ namespace Utopia.Shared.Interfaces
         /// <summary>
         /// Starts generation process.
         /// </summary>
-        void Generate(Range2I generationRange, GeneratedChunk[,] chunks);
+        void Generate(Range3I generationRange, GeneratedChunk[,,] chunks);
     }
 }

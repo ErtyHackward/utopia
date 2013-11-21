@@ -43,7 +43,7 @@ namespace Realms.Server
                 settingsManager.Settings.DatabasePath = Path.Combine(XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
 
             _iocContainer.Bind<ISoundEngine>().ToConstant<ISoundEngine>(null);
-            _iocContainer.Bind<ILandscapeManager2D>().ToConstant<ILandscapeManager2D>(null);
+            _iocContainer.Bind<ILandscapeManager>().ToConstant<ILandscapeManager>(null);
 
             var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null, param);
 
@@ -163,7 +163,7 @@ namespace Realms.Server
                 wp
                 );
 
-            _iocContainer.Rebind<ILandscapeManager2D>().ToConstant(_server.LandscapeManager);
+            _iocContainer.Rebind<ILandscapeManager>().ToConstant(_server.LandscapeManager);
 
             serverFactory.LandscapeManager = _server.LandscapeManager;
             serverFactory.DynamicEntityManager = _server.AreaManager;

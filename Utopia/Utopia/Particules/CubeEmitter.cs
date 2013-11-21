@@ -49,7 +49,7 @@ namespace Utopia.Particules
         private Dictionary<int, Color[]> _cubeColorSampled;
         private VisualWorldParameters _visualWorldParameters;
         private IWorldChunks _worldChunk;
-        private readonly ILandscapeManager2D _landscapeManager;
+        private readonly ILandscapeManager _landscapeManager;
         private BoundingBox _cubeBB;
 
         private double _maxRenderingDistanceSquared;
@@ -88,7 +88,7 @@ namespace Utopia.Particules
                            float size,
                            VisualWorldParameters visualWorldParameters,
                            IWorldChunks worldChunk,
-                           ILandscapeManager2D landscapeManager,
+                           ILandscapeManager landscapeManager,
                            double maxRenderingDistance)
         {
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");

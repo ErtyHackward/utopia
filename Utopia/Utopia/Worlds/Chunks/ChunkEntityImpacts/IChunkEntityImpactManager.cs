@@ -1,6 +1,7 @@
 ﻿using System;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Chunks;
+using Utopia.Worlds.Chunks.ChunkLandscape;
 using Utopia.Worlds.Chunks.ChunkLighting;
 using Utopia.Worlds.Storage;
 using Utopia.Network;
@@ -13,7 +14,7 @@ using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
-    public interface IChunkEntityImpactManager : ILandscapeManager2D, IDisposable
+    public interface IChunkEntityImpactManager : ILandscapeManager, IDisposable
     {
         /// <summary>
         /// Occurs when a single block at the landscape is changed

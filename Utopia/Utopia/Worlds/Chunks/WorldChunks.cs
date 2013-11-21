@@ -76,7 +76,7 @@ namespace Utopia.Worlds.Chunks
         private WorldFocusManager _worldFocusManager;
         private IChunksWrapper _chunkWrapper;
         private ILightingManager _lightingManager;
-        private ILandscapeManager _landscapeManager;
+        private ILandscapeManager2D _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private ServerComponent _server;
         private IPlayerManager _playerManager;
@@ -114,7 +114,7 @@ namespace Utopia.Worlds.Chunks
         /// <summary> World parameters </summary>
         public VisualWorldParameters VisualWorldParameters { get; set; }
 
-        public ILandscapeManager LandscapeManager
+        public ILandscapeManager2D LandscapeManager
         {
             get { return _landscapeManager; }
         }
@@ -168,7 +168,7 @@ namespace Utopia.Worlds.Chunks
                            GameStatesManager gameStates,
                            IClock gameClock,
                            SingleArrayChunkContainer cubesHolder,
-                           ILandscapeManager landscapeManager,
+                           ILandscapeManager2D landscapeManager,
                            IChunkMeshManager chunkMeshManager,
                            IChunksWrapper chunkWrapper,
                            ILightingManager lightingManager,
@@ -343,9 +343,9 @@ namespace Utopia.Worlds.Chunks
         /// Get a world's chunk from a chunk position
         /// </summary>
         /// <param name="chunkPos">chunk space coordinate</param>
-        public VisualChunk GetChunkFromChunkCoord(Vector2I chunkPos)
+        public VisualChunk GetChunkFromChunkCoord(Vector3I chunkPos)
         {
-            return GetChunkFromChunkCoord(chunkPos.X, chunkPos.Y);
+            return GetChunkFromChunkCoord(chunkPos.X, chunkPos.Z);
         }
 
         /// <summary>
@@ -492,7 +492,7 @@ namespace Utopia.Worlds.Chunks
             VisualChunk chunk;
 
             //Chunk Server request variables
-            List<Vector2I> chunkPosition = new List<Vector2I>();
+            List<Vector3I> chunkPosition = new List<Vector3I>();
             List<Md5Hash> chunkHash = new List<Md5Hash>();
             Md5Hash chunkMD5;
 
@@ -525,7 +525,7 @@ namespace Utopia.Worlds.Chunks
                     //Is this chunk inside the Client storae manager ?
                     if (_chunkstorage.ChunkHashes.TryGetValue(chunk.ChunkID, out chunkMD5))
                     {
-                        chunkPosition.Add(new Vector2I((VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X)) / AbstractChunk.ChunkSize.X,
+                        chunkPosition.Add(new Vector3I((VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X)) / AbstractChunk.ChunkSize.X, 0,
                                                        (VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)) / AbstractChunk.ChunkSize.Z));
                         chunkHash.Add(chunkMD5);
                     }
@@ -533,13 +533,15 @@ namespace Utopia.Worlds.Chunks
             }
 
 
-            Range2I chunkRange = new Range2I(
-                    new Vector2I(
-                        VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
+            var chunkRange = new Range3I(
+                    new Vector3I(
+                        VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X, 
+                        0,
                         VisualWorldParameters.WorldChunkStartUpPosition.Y / AbstractChunk.ChunkSize.Z
                         ),
-                    new Vector2I(
+                    new Vector3I(
                         VisualWorldParameters.VisibleChunkInWorld.X,
+                        1,
                         VisualWorldParameters.VisibleChunkInWorld.Y
                         )
                     );

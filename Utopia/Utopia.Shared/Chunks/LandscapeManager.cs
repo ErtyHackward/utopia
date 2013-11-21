@@ -12,31 +12,32 @@ using S33M3CoreComponents.Maths;
 namespace Utopia.Shared.Chunks
 {
     /// <summary>
-    /// Base class for chunk landscape management with 2d layout
+    /// Base class for chunk landscape management
     /// </summary>
     /// <typeparam name="TChunk"></typeparam>
-    public abstract class LandscapeManager<TChunk> : ILandscapeManager2D 
-        where TChunk : AbstractChunk, IChunkLayout2D
+    public abstract class LandscapeManager<TChunk> : ILandscapeManager 
+        where TChunk : AbstractChunk
     {
         protected WorldParameters _wp;
 
         /// <summary>
-        /// Gets chunk from chunk global position
+        /// Gets chunk from a global position
         /// </summary>
         /// <param name="globalPosition"></param>
         /// <returns></returns>
-        public TChunk GetChunk(Vector3D globalPosition)
+        public TChunk GetChunkFromBlock(Vector3D globalPosition)
         {
             return
-                GetChunk(new Vector2I(MathHelper.Floor(globalPosition.X / AbstractChunk.ChunkSize.X),
+                GetChunk(new Vector3I(MathHelper.Floor(globalPosition.X / AbstractChunk.ChunkSize.X),
+                                      MathHelper.Floor(globalPosition.Y / AbstractChunk.ChunkSize.Y),
                                       MathHelper.Floor(globalPosition.Z / AbstractChunk.ChunkSize.Z)));
         }
-
-
-        public TChunk GetChunk(Vector3I blockPosition)
+        
+        public TChunk GetChunkFromBlock(Vector3I blockPosition)
         {
             return
-                GetChunk(new Vector2I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
+                GetChunk(new Vector3I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
+                                      MathHelper.Floor((double)blockPosition.Y / AbstractChunk.ChunkSize.Y),
                                       MathHelper.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
         }
 
@@ -50,16 +51,16 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="position">chunk position</param>
         /// <returns></returns>
-        public abstract TChunk GetChunk(Vector2I position);
+        public abstract TChunk GetChunk(Vector3I position);
 
-        IChunkLayout2D ILandscapeManager2D.GetChunk(Vector2I position)
+        IAbstractChunk ILandscapeManager.GetChunk(Vector3I position)
         {
             return GetChunk(position);
         }
 
-        IChunkLayout2D ILandscapeManager2D.GetChunk(Vector3I blockPosition)
+        IAbstractChunk ILandscapeManager.GetChunkFromBlock(Vector3I blockPosition)
         {
-            return GetChunk(blockPosition);
+            return GetChunkFromBlock(blockPosition);
         }
 
         /// <summary>
@@ -268,21 +269,22 @@ namespace Utopia.Shared.Chunks
 
         public Vector3D GetHighestPoint(Vector3D vector2)
         {
-            var chunk = GetChunk(vector2);
+            var chunk = GetChunkFromBlock(vector2);
 
             var cx = (int)vector2.X % AbstractChunk.ChunkSize.X;
+            var cy = (int)vector2.Y % AbstractChunk.ChunkSize.Y;
             var cz = (int)vector2.Z % AbstractChunk.ChunkSize.Z;
 
             if (cx < 0) cx = AbstractChunk.ChunkSize.X + cx;
+            if (cy < 0) cy = AbstractChunk.ChunkSize.Y + cy;
             if (cz < 0) cz = AbstractChunk.ChunkSize.Z + cz;
 
             int y;
 
-            for (y = 127; y >= 0; y--)
+            for (y = AbstractChunk.ChunkSize.Y-1; y >= 0; y--)
             {
                 if (chunk.BlockData.GetBlock(new Vector3I(cx, y, cz)) != WorldConfiguration.CubeId.Air)
                     break;
-
             }
 
             return new Vector3D(vector2.X, y + 1, vector2.Z);

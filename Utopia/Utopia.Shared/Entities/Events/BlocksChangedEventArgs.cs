@@ -24,7 +24,7 @@ namespace Utopia.Shared.Entities.Events
         /// <summary>
         /// Chunk position
         /// </summary>
-        public Vector2I ChunkPosition { get; set; }
+        public Vector3I ChunkPosition { get; set; }
 
         /// <summary>
         /// Associated tags
