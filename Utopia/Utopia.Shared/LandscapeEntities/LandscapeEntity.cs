@@ -14,10 +14,13 @@ namespace Utopia.Shared.LandscapeEntities
     {
         [ProtoMember(1)]
         public int LandscapeEntityId { get; set; }
+
         [ProtoMember(2)]
-        public Vector2I ChunkLocation { get; set; }
+        public Vector3I ChunkLocation { get; set; }
+
         [ProtoMember(3, OverwriteList = true)]
         public List<BlockWithPosition> Blocks { get; set; }
+
         //Static Entities
         [ProtoMember(4)]
         public Vector3I RootLocation { get; set; }

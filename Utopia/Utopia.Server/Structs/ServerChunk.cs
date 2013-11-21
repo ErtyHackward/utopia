@@ -8,18 +8,13 @@ namespace Utopia.Server.Structs
     /// <summary>
     /// Represents a chunk to use in server
     /// </summary>
-    public class ServerChunk : CompressibleChunk, IChunkLayout2D
+    public class ServerChunk : CompressibleChunk
     {
         /// <summary>
         /// Indicates that we no need to send bytes to client, it can obtain the chunk locally using its generator
         /// </summary>
         public bool PureGenerated { get; set; }
-
-        /// <summary>
-        /// Gets or sets current chunk position
-        /// </summary>
-        public Vector2I Position { get; set; }
-
+        
         /// <summary>
         /// DateTime stamp of the chunk. Determines whether the chunk can be unloaded from memory
         /// </summary>

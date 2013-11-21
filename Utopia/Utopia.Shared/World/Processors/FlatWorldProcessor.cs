@@ -40,13 +40,13 @@ namespace Utopia.Shared.World.Processors
         /// <summary>
         /// Starts generation process.
         /// </summary>
-        public void Generate(Range2I generationRange, GeneratedChunk[,] chunks)
+        public void Generate(Range3I generationRange, GeneratedChunk[,,] chunks)
         {
             _totalChunks = generationRange.Count;
             _chunksDone = 0;
             generationRange.Foreach(pos =>
             {
-                var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
+                var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y, pos.Z - generationRange.Position.Z];
 
                 var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
 

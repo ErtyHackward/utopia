@@ -13,13 +13,13 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <param name="pos">Position of the block</param>
         /// <returns></returns>
-        byte[] LoadChunkData(Vector2I pos);
+        byte[] LoadChunkData(Vector3I pos);
 
         /// <summary>
         /// Saves multiple chunks in one transaction
         /// </summary>
         /// <param name="positions">Array of chunks positions</param>
         /// <param name="chunksData">corresponding array of chunks data</param>
-        void SaveChunksData(Vector2I[] positions, byte[][] chunksData);
+        void SaveChunksData(Vector3I[] positions, byte[][] chunksData);
     }
 }

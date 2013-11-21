@@ -23,7 +23,7 @@ namespace Utopia.Shared.Net.Messages
         /// Gets or sets chunks range
         /// </summary>
         [ProtoMember(1)]
-        public Range2I Range { get; set; }
+        public Range3I Range { get; set; }
 
         /// <summary>
         /// Gets or sets request mode flag
@@ -41,7 +41,7 @@ namespace Utopia.Shared.Net.Messages
         /// Gets or sets corresponding positions array of size HashesCount
         /// </summary>
         [ProtoMember(4)]
-        public Vector2I[] Positions { get; set; }
+        public Vector3I[] Positions { get; set; }
 
         /// <summary>
         /// Gets or sets corresponding md5 hashes array of size HashesCount, each hash must be 16 bytes length

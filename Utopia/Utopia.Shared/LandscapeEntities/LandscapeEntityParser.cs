@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.LandscapeEntities
@@ -13,42 +11,35 @@ namespace Utopia.Shared.LandscapeEntities
     {
         public static List<LandscapeEntity> GlobalMesh2ChunkMesh(IEnumerable<BlockWithPosition> globalMesh, Vector3I worldRootLocation, int landscapeEntityId)
         {
-            Dictionary<Vector2I, LandscapeEntity> chunks = new Dictionary<Vector2I, LandscapeEntity>();
+            var chunks = new Dictionary<Vector3I, LandscapeEntity>();
 
             foreach (var data in globalMesh)
             {
                 BlockWithPosition localData = data;
                 //Ge chunk position
-                Vector2I ChunkLocation;
-                GetChunk(localData.WorldPosition, out ChunkLocation);
-
+                var chunkLocation = BlockHelper.BlockToChunkPosition(localData.WorldPosition);
+                
                 LandscapeEntity chunkMesh;
-                if (chunks.TryGetValue(ChunkLocation, out chunkMesh) == false)
+                if (chunks.TryGetValue(chunkLocation, out chunkMesh) == false)
                 {
                     chunkMesh = new LandscapeEntity();
                     chunkMesh.LandscapeEntityId = landscapeEntityId;
-                    chunkMesh.ChunkLocation = ChunkLocation;
+                    chunkMesh.ChunkLocation = chunkLocation;
                     chunkMesh.Blocks = new List<BlockWithPosition>();
-                    chunkMesh.RootLocation = new Vector3I(worldRootLocation.X - (ChunkLocation.X * AbstractChunk.ChunkSize.X),
+                    chunkMesh.RootLocation = new Vector3I(worldRootLocation.X - (chunkLocation.X * AbstractChunk.ChunkSize.X),
                                                           worldRootLocation.Y,
-                                                          worldRootLocation.Z - (ChunkLocation.Y * AbstractChunk.ChunkSize.Z)
+                                                          worldRootLocation.Z - (chunkLocation.Y * AbstractChunk.ChunkSize.Z)
                                                           );
-                    chunks.Add(ChunkLocation, chunkMesh);
+                    chunks.Add(chunkLocation, chunkMesh);
                 }
                 //Tranform World position to chunk position
-                localData.ChunkPosition.X = localData.WorldPosition.X - (ChunkLocation.X * AbstractChunk.ChunkSize.X);
+                localData.ChunkPosition.X = localData.WorldPosition.X - (chunkLocation.X * AbstractChunk.ChunkSize.X);
                 localData.ChunkPosition.Y = localData.WorldPosition.Y;
-                localData.ChunkPosition.Z = localData.WorldPosition.Z - (ChunkLocation.Y * AbstractChunk.ChunkSize.Z);
+                localData.ChunkPosition.Z = localData.WorldPosition.Z - (chunkLocation.Y * AbstractChunk.ChunkSize.Z);
                 chunkMesh.Blocks.Add(localData);
             }
 
             return chunks.Values.ToList();
-        }
-
-        private static void GetChunk(Vector3I blockPosition, out Vector2I chunkPosition)
-        {
-            chunkPosition = new Vector2I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
-                                         MathHelper.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z));
         }
     }
 }

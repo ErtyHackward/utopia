@@ -5,23 +5,23 @@ using SharpDX;
 namespace Utopia.Shared.Interfaces
 {
     /// <summary>
-    /// Represents landscape manager that have 2d chunk layout
+    /// Contains all chunks
     /// </summary>
-    public interface ILandscapeManager2D
+    public interface ILandscapeManager
     {
         /// <summary>
         /// Gets the chunk at position specified
         /// </summary>
         /// <param name="chunkPosition">chunk position in World coordinate</param>
         /// <returns></returns>
-        IChunkLayout2D GetChunk(Vector2I chunkPosition);
+        IAbstractChunk GetChunk(Vector3I chunkPosition);
 
         /// <summary>
         /// Gets the chunk at block position specified
         /// </summary>
         /// <param name="blockPosition">block position in World coordinate</param>
         /// <returns></returns>
-        IChunkLayout2D GetChunk(Vector3I blockPosition);
+        IAbstractChunk GetChunkFromBlock(Vector3I blockPosition);
 
         /// <summary>
         /// Returns block cursor

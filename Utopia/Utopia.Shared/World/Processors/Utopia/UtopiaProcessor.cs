@@ -74,27 +74,27 @@ namespace Utopia.Shared.World.Processors.Utopia
         }
         #region Public Methods
 
-        public void Generate(Structs.Range2I generationRange, Chunks.GeneratedChunk[,] chunks)
+        public void Generate(Range3I generationRange, GeneratedChunk[,,] chunks)
         {
             generationRange.Foreach(pos =>
             {
                 //Get the chunk
-                GeneratedChunk chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y];
-                Vector3D chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+                var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y, pos.Z - generationRange.Position.Z];
+                var chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
 
                 //Create the Rnd component to be used by the landscape creator
-                FastRandom chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
+                var chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
 
                 //Get the landscape Items for this chunk from the buffer
-                LandscapeChunkBuffer landscapeBuffer = _landscapeBufferManager.Get(chunk.Position);
+                var landscapeBuffer = _landscapeBufferManager.Get(chunk.Position);
 
                 //"Localize" the array from Buffer to Client/Server. => In order to avoid having the same collection being shared between server/client
-                ChunkColumnInfo[] columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
-                byte[] chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
+                var columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
+                var chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
                 Array.Copy(landscapeBuffer.chunkBytesBuffer, chunkBytes, landscapeBuffer.chunkBytesBuffer.Length);
                 Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
-                ChunkMetaData metaData = CreateChunkMetaData(columnsInfo);
+                var metaData = CreateChunkMetaData(columnsInfo);
                 PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
 
                 RefreshChunkMetaData(metaData, columnsInfo);
@@ -109,19 +109,18 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// Specialy created to render quickl the landscape in order to be used by LandscapeItem Manager
         /// </summary>
         /// <param name="chunkBytes"></param>
-        /// <param name="ChunkPosition"></param>
-        /// <param name="chunkWorldRange"></param>
-        public void GenerateMacroLandscape(Vector2I ChunkPosition, out Biome biome, out byte[] chunkBytes, out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
+        /// <param name="chunkPosition"></param>
+        public void GenerateMacroLandscape(Vector3I chunkPosition, out Biome biome, out byte[] chunkBytes, out FastRandom chunkRnd, out ChunkColumnInfo[] columnsInfo)
         {
             Range3I chunkWorldRange = new Range3I()
             {
-                Position = new Vector3I(ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, ChunkPosition.Y * AbstractChunk.ChunkSize.Z),
+                Position = new Vector3I(chunkPosition.X * AbstractChunk.ChunkSize.X, 0, chunkPosition.Y * AbstractChunk.ChunkSize.Z),
                 Size = AbstractChunk.ChunkSize
             };
 
             chunkBytes = new byte[AbstractChunk.ChunkBlocksByteLength];
             columnsInfo = new ChunkColumnInfo[AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Z];
-            chunkRnd = new FastRandom(_worldParameters.Seed + ChunkPosition.GetHashCode());
+            chunkRnd = new FastRandom(_worldParameters.Seed + chunkPosition.GetHashCode());
 
             double[,] biomeMap;
             GenerateLandscape(chunkBytes, ref chunkWorldRange, out biomeMap);

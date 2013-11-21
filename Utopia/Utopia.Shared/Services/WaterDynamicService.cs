@@ -24,7 +24,7 @@ namespace Utopia.Shared.Services
     {
         private readonly LinkedList<Vector3I> _updateList = new LinkedList<Vector3I>();
         private readonly HashSet<Vector3I> _updateSet = new HashSet<Vector3I>();
-        private readonly Dictionary<Vector2I, InsideDataProvider> _affectedChunks = new Dictionary<Vector2I, InsideDataProvider>();
+        private readonly Dictionary<Vector3I, InsideDataProvider> _affectedChunks = new Dictionary<Vector3I, InsideDataProvider>();
         
         private bool _updating;
         private IServer _server;

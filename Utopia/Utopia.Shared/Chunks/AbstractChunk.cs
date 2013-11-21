@@ -36,9 +36,15 @@ namespace Utopia.Shared.Chunks
         private EntityCollection _entities;
 
         /// <summary>
-        /// Gets a chunk blocks data provider
+        /// Gets or sets current chunk position
         /// </summary>
         [ProtoMember(1)]
+        public Vector3I Position { get; set; }
+
+        /// <summary>
+        /// Gets a chunk blocks data provider
+        /// </summary>
+        [ProtoMember(2)]
         public ChunkDataProvider BlockData
         {
             get { return _blockDataProvider; }
@@ -63,7 +69,7 @@ namespace Utopia.Shared.Chunks
         /// <summary>
         /// Gets entity collection of the chunk
         /// </summary>
-        [ProtoMember(2)]
+        [ProtoMember(3)]
         public EntityCollection Entities
         {
             get { return _entities; }
@@ -86,6 +92,7 @@ namespace Utopia.Shared.Chunks
                 }
             }
         }
+        
 
         #endregion
         
