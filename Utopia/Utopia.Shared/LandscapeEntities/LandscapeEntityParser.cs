@@ -16,7 +16,7 @@ namespace Utopia.Shared.LandscapeEntities
             foreach (var data in globalMesh)
             {
                 BlockWithPosition localData = data;
-                //Ge chunk position
+                //Get chunk position
                 var chunkLocation = BlockHelper.BlockToChunkPosition(localData.WorldPosition);
                 
                 LandscapeEntity chunkMesh;
@@ -28,14 +28,14 @@ namespace Utopia.Shared.LandscapeEntities
                     chunkMesh.Blocks = new List<BlockWithPosition>();
                     chunkMesh.RootLocation = new Vector3I(worldRootLocation.X - (chunkLocation.X * AbstractChunk.ChunkSize.X),
                                                           worldRootLocation.Y,
-                                                          worldRootLocation.Z - (chunkLocation.Y * AbstractChunk.ChunkSize.Z)
+                                                          worldRootLocation.Z - (chunkLocation.Z * AbstractChunk.ChunkSize.Z)
                                                           );
                     chunks.Add(chunkLocation, chunkMesh);
                 }
                 //Tranform World position to chunk position
                 localData.ChunkPosition.X = localData.WorldPosition.X - (chunkLocation.X * AbstractChunk.ChunkSize.X);
                 localData.ChunkPosition.Y = localData.WorldPosition.Y;
-                localData.ChunkPosition.Z = localData.WorldPosition.Z - (chunkLocation.Y * AbstractChunk.ChunkSize.Z);
+                localData.ChunkPosition.Z = localData.WorldPosition.Z - (chunkLocation.Z * AbstractChunk.ChunkSize.Z);
                 chunkMesh.Blocks.Add(localData);
             }
 

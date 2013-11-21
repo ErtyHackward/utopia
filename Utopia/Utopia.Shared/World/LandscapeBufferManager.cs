@@ -28,7 +28,7 @@ namespace Utopia.Shared.World
         #region Private Variables
         private object _syncLock = new object();
         private Dictionary<Vector3I, LandscapeChunkBuffer> _buffer;
-        private Vector3I _chunkRangeLookUp = new Vector3I(3, 3, 3);
+        private Vector3I _chunkRangeLookUp = new Vector3I(3, 0, 3);
         private string _bufferPath;
 
         private Vector3I _lastSinglePlayerChunkPosition;
@@ -182,7 +182,7 @@ namespace Utopia.Shared.World
         private void GenerateLandscapeBuffer(LandscapeChunkBuffer buffer)
         {
             //Get the minimum chunk range that need to be computed to validate current chunk landscape entities generation
-            var chunkRange = new Range3I(buffer.ChunkLocation - _chunkRangeLookUp, new Vector3I(_chunkRangeLookUp.X * 2, _chunkRangeLookUp.Y * 2, _chunkRangeLookUp.Z * 2));
+            var chunkRange = new Range3I(buffer.ChunkLocation - _chunkRangeLookUp, new Vector3I(_chunkRangeLookUp.X * 2, 1, _chunkRangeLookUp.Z * 2));
             var chunkBuffers = new List<LandscapeChunkBuffer>(chunkRange.Count);
             foreach (var chunkPosition in chunkRange)
             {
@@ -193,7 +193,10 @@ namespace Utopia.Shared.World
                 {
                     if (_buffer.TryGetValue(chunkPosition, out surrendingChunkBuffer) == false)
                     {
-                        surrendingChunkBuffer = new LandscapeChunkBuffer() { ChunkLocation = chunkPosition, ProcessingState = LandscapeChunkBuffer.LandscapeChunkBufferState.NotProcessed };
+                        surrendingChunkBuffer = new LandscapeChunkBuffer { 
+                            ChunkLocation = chunkPosition, 
+                            ProcessingState = LandscapeChunkBuffer.LandscapeChunkBufferState.NotProcessed 
+                        };
                         _buffer.Add(chunkPosition, surrendingChunkBuffer);
                     }
 

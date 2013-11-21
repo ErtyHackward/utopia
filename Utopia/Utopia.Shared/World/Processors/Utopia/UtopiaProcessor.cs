@@ -80,7 +80,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             {
                 //Get the chunk
                 var chunk = chunks[pos.X - generationRange.Position.X, pos.Y - generationRange.Position.Y, pos.Z - generationRange.Position.Z];
-                var chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+                var chunkWorldPosition = new Vector3D(chunk.Position.X * AbstractChunk.ChunkSize.X, 0.0, chunk.Position.Z * AbstractChunk.ChunkSize.Z);
 
                 //Create the Rnd component to be used by the landscape creator
                 var chunkRnd = new FastRandom(_worldParameters.Seed + chunk.Position.GetHashCode());
@@ -114,7 +114,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             Range3I chunkWorldRange = new Range3I()
             {
-                Position = new Vector3I(chunkPosition.X * AbstractChunk.ChunkSize.X, 0, chunkPosition.Y * AbstractChunk.ChunkSize.Z),
+                Position = new Vector3I(chunkPosition.X * AbstractChunk.ChunkSize.X, 0, chunkPosition.Z * AbstractChunk.ChunkSize.Z),
                 Size = AbstractChunk.ChunkSize
             };
 

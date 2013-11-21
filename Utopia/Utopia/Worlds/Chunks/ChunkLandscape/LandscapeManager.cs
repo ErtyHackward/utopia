@@ -92,7 +92,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {
 
-            Int64 chunkId = VisualChunk.ComputeChunkId(e.Message.Position.X, e.Message.Position.Y);
+            Int64 chunkId = VisualChunk.ComputeChunkId(e.Message.Position.X, e.Message.Position.Z);
 #if DEBUG
             //logger.Debug("Chunk received from server id : {0}; Position : {1}, Flag :{2}", chunkId, e.Message.Position, e.Message.Flag);
 #endif

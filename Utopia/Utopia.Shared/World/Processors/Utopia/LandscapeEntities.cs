@@ -54,8 +54,9 @@ namespace Utopia.Shared.World.Processors.Utopia
                 //Check probability to make it spawn !
                 if (rnd.Next(0, 100) < biome.BiomeTrees.ChanceOfSpawning)
                 {
-                    List<LandscapeEntity> treeEntities = PopulateChunksWithTree(chunkPosition, biome, chunkBytes, columndInfo, rnd);
-                    if (treeEntities != null) globalList.AddRange(treeEntities);
+                    var treeEntities = PopulateChunksWithTree(chunkPosition, biome, chunkBytes, columndInfo, rnd);
+                    if (treeEntities != null) 
+                        globalList.AddRange(treeEntities);
                 }
             }
 
@@ -74,7 +75,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             if (chunkBytes[((z * AbstractChunk.ChunkSize.X) + x) * AbstractChunk.ChunkSize.Y + y] != WorldConfiguration.CubeId.Air) return null;
 
             x += (chunkPosition.X * AbstractChunk.ChunkSize.X);
-            z += (chunkPosition.Y * AbstractChunk.ChunkSize.Z);
+            z += (chunkPosition.Z * AbstractChunk.ChunkSize.Z);
             Vector3I worldPosition = new Vector3I(x, y, z);
 
             //Generate Tree mesh !
