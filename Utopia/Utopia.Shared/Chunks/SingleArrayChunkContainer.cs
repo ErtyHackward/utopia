@@ -99,7 +99,7 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public void Dispose()
         {
-            Cubes = null;
+            //Cubes = null;
         }
 
         /// <summary>
