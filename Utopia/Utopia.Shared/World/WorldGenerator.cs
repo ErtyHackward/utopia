@@ -1,11 +1,9 @@
 ﻿using System;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Ninject;
 using S33M3Resources.Structs;
-using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Shared.World
 {
@@ -15,7 +13,7 @@ namespace Utopia.Shared.World
     /// </summary>
     public class WorldGenerator : IDisposable
     {
-        private delegate GeneratedChunk[,] GenerateDelegate(Range2I range);
+        private delegate GeneratedChunk[,,] GenerateDelegate(Range3I range);
 
         /// <summary>
         /// Gets or sets current world designer
@@ -62,24 +60,27 @@ namespace Utopia.Shared.World
         /// <param name="range">chunks to generate</param>
         /// <param name="callback">this callback will be called when world will be generated</param>
         /// <param name="state"></param>
-        public IAsyncResult GenerateAsync(Range2I range, AsyncCallback callback, object state)
+        public IAsyncResult GenerateAsync(Range3I range, AsyncCallback callback, object state)
         {
             var del = new GenerateDelegate(Generate);
             return del.BeginInvoke(range, callback, state);
         }
 
-        private GeneratedChunk[,] Generate(Range2I range)
+        private GeneratedChunk[,,] Generate(Range3I range)
         {
             if (Stages.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
 
-            var chunks = new GeneratedChunk[range.Size.X, range.Size.Y];
+            var chunks = new GeneratedChunk[range.Size.X, range.Size.Y, range.Size.Z];
             
             for (int x = 0; x < range.Size.X; x++)
             {
-                for (int z = 0; z < range.Size.Y; z++)
+                for (int y = 0; y < range.Size.Y; y++)
                 {
-                    chunks[x, z] = new GeneratedChunk() { Position = new Vector2I(x + range.Position.X, z + range.Position.Y) };
+                    for (int z = 0; z < range.Size.Z; z++)
+                    {
+                        chunks[x, y, z] = new GeneratedChunk { Position = new Vector3I(x + range.Position.X, y + range.Position.Y, z + range.Position.Z) };
+                    }
                 }
             }
 
@@ -96,11 +97,11 @@ namespace Utopia.Shared.World
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public GeneratedChunk GetChunk(Vector2I position)
+        public GeneratedChunk GetChunk(Vector3I position)
         {
-            var chunks = Generate(new Range2I { Position = position, Size = new Vector2I(1,1) });
+            var chunks = Generate(new Range3I { Position = position, Size = new Vector3I(1,1,1) });
 
-            return chunks[0, 0];
+            return chunks[0, 0, 0];
         }
 
         /// <summary>

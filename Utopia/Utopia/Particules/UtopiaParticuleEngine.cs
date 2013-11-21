@@ -50,7 +50,7 @@ namespace Utopia.Particules
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private CubeEmitter _cubeEmitter;
         private IWorldChunks _worldChunks;
-        private readonly ILandscapeManager2D _landscapeManager;
+        private readonly ILandscapeManager _landscapeManager;
 
         private SpriteEmitter _staticEntityEmitter;
         private IWeather _weather;
@@ -70,7 +70,7 @@ namespace Utopia.Particules
                              VisualWorldParameters worldParameters,
                              IChunkEntityImpactManager chunkEntityImpactManager,
                              IWorldChunks worldChunks,
-                             ILandscapeManager2D landscapeManager,
+                             ILandscapeManager landscapeManager,
                              IWeather weather)
             : base(d3dEngine, sharedFrameCB.CBPerFrame)
         {

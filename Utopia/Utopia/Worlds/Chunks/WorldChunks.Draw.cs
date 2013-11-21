@@ -162,7 +162,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         for (int z = -1; z < 2; z++)
                         {
-                            var chunk = GetChunkFromChunkCoord(playerChunk.ChunkPosition + new Vector2I(x, z));
+                            var chunk = GetChunkFromChunkCoord(playerChunk.Position + new Vector3I(x, 0, z));
 
                             if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled && (!sameSlice || chunk.SliceOfMesh == _sliceValue))
                                 yield return chunk;
@@ -175,7 +175,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         for (int z = -2; z < 3; z++)
                         {
-                            var chunk = GetChunkFromChunkCoord(playerChunk.ChunkPosition + new Vector2I(x, z));
+                            var chunk = GetChunkFromChunkCoord(playerChunk.Position + new Vector3I(x, 0, z));
 
                             if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled && (!sameSlice || chunk.SliceOfMesh == _sliceValue))
                                 yield return chunk;

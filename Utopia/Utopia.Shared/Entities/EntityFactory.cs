@@ -36,7 +36,7 @@ namespace Utopia.Shared.Entities
         /// Gets landscape manager used to create new tools
         /// </summary>
         [Inject]
-        public ILandscapeManager2D LandscapeManager { get; set; }
+        public ILandscapeManager LandscapeManager { get; set; }
 
         /// <summary>
         /// Gets dynamic entity manager
@@ -217,10 +217,6 @@ namespace Utopia.Shared.Entities
             var boundingbox = protoTypeModel.Add(typeof(BoundingBox), true);
             boundingbox.AddField(1, "Minimum");
             boundingbox.AddField(2, "Maximum");
-
-            var range2I = protoTypeModel.Add(typeof(Range2I), true);
-            range2I.AddField(1, "Position");
-            range2I.AddField(2, "Size");
 
             #region Network messages
 

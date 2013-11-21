@@ -8,7 +8,7 @@ using Ninject;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
-    public interface ILandscapeManager : IDisposable
+    public interface ILandscapeManager2D : IDisposable
     {
         //This property will be injected
         WorldGenerator WorldGenerator { get; set; }

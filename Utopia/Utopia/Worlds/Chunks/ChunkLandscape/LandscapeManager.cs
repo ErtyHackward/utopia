@@ -24,7 +24,7 @@ using Utopia.Shared.LandscapeEntities;
 
 namespace Utopia.Worlds.Chunks.ChunkLandscape
 {
-    public class LandscapeManager : ILandscapeManager
+    public class LandscapeManager : ILandscapeManager2D
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -174,8 +174,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 _chunkStorageManager.StoreData_async(new ChunkDataStorage
                                                                          {
                                                                              ChunkId = chunk.ChunkID,
-                                                                             ChunkX = chunk.ChunkPosition.X,
-                                                                             ChunkZ = chunk.ChunkPosition.Y,
+                                                                             ChunkX = chunk.Position.X,
+                                                                             ChunkZ = chunk.Position.Z,
                                                                              Md5Hash = message.ChunkHash,
                                                                              CubeData = chunk.Compress()
                                                                          }
@@ -252,8 +252,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     {
                         HashesCount = 1,
                         Md5Hashes = new[] { hash },
-                        Positions = new[] { chunk.ChunkPosition },
-                        Range = new Range2I(chunk.ChunkPosition, Vector2I.One),
+                        Positions = new[] { chunk.Position },
+                        Range = new Range3I(chunk.Position, Vector3I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
                 }
@@ -262,7 +262,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     //Chunk has never been modified. Request it by the chunkposition to the server
                     _server.ServerConnection.Send(new GetChunksMessage
                     {
-                        Range = new Range2I(chunk.ChunkPosition, Vector2I.One),
+                        Range = new Range3I(chunk.Position, Vector3I.One),
                         Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                     });
                 }
@@ -272,7 +272,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         //Create the landscape for the chunk
         private void CreateLandscapeFromGenerator(VisualChunk visualChunk)
         {
-            GeneratedChunk generatedChunk = _worldGenerator.GetChunk(visualChunk.ChunkPosition);
+            var generatedChunk = _worldGenerator.GetChunk(visualChunk.Position);
 
             //Assign The Block generated to the Chunk
             visualChunk.BlockData.SetBlockBytes(generatedChunk.BlockData.GetBlocksBytes(), generatedChunk.BlockData.GetTags());

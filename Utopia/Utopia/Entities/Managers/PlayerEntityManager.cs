@@ -52,7 +52,7 @@ namespace Utopia.Entities.Managers
         private InputsManager _inputsManager;
         private SingleArrayChunkContainer _cubesHolder;
         private LandscapeBufferManager _bufferManager;
-        private readonly ILandscapeManager2D _landscapeManager;
+        private readonly ILandscapeManager _landscapeManager;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -252,7 +252,7 @@ namespace Utopia.Entities.Managers
                                    VisualWorldParameters visualWorldParameters,
                                    EntityFactory factory,
                                    LandscapeBufferManager bufferManager,
-                                   ILandscapeManager2D landscapeManager
+                                   ILandscapeManager landscapeManager
             )
         {
             _cameraManager = cameraManager;

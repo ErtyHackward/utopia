@@ -14,7 +14,7 @@ namespace Utopia.Shared.Structs
     public struct EntityLink
     {
         private bool _isDynamic;
-        private Vector2I _chunkPosition;
+        private Vector3I _chunkPosition;
         private uint _entityId;
         private uint[] _tail;
         
@@ -32,7 +32,7 @@ namespace Utopia.Shared.Structs
         /// Gets world chunk position
         /// </summary>
         [ProtoMember(2)]
-        public Vector2I ChunkPosition
+        public Vector3I ChunkPosition
         {
             get { return _chunkPosition; }
             set { _chunkPosition = value; }
@@ -79,7 +79,7 @@ namespace Utopia.Shared.Structs
             get
             {
                 EntityLink link;
-                link._chunkPosition = new Vector2I();
+                link._chunkPosition = new Vector3I();
                 link._entityId = 0;
                 link._isDynamic = true;
                 link._tail = null;
@@ -96,7 +96,7 @@ namespace Utopia.Shared.Structs
         {
             _entityId = dynamicId;
             _isDynamic = true;
-            _chunkPosition = Vector2I.Zero;
+            _chunkPosition = Vector3I.Zero;
             _tail = tail;
         }
 
@@ -105,7 +105,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="tail"></param>
-        public EntityLink(Vector2I pos, params uint[] tail)
+        public EntityLink(Vector3I pos, params uint[] tail)
         {
             _chunkPosition = pos;
             _entityId = 0;
@@ -185,7 +185,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         /// <param name="landscapeManager"></param>
         /// <returns></returns>
-        public IStaticEntity ResolveStatic(ILandscapeManager2D landscapeManager)
+        public IStaticEntity ResolveStatic(ILandscapeManager landscapeManager)
         {
             if (IsDynamic)
             {
@@ -241,4 +241,5 @@ namespace Utopia.Shared.Structs
             return string.Format("[EL:{0}:{1}]", ChunkPosition.ToString().Replace(" ",""), string.Join(",",_tail));
         }
     }
+
 }

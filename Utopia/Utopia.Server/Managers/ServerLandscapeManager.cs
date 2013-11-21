@@ -46,7 +46,7 @@ namespace Utopia.Server.Managers
         /// <summary>
         /// Gets main server memory chunk storage.
         /// </summary>
-        private readonly Dictionary<Vector2I, ServerChunk> _chunks = new Dictionary<Vector2I, ServerChunk>();
+        private readonly Dictionary<Vector3I, ServerChunk> _chunks = new Dictionary<Vector3I, ServerChunk>();
         
         #region Events
 
@@ -149,7 +149,7 @@ namespace Utopia.Server.Managers
 
         void ChunkBlocksChanged(object sender, ChunkDataProviderDataChangedEventArgs e)
         {
-            var ea = new ServerLandscapeManagerBlockChangedEventArgs((IChunkLayout2D)sender, e);
+            var ea = new ServerLandscapeManagerBlockChangedEventArgs((IAbstractChunk)sender, e);
 
             OnBlockChanged(ea);
             var serverChunk = (ServerChunk)sender;
@@ -182,7 +182,7 @@ namespace Utopia.Server.Managers
                 var range = e.Message.Range;
 
                 // list to get indicies
-                var positionsList = e.Message.Positions == null ? null : new List<Vector2I>(e.Message.Positions);
+                var positionsList = e.Message.Positions == null ? null : new List<Vector3I>(e.Message.Positions);
 
                 range.Foreach(pos =>
                 {
@@ -276,7 +276,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="position">chunk position</param>
         /// <returns></returns>
-        public override ServerChunk GetChunk(Vector2I position)
+        public override ServerChunk GetChunk(Vector3I position)
         {
             ServerChunk chunk = null;
             // search chunk in memory or load it
@@ -331,7 +331,7 @@ namespace Utopia.Server.Managers
         public override TerraCube GetCubeAt(Vector3I vector3I)
         {
             Vector3I internalPos;
-            Vector2I chunkPos;
+            Vector3I chunkPos;
 
             BlockHelper.GlobalToLocalAndChunkPos(vector3I, out internalPos, out chunkPos);
 
@@ -379,7 +379,7 @@ namespace Utopia.Server.Managers
                     return;
 
                 _saveStopwatch.Restart();
-                var positions = new Vector2I[_chunksToSave.Count];
+                var positions = new Vector3I[_chunksToSave.Count];
                 var datas = new List<byte[]>(_chunksToSave.Count);
 
                 int index = 0;
@@ -492,9 +492,11 @@ namespace Utopia.Server.Managers
 
         public IEnumerable<ServerChunk> SurroundChunks(Vector3D vector3D, float radius = 10)
         {
-            // first we check current chunk, then 8 surrounding, then 16
+            // first we check current chunk, then 26 surrounding, then 16
 
-            var chunkPosition = new Vector2I((int)Math.Floor(vector3D.X / AbstractChunk.ChunkSize.X), (int)Math.Floor(vector3D.Z / AbstractChunk.ChunkSize.Z));
+            var chunkPosition = new Vector3I((int)Math.Floor(vector3D.X / AbstractChunk.ChunkSize.X),
+                                             (int)Math.Floor(vector3D.Y / AbstractChunk.ChunkSize.Y),
+                                             (int)Math.Floor(vector3D.Z / AbstractChunk.ChunkSize.Z));
 
             yield return GetChunk(chunkPosition);
 
@@ -505,10 +507,13 @@ namespace Utopia.Server.Managers
                 {
                     for (int y = -i; y <= i; y++)
                     {
-                        // checking only border chunks
-                        if (x == -i || x == i || y == -i || y == i)
+                        for (int z = -i; z <= i; z++)
                         {
-                            yield return GetChunk(new Vector2I(chunkPosition.X + x, chunkPosition.Y + y));
+                            // checking only border chunks
+                            if (x == -i || x == i || y == -i || y == i || z == i || z == -i)
+                            {
+                                yield return GetChunk(new Vector3I(chunkPosition.X + x, chunkPosition.Y + y, chunkPosition.Z + z));
+                            }
                         }
                     }
                 }
