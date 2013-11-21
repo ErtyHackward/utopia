@@ -260,7 +260,7 @@ namespace Realms.Client.States
             var solidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("SolidCubeMeshFactory");
             var liquidCubeMeshFactory = _ioc.Get<ICubeMeshFactory>("LiquidCubeMeshFactory");
             var singleArrayChunkContainer = _ioc.Get<SingleArrayChunkContainer>();
-            var landscapeManager = _ioc.Get<ILandscapeManager>();
+            var landscapeManager = _ioc.Get<ILandscapeManager2D>();
             var lightingManager = _ioc.Get<ILightingManager>();
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
             var worldChunks = _ioc.Get<IWorldChunks>();

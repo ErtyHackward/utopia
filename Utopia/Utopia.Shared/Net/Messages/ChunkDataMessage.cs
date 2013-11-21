@@ -29,7 +29,7 @@ namespace Utopia.Shared.Net.Messages
         /// Gets or sets chunk position
         /// </summary>
         [ProtoMember(1)]
-        public Vector2I Position { get; set; }
+        public Vector3I Position { get; set; }
 
         /// <summary>
         /// Gets or sets result type flag. See the flag members to details

@@ -34,7 +34,7 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Represents a chunk for 3d rendering
     /// </summary>
-    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IChunkLayout2D, IDisposable
+    public class VisualChunk : CompressibleChunk, ISingleArrayDataProviderUser, IDisposable
     {
         #region Private variables
         private readonly object _syncRoot = new object();
@@ -78,8 +78,7 @@ namespace Utopia.Worlds.Chunks
         public Double DistanceFromPlayer { get; set; }
         public Vector3D ChunkCenter { get; set; } 
         public Vector2I ChunkPositionBlockUnit { get; private set; } // Gets or sets current chunk position in Block Unit
-        public Vector2I ChunkPosition { get; private set; } // Gets or sets current chunk position in Chunk Unit
-
+        
         public ChunkState State;
         
         public bool IsOutsideLightSourcePropagated { get; set; }
@@ -161,18 +160,6 @@ namespace Utopia.Worlds.Chunks
             {
                 _cubeRange = value;
                 RangeChanged();
-            }
-        }
-
-        public Vector2I Position
-        {
-            get
-            {
-                return ChunkPosition;
-            }
-            set
-            {
-                throw new NotImplementedException();
             }
         }
         
@@ -275,7 +262,7 @@ namespace Utopia.Worlds.Chunks
             //Get the surrounding chunks if BorderChunk is null
             if (IsBorderChunk == false)
             {
-                SurroundingChunks = _worldChunkManager.GetsurroundingChunkFromChunkCoord(ChunkPosition.X, ChunkPosition.Y);
+                SurroundingChunks = _worldChunkManager.GetsurroundingChunkFromChunkCoord(Position.X, Position.Z);
             }
             else
             {
@@ -655,9 +642,9 @@ namespace Utopia.Worlds.Chunks
         {
             ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Position.X, Y = _cubeRange.Position.Z };
 
-            ChunkPosition = new Vector2I() { X = _cubeRange.Position.X / AbstractChunk.ChunkSize.X, Y = _cubeRange.Position.Z / AbstractChunk.ChunkSize.Z };
+            Position = new Vector3I() { X = _cubeRange.Position.X / AbstractChunk.ChunkSize.X, Y = 0, Z = _cubeRange.Position.Z / AbstractChunk.ChunkSize.Z };
 
-            ChunkID = VisualChunk.ComputeChunkId(ChunkPosition.X, ChunkPosition.Y);
+            ChunkID = VisualChunk.ComputeChunkId(Position.X, Position.Z);
 
             ChunkCenter = new Vector3D(_cubeRange.Position.X + (_cubeRange.Max.X - _cubeRange.Position.X) / 2.0,
                            _cubeRange.Position.Y + (_cubeRange.Max.Y - _cubeRange.Position.Y) / 2.0,

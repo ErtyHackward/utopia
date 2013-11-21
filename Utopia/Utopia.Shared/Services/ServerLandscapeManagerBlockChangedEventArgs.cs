@@ -10,7 +10,7 @@ namespace Utopia.Shared.Services
     {
         public int Count { get; set; }
 
-        public ServerLandscapeManagerBlockChangedEventArgs(IChunkLayout2D chunk, ChunkDataProviderDataChangedEventArgs e)
+        public ServerLandscapeManagerBlockChangedEventArgs(IAbstractChunk chunk, ChunkDataProviderDataChangedEventArgs e)
         {
             Count = e.Count;
 

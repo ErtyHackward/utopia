@@ -91,7 +91,7 @@ namespace Utopia.Shared.Entities
             if (container is EntityCollection)
             {
                 var ec = container as EntityCollection;
-                return new EntityLink(((IChunkLayout2D)ec.Chunk).Position, entities.ToArray());
+                return new EntityLink(((IAbstractChunk)ec.Chunk).Position, entities.ToArray());
             }
 
             // root is the dynamicEntity

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProtoBuf;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Structs
@@ -8,22 +9,27 @@ namespace Utopia.Shared.Structs
     /// <summary>
     /// Represents a range in 3d space by position and size points of Vector3I type
     /// </summary>
+    [ProtoContract]
     public struct Range3I : IEnumerable<Vector3I>
     {
         /// <summary>
         /// Minimum point
         /// </summary>
+        [ProtoMember(1)]
         public Vector3I Position;
 
         /// <summary>
         /// Size of the range
         /// </summary>
+        [ProtoMember(2)]
         public Vector3I Size;
 
         public Vector3I Max
         {
             get { return Position + Size; }
         }
+
+        public int Count { get { return Size.x * Size.y * Size.z; } }
 
         public Range3I(Vector3I position, Vector3I size)
         {
@@ -132,6 +138,51 @@ namespace Utopia.Shared.Structs
             var max = Vector3I.Max(one, two);
 
             return new Range3I(min, max - min + Vector3I.One);
+        }
+
+        /// <summary>
+        /// Performs action for each point in this range
+        /// </summary>
+        /// <param name="action"></param>
+        public void Foreach(Action<Vector3I> action)
+        {
+            for (var x = Position.X; x < Position.X + Size.X; x++)
+            {
+                for (var y = Position.Y; y < Position.Y + Size.Y; y++)
+                {
+                    for (var z = Position.Z; z < Position.Z + Size.Z; z++)
+                    {
+                        Vector3I loc;
+                        loc.x = x;
+                        loc.y = y;
+                        loc.z = z;
+                        action(loc);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs action for each point in this range
+        /// </summary>
+        /// <param name="action"></param>
+        public void Foreach(Action<Vector3I, int> action)
+        {
+            int index = 0;
+            for (var x = Position.X; x < Position.X + Size.X; x++)
+            {
+                for (var y = Position.Y; y < Position.Y + Size.Y; y++)
+                {
+                    for (var z = Position.Z; z < Position.Z + Size.Z; z++)
+                    {
+                        Vector3I loc;
+                        loc.x = x;
+                        loc.y = y;
+                        loc.z = z;
+                        action(loc, index++);
+                    }
+                }
+            }
         }
     }
 }

@@ -95,7 +95,7 @@ namespace Utopia.Shared.Entities.Inventory
         public EntityFactory EntityFactory { get; set; }
 
         [Browsable(false)]
-        public ILandscapeManager2D LandscapeManager
+        public ILandscapeManager LandscapeManager
         {
             get { return EntityFactory.LandscapeManager; }
         }

@@ -294,11 +294,10 @@
     <Compile Include="Structs\Landscape\BlockWithPosition.cs" />
     <Compile Include="Structs\Landscape\TerraCubeResult.cs" />
     <Compile Include="Tools\BinarySerializer\IBinaryStorable.cs" />
-    <Compile Include="Interfaces\IChunkLayout2D.cs" />
     <Compile Include="Interfaces\IChunksStorage.cs" />
     <Compile Include="Interfaces\IGameStateToolManager.cs" />
     <Compile Include="Interfaces\ILandscapeCursor.cs" />
-    <Compile Include="Interfaces\ILandscapeManager2D.cs" />
+    <Compile Include="Interfaces\ILandscapeManager.cs" />
     <Compile Include="Interfaces\IVoxelModelStorage.cs" />
     <Compile Include="Interfaces\ISingleArrayDataProviderUser.cs" />
     <Compile Include="Interfaces\IUsersStorage.cs" />
