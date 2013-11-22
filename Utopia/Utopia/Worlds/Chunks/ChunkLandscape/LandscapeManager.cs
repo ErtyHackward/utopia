@@ -32,7 +32,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private readonly object _syncRoot = new object();
         private WorldGenerator _worldGenerator;
         private ServerComponent _server;
-        private Dictionary<long, ChunkDataMessage> _receivedServerChunks;
+        private Dictionary<Vector3I, ChunkDataMessage> _receivedServerChunks;
         private IChunkStorageManager _chunkStorageManager;
         private TimerManager.GameTimer _timer;
         private VoxelModelManager _voxelModelManager;
@@ -57,7 +57,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             _voxelModelManager = voxelModelManager;
 
             _server = server;
-            _receivedServerChunks = new Dictionary<long, ChunkDataMessage>(1024);
+            _receivedServerChunks = new Dictionary<Vector3I, ChunkDataMessage>(1024);
             _server.MessageChunkData += ServerConnection_MessageChunkData;
             _landscapeEntityManager = landscapeEntityManager;
             
@@ -90,9 +90,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         //New chunk Received !
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
-        {
-
-            Int64 chunkId = VisualChunk.ComputeChunkId(e.Message.Position.X, e.Message.Position.Z);
+        {            
 #if DEBUG
             //logger.Debug("Chunk received from server id : {0}; Position : {1}, Flag :{2}", chunkId, e.Message.Position, e.Message.Flag);
 #endif
@@ -100,8 +98,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             //Bufferize the Data here   
             lock (_syncRoot)
             {
-                if (_receivedServerChunks.ContainsKey(chunkId)) _receivedServerChunks.Remove(chunkId);
-                _receivedServerChunks.Add(chunkId, e.Message);
+                if (_receivedServerChunks.ContainsKey(e.Message.Position)) _receivedServerChunks.Remove(e.Message.Position);
+                _receivedServerChunks.Add(e.Message.Position, e.Message);
             }
         }
 
@@ -132,7 +130,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 {
                     //Request the chunk again to the server !!
                     chunk.IsServerRequested = false;
-                    logger.Warn("Requested Chunk {0} did not received server data for 30s. Requesting it again !", chunk.ChunkID);
+                    logger.Warn("Requested Chunk {0} did not received server data for 30s. Requesting it again !", chunk.Position);
                 }
             }
 
@@ -145,7 +143,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             {
                 ChunkDataMessage message;
                 //Have we receive the Server data
-                if (_receivedServerChunks.TryGetValue(chunk.ChunkID, out message))
+                if (_receivedServerChunks.TryGetValue(chunk.Position, out message))
                 {
                     switch (message.Flag)
                     {
@@ -158,13 +156,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             chunk.Consume(networkChunk); //Set the data into the "Big Array"
                             EntityFactory.PrepareEntities(chunk.Entities);
 
-                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
+                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position); //Remove the chunk from the recieved queue
                             //CreateVisualEntities(chunk, chunk);
 
                             //Save the modified chunk landscape data locally only if the local one is different from the server one
                             Md5Hash hash;
                             bool saveChunk = true;
-                            if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.ChunkID, out hash))
+                            if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.Position, out hash))
                             {
                                 if (hash == message.ChunkHash) saveChunk = false;
                             }
@@ -173,9 +171,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             {
                                 _chunkStorageManager.StoreData_async(new ChunkDataStorage
                                                                          {
-                                                                             ChunkId = chunk.ChunkID,
-                                                                             ChunkX = chunk.Position.X,
-                                                                             ChunkZ = chunk.Position.Z,
+                                                                             ChunkPos = chunk.Position,
                                                                              Md5Hash = message.ChunkHash,
                                                                              CubeData = chunk.Compress()
                                                                          }
@@ -192,7 +188,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
                             CreateLandscapeFromGenerator(chunk);
-                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.ChunkID);
+                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position);
                             if (chunk.StorageRequestTicket != 0)
                             {
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
@@ -207,7 +203,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             {
                                 //Data are present !
                                 chunk.Decompress(data.CubeData); //Set the data into the "Big Array"
-                                lock (_syncRoot) _receivedServerChunks.Remove(chunk.ChunkID); //Remove the chunk from the recieved queue
+                                lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position); //Remove the chunk from the recieved queue
                                 EntityFactory.PrepareEntities(chunk.Entities);
 
                                 //CreateVisualEntities(chunk, chunk);
@@ -236,16 +232,16 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             {
 
 #if DEBUG
-                logger.Trace("Chunk request to server : " + chunk.ChunkID);
+                logger.Trace("Chunk request to server : " + chunk.Position);
 #endif
                 //Request Chunk to the server, to see its server State (Was it modified by someone Else ???)
 
                 chunk.IsServerRequested = true;
                 Md5Hash hash;
-                if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.ChunkID, out hash))
+                if (_chunkStorageManager.ChunkHashes.TryGetValue(chunk.Position, out hash))
                 {
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one. This way the server won't have to send back the chunk data
-                    chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.ChunkID);
+                    chunk.StorageRequestTicket = _chunkStorageManager.RequestDataTicket_async(chunk.Position);
 
                     //We have already in the store manager a modified version of the chunk, do the server request with these information
                     _server.ServerConnection.Send(new GetChunksMessage

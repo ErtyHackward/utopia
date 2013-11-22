@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using System.Threading;
 using System.Collections.Concurrent;
+using S33M3Resources.Structs;
 using Utopia.Shared;
 using Utopia.Worlds.Storage.Structs;
 using Utopia.Shared.Structs;
@@ -27,7 +28,7 @@ namespace Utopia.Worlds.Storage
         #region Public Properties/Variables
         public bool IsRunning { get; set; }
         public ChunkDataStorage[] Data { get; private set; }
-        public ConcurrentDictionary<long, Md5Hash> ChunkHashes { get; private set; }
+        public ConcurrentDictionary<Vector3I, Md5Hash> ChunkHashes { get; private set; }
         #endregion
 
         /// <summary>
@@ -55,21 +56,21 @@ namespace Utopia.Worlds.Storage
 
         protected override string CreateDataBase()
         {
-            return @"CREATE TABLE CHUNKS([ChunkId] BIGINT PRIMARY KEY NOT NULL, [X] integer NOT NULL, [Z] integer NOT NULL, [md5hash] blob, [data] blob NOT NULL);";
+            return @"CREATE TABLE CHUNKS([X] integer NOT NULL, [Y] integer NOT NULL, [Z] integer NOT NULL, [md5hash] blob, [data] blob NOT NULL, PRIMARY KEY(X,Y,Z));";
         }
 
         #region Private Methods
 
         private void GetChunksMd5()
         {
-            ChunkHashes = new ConcurrentDictionary<long, Md5Hash>();
+            ChunkHashes = new ConcurrentDictionary<Vector3I, Md5Hash>();
 
             using (var dataReader = _landscapeGetHash.ExecuteReader())
             {
                 while (dataReader.Read())
                 {
-                    var chunkId = dataReader.GetInt64(0);
-                    var md5Hash = dataReader.IsDBNull(1) ? null : new Md5Hash((byte[]) dataReader.GetValue(1));
+                    var chunkId = new Vector3I(dataReader.GetInt32(0),dataReader.GetInt32(1), dataReader.GetInt32(2));
+                    var md5Hash = dataReader.IsDBNull(3) ? null : new Md5Hash((byte[]) dataReader.GetValue(3));
 
                     ChunkHashes.TryAdd(chunkId, md5Hash);
                 }
@@ -115,19 +116,19 @@ namespace Utopia.Worlds.Storage
             }
 
             //Get a specific chunk
-            var commandText = "SELECT [ChunkId], [X], [Z], [md5hash], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
+            var commandText = "SELECT [X], [Y], [Z], [md5hash], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
             _landscapeGetCmd = new SQLiteCommand(commandText, Connection);
             _landscapeGetCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
 
             //Get All modified chunks Hashs
-            commandText = "SELECT [ChunkId], [md5hash] FROM CHUNKS";
+            commandText = "SELECT [X], [Y], [Z], [md5hash] FROM CHUNKS";
             _landscapeGetHash = new SQLiteCommand(commandText, Connection);
 
             //Upsert a specific chunk
-            commandText = "INSERT OR REPLACE INTO CHUNKS ([ChunkId],[X], [Z], [md5hash], [data]) VALUES (@CHUNKID, @X, @Z, @MD5, @DATA)";
+            commandText = "INSERT OR REPLACE INTO CHUNKS ([X], [Y], [Z], [md5hash], [data]) VALUES (@X, @Y, @Z, @MD5, @DATA)";
             _landscapeInsertCmd = new SQLiteCommand(commandText, Connection);
-            _landscapeInsertCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
             _landscapeInsertCmd.Parameters.Add("@X", System.Data.DbType.Int32);
+            _landscapeInsertCmd.Parameters.Add("@Y", System.Data.DbType.Int32);
             _landscapeInsertCmd.Parameters.Add("@Z", System.Data.DbType.Int32);
             _landscapeInsertCmd.Parameters.Add("@MD5", System.Data.DbType.Binary);
             _landscapeInsertCmd.Parameters.Add("@DATA", System.Data.DbType.Binary);
@@ -135,10 +136,10 @@ namespace Utopia.Worlds.Storage
             _threadSync = new ManualResetEvent(false);
         }
 
-        public int RequestDataTicket_async(long chunkID)
+        public int RequestDataTicket_async(Vector3I chunkPos)
         {
             int ticket = _requestTickets.Dequeue();
-            _dataRequestQueue.Enqueue(new CubeRequest { ChunkId = chunkID, Ticket = ticket });
+            _dataRequestQueue.Enqueue(new CubeRequest { ChunkId = chunkPos, Ticket = ticket });
             Data[ticket] = null;
             _threadSync.Set();
             return ticket;
@@ -172,9 +173,7 @@ namespace Utopia.Worlds.Storage
                 {
                     cubeDataStorage = new ChunkDataStorage
                                           {
-                                              ChunkId = dataReader.GetInt64(0),
-                                              ChunkX = dataReader.GetInt32(1),
-                                              ChunkZ = dataReader.GetInt32(2),
+                                              ChunkPos = new Vector3I(dataReader.GetInt32(0), dataReader.GetInt32(1), dataReader.GetInt32(2)),
                                               Md5Hash = !dataReader.IsDBNull(3) ? new Md5Hash((byte[]) dataReader.GetValue(3)) : null,
                                               CubeData = (byte[]) dataReader.GetValue(4)
                                           };
@@ -207,9 +206,9 @@ namespace Utopia.Worlds.Storage
 
         private void SaveObject(ref ChunkDataStorage data)
         {
-            _landscapeInsertCmd.Parameters[0].Value = data.ChunkId;
-            _landscapeInsertCmd.Parameters[1].Value = data.ChunkX;
-            _landscapeInsertCmd.Parameters[2].Value = data.ChunkZ;
+            _landscapeInsertCmd.Parameters[0].Value = data.ChunkPos.X;
+            _landscapeInsertCmd.Parameters[1].Value = data.ChunkPos.Y;
+            _landscapeInsertCmd.Parameters[2].Value = data.ChunkPos.Z;
             if (data.Md5Hash != null) _landscapeInsertCmd.Parameters[3].Value = data.Md5Hash.Bytes;
             else _landscapeInsertCmd.Parameters[3].Value = null;
             _landscapeInsertCmd.Parameters[4].Value = data.CubeData; //Chunk + Entities Data under compressed form stored
@@ -221,7 +220,7 @@ namespace Utopia.Worlds.Storage
             //For a specified ChunkID it give the MD5Hash.
             var chunkHash = data.Md5Hash;
 
-            ChunkHashes.AddOrUpdate(data.ChunkId, chunkHash, (id, hash) => chunkHash);
+            ChunkHashes.AddOrUpdate(data.ChunkPos, chunkHash, (id, hash) => chunkHash);
         }
         //===============================================================================================
 

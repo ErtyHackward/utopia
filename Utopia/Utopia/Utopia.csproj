@@ -217,6 +217,7 @@
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\Chunks\VisualChunk3D.cs" />
     <Compile Include="Worlds\Chunks\VisualChunkBase.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks3D.cs" />
     <Compile Include="Worlds\Shadows\WorldShadowMap.cs" />
