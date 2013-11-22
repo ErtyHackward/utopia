@@ -93,7 +93,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.isExistingMesh4Drawing = false;
+                        chunk.Graphics.IsExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.X;
                         ActualCubeRange = chunk.CubeRange;
@@ -116,7 +116,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.isExistingMesh4Drawing = false;
+                        chunk.Graphics.IsExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Position.X;
                         ActualCubeRange = chunk.CubeRange;
@@ -139,7 +139,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.isExistingMesh4Drawing = false;
+                        chunk.Graphics.IsExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Max.Z;
                         ActualCubeRange = chunk.CubeRange;
@@ -161,7 +161,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.State = ChunkState.Empty;
-                        chunk.isExistingMesh4Drawing = false;
+                        chunk.Graphics.IsExistingMesh4Drawing = false;
 
                         NewMinWorldValue = WorldChunks.VisualWorldParameters.WorldRange.Position.Z;
                         ActualCubeRange = chunk.CubeRange;

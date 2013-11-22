@@ -87,9 +87,10 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 var chunk = SortedChunks[chunkIndice];
-                if (chunk.isFrustumCulled == false && chunk.isExistingMesh4Drawing)
+                if (chunk.Graphics.NeedToRender)
                 {
-                    if (chunk.DistanceFromPlayer > StaticEntityViewRange) continue;
+                    if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
+                        continue;
 
                     foreach (var staticEntity in chunk.AllEntities())
                     {
@@ -123,9 +124,9 @@ namespace Utopia.Worlds.Chunks
         {
             foreach (var chunk in ChunksToDraw(false))
             {
-                if (chunk.SliceValue != _sliceValue)
+                if (chunk.Graphics.SliceValue != _sliceValue)
                 {
-                    chunk.SliceValue = _sliceValue;
+                    chunk.Graphics.SliceValue = _sliceValue;
                     chunk.State = ChunkState.OuterLightSourcesProcessed;
                 }
             }
@@ -257,7 +258,7 @@ namespace Utopia.Worlds.Chunks
                                                              x.UpdateOrder == maximumUpdateOrderPossible))
             {
                 chunk.UpdateOrder = 0;
-                chunk.SendCubeMeshesToBuffers();
+                chunk.Graphics.SendCubeMeshesToBuffers();
                 nbrchunksSend2GC++;
 #if PERFTEST
                 if (chunk.ChunkID == Utopia.Worlds.Chunks.WorldChunks.perf.cubeChunkID)

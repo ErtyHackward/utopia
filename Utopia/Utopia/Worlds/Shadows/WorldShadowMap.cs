@@ -104,7 +104,7 @@ namespace Utopia.Worlds.Shadows
 
                 Matrix worldFocus = Matrix.Identity;
 
-                foreach (var chunk in WorldChunks.Chunks.Where(x => x.isExistingMesh4Drawing))
+                foreach (var chunk in WorldChunks.Chunks.Where(x => x.Graphics.IsExistingMesh4Drawing))
                 {
                     _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                     _shadowMapEffect.Begin(context);
@@ -112,7 +112,7 @@ namespace Utopia.Worlds.Shadows
                     _shadowMapEffect.CBPerDraw.IsDirty = true;
                     _shadowMapEffect.Apply(context);
 
-                    chunk.DrawSolidFaces(context);
+                    chunk.Graphics.DrawSolidFaces(context);
                 }
                 
                 _shadowMap.End();

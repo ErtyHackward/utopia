@@ -61,7 +61,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         private void CreateCubeMeshes(VisualChunk chunk)
         {
             //Instanciate the various collection objects that wil be used during the cube mesh creations
-            chunk.InitializeChunkBuffers();
+            chunk.Graphics.InitializeChunkBuffers();
 
             GenerateCubesFace(CubeFaces.Front, chunk);
             GenerateCubesFace(CubeFaces.Back, chunk);
@@ -93,8 +93,8 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
             int xNeight, yNeight, zNeight;
 
-            int yMin = chunk.SliceValue == -1 ? 0 : Math.Max(0, chunk.SliceValue - 5);
-            int yMax = chunk.SliceValue == -1 ? chunk.CubeRange.Size.Y : chunk.SliceValue;
+            int yMin = chunk.Graphics.SliceValue == -1 ? 0 : Math.Max(0, chunk.Graphics.SliceValue - 5);
+            int yMax = chunk.Graphics.SliceValue == -1 ? chunk.CubeRange.Size.Y : chunk.Graphics.SliceValue;
 
             Dictionary<long, int> verticeDico = new Dictionary<long, int>();
 

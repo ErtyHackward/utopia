@@ -50,9 +50,9 @@ namespace Utopia.Worlds.Chunks
 
         private void ChunkVisibilityTest()
         {
-            foreach (VisualChunk chunk in SortedChunks)
+            foreach (var chunk in SortedChunks)
             {
-                chunk.isFrustumCulled = !_camManager.ActiveCamera.Frustum.IntersectsWithoutFar(ref chunk.ChunkWorldBoundingBox);
+                chunk.Graphics.IsFrustumCulled = !_camManager.ActiveCamera.Frustum.IntersectsWithoutFar(ref chunk.ChunkWorldBoundingBox);
             }
         }
         
@@ -113,7 +113,7 @@ namespace Utopia.Worlds.Chunks
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
-                if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled) // !! Display all Changed one, even if the changed failed the Frustum culling test
+                if (chunk.Graphics.NeedToRender) // !! Display all Changed one, even if the changed failed the Frustum culling test
                 {
                     chunk.DrawDebugBoundingBox(context);
                 }
@@ -147,7 +147,7 @@ namespace Utopia.Worlds.Chunks
                 {
                     var chunk = SortedChunks[chunkIndice];
 
-                    if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled)
+                    if (chunk.Graphics.NeedToRender)
                         yield return chunk;
                 }
             }
@@ -164,7 +164,7 @@ namespace Utopia.Worlds.Chunks
                         {
                             var chunk = GetChunkFromChunkCoord(playerChunk.Position + new Vector3I(x, 0, z));
 
-                            if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled && (!sameSlice || chunk.SliceOfMesh == _sliceValue))
+                            if (chunk.Graphics.NeedToRender && (!sameSlice || chunk.Graphics.SliceOfMesh == _sliceValue))
                                 yield return chunk;
                         }
                     }
@@ -177,7 +177,7 @@ namespace Utopia.Worlds.Chunks
                         {
                             var chunk = GetChunkFromChunkCoord(playerChunk.Position + new Vector3I(x, 0, z));
 
-                            if (chunk.isExistingMesh4Drawing && !chunk.isFrustumCulled && (!sameSlice || chunk.SliceOfMesh == _sliceValue))
+                            if (chunk.Graphics.NeedToRender && (!sameSlice || chunk.Graphics.SliceOfMesh == _sliceValue))
                                 yield return chunk;
                         }
                     }
@@ -210,7 +210,7 @@ namespace Utopia.Worlds.Chunks
                 _terraEffect.CBPerDraw.IsDirty = true;
                 _terraEffect.Apply(context);
 
-                chunk.DrawSolidFaces(context);
+                chunk.Graphics.DrawSolidFaces(context);
 
                 _chunkDrawByFrame++;
             }
@@ -226,7 +226,7 @@ namespace Utopia.Worlds.Chunks
             foreach (var chunk in ChunksToDraw())
             {
                 //Only If I have something to draw !
-                if (chunk.LiquidCubeVB != null)
+                if (chunk.Graphics.LiquidCubeVB != null)
                 {
                     _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
                     _liquidEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
@@ -248,7 +248,7 @@ namespace Utopia.Worlds.Chunks
                     _liquidEffect.CBPerDraw.Values.World = Matrix.Transpose(worldFocus);
                     _liquidEffect.CBPerDraw.IsDirty = true;
                     _liquidEffect.Apply(context);
-                    chunk.DrawLiquidFaces(context);
+                    chunk.Graphics.DrawLiquidFaces(context);
                 }   
             }
         }
@@ -385,14 +385,14 @@ namespace Utopia.Worlds.Chunks
             //Run over all chunks to see their status, and take action accordingly.
             for (int chunkIndice = 0; chunkIndice < VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y; chunkIndice++)
             {
-                if (SortedChunks[chunkIndice].SolidCubeIB == null) continue;
-                if (!SortedChunks[chunkIndice].isFrustumCulled)
+                if (SortedChunks[chunkIndice].Graphics.SolidCubeIB == null) continue;
+                if (SortedChunks[chunkIndice].Graphics.NeedToRender)
                 {
-                    VprimitiveCount += SortedChunks[chunkIndice].SolidCubeIB.IndicesCount;
-                    if (SortedChunks[chunkIndice].LiquidCubeIB != null) VprimitiveCount += (SortedChunks[chunkIndice].LiquidCubeIB.IndicesCount);
+                    VprimitiveCount += SortedChunks[chunkIndice].Graphics.SolidCubeIB.IndicesCount;
+                    if (SortedChunks[chunkIndice].Graphics.LiquidCubeIB != null) VprimitiveCount += (SortedChunks[chunkIndice].Graphics.LiquidCubeIB.IndicesCount);
                 }
-                BprimitiveCount += SortedChunks[chunkIndice].SolidCubeIB.IndicesCount;
-                if (SortedChunks[chunkIndice].LiquidCubeIB != null) BprimitiveCount += (SortedChunks[chunkIndice].LiquidCubeIB.IndicesCount);
+                BprimitiveCount += SortedChunks[chunkIndice].Graphics.SolidCubeIB.IndicesCount;
+                if (SortedChunks[chunkIndice].Graphics.LiquidCubeIB != null) BprimitiveCount += (SortedChunks[chunkIndice].Graphics.LiquidCubeIB.IndicesCount);
             }
             return string.Concat("<TerraCube Mod> BChunks : ", VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y, "; BPrim : ", BprimitiveCount, " DChunks : ", _chunkDrawByFrame, " DPrim : ", VprimitiveCount);
         }

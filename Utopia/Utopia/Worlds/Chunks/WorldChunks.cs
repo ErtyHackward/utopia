@@ -441,7 +441,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns></returns>
         public IEnumerable<VisualChunk> VisibleChunks()
         {
-            return SortedChunks.Where(chunk => !chunk.isFrustumCulled);
+            return SortedChunks.Where(chunk => !chunk.Graphics.IsFrustumCulled);
         }
 
 
@@ -622,16 +622,16 @@ namespace Utopia.Worlds.Chunks
                 int VprimitiveCount = 0;
                 VisualChunk chunk;
                 //Run over all chunks to see their status, and take action accordingly.
-                for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
+                for (var chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
                 {
                     chunk = SortedChunks[chunkIndice];
-                    if (chunk.isFrustumCulled == false)
+                    if (!chunk.Graphics.IsFrustumCulled)
                     {
-                        if (chunk.SolidCubeIB != null) VprimitiveCount += chunk.SolidCubeIB.IndicesCount;
-                        if (chunk.LiquidCubeIB != null) VprimitiveCount += chunk.LiquidCubeIB.IndicesCount;
+                        if (chunk.Graphics.SolidCubeIB != null) VprimitiveCount += chunk.Graphics.SolidCubeIB.IndicesCount;
+                        if (chunk.Graphics.LiquidCubeIB != null) VprimitiveCount += chunk.Graphics.LiquidCubeIB.IndicesCount;
                     }
-                    if (chunk.SolidCubeIB != null) BprimitiveCount += chunk.SolidCubeIB.IndicesCount;
-                    if (chunk.LiquidCubeIB != null) BprimitiveCount += chunk.LiquidCubeIB.IndicesCount;
+                    if (chunk.Graphics.SolidCubeIB != null) BprimitiveCount += chunk.Graphics.SolidCubeIB.IndicesCount;
+                    if (chunk.Graphics.LiquidCubeIB != null) BprimitiveCount += chunk.Graphics.LiquidCubeIB.IndicesCount;
                 }
 
                 var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount);

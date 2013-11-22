@@ -14,13 +14,11 @@ namespace Utopia.Shared.Structs.Landscape
     [Serializable, StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TerraCube
     {
-        #region private properties
         public byte Id; //Represent the ID of the cube and it's linked texture in the array
-
         //Lighting channels
         public ByteColor EmissiveColor; //Color received
         public bool IsSunLightSource;
-        #endregion
+        
 
         public TerraCube(byte Id)
         {

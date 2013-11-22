@@ -138,7 +138,7 @@ namespace Utopia.Particules
         public void StaticEntityEmiters()
         {
             if (_worldChunks.Chunks == null) return;
-            foreach (VisualChunk chunk in _worldChunks.Chunks.Where(x => x.isFrustumCulled == false && x.DistanceFromPlayer < _worldChunks.StaticEntityViewRange))
+            foreach (VisualChunk chunk in _worldChunks.Chunks.Where(x => x.Graphics.IsFrustumCulled == false && x.DistanceFromPlayer < _worldChunks.StaticEntityViewRange))
             {
                 foreach (var entityWithMeta in chunk.EmitterStaticEntities)
                 {

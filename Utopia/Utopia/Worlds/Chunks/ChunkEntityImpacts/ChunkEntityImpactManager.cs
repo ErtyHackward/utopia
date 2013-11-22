@@ -290,7 +290,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// </summary>
         /// <param name="cubeCoordinates">The cube where the modification has been realized</param>
         /// <param name="replacementCubeId">The type of the modified cube</param>
-        public void CheckImpact(TerraCubeWithPosition cube, VisualChunk cubeChunk)
+        public void CheckImpact(TerraCubeWithPosition cube, VisualChunkBase cubeChunk)
         {
             Int64 mainChunkId;
 
