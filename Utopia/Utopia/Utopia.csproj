@@ -210,12 +210,15 @@
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\ChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\IChunkEntityImpactManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkEntityImpacts\SingleArrayLandscapeCursor.cs" />
+    <Compile Include="Worlds\Chunks\ChunkGraphics.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\ILandscapeManager2D.cs" />
     <Compile Include="Worlds\Chunks\ChunkLandscape\LandscapeManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLighting\ILightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkLighting\LightingManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\ChunkMeshManager.cs" />
     <Compile Include="Worlds\Chunks\ChunkMesh\IChunkMeshManager.cs" />
+    <Compile Include="Worlds\Chunks\VisualChunkBase.cs" />
+    <Compile Include="Worlds\Chunks\WorldChunks3D.cs" />
     <Compile Include="Worlds\Shadows\WorldShadowMap.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
