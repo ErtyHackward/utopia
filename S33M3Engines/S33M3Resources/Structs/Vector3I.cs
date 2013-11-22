@@ -280,6 +280,11 @@ namespace S33M3Resources.Structs
             get { return new Vector3I(0, 0, 1); }
         }
 
+        public int Volume
+        {
+            get { return x * y * z; }
+        }
+
         public bool IsZero()
         {
             return x == 0 && y == 0 && z == 0;

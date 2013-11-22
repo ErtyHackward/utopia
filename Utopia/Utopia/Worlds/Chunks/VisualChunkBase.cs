@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Maths;
@@ -30,21 +28,23 @@ namespace Utopia.Worlds.Chunks
 {
     public abstract class VisualChunkBase : CompressibleChunk, IDisposable
     {
-                #region Private variables
+        #region Private variables
         private readonly object _syncRoot = new object();
-
-        private VisualWorldParameters _visualWorldParameters;
-        
+        /// <summary>
+        /// Dictionary by the model name of the entity
+        /// </summary>
+        private readonly Dictionary<string, List<VisualVoxelEntity>> _visualVoxelEntities;
+        private readonly VisualWorldParameters _visualWorldParameters;
         private readonly CameraManager<ICameraFocused> _cameraManager;
-        private Range3I _cubeRange;
-        private FastRandom _rnd = new FastRandom();
-
+        private readonly FastRandom _rnd = new FastRandom();
         private readonly D3DEngine _d3DEngine;
         private readonly WorldFocusManager _worldFocusManager;
-        private WorldChunks _worldChunkManager;
-        private VoxelModelManager _voxelModelManager;
-        private IChunkEntityImpactManager _chunkEntityImpactManager;
+        private readonly WorldChunks _worldChunkManager;
+        private readonly VoxelModelManager _voxelModelManager;
+        private readonly IChunkEntityImpactManager _chunkEntityImpactManager;
 
+        private Range3I _cubeRange;
+        
         #endregion
 
         #region Public properties/Variable
@@ -87,9 +87,6 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         public FTSValue<float> PopUpValue = new FTSValue<float>(0.0f);
         
-        
-        public Int64 ChunkID { get; set; }                    // Chunk ID
-
         public Matrix World;                                  // The chunk World matrix ==> Not a property, to be sure it will be direct variables acces !!
         public BoundingBox ChunkWorldBoundingBox;             // The chunk World BoundingBox ==> Not a property, to be sure it will be direct variables acces !!
 
@@ -103,12 +100,7 @@ namespace Utopia.Worlds.Chunks
         {
             get { return _serverRequestTime; }
         }
-
-        /// <summary>
-        /// Dictionary by the model name of the entity
-        /// </summary>
-        private Dictionary<string, List<VisualVoxelEntity>> VisualVoxelEntities;
-
+        
         public List<EntityMetaData> EmitterStaticEntities;
         public List<IItem> SoundStaticEntities;
 
@@ -179,14 +171,14 @@ namespace Utopia.Worlds.Chunks
             
             _cameraManager = cameraManager;
             _voxelModelManager = voxelModelManager;
-            VisualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
+            _visualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
             EmitterStaticEntities = new List<EntityMetaData>();
             SoundStaticEntities = new List<IItem>();
             CubeRange = cubeRange;
             State = ChunkState.Empty;
-            Entities.EntityAdded += Entities_EntityAdded;
-            Entities.EntityRemoved += Entities_EntityRemoved;
-            Entities.CollectionCleared += Entities_CollectionCleared;
+            Entities.EntityAdded += EntitiesEntityAdded;
+            Entities.EntityRemoved += EntitiesEntityRemoved;
+            Entities.CollectionCleared += EntitiesCollectionCleared;
         }
 
         #region Public methods
@@ -195,7 +187,7 @@ namespace Utopia.Worlds.Chunks
         {
             foreach (var entity in Entities.EnumerateFast())
             {
-                Entities_EntityAdded(null,
+                EntitiesEntityAdded(null,
                                      new Shared.Entities.Events.EntityCollectionEventArgs
                                      {
                                          Chunk = this,
@@ -236,9 +228,9 @@ namespace Utopia.Worlds.Chunks
         }
 #endif
 
-        void Entities_CollectionCleared(object sender, EventArgs e)
+        void EntitiesCollectionCleared(object sender, EventArgs e)
         {
-            foreach (var entityList in VisualVoxelEntities.Values)
+            foreach (var entityList in _visualVoxelEntities.Values)
             {
                 foreach (IDisposable i in entityList)
                 {
@@ -246,12 +238,12 @@ namespace Utopia.Worlds.Chunks
                 }    
             }
             
-            VisualVoxelEntities.Clear();
+            _visualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
             SoundStaticEntities.Clear();
         }
 
-        private void Entities_EntityRemoved(object sender, EntityCollectionEventArgs e)
+        private void EntitiesEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
             RemoveVoxelEntity(e);
             RemoveParticuleEmitterEntity(e);
@@ -263,7 +255,7 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Entities_EntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
+        private void EntitiesEntityAdded(object sender, Shared.Entities.Events.EntityCollectionEventArgs e)
         {
             AddVoxelEntity(e);
             AddParticuleEmitterEntity(e);
@@ -309,16 +301,8 @@ namespace Utopia.Worlds.Chunks
                 visualVoxelEntity.VoxelEntity.ModelInstance.World = instanceScaling * instanceTranslation;
                 visualVoxelEntity.VoxelEntity.ModelInstance.Rotation = instanceRotation;
 
-                TerraCubeResult result;
-                //if (visualVoxelEntity.Entity is BlockLinkedItem)
-                //{
-                //    result = _singleArrayContainer.GetCube(((BlockLinkedItem)visualVoxelEntity.Entity).BlockLocationRoot);
-                //}
-                //else
-                //{
-                    //Find the Cube where the entity is placed, and assign its color to the entity
-                result = GetCube(visualVoxelEntity.VoxelEntity.Position.ToCubePosition());
-                //}
+                var result = GetCube(visualVoxelEntity.VoxelEntity.Position.ToCubePosition());
+
 
                 if (result.IsValid)
                 {
@@ -343,13 +327,13 @@ namespace Utopia.Worlds.Chunks
                 lock (_syncRoot)
                 {
                     List<VisualVoxelEntity> list;
-                    if (VisualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
+                    if (_visualVoxelEntities.TryGetValue(voxelEntity.ModelName, out list))
                     {
                         list.Add(visualVoxelEntity);
                     }
                     else
                     {
-                        VisualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
+                        _visualVoxelEntities.Add(voxelEntity.ModelName, new List<VisualVoxelEntity> { visualVoxelEntity });
                     }
                 }
 
@@ -369,7 +353,7 @@ namespace Utopia.Worlds.Chunks
         private void RemoveVoxelEntity(EntityCollectionEventArgs e)
         {
             //Remove the entity from Visual Model
-            foreach (var pair in VisualVoxelEntities)
+            foreach (var pair in _visualVoxelEntities)
             {
                 pair.Value.RemoveAll(x => x.Entity == e.Entity);
             }
@@ -378,8 +362,8 @@ namespace Utopia.Worlds.Chunks
             if (e.AtChunkCreationTime == false && lightEntity != null)
             {
                 //Get the Cube where is located the entity
-                Vector3D entityWorldPosition = ((IEntity)lightEntity).Position;
-                Vector3I entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
+                var entityWorldPosition = lightEntity.Position;
+                var entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
                                                             MathHelper.Floor(entityWorldPosition.Y),
                                                             MathHelper.Floor(entityWorldPosition.Z));
                 _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
@@ -423,7 +407,7 @@ namespace Utopia.Worlds.Chunks
         {
             lock (_syncRoot)
             {
-                foreach (var pair in VisualVoxelEntities)
+                foreach (var pair in _visualVoxelEntities)
                 {
                     foreach (var entity in pair.Value)
                     {
@@ -442,7 +426,7 @@ namespace Utopia.Worlds.Chunks
         {
             lock (_syncRoot)
             {
-                foreach (var entity in VisualVoxelEntities[modelName])
+                foreach (var entity in _visualVoxelEntities[modelName])
                 {
                     yield return entity;
                 }
@@ -457,7 +441,7 @@ namespace Utopia.Worlds.Chunks
         {
             lock (_syncRoot)
             {
-                return VisualVoxelEntities;
+                return _visualVoxelEntities;
             }
         }
 
@@ -497,9 +481,7 @@ namespace Utopia.Worlds.Chunks
             ChunkPositionBlockUnit = new Vector2I() { X = _cubeRange.Position.X, Y = _cubeRange.Position.Z };
 
             Position = new Vector3I() { X = _cubeRange.Position.X / AbstractChunk.ChunkSize.X, Y = 0, Z = _cubeRange.Position.Z / AbstractChunk.ChunkSize.Z };
-
-            ChunkID = VisualChunk.ComputeChunkId(Position.X, Position.Z);
-
+            
             ChunkCenter = new Vector3D(_cubeRange.Position.X + (_cubeRange.Max.X - _cubeRange.Position.X) / 2.0,
                            _cubeRange.Position.Y + (_cubeRange.Max.Y - _cubeRange.Position.Y) / 2.0,
                            _cubeRange.Position.Z + (_cubeRange.Max.Z - _cubeRange.Position.Z) / 2.0);
@@ -513,7 +495,7 @@ namespace Utopia.Worlds.Chunks
 
             SoundStaticEntities.Clear();
             lock (_syncRoot)
-                VisualVoxelEntities.Clear();
+                _visualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
         }
 
@@ -523,8 +505,8 @@ namespace Utopia.Worlds.Chunks
         {
             Graphics.Dispose();
 
-            Entities.EntityAdded -= Entities_EntityAdded;
-            Entities.EntityRemoved -= Entities_EntityRemoved;
+            Entities.EntityAdded -= EntitiesEntityAdded;
+            Entities.EntityRemoved -= EntitiesEntityRemoved;
 #if DEBUG
             _blockpickedUPEffect.Dispose();
             ChunkBoundingBoxDisplay.Dispose();
