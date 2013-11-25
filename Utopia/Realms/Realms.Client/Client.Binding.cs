@@ -222,7 +222,7 @@ namespace Realms.Client
             _iocContainer.Bind<ILandscapeManager2D>().To<LandscapeManager>().InScope(x => GameScope.CurrentGameScope);   //Interface betwee the big array and landscape processors
             _iocContainer.Bind<ILightingManager>().To<LightingManager>().InScope(x => GameScope.CurrentGameScope);     //Landscape lightings
             _iocContainer.Bind<IChunkMeshManager>().To<ChunkMeshManager>().InScope(x => GameScope.CurrentGameScope);   //Chunk Mesh + Entities creation
-            _iocContainer.Bind<IWorldChunks>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
+            _iocContainer.Bind<IWorldChunks2D>().To<WorldChunks>().InScope(x => GameScope.CurrentGameScope);             //Chunk Management (Update/Draw)
             _iocContainer.Bind<WorldShadowMap>().ToSelf().InScope(x => GameScope.CurrentGameScope);                    //Shadow Map Drawing Component
             _iocContainer.Bind<IChunksWrapper>().To<WorldChunksWrapper>().InScope(x => GameScope.CurrentGameScope);    //Chunk "Wrapping" inside the big Array
             _iocContainer.Bind<LandscapeBufferManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);

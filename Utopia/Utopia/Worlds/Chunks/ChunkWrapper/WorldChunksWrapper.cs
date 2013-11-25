@@ -30,7 +30,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
         #endregion
 
         #region Public variables
-        public IWorldChunks WorldChunks { get; set; }
+        public IWorldChunks2D WorldChunks { get; set; }
         #endregion
 
         public WorldChunksWrapper()

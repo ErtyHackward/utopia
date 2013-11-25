@@ -30,7 +30,7 @@ namespace Utopia.Entities.Renderer
     {
         private readonly D3DEngine _engine;
         private readonly CameraManager<ICameraFocused> _cameraManager;
-        private readonly IWorldChunks _worldChunks;
+        private readonly IWorldChunks2D _worldChunks;
         private ShaderResourceView _cracksArray;
 
         private HLSLCracks _cubeEffect;
@@ -41,7 +41,7 @@ namespace Utopia.Entities.Renderer
 
         public CracksRenderer(D3DEngine engine,
                               CameraManager<ICameraFocused> cameraManager,
-                              IWorldChunks worldChunks)
+                              IWorldChunks2D worldChunks)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");

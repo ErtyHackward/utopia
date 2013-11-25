@@ -9,7 +9,36 @@ using S33M3DXEngine.Debug.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
-    public interface IWorldChunks : IDrawableComponent, IDebugInfo
+    public interface IWorldChunks<out T> : IDrawableComponent, IDebugInfo where T : VisualChunkBase
+    {
+        /// <summary>
+        /// Indicates if inital chunks were loaded
+        /// </summary>
+        bool IsInitialized { get; set; }
+
+        /// <summary>
+        /// The visible world border in world coordinate
+        /// </summary>
+        VisualWorldParameters VisualWorldParameters { get; set; }
+        
+        /// <summary>
+        /// Get a world's chunk from a chunk position
+        /// </summary>
+        /// <param name="chunkPosition"></param>
+        /// <returns></returns>
+        T GetChunk(Vector3I chunkPosition);
+
+        /// <summary>
+        /// Enumerates all visible chunks by player (i.e. not frustum culled)
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<T> VisibleChunks();
+    }
+
+    /// <summary>
+    /// Represents 2d chunk layout manager
+    /// </summary>
+    public interface IWorldChunks2D : IDrawableComponent, IDebugInfo
     {
         /// <summary> The chunk collection </summary>
         VisualChunk[] Chunks { get; set; }
@@ -98,7 +127,7 @@ namespace Utopia.Worlds.Chunks
         /// <returns>True if the chunk was found</returns>
         bool GetSafeChunk(int X, int Z, out VisualChunk chunk);
 
-                /// <summary>
+        /// <summary>
         /// Get the list of chunks for a specific X world coordinate
         /// </summary>
         /// <param name="FixedX">The Fixed "line" of chunk to retrieve</param>

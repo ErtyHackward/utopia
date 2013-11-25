@@ -28,7 +28,7 @@ namespace Utopia.Worlds.Chunks
     }
 #endif
 
-    public partial class WorldChunks : IWorldChunks
+    public partial class WorldChunks : IWorldChunks2D
     {
 #if PERFTEST
         public static Perf perf = new Perf();
@@ -290,7 +290,7 @@ namespace Utopia.Worlds.Chunks
             {
                 chunk.DistanceFromPlayer = MVector3.Distance2D(chunk.ChunkCenter, _playerManager.CameraWorldPosition);
             }
-
+            
             //Sort by this distance
             int index = 0;
             foreach (var chunk in Chunks.OrderBy(x => x.DistanceFromPlayer))

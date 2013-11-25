@@ -13,7 +13,7 @@ namespace Utopia.Entities.Managers.Interfaces
 
         PlayerEntityManager Player { get; set; }
 
-        IWorldChunks WorldChunks { get; set; }
+        IWorldChunks2D WorldChunks { get; set; }
 
         /// <summary>
         /// Checks nearby entities intersection with the pickingRay

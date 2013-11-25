@@ -49,7 +49,7 @@ namespace Utopia.Particules
         //Small Cube emitter, will emit on cube Change ! 
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private CubeEmitter _cubeEmitter;
-        private IWorldChunks _worldChunks;
+        private IWorldChunks2D _worldChunks;
         private readonly ILandscapeManager _landscapeManager;
 
         private SpriteEmitter _staticEntityEmitter;
@@ -69,7 +69,7 @@ namespace Utopia.Particules
                              InputsManager inputsManager,
                              VisualWorldParameters worldParameters,
                              IChunkEntityImpactManager chunkEntityImpactManager,
-                             IWorldChunks worldChunks,
+                             IWorldChunks2D worldChunks,
                              ILandscapeManager landscapeManager,
                              IWeather weather)
             : base(d3dEngine, sharedFrameCB.CBPerFrame)

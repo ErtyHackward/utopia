@@ -1,28 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using S33M3Resources.Effects.Basics;
-using SharpDX.Direct3D11;
-using Utopia.Resources.ModelComp;
-using Utopia.Shared.Chunks;
+﻿using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Interfaces;
-using SharpDX;
 using Utopia.Shared.World;
 using S33M3Resources.Structs;
-using S33M3DXEngine.Threading;
 using S33M3DXEngine;
 using S33M3CoreComponents.WorldFocus;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Cameras;
-using S33M3CoreComponents.Maths;
 using Utopia.Entities.Voxel;
-using Utopia.Shared.Entities.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
-using Utopia.Shared.Configuration;
-using Utopia.Shared.Entities.Concrete.Interface;
-using Utopia.Shared.Entities.Models;
-using Utopia.Shared.Entities.Events;
-using Utopia.Entities;
 using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Worlds.Chunks
@@ -39,7 +25,7 @@ namespace Utopia.Worlds.Chunks
             get { return (SingleArrayDataProvider)base.BlockData; }
         }
 
-        public VisualChunk(D3DEngine d3DEngine, 
+        public VisualChunk( D3DEngine d3DEngine, 
                             WorldFocusManager worldFocusManager, 
                             VisualWorldParameters visualWorldParameter, 
                             ref Range3I cubeRange, 
@@ -47,9 +33,8 @@ namespace Utopia.Worlds.Chunks
                             CameraManager<ICameraFocused> cameraManager,
                             WorldChunks worldChunkManager,
                             VoxelModelManager voxelModelManager,
-                            IChunkEntityImpactManager chunkEntityImpactManager, 
-                            ChunkDataProvider provider = null)  : 
-            base(   d3DEngine,
+                            IChunkEntityImpactManager chunkEntityImpactManager)
+            : base( d3DEngine,
                     worldFocusManager, 
                     visualWorldParameter, 
                     cubeRange, 

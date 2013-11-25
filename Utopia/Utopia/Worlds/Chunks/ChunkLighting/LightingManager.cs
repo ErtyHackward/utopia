@@ -42,7 +42,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             get { return _lightPropagateSteps; }
         }
 
-        public IWorldChunks WorldChunk { get; set; }
+        public IWorldChunks2D WorldChunk { get; set; }
 
         #endregion
 

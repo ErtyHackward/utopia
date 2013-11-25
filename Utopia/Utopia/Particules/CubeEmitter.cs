@@ -48,7 +48,7 @@ namespace Utopia.Particules
 
         private Dictionary<int, Color[]> _cubeColorSampled;
         private VisualWorldParameters _visualWorldParameters;
-        private IWorldChunks _worldChunk;
+        private IWorldChunks2D _worldChunk;
         private readonly ILandscapeManager _landscapeManager;
         private BoundingBox _cubeBB;
 
@@ -87,7 +87,7 @@ namespace Utopia.Particules
                            float maximumAge,
                            float size,
                            VisualWorldParameters visualWorldParameters,
-                           IWorldChunks worldChunk,
+                           IWorldChunks2D worldChunk,
                            ILandscapeManager landscapeManager,
                            double maxRenderingDistance)
         {

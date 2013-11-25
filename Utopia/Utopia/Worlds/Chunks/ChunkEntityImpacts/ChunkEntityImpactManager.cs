@@ -28,7 +28,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private bool _initialized;
         private ServerComponent _server;
         private SingleArrayChunkContainer _cubesHolder;
-        private IWorldChunks _worldChunks;
+        private IWorldChunks2D _worldChunks;
         private IChunkStorageManager _chunkStorageManager;
         private ILightingManager _lightManager;
         private List<TerraCubePositionTag> _onHoldNetworkMsg = new List<TerraCubePositionTag>(1000);
@@ -42,7 +42,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             set { _cubesHolder = value; }
         }
 
-        public IWorldChunks WorldChunks
+        public IWorldChunks2D WorldChunks
         {
             get { return _worldChunks; }
             set { _worldChunks = value; }
@@ -79,7 +79,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public void LateInitialization( ServerComponent server,
                                         SingleArrayChunkContainer cubesHolder,
-                                        IWorldChunks worldChunks,
+                                        IWorldChunks2D worldChunks,
                                         IChunkStorageManager chunkStorageManager,
                                         ILightingManager lightManager,
                                         VisualWorldParameters visualWorldParameters
