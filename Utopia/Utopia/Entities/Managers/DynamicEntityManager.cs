@@ -76,7 +76,7 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _chunkContainer;
-        private readonly IWorldChunks _worldChunks;
+        private readonly IWorldChunks2D _worldChunks;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
 
@@ -151,7 +151,7 @@ namespace Utopia.Entities.Managers
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
                                     SingleArrayChunkContainer chunkContainer,
-                                    IWorldChunks worldChunks)
+                                    IWorldChunks2D worldChunks)
         {
             if (worldChunks == null) throw new ArgumentNullException("worldChunks");
 

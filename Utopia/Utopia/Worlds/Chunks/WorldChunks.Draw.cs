@@ -24,7 +24,7 @@ namespace Utopia.Worlds.Chunks
     /// Will contains world block landscape stored as Chunks.
     /// Concentrate to the rendering of the chunks !
     /// </summary>
-    public partial class WorldChunks : IWorldChunks
+    public partial class WorldChunks : IWorldChunks2D
     {
         #region Private variables
         private HLSLTerran _terraEffect;

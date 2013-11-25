@@ -263,7 +263,7 @@ namespace Realms.Client.States
             var landscapeManager = _ioc.Get<ILandscapeManager2D>();
             var lightingManager = _ioc.Get<ILightingManager>();
             var chunkMeshManager = _ioc.Get<IChunkMeshManager>();
-            var worldChunks = _ioc.Get<IWorldChunks>();
+            var worldChunks = _ioc.Get<IWorldChunks2D>();
             var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var fadeComponent = _ioc.Get<FadeComponent>();
@@ -344,7 +344,7 @@ namespace Realms.Client.States
 
         void worldChunks_LoadComplete(object sender, EventArgs e)
         {
-            _ioc.Get<IWorldChunks>().LoadComplete -= worldChunks_LoadComplete;
+            _ioc.Get<IWorldChunks2D>().LoadComplete -= worldChunks_LoadComplete;
             StatesManager.ActivateGameStateAsync("Gameplay");
         }
 

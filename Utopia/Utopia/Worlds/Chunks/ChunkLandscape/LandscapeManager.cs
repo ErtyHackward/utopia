@@ -47,7 +47,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             set { _worldGenerator = value; }
         }
 
-        public IWorldChunks WorldChunks { get; set; }
+        public IWorldChunks2D WorldChunks { get; set; }
 
         public EntityFactory EntityFactory { get; set; }
 

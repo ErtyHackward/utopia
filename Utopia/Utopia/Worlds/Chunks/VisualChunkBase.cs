@@ -73,15 +73,6 @@ namespace Utopia.Worlds.Chunks
 
         public VisualChunk[] SurroundingChunks;
 
-
-        public static Int64 ComputeChunkId(int PosiX, int PosiY)
-        {
-            var hashLong = new MathHelper.IntsToLong();
-            hashLong.LeftInt32 = PosiX;
-            hashLong.RightInt32 = PosiY;
-            return hashLong.LongValue;
-        }
-
         /// <summary>
         /// Gets or sets the value of chunk opaque. Allows to create slowly appearing effect
         /// </summary>
@@ -188,7 +179,7 @@ namespace Utopia.Worlds.Chunks
             foreach (var entity in Entities.EnumerateFast())
             {
                 EntitiesEntityAdded(null,
-                                     new Shared.Entities.Events.EntityCollectionEventArgs
+                                     new EntityCollectionEventArgs
                                      {
                                          Chunk = this,
                                          Entity = entity

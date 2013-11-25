@@ -20,6 +20,9 @@ namespace Utopia.Worlds.Chunks
     {
         private ByteColor[] _lights;
 
+        /// <summary>
+        /// Gets light intensity array (R,G,B,A (SUN))
+        /// </summary>
         public ByteColor[] Lights { get { return _lights; } }
 
         public VisualChunk3D(

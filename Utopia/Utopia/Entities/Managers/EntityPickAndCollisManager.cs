@@ -41,7 +41,7 @@ namespace Utopia.Entities.Managers
         private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
         private ServerComponent _server;
         private InputsManager _input;
-        private IWorldChunks _worldChunks;
+        private IWorldChunks2D _worldChunks;
         private PlayerEntityManager _playerManager;
         private bool? _onEntityTop = null;
         #endregion
@@ -53,7 +53,7 @@ namespace Utopia.Entities.Managers
             set { _player = value; }
         }
 
-        public IWorldChunks WorldChunks
+        public IWorldChunks2D WorldChunks
         {
             get { return _worldChunks; }
             set { _worldChunks = value; }

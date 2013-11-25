@@ -37,7 +37,7 @@ namespace Utopia.Entities.Renderer
         private IDynamicEntity _player;
         private CameraManager<ICameraFocused> _camManager;
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
-        private readonly IWorldChunks _worldChunks;
+        private readonly IWorldChunks2D _worldChunks;
 
         private Vector3 _cubeScaling = new Vector3(1.005f, 1.005f, 1.005f);
 
@@ -49,7 +49,7 @@ namespace Utopia.Entities.Renderer
                                IDynamicEntity player,
                                CameraManager<ICameraFocused> camManager,
                                IVisualDynamicEntityManager dynamicEntityManager,
-                               IWorldChunks worldChunks)
+                               IWorldChunks2D worldChunks)
         {
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
 

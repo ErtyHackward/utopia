@@ -9,7 +9,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
     public interface ILightingManager
     {
         byte LightPropagateSteps { get; }
-        IWorldChunks WorldChunk { get; set; }
+        IWorldChunks2D WorldChunk { get; set; }
 
         void CreateChunkLightSources(VisualChunk chunk);
         void PropagateInnerChunkLightSources(VisualChunk chunk);

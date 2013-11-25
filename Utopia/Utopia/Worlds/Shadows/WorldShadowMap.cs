@@ -52,7 +52,7 @@ namespace Utopia.Worlds.Shadows
         public ISkyDome SkyDome { get; set; }
 
         [Inject]
-        public IWorldChunks WorldChunks { get; set; }
+        public IWorldChunks2D WorldChunks { get; set; }
 
         public WorldShadowMap(
                                 CameraManager<ICameraFocused> camManager,

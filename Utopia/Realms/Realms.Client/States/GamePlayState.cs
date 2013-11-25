@@ -95,7 +95,7 @@ namespace Realms.Client.States
             }
 
             var weather = _ioc.Get<IWeather>();
-            var worldChunks = _ioc.Get<IWorldChunks>();
+            var worldChunks = _ioc.Get<IWorldChunks2D>();
             var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();

@@ -31,7 +31,7 @@ namespace Realms.Client.Components
                                     IVisualDynamicEntityManager dynamicEntityManager,
                                     IDynamicEntity player,
                                     IChunkEntityImpactManager chunkEntityImpactManager,
-                                    IWorldChunks worldChunk,
+                                    IWorldChunks2D worldChunk,
                                     IClock gameClockTime,
                                     IPlayerManager playerEntityManager,
                                     VisualWorldParameters visualWorldParameters,

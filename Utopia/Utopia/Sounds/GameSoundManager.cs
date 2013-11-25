@@ -58,7 +58,7 @@ namespace Utopia.Sounds
         private readonly ISoundEngine _soundEngine;
         private SingleArrayChunkContainer _singleArray;
         private IChunkEntityImpactManager _chunkEntityImpactManager;
-        private IWorldChunks _worldChunk;
+        private IWorldChunks2D _worldChunk;
         private IClock _gameClockTime;
         private IPlayerManager _playerEntityManager;
         private VisualWorldParameters _visualWorldParameters;
@@ -99,7 +99,7 @@ namespace Utopia.Sounds
                                 IVisualDynamicEntityManager dynamicEntityManager,
                                 IDynamicEntity player,
                                 IChunkEntityImpactManager chunkEntityImpactManager,
-                                IWorldChunks worldChunk,
+                                IWorldChunks2D worldChunk,
                                 IClock gameClockTime,
                                 IPlayerManager playerEntityManager,
                                 VisualWorldParameters visualWorldParameters,

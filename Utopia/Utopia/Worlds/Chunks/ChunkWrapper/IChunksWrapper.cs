@@ -7,7 +7,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
 {
     public interface IChunksWrapper
     {
-        IWorldChunks WorldChunks { get; set; }
+        IWorldChunks2D WorldChunks { get; set; }
 
         void AddWrapOperation(ChunkWrapType operationType);
     }

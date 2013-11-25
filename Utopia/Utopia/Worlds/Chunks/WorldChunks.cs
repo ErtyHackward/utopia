@@ -59,7 +59,7 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Will contains world block landscape stored as Chunks.
     /// </summary>
-    public partial class WorldChunks : DrawableGameComponent, IWorldChunks
+    public partial class WorldChunks : DrawableGameComponent, IWorldChunks2D
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -452,9 +452,9 @@ namespace Utopia.Worlds.Chunks
         public bool isBorderChunk(Vector2I chunkPosition)
         {
             if (chunkPosition.X == VisualWorldParameters.WorldRange.Position.X ||
-               chunkPosition.Y == VisualWorldParameters.WorldRange.Position.Z ||
-               chunkPosition.X == VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
-               chunkPosition.Y == VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
+                chunkPosition.Y == VisualWorldParameters.WorldRange.Position.Z ||
+                chunkPosition.X == VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X ||
+                chunkPosition.Y == VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z)
             {
                 return true;
             }

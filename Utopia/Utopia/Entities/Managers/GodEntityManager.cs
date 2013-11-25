@@ -120,7 +120,7 @@ namespace Utopia.Entities.Managers
         }
         
         [Inject]
-        public IWorldChunks Chunks { get; set; }
+        public IWorldChunks2D Chunks { get; set; }
 
         public GodEntityManager(D3DEngine engine,
                                 GodEntity playerEntity, 

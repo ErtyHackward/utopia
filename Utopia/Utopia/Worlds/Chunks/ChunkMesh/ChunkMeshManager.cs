@@ -31,7 +31,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         #endregion
 
         #region public variables/properties
-        public IWorldChunks WorldChunks { get; set; }
+        public IWorldChunks2D WorldChunks { get; set; }
         #endregion
 
         public ChunkMeshManager(VisualWorldParameters visualWorldParameters, SingleArrayChunkContainer cubesHolder, [Named("SolidCubeMeshFactory")] ICubeMeshFactory solidCubeMeshFactory, [Named("LiquidCubeMeshFactory")] ICubeMeshFactory liquidCubeMeshFactory)

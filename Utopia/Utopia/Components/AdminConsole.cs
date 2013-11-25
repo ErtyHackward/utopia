@@ -23,7 +23,7 @@ namespace Utopia.Components
 
         #region Private Variables
         private ChatComponent _chatComp;
-        private IWorldChunks _worldChunk;
+        private IWorldChunks2D _worldChunk;
         private D3DEngine _engine;
         private Game _mainGameLoop;
         private ServerComponent _server;
@@ -36,7 +36,7 @@ namespace Utopia.Components
         #endregion
 
         public AdminConsole(ChatComponent chatComp,
-                            IWorldChunks worldChunk,
+                            IWorldChunks2D worldChunk,
                             D3DEngine engine,
                             Game mainGameLoop,
                             ServerComponent server)

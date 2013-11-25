@@ -342,7 +342,7 @@ namespace Realms.Client.Components.GUI.Settings
         {
             if (isGameRunning)
             {
-                var worldChunks = _iocContainer.Get<IWorldChunks>();
+                var worldChunks = _iocContainer.Get<IWorldChunks2D>();
 
                 if (distance > (ClientSettings.Current.Settings.GraphicalParameters.WorldSize / 2) - 2.5)
                 {

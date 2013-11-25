@@ -232,7 +232,7 @@ namespace Utopia.Entities.Managers
         public GhostedEntityRenderer GhostedEntityRenderer { get; set; }
 
         [Inject]
-        public IWorldChunks WorldChunks { get; set; }
+        public IWorldChunks2D WorldChunks { get; set; }
 
         #endregion
 

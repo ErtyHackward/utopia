@@ -27,7 +27,7 @@ namespace Utopia.Entities.Managers
     {
         private readonly IPlayerManager _playerManager;
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
-        private readonly IWorldChunks _worldChunks;
+        private readonly IWorldChunks2D _worldChunks;
         private readonly ICameraManager _cameraManager;
         private readonly InputsManager _inputsManager;
         private readonly IPickingRenderer _pickingRenderer;
@@ -46,7 +46,7 @@ namespace Utopia.Entities.Managers
         
         public PickingManager(IPlayerManager playerManager,
                               IVisualDynamicEntityManager dynamicEntityManager,
-                              IWorldChunks worldChunks,
+                              IWorldChunks2D worldChunks,
                               ICameraManager cameraManager,
                               InputsManager inputsManager,
                               IPickingRenderer pickingRenderer,
