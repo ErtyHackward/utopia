@@ -123,6 +123,7 @@ namespace Utopia.GUI
             var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
             //ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
             //ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
+            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
         }
 
         public override void BeforeDispose()
@@ -229,6 +230,11 @@ namespace Utopia.GUI
 
             if (!_screen.Desktop.Children.Contains(ToolbarUi))
                 _screen.Desktop.Children.Add(ToolbarUi);
+
+            var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
+
+            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
+
 
             base.EnableComponent();
         }

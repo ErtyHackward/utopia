@@ -116,9 +116,11 @@ namespace Utopia.Worlds.Storage
             }
 
             //Get a specific chunk
-            var commandText = "SELECT [X], [Y], [Z], [md5hash], [data] FROM CHUNKS WHERE (CHUNKID = @CHUNKID)";
+            var commandText = "SELECT [X], [Y], [Z], [md5hash], [data] FROM CHUNKS WHERE (X = @X AND Y = @Y AND Z = @Z)";
             _landscapeGetCmd = new SQLiteCommand(commandText, Connection);
-            _landscapeGetCmd.Parameters.Add("@CHUNKID", System.Data.DbType.Int64);
+            _landscapeGetCmd.Parameters.Add("@X", System.Data.DbType.Int32);
+            _landscapeGetCmd.Parameters.Add("@Y", System.Data.DbType.Int32);
+            _landscapeGetCmd.Parameters.Add("@Z", System.Data.DbType.Int32);
 
             //Get All modified chunks Hashs
             commandText = "SELECT [X], [Y], [Z], [md5hash] FROM CHUNKS";
@@ -164,7 +166,9 @@ namespace Utopia.Worlds.Storage
 
         private void ProcessRequest(ref CubeRequest processingRequest)
         {
-            _landscapeGetCmd.Parameters[0].Value = processingRequest.ChunkId;
+            _landscapeGetCmd.Parameters[0].Value = processingRequest.ChunkId.X;
+            _landscapeGetCmd.Parameters[1].Value = processingRequest.ChunkId.Y;
+            _landscapeGetCmd.Parameters[2].Value = processingRequest.ChunkId.Z;
 
             ChunkDataStorage cubeDataStorage = null;
             using (var dataReader = _landscapeGetCmd.ExecuteReader())

@@ -34,8 +34,7 @@ namespace Utopia.GUI.Inventory
         
         private readonly IconFactory _iconFactory;
         private readonly ItemMessageTranslator _itemMessageTranslator;
-        private readonly Hud _hud;
-        private readonly ToolBarUi _toolBar;
+        private ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
         private InventoryWindow _containerInventoryWindow;
 
@@ -46,13 +45,7 @@ namespace Utopia.GUI.Inventory
         private bool _inventoryActive;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
-
-        [Inject]
-        public PlayerEntityManager PlayerManager { get; set; }
-
-        [Inject]
-        public ISoundEngine SoundEngine { get; set; }
-
+        
         /// <summary>
         /// Indicates if inventory is active now
         /// </summary>
@@ -117,14 +110,22 @@ namespace Utopia.GUI.Inventory
             if (handler != null) handler(this, new InventorySwitchEventArgs { Closing = closed });
         }
 
+        [Inject]
+        public PlayerEntityManager PlayerManager { get; set; }
+
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
+
+        [Inject]
+        public Hud Hud { get; set; }
+
 
         public InventoryComponent(
             D3DEngine engine,
             InputsManager inputManager, 
             GuiManager guiManager, 
             IconFactory iconFactory,
-            ItemMessageTranslator itemMessageTranslator, 
-            Hud hud)
+            ItemMessageTranslator itemMessageTranslator)
         {
 
             IsDefferedLoadContent = true;
@@ -134,12 +135,7 @@ namespace Utopia.GUI.Inventory
             _guiManager = guiManager;
             _iconFactory = iconFactory;
             _itemMessageTranslator = itemMessageTranslator;
-            _hud = hud;
-            _toolBar = hud.ToolbarUi;
-            _toolBar.SlotEnter += _toolBar_SlotEnter;
-            _toolBar.SlotLeave += _toolBar_SlotLeave;
-
-            _hud.SlotClicked += HudSlotClicked;
+            
             _guiManager.Screen.Desktop.Clicked += DesktopClicked;
 
             _itemMessageTranslator.Enabled = false;
@@ -172,7 +168,7 @@ namespace Utopia.GUI.Inventory
         
         public override void BeforeDispose()
         {
-            _hud.SlotClicked -= HudSlotClicked;
+            Hud.SlotClicked -= HudSlotClicked;
             _guiManager.Screen.Desktop.Clicked -= DesktopClicked;
         }
 
@@ -215,6 +211,15 @@ namespace Utopia.GUI.Inventory
             window.CellMouseLeave -= InventoryUiCellMouseLeave;
             window.CellMouseUp -= charInventory_CellMouseUp;
             window.CellMouseDown -= charInventory_CellMouseDown;
+        }
+
+        public override void Initialize()
+        {
+            _toolBar = Hud.ToolbarUi;
+            _toolBar.SlotEnter += _toolBar_SlotEnter;
+            _toolBar.SlotLeave += _toolBar_SlotLeave;
+
+            Hud.SlotClicked += HudSlotClicked;
         }
 
         public override void LoadContent(DeviceContext context)

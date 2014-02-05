@@ -52,7 +52,7 @@ namespace Utopia.Worlds.Chunks
             }
 
             // slicing view of the chunk only if player is in God mode !
-            if (_playerManager is GodEntityManager)
+            if (PlayerManager is GodEntityManager)
             {
                 SlicingUpdate(timeSpend);
             }
@@ -288,7 +288,7 @@ namespace Utopia.Worlds.Chunks
             //Compute Distance Squared from Chunk Center to Camera
             foreach (var chunk in Chunks)
             {
-                chunk.DistanceFromPlayer = MVector3.Distance2D(chunk.ChunkCenter, _playerManager.CameraWorldPosition);
+                chunk.DistanceFromPlayer = MVector3.Distance2D(chunk.ChunkCenter, PlayerManager.CameraWorldPosition);
             }
 
             //Sort by this distance
@@ -303,10 +303,10 @@ namespace Utopia.Worlds.Chunks
 
         private void PlayerDisplacementChunkEvents()
         {
-            double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, _playerManager.Player.Position);
+            double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, PlayerManager.Player.Position);
             if (distance > 8)
             {
-                _lastPlayerTriggeredPosition = _playerManager.Player.Position;
+                _lastPlayerTriggeredPosition = PlayerManager.Player.Position;
                 ChunkNeed2BeSorted = true;
             }
         }
@@ -318,13 +318,13 @@ namespace Utopia.Worlds.Chunks
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
-            var resultmin = new Vector3D(_playerManager.Player.Position.X - VisualWorldParameters.WorldRange.Position.X,
-                                         _playerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Position.Y,
-                                         _playerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Position.Z);
+            var resultmin = new Vector3D(PlayerManager.Player.Position.X - VisualWorldParameters.WorldRange.Position.X,
+                                         PlayerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Position.Y,
+                                         PlayerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Position.Z);
 
-            var resultmax = new Vector3D(VisualWorldParameters.WorldRange.Max.X - _playerManager.Player.Position.X,
-                                         VisualWorldParameters.WorldRange.Max.Y - _playerManager.Player.Position.Y,
-                                         VisualWorldParameters.WorldRange.Max.Z - _playerManager.Player.Position.Z);
+            var resultmax = new Vector3D(VisualWorldParameters.WorldRange.Max.X - PlayerManager.Player.Position.X,
+                                         VisualWorldParameters.WorldRange.Max.Y - PlayerManager.Player.Position.Y,
+                                         VisualWorldParameters.WorldRange.Max.Z - PlayerManager.Player.Position.Z);
 
             float wrapOrder = float.MaxValue;
             ChunkWrapType operation = ChunkWrapType.Z_Plus1;

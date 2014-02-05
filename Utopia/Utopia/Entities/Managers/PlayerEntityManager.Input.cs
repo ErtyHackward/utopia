@@ -40,7 +40,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggeredUp(UtopiaActions.UseLeft, CatchExclusiveAction))
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {

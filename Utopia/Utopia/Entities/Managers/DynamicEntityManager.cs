@@ -76,7 +76,7 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _chunkContainer;
-        private readonly IWorldChunks _worldChunks;
+        private IWorldChunks _worldChunks;
         private int _staticEntityViewRange;
         private IDynamicEntity _playerEntity;
 
@@ -143,6 +143,13 @@ namespace Utopia.Entities.Managers
             set { _sharedFrameCB = value; }
         }
 
+        [Inject]
+        public IWorldChunks WorldChunks
+        {
+            get { return _worldChunks; }
+            set { _worldChunks = value; }
+        }
+
         #endregion
 
         public DynamicEntityManager(D3DEngine d3DEngine,
@@ -150,16 +157,14 @@ namespace Utopia.Entities.Managers
                                     CameraManager<ICameraFocused> camManager,
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
-                                    SingleArrayChunkContainer chunkContainer,
-                                    IWorldChunks worldChunks)
+                                    SingleArrayChunkContainer chunkContainer
+                                    )
         {
-            if (worldChunks == null) throw new ArgumentNullException("worldChunks");
-
+            
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
             _chunkContainer = chunkContainer;
-            _worldChunks = worldChunks;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
 
@@ -284,10 +289,10 @@ namespace Utopia.Entities.Managers
 
         private bool IsEntityVisible(Vector3D pos)
         {
-            if (_worldChunks.SliceValue == -1)
+            if (WorldChunks.SliceValue == -1)
                 return true;
 
-            return pos.Y < _worldChunks.SliceValue + 1 && pos.Y > _worldChunks.SliceValue - 7;
+            return pos.Y < WorldChunks.SliceValue + 1 && pos.Y > WorldChunks.SliceValue - 7;
         }
 
         public override void Draw(DeviceContext context, int index)
@@ -651,15 +656,15 @@ namespace Utopia.Entities.Managers
         #region Events handling
         private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
         {
-            //if (e.Camera.CameraType == CameraType.FirstPerson)
-            //{
-            //    PlayerEntity = null;
-            //}
-            //else
-            //{
-            //    PlayerEntity = null;
-            //    PlayerEntity = _playerEntityManager.Player;
-            //}
+            if (e.Camera.CameraType == CameraType.FirstPerson)
+            {
+                PlayerEntity = null;
+            }
+            else
+            {
+                PlayerEntity = null;
+                PlayerEntity = _playerEntityManager.Player;
+            }
         }
 
         private void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)

@@ -74,7 +74,6 @@ namespace Utopia.Entities.Managers
         private VerletSimulator _physicSimu;
         private float _gravityInfluence;
         private float _moveDelta;
-        private IPickingRenderer _pickingRenderer;
         private IEntityPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
 
@@ -145,13 +144,13 @@ namespace Utopia.Entities.Managers
                     _physicSimu.ConstraintOnlyMode = false;
                 }
                 //Collision detection not activated oustide debug mode when flying !
-//#if !DEBUG
-//                else if (value == EntityDisplacementModes.Flying)
-//                {
-//                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
-//                    _physicSimu.ConstraintOnlyMode = true;
-//                }
-//#endif
+#if !DEBUG
+                else if (value == EntityDisplacementModes.Flying)
+                {
+                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                    _physicSimu.ConstraintOnlyMode = true;
+                }
+#endif
                 else
                 {
                     _physicSimu.StopSimulation();
@@ -234,6 +233,9 @@ namespace Utopia.Entities.Managers
         [Inject]
         public IWorldChunks WorldChunks { get; set; }
 
+        [Inject]
+        public IPickingRenderer PickingRenderer { get; set; }
+
         #endregion
 
         #region Events
@@ -247,7 +249,6 @@ namespace Utopia.Entities.Managers
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
                                    PlayerCharacter player,
-                                   IPickingRenderer pickingRenderer,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
                                    EntityFactory factory,
@@ -258,7 +259,6 @@ namespace Utopia.Entities.Managers
             _cameraManager = cameraManager;
             _inputsManager = inputsManager;
             _cubesHolder = cubesHolder;
-            _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
             _factory = factory;
             _bufferManager = bufferManager;
@@ -266,8 +266,6 @@ namespace Utopia.Entities.Managers
 
             PlayerCharacter = player;
             PlayerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
-
-            _faction = _factory.GlobalStateManager.GlobalState.Factions[player.FactionId];
             
             ShowDebugInfo = true;
 
@@ -371,9 +369,11 @@ namespace Utopia.Entities.Managers
             _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
             _entityRotations.EntityRotationSpeed = Player.RotationSpeed;
             _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition + _entityEyeOffset);
-
+            
             // Set displacement mode
             DisplacementMode = Player.DisplacementMode;
+
+            //_faction = _factory.GlobalStateManager.GlobalState.Factions[PlayerCharacter.FactionId];
         }
 
         /// <summary>
@@ -419,7 +419,9 @@ namespace Utopia.Entities.Managers
 
         // Debug Info interface
         public bool ShowDebugInfo { get; set; }
-        
+
+
+
         public string GetDebugInfo()
         {
             return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", PlayerCharacter.CharacterName,

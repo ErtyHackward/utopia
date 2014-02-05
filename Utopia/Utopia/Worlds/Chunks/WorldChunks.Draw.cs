@@ -79,7 +79,7 @@ namespace Utopia.Worlds.Chunks
             if (index == TRANSPARENT_DRAW)
             {
                 //Only 2 index registered, no need to test the value of the index here it is for transparent one !
-                if (!_playerManager.IsHeadInsideWater)
+                if (!PlayerManager.IsHeadInsideWater)
                 {
                     //Head not inside Water => Draw water front Faces
                     RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
@@ -153,7 +153,7 @@ namespace Utopia.Worlds.Chunks
             }
             else
             {
-                var pos = _playerManager.Player.Position.ToCubePosition();
+                var pos = PlayerManager.Player.Position.ToCubePosition();
                 var playerChunk = GetChunk(ref pos);
 
                 if (SliceViewChunks <= 9)
@@ -261,14 +261,14 @@ namespace Utopia.Worlds.Chunks
             if (DrawStaticInstanced)
             {
                 _voxelModelInstancedEffect.Begin(context);
-                _voxelModelInstancedEffect.CBPerFrame.Values.LightDirection = _skydome.LightDirection;
+                _voxelModelInstancedEffect.CBPerFrame.Values.LightDirection = Skydome.LightDirection;
                 _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
             }
             else
             {
                 _voxelModelEffect.Begin(context);
-                _voxelModelEffect.CBPerFrame.Values.LightDirection = _skydome.LightDirection;
+                _voxelModelEffect.CBPerFrame.Values.LightDirection = Skydome.LightDirection;
                 _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
             }
@@ -285,7 +285,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
                         var sunPart = (float)staticEntity.BlockLight.A / 255;
-                        var sunColor = _skydome.SunColor * sunPart;
+                        var sunColor = Skydome.SunColor * sunPart;
                         var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
                         staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
 
@@ -333,14 +333,14 @@ namespace Utopia.Worlds.Chunks
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"AnimatedTextures/", @"*.png", FilterFlags.Point, "ArrayTexture_AnimatedTextures", out _textureAnimation_View, SharpDX.DXGI.Format.BC4_UNorm);
             
 
-            _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCb.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
             _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
             _terraEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _terraEffect.BiomesColors.Value = _biomesColors_View;
             _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
 
-            _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, SharedFrameCb.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
             _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
             _liquidEffect.SamplerOverlay.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);

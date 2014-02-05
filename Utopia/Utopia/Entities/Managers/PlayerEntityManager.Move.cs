@@ -276,7 +276,13 @@ namespace Utopia.Entities.Managers
                 //Get Feet block
                 int feetBlockIdx = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Floor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
-                TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Floor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
+
+                var belowIndex = _cubesHolder.FastIndex(feetBlockIdx, MathHelper.Floor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
+
+                if (belowIndex < 0 || belowIndex > _cubesHolder.Cubes.Length)
+                    return;
+
+                TerraCube BelowfeetBlock = _cubesHolder.Cubes[belowIndex];
 
                 if (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
                    (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))

@@ -46,13 +46,13 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref PlayerCharacter.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[PickedCube.Cube.Id].YBlockOffset);
+                    PickingRenderer.SetPickedBlock(ref PlayerCharacter.EntityState.PickedBlockPosition, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[PickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
                     if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.ThirdPerson && _pickedUpEntity.Entity == Player)
                         return;
-                    _pickingRenderer.SetPickedEntity(_pickedUpEntity);
+                    PickingRenderer.SetPickedEntity(_pickedUpEntity);
                 }
             }
         }
