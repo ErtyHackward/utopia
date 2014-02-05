@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using S33M3CoreComponents.Sound;
+using Utopia.Entities.Managers;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
@@ -79,11 +80,8 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager2D _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private ServerComponent _server;
-        private IPlayerManager _playerManager;
         private IChunkStorageManager _chunkstorage;
-        private ISkyDome _skydome;
         private IWeather _weather;
-        private SharedFrameCB _sharedFrameCB;
         private int _readyToDrawCount;
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
@@ -150,16 +148,23 @@ namespace Utopia.Worlds.Chunks
         private void OnInitialLoadComplete()
         {
             if (LoadComplete != null) 
-                LoadComplete(this, EventArgs.Empty);
+                LoadComplete(this, EventArgs.Empty);          
         }
 
-        
+        [Inject]
+        public ISkyDome Skydome { get; set; }
 
         [Inject]
         public ISoundEngine SoundEngine { get; set; }
 
         [Inject]
         public WorldShadowMap ShadowMap { get; set; }
+
+        [Inject]
+        public IPlayerManager PlayerManager { get; set; }
+
+        [Inject]
+        public SharedFrameCB SharedFrameCb { get; set; }
 
         public WorldChunks(D3DEngine d3dEngine,
                            CameraManager<ICameraFocused> camManager,
@@ -174,10 +179,7 @@ namespace Utopia.Worlds.Chunks
                            ILightingManager lightingManager,
                            IChunkStorageManager chunkstorage,
                            ServerComponent server,
-                           IPlayerManager player,
-                           ISkyDome skydome,
                            IWeather weather,
-                           SharedFrameCB sharedFrameCB,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
                            IChunkEntityImpactManager chunkEntityImpactManager,
@@ -197,10 +199,7 @@ namespace Utopia.Worlds.Chunks
             _landscapeManager = landscapeManager;
             _chunkMeshManager = chunkMeshManager;
             _lightingManager = lightingManager;
-            _playerManager = player;
-            _skydome = skydome;
             _weather = weather;
-            _sharedFrameCB = sharedFrameCB;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
@@ -607,15 +606,16 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         public bool ShowDebugInfo { get; set; }
+
         public string GetDebugInfo()
         {
             if (ShowDebugInfo)
             {
 
-                var c = GetChunk((int)_playerManager.CameraWorldPosition.X, (int)_playerManager.CameraWorldPosition.Z);
+                var c = GetChunk((int)PlayerManager.CameraWorldPosition.X, (int)PlayerManager.CameraWorldPosition.Z);
                 //From World Coord to Cube Array Coord
-                int arrayX = MathHelper.Mod((int)_playerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
-                int arrayZ = MathHelper.Mod((int)_playerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
+                int arrayX = MathHelper.Mod((int)PlayerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
+                int arrayZ = MathHelper.Mod((int)PlayerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
                 var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX, arrayZ));
 
                 int BprimitiveCount = 0;

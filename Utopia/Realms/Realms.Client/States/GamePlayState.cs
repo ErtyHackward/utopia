@@ -53,7 +53,7 @@ namespace Realms.Client.States
             :base(stateManager)
         {
             _ioc = ioc;
-            AllowMouseCaptureChange = false;
+            AllowMouseCaptureChange = true;
         }
 
         public override void Initialize(DeviceContext context)
@@ -66,14 +66,14 @@ namespace Realms.Client.States
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
-            //var inventory = _ioc.Get<InventoryComponent>();
+            var inventory = _ioc.Get<InventoryComponent>();
             
             
             var chat = _ioc.Get<ChatComponent>();
 
             var hud = (RealmsHud)_ioc.Get<Hud>();
-            //hud.CraftingButton.Pressed += CraftingButton_Pressed;
-            //hud.InventoryButton.Pressed += InventoryButton_Pressed;
+            hud.CraftingButton.Pressed += CraftingButton_Pressed;
+            hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -98,12 +98,12 @@ namespace Realms.Client.States
             var worldChunks = _ioc.Get<IWorldChunks>();
             var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
-            var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
+            //var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            //playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
-            //playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
-            var playerEntityManager = _ioc.Get<IPlayerManager>();
+            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            playerEntityManager.PlayerCharacter.Inventory.ItemPut += InventoryOnItemPut;
+            playerEntityManager.PlayerCharacter.Inventory.ItemTaken += InventoryOnItemTaken;
+            //var playerEntityManager = _ioc.Get<IPlayerManager>();
 
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
@@ -132,7 +132,8 @@ namespace Realms.Client.States
             AddComponent(hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            AddComponent(selectedBlocksRenderer);
+            //AddComponent(selectedBlocksRenderer);
+            AddComponent(inventory);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);
@@ -153,7 +154,7 @@ namespace Realms.Client.States
             if (worldShadowMap != null)
                 AddComponent(worldShadowMap);
             
-            inputsManager.MouseManager.StrategyMode = true;
+            //inputsManager.MouseManager.StrategyMode = true;
 
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState

@@ -53,6 +53,7 @@ namespace Utopia.Entities.Managers
             set { _player = value; }
         }
 
+        [Inject]
         public IWorldChunks WorldChunks
         {
             get { return _worldChunks; }
@@ -68,19 +69,25 @@ namespace Utopia.Entities.Managers
             set { _dynamicEntityManager = value; }
         }
 
+        [Inject]
+        public PlayerEntityManager PlayerManager
+        {
+            get { return _playerManager; }
+            set { _playerManager = value; }
+        }
+
         #endregion
+
+
 
         public EntityPickAndCollisManager(TimerManager timerManager,
                                           ServerComponent server,
-                                          InputsManager input,
-                                          PlayerEntityManager playerManager)                                     
+                                          InputsManager input)                                     
         {
             //_timer = timerManager.AddTimer(1, 100);         //10 times/s
             //_timer.OnTimerRaised += _timer_OnTimerRaised;
             _input = input;
-            _server = server;
-            _playerManager = playerManager;
-            
+            _server = server;            
         }
 
         public void Dispose()
@@ -286,7 +293,7 @@ namespace Utopia.Entities.Managers
 
                 newPositionWithColliding.X = previousPosition.X;
                 _onEntityTop = false;
-                _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
+                PlayerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
 
             }
 
@@ -298,7 +305,7 @@ namespace Utopia.Entities.Managers
 
                 newPositionWithColliding.Z = previousPosition.Z;
                 _onEntityTop = false;
-                _playerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
+                PlayerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
             }
 
             newPositionWithColliding.Y = newPosition2Evaluate.Y;

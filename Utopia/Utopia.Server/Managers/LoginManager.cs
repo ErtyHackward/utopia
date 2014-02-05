@@ -137,7 +137,7 @@ namespace Utopia.Server.Managers
                 {
                     var state = UserState.Load(loginData.State);
                     // load new player entity
-                    playerEntity = new ServerPlayerGodEntity(connection, new GodEntity(), _server);
+                    playerEntity = new ServerPlayerCharacterEntity(connection, new PlayerCharacter(), _server);
 
                     var bytes = _server.EntityStorage.LoadEntityBytes(state.EntityId);
 
@@ -150,7 +150,7 @@ namespace Utopia.Server.Managers
                     {
                         using (var ms = new MemoryStream(bytes))
                         {
-                            playerEntity.DynamicEntity = Serializer.Deserialize<GodEntity>(ms);
+                            playerEntity.DynamicEntity = Serializer.Deserialize<PlayerCharacter>(ms);
                             _server.EntityFactory.PrepareEntity(playerEntity.DynamicEntity);
                         }
 
@@ -201,7 +201,7 @@ namespace Utopia.Server.Managers
             var eArgs = new NewPlayerEntityNeededEventArgs { Connection = clientConnection, EntityId = entityId };
             OnPlayerEntityNeeded(eArgs);
 
-            return new ServerPlayerGodEntity(
+            return new ServerPlayerCharacterEntity(
                 clientConnection,
                 eArgs.PlayerEntity,
                 _server
