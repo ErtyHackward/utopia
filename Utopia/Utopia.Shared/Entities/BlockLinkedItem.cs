@@ -79,7 +79,7 @@ namespace Utopia.Shared.Entities
             if (BlockEmptyRequired)
             {
                 //Get the chunk where the entity will be added and check if another entity is not present at the destination root block !
-                var workingchunk = LandscapeManager.GetChunk(owner.EntityState.PickedBlockPosition);
+                var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
                 foreach (BlockLinkedItem entity in workingchunk.Entities.Entities.Values.Where(x => x is BlockLinkedItem && ((IBlockLinkedEntity)x).LinkedCube == owner.EntityState.PickedBlockPosition))
                 {
                     if (entity.BlockLocationRoot == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)

@@ -331,7 +331,7 @@ namespace Utopia.Shared.Chunks
                 entityBlockPosition = (Vector3I)entity.Position;
             }
 
-            var entityChunk = _manager.GetChunk(entityBlockPosition);
+            var entityChunk = _manager.GetChunkFromBlock(entityBlockPosition);
 
             entityChunk.Entities.Add(entity, sourceDynamicId);
         }

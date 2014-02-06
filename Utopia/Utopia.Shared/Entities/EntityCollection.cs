@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using ProtoBuf;
@@ -11,8 +12,8 @@ namespace Utopia.Shared.Entities
     /// <summary>
     /// Represents a threadsafe collection of entities
     /// </summary>
-    [ProtoContract]
-    public class EntityCollection : IStaticContainer
+    [ProtoContract(IgnoreListHandling = true)]
+    public class EntityCollection : IStaticContainer, IEnumerable<IStaticEntity>
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -473,6 +474,16 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
                 return _entities[staticId];
+        }
+
+        public IEnumerator<IStaticEntity> GetEnumerator()
+        {
+            return EnumerateFast().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

@@ -1,9 +1,11 @@
-﻿using ProtoBuf;
+﻿using System.Linq;
+using ProtoBuf;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
 using SharpDX;
 using System;
 using System.ComponentModel;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -76,6 +78,11 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             if (newBlockPos == null)
+                return pos;
+
+            var cursor = LandscapeManager.GetCursor(newBlockPos.Value);
+
+            if (cursor.Read() != WorldConfiguration.CubeId.Air || LandscapeManager.GetChunkFromBlock(newBlockPos.Value).Entities.OfType<BlockItem>().Any(i => i.BlockLocationRoot == newBlockPos))
                 return pos;
             
             // locate the entity, set translation in World space

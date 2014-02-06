@@ -111,7 +111,7 @@ namespace Utopia.Shared.Services
 
                         var cursor = _server.LandscapeManager.GetCursor(pos);
 
-                        var chunk = _server.LandscapeManager.GetChunk(new Vector3I(-50 + move, 72, 30));
+                        var chunk = _server.LandscapeManager.GetChunkFromBlock(new Vector3I(-50 + move, 72, 30));
 
                         if (!chunk.Entities.EnumerateFast().Any(e => e.Position == pos))
                         {
