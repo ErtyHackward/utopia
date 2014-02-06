@@ -108,7 +108,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Gets active player tool or null
         /// </summary>
-        public IItem ActiveTool { get { return PlayerCharacter.Equipment.RightTool; } }
+        public IItem ActiveTool { get { return PlayerCharacter.Equipment.RightTool ?? PlayerCharacter.HandTool; } }
 
         /// <summary>
         /// The Player Voxel body, its a class that will wrap the player character object with a Voxel Body
@@ -400,7 +400,7 @@ namespace Utopia.Entities.Managers
             inputHandler();
 
             // Picking
-            GetSelectedEntity();
+            //GetSelectedEntity();
 
             // Refresh player Movement + rotation
             UpdateEntityMovementAndRotation(ref timeSpend);   

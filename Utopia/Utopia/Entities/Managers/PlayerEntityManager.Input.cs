@@ -65,7 +65,10 @@ namespace Utopia.Entities.Managers
                     else
                     {
                         // raise DynamicEntity.Use event and calls current tool Use method
-                        PlayerCharacter.ToolUse();
+                        if (item == PlayerCharacter.HandTool)
+                            PlayerCharacter.HandUse();
+                        else
+                            PlayerCharacter.ToolUse();
                     }
                 }
             }

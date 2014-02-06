@@ -218,7 +218,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Defines tool pick behaviour for the blocks
         /// </summary>
-        /// <param name="blockId"></param>
+        /// <param name="blockProfile"></param>
         /// <returns></returns>
         public virtual PickType CanPickBlock(BlockProfile blockProfile)
         {
