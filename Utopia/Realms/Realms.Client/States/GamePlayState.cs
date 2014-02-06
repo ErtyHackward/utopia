@@ -103,6 +103,7 @@ namespace Realms.Client.States
             var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
             playerEntityManager.PlayerCharacter.Inventory.ItemPut += InventoryOnItemPut;
             playerEntityManager.PlayerCharacter.Inventory.ItemTaken += InventoryOnItemTaken;
+            playerEntityManager.NeedToShowInventory += playerEntityManager_NeedToShowInventory;
             //var playerEntityManager = _ioc.Get<IPlayerManager>();
 
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
@@ -177,6 +178,14 @@ namespace Realms.Client.States
 
 #endif
             base.Initialize(context);
+        }
+
+        void playerEntityManager_NeedToShowInventory(object sender, InventoryEventArgs e)
+        {
+            if (StatesManager.CurrentState.Name != "Inventory")
+            {
+                StatesManager.ActivateGameStateAsync("Inventory", true);
+            }
         }
 
         void InventoryButton_Pressed(object sender, EventArgs e)

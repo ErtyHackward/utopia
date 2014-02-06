@@ -3,7 +3,10 @@ using Realms.Client.Components.GUI;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.States;
 using Utopia.Components;
+using Utopia.Entities.Managers;
+using Utopia.Entities.Managers.Interfaces;
 using Utopia.GUI.Inventory;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Realms.Client.States
 {
@@ -21,7 +24,7 @@ namespace Realms.Client.States
         {
             get { return "Inventory"; }
         }
-
+        
         public override void OnEnabled(GameState previousState)
         {
             var fadeComponent = _iocContainer.Get<FadeComponent>();
@@ -29,7 +32,8 @@ namespace Realms.Client.States
             fadeComponent.Visible = true;
 
             var inventoryComponent = _iocContainer.Get<InventoryComponent>();
-            inventoryComponent.ShowInventory();
+            var playerEntityManager = _iocContainer.Get<PlayerEntityManager>();
+            inventoryComponent.ShowInventory(playerEntityManager.LockedContainer);
 
             var guiManager = _iocContainer.Get<GuiManager>();
             guiManager.SetDialogMode(true);

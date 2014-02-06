@@ -14,11 +14,6 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     public abstract class ResourcesCollector : Item, ITool
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        private IDynamicEntity _owner;
-        private ScheduleTask _task;
-
         /// <summary>
         /// Using a Collector type Tool Item will start to hit block from world an place it into own bag.
         /// </summary>
@@ -27,54 +22,18 @@ namespace Utopia.Shared.Entities
         public IToolImpact Use(IDynamicEntity owner)
         {
             var impact = new ToolImpact { Success = false };
-            
-            if (!EntityFactory.ServerSide)
-            {
-                // client run
-                if (owner.ModelInstance != null)
-                {
-                    if (owner.EntityState.MouseUp)
-                    {
-                        owner.ModelInstance.Stop("Dig"); 
-                    }
-                    else if (owner.EntityState.IsBlockPicked)
-                    {
-                        owner.ModelInstance.TryPlayForced("Dig", true);                        
-                    }
-                }
+
+            if (!owner.EntityState.IsBlockPicked)
                 return impact;
-            }
 
-            // server side logic
-
-            _owner = owner;
-
-            if (owner.EntityState.MouseUp)
-            {
-                if (_task != null)
-                {
-                    EntityFactory.ScheduleManager.RemoveTask(_task);
-                    _task = null;
-                }
-                
-                return impact;
-            }
-
-            if (owner.EntityState.IsBlockPicked)
-            {
-                // tool will start to hit the block each second
-                _task = EntityFactory.ScheduleManager.AddPeriodic(EntityFactory.ScheduleManager.Clock.RealToGameSpan(TimeSpan.FromSeconds(1)), BlockHit);
-                
-                return impact;
-            }
-
-            impact.Message = "No target selected for use";
+            impact.Success = true;
+            BlockHit(owner);
             return impact;
         }
 
-        private void BlockHit()
+        private void BlockHit(IDynamicEntity owner)
         {
-            var cursor = LandscapeManager.GetCursor(_owner.EntityState.PickedBlockPosition);
+            var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
 
             if (cursor.PeekProfile().Hardness == 0)
             {
@@ -96,9 +55,9 @@ namespace Utopia.Shared.Entities
 
                 if (damage.Strength <= 0)
                 {
-                    var chunk = LandscapeManager.GetChunkFromBlock(_owner.EntityState.PickedBlockPosition);
-                    
-                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == _owner.EntityState.PickedBlockPosition);
+                    var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
+
+                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
 
                     cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
                 }
