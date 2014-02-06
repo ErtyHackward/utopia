@@ -52,7 +52,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns></returns>
         public BlockTag ReadTag()
         {
-            throw new NotImplementedException();
+            var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
+            return chunk.BlockData.GetTag(_globalPosition);
         }
 
         /// <summary>
@@ -61,7 +62,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns></returns>
         public byte Read<T>(out T tag) where T : BlockTag
         {
-            throw new NotImplementedException();
+            var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
+            tag = (T)chunk.BlockData.GetTag(_globalPosition);
+            return Read();
         }
 
         public void Write(byte value, BlockTag tag = null)

@@ -183,6 +183,11 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        /// <summary>
+        /// Contains current locked container or null
+        /// </summary>
+        public Container LockedContainer { get; set; }
+
         #endregion
 
         #region Dependenices
@@ -243,6 +248,18 @@ namespace Utopia.Entities.Managers
         public delegate void LandingGround(double fallHeight, TerraCubeWithPosition landedCube);
         public event LandingGround OnLanding;
 
+        /// <summary>
+        /// Occurs when the inventory screen should be shown
+        /// Indicates that we have the lock and can perform transfer operations with container
+        /// </summary>
+        public event EventHandler<InventoryEventArgs> NeedToShowInventory;
+
+        protected virtual void OnNeedToShowInventory(InventoryEventArgs e)
+        {
+            var handler = NeedToShowInventory;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         public PlayerEntityManager(CameraManager<ICameraFocused> cameraManager,
@@ -302,6 +319,7 @@ namespace Utopia.Entities.Managers
                 _itemMessageTranslator.ReleaseLock();
                 _lockedEntity = null;
                 _itemMessageTranslator.Container = null;
+                LockedContainer = null;
             }
         }
 
@@ -320,7 +338,8 @@ namespace Utopia.Entities.Managers
             {
                 var container = _lockedEntity as Container;
                 _itemMessageTranslator.Container = container.Content;
-                _inventoryComponent.ShowInventory(container);
+                LockedContainer = container;
+                OnNeedToShowInventory(new InventoryEventArgs { Container = container });
             }
             else if (_lockedEntity is IUsableEntity)
             {
@@ -419,9 +438,7 @@ namespace Utopia.Entities.Managers
 
         // Debug Info interface
         public bool ShowDebugInfo { get; set; }
-
-
-
+        
         public string GetDebugInfo()
         {
             return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", PlayerCharacter.CharacterName,
@@ -432,5 +449,10 @@ namespace Utopia.Entities.Managers
                                                                                   Player.EntityState.IsBlockPicked ? Player.EntityState.NewBlockPosition.ToString() : "None"
                                                                                   );            
         }
+    }
+
+    public class InventoryEventArgs : EventArgs
+    {
+        public Container Container { get; set; }
     }
 }
