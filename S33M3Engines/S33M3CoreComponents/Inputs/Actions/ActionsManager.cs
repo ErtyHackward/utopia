@@ -249,11 +249,6 @@ namespace S33M3CoreComponents.Inputs.Actions
             return _actions[actionId].Triggered;
         }
 
-        public bool isTriggeredUp(int actionId, bool withExclusive = false)
-        {
-            return _mouseManager.CurMouseState.LeftButton == ButtonState.Released && isTriggered(actionId, withExclusive);
-        }
-
         /// <summary>
         /// Is an action Triggered !
         /// </summary>

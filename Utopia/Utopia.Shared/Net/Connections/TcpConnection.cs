@@ -89,7 +89,6 @@ namespace Utopia.Shared.Net.Connections
 
         protected abstract void OnMessage(IBinaryMessage msg);
 
-        [DebuggerStepThrough]
         protected void ReadThread()
         {
             try
@@ -144,7 +143,6 @@ namespace Utopia.Shared.Net.Connections
             }
         }
 
-        [DebuggerStepThrough]
         private void SendThread()
         {
             try

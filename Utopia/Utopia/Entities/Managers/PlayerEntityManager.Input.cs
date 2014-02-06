@@ -17,13 +17,13 @@ namespace Utopia.Entities.Managers
         {
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
             {
-                if (Player.DisplacementMode == EntityDisplacementModes.God)
+                if (Player.DisplacementMode == EntityDisplacementModes.Flying)
                 {
                     DisplacementMode = EntityDisplacementModes.Walking;
                 }
                 else
                 {
-                    DisplacementMode = EntityDisplacementModes.God;
+                    DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }
 
@@ -34,13 +34,13 @@ namespace Utopia.Entities.Managers
             {
                 // switch the drop mode if possible
                 var tool = PlayerCharacter.Equipment.RightTool;
-                if (tool != null && tool is ITool)
+                if (tool is ITool)
                 {
                     PutMode = !PutMode;
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggeredUp(UtopiaActions.UseLeft, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, CatchExclusiveAction))
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {

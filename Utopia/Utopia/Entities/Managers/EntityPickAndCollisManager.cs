@@ -53,6 +53,9 @@ namespace Utopia.Entities.Managers
             set { _player = value; }
         }
 
+        #endregion
+
+        #region DI
         [Inject]
         public IWorldChunks WorldChunks
         {
@@ -69,17 +72,7 @@ namespace Utopia.Entities.Managers
             set { _dynamicEntityManager = value; }
         }
 
-        [Inject]
-        public PlayerEntityManager PlayerManager
-        {
-            get { return _playerManager; }
-            set { _playerManager = value; }
-        }
-
         #endregion
-
-
-
         public EntityPickAndCollisManager(TimerManager timerManager,
                                           ServerComponent server,
                                           InputsManager input)                                     
@@ -293,7 +286,7 @@ namespace Utopia.Entities.Managers
 
                 newPositionWithColliding.X = previousPosition.X;
                 _onEntityTop = false;
-                PlayerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
+                Player.YForceApplying = entityTesting.Entity.YForceOnSideHit;
 
             }
 
@@ -305,7 +298,7 @@ namespace Utopia.Entities.Managers
 
                 newPositionWithColliding.Z = previousPosition.Z;
                 _onEntityTop = false;
-                PlayerManager.YForceApplying = entityTesting.Entity.YForceOnSideHit;
+                Player.YForceApplying = entityTesting.Entity.YForceOnSideHit;
             }
 
             newPositionWithColliding.Y = newPosition2Evaluate.Y;

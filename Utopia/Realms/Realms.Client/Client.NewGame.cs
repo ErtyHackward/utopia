@@ -149,13 +149,6 @@ namespace Realms.Client
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
             {
-                ActionId = UtopiaActions.UseLeft,
-                TriggerType = MouseTriggerMode.ButtonReleased,
-                Binding = MouseButton.LeftButton
-            });
-
-            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
-            {
                 ActionId = UtopiaActions.RightDown,
                 TriggerType = MouseTriggerMode.ButtonDown,
                 Binding = MouseButton.RightButton
@@ -165,13 +158,6 @@ namespace Realms.Client
             {
                 ActionId = UtopiaActions.UseRight,
                 TriggerType = MouseTriggerMode.ButtonPressed,
-                Binding = MouseButton.RightButton
-            });
-
-            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
-            {
-                ActionId = UtopiaActions.UseRight,
-                TriggerType = MouseTriggerMode.ButtonReleased,
                 Binding = MouseButton.RightButton
             });
 

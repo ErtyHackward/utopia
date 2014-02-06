@@ -243,6 +243,7 @@ namespace Realms.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
+            
             var inventory = _ioc.Get<InventoryComponent>();
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
             inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
@@ -269,11 +270,11 @@ namespace Realms.Client.States
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
+            var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
             var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
             var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
