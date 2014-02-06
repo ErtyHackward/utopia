@@ -133,9 +133,9 @@ namespace Utopia.Entities.Renderer
 
             _alpha += ( _alphaRaise ? 0.4f : -0.4f ) * elapsedTime;
 
-            if (_alpha < 0.2f)
+            if (_alpha < 0.1f)
                 _alphaRaise = true;
-            if (_alpha > 0.5f)
+            if (_alpha > 0.3f)
                 _alphaRaise = false;
         }
 
@@ -150,7 +150,7 @@ namespace Utopia.Entities.Renderer
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
 
                 _toolVoxelInstance.World = Matrix.Scaling(1f / 16) * Transform.Value; 
-                _toolVoxelInstance.LightColor = new Color3(0, 0, 1);
+                _toolVoxelInstance.LightColor = new Color3(0.0f, 0.0f, 1f);
                 _toolVoxelInstance.Alpha = _alpha;
 
                 _toolVoxelModel.Draw(context, _voxelModelEffect, _toolVoxelInstance);

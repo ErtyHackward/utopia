@@ -400,7 +400,7 @@ namespace Utopia.Entities.Managers
             inputHandler();
 
             // Picking
-            //GetSelectedEntity();
+            GetSelectedEntity();
 
             // Refresh player Movement + rotation
             UpdateEntityMovementAndRotation(ref timeSpend);   

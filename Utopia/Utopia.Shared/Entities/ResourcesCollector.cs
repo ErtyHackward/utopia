@@ -96,7 +96,7 @@ namespace Utopia.Shared.Entities
 
                 if (damage.Strength <= 0)
                 {
-                    var chunk = LandscapeManager.GetChunk(_owner.EntityState.PickedBlockPosition);
+                    var chunk = LandscapeManager.GetChunkFromBlock(_owner.EntityState.PickedBlockPosition);
                     
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == _owner.EntityState.PickedBlockPosition);
 
