@@ -57,16 +57,32 @@ namespace Utopia.Shared.Entities.Concrete
         {
             var pos = new EntityPosition();
 
-            if (!owner.EntityState.IsBlockPicked)
+            Vector3I? newBlockPos = null;
+
+            var playerRotation = owner.HeadRotation.GetLookAtVector();
+
+            if (owner.EntityState.IsBlockPicked)
+                newBlockPos = owner.EntityState.NewBlockPosition;
+            else if (owner.EntityState.IsEntityPicked)
+            {
+                var entity = owner.EntityState.PickedEntityLink.ResolveStatic(LandscapeManager);
+
+                if (entity is BlockItem)
+                {
+                    newBlockPos = owner.EntityState.PickedEntityPosition.ToCubePosition();
+                    newBlockPos += owner.EntityState.PickPointNormal;
+                }
+
+            }
+
+            if (newBlockPos == null)
                 return pos;
             
-            var playerRotation = owner.HeadRotation.GetLookAtVector();
-            
             // locate the entity, set translation in World space
-            pos.Position = new Vector3D(owner.EntityState.NewBlockPosition.X + 0.5f,
-                                        owner.EntityState.NewBlockPosition.Y,
-                                        owner.EntityState.NewBlockPosition.Z + 0.5f);
-
+            pos.Position = new Vector3D(newBlockPos.Value.X + 0.5f,
+                                        newBlockPos.Value.Y,
+                                        newBlockPos.Value.Z + 0.5f);
+            
             //Set Orientation
             double entityRotation;
             if (Math.Abs(playerRotation.Z) >= Math.Abs(playerRotation.X))
