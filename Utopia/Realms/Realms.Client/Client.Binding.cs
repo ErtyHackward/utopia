@@ -236,7 +236,7 @@ namespace Realms.Client
             _iocContainer.Bind<IVisualDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IGlobalStateManager>().To<GlobalStateManager>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<IPlayerManager>().To<PlayerEntityManager>().InScope(x => GameScope.CurrentGameScope);                             //The player manager
+            _iocContainer.Bind<IPlayerManager,PlayerEntityManager>().To<PlayerEntityManager>().InScope(x => GameScope.CurrentGameScope);                             //The player manager
             //_iocContainer.Bind<IPlayerManager>().To<GodEntityManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PickingManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //Register the Player Against IDynamicEntity and PlayerCharacter

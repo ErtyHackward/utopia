@@ -1,10 +1,12 @@
 ﻿using System.Threading;
 using System;
+using Ninject;
 using S33M3CoreComponents.Config;
 using System.IO;
 
 namespace Realms.Client
 {
+    
     static class Program
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

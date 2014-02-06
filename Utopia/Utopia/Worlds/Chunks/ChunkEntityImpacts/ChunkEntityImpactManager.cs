@@ -191,7 +191,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 entityBlockPosition = (Vector3I)entity.Position;
             }
 
-            var impactedChunk = (VisualChunk)GetChunk(entityBlockPosition);
+            var impactedChunk = GetChunkFromBlock(entityBlockPosition);
             impactedChunk.Entities.Add(entity, sourceDynamicId);
 
             //Raise event (Playing sound)
@@ -204,7 +204,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
         {
             IStaticEntity entityRemoved;
-            var impactedChunk = (VisualChunk)GetChunk(entity.ChunkPosition);
+            var impactedChunk = GetChunk(entity.ChunkPosition);
             impactedChunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
 
             //Raise event (Playing sound)
@@ -397,6 +397,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("CheckImpact END");
 #endif
         }
+
 
         public override VisualChunk GetChunk(Vector3I position)
         {

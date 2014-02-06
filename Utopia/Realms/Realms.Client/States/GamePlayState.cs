@@ -100,7 +100,7 @@ namespace Realms.Client.States
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             //var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = _ioc.Get<PlayerEntityManager>();
+            var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
             playerEntityManager.PlayerCharacter.Inventory.ItemPut += InventoryOnItemPut;
             playerEntityManager.PlayerCharacter.Inventory.ItemTaken += InventoryOnItemTaken;
             //var playerEntityManager = _ioc.Get<IPlayerManager>();
