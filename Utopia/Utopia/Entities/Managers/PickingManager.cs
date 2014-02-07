@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
+using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -23,7 +24,7 @@ namespace Utopia.Entities.Managers
     /// <summary>
     /// Provides entity and block picking by the player
     /// </summary>
-    public class PickingManager : GameComponent
+    public class PickingManager : GameComponent, IDebugInfo
     {
         private readonly IPlayerManager _playerManager;
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
@@ -70,6 +71,8 @@ namespace Utopia.Entities.Managers
             _pickingRenderer = pickingRenderer;
             _cubesHolder = cubesHolder;
             _worldConfiguration = worldConfiguration;
+
+            ShowDebugInfo = true;
         }
 
         public override void FTSUpdate(GameTime timeSpent)
@@ -84,7 +87,7 @@ namespace Utopia.Entities.Managers
         /// </summary>
         /// <param name="pickingRay">Ray to check intersection</param>
         /// <returns></returns>
-        public EntityPickResult CheckEntityPicking(Ray pickingRay)
+        private EntityPickResult CheckEntityPicking(Ray pickingRay)
         {
             var result = new EntityPickResult { Distance = float.MaxValue };
 
@@ -344,6 +347,9 @@ namespace Utopia.Entities.Managers
 
             var epr = CheckEntityPicking(pickingRay);
 
+            if (epr.Found && epr.Distance > blockPickingDistance)
+                epr.Found = false;
+
             var tool = PlayerManager.ActiveTool;
 
             var nbrPointToSample = (int)(Math.Min(blockPickingDistance, epr.Distance) / 0.02);
@@ -494,6 +500,23 @@ namespace Utopia.Entities.Managers
             }
 
             return PlayerManager.Player.EntityState.IsBlockPicked || PlayerManager.Player.EntityState.IsEntityPicked;
+        }
+
+        public bool ShowDebugInfo { get; set; }
+        public string GetDebugInfo()
+        {
+            if (PlayerManager.Player.EntityState.IsBlockPicked)
+            {
+                return string.Format("Block picked {0}", PlayerManager.Player.EntityState.PickedBlockPosition);
+            }
+            else if (PlayerManager.Player.EntityState.IsEntityPicked)
+            {
+                return string.Format("Entity picked {0}", PlayerManager.Player.EntityState.PickedEntityPosition);
+            }
+            else
+            {
+                return "";    
+            }
         }
     }
 }
