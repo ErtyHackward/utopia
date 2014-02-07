@@ -149,7 +149,7 @@ namespace S33M3CoreComponents.Textures
         {
             context.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
             //Set the viewport associated to the Texture renderer
-            context.Rasterizer.SetViewports(Viewport);
+            context.Rasterizer.SetViewport(Viewport);
 
             // Clear the back buffer.
             context.ClearRenderTargetView(_renderTargetView, _backGroundColor);

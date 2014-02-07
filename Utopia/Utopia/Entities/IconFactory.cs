@@ -200,7 +200,7 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
-        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, DrawingSize iconSize, DeviceContext context = null)
+        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, Size2 iconSize, DeviceContext context = null)
         {
             if (context == null)
                 context = _d3DEngine.ImmediateContext;
@@ -409,7 +409,7 @@ namespace Utopia.Entities
             return texture.CloneTexture(context, ResourceUsage.Default);
         }
 
-        public List<Texture2D> Get3DBlockIcons(DeviceContext context, DrawingSize iconSize, ShaderResourceView cubeTextureView)
+        public List<Texture2D> Get3DBlockIcons(DeviceContext context, Size2 iconSize, ShaderResourceView cubeTextureView)
         {
             return Create3DBlockIcons(context, cubeTextureView, iconSize.Width);
         }
@@ -462,7 +462,7 @@ namespace Utopia.Entities
             dataStream.Dispose();
 
             SpriteTexture spriteTexture = new SpriteTexture(sTexture);
-            spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, spriteTexture.ScreenPosition.X + textureSize, spriteTexture.ScreenPosition.Y + textureSize) ;
+            spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, textureSize, textureSize) ;
             sTexture.Dispose();
 
             //Create the Shadder used to render on the texture.

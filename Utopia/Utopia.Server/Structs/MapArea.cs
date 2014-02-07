@@ -213,8 +213,7 @@ namespace Utopia.Server.Structs
         {
             Position = topLeftPoint;
 
-            Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, topLeftPoint.X + AreaSize.X,
-                                      topLeftPoint.Y + AreaSize.Y);
+            Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, AreaSize.X, AreaSize.Y);
         }
 
         public void EntityLock(EntityLockMessage msg)

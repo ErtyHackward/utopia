@@ -197,7 +197,7 @@ namespace S33M3CoreComponents.Sprites2D
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
 
-            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
+            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
 
             _spriteBuffer.AddWrappingSprite(spriteTexture, _spriteSamplerWrap, ref position, ref size, ref src, textureArrayIndex, ref color, drawGroupId);
         }
@@ -207,7 +207,7 @@ namespace S33M3CoreComponents.Sprites2D
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
 
-            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
+            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
             
             _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color, drawGroupId);
         }

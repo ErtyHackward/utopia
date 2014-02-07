@@ -31,11 +31,11 @@ namespace Utopia.Editor
             set { _modelManager = value; }
         }
 
-        public DrawingSize IconSize { get; set; }
+        public Size2 IconSize { get; set; }
 
         public IconManager()
         {
-            IconSize = new DrawingSize(42, 42);
+            IconSize = new Size2(42, 42);
         }
 
         public void Initialize(string utopiaPath)

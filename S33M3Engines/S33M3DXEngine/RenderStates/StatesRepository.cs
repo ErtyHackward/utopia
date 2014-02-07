@@ -84,7 +84,7 @@ namespace S33M3DXEngine.RenderStates
         public static int AddSamplerStates(SamplerStateDescription SamplerDescr)
         {
             Array.Resize<SamplerState>(ref _samplerStates, _samplerStates.Length + 1);
-            _samplerStates[_samplerStates.Length - 1] = new SamplerState(_engine.Device, ref SamplerDescr);
+            _samplerStates[_samplerStates.Length - 1] = new SamplerState(_engine.Device, SamplerDescr);
             return _samplerStates.Length - 1;
         }
 

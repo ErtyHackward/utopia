@@ -271,7 +271,7 @@ namespace S33M3CoreComponents.Sprites2D
                     currentY += (int)(_charHeight) + 1;
                 }
 
-                CharDescriptors[allCharsString[i]] = new RectangleF(currentX, currentY, currentX + charWidth, currentY + _charHeight);
+                CharDescriptors[allCharsString[i]] = new RectangleF(currentX, currentY, charWidth, _charHeight);
 
                 // Copy the character over 
                 int height = (int)(_charHeight + 1);

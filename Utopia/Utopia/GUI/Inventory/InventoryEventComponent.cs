@@ -148,7 +148,7 @@ namespace Utopia.GUI.Inventory
                 var textShadowPos = textPos + new Vector2(1, 1);
                 var color = new ByteColor(255, 255, 255, (int)(255 *_alpha));
                 var colorBlack = new ByteColor(0, 0, 0, (int)(255 * _alpha));
-                var rect = new Rectangle(25, 25, 67, 67);
+                var rect = new Rectangle(25, 25, 67 - 25, 67 - 25);
 
                 _spriteRender.Draw(_icon, ref rect, ref color, _textureArrayIndex);
                 _spriteRender.DrawText(_font, _currentItem.Value.Message, ref textShadowPos, ref colorBlack);

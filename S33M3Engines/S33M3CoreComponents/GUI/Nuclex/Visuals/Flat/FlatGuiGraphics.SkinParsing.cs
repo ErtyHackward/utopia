@@ -153,7 +153,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
                     System.Drawing.Rectangle test = new System.Drawing.Rectangle(int.Parse(x), int.Parse(y), int.Parse(w), int.Parse(h));
 
-                    region.SourceRegion = new Rectangle(int.Parse(x), int.Parse(y), int.Parse(x) + int.Parse(w), int.Parse(y) + int.Parse(h));
+                    region.SourceRegion = new Rectangle(int.Parse(x), int.Parse(y), int.Parse(w), int.Parse(h));
 
                     // Process each region's placement and set up the unified coordinates
                     calculateRegionPlacement(
