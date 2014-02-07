@@ -80,11 +80,11 @@ namespace S33M3Resources.Structs
 
             if (Math.Abs(surfacePoint.X - box.Minimum.X) < epsilon)
             {
-                normal.X = 1;
+                normal.X = -1;
             }
             if (Math.Abs(surfacePoint.X - box.Maximum.X) < epsilon)
             {
-                normal.X = -1;
+                normal.X = 1;
             }
 
             if (Math.Abs(surfacePoint.Y - box.Minimum.Y) < epsilon)
@@ -98,11 +98,11 @@ namespace S33M3Resources.Structs
 
             if (Math.Abs(surfacePoint.Z - box.Minimum.Z) < epsilon)
             {
-                normal.Z = 1;
+                normal.Z = -1;
             }
             if (Math.Abs(surfacePoint.Z - box.Maximum.Z) < epsilon)
             {
-                normal.Z = -1;
+                normal.Z = 1;
             }
 
             return normal;

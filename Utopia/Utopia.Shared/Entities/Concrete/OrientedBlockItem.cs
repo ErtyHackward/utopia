@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete.Interface;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 
@@ -72,7 +73,14 @@ namespace Utopia.Shared.Entities.Concrete
                 if (entity is BlockItem)
                 {
                     newBlockPos = owner.EntityState.PickedEntityPosition.ToCubePosition();
-                    newBlockPos += owner.EntityState.PickPointNormal;
+                    
+                    var rotation = entity.Rotation;
+                    
+                    var normal = Vector3.TransformNormal(owner.EntityState.PickPointNormal, Matrix.RotationQuaternion(rotation));
+
+                    var converted = new Vector3I((int)Math.Round(normal.X, MidpointRounding.ToEven), (int)Math.Round(normal.Y, MidpointRounding.ToEven), (int)Math.Round(normal.Z, MidpointRounding.ToEven));
+
+                    newBlockPos += converted;
                 }
 
             }

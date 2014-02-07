@@ -126,12 +126,14 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// Gets or sets list of all possible recipes
         /// </summary>
+        [Browsable(false)]
         [ProtoMember(13, OverwriteList = true)]
         public List<Recipe> Recipes { get; set; }
 
         /// <summary>
         /// Get or sets Tree template, that will be added in the biome.
         /// </summary>
+        [Browsable(false)]
         [ProtoMember(14, OverwriteList = true)]
         public List<TreeBluePrint> TreeBluePrints { get; set; }
 
