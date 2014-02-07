@@ -94,7 +94,7 @@ namespace S33M3DXEngine.Textures
             }
 
             //Set the viewport associated to the Texture renderer
-            _d3dEngine.ImmediateContext.Rasterizer.SetViewports(_viewport);
+            _d3dEngine.ImmediateContext.Rasterizer.SetViewport(_viewport);
 
             if (_colorMapRTV != null) _d3dEngine.ImmediateContext.ClearRenderTargetView(_colorMapRTV, _whiteColor);
             _d3dEngine.ImmediateContext.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);

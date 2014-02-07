@@ -107,11 +107,11 @@ namespace S33M3CoreComponents.Sprites2D
             RectangleF sourceRectInTexCoord;
             if (sourceRectInTextCoord)
             {
-                sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)Texture.Width, sourceRect.Top / (float)Texture.Height, sourceRect.Right / (float)Texture.Width, sourceRect.Bottom / (float)Texture.Height);
+                sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)Texture.Width, sourceRect.Top / (float)Texture.Height, sourceRect.Width / (float)Texture.Width, sourceRect.Height / (float)Texture.Height);
             }
             else
             {
-                sourceRectInTexCoord = new RectangleF(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
+                sourceRectInTexCoord = new RectangleF(sourceRect.Left, sourceRect.Top, sourceRect.Width, sourceRect.Height);
             }
 
             //Create the vertices

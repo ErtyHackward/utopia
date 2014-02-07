@@ -185,7 +185,7 @@ namespace Utopia.Entities.EntityMovement
 
             Quaternion rotation;
             Quaternion.RotationYawPitchRoll(heading, pitch, roll, out rotation);
-            Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
+            Quaternion.Multiply(ref rotation, ref _eyeOrientation, out _eyeOrientation);
 
             return true;
         }
@@ -225,8 +225,8 @@ namespace Utopia.Entities.EntityMovement
             if (heading != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Up, heading, out rotation);
-                Quaternion.Multiply(ref rotation, ref _eyeOrientation, out _eyeOrientation);
-                Quaternion.Multiply(ref rotation, ref _bodyOrientation, out _bodyOrientation);
+                Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
+                Quaternion.Multiply(ref _bodyOrientation, ref rotation, out _bodyOrientation);
             }
 
             // Rotate camera about its local x axis.
@@ -234,7 +234,7 @@ namespace Utopia.Entities.EntityMovement
             if (pitch != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Right, pitch, out rotation);
-                Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
+                Quaternion.Multiply(ref rotation , ref _eyeOrientation, out _eyeOrientation);
             }
 
             return true;

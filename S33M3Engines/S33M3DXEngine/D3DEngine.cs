@@ -284,17 +284,17 @@ namespace S33M3DXEngine
         {
             SetRenderTargets(context);
             context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
-            context.Rasterizer.SetViewports(_viewPort);
+            context.Rasterizer.SetViewport(_viewPort);
         }
 
         public void SetCustomViewPort(ViewportF customViewPort)
         {
-            ImmediateContext.Rasterizer.SetViewports(customViewPort);
+            ImmediateContext.Rasterizer.SetViewport(customViewPort);
         }
 
         public void SetScreenViewPort()
         {
-            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+            ImmediateContext.Rasterizer.SetViewport(_viewPort);
         }
 
         public SharpDX.Rectangle[] ScissorRectangles
@@ -511,7 +511,7 @@ namespace S33M3DXEngine
             Matrix.OrthoOffCenterLH(0, _viewPort.Width, _viewPort.Height, 0, 0, 1, out Projection2D); // Make the 0,0 bottom/left, 1,1 Up/right
 
             if (ViewPort_Updated != null) ViewPort_Updated(_viewPort, BackBufferTex.Description);
-            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+            ImmediateContext.Rasterizer.SetViewport(_viewPort);
 
             logger.Debug("ViewPort Updated new size Width : {0}px Height : {1}px", BackBufferTex.Description.Width, BackBufferTex.Description.Height);
         }

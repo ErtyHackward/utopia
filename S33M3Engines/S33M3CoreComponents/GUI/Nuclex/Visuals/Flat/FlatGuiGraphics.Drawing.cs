@@ -104,8 +104,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             Rectangle scissorRegion = new Rectangle(
                                                 Math.Max(clipX, (int)viewport.X),
                                                 Math.Max(clipY, (int)viewport.Y),
-                                                Math.Max(clipX, (int)viewport.X) + (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.X)),
-                                                Math.Max(clipY, (int)viewport.Y) + (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.Y))
+                                                (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.X)),
+                                                (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.Y))
                                             );
             //scissorRegion.Width += clipX - scissorRegion.X;
             //scissorRegion.Height += clipY - scissorRegion.Y;
