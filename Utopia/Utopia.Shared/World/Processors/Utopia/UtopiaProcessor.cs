@@ -527,7 +527,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
             if (landscapeEntities == null) return;
 
-            Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Y * AbstractChunk.ChunkSize.Z);
+            Vector2I chunkWorldPosition = new Vector2I(chunk.Position.X * AbstractChunk.ChunkSize.X, chunk.Position.Z * AbstractChunk.ChunkSize.Z);
 
             //The entities are sorted by their origine chunk hashcode value
             foreach (LandscapeEntity entity in landscapeEntities)
