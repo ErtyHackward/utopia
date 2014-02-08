@@ -44,31 +44,23 @@ namespace Utopia.Entities.Managers
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
-
                     var item = PlayerCharacter.Equipment.RightTool;
 
                     if (item == null)
-                        item = PlayerCharacter.HandTool;
-
-                    if (_putMode || !(item is ITool))
                     {
-                        // can't put the hand!
-                        if (item == PlayerCharacter.HandTool)
-                            return;
-
-                        // send put message to the server
-                        PlayerCharacter.PutUse();
-
-                        // client sync
-                        item.Put(Player);
+                        HandleHandUse();
                     }
                     else
                     {
-                        // raise DynamicEntity.Use event and calls current tool Use method
-                        if (item == PlayerCharacter.HandTool)
-                            PlayerCharacter.HandUse();
+                        if (_putMode || !(item is ITool))
+                        {
+                            // send put message to the server
+                            PlayerCharacter.PutUse();
+                        }
                         else
+                        {
                             PlayerCharacter.ToolUse();
+                        }
                     }
                 }
             }
@@ -90,58 +82,7 @@ namespace Utopia.Entities.Managers
                 // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
                 // like opening a chest or a door  
 
-                if (Player.EntityState.IsEntityPicked)
-                {
-                    var link = Player.EntityState.PickedEntityLink;
-
-                    IEntity entity = null;
-
-                    if (link.IsDynamic)
-                    {
-                        //TODO: resolve dynamic entity
-                    }
-                    else
-                    {
-                        entity = link.ResolveStatic(_factory.LandscapeManager);
-                    }
-
-                    if (entity == null)
-                        return;
-                    
-                    // check if the entity need to be locked
-
-                    if (entity.RequiresLock)
-                    {
-                        if (_lockedEntity != null)
-                        {
-                            logger.Warn("Unable to lock two items at once");
-                            return;
-                        }
-
-                        _lockedEntity = entity;
-                        _itemMessageTranslator.RequestLock(_lockedEntity);
-                    }
-                    else
-                    {
-                        if (!link.IsDynamic)
-                        {
-                            if (entity is IUsableEntity)
-                            {
-                                // send use message to the server
-                                PlayerCharacter.EntityUse();
-
-                                var usableEntity = entity as IUsableEntity;
-                                usableEntity.Use();
-                            }
-                            else
-                            {
-                                // hand use
-                                // raise DynamicEntity.Use event that will invoke local tool and send a use-message to the server
-                                PlayerCharacter.HandUse();
-                            }
-                        }
-                    }
-                }
+                HandleHandUse();
             }
 
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
@@ -151,6 +92,33 @@ namespace Utopia.Entities.Managers
             }
 
         }
+
+        private bool HandleHandUse()
+        {
+            if (!Player.EntityState.IsEntityPicked || Player.EntityState.PickedEntityLink.IsDynamic)
+                return false;
+
+            var entity = Player.EntityState.PickedEntityLink.ResolveStatic(_factory.LandscapeManager);
+
+            if (entity.RequiresLock)
+            {
+                if (_lockedEntity != null)
+                {
+                    logger.Warn("Unable to lock two items at once");
+                    return false;
+                }
+
+                _lockedEntity = entity;
+                _itemMessageTranslator.RequestLock(_lockedEntity);
+            }
+            else
+            {
+                // hand tool use
+                PlayerCharacter.HandUse();
+            }
+            return true;
+        }
+
         #endregion        
     }
 }

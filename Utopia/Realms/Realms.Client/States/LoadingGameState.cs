@@ -20,6 +20,7 @@ using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -96,9 +97,31 @@ namespace Realms.Client.States
         //The state is enabled, start loading other components in background while the Loading is shown
         public override void OnEnabled(GameState previousState)
         {
-            if (this.PreviousGameState != this) ThreadsManager.RunAsync(GameplayInitializeAsync);
+            if (PreviousGameState != this) 
+                ThreadsManager.RunAsync(GameplayInitializeAsync);
+
+            var serverComponent = _ioc.Get<ServerComponent>();
+            serverComponent.ConnectionStausChanged += serverComponent_ConnectionStausChanged;
 
             base.OnEnabled(previousState);
+        }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            var serverComponent = _ioc.Get<ServerComponent>();
+            serverComponent.ConnectionStausChanged -= serverComponent_ConnectionStausChanged;
+
+            base.OnDisabled(nextState);
+        }
+
+        void serverComponent_ConnectionStausChanged(object sender, TcpConnectionStatusEventArgs e)
+        {
+            if (e.Status == TcpConnectionStatus.Disconnected)
+            {
+                var guiManager = _ioc.Get<GuiManager>();
+                guiManager.MessageBox("Can't connect to the server", "error");
+                StatesManager.ActivateGameStateAsync("MainMenu");
+            }
         }
 
         private void GameplayInitializeAsync()
@@ -126,7 +149,7 @@ namespace Realms.Client.States
                 _vars.LocalServer.InitSinglePlayerServer(wp);
 
                 if (serverComponent.ServerConnection == null ||
-                    serverComponent.ServerConnection.Status != Utopia.Shared.Net.Connections.TcpConnectionStatus.Connected)
+                    serverComponent.ServerConnection.Status != TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     serverComponent.BindingServer("127.0.0.1");
@@ -137,7 +160,7 @@ namespace Realms.Client.States
             else
             {
                 if (serverComponent.ServerConnection == null ||
-                    serverComponent.ServerConnection.Status != Utopia.Shared.Net.Connections.TcpConnectionStatus.Connected)
+                    serverComponent.ServerConnection.Status != TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
                     serverComponent.BindingServer(_vars.CurrentServerAddress);
@@ -155,7 +178,7 @@ namespace Realms.Client.States
             }
         }
         
-        void ServerConnectionMessageEntityIn(object sender, Utopia.Shared.Net.Connections.ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
+        void ServerConnectionMessageEntityIn(object sender, ProtocolMessageEventArgs<Utopia.Shared.Net.Messages.EntityInMessage> e)
         {
             var serverComponent = _ioc.Get<ServerComponent>();
             

@@ -341,16 +341,13 @@ namespace Utopia.Entities.Managers
                 LockedContainer = container;
                 OnNeedToShowInventory(new InventoryEventArgs { Container = container });
             }
-            else if (_lockedEntity is IUsableEntity)
+            else
             {
-                var usable = _lockedEntity as IUsableEntity;
-                // send use message to the server
-                PlayerCharacter.EntityUse();
-
-                usable.Use();
+                PlayerCharacter.EntityState.IsEntityPicked = true;
+                PlayerCharacter.EntityState.IsBlockPicked = false;
+                PlayerCharacter.EntityState.PickedEntityLink = _lockedEntity.GetLink();
+                PlayerCharacter.HandUse();
             }
-
-
         }
 
         public override void BeforeDispose()

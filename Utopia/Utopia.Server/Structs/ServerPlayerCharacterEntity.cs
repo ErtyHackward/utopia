@@ -85,24 +85,14 @@ namespace Utopia.Server.Structs
             }
             else
             {
-                var link = entityUseMessage.State.PickedEntityLink;
-                var entity = link.ResolveStatic(Server.LandscapeManager);
-
-                if (entity is IUsableEntity)
-                {
-                    var usableEntity = (IUsableEntity)entity;
-                    usableEntity.Use();
-                }
-                else
-                {
-                    var toolImpact = playerCharacter.HandTool.Use(playerCharacter);
-                    // returning tool feedback
-                    Connection.Send(new UseFeedbackMessage
-                                        {
-                                            Token = entityUseMessage.Token,
-                                            EntityImpactBytes = toolImpact.Serialize()
-                                        });
-                }
+                var toolImpact = playerCharacter.HandTool.Use(playerCharacter);
+                // returning tool feedback
+                Connection.Send(new UseFeedbackMessage
+                                    {
+                                        Token = entityUseMessage.Token,
+                                        EntityImpactBytes = toolImpact.Serialize()
+                                    });
+                
             }
         }
         

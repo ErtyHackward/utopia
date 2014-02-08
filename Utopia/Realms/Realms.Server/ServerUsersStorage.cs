@@ -53,8 +53,10 @@ namespace Realms.Server
 
             try
             {
-                // we need to authenticate user from gloabal server
+                // we need to authenticate user from global server
                 var responce = _webApi.UserAuthenticate(login, passwordHash);
+
+                logger.Info("Request auth {0} {1} {2}", login, passwordHash, responce.Valid);
 
                 if (responce != null && responce.Valid)
                 {

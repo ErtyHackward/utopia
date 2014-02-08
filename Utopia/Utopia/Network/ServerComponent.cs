@@ -15,6 +15,8 @@ namespace Utopia.Network
     /// </summary>
     public class ServerComponent : GameComponent, IDebugInfo
     {
+        private ServerConnection _serverConnection;
+
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
         public IDynamicEntity Player { get; set; }
@@ -26,7 +28,31 @@ namespace Utopia.Network
         public string DisplayName { get; set; }
 
         public string Address { get; set; }
-        public ServerConnection ServerConnection { get; set; }
+
+        public ServerConnection ServerConnection
+        {
+            get { return _serverConnection; }
+            set {
+
+                if (_serverConnection != value)
+                {
+                    if (_serverConnection != null)
+                    {
+                        _serverConnection.StatusChanged -= _serverConnection_StatusChanged;
+                    }
+                    
+                    _serverConnection = value;
+
+                    if (_serverConnection != null)
+                    {
+                        _serverConnection.StatusChanged += _serverConnection_StatusChanged;
+                    }
+                }
+            }
+        }
+
+        public ErrorMessage LastError { get; set; }
+
         #endregion
 
         #region Events
@@ -126,6 +152,15 @@ namespace Utopia.Network
         /// Occurs when VoxelModelDataMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
+
+        public event EventHandler<TcpConnectionStatusEventArgs> ConnectionStausChanged;
+
+        protected virtual void OnConnectionStausChanged(TcpConnectionStatusEventArgs e)
+        {
+            var handler = ConnectionStausChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         [Inject]
@@ -234,6 +269,7 @@ namespace Utopia.Network
 
         protected void OnMessageError(ErrorMessage ea)
         {
+            LastError = ea;
             if (MessageError != null) MessageError(this, new ProtocolMessageEventArgs<ErrorMessage> { Message = ea });
         }
 
@@ -430,6 +466,11 @@ namespace Utopia.Network
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");
             }
+        }
+
+        void _serverConnection_StatusChanged(object sender, TcpConnectionStatusEventArgs e)
+        {
+            OnConnectionStausChanged(e);
         }
         #endregion
 
