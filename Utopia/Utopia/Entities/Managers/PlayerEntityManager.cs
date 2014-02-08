@@ -441,12 +441,10 @@ namespace Utopia.Entities.Managers
         
         public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", PlayerCharacter.CharacterName,
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}]", PlayerCharacter.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
-                                                                                  Math.Round(Player.Position.Z, 1),
-                                                                                  Player.EntityState.IsBlockPicked ? Player.EntityState.PickedBlockPosition.ToString() : "None",
-                                                                                  Player.EntityState.IsBlockPicked ? Player.EntityState.NewBlockPosition.ToString() : "None"
+                                                                                  Math.Round(Player.Position.Z, 1)
                                                                                   );            
         }
     }

@@ -381,17 +381,27 @@ namespace Utopia.GUI.Inventory
                 if (slot != null && !slot.CanStackWith(_dragControl.Slot))
                 {
                     // exchange
-                    var prevPosition = _dragControl.Slot.GridPosition;
-                    _dragControl.Slot.GridPosition = e.SlotPosition;
-                    ContainedSlot slotTaken;
-                    if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
-                        throw new InvalidOperationException();
 
-                    OnSlotPut(_dragControl.Slot);
+                    // first check if we can perform exchange here, we can't if we took not the whole pack
+                    var srcSlot = e.Container.PeekSlot(_dragControl.Slot.GridPosition);
+                    if (srcSlot != null)
+                    {
+                        CancelDrag();
+                    }
+                    else
+                    {
+                        var prevPosition = _dragControl.Slot.GridPosition;
+                        _dragControl.Slot.GridPosition = e.SlotPosition;
+                        ContainedSlot slotTaken;
+                        if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
+                            throw new InvalidOperationException();
 
-                    slotTaken.GridPosition = prevPosition;
-                    UpdateDrag(slotTaken);
-                    CancelDrag();
+                        OnSlotPut(_dragControl.Slot);
+
+                        slotTaken.GridPosition = prevPosition;
+                        UpdateDrag(slotTaken);
+                        CancelDrag();
+                    }
                 }
                 else
                 {
@@ -483,6 +493,7 @@ namespace Utopia.GUI.Inventory
             foreach (var inventoryWindow in windows)
             {
                 inventoryWindow.LayoutFlags = ControlLayoutFlags.Center;
+                inventoryWindow.IsVisible = true;
                 desktop.Children.Add(inventoryWindow);
             }
             
