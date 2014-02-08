@@ -383,7 +383,7 @@ namespace Utopia.GUI.Inventory
                     // exchange
 
                     // first check if we can perform exchange here, we can't if we took not the whole pack
-                    var srcSlot = e.Container.PeekSlot(_dragControl.Slot.GridPosition);
+                    var srcSlot = _sourceContainer.PeekSlot(_dragControl.Slot.GridPosition);
                     if (srcSlot != null)
                     {
                         CancelDrag();

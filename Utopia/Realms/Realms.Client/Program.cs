@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
 using System;
 using Ninject;
 using S33M3CoreComponents.Config;
@@ -39,12 +41,24 @@ namespace Realms.Client
             ShowDebug = true;     
 #endif
 
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             using (var main = new GameClient())
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 main.Run();
             }
 
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var logPath = Path.Combine(Path.GetTempPath(), string.Format("utopia-client-{0}.log", DateTime.Now.ToShortDateString()));
+
+            if (File.Exists(logPath))
+            {
+                Process.Start(logPath);
+            }
         }
 
         private static void DeleteAllSavedGame()

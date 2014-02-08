@@ -596,7 +596,8 @@ namespace Utopia.Sounds
 
         private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
-            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
+            var index = _stepsTracker.FindIndex(p => p.Entity.DynamicId == e.Entity.DynamicId);
+            _stepsTracker.RemoveAt(index);
         }
 
         private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)

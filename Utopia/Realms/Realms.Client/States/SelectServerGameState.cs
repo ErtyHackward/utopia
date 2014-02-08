@@ -63,6 +63,12 @@ namespace Realms.Client.States
             {
                 selection.List.Items.Clear();
 
+#if DEBUG
+                if (e.Servers == null)
+                    e.Servers = new List<ServerInfo>();
+                e.Servers.Add(new ServerInfo { ServerAddress = "127.0.0.1", ServerName = "localhost" });
+#endif
+
                 if (e.Servers != null)
                 {
                     foreach (var serverInfo in e.Servers)

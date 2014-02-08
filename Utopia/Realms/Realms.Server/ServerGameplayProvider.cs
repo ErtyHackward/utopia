@@ -39,35 +39,14 @@ namespace Realms.Server
             dEntity.DisplacementMode = EntityDisplacementModes.Walking;
             dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             dEntity.CharacterName = name;
-            ContainedSlot outItem;
-            //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
 
-            byte equipedCubeId = _config.BlockProfiles.Where(x => x.IsSolidToEntity).First().Id;
-            var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(equipedCubeId, _config.BlockProfiles[equipedCubeId].Name);
-
-            dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
-
-            //Add Items in inventory, every cubes
-            foreach (BlockProfile profile in _config.GetAllCubesProfiles())
+            // give start items to the player
+            var startSetName = _server.WorldParameters.Configuration.StartSet;
+            if (!string.IsNullOrEmpty(startSetName))
             {
-                if (profile.Id == WorldConfiguration.CubeId.Air)
-                    continue;
-
-                var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.SetCube(profile.Id, profile.Name);
-                dEntity.Inventory.PutItem(item3);
+                _server.EntityFactory.FillContainer(startSetName, dEntity.Inventory);
             }
-
-            //Add coins + Torch
-            var torch = _server.EntityFactory.CreateEntity<LightSource>();
-            dEntity.Inventory.PutItem(torch);
-
-            //var item = (IItem)EntityFactory.Instance.CreateEntity((SandboxEntityClassId.Shovel));
-            //dEntity.Inventory.PutItem(item);
-
-            //dEntity.Inventory.PutItem(new GoldCoin(), 45821);
-
+            
             return dEntity;
         }
 
