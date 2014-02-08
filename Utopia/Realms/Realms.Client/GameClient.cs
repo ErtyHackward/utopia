@@ -38,7 +38,7 @@ namespace Realms.Client
                 Program.StartUpResolution = ClientSettings.Current.Settings.GraphicalParameters.WindowSize;
 
             //Bings all components
-            IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version, Program.StartUpResolution);
+            IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3), Program.StartUpResolution);
             
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Resources.Utopia;

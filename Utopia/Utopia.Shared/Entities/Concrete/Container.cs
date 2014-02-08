@@ -67,6 +67,8 @@ namespace Utopia.Shared.Entities.Concrete
             get { return EntityClassId.Container; }
         }
 
+        [Browsable(false)]
+        [ProtoMember(3)]
         public SlotContainer<ContainedSlot> Content 
         { 
             get { return _content; }
