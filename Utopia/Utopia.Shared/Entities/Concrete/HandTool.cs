@@ -37,7 +37,16 @@ namespace Utopia.Shared.Entities.Concrete
             if (owner.EntityState.PickedEntityLink.IsDynamic)
                 return impact;
 
+            impact.Success = true;
+
             var entity = owner.EntityState.PickedEntityLink.ResolveStatic(LandscapeManager);
+
+            if (entity is IUsableEntity)
+            {
+                var usable = (IUsableEntity)entity;
+                usable.Use();
+                return impact;
+            }
 
             var cursor = LandscapeManager.GetCursor(entity.Position);
             

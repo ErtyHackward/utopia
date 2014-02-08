@@ -4,6 +4,7 @@ using Ninject;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
 using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.Sound;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -16,6 +17,7 @@ using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Connections;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
@@ -43,6 +45,8 @@ namespace Realms.Client.States
         private RealmGameSoundManager _sandboxGameSoundManager;
 
         private readonly IKernel _ioc;
+
+        private bool _exiting;
 
         public override string Name
         {
@@ -110,6 +114,8 @@ namespace Realms.Client.States
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
             var serverComponent = _ioc.Get<ServerComponent>();
+            serverComponent.ConnectionStausChanged += ServerComponentOnConnectionStausChanged;
+            
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
@@ -121,6 +127,8 @@ namespace Realms.Client.States
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var pickingManager = _ioc.Get<PickingManager>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
+
+            
             
             AddComponent(cameraManager);
             AddComponent(serverComponent);
@@ -170,7 +178,7 @@ namespace Realms.Client.States
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in GameComponents.Except(_ioc.Get<LoadingGameState>().GameComponents))
             {
-                if (gc.GetType() != typeof(Realms.Client.Components.GUI.LoadingComponent))
+                if (gc.GetType() != typeof(LoadingComponent))
                 {
                     logger.Warn("Missing LoadingGameState component, present inside GamePlayState : {0}", gc.GetType().ToString());
                 }
@@ -178,6 +186,15 @@ namespace Realms.Client.States
 
 #endif
             base.Initialize(context);
+        }
+
+        private void ServerComponentOnConnectionStausChanged(object sender, TcpConnectionStatusEventArgs e)
+        {
+            if (e.Status == TcpConnectionStatus.Disconnected)
+            {
+                _exiting = true;
+                StatesManager.ActivateGameState("MainMenu");
+            }
         }
 
         void playerEntityManager_NeedToShowInventory(object sender, InventoryEventArgs e)
@@ -277,6 +294,23 @@ namespace Realms.Client.States
         {
             var playerEntityManager = _ioc.Get<IPlayerManager>();
             playerEntityManager.DisableComponent();
+
+            if (_exiting)
+            {
+                var inputManager = _ioc.Get<InputsManager>();
+                inputManager.MouseManager.MouseCapture = false;
+
+                var guiManager = _ioc.Get<GuiManager>();
+                guiManager.MessageBox("Server connection was interrupted", "error");
+
+                var soundEngine = _ioc.Get<ISoundEngine>();
+                soundEngine.StopAllSounds();
+                //Dispose all components related to the Game scope
+                GameScope.CurrentGameScope.Dispose();
+                //Create a new Scope
+                GameScope.CreateNewScope();
+                _exiting = false;
+            }
 
             base.OnDisabled(nextState);
         }

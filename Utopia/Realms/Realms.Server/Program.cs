@@ -88,6 +88,9 @@ namespace Realms.Server
 
         static void Main(string[] args)
         {
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             logger.Info("Utopia Realms game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "main.realm");
@@ -183,6 +186,12 @@ namespace Realms.Server
             {
                 Console.WriteLine("Type 'exit' to quit");
             }
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = (Exception)e.ExceptionObject;
+            logger.Fatal("Unhandled exception {0}\n{1}", exception.Message, exception.StackTrace);
         }
 
         static void CommitServerInfo(object state)

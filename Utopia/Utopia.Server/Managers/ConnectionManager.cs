@@ -112,7 +112,10 @@ namespace Utopia.Server.Managers
             conn.Listen();
 
             if (!e.Handled)
+            {
+                logger.Warn("Disconnecting non handled connection {0}", e.Socket.RemoteEndPoint);
                 conn.Dispose();
+            }
         }
 
         void ConnectionMessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
