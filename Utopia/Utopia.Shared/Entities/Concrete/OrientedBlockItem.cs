@@ -66,7 +66,7 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (owner.EntityState.IsBlockPicked)
                 newBlockPos = owner.EntityState.NewBlockPosition;
-            else if (owner.EntityState.IsEntityPicked)
+            else if (owner.EntityState.IsEntityPicked && owner.EntityState.PickedEntityLink.IsStatic)
             {
                 var entity = owner.EntityState.PickedEntityLink.ResolveStatic(LandscapeManager);
 
