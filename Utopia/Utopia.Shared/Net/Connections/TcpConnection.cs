@@ -11,6 +11,8 @@ namespace Utopia.Shared.Net.Connections
 {
     public abstract class TcpConnection : IDisposable
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected TcpClient Client;
         private TcpConnectionStatus _status;
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
@@ -107,8 +109,9 @@ namespace Utopia.Shared.Net.Connections
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception x)
             {
+                logger.Error("Connection exception: {0}\n{1}", x.Message, x.StackTrace);
                 Status = TcpConnectionStatus.Disconnected;
             }
         }

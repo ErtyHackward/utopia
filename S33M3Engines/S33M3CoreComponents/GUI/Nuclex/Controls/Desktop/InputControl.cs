@@ -169,7 +169,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         protected virtual void OnCharacterEntered(char character)
         {
             // For some reason, Windows translates Backspace to a character :)
-            if (IsNumeric && char.IsNumber(character) == false && character != '.') return;
+            if (IsNumeric && char.IsNumber(character) == false && character != '.' && character != '-') return;
 
             //Remove the Tab as valid character
             if (character == '\t') return;

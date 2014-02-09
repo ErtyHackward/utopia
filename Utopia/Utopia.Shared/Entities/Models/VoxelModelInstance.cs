@@ -309,8 +309,8 @@ namespace Utopia.Shared.Entities.Models
                 throw new ArgumentOutOfRangeException("animationName", "Model have not animation called " + animationName);
 
             _animationIndex = animation;
-            _animationStepIndexFrom = -1;
-            _animationStepIndexTo = 0;
+            _animationStepIndexFrom = VoxelModel.Animations[animation].StartFrame;
+            _animationStepIndexTo = _animationStepIndexFrom + 1;
             _elapsed = 0;
             _repeat = repeat;
             _stopping = false;
@@ -327,8 +327,8 @@ namespace Utopia.Shared.Entities.Models
                 throw new ArgumentOutOfRangeException("index", "Model have not animation with index " + index);
 
             _animationIndex = index;
-            _animationStepIndexFrom = -1;
-            _animationStepIndexTo = 0;
+            _animationStepIndexFrom = VoxelModel.Animations[index].StartFrame;
+            _animationStepIndexTo = _animationStepIndexFrom + 1;
             _elapsed = 0;
             _repeat = repeat;
             _stopping = false;

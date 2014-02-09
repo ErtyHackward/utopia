@@ -22,6 +22,7 @@ namespace Utopia.Components
         private struct DialogAnimationEditStruct
         {
             public string Name;
+            public int StartFrame;
         }
 
         private struct DialogAnimationStepStruct

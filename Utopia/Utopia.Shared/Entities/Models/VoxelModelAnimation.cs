@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using ProtoBuf;
 using Utopia.Shared.Interfaces;
@@ -30,9 +31,17 @@ namespace Utopia.Shared.Entities.Models
         [ProtoMember(3)]
         public List<AnimationStep> Steps { get; private set; }
 
+        /// <summary>
+        /// Gets start animation index (default -1)
+        /// </summary>
+        [ProtoMember(4)]
+        [DefaultValue(-1)]
+        public int StartFrame { get; set; }
+
         public VoxelModelAnimation()
         {
             Steps = new List<AnimationStep>();
+            StartFrame = -1;
         }
 
         public void Save(BinaryWriter writer)
