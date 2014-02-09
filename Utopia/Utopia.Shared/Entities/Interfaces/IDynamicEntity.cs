@@ -63,6 +63,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Fires use event from current entity state
         /// </summary>
-        void ToolUse(ITool tool);
+        IToolImpact ToolUse(ITool tool);
     }
 }

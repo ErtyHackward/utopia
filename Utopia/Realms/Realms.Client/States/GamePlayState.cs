@@ -234,12 +234,20 @@ namespace Realms.Client.States
 
         private void InventoryOnItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            var inventory = _ioc.Get<InventoryComponent>();
+            if (inventory.IsToolbarSwitching)
+                return;
+
             var iec = _ioc.Get<InventoryEventComponent>();
             iec.Notify(e.Slot.Item, e.Slot.Item.Name + " removed", false, e.Slot.ItemsCount);
         }
 
         private void InventoryOnItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            var inventory = _ioc.Get<InventoryComponent>();
+            if (inventory.IsToolbarSwitching)
+                return;
+
             var iec = _ioc.Get<InventoryEventComponent>();
             iec.Notify(e.Slot.Item, e.Slot.Item.Name + " added", true, e.Slot.ItemsCount);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using S33M3Resources.Effects.Sprites;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -291,7 +292,9 @@ namespace Utopia.Entities
 
                 var instance = visualVoxelModel.VoxelModel.CreateInstance();
 
-                var state = visualVoxelModel.VoxelModel.GetMainState();
+                var iconState = visualVoxelModel.VoxelModel.States.FirstOrDefault(s => string.Equals(s.Name, "Icon", StringComparison.CurrentCultureIgnoreCase));
+
+                var state = iconState ?? visualVoxelModel.VoxelModel.GetMainState();
 
                 instance.SetState(state);
                 var size = state.BoundingBox.GetSize();

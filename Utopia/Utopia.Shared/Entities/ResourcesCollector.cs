@@ -16,6 +16,14 @@ namespace Utopia.Shared.Entities
     [ProtoInclude(100, typeof(BasicCollector))]
     public abstract class ResourcesCollector : Item, ITool
     {
+
+        /// <summary>
+        /// Tool block damage
+        /// negative values will repair blocks
+        /// </summary>
+        [ProtoMember(1)]
+        public int Damage { get; set; }
+
         /// <summary>
         /// Using a Collector type Tool Item will start to hit block from world an place it into own bag.
         /// </summary>
@@ -48,20 +56,27 @@ namespace Utopia.Shared.Entities
             var cube = cursor.Read(out damage);
             if (cube != WorldConfiguration.CubeId.Air)
             {
+                var hardness = cursor.PeekProfile().Hardness;
+
                 if (damage == null)
                 {
-                    damage = new DamageTag { Strength = 15, TotalStrength = 15 };
+                    damage = new DamageTag {
+                        Strength = (int)hardness,
+                        TotalStrength = (int)hardness
+                    };
                 }
 
-                damage.Strength--;
+                damage.Strength -= Damage;
 
                 if (damage.Strength <= 0)
                 {
                     var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
-
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
-
                     cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                }
+                else if (damage.Strength >= hardness)
+                {
+                    cursor.Write(cube);
                 }
                 else
                 {

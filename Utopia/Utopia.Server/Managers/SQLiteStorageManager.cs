@@ -206,6 +206,18 @@ namespace Utopia.Server.Managers
             InsertBlob(string.Format("UPDATE users SET state = @blob WHERE login = '{0}'", Escape(login)), state);
         }
 
+        public int GetUsersCount()
+        {
+            using (var reader = Query("SELECT count(*) FROM users"))
+            {
+                if (reader.Read())
+                {
+                    return reader.GetInt32(0);
+                }
+            }
+            return 0;
+        }
+
         public void SaveDynamicEntity(IDynamicEntity entity)
         {
             SaveEntity(entity.DynamicId, entity.ProtoSerialize());

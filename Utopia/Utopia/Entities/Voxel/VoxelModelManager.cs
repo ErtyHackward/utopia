@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Ninject;
@@ -21,7 +22,7 @@ namespace Utopia.Entities.Voxel
         private readonly object _syncRoot = new object();
         private readonly Dictionary<string, VisualVoxelModel> _models = new Dictionary<string, VisualVoxelModel>();
         private HashSet<string> _pendingModels = new HashSet<string>();
-
+        private readonly ConcurrentQueue<VoxelModel> _receivedModels = new ConcurrentQueue<VoxelModel>();
 
         /// <summary>
         /// Occurs when a voxel model is available (received from the server, loaded from the storage)
@@ -64,8 +65,8 @@ namespace Utopia.Entities.Voxel
                 _pendingModels.Remove(e.Message.VoxelModel.Name);
             }
 
-            OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = e.Message.VoxelModel });
-
+            _receivedModels.Enqueue(e.Message.VoxelModel);
+            
             VoxelModelStorage.Save(e.Message.VoxelModel);
         }
 
@@ -201,6 +202,20 @@ namespace Utopia.Entities.Voxel
             {
                 RequestModel(absentModel);
             }
+        }
+
+        public override void FTSUpdate(GameTime timeSpent)
+        {
+            if (_receivedModels.Count > 0)
+            {
+                VoxelModel model;
+                while (_receivedModels.TryDequeue(out model))
+                {
+                    OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = model });
+                }
+            }
+
+            base.FTSUpdate(timeSpent);
         }
 
         public bool Contains(string name)

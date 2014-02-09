@@ -31,5 +31,11 @@ namespace Utopia.Shared.Interfaces
         /// <param name="login">User login</param>
         /// <param name="state">custom byte array</param>
         void SetData(string login, byte[] state);
+
+        /// <summary>
+        /// Returns current cached user accounts
+        /// </summary>
+        /// <returns></returns>
+        int GetUsersCount();
     }
 }
