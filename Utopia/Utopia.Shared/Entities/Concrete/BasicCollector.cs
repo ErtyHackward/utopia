@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
 

@@ -2,6 +2,7 @@
 using Utopia.Server.Managers;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Web;
+using Utopia.Shared.Structs;
 
 namespace Realms.Server
 {
@@ -45,7 +46,7 @@ namespace Realms.Server
         /// <param name="passwordHash">User SHA1 password hash</param>
         /// <param name="data">Filled login data structure if login succeed</param>
         /// <returns>true if login succeed otherwise false</returns>
-        public bool Login(string login, string passwordHash, out Utopia.Shared.Structs.LoginData data)
+        public bool Login(string login, string passwordHash, out LoginData data)
         {
             // check if we have this user in our local database
             if (_storage.Login(login, passwordHash, out data))
@@ -55,13 +56,16 @@ namespace Realms.Server
             {
                 // we need to authenticate user from global server
                 var responce = _webApi.UserAuthenticate(login, passwordHash);
-
-                logger.Info("Request auth {0} {1} {2}", login, passwordHash, responce.Valid);
-
+                
                 if (responce != null && responce.Valid)
                 {
+                    var role = UserRole.Guest;
+
+                    if (_storage.GetUsersCount() == 0)
+                        role = UserRole.Administrator;
+
                     // create or update local registration 
-                    _storage.Register(login, passwordHash, Utopia.Shared.Structs.UserRole.Guest);
+                    _storage.Register(login, passwordHash, role);
                     return _storage.Login(login, passwordHash, out data);
                 }
 
@@ -82,6 +86,11 @@ namespace Realms.Server
         public void SetData(string login, byte[] state)
         {
             _storage.SetData(login, state);
+        }
+
+        public int GetUsersCount()
+        {
+            return _storage.GetUsersCount();
         }
     }
 }

@@ -136,9 +136,7 @@ namespace Utopia.Server.Structs
                 {
                     if (entityUseMessage.UseType == UseType.Use)
                     {
-                        var tool = (ITool)item;
-
-                        var toolImpact = tool.Use(playerCharacter);
+                        var toolImpact = playerCharacter.ToolUse();
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
                         {
@@ -148,7 +146,7 @@ namespace Utopia.Server.Structs
                     }
                     if (entityUseMessage.UseType == UseType.Put)
                     {
-                        var toolImpact = item.Put(playerCharacter);
+                        var toolImpact = playerCharacter.PutUse();
                         // returning tool feedback
                         Connection.Send(new UseFeedbackMessage
                         {
@@ -168,7 +166,7 @@ namespace Utopia.Server.Structs
             }
             else
             {
-                var toolImpact = playerCharacter.HandTool.Use(playerCharacter);
+                var toolImpact = playerCharacter.HandUse();
                 // returning tool feedback
                 Connection.Send(new UseFeedbackMessage
                 {

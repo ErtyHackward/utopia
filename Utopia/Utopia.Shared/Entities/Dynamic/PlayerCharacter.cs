@@ -4,6 +4,7 @@ using SharpDX;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -47,19 +48,18 @@ namespace Utopia.Shared.Entities.Dynamic
             Name = "Player";
         }
         
-        public void ToolUse()
+        public IToolImpact ToolUse()
         {
-            ToolUse((ITool)Equipment.RightTool);
+            return ToolUse((ITool)Equipment.RightTool);
         }
 
-        public void HandUse()
+        public IToolImpact HandUse()
         {
-            HandTool.Use(this);
-
             ToolUse(null);
+            return HandTool.Use(this);
         }
 
-        public void PutUse()
+        public IToolImpact PutUse()
         {
             if (Equipment.RightTool != null)
             {
@@ -68,8 +68,9 @@ namespace Utopia.Shared.Entities.Dynamic
                 args.UseType = UseType.Put;
                 OnUse(args);
 
-                Equipment.RightTool.Put(this);
+                return Equipment.RightTool.Put(this);
             }
+            return new ToolImpact();
         }
 
         public IItem LookupItem(uint itemId)

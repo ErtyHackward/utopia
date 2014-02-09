@@ -251,6 +251,7 @@ namespace Utopia.GUI.Inventory
 
             try
             {
+                IsToolbarSwitching = true;
                 _itemMessageTranslator.Enabled = true;
                 if (PlayerManager.PlayerCharacter.Toolbar[e.SlotIndex] != 0)
                 {
@@ -276,9 +277,12 @@ namespace Utopia.GUI.Inventory
             }
             finally
             {
+                IsToolbarSwitching = false;
                 _itemMessageTranslator.Enabled = enabled;
             }
         }
+
+        public bool IsToolbarSwitching { get; set; }
 
         private void ToolBarSlotClicked(object sender, InventoryWindowCellMouseEventArgs e)
         {

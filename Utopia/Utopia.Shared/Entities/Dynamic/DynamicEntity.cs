@@ -6,6 +6,7 @@ using SharpDX;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -50,15 +51,19 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Calls tool use and fires use event from current entity state
         /// </summary>
-        public void ToolUse(ITool tool)
+        public IToolImpact ToolUse(ITool tool)
         {
-            if (tool != null)
-                tool.Use(this);
-           
             var arg = EntityUseEventArgs.FromState(this);
             arg.Tool = tool;
 
             OnUse(arg);
+
+            if (ModelInstance != null)
+                ModelInstance.TryPlay("Use");
+
+            if (tool != null)
+                return tool.Use(this);
+            return new ToolImpact(); ;
         }
         
         /// <summary>

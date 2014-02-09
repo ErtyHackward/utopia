@@ -115,7 +115,7 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.Send(new EntityUseMessage (e));
+                Connection.Send(new EntityUseMessage(e));
             }
         }
 
