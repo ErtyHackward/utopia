@@ -47,7 +47,6 @@ namespace Utopia.Server.Structs
             {
                 if (serverEntity != this)
                 {
-                    //Console.WriteLine("TO: {0}, entity {1} in", Connection.Entity.EntityId, dynamicEntity.EntityId);
                     Connection.Send(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
@@ -66,9 +65,8 @@ namespace Utopia.Server.Structs
 
             foreach (var serverEntity in area.Enumerate())
             {
-                if (serverEntity != DynamicEntity)
+                if (serverEntity.DynamicEntity != DynamicEntity)
                 {
-                    //Console.WriteLine("TO: {0}, entity {1} out (remove)", Connection.Entity.EntityId, dynamicEntity.EntityId);
                     Connection.Send(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, Link = serverEntity.DynamicEntity.GetLink() });
                 }
             }
@@ -99,18 +97,16 @@ namespace Utopia.Server.Structs
 
         protected override void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e)
         {
-            if (e.Entity != DynamicEntity)
+            if (e.Entity.DynamicEntity != DynamicEntity)
             {
-                //Console.WriteLine("TO: {0},  {1} entity out of view", Connection.Entity.EntityId, e.Entity.EntityId);
                 Connection.Send(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }
 
         protected override void AreaEntityInViewRange(object sender, ServerDynamicEntityEventArgs e)
         {
-            if (e.Entity != DynamicEntity)
+            if (e.Entity.DynamicEntity != DynamicEntity)
             {
-                //Console.WriteLine("TO: {0},  {1} entity in view", Connection.Entity.EntityId, e.Entity.EntityId);
                 Connection.Send(new EntityInMessage { Entity = e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
             }
         }

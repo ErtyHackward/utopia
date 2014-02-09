@@ -1,7 +1,7 @@
 ﻿namespace Utopia.Shared
 {
     /// <summary>
-    /// Contains various runtime game variables
+    /// Contains various runtime game variables for cross-state communications
     /// </summary>
     public class RuntimeVariables
     {

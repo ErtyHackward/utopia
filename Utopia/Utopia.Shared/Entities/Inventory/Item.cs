@@ -21,6 +21,14 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(BlockItem))]
+    [ProtoInclude(101, typeof(BlockLinkedItem))]
+    [ProtoInclude(102, typeof(ResourcesCollector))]
+    [ProtoInclude(103, typeof(CubeResource))]
+    [ProtoInclude(104, typeof(Food))]
+    [ProtoInclude(105, typeof(Stuff))]
+    [ProtoInclude(106, typeof(GodHandTool))]
+    [ProtoInclude(107, typeof(Extractor))]
     public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity
     {
         private VoxelModelInstance _modelInstance;
@@ -76,6 +84,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Gets stack string. Entities with the same stack string will be possible to put together in a single slot
         /// </summary>
+        [Browsable(false)]
         public virtual string StackType
         {
             get { return BluePrintId.ToString(CultureInfo.InvariantCulture); }            

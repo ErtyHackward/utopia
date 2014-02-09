@@ -68,20 +68,9 @@ namespace Utopia.Shared.Entities
         {
             var protoTypeModel = RuntimeTypeModel.Default;
 
-            var entityInterface =           protoTypeModel.Add(typeof(IEntity), true);
-            var entityType =                protoTypeModel.Add(typeof(Entity), true);
-            var dynEntityType =             protoTypeModel.Add(typeof(DynamicEntity), true);
-            var staticEntityType =          protoTypeModel.Add(typeof(StaticEntity), true);
-            var charEntityType =            protoTypeModel.Add(typeof(CharacterEntity), true);
-            var rpgCharType =               protoTypeModel.Add(typeof(RpgCharacterEntity), true);
-            var itemType =                  protoTypeModel.Add(typeof(Item), true);
+            var entityInterface =           protoTypeModel.Add(typeof(IEntity), true); // we need to register all entities hierarchy
             var slotType =                  protoTypeModel.Add(typeof(Slot), true);
             var containedSlotType =         protoTypeModel.Add(typeof(ContainedSlot), true);
-            var blockItem =                 protoTypeModel.Add(typeof(BlockItem), true);
-            var orientedBlockItem =         protoTypeModel.Add(typeof(OrientedBlockItem), true);
-            var blockLinkedItem =           protoTypeModel.Add(typeof(BlockLinkedItem), true);
-            var orientedBlockLinkedItem =   protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
-            var resourceCollector =         protoTypeModel.Add(typeof(ResourcesCollector), true);
             var worldConfig =               protoTypeModel.Add(typeof(WorldConfiguration), true);
             var soundSource =               protoTypeModel.Add(typeof(SoundSource), true);
             var chunkDataProvider =         protoTypeModel.Add(typeof(ChunkDataProvider), true);
@@ -100,45 +89,8 @@ namespace Utopia.Shared.Entities
             worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
             worldConfig.AddSubType(101, typeof(FlatWorldConfiguration));
 
-            entityInterface.AddSubType(100, typeof(Entity));
-
-            // entities hierarchy
-            entityType.AddSubType(100, typeof(DynamicEntity));
-            entityType.AddSubType(101, typeof(StaticEntity));
-
-            dynEntityType.AddSubType(100, typeof(CharacterEntity));
-            dynEntityType.AddSubType(101, typeof(GodEntity));
-
-            charEntityType.AddSubType(100, typeof(RpgCharacterEntity));
-            charEntityType.AddSubType(101, typeof(Npc));
-
-            rpgCharType.AddSubType(100, typeof(PlayerCharacter));
-
-            staticEntityType.AddSubType(100, typeof(Item));
-
-            itemType.AddSubType(100, typeof(BlockItem));
-            itemType.AddSubType(101, typeof(BlockLinkedItem));
-            itemType.AddSubType(102, typeof(ResourcesCollector));
-            itemType.AddSubType(103, typeof(CubeResource));
-            itemType.AddSubType(104, typeof(Food));
-            itemType.AddSubType(105, typeof(Stuff));
-            itemType.AddSubType(106, typeof(GodHandTool));
-
-            blockItem.AddSubType(100, typeof(OrientedBlockItem));
-
-            orientedBlockItem.AddSubType(100, typeof(Door));
-
-            blockLinkedItem.AddSubType(100, typeof(OrientedBlockLinkedItem));
-            blockLinkedItem.AddSubType(101, typeof(Plant));
-            blockLinkedItem.AddSubType(102, typeof(LightSource));
-
-            orientedBlockLinkedItem.AddSubType(100, typeof(Container));
-
-            resourceCollector.AddSubType(100, typeof(BasicCollector));
-
             // slots hierarchy
 
-            //protoTypeModel.Add(typeof(SlotContainer<BlueprintSlot>), true);
             var slotContainer = protoTypeModel.Add(typeof(SlotContainer<ContainedSlot>), true);
 
             slotContainer.AddSubType(100, typeof(CharacterEquipment));
@@ -344,6 +296,11 @@ namespace Utopia.Shared.Entities
         public Entity CreateFromBluePrint(IEntity entity)
         {
             return CreateFromBluePrint(entity.BluePrintId);
+        }
+
+        public T CreateFromBluePrint<T>(ushort bluePrintId) where T : Entity
+        {
+            return (T)CreateFromBluePrint(bluePrintId);
         }
 
         public Entity CreateFromBluePrint(ushort bluePrintId)

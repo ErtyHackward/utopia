@@ -2,6 +2,7 @@
 using S33M3Resources.Structs;
 using System.ComponentModel;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -13,6 +14,7 @@ namespace Utopia.Shared.Entities
     /// This entity cannot be placed on a block where another entity is placed.
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(OrientedBlockItem))]
     public abstract class BlockItem : Item, IBlockLocationRoot
     {
         /// <summary>

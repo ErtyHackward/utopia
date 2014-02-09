@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using ProtoBuf;
 using SharpDX;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
@@ -11,6 +12,8 @@ namespace Utopia.Shared.Entities
     /// Represents a base entity 
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(DynamicEntity))]
+    [ProtoInclude(101, typeof(StaticEntity))]
     public abstract class Entity : IEntity
     {
         private string _name = "No name";
@@ -24,7 +27,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets Entity ID used in configuration to distinguish entities of the same final type
         /// </summary>
-        [Browsable(false)]
+        [ReadOnly(true)]
         [ProtoMember(1)]
         public ushort BluePrintId { get; set; }
 
@@ -120,6 +123,7 @@ namespace Utopia.Shared.Entities
         /// Gets entity class id
         /// </summary>
         [Category("Entity")]
+        [Browsable(false)]
         public abstract ushort ClassId { get; }
         
         /// <summary>

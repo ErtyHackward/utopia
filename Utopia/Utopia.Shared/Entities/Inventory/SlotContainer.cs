@@ -365,7 +365,8 @@ namespace Utopia.Shared.Entities.Inventory
             var currentItem = _items[position.X, position.Y];
 
             // unable to take items from empty slot
-            if (currentItem == null) return false;
+            if (currentItem == null) 
+                return false;
 
             // unable to take more items than container have
             if (currentItem.ItemsCount < itemsCount)

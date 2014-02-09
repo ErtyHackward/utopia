@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using Ninject;
 using Realms.Client.Components.GUI;
+using S33M3CoreComponents.Inputs;
+using S33M3CoreComponents.Sound;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
 using Utopia.Shared.Settings;
@@ -13,7 +15,7 @@ namespace Realms.Client.States
     /// </summary>
     public class MainMenuState : GameState
     {
-        private readonly IKernel _iocContainer;
+        private readonly IKernel _ioc;
         private RealmRuntimeVariables _vars;
 
         public override string Name
@@ -24,16 +26,16 @@ namespace Realms.Client.States
         public MainMenuState(GameStatesManager stateManager, IKernel iocContainer)
             :base(stateManager)
         {
-            _iocContainer = iocContainer;
+            _ioc = iocContainer;
             AllowMouseCaptureChange = false;
         }
 
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
-            var bg = _iocContainer.Get<BlackBgComponent>();
-            var gui = _iocContainer.Get<GuiManager>();
-            var menu = _iocContainer.Get<MainMenuComponent>();
-            _vars = _iocContainer.Get<RealmRuntimeVariables>();
+            var bg = _ioc.Get<BlackBgComponent>();
+            var gui = _ioc.Get<GuiManager>();
+            var menu = _ioc.Get<MainMenuComponent>();
+            _vars = _ioc.Get<RealmRuntimeVariables>();
 
             AddComponent(bg);
             AddComponent(gui);
@@ -44,7 +46,7 @@ namespace Realms.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
-            var menu = _iocContainer.Get<MainMenuComponent>();
+            var menu = _ioc.Get<MainMenuComponent>();
             menu.CreditsPressed += MenuCreditsPressed;
             menu.SinglePlayerPressed += MenuSinglePlayerPressed;
             menu.MultiplayerPressed += MenuMultiplayerPressed;
@@ -53,6 +55,29 @@ namespace Realms.Client.States
             menu.LogoutPressed += MenuLogoutPressed;
             menu.ExitPressed += MenuExitPressed;
 
+            if (_vars.DisposeGameComponents)
+            {
+                _vars.DisposeGameComponents = false;
+
+                var inputManager = _ioc.Get<InputsManager>();
+                inputManager.MouseManager.MouseCapture = false;
+
+                if (!string.IsNullOrEmpty(_vars.MessageOnExit))
+                {
+                    var guiManager = _ioc.Get<GuiManager>();
+                    guiManager.MessageBox(_vars.MessageOnExit, "Information");
+                    _vars.MessageOnExit = null;
+                }
+
+                var soundEngine = _ioc.Get<ISoundEngine>();
+                soundEngine.StopAllSounds();
+
+                //Dispose all components related to the Game scope
+                GameScope.CurrentGameScope.Dispose();
+                //Create a new Scope
+                GameScope.CreateNewScope();
+            }
+
             base.OnEnabled(previousState);
         }
 
@@ -60,7 +85,7 @@ namespace Realms.Client.States
 
         public override void OnDisabled(GameState nextState)
         {
-            var menu = _iocContainer.Get<MainMenuComponent>();
+            var menu = _ioc.Get<MainMenuComponent>();
             menu.CreditsPressed -= MenuCreditsPressed;
             menu.SinglePlayerPressed -= MenuSinglePlayerPressed;
             menu.MultiplayerPressed -= MenuMultiplayerPressed;

@@ -7,6 +7,7 @@ using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
@@ -53,7 +54,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public BlockTag ReadTag()
         {
             var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
-            return chunk.BlockData.GetTag(_globalPosition);
+            return chunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(_globalPosition));
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public byte Read<T>(out T tag) where T : BlockTag
         {
             var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
-            tag = (T)chunk.BlockData.GetTag(_globalPosition);
+            tag = (T)chunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(_globalPosition));
             return Read();
         }
 

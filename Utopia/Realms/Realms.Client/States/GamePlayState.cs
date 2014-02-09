@@ -45,8 +45,10 @@ namespace Realms.Client.States
         private RealmGameSoundManager _sandboxGameSoundManager;
 
         private readonly IKernel _ioc;
-
-        private bool _exiting;
+        private InputsManager _inputsManager;
+        private RealmsHud _hud;
+        private PlayerEntityManager _playerEntityManager;
+        private ServerComponent _serverComponent;
 
         public override string Name
         {
@@ -62,10 +64,12 @@ namespace Realms.Client.States
 
         public override void Initialize(DeviceContext context)
         {
+            GameScope.CurrentGameScope.Disposed += CurrentGameScope_Disposed;
+
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
-            var inputsManager = _ioc.Get<InputsManager>();
-            inputsManager.ActionsManager.KeyboardAction += ActionsManager_KeyboardAction;
+            _inputsManager = _ioc.Get<InputsManager>();
+            _inputsManager.ActionsManager.KeyboardAction += ActionsManager_KeyboardAction;
 
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
@@ -75,9 +79,9 @@ namespace Realms.Client.States
             
             var chat = _ioc.Get<ChatComponent>();
 
-            var hud = (RealmsHud)_ioc.Get<Hud>();
-            hud.CraftingButton.Pressed += CraftingButton_Pressed;
-            hud.InventoryButton.Pressed += InventoryButton_Pressed;
+            _hud = (RealmsHud)_ioc.Get<Hud>();
+            _hud.CraftingButton.Pressed += CraftingButton_Pressed;
+            _hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -102,19 +106,18 @@ namespace Realms.Client.States
             var worldChunks = _ioc.Get<IWorldChunks>();
             var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
-            //var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
-            playerEntityManager.PlayerCharacter.Inventory.ItemPut += InventoryOnItemPut;
-            playerEntityManager.PlayerCharacter.Inventory.ItemTaken += InventoryOnItemTaken;
-            playerEntityManager.NeedToShowInventory += playerEntityManager_NeedToShowInventory;
-            //var playerEntityManager = _ioc.Get<IPlayerManager>();
 
+            _playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
+            _playerEntityManager.PlayerCharacter.Inventory.ItemPut += InventoryOnItemPut;
+            _playerEntityManager.PlayerCharacter.Inventory.ItemTaken += InventoryOnItemTaken;
+            _playerEntityManager.NeedToShowInventory += playerEntityManager_NeedToShowInventory;
+            
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
-            var serverComponent = _ioc.Get<ServerComponent>();
-            serverComponent.ConnectionStausChanged += ServerComponentOnConnectionStausChanged;
+            _serverComponent = _ioc.Get<ServerComponent>();
+            _serverComponent.ConnectionStausChanged += ServerComponentOnConnectionStausChanged;
             
             var fadeComponent = _ioc.Get<FadeComponent>();
             fadeComponent.Visible = false;
@@ -131,17 +134,16 @@ namespace Realms.Client.States
             
             
             AddComponent(cameraManager);
-            AddComponent(serverComponent);
-            AddComponent(inputsManager);
+            AddComponent(_serverComponent);
+            AddComponent(_inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
             AddComponent(skyBackBuffer);
-            AddComponent(playerEntityManager);
+            AddComponent(_playerEntityManager);
             AddComponent(dynamicEntityManager);
-            AddComponent(hud);
+            AddComponent(_hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            //AddComponent(selectedBlocksRenderer);
             AddComponent(inventory);
             AddComponent(chat);
             AddComponent(skyDome);
@@ -163,8 +165,6 @@ namespace Realms.Client.States
             if (worldShadowMap != null)
                 AddComponent(worldShadowMap);
             
-            //inputsManager.MouseManager.StrategyMode = true;
-
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in _ioc.Get<LoadingGameState>().GameComponents.Except(GameComponents))
@@ -188,11 +188,28 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
+        void CurrentGameScope_Disposed(object sender, EventArgs e)
+        {
+            _inputsManager.ActionsManager.KeyboardAction -= ActionsManager_KeyboardAction;
+            _inputsManager = null;
+
+            _serverComponent.ConnectionStausChanged -= ServerComponentOnConnectionStausChanged;
+            _serverComponent = null;
+            
+            _hud.CraftingButton.Pressed -= CraftingButton_Pressed;
+            _hud.InventoryButton.Pressed -= InventoryButton_Pressed;
+            _hud = null;
+            
+            _playerEntityManager.NeedToShowInventory -= playerEntityManager_NeedToShowInventory;
+            _playerEntityManager = null;
+        }
+
         private void ServerComponentOnConnectionStausChanged(object sender, TcpConnectionStatusEventArgs e)
         {
             if (e.Status == TcpConnectionStatus.Disconnected)
             {
-                _exiting = true;
+                var vars = _ioc.Get<RealmRuntimeVariables>();
+                vars.MessageOnExit = "Server connection was interrupted";
                 StatesManager.ActivateGameState("MainMenu");
             }
         }
@@ -218,13 +235,13 @@ namespace Realms.Client.States
         private void InventoryOnItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             var iec = _ioc.Get<InventoryEventComponent>();
-            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " removed " + (e.Slot.ItemsCount > 1 ? "x" + e.Slot.ItemsCount : ""), false);
+            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " removed", false, e.Slot.ItemsCount);
         }
 
         private void InventoryOnItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             var iec = _ioc.Get<InventoryEventComponent>();
-            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " added " + (e.Slot.ItemsCount > 1 ? "x" + e.Slot.ItemsCount : ""), true);
+            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " added", true, e.Slot.ItemsCount);
         }
 
         void ActionsManager_KeyboardAction(object sender, ActionsManagerEventArgs e)
@@ -294,23 +311,6 @@ namespace Realms.Client.States
         {
             var playerEntityManager = _ioc.Get<IPlayerManager>();
             playerEntityManager.DisableComponent();
-
-            if (_exiting)
-            {
-                var inputManager = _ioc.Get<InputsManager>();
-                inputManager.MouseManager.MouseCapture = false;
-
-                var guiManager = _ioc.Get<GuiManager>();
-                guiManager.MessageBox("Server connection was interrupted", "error");
-
-                var soundEngine = _ioc.Get<ISoundEngine>();
-                soundEngine.StopAllSounds();
-                //Dispose all components related to the Game scope
-                GameScope.CurrentGameScope.Dispose();
-                //Create a new Scope
-                GameScope.CreateNewScope();
-                _exiting = false;
-            }
 
             base.OnDisabled(nextState);
         }

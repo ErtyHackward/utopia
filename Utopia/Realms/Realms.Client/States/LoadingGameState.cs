@@ -214,8 +214,8 @@ namespace Realms.Client.States
 
         private void GameplayComponentsCreation()
         {
-            //_ioc.Get<ServerComponent>().GameInformations is set by the MessageGameInformation received by the server
-            
+            _vars.DisposeGameComponents = true;
+
             var clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
 
             var clientFactory = _ioc.Get<EntityFactory>("Client");
