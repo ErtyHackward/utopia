@@ -15,6 +15,7 @@ namespace Utopia.Shared.Entities
     /// Provides basic functionality for all static entities
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(Item))]
     public abstract class StaticEntity : Entity, IStaticEntity
     {
         /// <summary>

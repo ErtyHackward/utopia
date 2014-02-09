@@ -32,13 +32,14 @@ namespace Utopia.GUI.Inventory
             public IItem Item;
             public string Message;
             public EventType Event;
+            public int Count;
         }
 
         private SpriteFont _font;
         private SpriteRenderer _spriteRender;
         private SpriteTexture _icon;
         private int _textureArrayIndex;
-        private Queue<NotifyData> _queue;
+        private List<NotifyData> _list;
         private DateTime _lastUpdate;
         private NotifyData? _currentItem;
         private bool _hide;
@@ -64,20 +65,25 @@ namespace Utopia.GUI.Inventory
             DrawOrders.UpdateIndex(0, 10000);
         }
 
-        public void Notify(IItem item, string text, bool put)
+        public void Notify(IItem item, string text, bool put, int count)
         {
-            Notify(new NotifyData { Item = item, Message = text, Event = put ? EventType.Put : EventType.Take});
+            Notify(new NotifyData { 
+                Item = item, 
+                Message = text, 
+                Event = put ? EventType.Put : EventType.Take,
+                Count = count
+            });
         }
 
         public void Notify(NotifyData data)
         {
             if (Updatable)
-                _queue.Enqueue(data);
+                _list.Add(data);
         }
 
         public override void Initialize()
         {
-            _queue = new Queue<NotifyData>();
+            _list = new List<NotifyData>();
         }
 
         public override void LoadContent(DeviceContext context)
@@ -87,15 +93,34 @@ namespace Utopia.GUI.Inventory
             _spriteRender = ToDispose(new SpriteRenderer(Engine));
         }
 
+        private void GroupNotices()
+        {
+            _list = _list.GroupBy(n => new { n.Item, n.Message, n.Event }, n => n.Count, (s, g) => new NotifyData { Item = s.Item, Event = s.Event, Message = s.Message, Count = g.Sum()}).ToList();
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             if (( DateTime.Now - _lastUpdate ).TotalSeconds >= 3)
             {
-                if (_queue.Count > 0)
+                if (_list.Count > 0)
                 {
                     _hide = false;
                     _lastUpdate = DateTime.Now;
-                    _currentItem = _queue.Dequeue();
+
+                    GroupNotices();
+
+                    _currentItem = _list[0];
+                    _list.RemoveAt(0);
+
+                    if (_currentItem.Value.Count > 1)
+                    {
+                        _currentItem = new NotifyData { 
+                            Event = _currentItem.Value.Event,
+                            Item = _currentItem.Value.Item,
+                            Message = _currentItem.Value.Message + " x" + _currentItem.Value.Count
+                        };
+                    }
+
                     var item = _currentItem.Value;
                     IconFactory.Lookup(item.Item, out _icon, out _textureArrayIndex);
 
@@ -161,7 +186,7 @@ namespace Utopia.GUI.Inventory
         {
             if (!isEnabled)
             {
-                _queue.Clear();
+                _list.Clear();
             }
 
             base.OnUpdatableChanged(sender, args);

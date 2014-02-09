@@ -2,6 +2,7 @@
 using ProtoBuf;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs;
@@ -12,6 +13,7 @@ namespace Utopia.Shared.Entities
     /// The base class use to collect things in the world (= Removed them and put them in the inventory)
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(BasicCollector))]
     public abstract class ResourcesCollector : Item, ITool
     {
         /// <summary>
@@ -21,7 +23,7 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var impact = new ToolImpact { Success = false };
+            var impact = new ToolImpact();
 
             if (!owner.EntityState.IsBlockPicked)
                 return impact;

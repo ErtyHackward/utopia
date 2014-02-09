@@ -57,6 +57,19 @@ namespace Utopia.Shared.Services
         }
     }
 
+    public class AdditemCommand : AdministratorCommand
+    {
+        public override string Id
+        {
+            get { return "additem"; }
+        }
+
+        public override string Description
+        {
+            get { return "Adds items to the inventory. Format: \"additem <blueprintid> [count=1]\" Example: additem 59 10"; }
+        }
+    }
+
     public class HelpCommand : IServerCommand
     {
         public string Id

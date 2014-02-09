@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Services;
 using Utopia.Shared.Services.Interfaces;
@@ -34,6 +36,7 @@ namespace Utopia.Server.Managers
             RegisterCommand(new SaveCommand());
             RegisterCommand(new ServicesCommand());
             RegisterCommand(new SettimeCommand());
+            RegisterCommand(new AdditemCommand());
         }
 
         public void RegisterCommand(IServerCommand command)
@@ -165,7 +168,44 @@ namespace Utopia.Server.Managers
                     return true;
                 }
                 #endregion
+                #region Additem command
+                if (command is AdditemCommand)
+                {
+                    try
+                    {
+                        if (pars == null || pars.Length == 0)
+                            return false;
 
+                        ushort blueprintId ;
+
+                        if (!ushort.TryParse(pars[0], out blueprintId))
+                        {
+                            var entity = _server.EntityFactory.Config.BluePrints.Values.FirstOrDefault(v => string.Equals(v.Name, pars[0], StringComparison.CurrentCultureIgnoreCase));
+
+                            if (entity == null)
+                            {
+                                connection.Send(new ChatMessage { DisplayName = "server", Message = "There is no such item." });
+                                return false;
+                            }
+                            blueprintId = entity.BluePrintId;
+                        }
+
+                        var count = pars.Length == 2 ? int.Parse(pars[1]) : 1;
+
+                        var charEntity = (CharacterEntity)connection.ServerEntity.DynamicEntity;
+
+                        var item = (IItem)_server.EntityFactory.CreateFromBluePrint(blueprintId);
+
+                        charEntity.Inventory.PutItem(item, count);
+                        connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Item {0} was added to the inventory",item) });
+                    }
+                    catch (Exception x)
+                    {
+                        connection.Send(new ChatMessage { DisplayName = "server", Message = "Error: " + x.Message });
+                    }
+                    return true;
+                }
+                #endregion
 
 
                 OnPlayerCommand(new PlayerCommandEventArgs { Command = command, Params = pars, PlayerEntity = connection.ServerEntity.DynamicEntity });

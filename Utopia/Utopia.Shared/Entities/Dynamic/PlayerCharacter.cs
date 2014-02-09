@@ -63,12 +63,12 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             if (Equipment.RightTool != null)
             {
-                Equipment.RightTool.Put(this);
-
                 var args = EntityUseEventArgs.FromState(this);
                 args.Tool = Equipment.RightTool;
                 args.UseType = UseType.Put;
                 OnUse(args);
+
+                Equipment.RightTool.Put(this);
             }
         }
 

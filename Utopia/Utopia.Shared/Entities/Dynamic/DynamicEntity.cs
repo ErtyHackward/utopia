@@ -17,6 +17,8 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Represents dynamic voxel entity (players, robots, animals, NPC)
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(CharacterEntity))]
+    [ProtoInclude(101, typeof(GodEntity))]
     public abstract class DynamicEntity : Entity, IDynamicEntity
     {
         public DynamicEntityState EntityState;
@@ -52,7 +54,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             if (tool != null)
                 tool.Use(this);
-            
+           
             var arg = EntityUseEventArgs.FromState(this);
             arg.Tool = tool;
 

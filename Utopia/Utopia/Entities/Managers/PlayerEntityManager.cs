@@ -178,7 +178,6 @@ namespace Utopia.Entities.Managers
             set
             {
                 _putMode = value;
-
                 GhostedEntityRenderer.Display = _putMode;
             }
         }
@@ -425,7 +424,17 @@ namespace Utopia.Entities.Managers
             // Refresh the player Bounding box
             VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
         }
-        
+
+        protected override void OnUpdatableChanged(object sender, EventArgs args)
+        {
+            if (Updatable)
+            {
+                GhostedEntityRenderer.Display = _putMode;
+            }
+
+            base.OnUpdatableChanged(sender, args);
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             CheckHeadUnderWater();      //Under water head test

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using ProtoBuf;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
@@ -15,6 +16,9 @@ namespace Utopia.Shared.Entities
     /// A Cube placeable Item will be by default a centered cube position, and can only be placed in a cube where no other CubePlaceableItem is present.
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(OrientedBlockLinkedItem))]
+    [ProtoInclude(101, typeof(Plant))]
+    [ProtoInclude(102, typeof(LightSource))]
     public abstract class BlockLinkedItem : Item, IBlockLinkedEntity, IBlockLocationRoot
     {
         /// <summary>

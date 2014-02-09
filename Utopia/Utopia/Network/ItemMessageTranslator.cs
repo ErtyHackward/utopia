@@ -20,6 +20,7 @@ namespace Utopia.Network
         private bool _pendingOperation;
         private ISlotContainer<ContainedSlot> _sourceContainer;
         private IEntity _lockedEntity;
+        private bool _skipInventoryEvents;
 
         /// <summary>
         /// Occurs when server locks the entity requested
@@ -98,9 +99,12 @@ namespace Utopia.Network
 
             _server = server;
             _server.MessageEntityLockResult += ServerMessageEntityLockResult;
+            _server.MessageItemTransfer += _server_MessageItemTransfer;
 
             Enabled = true;
         }
+
+
 
         /// <summary>
         /// Sends request to the server to obtain container lock, when received LockResult event will fire
@@ -146,6 +150,7 @@ namespace Utopia.Network
             _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
 
             _server.MessageEntityLockResult -= ServerMessageEntityLockResult;
+            _server.MessageItemTransfer -= _server_MessageItemTransfer;
         }
 
         void ServerMessageEntityLockResult(object sender, ProtocolMessageEventArgs<EntityLockResultMessage> e)
@@ -159,6 +164,33 @@ namespace Utopia.Network
                 _lockedEntity = null;
                 OnEntityLockFailed();
             }
+        }
+
+        void _server_MessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
+        {
+            try
+            {
+                _skipInventoryEvents = true;
+
+                if (e.Message.DestinationContainerEntityLink.DynamicEntityId == _playerEntity.DynamicId)
+                {
+                    // god gave us an item(s)
+
+                    var item = _playerEntity.EntityFactory.CreateFromBluePrint<Item>((ushort)e.Message.ItemEntityId);
+                    _playerEntity.Inventory.PutItem(item, e.Message.ItemsCount);
+                }
+
+                if (e.Message.SourceContainerEntityLink.DynamicEntityId == _playerEntity.DynamicId)
+                {
+                    // god took us an item(s)
+                    _playerEntity.Inventory.TakeItem(e.Message.SourceContainerSlot, e.Message.ItemsCount);
+                }
+            }
+            finally
+            {
+                _skipInventoryEvents = false;
+            }
+
         }
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -209,6 +241,9 @@ namespace Utopia.Network
             if (!Enabled)
                 return;
 
+            if (_skipInventoryEvents)
+                return;
+
             // at this point we need to remember what was taken to create appropriate message
             if (_pendingOperation)
                 throw new InvalidOperationException("Unable to take another item, release first previous taken item");
@@ -227,6 +262,9 @@ namespace Utopia.Network
         private void InventoryItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             if (!Enabled)
+                return;
+
+            if (_skipInventoryEvents)
                 return;
 
             if (!_pendingOperation)

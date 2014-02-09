@@ -12,6 +12,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// Base interface for entities
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(Entity))]
     public interface IEntity : ICloneable
     {
         /// <summary>
