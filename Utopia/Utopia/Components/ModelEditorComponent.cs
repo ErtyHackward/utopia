@@ -1042,6 +1042,7 @@ namespace Utopia.Components
             var animation = new VoxelModelAnimation();
             
             animation.Name = e.Name;
+            animation.StartFrame = e.StartFrame;
 
             VisualVoxelModel.VoxelModel.Animations.Add(animation);
             _animationsList.Items.Add(animation);
@@ -1063,12 +1064,13 @@ namespace Utopia.Components
 
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
 
-            _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct { Name = animation.Name }, "Animation edit", OnAnimationEdited);
+            _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct { Name = animation.Name, StartFrame = animation.StartFrame }, "Animation edit", OnAnimationEdited);
         }
         private void OnAnimationEdited(DialogAnimationEditStruct e)
         {
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
             animation.Name = e.Name;
+            animation.StartFrame = e.StartFrame;
         }
 
         private void OnAnimationsDeleteButtonPressed()
