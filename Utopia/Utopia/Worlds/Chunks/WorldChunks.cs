@@ -466,6 +466,41 @@ namespace Utopia.Worlds.Chunks
         {
             return _cubesHolder.IsSolidToPlayer(ref newPosition2Evaluate) == false;
         }
+
+        public enum GetChunksFilter
+        {
+            All,                      //Return all chunks
+            Visibles,                  //Return all chunks that are visible to the player
+            VisibleWithinStaticObjectRange  //Return all chunks that are visible to the player & in the max range of the static object drawing
+        }
+
+        public IEnumerable<VisualChunk> GetChunks(GetChunksFilter filter)
+        {
+            switch (filter)
+            {
+                case GetChunksFilter.All:
+                    for (int i = 0; i < Chunks.Length; i++)
+                    {
+                        yield return Chunks[i];
+                    }
+                    break;
+                case GetChunksFilter.Visibles:
+                    foreach(var chunk in Chunks.Where(x => !x.Graphics.IsFrustumCulled && x.Graphics.IsExistingMesh4Drawing))
+                    {
+                        yield return chunk;
+                    }
+                    break;
+                case GetChunksFilter.VisibleWithinStaticObjectRange:
+                    for (int i = 0; i < SortedChunks.Length; i++)
+                    {
+                        //Sorted chunk are sorted by DistanceFromPlayer
+                        if (SortedChunks[i].DistanceFromPlayer > StaticEntityViewRange) yield break;
+                        yield return SortedChunks[i];
+                    }
+                    break;
+            }
+            yield break;
+        }
         #endregion
 
         #region Private methods

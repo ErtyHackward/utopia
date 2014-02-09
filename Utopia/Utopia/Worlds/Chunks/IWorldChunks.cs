@@ -14,6 +14,7 @@ namespace Utopia.Worlds.Chunks
         /// <summary> The chunk collection </summary>
         VisualChunk[] Chunks { get; set; }
 
+        //Chunks sorted from the near to far compared to the players
         VisualChunk[] SortedChunks { get; set; }
 
         ShaderResourceView Terra_View { get; }
@@ -125,6 +126,8 @@ namespace Utopia.Worlds.Chunks
         bool ValidatePosition(ref Vector3D newPosition2Evaluate);
 
         bool IsEntityVisible(Vector3D pos);
+
+        IEnumerable<VisualChunk> GetChunks(WorldChunks.GetChunksFilter filter);
 
         /// <summary>
         /// Enumerates chunks to draw
