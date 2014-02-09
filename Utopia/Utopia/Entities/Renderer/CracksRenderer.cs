@@ -95,8 +95,10 @@ namespace Utopia.Entities.Renderer
         {
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
             
-            foreach (var chunk in _worldChunks.ChunksToDraw())
+            foreach(var chunk in _worldChunks.GetChunks(WorldChunks.GetChunksFilter.VisibleWithinStaticObjectRange))
             {
+                if (chunk.DistanceFromPlayer > _worldChunks.StaticEntityViewRange) break; //Limit the crack drawing to the same zone as the static entity visualization
+      
                 foreach (var pair in chunk.BlockData.GetTags().Where(p => p.Value is DamageTag && _worldChunks.IsEntityVisible(p.Key)))
                 {
                     var tag = (DamageTag)pair.Value;
@@ -114,7 +116,6 @@ namespace Utopia.Entities.Renderer
                     result.Red = Math.Max(result.Red, result.Alpha * _skyDome.SunColor.Red);
                     result.Green = Math.Max(result.Green, result.Alpha * _skyDome.SunColor.Green);
                     result.Blue = Math.Max(result.Blue, result.Alpha * _skyDome.SunColor.Blue);
-
 
                     _cubeEffect.Begin(context);
                     _cubeEffect.CBPerDraw.Values.TextureIndex = 5 - 5 * tag.Strength / tag.TotalStrength;
