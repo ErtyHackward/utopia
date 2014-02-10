@@ -170,19 +170,25 @@ namespace Utopia.Shared.Entities.Inventory
         public virtual IToolImpact Put(IDynamicEntity owner)
         {
             // by default all items can only be dropped to some position
-            var impact = new ToolImpact { Success = false };
+            var impact = new ToolImpact();
 
             var blockPicked = owner.EntityState.IsBlockPicked;
             var entityPicked = owner.EntityState.IsEntityPicked;
 
             // allow to put the item only if user picks something
             if (!blockPicked && !entityPicked)
+            {
+                impact.Message = "Block or entity should be picked to put";
                 return impact;
+            }
 
             var pos = GetPosition(owner);
 
             if (!pos.Valid)
+            {
+                impact.Message = "Provided position is invalid";
                 return impact;
+            }
 
             var entityBB = new BoundingBox(pos.Position.AsVector3(), pos.Position.AsVector3() + DefaultSize);
 
@@ -190,7 +196,10 @@ namespace Utopia.Shared.Entities.Inventory
             {
                 var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
                 if (entityBB.Intersects(ref dynBB))
+                {
+                    impact.Message = "Intersection with dynamic entity is detected";
                     return impact;
+                }
             }
 
 
@@ -213,14 +222,22 @@ namespace Utopia.Shared.Entities.Inventory
                 {
                     // we have no more items in the inventory, remove from the hand
                     slot = charEntity.Equipment[EquipmentSlotType.Hand];
-                    charEntity.Equipment.TakeItem(slot.GridPosition);
+                    impact.Success = charEntity.Equipment.TakeItem(slot.GridPosition);
                 }
                 else
                 {
-                    charEntity.Inventory.TakeItem(slot.GridPosition);
+                    impact.Success = charEntity.Inventory.TakeItem(slot.GridPosition);
                 }
+
+                if (!impact.Success)
+                {
+                    impact.Message = "Unable to put item to the inventory";
+                }
+
+                return impact;
             }
 
+            impact.Message = "CharacterEntity owner is expected";
             return impact;
         }
 

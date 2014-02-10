@@ -121,7 +121,7 @@ namespace Utopia.Server.Structs
                 Connection.Send(new UseFeedbackMessage
                 {
                     Token = entityUseMessage.Token,
-                    EntityImpactBytes = impact.Serialize()
+                    Impact = impact
                 });
                 return;
             }
@@ -141,7 +141,7 @@ namespace Utopia.Server.Structs
                         Connection.Send(new UseFeedbackMessage
                         {
                             Token = entityUseMessage.Token,
-                            EntityImpactBytes = toolImpact.Serialize()
+                            Impact = toolImpact
                         });
                     }
                     if (entityUseMessage.UseType == UseType.Put)
@@ -151,7 +151,7 @@ namespace Utopia.Server.Structs
                         Connection.Send(new UseFeedbackMessage
                         {
                             Token = entityUseMessage.Token,
-                            EntityImpactBytes = toolImpact.Serialize()
+                            Impact = toolImpact
                         });
                     }
                 }
@@ -171,7 +171,7 @@ namespace Utopia.Server.Structs
                 Connection.Send(new UseFeedbackMessage
                 {
                     Token = entityUseMessage.Token,
-                    EntityImpactBytes = toolImpact.Serialize()
+                    Impact = toolImpact
                 });
             }
         }

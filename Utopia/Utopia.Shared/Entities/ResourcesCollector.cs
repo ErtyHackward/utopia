@@ -1,11 +1,9 @@
-﻿using System;
-using ProtoBuf;
+﻿using ProtoBuf;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities
 {
@@ -31,24 +29,26 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var impact = new ToolImpact();
-
             if (!owner.EntityState.IsBlockPicked)
-                return impact;
-
-            impact.Success = true;
-            BlockHit(owner);
-            return impact;
+            {
+                return new ToolImpact { 
+                    Message = "Expected picked block" 
+                };
+            }
+            
+            return BlockHit(owner);
         }
 
-        private void BlockHit(IDynamicEntity owner)
+        private IToolImpact BlockHit(IDynamicEntity owner)
         {
+            var impact = new ToolImpact();
+            
             var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
 
             if (cursor.PeekProfile().Hardness == 0)
             {
-                //Indestrutible cube, cannot be removed !
-                return;
+                impact.Message = "Indestrutible cube, cannot be removed !";
+                return impact;
             }
 
             DamageTag damage;
@@ -82,7 +82,13 @@ namespace Utopia.Shared.Entities
                 {
                     cursor.Write(cube, damage);
                 }
+
+                impact.Success = true;
+                return impact;
             }
+
+            impact.Message = "Cannot hit air block";
+            return impact;
         }
     }
 }

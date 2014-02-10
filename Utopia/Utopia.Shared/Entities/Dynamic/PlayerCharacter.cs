@@ -70,7 +70,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
                 return Equipment.RightTool.Put(this);
             }
-            return new ToolImpact();
+            return new ToolImpact { Message = "RightTool is null" };
         }
 
         public IItem LookupItem(uint itemId)

@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Interfaces;
 
 namespace Utopia.Shared.Net.Messages
@@ -19,7 +20,7 @@ namespace Utopia.Shared.Net.Messages
         /// Serialized bytes of the EntityImpact
         /// </summary>
         [ProtoMember(2)]
-        public byte[] EntityImpactBytes { get; set; }
+        public IToolImpact Impact { get; set; }
 
         /// <summary>
         /// Gets a message identification number
