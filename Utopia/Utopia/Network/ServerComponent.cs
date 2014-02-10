@@ -16,6 +16,7 @@ namespace Utopia.Network
     public class ServerComponent : GameComponent, IDebugInfo
     {
         private ServerConnection _serverConnection;
+        private bool _entered;
 
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
@@ -211,13 +212,15 @@ namespace Utopia.Network
             Login = userName;
             DisplayName = displayName;
 
+            _entered = false;
+
             if (ServerConnection.LoggedOn)
                 ServerConnection.Disconnect();
             
             ServerConnection.Login = userName;
             ServerConnection.DisplayName = displayName;
             ServerConnection.Password = passwordHash;
-            ServerConnection.ClientVersion = 1;
+            ServerConnection.ClientVersion = ServerConnection.ProtocolVersion;
             ServerConnection.Register = false;
 
             if (ServerConnection.Status != TcpConnectionStatus.Connected)
@@ -234,7 +237,7 @@ namespace Utopia.Network
         {
             if (ServerConnection != null)
             {
-                foreach (IBinaryMessage data in ServerConnection.FetchPendingMessages())
+                foreach (var data in ServerConnection.FetchPendingMessages())
                 {
                     InvokeEventForNetworkDataReceived(data);
                 }
@@ -258,8 +261,7 @@ namespace Utopia.Network
 
         protected void OnMessageChunkData(ChunkDataMessage ea)
         {
-            if (MessageChunkData != null) 
-                MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
+            if (MessageChunkData != null) MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
         }
 
         protected void OnMessageChat(ChatMessage ea)
@@ -489,6 +491,15 @@ namespace Utopia.Network
             }
         }
         #endregion
+
+        public void EnterTheWorld()
+        {
+            if (!_entered)
+            {
+                _entered = true;
+                ServerConnection.Send(new EntityInMessage());
+            }
+        }
     }
 
 }

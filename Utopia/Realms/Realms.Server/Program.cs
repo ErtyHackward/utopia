@@ -10,6 +10,7 @@ using Utopia.Server.Managers;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Web;
 using Utopia.Shared.Services;
 using Utopia.Shared.World;
@@ -91,7 +92,7 @@ namespace Realms.Server
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            logger.Info("Utopia Realms game server v{1} Protocol: v{0}", Utopia.Server.Server.ServerProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
+            logger.Info("Utopia Realms game server v{1} Protocol: v{0}", ServerConnection.ProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
 
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "main.realm");
 
