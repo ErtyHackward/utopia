@@ -118,8 +118,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 for (int i = 0; i < expiredIndex.Count; i++)
                 {
                     //Remove Data not used,but received from the server
+                    logger.Warn("Data received from server never used {0} {1} (Not requested ??) for 60 seconds, was cleaned up !", expiredIndex[i].Value.Position, expiredIndex[i].Value.Flag );
                     _receivedServerChunks.Remove(expiredIndex[i].Key);
-                    logger.Warn("Data received from server never used for 60 seconds, was cleaned up !");
                 }
             }
 
@@ -155,11 +155,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             //Do nothing we are still in sync !
                             chunk.IsServerRequested = false;
                             chunk.IsServerResyncMode = false;
+                            lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position); //Remove the sync from the recieved queue
                             logger.Debug("[Chunk Resync] {0} - was still in sync with server [{1}] !", chunk.Position, message.Flag.ToString());
                             return;
                         }
                         else
                         {
+                            chunk.State = ChunkState.MeshesChanged;
                             logger.Debug("[Chunk Resync] {0} - was DESYNC with server [{1}] !", chunk.Position, message.Flag.ToString());
                         }
                     }

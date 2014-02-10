@@ -126,6 +126,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             for (int i = 0; i < e.Message.BlockValues.Length; i++)
             {
                 BlockTag tag = e.Message.Tags != null ? e.Message.Tags[i] : null;
+
                 if (ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], true, tag) == false)
                 {
                     _onHoldNetworkMsg.Add(new TerraCubePositionTag(e.Message.BlockPositions[i], e.Message.BlockValues[i], tag, _visualWorldParameters.WorldParameters.Configuration));
@@ -232,31 +233,33 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             // Get Cube Profile
             BlockProfile blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[replacementCubeId];
 
+            //Set Tag only if "new" tag, else the value has already been assigned
+            if (impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates)) == null || blockTag == null)
+            {
+                impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+            }
+
             // Check if the cube is not already the same ? ! ?
             TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
             if (existingCube.Id == replacementCubeId)
             {
-                if (blockProfile.IsTaggable)
-                {
-                    BlockTag existingTag = impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-                    if (existingTag == blockTag)
-                    {
-                        return true; // The block & tags are the sames !
-                    }
-                }
-                else
-                {
-                    impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-                    return true; // The block are the sames !
-                }
+                return true; // The block & tags are the sames ! (In case if the tag DON'T request a chunk refresh => Like Water tags, ...)
+            }
+
+            if (blockTag == null)
+            {
+                logger.Debug("Chunk SetBlock {0}, id : {2} - From Network : {1} TAG == NULL", cubeCoordinates, isNetworkChanged, replacementCubeId);
+            }
+            else
+            {
+                logger.Debug("Chunk SetBlock {0}, id : {3} - From Network : {1} TAG strenght {2}", cubeCoordinates, isNetworkChanged, ((Utopia.Shared.Chunks.Tags.DamageTag)blockTag).Strength, replacementCubeId);
             }
 
             // Change the cube in the big array
             impactedChunk.BlockData.SetBlock(cubeCoordinates, replacementCubeId);
 
             // Update chunk tag collection if needed
-            impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-            
+            //impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
 
             // Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
             TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId, _visualWorldParameters.WorldParameters.Configuration);
