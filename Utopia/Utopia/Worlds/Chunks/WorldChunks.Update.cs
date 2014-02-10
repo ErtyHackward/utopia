@@ -114,6 +114,7 @@ namespace Utopia.Worlds.Chunks
         {
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
             UpdateLeveled();
+            ChunkResyncing();
             CreateNewChunk();
             PropagateOuterChunkLights();
             CreateChunkMeshes(maximumUpdateOrderPossible);
@@ -132,6 +133,28 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        private void ChunkResyncing()
+        {
+            //Process each chunk that are in Empty state, and not currently processed
+            foreach (VisualChunk chunk in SortedChunks.Where(x => x.IsServerResyncMode && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            {
+                VisualChunk localChunk = chunk;
+
+                //Start chunk creation process in a threaded way !
+                localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
+#if DEBUG
+                localChunk.ThreadLockedBy = "ChunkResyncing";
+#endif
+                //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
+                S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkResyncing_Threaded(localChunk));
+            }
+        }
+
+        private void ChunkResyncing_Threaded(VisualChunk chunk)
+        {
+            if (chunk.IsServerResyncMode) _landscapeManager.CreateLandScape(chunk);
+            chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
+        }
 
         //Will create new chunks based on chunks with state = Empty
         private void CreateNewChunk()

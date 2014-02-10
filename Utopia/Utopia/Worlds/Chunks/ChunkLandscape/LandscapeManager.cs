@@ -126,14 +126,17 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             //Check for chunk that are waiting for server data for more than 30 seconds.
             foreach (var chunk in WorldChunks.Chunks.Where(x => x.IsServerRequested))
             {
-                if (DateTime.Now.Subtract(chunk.ServerRequestTime).Seconds > 30)
+                if (DateTime.Now.Subtract(chunk.ServerRequestTime).Seconds > 20)
                 {
-                    //Request the chunk again to the server !!
+#if !DEBUG
                     chunk.IsServerRequested = false;
-                    logger.Warn("Requested Chunk {0} did not received server data for 30s. Requesting it again !", chunk.Position);
+                    chunk.IsServerResyncMode = false;
+#else
+                    chunk.IsServerRequested = true;
+#endif
+                    logger.Warn("Requested Chunk {0} did not received server data for 20s ! ==> DESYNC possible !", chunk.Position);
                 }
             }
-
         }
 
         private void CheckServerReceivedData(VisualChunk chunk)
@@ -145,6 +148,22 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                 //Have we receive the Server data
                 if (_receivedServerChunks.TryGetValue(chunk.Position, out message))
                 {
+                    if (chunk.IsServerResyncMode)
+                    {
+                        if (message.Flag != ChunkDataMessageFlag.ChunkWasModified)
+                        {
+                            //Do nothing we are still in sync !
+                            chunk.IsServerRequested = false;
+                            chunk.IsServerResyncMode = false;
+                            logger.Debug("[Chunk Resync] {0} - was still in sync with server [{1}] !", chunk.Position, message.Flag.ToString());
+                            return;
+                        }
+                        else
+                        {
+                            logger.Debug("[Chunk Resync] {0} - was DESYNC with server [{1}] !", chunk.Position, message.Flag.ToString());
+                        }
+                    }
+
                     switch (message.Flag)
                     {
                         //In this case the message contains the data from the landscape !
@@ -184,9 +203,9 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 chunk.StorageRequestTicket = 0;
                             }
 
-
                             break;
                         case ChunkDataMessageFlag.ChunkCanBeGenerated:
+
                             CreateLandscapeFromGenerator(chunk);
                             lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position);
                             if (chunk.StorageRequestTicket != 0)
@@ -206,17 +225,11 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position); //Remove the chunk from the recieved queue
                                 EntityFactory.PrepareEntities(chunk.Entities);
 
-                                //CreateVisualEntities(chunk, chunk);
-
                                 if (chunk.StorageRequestTicket != 0)
                                 {
                                     _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                     chunk.StorageRequestTicket = 0;
                                 }
-                            }
-                            else
-                            {
-                                logger.Error("Can't load chunk from local storage");
                             }
                             break;
                         default:
@@ -225,6 +238,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
                     chunk.RefreshBorderChunk();
                     chunk.IsServerRequested = false;
+                    chunk.IsServerResyncMode = false;
                     chunk.State = ChunkState.LandscapeCreated;
                 }
             }

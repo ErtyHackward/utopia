@@ -243,6 +243,15 @@ namespace Utopia.Network
                 }
             }
         }
+
+        public void EnterTheWorld()
+        {
+            if (!_entered)
+            {
+                _entered = true;
+                ServerConnection.Send(new EntityInMessage());
+            }
+        }
         #endregion
 
         #region Events Handling
@@ -251,7 +260,6 @@ namespace Utopia.Network
             GameInformations = e.Message;
         }
         #endregion
-
 
         #region Events Raising
         public void OnMessageLogin(LoginMessage ea)
@@ -375,6 +383,8 @@ namespace Utopia.Network
         {
             if (MessageVoxelModelData != null) MessageVoxelModelData(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
         }
+
+
         #endregion
 
         #region Private Methods
@@ -492,14 +502,7 @@ namespace Utopia.Network
         }
         #endregion
 
-        public void EnterTheWorld()
-        {
-            if (!_entered)
-            {
-                _entered = true;
-                ServerConnection.Send(new EntityInMessage());
-            }
-        }
+
     }
 
 }

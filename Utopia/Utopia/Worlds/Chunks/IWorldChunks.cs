@@ -34,6 +34,8 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         bool DrawStaticInstanced { get; set; }
 
+        void ResyncClientChunks();
+
         ILandscapeManager2D LandscapeManager { get; }
 
         /// <summary>

@@ -64,6 +64,7 @@ namespace Utopia.Worlds.Chunks
         
 
         private bool _isServerRequested;
+        private bool _isServerResyncMode;
         private DateTime _serverRequestTime;
         
         /// <summary>
@@ -94,6 +95,12 @@ namespace Utopia.Worlds.Chunks
         {
             get { return _isServerRequested; }
             set { _isServerRequested = value; if (value) _serverRequestTime = DateTime.Now; }
+        }
+
+        public bool IsServerResyncMode
+        {
+            get { return _isServerResyncMode; }
+            set { _isServerResyncMode = value; }
         }
 
         public DateTime ServerRequestTime

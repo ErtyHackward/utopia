@@ -600,6 +600,52 @@ namespace Utopia.Worlds.Chunks
             OnChunksArrayInitialized();
         }
 
+        /// <summary>
+        /// Will start a full client chunk sync with server !
+        /// </summary>
+        public void ResyncClientChunks()
+        {
+            List<Vector3I> chunkPosition = new List<Vector3I>();
+            List<Md5Hash> chunkHash = new List<Md5Hash>();
+
+            foreach (var chunk in GetChunks(GetChunksFilter.All))
+            {
+                //Requesting server chunks, for validation
+
+                var md5Hash = chunk.GetMd5Hash();
+
+                chunkPosition.Add(chunk.Position);
+                chunkHash.Add(md5Hash);
+                chunk.IsServerRequested = true;
+                chunk.IsServerResyncMode = true;
+            }
+
+            var chunkRange = new Range3I(
+                            new Vector3I(
+                                VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
+                                0,
+                                VisualWorldParameters.WorldChunkStartUpPosition.Y / AbstractChunk.ChunkSize.Z
+                                ),
+                            new Vector3I(
+                                VisualWorldParameters.VisibleChunkInWorld.X,
+                                1,
+                                VisualWorldParameters.VisibleChunkInWorld.Y
+                                )
+                 );
+
+            _server.ServerConnection.Send(
+                    new GetChunksMessage()
+                    {
+                        Range = chunkRange,
+                        Md5Hashes = chunkHash.ToArray(),
+                        Positions = chunkPosition.ToArray(),
+                        HashesCount = chunkHash.Count,
+                        Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                    }
+            );
+
+        }
+
         //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
