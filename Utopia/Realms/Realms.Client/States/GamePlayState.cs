@@ -131,8 +131,6 @@ namespace Realms.Client.States
             var pickingManager = _ioc.Get<PickingManager>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
 
-            
-            
             AddComponent(cameraManager);
             AddComponent(_serverComponent);
             AddComponent(_inputsManager);
@@ -306,8 +304,6 @@ namespace Realms.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
-            _serverComponent.EnterTheWorld();
-
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
 

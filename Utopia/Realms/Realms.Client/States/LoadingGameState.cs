@@ -366,10 +366,17 @@ namespace Realms.Client.States
             inputsManager.MouseManager.MouseCapture = true;
         }
 
+        //All chunks have been created on the client (They can be rendered)
         void worldChunks_LoadComplete(object sender, EventArgs e)
         {
             _ioc.Get<IWorldChunks>().LoadComplete -= worldChunks_LoadComplete;
             StatesManager.ActivateGameStateAsync("Gameplay");
+
+            //Say to server that the loading phase is finished inside the client
+            _ioc.Get<ServerComponent>().EnterTheWorld();
+
+            //Start a client chunk resync phase.
+            _ioc.Get<IWorldChunks>().ResyncClientChunks();
         }
 
     }
