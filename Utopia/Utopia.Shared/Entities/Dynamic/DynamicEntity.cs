@@ -63,7 +63,8 @@ namespace Utopia.Shared.Entities.Dynamic
 
             if (tool != null)
                 return tool.Use(this);
-            return new ToolImpact(); ;
+
+            return new ToolImpact{ Message = "Null tool" };
         }
         
         /// <summary>

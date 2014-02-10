@@ -1,6 +1,5 @@
 ﻿using System;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -69,6 +68,7 @@ namespace Utopia.Network
             _server.MessageEntityLock += ServerMessageEntityLock;
             _server.MessageEntityUse += _server_MessageEntityUse;
             _server.MessageEntityEquipment += _server_MessageEntityEquipment;
+            _server.MessageUseFeedback += _server_MessageUseFeedback;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
@@ -77,6 +77,14 @@ namespace Utopia.Network
             _dynamicEntityManager = dynamicEntityManager;
             _landscapeManager = landscapeManager;
             PlayerEntity = playerEntity;
+        }
+
+        void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
+        {
+            if (!e.Message.Impact.Success)
+            {
+
+            }
         }
 
         public void Dispose()
@@ -90,6 +98,7 @@ namespace Utopia.Network
             _server.MessageEntityLock -= ServerMessageEntityLock;
             _server.MessageEntityUse -= _server_MessageEntityUse;
             _server.MessageEntityEquipment -= _server_MessageEntityEquipment;
+            _server.MessageUseFeedback -= _server_MessageUseFeedback;
         }
 
         //IN Going Server Data concering entities =================================================================

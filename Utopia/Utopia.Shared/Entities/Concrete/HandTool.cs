@@ -32,17 +32,24 @@ namespace Utopia.Shared.Entities.Concrete
             var impact = new ToolImpact();
 
             if (!owner.EntityState.IsEntityPicked)
+            {
+                impact.Message = "Entity should be picked to use";
                 return impact;
+            }
 
             if (owner.EntityState.PickedEntityLink.IsDynamic)
+            {
+                impact.Message = "Only static entities allowed to use";
                 return impact;
-            
+            }
+
             var entity = owner.EntityState.PickedEntityLink.ResolveStatic(LandscapeManager);
 
             if (entity is IUsableEntity)
             {
                 var usable = (IUsableEntity)entity;
                 usable.Use();
+                impact.Success = true;
                 return impact;
             }
 
@@ -61,9 +68,14 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     cursor.RemoveEntity(owner.EntityState.PickedEntityLink, owner.DynamicId);
                     impact.Success = true;
+                    return impact;
                 }
+
+                impact.Message = "Unable to put item to the inventory";
+                return impact;
             }
 
+            impact.Message = "Expected CharacterEntity owner";
             return impact;
         }
     }

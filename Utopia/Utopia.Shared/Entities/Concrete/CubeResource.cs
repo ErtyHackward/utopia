@@ -37,7 +37,7 @@ namespace Utopia.Shared.Entities.Concrete
         public override IToolImpact Put(IDynamicEntity owner)
         {
             // don't allow to put out the cube resource
-            return new ToolImpact();
+            return new ToolImpact { Message = "This action is not allowed by design" };
         }
 
         public IToolImpact Use(IDynamicEntity owner)
@@ -47,15 +47,16 @@ namespace Utopia.Shared.Entities.Concrete
                 return BlockImpact(owner);
             }
 
-            var impact = new ToolImpact { Success = false };
-            impact.Message = "No target selected for use";
+            var impact = new ToolImpact { 
+                 Message = "No target selected for use" 
+            };
             return impact;
         }
 
         public IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
         {
             var entity = owner;
-            var impact = new ToolImpact { Success = false };
+            var impact = new ToolImpact();
 
             if (entity.EntityState.IsBlockPicked)
             {
@@ -64,20 +65,25 @@ namespace Utopia.Shared.Entities.Concrete
                 foreach (var dynEntity in EntityFactory.DynamicEntityManager.EnumerateAround(entity.EntityState.NewBlockPosition))
                 {
                     var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
-                    if (blockBB.Intersects(ref dynBB)) return impact;
+                    if (blockBB.Intersects(ref dynBB))
+                    {
+                        impact.Message = "Cannot place a block intersected with a dynamic entity";
+                        return impact;
+                    }
                 }
 
                 // Get the chunk where the entity will be added and check if another block static entity is present inside this block
                 var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.NewBlockPosition);
-                foreach (IBlockLocationRoot staticEntity in workingchunk.Entities.Entities.Values.Where(e => e is IBlockLocationRoot))
+                foreach (var staticEntity1 in workingchunk.Entities.Entities.Values.Where(e => e is IBlockLocationRoot))
                 {
+                    var staticEntity = (IBlockLocationRoot)staticEntity1;
                     if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
                     {
-                        // IBlockLocationRoot Entity already present at this location
+                        impact.Message = "IBlockLocationRoot Entity already present at this location";
                         return impact;
                     }
                 }
-                
+
                 //Add new block
                 var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
 
