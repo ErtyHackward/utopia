@@ -136,6 +136,15 @@
     <None Include="Models\Barrel.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Models\ColumnBottom.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\ColumnMiddle.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\ColumnTop.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Models\Crate.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
