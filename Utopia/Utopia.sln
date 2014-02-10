@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia", "Utopia\Utopia.csproj", "{DB3E251E-EF28-44D5-9F9A-DB07624CD753}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utopia.Resources", "Utopia.Resources\Utopia.Resources.csproj", "{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}"
@@ -52,6 +50,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LtreeVisualizer", "LtreeVisualizer\LtreeVisualizer.csproj", "{BF406949-62CF-4F16-B5A5-4519FDD0EBAD}"
 EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Utopia.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AutomatedRelease|Any CPU = AutomatedRelease|Any CPU
 		AutomatedRelease|Mixed Platforms = AutomatedRelease|Mixed Platforms
@@ -326,9 +327,6 @@ Global
 		{C08EEA93-7525-414C-A578-0F00170A8015} = {391649F4-9A97-4855-9493-0EAF2D8E8BB3}
 		{A0AEF662-59FC-4E0C-BFB9-4CF1E31752B3} = {391649F4-9A97-4855-9493-0EAF2D8E8BB3}
 		{BF406949-62CF-4F16-B5A5-4519FDD0EBAD} = {391649F4-9A97-4855-9493-0EAF2D8E8BB3}
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Utopia.vsmdi
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
