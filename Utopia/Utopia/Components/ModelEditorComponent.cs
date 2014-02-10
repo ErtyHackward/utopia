@@ -1238,8 +1238,8 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+                if (frame.BlockBytes == null)
+                    frame.SetBlock(new Vector3I(), 0);
 
                 Vector3 center;
 
@@ -1258,13 +1258,15 @@ namespace Utopia.Components
                     center = (Vector3)frame.ChunkSize / 2;
                 }
 
-                var radius = Math.Min(Math.Min(center.X, center.Y), center.Z);
+                var radius = Math.Min(center.X, center.Z);
 
                 foreach (var position in range)
                 {
                     var point = position + new Vector3(0.5f, 0.5f, 0.5f);
-                    center.Y = point.Y;
-                    if (Vector3.Distance(point, center + range.Position) <= radius)
+                    var rangeOffset = center + range.Position;
+                    //center.Y = point.Y;
+                    rangeOffset.Y = point.Y;
+                    if (Vector3.Distance(point, rangeOffset) <= radius)
                         frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
                 }
 
@@ -1279,8 +1281,8 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+                if (frame.BlockBytes == null)
+                    frame.SetBlock(new Vector3I(), 0);
 
                 Vector3 center;
 
@@ -1331,8 +1333,8 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+                if (frame.BlockBytes == null)
+                    frame.SetBlock(new Vector3I(), 0);
 
                 Vector3 center;
 
@@ -3028,6 +3030,9 @@ namespace Utopia.Components
 
         private Range3I GetSelectionRange()
         {
+            if (_selectionStart == null || _selectionEnd == null)
+                return new Range3I(Vector3I.Zero, _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData.ChunkSize);
+
             var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
             var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
 
