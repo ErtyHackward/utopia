@@ -48,12 +48,14 @@ namespace Utopia.Server.Managers
         {
             // note: do not forget to remove events!
             e.Connection.MessageLogin += ConnectionMessageLogin;
+            e.Connection.MessageEntityIn += Connection_MessageEntityIn;
         }
 
         private void ConnectionManagerBeforeConnectionRemoved(object sender, ConnectionEventArgs e)
         {
             // stop listening
             e.Connection.MessageLogin -= ConnectionMessageLogin;
+            e.Connection.MessageEntityIn -= Connection_MessageEntityIn;
 
             logger.Info("{0} disconnected", e.Connection.RemoteAddress);
 
@@ -69,6 +71,17 @@ namespace Utopia.Server.Managers
 
                 e.Connection.ServerEntity.CurrentArea = null;
             }
+        }
+
+        void Connection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
+        {
+            var connection = (ClientConnection)sender; 
+
+            _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", connection.DisplayName), Operator = true });
+            connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName), Operator = true });
+
+            // adding entity to the world
+            _server.AreaManager.AddEntity(connection.ServerEntity);
         }
         
         private void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
@@ -90,13 +103,13 @@ namespace Utopia.Server.Managers
             }
 
             // check client version
-            if (e.Message.Version != Server.ServerProtocolVersion)
+            if (e.Message.Version != ServerConnection.ProtocolVersion)
             {
                 var error = new ErrorMessage
                 {
                     ErrorCode = ErrorCodes.VersionMissmatch,
-                    Data = Server.ServerProtocolVersion,
-                    Message = "Wrong client version, expected " + Server.ServerProtocolVersion
+                    Data = ServerConnection.ProtocolVersion,
+                    Message = "Wrong client version, expected " + ServerConnection.ProtocolVersion
                 };
                 connection.Send(error);
                 connection.Disconnect();
@@ -174,12 +187,6 @@ namespace Utopia.Server.Managers
                 connection.Send(gameInfo);
                 connection.Send(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
                 connection.Send(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
-
-                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", e.Message.DisplayName), Operator = true });
-                connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", e.Message.DisplayName), Operator = true });
-
-                // adding entity to world
-                _server.AreaManager.AddEntity(playerEntity);
             }
             else
             {

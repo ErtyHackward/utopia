@@ -219,7 +219,7 @@ namespace Utopia.Server
         }
 
         /// <summary>
-        /// Occurs when RequestDateTimeSync is received
+        /// Occurs when RequestDateTimeSyncMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<RequestDateTimeSyncMessage>> MessageRequestDateTimeSync;
 
@@ -227,6 +227,17 @@ namespace Utopia.Server
         {
             var handler = MessageRequestDateTimeSync;
             if (handler != null) handler(this, new ProtocolMessageEventArgs<RequestDateTimeSyncMessage> { Message = ea });
+        }
+
+        /// <summary>
+        /// Occurs when EntityInMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityInMessage>> MessageEntityIn;
+
+        protected void OnMessageEntityIn(EntityInMessage ea)
+        {
+            var handler = MessageEntityIn;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityInMessage> { Message = ea });
         }
         #endregion
         
@@ -291,6 +302,9 @@ namespace Utopia.Server
                     break;
                 case MessageTypes.RequestDateTimeSync:
                     OnMessageRequestDateTimeSync((RequestDateTimeSyncMessage)message);
+                    break;
+                case MessageTypes.EntityIn:
+                    OnMessageEntityIn((EntityInMessage)message);
                     break;
                 default:
                     throw new ArgumentException("Invalid message id");

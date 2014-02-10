@@ -18,11 +18,7 @@ namespace Utopia.Server
     /// </summary>
     public class Server : IServer
     {
-        /// <summary>
-        /// Modify this constant to actual value
-        /// </summary>
-        public const int ServerProtocolVersion = 1;
-        
+       
         #region Properties
         /// <summary>
         /// Gets server settings manager

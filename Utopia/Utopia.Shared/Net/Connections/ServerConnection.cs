@@ -15,6 +15,11 @@ namespace Utopia.Shared.Net.Connections
         readonly ConcurrentQueue<IBinaryMessage> _incomingMessages = new ConcurrentQueue<IBinaryMessage>();
 
         /// <summary>
+        /// Modify this constant to actual value
+        /// </summary>
+        public const int ProtocolVersion = 2;
+
+        /// <summary>
         /// Gets or sets current client version
         /// </summary>
         public int ClientVersion { get; set; }

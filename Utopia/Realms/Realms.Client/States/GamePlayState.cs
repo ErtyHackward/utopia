@@ -306,6 +306,8 @@ namespace Realms.Client.States
 
         public override void OnEnabled(GameState previousState)
         {
+            _serverComponent.EnterTheWorld();
+
             var guiManager = _ioc.Get<GuiManager>();
             guiManager.Screen.ShowAll();
 
