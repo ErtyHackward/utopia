@@ -198,7 +198,8 @@ namespace Utopia.Server.Managers
 
         private MapArea GetArea(Vector3D position)
         {
-            var pos = new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
+            var pos = new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, 
+                                   (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
             MapArea area;
             if (_areas.ContainsKey(pos))
             {
@@ -231,17 +232,17 @@ namespace Utopia.Server.Managers
             double tooFarAway = MapArea.AreaSize.X * MapArea.AreaSize.X + MapArea.AreaSize.Y * MapArea.AreaSize.Y;
 
             var currentArea = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X, 0,
-                                                  e.Entity.DynamicEntity.Position.Z));
+                                                   e.Entity.DynamicEntity.Position.Z));
 
             var previousArea = GetArea(new Vector3D(e.PreviousPosition.X, 0,
-                                                   e.PreviousPosition.Z));
+                                                    e.PreviousPosition.Z));
 
             for (int x = -1; x < 2; x++)
             {
                 for (int z = -1; z < 2; z++)
                 {
                     var prev = GetArea(new Vector3D(e.PreviousPosition.X + x * MapArea.AreaSize.X, 0,
-                                                   e.PreviousPosition.Z + z*MapArea.AreaSize.Y));
+                                                    e.PreviousPosition.Z + z * MapArea.AreaSize.Y));
                     
                     if(Vector2I.DistanceSquared(currentArea.Position,prev.Position) > tooFarAway )
                     {
@@ -253,7 +254,7 @@ namespace Utopia.Server.Managers
                     }
                     
                     var now = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X + x*MapArea.AreaSize.X, 0,
-                                                  e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
+                                                   e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
 
                     if(Vector2I.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)
                     {
