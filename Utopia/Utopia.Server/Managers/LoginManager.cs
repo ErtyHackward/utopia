@@ -181,7 +181,8 @@ namespace Utopia.Server.Managers
                     ChunkSize = AbstractChunk.ChunkSize,
                     MaxViewRange = 32,
                     WorldParameter = _server.LandscapeManager.WorldGenerator.WorldParameters,
-                    GlobalState = _server.GlobalStateManager.GlobalState
+                    GlobalState = _server.GlobalStateManager.GlobalState,
+                    AreaSize = MapArea.AreaSize
                 };
 
                 connection.Send(gameInfo);

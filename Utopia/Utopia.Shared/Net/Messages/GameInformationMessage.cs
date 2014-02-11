@@ -43,5 +43,10 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         [ProtoMember(4)]
         public GlobalState GlobalState { get; set; }
+
+        /// <summary>
+        /// Holds size of the server area
+        /// </summary>
+        public Vector2I AreaSize { get; set; }
     }
 }
