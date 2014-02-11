@@ -19,8 +19,9 @@ namespace Utopia.Network
         private readonly ServerComponent _server;
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly IChunkEntityImpactManager _landscapeManager;
+        private readonly SyncManager _syncManager;
         private IDynamicEntity _playerEntity;
-
+        
         /// <summary>
         /// Gets or sets main player entity. All its events will be translated to the server
         /// </summary>
@@ -52,11 +53,12 @@ namespace Utopia.Network
         /// <summary>
         /// Creates new instance of EntityMessageTranslator
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="playerEntity"></param>
-        /// <param name="dynamicEntityManager"></param>
-        /// <param name="landscapeManager"> </param>
-        public EntityMessageTranslator(ServerComponent server, IDynamicEntity playerEntity, IVisualDynamicEntityManager dynamicEntityManager, IChunkEntityImpactManager landscapeManager)
+        public EntityMessageTranslator(
+                ServerComponent server, 
+                IDynamicEntity playerEntity, 
+                IVisualDynamicEntityManager dynamicEntityManager, 
+                IChunkEntityImpactManager landscapeManager,
+                SyncManager syncManager)
         {
             _server = server;
 
@@ -72,19 +74,18 @@ namespace Utopia.Network
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
+            if (syncManager == null) throw new ArgumentNullException("syncManager");
             if (playerEntity == null) throw new ArgumentNullException("playerEntity");
 
             _dynamicEntityManager = dynamicEntityManager;
             _landscapeManager = landscapeManager;
+            _syncManager = syncManager;
             PlayerEntity = playerEntity;
         }
 
         void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
         {
-            if (!e.Message.Impact.Success)
-            {
-
-            }
+            _syncManager.RegisterFeedback(e.Message);
         }
 
         public void Dispose()
@@ -177,17 +178,21 @@ namespace Utopia.Network
         {
             var entity = (CharacterEntity)_dynamicEntityManager.GetEntityById(e.Message.DynamicEntityId);
             
-
             if (entity != null)
             {
                 entity.EntityState = e.Message.State;
 
+                IToolImpact impact;
+
                 if (e.Message.ToolId != 0)
-                    entity.ToolUse((ITool)entity.FindItemById(e.Message.ToolId));
+                    impact = entity.ToolUse((ITool)entity.FindItemById(e.Message.ToolId));
                 else
                 {
-                    entity.ToolUse(entity.HandTool);
+                    impact = entity.ToolUse(entity.HandTool);
                 }
+
+                // register other entity use message
+                _syncManager.RegisterUseMessage(e.Message, impact);
             }
         }
 
@@ -200,7 +205,9 @@ namespace Utopia.Network
         //These are player event subscribing
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
-            _server.ServerConnection.Send(new EntityUseMessage(e));
+            var useMessage = new EntityUseMessage(e);
+            _syncManager.RegisterUseMessage(useMessage, e.Impact);
+            _server.ServerConnection.Send(useMessage);
         }
 
         private void PlayerEntityViewChanged(object sender, EntityViewEventArgs e)
