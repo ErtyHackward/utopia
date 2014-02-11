@@ -137,7 +137,18 @@ namespace Utopia.Server.Structs
 
         void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
         {
-            Connection.Send(new BlocksChangedMessage { BlockValues = e.BlockValues, BlockPositions = e.GlobalLocations, Tags = e.Tags });
+            // we no need to send message caused by the entity, because it is responsibility of the entity tool to update the world
+            // the message will only be sent if change was done by 3rd party objects (services)
+
+            if (e.SourceEntityId == 0)
+            {
+                Connection.Send(new BlocksChangedMessage
+                {
+                    BlockValues = e.BlockValues,
+                    BlockPositions = e.GlobalLocations,
+                    Tags = e.Tags
+                });
+            }
         }        
     }
 }

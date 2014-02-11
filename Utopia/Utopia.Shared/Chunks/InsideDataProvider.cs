@@ -306,14 +306,15 @@ namespace Utopia.Shared.Chunks
                 }
             }
         }
-
+        
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null, uint sourceDynamicId = 0)
         {
             lock (_writeSyncRoot) { }
 
@@ -321,6 +322,7 @@ namespace Utopia.Shared.Chunks
             {
                 _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
             }
+
             _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
             RefreshMetaData(ref inChunkPosition);
             SetTag(tag, inChunkPosition);
@@ -342,18 +344,21 @@ namespace Utopia.Shared.Chunks
                                            Count = 1,
                                            Locations = new[] {inChunkPosition},
                                            Bytes = new[] {blockValue},
-                                           Tags = tag != null ? new[] {tag} : null
+                                           Tags = tag != null ? new[] {tag} : null,
+                                           SourceDynamicId = sourceDynamicId
                                        });
             }
         }
 
+
         /// <summary>
         /// Sets a group of blocks
         /// </summary>
-        /// <param name="positions">internal chunk positions</param>
+        /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"> </param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null, uint sourceDynamicId = 0)
         {
             lock (_writeSyncRoot) { }
 
@@ -395,7 +400,8 @@ namespace Utopia.Shared.Chunks
                                            Count = positions.Length,
                                            Locations = positions,
                                            Bytes = values,
-                                           Tags = tags
+                                           Tags = tags,
+                                           SourceDynamicId = sourceDynamicId
                                        });
             }
         }

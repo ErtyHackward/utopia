@@ -158,7 +158,8 @@ namespace Utopia.Server.Managers
                 BlockValues = e.Bytes,
                 Locations = e.Locations,
                 GlobalLocations = globalPos,
-                Tags = e.Tags
+                Tags = e.Tags,
+                SourceEntityId = e.SourceDynamicId
             };
 
             GetArea(new Vector3D(eargs.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, eargs.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(eargs);

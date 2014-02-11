@@ -54,6 +54,8 @@ namespace Utopia.Shared.Chunks
             }
         }
 
+        public uint OwnerDynamicId { get; set; }
+
         /// <summary>
         /// Reads current block type at the cursor position
         /// </summary>
@@ -91,10 +93,17 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="value"></param>
         /// <param name="tag"> </param>
-        public void Write(byte value, BlockTag tag = null)
+        /// <param name="sourceDynamicId"></param>
+        public void Write(byte value, BlockTag tag = null, uint sourceDynamicId = 0)
         {
-            OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { GlobalPosition = GlobalPosition, Value = value, BlockTag = tag });
-            _currentChunk.BlockData.SetBlock(_internalPosition, value, tag);
+            OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { 
+                GlobalPosition = GlobalPosition, 
+                Value = value, 
+                BlockTag = tag,
+                SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
+            });
+
+            _currentChunk.BlockData.SetBlock(_internalPosition, value, tag, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
         protected LandscapeCursor(ILandscapeManager manager, WorldParameters wp)
@@ -333,7 +342,7 @@ namespace Utopia.Shared.Chunks
 
             var entityChunk = _manager.GetChunkFromBlock(entityBlockPosition);
 
-            entityChunk.Entities.Add(entity, sourceDynamicId);
+            entityChunk.Entities.Add(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
         /// <summary>
@@ -346,7 +355,7 @@ namespace Utopia.Shared.Chunks
         {
             IStaticEntity entityRemoved;
             var chunk = _manager.GetChunk(entity.ChunkPosition);
-            chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
+            chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId, out entityRemoved);
 
             return entityRemoved;
         }
