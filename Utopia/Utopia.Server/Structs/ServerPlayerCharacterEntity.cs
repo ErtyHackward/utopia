@@ -117,11 +117,11 @@ namespace Utopia.Server.Structs
             {
                 var impact = new ToolImpact();
                 impact.Success = playerCharacter.Craft(entityUseMessage.RecipeIndex);
-
-                Connection.Send(new UseFeedbackMessage
+                CurrentArea.UseFeedback(new UseFeedbackMessage
                 {
                     Token = entityUseMessage.Token,
-                    Impact = impact
+                    Impact = impact,
+                    OwnerDynamicId = playerCharacter.DynamicId
                 });
                 return;
             }
@@ -137,21 +137,21 @@ namespace Utopia.Server.Structs
                     if (entityUseMessage.UseType == UseType.Use)
                     {
                         var toolImpact = playerCharacter.ToolUse();
-                        // returning tool feedback
-                        Connection.Send(new UseFeedbackMessage
+                        CurrentArea.UseFeedback(new UseFeedbackMessage
                         {
                             Token = entityUseMessage.Token,
-                            Impact = toolImpact
+                            Impact = toolImpact,
+                            OwnerDynamicId = playerCharacter.DynamicId
                         });
                     }
                     if (entityUseMessage.UseType == UseType.Put)
                     {
                         var toolImpact = playerCharacter.PutUse();
-                        // returning tool feedback
-                        Connection.Send(new UseFeedbackMessage
+                        CurrentArea.UseFeedback(new UseFeedbackMessage
                         {
                             Token = entityUseMessage.Token,
-                            Impact = toolImpact
+                            Impact = toolImpact,
+                            OwnerDynamicId = playerCharacter.DynamicId
                         });
                     }
                 }
@@ -167,11 +167,11 @@ namespace Utopia.Server.Structs
             else
             {
                 var toolImpact = playerCharacter.HandUse();
-                // returning tool feedback
-                Connection.Send(new UseFeedbackMessage
+                CurrentArea.UseFeedback(new UseFeedbackMessage
                 {
                     Token = entityUseMessage.Token,
-                    Impact = toolImpact
+                    Impact = toolImpact,
+                    OwnerDynamicId = playerCharacter.DynamicId
                 });
             }
         }

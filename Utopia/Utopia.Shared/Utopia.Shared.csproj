@@ -252,6 +252,8 @@
     <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
       <DependentUpon>TreeBluePrint.cs</DependentUpon>
     </Compile>
+    <Compile Include="Net\Messages\EntityDataMessage.cs" />
+    <Compile Include="Net\Messages\GetEntityMessage.cs" />
     <Compile Include="Net\Web\Responses\VerifyResponse.cs" />
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
