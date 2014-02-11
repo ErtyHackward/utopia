@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BBoxOptimizeTest.cs" />
+    <Compile Include="BlockTagEqualityTest.cs" />
     <Compile Include="CloneTest.cs" />
     <Compile Include="Md5HashTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,5 +1,6 @@
 using System;
 using ProtoBuf;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -122,24 +123,30 @@ namespace Utopia.Shared.Chunks
                                                      inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)].Id;
         }
 
+
         /// <summary>
-        /// Operation is not supported
+        /// Sets a single block into location specified
         /// </summary>
-        /// <param name="worldPosition"></param>
+        /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I worldPosition, byte blockValue, BlockTag tag = null)
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
         {
-            int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
+            int index = ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
+                                         inChunkPosition.Y,
+                                         inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y);
+
             ChunkCubes.Cubes[index] = new TerraCube(blockValue);
 
-            if (tag != null) SetTag(tag, worldPosition);
+            SetTag(tag, inChunkPosition);
 
-            RefreshMetaData(ref worldPosition);
+            RefreshMetaData(BlockHelper.ConvertToGlobal(
+                new Vector3I(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y), 
+                inChunkPosition));
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                    {
-                                       Locations = new[] { worldPosition },
+                                       Locations = new[] { inChunkPosition },
                                        Bytes = new[] { blockValue },
                                        Tags = tag != null ? new[] { tag } : null
                                    });
@@ -150,15 +157,14 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="worldPosition"></param>
         /// <param name="blockValue"></param>
-        /// <param name="tag"></param>
         public void SetBlockWithoutEvents(Vector3I worldPosition, byte blockValue)
         {
             int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
             ChunkCubes.Cubes[index] = new TerraCube(blockValue);
-            RefreshMetaData(ref worldPosition);
+            RefreshMetaData(worldPosition);
         }
 
-        private void RefreshMetaData(ref Vector3I worldPosition)
+        private void RefreshMetaData(Vector3I worldPosition)
         {
             //Must look from World Top to bottom to recompute the new High Block !
             int yPosi = AbstractChunk.ChunkSize.Y - 1;
@@ -179,17 +185,16 @@ namespace Utopia.Shared.Chunks
         }
 
         /// <summary>
-        /// Operation is not supported
+        /// Sets a group of blocks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
-        /// <param name="tags"></param>
-        /// <exception cref="NotSupportedException"></exception>
+        /// <param name="tags"> </param>
         public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
         {
             for (int i = 0; i < positions.Length; i++)
             {
-                SetBlock(positions[i], values[i], tags[i]);
+                SetBlock(positions[i], values[i], tags == null ? null : tags[i]);
             }
         }
 
@@ -288,7 +293,7 @@ namespace Utopia.Shared.Chunks
         {
             BlockTag result;
             _tags.TryGetValue(inChunkPosition, out result);
-            return result;
+            return result == null ? null : (BlockTag)result.Clone();
         }
 
         public void SetTag(BlockTag tag, Vector3I inChunkPosition)
@@ -296,7 +301,7 @@ namespace Utopia.Shared.Chunks
             lock (_syncRoot)
             {
                 if (tag != null)
-                    _tags[inChunkPosition] = tag;
+                    _tags[inChunkPosition] = (BlockTag)tag.Clone();
                 else
                     _tags.Remove(inChunkPosition);
             }
