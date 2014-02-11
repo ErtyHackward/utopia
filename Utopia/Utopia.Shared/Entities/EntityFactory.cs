@@ -169,36 +169,8 @@ namespace Utopia.Shared.Entities
             var boundingbox = protoTypeModel.Add(typeof(BoundingBox), true);
             boundingbox.AddField(1, "Minimum");
             boundingbox.AddField(2, "Maximum");
-
-            #region Network messages
-
+            
             var iBinaryMessage = protoTypeModel.Add(typeof(IBinaryMessage), true);
-
-            iBinaryMessage.AddSubType(100, typeof(BlocksChangedMessage));
-            iBinaryMessage.AddSubType(101, typeof(ChatMessage));
-            iBinaryMessage.AddSubType(102, typeof(ChunkDataMessage));
-            iBinaryMessage.AddSubType(103, typeof(DateTimeMessage));
-            iBinaryMessage.AddSubType(104, typeof(ErrorMessage));
-            iBinaryMessage.AddSubType(105, typeof(GameInformationMessage));
-            iBinaryMessage.AddSubType(106, typeof(GetChunksMessage));
-            iBinaryMessage.AddSubType(107, typeof(LoginMessage));
-            iBinaryMessage.AddSubType(108, typeof(LoginResultMessage));
-            iBinaryMessage.AddSubType(109, typeof(EntityHeadDirectionMessage));
-            iBinaryMessage.AddSubType(110, typeof(EntityInMessage));
-            iBinaryMessage.AddSubType(111, typeof(EntityOutMessage));
-            iBinaryMessage.AddSubType(112, typeof(EntityPositionMessage));
-            iBinaryMessage.AddSubType(113, typeof(EntityUseMessage));
-            iBinaryMessage.AddSubType(114, typeof(PingMessage));
-            iBinaryMessage.AddSubType(115, typeof(EntityVoxelModelMessage));
-            iBinaryMessage.AddSubType(116, typeof(ItemTransferMessage));
-            iBinaryMessage.AddSubType(117, typeof(EntityEquipmentMessage));
-            iBinaryMessage.AddSubType(118, typeof(WeatherMessage));
-            iBinaryMessage.AddSubType(119, typeof(EntityImpulseMessage));
-            iBinaryMessage.AddSubType(120, typeof(EntityLockMessage));
-            iBinaryMessage.AddSubType(121, typeof(EntityLockResultMessage));
-            iBinaryMessage.AddSubType(122, typeof(UseFeedbackMessage));
-            iBinaryMessage.AddSubType(123, typeof(RequestDateTimeSyncMessage));
-            #endregion
         }
 
         /// <summary>

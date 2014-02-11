@@ -17,10 +17,16 @@ namespace Utopia.Shared.Net.Messages
         public int Token { get; set; }
 
         /// <summary>
-        /// Serialized bytes of the EntityImpact
+        /// EntityImpact result of tool use
         /// </summary>
         [ProtoMember(2)]
         public IToolImpact Impact { get; set; }
+
+        /// <summary>
+        /// Host entity id
+        /// </summary>
+        [ProtoMember(3)]
+        public uint OwnerDynamicId { get; set; }
 
         /// <summary>
         /// Gets a message identification number

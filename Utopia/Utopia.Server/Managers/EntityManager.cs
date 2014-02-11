@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utopia.Server.Structs;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -38,13 +39,14 @@ namespace Utopia.Server.Managers
 
         void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessagePosition -= ConnectionMessagePosition;
-            e.Connection.MessageDirection -= ConnectionMessageDirection;
-            e.Connection.MessageEntityUse -= ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer -= ConnectionMessageItemTransfer;
-            e.Connection.MessageEntityEquipment -= ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock -= ConnectionMessageEntityLock;
+            e.Connection.MessagePosition            -= ConnectionMessagePosition;
+            e.Connection.MessageDirection           -= ConnectionMessageDirection;
+            e.Connection.MessageEntityUse           -= ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer        -= ConnectionMessageItemTransfer;
+            e.Connection.MessageEntityEquipment     -= ConnectionMessageEntityEquipment;
+            e.Connection.MessageEntityLock          -= ConnectionMessageEntityLock;
             e.Connection.MessageRequestDateTimeSync -= ConnectionOnMessageRequestDateTimeSync;
+            e.Connection.MessageGetEntity           -= ConnectionOnMessageGetEntity;
 
             if (e.Connection.Authorized)
             {
@@ -83,12 +85,38 @@ namespace Utopia.Server.Managers
             e.Connection.MessageEntityEquipment     += ConnectionMessageEntityEquipment;
             e.Connection.MessageEntityLock          += ConnectionMessageEntityLock;
             e.Connection.MessageRequestDateTimeSync += ConnectionOnMessageRequestDateTimeSync;
+            e.Connection.MessageGetEntity           += ConnectionOnMessageGetEntity;
+        }
+
+        private void ConnectionOnMessageGetEntity(object sender, ProtocolMessageEventArgs<GetEntityMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+
+            ServerDynamicEntity entity;
+            
+            if (_server.AreaManager.TryFind(e.Message.DynamicEntityId, out entity))
+            {
+                connection.Send(new EntityDataMessage { 
+                    Entity = entity.DynamicEntity,
+                    DynamicId = e.Message.DynamicEntityId
+                });
+            }
+            else
+            {
+                connection.Send(new EntityDataMessage { 
+                    Entity = null,
+                    DynamicId = e.Message.DynamicEntityId
+                });
+            }
         }
 
         private void ConnectionOnMessageRequestDateTimeSync(object sender, ProtocolMessageEventArgs<RequestDateTimeSyncMessage> protocolMessageEventArgs)
         {
             var connection = (ClientConnection)sender;
-            connection.Send(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
+            connection.Send(new DateTimeMessage { 
+                DateTime = _server.Clock.Now, 
+                TimeFactor = _server.Clock.TimeFactor 
+            });
         }
 
         private void ConnectionMessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)

@@ -70,7 +70,13 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         public void Authenticate()
         {
-            Send(new LoginMessage { Login = Login, DisplayName = DisplayName, Password = Password, Register = Register, Version = ClientVersion });
+            Send(new LoginMessage { 
+                Login = Login, 
+                DisplayName = DisplayName, 
+                Password = Password, 
+                Register = Register, 
+                Version = ClientVersion 
+            });
         }
 
         protected override void OnMessage(IBinaryMessage msg)

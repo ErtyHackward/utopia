@@ -153,6 +153,10 @@ namespace Utopia.Network
         /// Occurs when VoxelModelDataMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
+        /// <summary>
+        /// Occurs when EntityDataMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityDataMessage>> MessageEntityData;
 
         public event EventHandler<TcpConnectionStatusEventArgs> ConnectionStausChanged;
 
@@ -384,6 +388,11 @@ namespace Utopia.Network
             if (MessageVoxelModelData != null) MessageVoxelModelData(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
         }
 
+        protected virtual void OnMessageEntityData(EntityDataMessage ea)
+        {
+            var handler = MessageEntityData;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityDataMessage> { Message = ea });
+        }
 
         #endregion
 
@@ -474,6 +483,9 @@ namespace Utopia.Network
                     break;
                 case MessageTypes.VoxelModelData:
                     OnMessageVoxelModelData((VoxelModelDataMessage)msg);
+                    break;
+                case MessageTypes.EntityData:
+                    OnMessageEntityData((EntityDataMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");

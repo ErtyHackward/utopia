@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using Utopia.Server.Structs;
@@ -239,6 +240,18 @@ namespace Utopia.Server
             var handler = MessageEntityIn;
             if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityInMessage> { Message = ea });
         }
+
+        /// <summary>
+        /// Occurs when GetEntityMessage is received
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<GetEntityMessage>> MessageGetEntity;
+
+        protected void OnMessageGetEntity(GetEntityMessage ea)
+        {
+            var handler = MessageGetEntity;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<GetEntityMessage> { Message = ea });
+        }
+
         #endregion
         
         /// <summary>
@@ -305,6 +318,9 @@ namespace Utopia.Server
                     break;
                 case MessageTypes.EntityIn:
                     OnMessageEntityIn((EntityInMessage)message);
+                    break;
+                case MessageTypes.GetEntity:
+                    OnMessageGetEntity((GetEntityMessage)message);
                     break;
                 default:
                     throw new ArgumentException("Invalid message id");

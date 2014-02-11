@@ -12,8 +12,6 @@ namespace Utopia.Server.Structs
     /// </summary>
     public class ServerPlayerEntity : ServerDynamicEntity
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        
         public ClientConnection Connection { get; private set; }
 
         /// <summary>
@@ -37,6 +35,7 @@ namespace Utopia.Server.Structs
             area.EntityView          += AreaEntityView;
             area.EntityMoved         += AreaEntityMoved;
             area.EntityUse           += AreaEntityUse;
+            area.EntityUseFeedback   += AreaEntityUseFeedback;
             area.BlocksChanged       += AreaBlocksChanged;
             area.EntityEquipment     += AreaEntityEquipment;
             area.StaticEntityAdded   += AreaStaticEntityAdded;
@@ -47,7 +46,10 @@ namespace Utopia.Server.Structs
             {
                 if (serverEntity != this)
                 {
-                    Connection.Send(new EntityInMessage { Entity = (Entity)serverEntity.DynamicEntity, Link = serverEntity.DynamicEntity.GetLink() });
+                    Connection.Send(new EntityInMessage { 
+                        Entity = (Entity)serverEntity.DynamicEntity, 
+                        Link = serverEntity.DynamicEntity.GetLink() 
+                    });
                 }
             }
         }
@@ -57,6 +59,7 @@ namespace Utopia.Server.Structs
             area.EntityView          -= AreaEntityView;
             area.EntityMoved         -= AreaEntityMoved;
             area.EntityUse           -= AreaEntityUse;
+            area.EntityUseFeedback   -= AreaEntityUseFeedback;
             area.BlocksChanged       -= AreaBlocksChanged;
             area.EntityEquipment     -= AreaEntityEquipment;
             area.StaticEntityAdded   -= AreaStaticEntityAdded;
@@ -67,7 +70,10 @@ namespace Utopia.Server.Structs
             {
                 if (serverEntity.DynamicEntity != DynamicEntity)
                 {
-                    Connection.Send(new EntityOutMessage { EntityId = serverEntity.DynamicEntity.DynamicId, Link = serverEntity.DynamicEntity.GetLink() });
+                    Connection.Send(new EntityOutMessage { 
+                        EntityId = serverEntity.DynamicEntity.DynamicId, 
+                        Link = serverEntity.DynamicEntity.GetLink() 
+                    });
                 }
             }
         }
@@ -79,12 +85,20 @@ namespace Utopia.Server.Structs
         
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
-            Connection.Send(new EntityOutMessage { EntityId = e.Entity.StaticId, TakerEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
+            Connection.Send(new EntityOutMessage { 
+                EntityId = e.Entity.StaticId, 
+                TakerEntityId = e.SourceDynamicEntityId, 
+                Link = e.Entity.GetLink() 
+            });
         }
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
-            Connection.Send(new EntityInMessage { Entity = e.Entity, SourceEntityId = e.SourceDynamicEntityId, Link = e.Entity.GetLink() });
+            Connection.Send(new EntityInMessage { 
+                Entity = e.Entity, 
+                SourceEntityId = e.SourceDynamicEntityId, 
+                Link = e.Entity.GetLink() 
+            });
         }
 
         void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
@@ -99,7 +113,10 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity.DynamicEntity != DynamicEntity)
             {
-                Connection.Send(new EntityOutMessage { EntityId = e.Entity.DynamicEntity.DynamicId, Link = e.Entity.DynamicEntity.GetLink() });
+                Connection.Send(new EntityOutMessage { 
+                    EntityId = e.Entity.DynamicEntity.DynamicId, 
+                    Link = e.Entity.DynamicEntity.GetLink() 
+                });
             }
         }
 
@@ -107,11 +124,14 @@ namespace Utopia.Server.Structs
         {
             if (e.Entity.DynamicEntity != DynamicEntity)
             {
-                Connection.Send(new EntityInMessage { Entity = e.Entity.DynamicEntity, Link = e.Entity.DynamicEntity.GetLink() });
+                Connection.Send(new EntityInMessage { 
+                    Entity = e.Entity.DynamicEntity, 
+                    Link = e.Entity.DynamicEntity.GetLink() 
+                });
             }
         }
 
-        void AreaEntityUse(object sender, EntityUseEventArgs e)
+        private void AreaEntityUse(object sender, EntityUseEventArgs e)
         {
             if (e.Entity != DynamicEntity)
             {
@@ -119,23 +139,35 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void AreaEntityMoved(object sender, EntityMoveEventArgs e)
+        private void AreaEntityUseFeedback(object sender, EntityUseFeedbackEventArgs e)
+        {
+            // to be able to detect desync we need to send our toolimpact back and compare with local version
+            Connection.Send(e.Message);
+        }
+
+        private void AreaEntityMoved(object sender, EntityMoveEventArgs e)
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.Send(new EntityPositionMessage { EntityId = e.Entity.DynamicId, Position = e.Entity.Position });
+                Connection.Send(new EntityPositionMessage { 
+                    EntityId = e.Entity.DynamicId, 
+                    Position = e.Entity.Position 
+                });
             }
         }
 
-        void AreaEntityView(object sender, EntityViewEventArgs e)
+        private void AreaEntityView(object sender, EntityViewEventArgs e)
         {
             if (e.Entity != DynamicEntity)
             {
-                Connection.Send(new EntityHeadDirectionMessage { EntityId = e.Entity.DynamicId, Rotation = e.Entity.HeadRotation });
+                Connection.Send(new EntityHeadDirectionMessage { 
+                    EntityId = e.Entity.DynamicId, 
+                    Rotation = e.Entity.HeadRotation 
+                });
             }
         }
 
-        void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
+        private void AreaBlocksChanged(object sender, BlocksChangedEventArgs e)
         {
             // we no need to send message caused by the entity, because it is responsibility of the entity tool to update the world
             // the message will only be sent if change was done by 3rd party objects (services)

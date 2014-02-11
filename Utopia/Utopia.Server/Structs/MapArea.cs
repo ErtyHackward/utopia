@@ -7,6 +7,7 @@ using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -52,7 +53,18 @@ namespace Utopia.Server.Structs
             var handler = EntityUse;
             if (handler != null) handler(this, e);
         }
-        
+
+        /// <summary>
+        /// Occurs when tool processing is finished
+        /// </summary>
+        public event EventHandler<EntityUseFeedbackEventArgs> EntityUseFeedback;
+
+        protected virtual void OnEntityUseFeedback(EntityUseFeedbackEventArgs e)
+        {
+            var handler = EntityUseFeedback;
+            if (handler != null) handler(this, e);
+        }
+
         /// <summary>
         /// Occurs when one of dynamic entities changes its view direction
         /// </summary>
@@ -291,6 +303,11 @@ namespace Utopia.Server.Structs
             }
         }
 
+        public void UseFeedback(UseFeedbackMessage msg)
+        {
+            OnEntityUseFeedback(new EntityUseFeedbackEventArgs { Message = msg });
+        }
+
         public IEnumerable<ServerDynamicEntity> Enumerate()
         {
             foreach (var entity in _entities)
@@ -313,6 +330,11 @@ namespace Utopia.Server.Structs
         {
             return _entities.ContainsKey((int)entityId);
         }
+    }
+
+    public class EntityUseFeedbackEventArgs : EventArgs
+    {
+        public UseFeedbackMessage Message { get; set; }
     }
 
     public class ServerDynamicEntityEventArgs : EventArgs

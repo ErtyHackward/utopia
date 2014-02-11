@@ -108,6 +108,14 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Client request server DateTime for syncing server <-> Client time
         /// </summary>
-        RequestDateTimeSync = 26
+        RequestDateTimeSync = 26,
+        /// <summary>
+        /// Client request for dynamic entity to resync
+        /// </summary>
+        GetEntity = 27,
+        /// <summary>
+        /// Server response for GetEntity message
+        /// </summary>
+        EntityData = 28,
     }
 }
