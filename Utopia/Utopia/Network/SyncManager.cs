@@ -32,6 +32,8 @@ namespace Utopia.Network
             {
                 OnDesyncDetected(new DesyncEventArgs { UseMessage = item.UseMessage });
             }
+
+            _syncItems.Remove(item);
         }
 
         public void RegisterUseMessage(EntityUseMessage useMessage, IToolImpact localImpact)
