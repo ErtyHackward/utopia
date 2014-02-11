@@ -225,44 +225,48 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChanged, BlockTag blockTag = null)
         {
             VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+
             if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
             {
                 return false;
             }
 
-            // Get Cube Profile
-            BlockProfile blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[replacementCubeId];
-
-            //Set Tag only if "new" tag, else the value has already been assigned
-            if (impactedChunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates)) == null || blockTag == null)
+            try
             {
-                impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
-            }
+                // Check if the cube is not already the same ? ! ?
+                var existingCube = _cubesHolder.Cubes[cubeArrayIndex];
 
-            // Check if the cube is not already the same ? ! ?
-            TerraCube existingCube = _cubesHolder.Cubes[cubeArrayIndex];
-            if (existingCube.Id == replacementCubeId)
-            {
-                return true; // The block & tags are the sames ! (In case if the tag DON'T request a chunk refresh => Like Water tags, ...)
-            }
+                var inChunkPos = BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates);
 
-            if (blockTag == null)
-            {
-                logger.Debug("Chunk SetBlock {0}, id : {2} - From Network : {1} TAG == NULL", cubeCoordinates, isNetworkChanged, replacementCubeId);
-            }
-            else
-            {
-                logger.Debug("Chunk SetBlock {0}, id : {3} - From Network : {1} TAG strenght {2}", cubeCoordinates, isNetworkChanged, ((Utopia.Shared.Chunks.Tags.DamageTag)blockTag).Strength, replacementCubeId);
-            }
+                if (existingCube.Id == replacementCubeId)
+                {
+                    // tag change event
+                    // some tags changes requires chunk mesh rebuild (LiquidTag), some not (DamageTag)
+                    // we will update the mesh only if at least one tag (current or previous) requires mesh update
 
-            // Change the cube in the big array
-            impactedChunk.BlockData.SetBlock(cubeCoordinates, replacementCubeId);
+                    var needChunkMeshUpdate = false;
 
-            // Update chunk tag collection if needed
-            //impactedChunk.BlockData.SetTag(blockTag, BlockHelper.GlobalToInternalChunkPosition(cubeCoordinates));
+                    var oldTag = impactedChunk.BlockData.GetTag(inChunkPos);
+                
+                    if (oldTag != null && oldTag.RequireChunkMeshUpdate)
+                        needChunkMeshUpdate = true;
 
-            // Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, quite heavy, will also restart light computations for the impacted chunk range.
-            TerraCubeWithPosition cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId, _visualWorldParameters.WorldParameters.Configuration);
+                    if (blockTag != null && blockTag.RequireChunkMeshUpdate)
+                        needChunkMeshUpdate = true;
+
+                    if (!needChunkMeshUpdate)
+                    {
+                        impactedChunk.BlockData.SetTag(blockTag, inChunkPos);
+                        return true;
+                    }
+                }
+
+                // Change the cube in the big array
+                impactedChunk.BlockData.SetBlock(inChunkPos, replacementCubeId, blockTag);
+
+                // Start Chunk Visual Impact to decide what needs to be redraw, will be done in async mode, 
+                // quite heavy, will also restart light computations for the impacted chunk range.
+                var cube = new TerraCubeWithPosition(cubeCoordinates, replacementCubeId, _visualWorldParameters.WorldParameters.Configuration);
 
 #if PERFTEST
             if (Utopia.Worlds.Chunks.WorldChunks.perf.Actif == false)
@@ -274,16 +278,24 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 #endif
 
-            impactedChunk.UpdateOrder = 1;
-            ThreadsManager.RunAsync(() => CheckImpact(cube, impactedChunk), ThreadsManager.ThreadTaskPriority.High);
+                impactedChunk.UpdateOrder = 1;
+                ThreadsManager.RunAsync(() => CheckImpact(cube, impactedChunk), ThreadsManager.ThreadTaskPriority.High);
 
-            // Raise event for sound
-            OnBlockReplaced(new LandscapeBlockReplacedEventArgs { IsLocalPLayerAction = !isNetworkChanged, Position = cubeCoordinates, NewBlockType = replacementCubeId, PreviousBlock = existingCube });
-
-            // Save the modified Chunk in local buffer DB
-            SendChunkForBuffering(impactedChunk);
-
-            return true;
+                // Raise event for sound
+                OnBlockReplaced(new LandscapeBlockReplacedEventArgs { 
+                    IsLocalPLayerAction = !isNetworkChanged, 
+                    Position = cubeCoordinates, 
+                    NewBlockType = replacementCubeId, 
+                    PreviousBlock = existingCube 
+                });
+                
+                return true;
+            }
+            finally
+            {
+                // Save the modified Chunk in local buffer DB
+                SendChunkForBuffering(impactedChunk);
+            }
         }
 
         /// <summary>

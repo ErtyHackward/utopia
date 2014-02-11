@@ -118,7 +118,7 @@ namespace Utopia.Shared.Chunks
         public abstract IEnumerable<KeyValuePair<Vector3I,BlockTag>> GetTags();
 
         /// <summary>
-        /// Gets an optional block tag
+        /// Gets an optional block tag. Note that returned object will be a copy of original, to change the tag use SetTag/SetBlock methods
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <returns></returns>
@@ -133,7 +133,7 @@ namespace Utopia.Shared.Chunks
         public abstract void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null);
 
         /// <summary>
-        /// Seta a group of blocks
+        /// Sets a group of blocks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>

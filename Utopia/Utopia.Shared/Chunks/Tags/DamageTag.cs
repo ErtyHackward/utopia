@@ -1,4 +1,6 @@
-﻿using ProtoBuf;
+﻿using System;
+using System.Windows.Forms;
+using ProtoBuf;
 
 namespace Utopia.Shared.Chunks.Tags
 {
@@ -19,5 +21,28 @@ namespace Utopia.Shared.Chunks.Tags
         /// </summary>
         [ProtoMember(2)]
         public int TotalStrength { get; set; }
+
+        public override bool Equals(BlockTag tag)
+        {
+            var t = tag as DamageTag;
+
+            if (ReferenceEquals(t, null))
+                return false;
+
+            return Strength == t.Strength && TotalStrength == t.TotalStrength;
+        }
+
+        public override int GetHashCode()
+        {
+            return Strength << 16 + TotalStrength;
+        }
+
+        /// <summary>
+        /// Cracks are the separate part and no need to rebuild the mesh
+        /// </summary>
+        public override bool RequireChunkMeshUpdate
+        {
+            get { return false; }
+        }
     }
 }

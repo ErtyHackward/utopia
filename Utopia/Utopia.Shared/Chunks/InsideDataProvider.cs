@@ -267,13 +267,13 @@ namespace Utopia.Shared.Chunks
         {
             BlockTag result;
             _tags.TryGetValue(inChunkPosition, out result);
-            return result;
+            return result == null ? null : (BlockTag)result.Clone();
         }
 
         private void SetTag(BlockTag tag, Vector3I inChunkPosition)
         {
             if (tag != null)
-                _tags[inChunkPosition] = tag;
+                _tags[inChunkPosition] = (BlockTag)tag.Clone();
             else
                 _tags.Remove(inChunkPosition);
         }
