@@ -130,7 +130,8 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null, uint sourceDynamicId = 0)
         {
             int index = ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
                                          inChunkPosition.Y,
@@ -148,7 +149,8 @@ namespace Utopia.Shared.Chunks
                                    {
                                        Locations = new[] { inChunkPosition },
                                        Bytes = new[] { blockValue },
-                                       Tags = tag != null ? new[] { tag } : null
+                                       Tags = tag != null ? new[] { tag } : null,
+                                       SourceDynamicId = sourceDynamicId
                                    });
         }
 
@@ -183,18 +185,19 @@ namespace Utopia.Shared.Chunks
             ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
             ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
         }
-
+        
         /// <summary>
         /// Sets a group of blocks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"> </param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null, uint sourceDynamicId = 0)
         {
             for (int i = 0; i < positions.Length; i++)
             {
-                SetBlock(positions[i], values[i], tags == null ? null : tags[i]);
+                SetBlock(positions[i], values[i], tags == null ? null : tags[i], sourceDynamicId);
             }
         }
 

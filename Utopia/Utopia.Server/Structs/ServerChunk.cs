@@ -1,7 +1,5 @@
 using System;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Interfaces;
-using S33M3Resources.Structs;
 
 namespace Utopia.Server.Structs
 {

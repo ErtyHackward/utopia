@@ -24,5 +24,10 @@ namespace Utopia.Shared.Chunks
         /// Gets optional tags array
         /// </summary>
         public BlockTag[] Tags { get; set; }
+
+        /// <summary>
+        /// Gets optional id of the entity which is responsible for the change
+        /// </summary>
+        public uint SourceDynamicId { get; set; }
     }
 }

@@ -42,6 +42,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
         }
 
+        public uint OwnerDynamicId { get; set; }
+
         public byte Read()
         {
             return _landscapeManager.CubesHolder.Cubes[_bigArrayIndex].Id;
@@ -68,11 +70,22 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return Read();
         }
 
-        public void Write(byte value, BlockTag tag = null)
+        /// <summary>
+        /// Writes specidfied value to current cursor position
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="tag"> </param>
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for that change</param>
+        public void Write(byte value, BlockTag tag = null, uint sourceDynamicId = 0)
         {
             var handler = BeforeWrite;
             if (handler != null) 
-                handler(this, new LandscapeCursorBeforeWriteEventArgs { GlobalPosition = GlobalPosition, Value = value, BlockTag = tag });
+                handler(this, new LandscapeCursorBeforeWriteEventArgs { 
+                    GlobalPosition = GlobalPosition, 
+                    Value = value, 
+                    BlockTag = tag,
+                    SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
+                });
 
             _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value, false, tag);
         }
@@ -158,7 +171,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         public void AddEntity(StaticEntity entity, uint sourceDynamicId = 0)
         {
-            _landscapeManager.AddEntity(entity, sourceDynamicId);
+            _landscapeManager.AddEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
         /// <summary>
@@ -169,7 +182,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns>Removed entity</returns>
         public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
         {
-            return _landscapeManager.RemoveEntity(entity, sourceDynamicId);
+            return _landscapeManager.RemoveEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
     }

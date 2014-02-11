@@ -130,7 +130,8 @@ namespace Utopia.Shared.Chunks
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public abstract void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null);
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public abstract void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null, uint sourceDynamicId = 0);
 
         /// <summary>
         /// Sets a group of blocks
@@ -138,7 +139,8 @@ namespace Utopia.Shared.Chunks
         /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"> </param>
-        public abstract void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null);
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public abstract void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null, uint sourceDynamicId = 0);
 
         /// <summary>
         /// Sets a full block buffer for a chunk (only raw block ids) and the tags collection

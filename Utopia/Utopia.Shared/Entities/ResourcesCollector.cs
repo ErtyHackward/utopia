@@ -14,7 +14,6 @@ namespace Utopia.Shared.Entities
     [ProtoInclude(100, typeof(BasicCollector))]
     public abstract class ResourcesCollector : Item, ITool
     {
-
         /// <summary>
         /// Tool block damage
         /// negative values will repair blocks
@@ -45,6 +44,8 @@ namespace Utopia.Shared.Entities
             
             var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
 
+            cursor.OwnerDynamicId = owner.DynamicId;
+
             if (cursor.PeekProfile().Hardness == 0)
             {
                 impact.Message = "Indestrutible cube, cannot be removed !";
@@ -72,7 +73,7 @@ namespace Utopia.Shared.Entities
                 {
                     var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
-                    cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                    cursor.Write(WorldConfiguration.CubeId.Air);
                 }
                 else if (damage.Strength >= hardness)
                 {
