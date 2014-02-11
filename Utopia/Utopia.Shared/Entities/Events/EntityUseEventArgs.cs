@@ -27,7 +27,12 @@ namespace Utopia.Shared.Entities.Events
         /// Gets or sets supplied dynamic entity information
         /// </summary>
         public DynamicEntityState State { get; set; }
-        
+
+        /// <summary>
+        /// Resulted impact
+        /// </summary>
+        public IToolImpact Impact { get; set; }
+
         /// <summary>
         /// Creates event args from entity state
         /// </summary>

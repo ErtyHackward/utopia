@@ -55,8 +55,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public IToolImpact HandUse()
         {
-            ToolUse(null);
-            return HandTool.Use(this);
+            return ToolUse(HandTool);
         }
 
         public IToolImpact PutUse()
@@ -66,9 +65,11 @@ namespace Utopia.Shared.Entities.Dynamic
                 var args = EntityUseEventArgs.FromState(this);
                 args.Tool = Equipment.RightTool;
                 args.UseType = UseType.Put;
+                args.Impact = Equipment.RightTool.Put(this);
+
                 OnUse(args);
 
-                return Equipment.RightTool.Put(this);
+                return args.Impact;
             }
             return new ToolImpact { Message = "RightTool is null" };
         }

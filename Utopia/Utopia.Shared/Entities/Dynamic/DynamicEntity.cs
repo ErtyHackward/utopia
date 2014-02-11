@@ -56,15 +56,19 @@ namespace Utopia.Shared.Entities.Dynamic
             var arg = EntityUseEventArgs.FromState(this);
             arg.Tool = tool;
 
+            if (tool != null)
+                arg.Impact = tool.Use(this);
+            else
+            {
+                arg.Impact = new ToolImpact{ Message = "Null tool" };
+            }
+            
             OnUse(arg);
 
             if (ModelInstance != null)
                 ModelInstance.TryPlay("Use");
-
-            if (tool != null)
-                return tool.Use(this);
-
-            return new ToolImpact{ Message = "Null tool" };
+            
+            return arg.Impact;
         }
         
         /// <summary>
