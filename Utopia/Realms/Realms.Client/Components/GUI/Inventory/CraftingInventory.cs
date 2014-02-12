@@ -7,6 +7,7 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Crafting;
 using Utopia.GUI.Inventory;
 using Utopia.Shared.Configuration;
@@ -32,7 +33,7 @@ namespace Realms.Client.Components.GUI.Inventory
 
         
 
-        public CraftingInventory(D3DEngine engine, WorldConfiguration conf, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) :
+        public CraftingInventory(D3DEngine engine, WorldConfiguration conf, PlayerEntityManager character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) :
             base(conf, character, iconFactory, inputManager)
         {
             _engine = engine;

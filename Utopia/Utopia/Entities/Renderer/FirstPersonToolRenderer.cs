@@ -63,7 +63,6 @@ namespace Utopia.Entities.Renderer
         private VisualVoxelModel _playerModel;
         private VoxelModelInstance _toolVoxelInstance;
         private HLSLVoxelModel _voxelModelEffect;
-        private PlayerCharacter _player;
         private SingleArrayChunkContainer _chunkContainer;
         private VisualWorldParameters _visualWorldParameters;
 
@@ -78,7 +77,7 @@ namespace Utopia.Entities.Renderer
         private bool _animationStated;
         private Quaternion _animationRotation;
         private Vector3 _animationOffset;
-        
+        private PlayerCharacter _player;
 
         #endregion
 
@@ -88,33 +87,64 @@ namespace Utopia.Entities.Renderer
             get { return _tool; }
             set { _tool = value; ToolChange(); }
         }
+
+        public PlayerCharacter PlayerCharacter
+        {
+            get { return _player; }
+            set { 
+                if (_player == value)
+                    return;
+
+                if (_player != null)
+                {
+                    _player.Equipment.ItemEquipped -= EquipmentItemEquipped;
+                    _player.Use -= _player_Use;
+                }
+
+                _player = value;
+
+                if (_player != null)
+                {
+                    _player.Equipment.ItemEquipped += EquipmentItemEquipped;
+                    _player.Use += _player_Use;
+                }
+            }
+        }
+
         #endregion
 
-        public FirstPersonToolRenderer(D3DEngine d3DEngine,
-                            CameraManager<ICameraFocused> camManager,
-                            PlayerCharacter player,
-                            VoxelModelManager voxelModelManager, 
-                            VisualWorldParameters visualWorldParameters,
-                            SingleArrayChunkContainer chunkContainer,
-                            ISkyDome skyDome)
+        public FirstPersonToolRenderer( 
+                D3DEngine d3DEngine,
+                CameraManager<ICameraFocused> camManager,
+                PlayerEntityManager playerEntityManager,
+                VoxelModelManager voxelModelManager, 
+                VisualWorldParameters visualWorldParameters,
+                SingleArrayChunkContainer chunkContainer,
+                ISkyDome skyDome)
         {
             _d3dEngine = d3DEngine;
             _milkShapeMeshfactory = new MilkShape3DMeshFactory();
             _camManager = camManager;
-            _player = player;
             _voxelModelManager = voxelModelManager;
             _visualWorldParameters = visualWorldParameters;
             _chunkContainer = chunkContainer;
             _skyDome = skyDome;
 
-            _player.Equipment.ItemEquipped += EquipmentItemEquipped;
-            _player.Use += _player_Use;
+
+            PlayerCharacter = playerEntityManager.PlayerCharacter;
+            playerEntityManager.PlayerEntityChanged += _player_PlayerEntityChanged;
+
 
             _animationRotation = Quaternion.Identity;
 
             DrawOrders.UpdateIndex(0, 5000);
 
             this.IsDefferedLoadContent = true;
+        }
+
+        void _player_PlayerEntityChanged(object sender, PlayerEntityChangedEventArgs e)
+        {
+            PlayerCharacter = e.PlayerCharacter;
         }
 
         void _player_Use(object sender, Shared.Entities.Events.EntityUseEventArgs e)
@@ -125,11 +155,11 @@ namespace Utopia.Entities.Renderer
                 _animationStated = true;
             }
         }
-
-
+        
         public override void BeforeDispose()
         {
-            _player.Equipment.ItemEquipped -= EquipmentItemEquipped;
+            // unsubscribe events
+            PlayerCharacter = null;
         }
 
 

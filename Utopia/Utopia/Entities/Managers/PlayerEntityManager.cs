@@ -92,6 +92,8 @@ namespace Utopia.Entities.Managers
         private InventoryComponent _inventoryComponent;
 
         private Faction _faction;
+        private PlayerCharacter _playerCharacter;
+
         #endregion
 
         #region Public variables/properties
@@ -99,8 +101,32 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// The Player
         /// </summary>
-        public readonly PlayerCharacter PlayerCharacter;
-        
+        public PlayerCharacter PlayerCharacter
+        {
+            get { return _playerCharacter; }
+            set {
+                if (_playerCharacter != value)
+                {
+                    var ea = new PlayerEntityChangedEventArgs();
+
+                    if (_playerCharacter != null)
+                    {
+                        ea.PreviousCharacter = _playerCharacter;
+                        _playerCharacter.Equipment.ItemEquipped -= Equipment_ItemEquipped;
+                    }
+                    _playerCharacter = value;
+
+                    if (_playerCharacter != null)
+                    {
+                        ea.PlayerCharacter = _playerCharacter;
+                        _playerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
+                    }
+
+                    OnPlayerEntityChanged(ea);
+                }
+            }
+        }
+
         public IDynamicEntity Player { get { return PlayerCharacter; } }
 
         public Faction Faction { get { return _faction; } }
@@ -259,12 +285,20 @@ namespace Utopia.Entities.Managers
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
+
+        protected virtual void OnPlayerEntityChanged(PlayerEntityChangedEventArgs e)
+        {
+            var handler = PlayerEntityChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         public PlayerEntityManager(CameraManager<ICameraFocused> cameraManager,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
-                                   PlayerCharacter player,
+                                   ServerComponent server,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
                                    EntityFactory factory,
@@ -280,13 +314,13 @@ namespace Utopia.Entities.Managers
             _bufferManager = bufferManager;
             _landscapeManager = landscapeManager;
 
-            PlayerCharacter = player;
-            PlayerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
+            PlayerCharacter = (PlayerCharacter)server.Player;
+            
             
             ShowDebugInfo = true;
 
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
-            VisualVoxelEntity = new VisualVoxelEntity(player, voxelModelManager);
+            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, voxelModelManager);
 
 
             HasMouseFocus = Updatable;
@@ -453,6 +487,12 @@ namespace Utopia.Entities.Managers
                                                                                   Math.Round(Player.Position.Z, 1)
                                                                                   );            
         }
+    }
+
+    public class PlayerEntityChangedEventArgs : EventArgs
+    {
+        public PlayerCharacter PlayerCharacter { get; set; }
+        public PlayerCharacter PreviousCharacter { get; set; }
     }
 
     public class InventoryEventArgs : EventArgs

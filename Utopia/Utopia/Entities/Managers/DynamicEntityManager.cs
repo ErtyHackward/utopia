@@ -104,16 +104,17 @@ namespace Utopia.Entities.Managers
                 if (_playerEntity == value)
                     return;
 
-                if (value != null)
-                {
-                    AddEntity(value, false);
-                }
-                else
+                if (_playerEntity != null)
                 {
                     RemoveEntity(_playerEntity);
                 }
 
                 _playerEntity = value;
+
+                if (_playerEntity != null)
+                {
+                    AddEntity(value, false);
+                }
             }
         }
         #endregion
@@ -587,7 +588,9 @@ namespace Utopia.Entities.Managers
             
             visualEntity.DynamicEntity = entity;
             visualEntity.VisualVoxelEntity.Entity = entity;
-            
+
+            if (entity.DynamicId == _playerEntity.DynamicId)
+                _playerEntity = entity;
         }
 
         public void RemoveEntity(IDynamicEntity entity)

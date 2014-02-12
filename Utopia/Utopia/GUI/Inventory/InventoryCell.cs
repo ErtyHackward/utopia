@@ -2,7 +2,6 @@
 using S33M3CoreComponents.Sprites2D;
 using Utopia.Entities;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.GUI.Nuclex.Input;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
@@ -16,15 +15,15 @@ namespace Utopia.GUI.Inventory
     public class InventoryCell : Control, IDropTarget
     {
         private readonly InputsManager _inputManager;
-        private readonly SlotContainer<ContainedSlot> _container;
         private readonly IconFactory _iconFactory;
+        private SlotContainer<ContainedSlot> _container;
         private ContainedSlot _slot;
-        private Shared.Entities.Dynamic.PlayerCharacter _player = null;
         private int _drawIconsGroupId;
 
         public SlotContainer<ContainedSlot> Container
         {
             get { return _container; }
+            set { _container = value; }
         }
 
         /// <summary>
@@ -43,8 +42,6 @@ namespace Utopia.GUI.Inventory
                     return _slot;
                 if(_container != null)
                     return _container.PeekSlot(InventoryPosition);
-                if (_player != null)
-                    return _player.Equipment[SlotType];
                 return null;
             }
             set { _slot = value; }

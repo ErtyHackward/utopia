@@ -33,7 +33,6 @@ namespace Utopia.GUI.Inventory
         private readonly GuiManager _guiManager;
         
         private readonly IconFactory _iconFactory;
-        private readonly ItemMessageTranslator _itemMessageTranslator;
         private ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
         private InventoryWindow _containerInventoryWindow;
@@ -45,7 +44,8 @@ namespace Utopia.GUI.Inventory
         private bool _inventoryActive;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
-        
+        private ItemMessageTranslator _itemMessageTranslator;
+
         /// <summary>
         /// Indicates if inventory is active now
         /// </summary>
@@ -110,6 +110,19 @@ namespace Utopia.GUI.Inventory
             if (handler != null) handler(this, new InventorySwitchEventArgs { Closing = closed });
         }
 
+
+        public bool IsToolbarSwitching { get; set; }
+
+        [Inject]
+        public ItemMessageTranslator ItemMessageTranslator
+        {
+            get { return _itemMessageTranslator; }
+            set { 
+                _itemMessageTranslator = value;
+                _itemMessageTranslator.Enabled = false;
+            }
+        }
+
         [Inject]
         public PlayerEntityManager PlayerManager { get; set; }
 
@@ -124,8 +137,7 @@ namespace Utopia.GUI.Inventory
             D3DEngine engine,
             InputsManager inputManager, 
             GuiManager guiManager, 
-            IconFactory iconFactory,
-            ItemMessageTranslator itemMessageTranslator)
+            IconFactory iconFactory)
         {
 
             IsDefferedLoadContent = true;
@@ -134,12 +146,9 @@ namespace Utopia.GUI.Inventory
             _inputManager = inputManager;
             _guiManager = guiManager;
             _iconFactory = iconFactory;
-            _itemMessageTranslator = itemMessageTranslator;
             
             _guiManager.Screen.Desktop.Clicked += DesktopClicked;
-
-            _itemMessageTranslator.Enabled = false;
-
+            
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
         }
 
@@ -240,19 +249,19 @@ namespace Utopia.GUI.Inventory
             if (IsActive && _dragControl.Slot != null)
             {
                 // drop item to the world
-                _itemMessageTranslator.DropToWorld();
+                ItemMessageTranslator.DropToWorld();
                 EndDrag();
             }
         }
 
         private void HudSlotClicked(object sender, SlotClickedEventArgs e)
         {
-            var enabled = _itemMessageTranslator.Enabled;
+            var enabled = ItemMessageTranslator.Enabled;
 
             try
             {
                 IsToolbarSwitching = true;
-                _itemMessageTranslator.Enabled = true;
+                ItemMessageTranslator.Enabled = true;
                 if (PlayerManager.PlayerCharacter.Toolbar[e.SlotIndex] != 0)
                 {
                     var player = PlayerManager.PlayerCharacter;
@@ -278,11 +287,10 @@ namespace Utopia.GUI.Inventory
             finally
             {
                 IsToolbarSwitching = false;
-                _itemMessageTranslator.Enabled = enabled;
+                ItemMessageTranslator.Enabled = enabled;
             }
         }
 
-        public bool IsToolbarSwitching { get; set; }
 
         private void ToolBarSlotClicked(object sender, InventoryWindowCellMouseEventArgs e)
         {
@@ -296,7 +304,7 @@ namespace Utopia.GUI.Inventory
                     GridPosition = e.Cell.InventoryPosition
                 });
 
-            _itemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
+            ItemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
 
             _sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition,
                                      _dragControl.Slot.ItemsCount);
@@ -503,7 +511,7 @@ namespace Utopia.GUI.Inventory
             
             desktop.UpdateLayout();
 
-            _itemMessageTranslator.Enabled = true;
+            ItemMessageTranslator.Enabled = true;
             _inventoryActive = true;
 
             OnSwitchInventory(false);
@@ -520,7 +528,7 @@ namespace Utopia.GUI.Inventory
             }
 
             _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
-            _itemMessageTranslator.Enabled = false;
+            ItemMessageTranslator.Enabled = false;
             _inventoryActive = false;
 
             OnSwitchInventory(true);

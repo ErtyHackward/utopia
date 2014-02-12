@@ -1,4 +1,5 @@
 ﻿using System;
+using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
@@ -57,7 +58,7 @@ namespace Utopia.Network
         /// </summary>
         public EntityMessageTranslator(
                 ServerComponent server, 
-                IDynamicEntity playerEntity, 
+                PlayerEntityManager playerEntityManager, 
                 IVisualDynamicEntityManager dynamicEntityManager, 
                 IChunkEntityImpactManager landscapeManager,
                 SyncManager syncManager)
@@ -77,12 +78,13 @@ namespace Utopia.Network
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
             if (syncManager == null) throw new ArgumentNullException("syncManager");
-            if (playerEntity == null) throw new ArgumentNullException("playerEntity");
+            if (playerEntityManager == null) throw new ArgumentNullException("playerEntityManager");
 
             _dynamicEntityManager = dynamicEntityManager;
             _landscapeManager = landscapeManager;
             _syncManager = syncManager;
-            PlayerEntity = playerEntity;
+            PlayerEntity = playerEntityManager.PlayerCharacter;
+            playerEntityManager.PlayerEntityChanged += (sender, args) => { PlayerEntity = args.PlayerCharacter; };
         }
 
         void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)

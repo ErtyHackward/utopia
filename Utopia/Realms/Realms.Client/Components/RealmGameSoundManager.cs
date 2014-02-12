@@ -1,25 +1,18 @@
 ﻿using S33M3Resources.Structs;
-using Utopia.Components;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Chunks;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
-using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Sound;
 using SharpDX;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Entities.Managers;
 using Utopia.Shared.World;
-using System.Linq;
 using Utopia.Sounds;
-using System.IO;
-using Utopia.Shared.Sounds;
-using System.Collections.Generic;
 using Utopia.Shared.Structs;
-using Utopia.Shared.Entities.Inventory;
 
 namespace Realms.Client.Components
 {
@@ -29,14 +22,13 @@ namespace Realms.Client.Components
                                     CameraManager<ICameraFocused> cameraManager,
                                     SingleArrayChunkContainer singleArray,
                                     IVisualDynamicEntityManager dynamicEntityManager,
-                                    IDynamicEntity player,
                                     IChunkEntityImpactManager chunkEntityImpactManager,
                                     IWorldChunks worldChunk,
                                     IClock gameClockTime,
-                                    IPlayerManager playerEntityManager,
+                                    PlayerEntityManager playerEntityManager,
                                     VisualWorldParameters visualWorldParameters,
                                     IClock worlClock)
-            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, player, chunkEntityImpactManager, worldChunk, gameClockTime, playerEntityManager, visualWorldParameters, worlClock)
+            : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, chunkEntityImpactManager, worldChunk, gameClockTime, playerEntityManager, visualWorldParameters, worlClock)
         {
             PreLoadSound("Put", @"Sounds\Blocks\put.adpcm.wav", 0.3f, 12.0f);
             PreLoadSound("Take", @"Sounds\Blocks\take.adpcm.wav", 0.3f, 12.0f);
