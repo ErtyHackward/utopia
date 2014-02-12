@@ -116,9 +116,21 @@ namespace Utopia.Server.Managers
                 return;
             }
 
+            if (string.IsNullOrEmpty(e.Message.Login) || string.IsNullOrEmpty(e.Message.Password))
+            {
+                var error = new ErrorMessage
+                {
+                    ErrorCode = ErrorCodes.LoginPasswordIncorrect,
+                    Message = "Invalid login or password"
+                };
+                connection.Send(error);
+                connection.Disconnect();
+                return;
+            }
+
             // checking login and password
             LoginData loginData;
-            if (_server.UsersStorage.Login(e.Message.Login, e.Message.Password, out loginData))
+            if (_server.UsersStorage.Login(e.Message.Login.ToLower(), e.Message.Password, out loginData))
             {
                 var oldConnection = _server.ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
@@ -201,6 +213,7 @@ namespace Utopia.Server.Managers
                                   connection.Id);
 
                 connection.Send(error, new LoginResultMessage { Logged = false });
+                connection.Disconnect();
             }
         }
 
