@@ -589,7 +589,7 @@ namespace Utopia.Entities.Managers
             visualEntity.DynamicEntity = entity;
             visualEntity.VisualVoxelEntity.Entity = entity;
 
-            if (entity.DynamicId == _playerEntity.DynamicId)
+            if (_playerEntity != null && entity.DynamicId == _playerEntity.DynamicId)
                 _playerEntity = entity;
         }
 
