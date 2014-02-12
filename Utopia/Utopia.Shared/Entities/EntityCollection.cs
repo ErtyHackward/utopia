@@ -143,11 +143,13 @@ namespace Utopia.Shared.Entities
         /// <param name="atChunkCreationTime"></param>
         public void Import(EntityCollection entityCollection, bool atChunkCreationTime = false)
         {
+            var prevCount = _entities.Count;
+
             lock (_syncRoot)
             {
                 _initialisation = true;
                 _entities.Clear();
-
+                
                 foreach (var entity in entityCollection.EnumerateFast())
                 {
                     entity.Container = this;
@@ -155,6 +157,9 @@ namespace Utopia.Shared.Entities
                 }
                 _initialisation = false;
             }
+
+            if (prevCount > 0)
+                OnCollectionCleared();
 
             foreach (var entity in entityCollection.EnumerateFast())
             {
