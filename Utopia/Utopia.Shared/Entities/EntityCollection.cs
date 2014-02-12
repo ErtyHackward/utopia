@@ -19,7 +19,6 @@ namespace Utopia.Shared.Entities
 
         private SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
-        private bool _initialisation;
 
         #region Events
         /// <summary>
@@ -29,7 +28,6 @@ namespace Utopia.Shared.Entities
 
         protected void OnCollectionDirty()
         {
-            if (_initialisation) return;
             var handler = CollectionDirty;
             if (handler != null) handler(this, EventArgs.Empty);
         }
@@ -53,7 +51,6 @@ namespace Utopia.Shared.Entities
 
         protected void OnCollectionCleared()
         {
-            if (_initialisation) return;
             var handler = CollectionCleared;
             if (handler != null) handler(this, EventArgs.Empty);
         }
@@ -147,7 +144,6 @@ namespace Utopia.Shared.Entities
 
             lock (_syncRoot)
             {
-                _initialisation = true;
                 _entities.Clear();
                 
                 foreach (var entity in entityCollection.EnumerateFast())
@@ -155,7 +151,6 @@ namespace Utopia.Shared.Entities
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
                 }
-                _initialisation = false;
             }
 
             if (prevCount > 0)

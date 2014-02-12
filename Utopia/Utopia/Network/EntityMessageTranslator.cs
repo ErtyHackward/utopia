@@ -131,8 +131,6 @@ namespace Utopia.Network
 
         void ServerMessageEntityOut(object sender, ProtocolMessageEventArgs<EntityOutMessage> e)
         {
-            logger.Debug("Entity Removed Dyn:{0}", e.Message.Link.IsDynamic);
-
             if (e.Message.Link.IsDynamic)
             {
                 _dynamicEntityManager.RemoveEntityById(e.Message.EntityId);

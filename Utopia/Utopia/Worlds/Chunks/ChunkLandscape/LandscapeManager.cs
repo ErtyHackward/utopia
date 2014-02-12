@@ -92,7 +92,10 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {            
 #if DEBUG
-            //logger.Debug("Chunk received from server id : {0}; Position : {1}, Flag :{2}", chunkId, e.Message.Position, e.Message.Flag);
+            if (e.Message.Position.ToString() == "[0;0;0]")
+            {
+                logger.Debug("Chunk received from server; Position : {0}, Flag :{1}, Hash {2}", e.Message.Position, e.Message.Flag, e.Message.ChunkHash);
+            }
 #endif
 
             //Bufferize the Data here   
@@ -156,12 +159,13 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             chunk.IsServerRequested = false;
                             chunk.IsServerResyncMode = false;
                             lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position); //Remove the sync from the recieved queue
-                            logger.Debug("[Chunk Resync] {0} - was still in sync with server [{1}] !", chunk.Position, message.Flag.ToString());
+                            logger.Trace("[Chunk Resync] {0} - was still in sync with server [{1}] !", chunk.Position, message.Flag.ToString());
                             return;
                         }
                         else
                         {
                             chunk.State = ChunkState.MeshesChanged;
+                            var chunkHash = chunk.GetMd5Hash();
                             logger.Debug("[Chunk Resync] {0} - was DESYNC with server [{1}] !", chunk.Position, message.Flag.ToString());
                         }
                     }

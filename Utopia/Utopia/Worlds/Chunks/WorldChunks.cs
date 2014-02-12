@@ -556,13 +556,18 @@ namespace Utopia.Worlds.Chunks
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.VisibleChunkInWorld.X] = chunk;
                     SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.VisibleChunkInWorld.X] = chunk;
 
-                    //Is this chunk inside the Client storae manager ?
+                    //Is this chunk inside the Client storage manager ?
                     if (_chunkstorage.ChunkHashes.TryGetValue(chunk.Position, out chunkMD5))
                     {
                         chunkPosition.Add(new Vector3I((VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X)) / AbstractChunk.ChunkSize.X, 0,
                                                        (VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)) / AbstractChunk.ChunkSize.Z));
                         chunkHash.Add(chunkMD5);
                     }
+                    if (chunk.Position.ToString() == "[0;0;0]")
+                    {
+                        logger.Debug("Chunk Init phase requested from server; Position : {0},  Hash {1}", chunk.Position, chunkMD5);
+                    }
+
                 }
             }
 
@@ -618,6 +623,11 @@ namespace Utopia.Worlds.Chunks
                 chunkHash.Add(md5Hash);
                 chunk.IsServerRequested = true;
                 chunk.IsServerResyncMode = true;
+
+                if (chunk.Position.ToString() == "[0;0;0]")
+                {
+                    logger.Debug("Chunk ResyncClientChunks phase requested from server; Position : {0},  Hash {1}", chunk.Position, md5Hash);
+                }
             }
 
             var chunkRange = new Range3I(
