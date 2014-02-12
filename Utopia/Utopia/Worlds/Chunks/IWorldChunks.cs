@@ -36,6 +36,8 @@ namespace Utopia.Worlds.Chunks
 
         void ResyncClientChunks();
 
+        void ResyncChunk(Vector3I chunkPosition);
+
         ILandscapeManager2D LandscapeManager { get; }
 
         /// <summary>

@@ -646,6 +646,26 @@ namespace Utopia.Worlds.Chunks
 
         }
 
+        public void ResyncChunk(Vector3I chunkPosition)
+        {
+            var chunk = GetChunk(chunkPosition.X, chunkPosition.Z); 
+
+            var md5Hash = chunk.GetMd5Hash();
+            
+            chunk.IsServerRequested = true;
+            chunk.IsServerResyncMode = true;
+
+            _server.ServerConnection.Send(
+                new GetChunksMessage
+                {
+                    Range = new Range3I(chunkPosition, Vector3I.One),
+                    Md5Hashes = new [] { md5Hash },
+                    Positions = new []{ chunkPosition },
+                    HashesCount = 1,
+                    Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                });
+        }
+
         //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).
         void ChunkReadyToDraw(object sender, EventArgs e)
         {

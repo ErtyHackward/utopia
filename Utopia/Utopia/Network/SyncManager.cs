@@ -10,12 +10,30 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
+using Utopia.Worlds.Chunks;
 
 namespace Utopia.Network
 {
+    /// <summary>
+    /// Allows to prevent desynchronizations in the game
+    /// Desync can be detected by the server or the client
+    /// 
+    /// Server can detect it when it failed to perform ItemTransferOperation
+    /// in such case ErrorMessage with ErrorCode == ErrorCodes.DesyncDetected will be sent
+    /// 
+    /// Client can detect the desync by caching UseMessages with local IToolImpcat and 
+    /// comparing them to server responces
+    /// 
+    /// Local caching is done in RegisterUseMessage, validation is performed in RegisterFeedback
+    /// 
+    /// </summary>
     public class SyncManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
+        private readonly ServerComponent _server;
+        private readonly IWorldChunks _chunks;
         private readonly List<SyncItem> _syncItems = new List<SyncItem>();
 
         /// <summary>
@@ -25,50 +43,36 @@ namespace Utopia.Network
 
         protected virtual void OnDesyncDetected(DesyncEventArgs e)
         {
-            if (e.ChunksToSynchronize == null)
-                e.ChunksToSynchronize = new List<Vector3I>();
+            PrepareEvent(e);
 
-            if (e.EntitiesToSynchronize == null)
-                e.EntitiesToSynchronize = new List<uint>();
+            logger.Info("Desync detected, fixing...");
 
-            // we always need to resync our entity
-            if (!e.EntitiesToSynchronize.Contains(PlayerManager.PlayerCharacter.DynamicId))
-                e.EntitiesToSynchronize.Add(PlayerManager.PlayerCharacter.DynamicId);
-
-            // find chunks to resync
-            foreach (var entityId in e.EntitiesToSynchronize)
+            foreach (var chunkPos in e.ChunksToSynchronize)
             {
-                var entity = _dynamicEntityManager.FindEntity(new EntityLink(entityId));
-
-                if (entity != null)
-                {
-                    var rootPos = BlockHelper.EntityToChunkPosition(entity.Position);
-
-                    for (int x = -1; x < 2; x++)
-                    {
-                        for (int z = -1; z < 2; z++)
-                        {
-                            e.ChunksToSynchronize.Add(rootPos + new Vector3I(x, 0, z));
-                        }
-                    }
-                }
+                _chunks.ResyncChunk(chunkPos);
             }
 
-            e.ChunksToSynchronize = e.ChunksToSynchronize.Distinct().ToList();
+            foreach (var entityId in e.EntitiesToSynchronize)
+            {
+                _server.ServerConnection.Send(new GetEntityMessage{ DynamicEntityId = entityId });
+            }
 
             var handler = DesyncDetected;
             if (handler != null) handler(this, e);
         }
-
+        
         [Inject]
         public PlayerEntityManager PlayerManager { get; set; }
 
         public SyncManager(IVisualDynamicEntityManager dynamicEntityManager,
-                           ServerComponent server)
+                           ServerComponent server,
+                           IWorldChunks chunks)
         {
             _dynamicEntityManager = dynamicEntityManager;
-            server.MessageError += _server_MessageError;
-            server.MessageEntityData += server_MessageEntityData;
+            _server = server;
+            _chunks = chunks;
+            _server.MessageError += _server_MessageError;
+            _server.MessageEntityData += server_MessageEntityData;
         }
 
         void server_MessageEntityData(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<EntityDataMessage> e)
@@ -125,6 +129,40 @@ namespace Utopia.Network
         public void Clear()
         {
             _syncItems.Clear();
+        }
+
+        private void PrepareEvent(DesyncEventArgs e)
+        {
+            if (e.ChunksToSynchronize == null)
+                e.ChunksToSynchronize = new List<Vector3I>();
+
+            if (e.EntitiesToSynchronize == null)
+                e.EntitiesToSynchronize = new List<uint>();
+
+            // we always need to resync our entity
+            if (!e.EntitiesToSynchronize.Contains(PlayerManager.PlayerCharacter.DynamicId))
+                e.EntitiesToSynchronize.Add(PlayerManager.PlayerCharacter.DynamicId);
+
+            // find chunks to resync
+            foreach (var entityId in e.EntitiesToSynchronize)
+            {
+                var entity = _dynamicEntityManager.FindEntity(new EntityLink(entityId));
+
+                if (entity != null)
+                {
+                    var rootPos = BlockHelper.EntityToChunkPosition(entity.Position);
+
+                    for (int x = -1; x < 2; x++)
+                    {
+                        for (int z = -1; z < 2; z++)
+                        {
+                            e.ChunksToSynchronize.Add(rootPos + new Vector3I(x, 0, z));
+                        }
+                    }
+                }
+            }
+
+            e.ChunksToSynchronize = e.ChunksToSynchronize.Distinct().ToList();
         }
     }
 
