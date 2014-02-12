@@ -173,6 +173,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash = impactedChunk.GetMd5Hash();
             byte[] chunkDataCompressed = impactedChunk.Compress();
+
+            //TESTING Decompression ! => not Working
+            //impactedChunk.Decompress(chunkDataCompressed);
+
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkPos = impactedChunk.Position, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
 
         }
