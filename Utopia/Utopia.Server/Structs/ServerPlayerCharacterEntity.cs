@@ -115,8 +115,7 @@ namespace Utopia.Server.Structs
 
             if (entityUseMessage.UseType == UseType.Craft)
             {
-                var impact = new ToolImpact();
-                impact.Success = playerCharacter.Craft(entityUseMessage.RecipeIndex);
+                var impact = playerCharacter.Craft(entityUseMessage.RecipeIndex);
                 CurrentArea.UseFeedback(new UseFeedbackMessage
                 {
                     Token = entityUseMessage.Token,
