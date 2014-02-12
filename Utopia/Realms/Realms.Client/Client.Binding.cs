@@ -194,6 +194,7 @@ namespace Realms.Client
 
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<SyncManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Game Componenents =========================================

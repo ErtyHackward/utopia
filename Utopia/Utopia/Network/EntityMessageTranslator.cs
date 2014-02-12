@@ -21,6 +21,8 @@ namespace Utopia.Network
         private readonly IChunkEntityImpactManager _landscapeManager;
         private readonly SyncManager _syncManager;
         private IDynamicEntity _playerEntity;
+
+        private int _useToken;
         
         /// <summary>
         /// Gets or sets main player entity. All its events will be translated to the server
@@ -205,7 +207,10 @@ namespace Utopia.Network
         //These are player event subscribing
         private void PlayerEntityUse(object sender, EntityUseEventArgs e)
         {
-            var useMessage = new EntityUseMessage(e);
+            var useMessage = new EntityUseMessage(e) { 
+                Token = ++_useToken 
+            };
+
             _syncManager.RegisterUseMessage(useMessage, e.Impact);
             _server.ServerConnection.Send(useMessage);
         }
