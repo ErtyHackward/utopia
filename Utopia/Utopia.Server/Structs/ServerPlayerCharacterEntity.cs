@@ -157,9 +157,9 @@ namespace Utopia.Server.Structs
                 }
                 else
                 {
-                    Connection.Send(new ChatMessage
+                    Connection.Send(new ErrorMessage()
                     {
-                        DisplayName = "toolsystem",
+                        ErrorCode = ErrorCodes.DesyncDetected,
                         Message = "Invalid toolid provided. Can not use the tool"
                     });
                 }
@@ -418,7 +418,10 @@ namespace Utopia.Server.Structs
 
         private void ItemError()
         {
-            Connection.Send(new ChatMessage { DisplayName = "inventory", Message = "Invalid transfer operation" });
+            Connection.Send(new ErrorMessage { 
+                ErrorCode = ErrorCodes.DesyncDetected, 
+                Message = "Invalid transfer operation" 
+            });
         }
 
     }

@@ -107,7 +107,7 @@ namespace Utopia.Server.Managers
             {
                 var error = new ErrorMessage
                 {
-                    ErrorCode = ErrorCodes.VersionMissmatch,
+                    ErrorCode = ErrorCodes.VersionMismatch,
                     Data = ServerConnection.ProtocolVersion,
                     Message = "Wrong client version, expected " + ServerConnection.ProtocolVersion
                 };
