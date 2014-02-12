@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Structs;
 using Vector3D = S33M3Resources.Structs.Vector3D;
-using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -21,7 +18,6 @@ using S33M3CoreComponents.Maths;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Worlds.GameClocks;
-using Utopia.Entities.Managers;
 using Utopia.Shared.World;
 using Utopia.Shared.Sounds;
 using System.IO;
@@ -60,7 +56,7 @@ namespace Utopia.Sounds
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private IWorldChunks _worldChunk;
         private IClock _gameClockTime;
-        private IPlayerManager _playerEntityManager;
+        private readonly PlayerEntityManager _playerEntityManager;
         private VisualWorldParameters _visualWorldParameters;
         private UtopiaProcessorParams _biomesParams;
         private Dictionary<IItem, ISoundVoice> _staticEntityPlayingVoices = new Dictionary<IItem, ISoundVoice>();
@@ -68,7 +64,7 @@ namespace Utopia.Sounds
         private FastRandom _rnd;
 
         private Vector3 _listenerPosition;
-        private IDynamicEntity _player;
+
 
         private readonly SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>>();
 
@@ -97,11 +93,10 @@ namespace Utopia.Sounds
                                 CameraManager<ICameraFocused> cameraManager,
                                 SingleArrayChunkContainer singleArray,
                                 IVisualDynamicEntityManager dynamicEntityManager,
-                                IDynamicEntity player,
                                 IChunkEntityImpactManager chunkEntityImpactManager,
                                 IWorldChunks worldChunk,
                                 IClock gameClockTime,
-                                IPlayerManager playerEntityManager,
+                                PlayerEntityManager playerEntityManager,
                                 VisualWorldParameters visualWorldParameters,
                                 IClock worlClock)
         {
@@ -120,8 +115,8 @@ namespace Utopia.Sounds
             }
 
             _dynamicEntityManager = dynamicEntityManager;
-            _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = player, Position = player.Position, isLocalSound = true });
-            _player = player;
+            _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = _playerEntityManager.Player, Position = _playerEntityManager.Player.Position, isLocalSound = true });
+            _playerEntityManager.PlayerEntityChanged += _playerEntityManager_PlayerEntityChanged;
 
             //Register to Events
             
@@ -134,7 +129,21 @@ namespace Utopia.Sounds
             _rnd = new FastRandom();
             MoodsSounds = new Dictionary<MoodSoundKey, List<IUtopiaSoundSource>>();
 
-            this.IsDefferedLoadContent = true; //Make LoadContent executed in thread
+            IsDefferedLoadContent = true; //Make LoadContent executed in thread
+        }
+
+        void _playerEntityManager_PlayerEntityChanged(object sender, PlayerEntityChangedEventArgs e)
+        {
+            _stepsTracker.RemoveAll(t => t.Entity == e.PreviousCharacter);
+
+            if (e.PlayerCharacter != null)
+            {
+                _stepsTracker.Add(new DynamicEntitySoundTrack { 
+                    Entity = _playerEntityManager.Player, 
+                    Position = _playerEntityManager.Player.Position, 
+                    isLocalSound = true 
+                });
+            }
         }
 
         public override void BeforeDispose()
@@ -289,8 +298,8 @@ namespace Utopia.Sounds
             _soundEngine.Update3DSounds();
 
             //Get current player chunk
-            VisualChunk chunk = _worldChunk.GetChunk(MathHelper.Floor(_player.Position.X), MathHelper.Floor(_player.Position.Z));
-            Vector3I playerPosition = (Vector3I)_player.Position;
+            var chunk = _worldChunk.GetChunk(MathHelper.Floor(_playerEntityManager.Player.Position.X), MathHelper.Floor(_playerEntityManager.Player.Position.Z));
+            var playerPosition = (Vector3I)_playerEntityManager.Player.Position;
 
             //Always active background music linked to player Mood + Time
             MoodSoundProcessing(ref playerPosition);

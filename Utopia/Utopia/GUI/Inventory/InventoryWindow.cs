@@ -76,9 +76,11 @@ namespace Utopia.GUI.Inventory
         public SlotContainer<ContainedSlot> Content
         {
             get { return _content; }
-            set { 
+            set {
                 _content = value;
-                BuildGrid(GridOffset);
+
+                if (_content != null)
+                    BuildGrid(GridOffset);
             }
         }
 
@@ -86,19 +88,9 @@ namespace Utopia.GUI.Inventory
         {
             _inputManager = inputManager;
             GridOffset = gridOffset;
-            _content = container;
+            Content = container;
             _iconFactory = iconFactory;
             _windowStartPosition = windowStartPosition;
-
-            if (container != null)
-            {
-                var width = _content.GridSize.X*CellSize + GridOffset.X + 4;
-                var height = _content.GridSize.Y*CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
-
-                Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
-
-                BuildGrid(GridOffset);
-            }
         }
 
         public InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition, InputsManager inputManager)
@@ -114,6 +106,11 @@ namespace Utopia.GUI.Inventory
 
         public void BuildGrid(Point offset)
         {
+            var width = _content.GridSize.X * CellSize + GridOffset.X + 4;
+            var height = _content.GridSize.Y * CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
+
+            Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
+
             if (UiGrid != null)
             {
                 for (int x = 0; x < _content.GridSize.X; x++)

@@ -4,6 +4,7 @@ using Ninject;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Inventory;
 using SharpDX.Direct3D11;
 using S33M3DXEngine.Main;
@@ -48,9 +49,13 @@ namespace Utopia.GUI
             var handler = SlotClicked;
             if (handler != null) handler(this, e);
         }
+        
+        public PlayerCharacter Player {
+            get { return PlayerEntityManager.PlayerCharacter; }
+        }
 
         [Inject]
-        public PlayerCharacter Player { get; set; }
+        public PlayerEntityManager PlayerEntityManager { get; set; }
 
         public Hud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager, CameraManager<ICameraFocused> camManager)
         {

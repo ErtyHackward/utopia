@@ -1,33 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
-using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
-using Utopia.Entities.Voxel;
-using Utopia.GUI.Crafting;
 using Utopia.GUI.Inventory;
-using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
 
 namespace Realms.Client.Components.GUI
 {
     public class SandboxToolBar : ToolBarUi
     {
-        private readonly PlayerCharacter _player;
-        private readonly GodEntity _godEntity;
-        private readonly EntityFactory _factory;
-        private readonly DynamicEntityManager _dynamicEntityManager;
-
         public override int DrawGroupId
         {
             get
@@ -41,7 +28,6 @@ namespace Realms.Client.Components.GUI
         readonly SpriteTexture _stToolbatSlotHover;
 
         private readonly List<LabelControl> _numbersLabels = new List<LabelControl>();
-        private ModelControl _modelControl;
 
         /// <summary>
         /// Occurs when user picks an entity
@@ -53,26 +39,17 @@ namespace Realms.Client.Components.GUI
             var handler = EntitySelected;
             if (handler != null) handler(this, e);
         }
-
-        public HLSLVoxelModel VoxelEffect
-        {
-            get { return _modelControl.VoxelEffect; }
-            set { _modelControl.VoxelEffect = value; }
-        }
-
+        
         public List<LabelControl> NumbersLabels
         {
             get { return _numbersLabels; }
         }
 
         public SandboxToolBar(D3DEngine engine,
-                              PlayerCharacter player, 
-                              GodEntity godEntity, 
+                              PlayerEntityManager player, 
                               IconFactory iconFactory, 
                               InputsManager inputManager, 
-                              EntityFactory factory, 
-                              VoxelModelManager voxelModelManager,
-                              DynamicEntityManager dynamicEntityManager
+                              EntityFactory factory
             ) : base(player, iconFactory, inputManager, factory)
         {
             _stBackground = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_bg.png");
@@ -128,16 +105,4 @@ namespace Realms.Client.Components.GUI
     {
         public Entity Entity { get; set; }
     }
-
-    //public class SandboxToolBarRenderer : IFlatControlRenderer<SandboxToolBar>
-    //{
-    //    public void Render(SandboxToolBar control, IFlatGuiGraphics graphics)
-    //    {
-    //        if (control.DisplayBackground)
-    //        {
-    //            var absoluteBounds = control.GetAbsoluteBounds();
-    //            graphics.DrawElement("toolbar", ref absoluteBounds);
-    //        }
-    //    }
-    //}
 }

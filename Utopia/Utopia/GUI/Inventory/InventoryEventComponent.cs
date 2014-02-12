@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Ninject;
 using S33M3CoreComponents.Sound;
 using S33M3CoreComponents.Sprites2D;
@@ -11,7 +10,6 @@ using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Entities;
-using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.GUI.Inventory
@@ -46,9 +44,6 @@ namespace Utopia.GUI.Inventory
         private float _alpha;
 
         #region Dependencies
-        [Inject]
-        public PlayerCharacter Player { get; set; }
-
         [Inject]
         public D3DEngine Engine { get; set; }
 

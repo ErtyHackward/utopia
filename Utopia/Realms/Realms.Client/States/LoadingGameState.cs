@@ -182,32 +182,11 @@ namespace Realms.Client.States
         {
             var serverComponent = _ioc.Get<ServerComponent>();
             
-            IDynamicEntity entity = null;
-
-            if (e.Message.Entity is PlayerCharacter)
-            {
-                var player = (PlayerCharacter)e.Message.Entity;
-                
-                _ioc.Rebind<PlayerCharacter>().ToConstant(player).InScope(x => GameScope.CurrentGameScope); //Register the current Player.
-                _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player"); //Register the current Player.
-                
-                entity = player;
-            }
-            else if (e.Message.Entity is GodEntity)
-            {
-                var player = (GodEntity)e.Message.Entity;
-                
-                _ioc.Rebind<GodEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope);
-                _ioc.Rebind<IDynamicEntity>().ToConstant(player).InScope(x => GameScope.CurrentGameScope).Named("Player");
-
-                entity = player;
-            }
-
             serverComponent.MessageEntityIn -= ServerConnectionMessageEntityIn;
-            serverComponent.Player = entity;
+            serverComponent.Player = (IDynamicEntity)e.Message.Entity;
 
             var factory = _ioc.Get<EntityFactory>();
-            factory.PrepareEntity(entity);
+            factory.PrepareEntity(serverComponent.Player);
 
             GameplayComponentsCreation();
         }
@@ -253,7 +232,9 @@ namespace Realms.Client.States
             var serverComponent = _ioc.Get<ServerComponent>();
             var worldFocusManager = _ioc.Get<WorldFocusManager>();
             var wordParameters = _ioc.Get<WorldParameters>();
-            var visualWorldParameters = _ioc.Get<VisualWorldParameters>(new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)));
+            var visualWorldParameters = _ioc.Get<VisualWorldParameters>(
+                new ConstructorArgument("visibleChunkInWorld", new Vector2I(ClientSettings.Current.Settings.GraphicalParameters.WorldSize, ClientSettings.Current.Settings.GraphicalParameters.WorldSize)),
+                new ConstructorArgument("player", serverComponent.Player));
             
             var firstPersonCamera = _ioc.Get<ICameraFocused>("FirstPCamera");
             var thirdPersonCamera = _ioc.Get<ICameraFocused>("ThirdPCamera");
@@ -298,7 +279,6 @@ namespace Realms.Client.States
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
             var entityPickingManager = _ioc.Get<IEntityPickingManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            var playerCharacter = _ioc.Get<PlayerCharacter>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
             var itemMessageTranslator = _ioc.Get<ItemMessageTranslator>();

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ninject;
 using S33M3Resources.Structs;
+using Utopia.Entities.Managers;
+using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Helpers;
@@ -13,8 +15,7 @@ namespace Utopia.Network
 {
     public class SyncManager
     {
-        private readonly PlayerCharacter _player;
-        private readonly IDynamicEntityManager _dynamicEntityManager;
+        private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly List<SyncItem> _syncItems = new List<SyncItem>();
 
         /// <summary>
@@ -31,8 +32,8 @@ namespace Utopia.Network
                 e.EntitiesToSynchronize = new List<uint>();
 
             // we always need to resync our entity
-            if (!e.EntitiesToSynchronize.Contains(_player.DynamicId))
-                e.EntitiesToSynchronize.Add(_player.DynamicId);
+            if (!e.EntitiesToSynchronize.Contains(PlayerManager.PlayerCharacter.DynamicId))
+                e.EntitiesToSynchronize.Add(PlayerManager.PlayerCharacter.DynamicId);
 
             // find chunks to resync
             foreach (var entityId in e.EntitiesToSynchronize)
@@ -59,13 +60,31 @@ namespace Utopia.Network
             if (handler != null) handler(this, e);
         }
 
-        public SyncManager(PlayerCharacter player,
-                           IDynamicEntityManager dynamicEntityManager,
+        [Inject]
+        public PlayerEntityManager PlayerManager { get; set; }
+
+        public SyncManager(IVisualDynamicEntityManager dynamicEntityManager,
                            ServerComponent server)
         {
-            _player = player;
             _dynamicEntityManager = dynamicEntityManager;
             server.MessageError += _server_MessageError;
+            server.MessageEntityData += server_MessageEntityData;
+        }
+
+        void server_MessageEntityData(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<EntityDataMessage> e)
+        {
+            // update the entity
+            if (e.Message.Entity != null)
+            {
+                var dynEntity = (IDynamicEntity)e.Message.Entity;
+
+                _dynamicEntityManager.UpdateEntity(dynEntity);
+
+                if (dynEntity.DynamicId == PlayerManager.PlayerCharacter.DynamicId)
+                {
+                    PlayerManager.PlayerCharacter = (PlayerCharacter)dynEntity;
+                }
+            }
         }
 
         void _server_MessageError(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<ErrorMessage> e)
