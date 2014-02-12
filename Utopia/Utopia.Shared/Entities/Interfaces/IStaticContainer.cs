@@ -28,5 +28,20 @@
         /// Deletes all items from the container
         /// </summary>
         void Clear();
+
+        /// <summary>
+        /// Detects if spicified entity in this collection
+        /// </summary>
+        /// <param name="staticEntityId"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        bool ContainsId(uint staticEntityId, out IStaticEntity entity);
+
+        /// <summary>
+        /// Detects if spicified entity in this collection
+        /// </summary>
+        /// <param name="staticEntityId"></param>
+        /// <returns></returns>
+        bool ContainsId(uint staticEntityId);
     }
 }

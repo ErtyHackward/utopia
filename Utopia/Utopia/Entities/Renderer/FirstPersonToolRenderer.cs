@@ -167,6 +167,9 @@ namespace Utopia.Entities.Renderer
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
+            if (_player == null)
+                return;
+
             // update model color, get the cube where model is
             var result = _chunkContainer.GetCube(_player.Position);
             if (result.IsValid && result.Cube.Id == WorldConfiguration.CubeId.Air)
