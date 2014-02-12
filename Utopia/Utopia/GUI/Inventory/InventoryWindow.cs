@@ -88,9 +88,10 @@ namespace Utopia.GUI.Inventory
         {
             _inputManager = inputManager;
             GridOffset = gridOffset;
-            Content = container;
             _iconFactory = iconFactory;
             _windowStartPosition = windowStartPosition;
+
+            Content = container;
         }
 
         public InventoryWindow(SlotContainer<ContainedSlot> container, IconFactory iconFactory, Point windowStartPosition, InputsManager inputManager)

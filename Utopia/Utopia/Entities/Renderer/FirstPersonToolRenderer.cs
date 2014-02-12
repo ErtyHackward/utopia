@@ -149,7 +149,7 @@ namespace Utopia.Entities.Renderer
 
         void _player_Use(object sender, Shared.Entities.Events.EntityUseEventArgs e)
         {
-            if (e.Tool != null)
+            if (e.Tool != null && e.Tool != PlayerCharacter.HandTool)
             {
                 _animation = true;
                 _animationStated = true;

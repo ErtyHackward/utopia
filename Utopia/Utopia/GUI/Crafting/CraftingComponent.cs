@@ -46,7 +46,6 @@ namespace Utopia.GUI.Crafting
                 var recipeIndex = CraftingWindow.RecipesList.SelectedItems[0];
 
                 CraftingWindow.Player.CraftUse(recipeIndex);
-                CraftingWindow.Player.Craft(recipeIndex);
                 CraftingWindow.Update();
             }
         }

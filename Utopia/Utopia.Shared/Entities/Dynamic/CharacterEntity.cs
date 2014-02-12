@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
@@ -167,12 +168,15 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Fires entity use event for the craft operation
         /// </summary>
         /// <param name="recipeIndex"></param>
-        public void CraftUse(int recipeIndex)
+        public IToolImpact CraftUse(int recipeIndex)
         {
             var args = EntityUseEventArgs.FromState(this);
             args.UseType = UseType.Craft;
             args.RecipeIndex = recipeIndex;
+            args.Impact = Craft(recipeIndex);
             OnUse(args);
+
+            return args.Impact;
         }
 
         /// <summary>
@@ -180,8 +184,10 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         /// <param name="recipeIndex"></param>
         /// <returns></returns>
-        public bool Craft(int recipeIndex)
+        public IToolImpact Craft(int recipeIndex)
         {
+            var impact = new ToolImpact();
+
             try
             {
                 var recipe = EntityFactory.Config.Recipes[recipeIndex];
@@ -191,26 +197,36 @@ namespace Utopia.Shared.Entities.Dynamic
                 {
                     var count = Slots().Where(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
                     if (count < ingredient.Count)
-                        return false;
+                    {
+                        impact.Message = "Not enough ingerdients";
+                        return impact;
+                    }
                 }
 
                 foreach (var ingredient in recipe.Ingredients)
                 {
                     if (!TakeItems(ingredient.BlueprintId, ingredient.Count))
-                        return false;
+                    {
+                        impact.Message = "Can't take items from the inventory";
+                        return impact;
+                    }
                 }
                 
                 var item = (Item)EntityFactory.CreateFromBluePrint(recipe.ResultBlueprintId);
-
+                
                 if (!Inventory.PutItem(item, recipe.ResultCount))
-                    return false;
+                {
+                    impact.Message = "Can't put item to the inventory";
+                    return impact;
+                }
 
-                return true;
+                impact.Success = true;
+                return impact;
             }
-            catch (Exception)
+            catch (Exception x)
             {
-
-                return false;
+                impact.Message = x.Message;
+                return impact;
             }
         }
 
