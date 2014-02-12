@@ -187,6 +187,8 @@ namespace Realms.Server
             {
                 Console.WriteLine("Type 'exit' to quit");
             }
+
+            _server.ConnectionManager.Dispose();
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
