@@ -121,7 +121,7 @@ namespace S33M3Resources.Structs
 
         public override string ToString()
         {
-            return string.Format("[{0};{1};{2}]", x, y, z);
+            return string.Format("[{0:000}; {1:000}; {2:000}]", x, y, z);
         }
 
         public static implicit operator Vector3(Vector3I pos)
