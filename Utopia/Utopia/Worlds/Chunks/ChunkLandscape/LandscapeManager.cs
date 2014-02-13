@@ -156,7 +156,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                             chunk.IsServerRequested = false;
                             chunk.IsServerResyncMode = false;
                             lock (_syncRoot) _receivedServerChunks.Remove(chunk.Position); //Remove the sync from the recieved queue
-                            logger.Trace("[Chunk Resync] {0} - was still in sync with server [{1}] !", chunk.Position, message.Flag.ToString());
                             return;
                         }
                         else
@@ -216,7 +215,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                 _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                 chunk.StorageRequestTicket = 0;
                             }
-
                             break;
                         case ChunkDataMessageFlag.ChunkMd5Equal:
                             //Do we still have to wait for the chunk from the local storage ??
@@ -233,6 +231,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                                     _chunkStorageManager.FreeTicket(chunk.StorageRequestTicket);
                                     chunk.StorageRequestTicket = 0;
                                 }
+
+
                             }
                             break;
                         default:
@@ -243,8 +243,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     chunk.IsServerRequested = false;
                     chunk.IsServerResyncMode = false;
                     chunk.State = ChunkState.LandscapeCreated;
-
-                    logger.Debug("CheckServerReceivedData {0}, {1}, {2}", chunk.Position, chunk.GetMd5Hash(), message.Flag);
                 }
             }
             else
