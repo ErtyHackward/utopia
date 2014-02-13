@@ -10,13 +10,9 @@
         /// </summary>
         Undefinded = 0,
         /// <summary>
-        /// User that have no registration yet
+        /// Default user rights
         /// </summary>
-        Guest,
-        /// <summary>
-        /// Normal ordinary registered user
-        /// </summary>
-        Registered,
+        Normal,
         /// <summary>
         /// User with higher credentials
         /// </summary>

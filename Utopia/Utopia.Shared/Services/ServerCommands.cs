@@ -5,7 +5,7 @@ namespace Utopia.Shared.Services
     /// <summary>
     /// Server command for status information
     /// </summary>
-    public class StatusCommand : AdministratorCommand
+    public class StatusCommand : ModeratorCommand
     {
         public override string Id
         {
@@ -18,7 +18,7 @@ namespace Utopia.Shared.Services
         }
     }
 
-    public class SaveCommand : AdministratorCommand
+    public class SaveCommand : ModeratorCommand
     {
         public override string Id
         {
@@ -31,7 +31,7 @@ namespace Utopia.Shared.Services
         }
     }
 
-    public class ServicesCommand : AdministratorCommand
+    public class ServicesCommand : ModeratorCommand
     {
         public override string Id
         {
@@ -44,7 +44,7 @@ namespace Utopia.Shared.Services
         }
     }
 
-    public class SettimeCommand : AdministratorCommand
+    public class SettimeCommand : ModeratorCommand
     {
         public override string Id
         {
@@ -67,6 +67,19 @@ namespace Utopia.Shared.Services
         public override string Description
         {
             get { return "Adds items to the inventory. Format: \"additem <blueprintid> [count=1]\" Example: additem 59 10"; }
+        }
+    }
+
+    public class SetroleCommand : AdministratorCommand
+    {
+        public override string Id
+        {
+            get { return "setrole"; }
+        }
+
+        public override string Description
+        {
+            get { return "Changes access level of the user. Format: \"setrole <usernickname> <role>\".\n Possible roles: op, normal "; }
         }
     }
 

@@ -67,7 +67,12 @@ namespace Utopia.Server.Managers
                 // tell everybody that this player is gone
                 _server.AreaManager.RemoveEntity(e.Connection.ServerEntity);
 
-                _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} has left the game.", e.Connection.DisplayName), Operator = true });
+                _server.ConnectionManager.Broadcast(new ChatMessage { 
+                    IsServerMessage = true,
+                    DisplayName = "server",
+                    Message = string.Format("{0} has left the game.", e.Connection.DisplayName), 
+                    Operator = true 
+                });
 
                 e.Connection.ServerEntity.CurrentArea = null;
             }
@@ -75,11 +80,28 @@ namespace Utopia.Server.Managers
 
         void Connection_MessageEntityIn(object sender, ProtocolMessageEventArgs<EntityInMessage> e)
         {
-            var connection = (ClientConnection)sender; 
+            var connection = (ClientConnection)sender;
 
-            _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = "server", Message = string.Format("{0} joined.", connection.DisplayName), Operator = true });
-            connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName), Operator = true });
-
+            _server.ConnectionManager.Broadcast(new ChatMessage { 
+                IsServerMessage = true, 
+                DisplayName = "server",
+                Message = string.Format("{0} joined.", connection.DisplayName), 
+                Operator = true 
+            });
+            connection.Send(new ChatMessage { 
+                IsServerMessage = true,
+                DisplayName = "server",
+                Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName, _server.ConnectionManager.Count), 
+                Operator = true 
+            });
+            connection.Send(new ChatMessage
+            {
+                IsServerMessage = true,
+                DisplayName = "server",
+                Message = string.Format("Players online: {0}", _server.ConnectionManager.Count),
+                Operator = true
+            });
+            
             // adding entity to the world
             _server.AreaManager.AddEntity(connection.ServerEntity);
         }

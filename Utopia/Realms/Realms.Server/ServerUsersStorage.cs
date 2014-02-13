@@ -59,7 +59,7 @@ namespace Realms.Server
                 
                 if (responce != null && responce.Valid)
                 {
-                    var role = UserRole.Guest;
+                    var role = UserRole.Normal;
 
                     if (_storage.GetUsersCount() == 0)
                         role = UserRole.Administrator;

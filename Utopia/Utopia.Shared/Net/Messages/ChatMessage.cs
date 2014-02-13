@@ -40,5 +40,11 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         [ProtoMember(4)]
         public string Message { get; set; }
+
+        /// <summary>
+        /// Indicates if this is the special server message
+        /// </summary>
+        [ProtoMember(5)]
+        public bool IsServerMessage { get; set; }
     }
 }

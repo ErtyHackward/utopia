@@ -131,11 +131,18 @@ namespace Utopia.GUI
             //Cut the received message by line feed
             foreach (var msgText in e.Message.Message.Split('\n'))
             {
-                if (e.Message.Action)
+                if (e.Message.IsServerMessage)
                 {
-                    AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
+                    AddMessage(string.Format("-{0}- {1}", e.Message.DisplayName, msgText));
                 }
-                else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
+                else
+                {
+                    if (e.Message.Action)
+                    {
+                        AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
+                    }
+                    else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
+                }
             }
 
             _lastUpdateTime = Stopwatch.GetTimestamp();

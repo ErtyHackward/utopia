@@ -37,7 +37,7 @@ namespace Utopia.Server.Managers
         private void ConnectionMessageChat(object sender, ProtocolMessageEventArgs<ChatMessage> e)
         {
             var connection = (ClientConnection)sender;
-            if (e.Message.DisplayName == connection.DisplayName)
+            if (e.Message.DisplayName == connection.DisplayName && !e.Message.IsServerMessage)
             {
                 var msg = e.Message.Message;
 
