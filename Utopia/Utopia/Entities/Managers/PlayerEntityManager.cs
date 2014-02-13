@@ -120,6 +120,9 @@ namespace Utopia.Entities.Managers
                     {
                         ea.PlayerCharacter = _playerCharacter;
                         _playerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
+
+                        var rightTool = _playerCharacter.Equipment.RightTool;
+                        PutMode = !(rightTool is ITool);
                     }
 
                     OnPlayerEntityChanged(ea);
@@ -204,7 +207,8 @@ namespace Utopia.Entities.Managers
             set
             {
                 _putMode = value;
-                GhostedEntityRenderer.Display = _putMode;
+                if (GhostedEntityRenderer != null)
+                    GhostedEntityRenderer.Display = _putMode;
             }
         }
 

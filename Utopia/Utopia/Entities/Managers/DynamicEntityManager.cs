@@ -580,8 +580,11 @@ namespace Utopia.Entities.Managers
         {
             Trace.Assert(entity.DynamicId != 0);
 
-            var visualEntity = _dynamicEntitiesDico[entity.DynamicId];
+            VisualDynamicEntity visualEntity;
 
+            if (!_dynamicEntitiesDico.TryGetValue(entity.DynamicId, out visualEntity))
+                return;
+            
             var oldEntity = visualEntity.DynamicEntity;
 
             entity.ModelInstance = oldEntity.ModelInstance;

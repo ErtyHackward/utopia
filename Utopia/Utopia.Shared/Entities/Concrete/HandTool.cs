@@ -45,6 +45,12 @@ namespace Utopia.Shared.Entities.Concrete
 
             var entity = owner.EntityState.PickedEntityLink.ResolveStatic(LandscapeManager);
 
+            if (entity == null)
+            {
+                impact.Message = "There is no entity by this link";
+                return impact;
+            }
+
             if (entity is IUsableEntity)
             {
                 var usable = (IUsableEntity)entity;

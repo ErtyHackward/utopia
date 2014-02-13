@@ -658,7 +658,7 @@ namespace Utopia.Worlds.Chunks
 
         public void ResyncChunk(Vector3I chunkPosition)
         {
-            var chunk = GetChunk(chunkPosition.X, chunkPosition.Z); 
+            var chunk = GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Z); 
 
             var md5Hash = chunk.GetMd5Hash();
             
@@ -669,8 +669,8 @@ namespace Utopia.Worlds.Chunks
                 new GetChunksMessage
                 {
                     Range = new Range3I(chunkPosition, Vector3I.One),
-                    Md5Hashes = new [] { md5Hash },
-                    Positions = new []{ chunkPosition },
+                    Md5Hashes = new[] { md5Hash },
+                    Positions = new[] { chunkPosition },
                     HashesCount = 1,
                     Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                 });

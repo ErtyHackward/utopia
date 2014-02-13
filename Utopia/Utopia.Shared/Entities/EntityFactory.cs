@@ -381,25 +381,35 @@ namespace Utopia.Shared.Entities
         {
             switch ((MessageTypes)imsg.MessageId)
             {
-                case MessageTypes.EntityIn:
+                case MessageTypes.EntityData:
+                {
+                    var msg = (EntityDataMessage)imsg;
+                    if (msg.Entity != null)
                     {
-                        var msg = (EntityInMessage)imsg;
-
-                        if (msg.Entity != null)
-                        {
-                            PrepareEntity(msg.Entity);
-                        }
+                        PrepareEntity(msg.Entity);
                     }
+
+                }
+                    break;
+                case MessageTypes.EntityIn:
+                {
+                    var msg = (EntityInMessage)imsg;
+
+                    if (msg.Entity != null)
+                    {
+                        PrepareEntity(msg.Entity);
+                    }
+                }
                     break;
                 case MessageTypes.EntityEquipment:
-                    {
-                        var msg = (EntityEquipmentMessage)imsg;
+                {
+                    var msg = (EntityEquipmentMessage)imsg;
 
-                        if (msg.Entity != null)
-                        {
-                            PrepareEntity(msg.Entity);
-                        }
+                    if (msg.Entity != null)
+                    {
+                        PrepareEntity(msg.Entity);
                     }
+                }
                     break;
             }
         }

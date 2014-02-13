@@ -35,7 +35,7 @@ namespace Utopia.GUI.Inventory
             // rebuild the slots grid
             Content = _playerEntityManager.PlayerCharacter.Inventory;
 
-            foreach (var control in Children.OfType<InventoryCell>())
+            foreach (var control in Children.OfType<InventoryCell>().Where(c => c.Container.Parent != _playerEntityManager.PlayerCharacter))
             {
                 control.Container = _playerEntityManager.PlayerCharacter.Equipment;
             }
@@ -43,8 +43,13 @@ namespace Utopia.GUI.Inventory
 
         protected InventoryCell BuildBodyslot(EquipmentSlotType inventorySlot, int x, int y, int size = 32)
         {
-            var bodyCell = new InventoryCell(_playerEntityManager.PlayerCharacter.Equipment, _iconFactory, new Vector2I(0, (int) inventorySlot),
-                                             _inputManager);
+            var bodyCell = new InventoryCell(
+                _playerEntityManager.PlayerCharacter.Equipment,
+                _iconFactory,
+                new Vector2I(0, (int)inventorySlot),
+                _inputManager
+                );
+
             bodyCell.DrawGroupId = DrawGroupId;
             bodyCell.Name = inventorySlot.ToString();
             bodyCell.Bounds = new UniRectangle(x, y, size, size);
