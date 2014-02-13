@@ -211,11 +211,12 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
+
                 entity.StaticId = staicId;
                 entity.Container = this;
                 _entities.Add(entity.StaticId, entity);
             }
-            
+
             IsDirty = true;
             OnEntityAdded(new EntityCollectionEventArgs { 
                 Entity = entity, 
