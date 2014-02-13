@@ -243,6 +243,8 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
                     chunk.IsServerRequested = false;
                     chunk.IsServerResyncMode = false;
                     chunk.State = ChunkState.LandscapeCreated;
+
+                    logger.Debug("CheckServerReceivedData {0}, {1}, {2}", chunk.Position, chunk.GetMd5Hash(), message.Flag);
                 }
             }
             else

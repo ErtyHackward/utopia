@@ -485,10 +485,11 @@ namespace Utopia.Entities.Managers
         
         public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}]", PlayerCharacter.CharacterName,
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] Chunk : {4}", PlayerCharacter.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
-                                                                                  Math.Round(Player.Position.Z, 1)
+                                                                                  Math.Round(Player.Position.Z, 1),
+                                                                                  _landscapeManager.GetChunkFromBlock(new Vector3I(Player.Position.X, Player.Position.Y, Player.Position.Z)).Position.ToString() 
                                                                                   );            
         }
     }
