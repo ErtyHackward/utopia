@@ -83,12 +83,16 @@ namespace Utopia.Shared.Entities
                 return list;
             }
             set {
-                _entities.Clear();
+                lock (_syncRoot)
+                {
+                    _entities.Clear();
+                }
                 foreach (var keyValuePair in value)
                 {
                     var entity = (IStaticEntity)keyValuePair.Value;
                     AddWithId(entity, keyValuePair.Key, 0, true);
                 }
+                
             }
         }
 
@@ -163,7 +167,7 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public uint GetFreeId()
         {
-            lock (_entities)
+            lock (_syncRoot)
             {
                 if(_entities.Count > 0)
                     return _entities[_entities.Keys[_entities.Count - 1]].StaticId + 1;
@@ -196,7 +200,7 @@ namespace Utopia.Shared.Entities
         }
 
         /// <summary>
-        /// Warning: function is not threadsafe
+        /// Warning: care about GetFreeId() because it is outside the sync
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="staicId"></param>
@@ -205,9 +209,12 @@ namespace Utopia.Shared.Entities
         private void AddWithId(IStaticEntity entity, uint staicId, uint sourceDynamicId = 0,
             bool atChunkCreationTime = false)
         {
-            entity.StaticId = staicId;
-            entity.Container = this;
-            _entities.Add(entity.StaticId, entity);
+            lock (_syncRoot)
+            {
+                entity.StaticId = staicId;
+                entity.Container = this;
+                _entities.Add(entity.StaticId, entity);
+            }
             
             IsDirty = true;
             OnEntityAdded(new EntityCollectionEventArgs { 
@@ -375,7 +382,8 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
-                if (_entities.Count == 0) return;
+                if (_entities.Count == 0) 
+                    return;
 
                 foreach (var staticEntity in _entities)
                 {

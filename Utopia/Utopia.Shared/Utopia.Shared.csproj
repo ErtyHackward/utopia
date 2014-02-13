@@ -266,6 +266,7 @@
     <Compile Include="Services\Interfaces\IServer.cs" />
     <Compile Include="Services\Interfaces\IServerCommand.cs" />
     <Compile Include="Services\Interfaces\IServerLandscapeManager.cs" />
+    <Compile Include="Services\ModeratorCommand.cs" />
     <Compile Include="Services\NpcService.cs" />
     <Compile Include="Services\PlayerCommandEventArgs.cs" />
     <Compile Include="Services\ServerCommands.cs" />

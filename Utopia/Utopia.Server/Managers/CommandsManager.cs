@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Services;
 using Utopia.Shared.Services.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Server.Managers
 {
@@ -72,7 +73,7 @@ namespace Utopia.Server.Managers
                 IServerCommand command;
                 if (!_commands.TryGetValue(cmd, out command))
                 {
-                    connection.Send(new ChatMessage { DisplayName = "server", Message = "Sorry, no such command." });
+                    connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "Sorry, no such command." });
                     return true;
                 }
 
@@ -81,7 +82,7 @@ namespace Utopia.Server.Managers
                 {
                     if (!(command as IRoleRestrictedCommand).HasAccess(connection.UserRole))
                     {
-                        connection.Send(new ChatMessage { DisplayName = "server", Message = "Sorry, access denied." });
+                        connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "Sorry, access denied." });
                         return true;
                     }
                 }
@@ -98,7 +99,7 @@ namespace Utopia.Server.Managers
 
                         var commandsList = string.Join(", ", result);
 
-                        connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Available commands: {0}.\nUse help [command_name] to get additioanl information about command", commandsList) });
+                        connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = string.Format("Available commands: {0}.\nUse help [command_name] to get additioanl information about command", commandsList) });
                         
                         return true;
                     }
@@ -108,9 +109,9 @@ namespace Utopia.Server.Managers
                     IServerCommand c;
                     if (_commands.TryGetValue(cmdName, out c))
                     {
-                        connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("{0} - {1}", cmdName, c.Description) });
+                        connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = string.Format("{0} - {1}", cmdName, c.Description) });
                     }
-                    else connection.Send(new ChatMessage { DisplayName = "server", Message = "No such command" });
+                    else connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "No such command" });
                     
                     return true;
                 }
@@ -125,7 +126,7 @@ namespace Utopia.Server.Managers
                     sb.AppendFormat("Entities count: {0}\n", _server.AreaManager.EntitiesCount);
                     sb.AppendFormat("Perfomance: CPU usage {1}%, Free RAM {2}Mb, DynamicUpdate {0} msec", _server.PerformanceManager.UpdateAverageTime, _server.PerformanceManager.CpuUsage, _server.PerformanceManager.FreeRAM);
 
-                    connection.Send(new ChatMessage { DisplayName = "server", Message = sb.ToString() });
+                    connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = sb.ToString() });
                     return true;
                 }
                 #endregion
@@ -133,14 +134,14 @@ namespace Utopia.Server.Managers
                 if (command is SaveCommand)
                 {
                     _server.LandscapeManager.SaveChunks();
-                    connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", _server.LandscapeManager.SaveTime, _server.LandscapeManager.ChunksSaved) });
+                    connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = string.Format("Saved {1} chunks. Time: {0} ms", _server.LandscapeManager.SaveTime, _server.LandscapeManager.ChunksSaved) });
                     return true;
                 }
                 #endregion
                 #region Services command
                 if (command is ServicesCommand)
                 {
-                    connection.Send(new ChatMessage { DisplayName = "server", Message = "Currenty active services: " + string.Join(", ", (from s in _server.Services select s.GetType().Name)) });
+                    connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "Currenty active services: " + string.Join(", ", (from s in _server.Services select s.GetType().Name)) });
                     
                     return true;
                 }
@@ -162,7 +163,7 @@ namespace Utopia.Server.Managers
                     catch (Exception ex)
                     {
                         if(ex is OverflowException || ex is FormatException)
-                            connection.Send(new ChatMessage { DisplayName = "server", Message = "wrong time value, try 9:00 or 21:00" });
+                            connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "wrong time value, try 9:00 or 21:00" });
                         else throw;
                     }
                     return true;
@@ -180,11 +181,11 @@ namespace Utopia.Server.Managers
 
                         if (!ushort.TryParse(pars[0], out blueprintId))
                         {
-                            var entity = _server.EntityFactory.Config.BluePrints.Values.FirstOrDefault(v => string.Equals(v.Name, pars[0], StringComparison.CurrentCultureIgnoreCase));
+                            var entity = _server.EntityFactory.Config.BluePrints.Values.FirstOrDefault(v => string.Equals(v.Name.Replace(" ", ""), pars[0], StringComparison.CurrentCultureIgnoreCase));
 
                             if (entity == null)
                             {
-                                connection.Send(new ChatMessage { DisplayName = "server", Message = "There is no such item." });
+                                connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "There is no such item." });
                                 return false;
                             }
                             blueprintId = entity.BluePrintId;
@@ -197,16 +198,34 @@ namespace Utopia.Server.Managers
                         var item = (IItem)_server.EntityFactory.CreateFromBluePrint(blueprintId);
 
                         charEntity.Inventory.PutItem(item, count);
-                        connection.Send(new ChatMessage { DisplayName = "server", Message = string.Format("Item {0} was added to the inventory",item) });
+                        connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = string.Format("Item {0} was added to the inventory", item) });
                     }
                     catch (Exception x)
                     {
-                        connection.Send(new ChatMessage { DisplayName = "server", Message = "Error: " + x.Message });
+                        connection.Send(new ChatMessage { IsServerMessage = true, DisplayName = "server", Message = "Error: " + x.Message });
                     }
                     return true;
                 }
                 #endregion
+                #region Setrole command
+                if (command is SetroleCommand)
+                {
+                    if (pars == null || pars.Length != 2)
+                        return false;
 
+                    switch (pars[2])
+                    {
+                        case "op":
+                            //_server.UsersStorage.SetRole(pars[0], UserRole.Moderator);
+                            break;
+                        case "normal":
+                            //_server.UsersStorage.SetRole(pars[0], UserRole.Normal);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                #endregion
 
                 OnPlayerCommand(new PlayerCommandEventArgs { Command = command, Params = pars, PlayerEntity = connection.ServerEntity.DynamicEntity });
                 return true;
