@@ -146,16 +146,23 @@ namespace Utopia.Network
             // find chunks to resync
             foreach (var entityId in e.EntitiesToSynchronize)
             {
-                var entity = _dynamicEntityManager.FindEntity(new EntityLink(entityId));
-
+                var entity = entityId == PlayerManager.PlayerCharacter.DynamicId ? 
+                    PlayerManager.PlayerCharacter : 
+                    _dynamicEntityManager.FindEntity(new EntityLink(entityId));
+                
                 if (entity != null)
                 {
                     var rootPos = BlockHelper.EntityToChunkPosition(entity.Position);
+
+                    e.ChunksToSynchronize.Add(rootPos);
 
                     for (int x = -1; x < 2; x++)
                     {
                         for (int z = -1; z < 2; z++)
                         {
+                            if (x == 0 && z == 0)
+                                continue;
+
                             e.ChunksToSynchronize.Add(rootPos + new Vector3I(x, 0, z));
                         }
                     }
