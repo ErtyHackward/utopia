@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using ProtoBuf;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Net.Connections;
@@ -169,13 +171,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private void SendChunkForBuffering(VisualChunk impactedChunk)
         {
             // Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
-            // Is it Worth ????
+            
             impactedChunk.CompressedDirty = true;
             Md5Hash chunkHash = impactedChunk.GetMd5Hash();
             byte[] chunkDataCompressed = impactedChunk.Compress();
-
-            //TESTING Decompression ! => not Working
-            //impactedChunk.Decompress(chunkDataCompressed);
 
             _chunkStorageManager.StoreData_async(new Storage.Structs.ChunkDataStorage { ChunkPos = impactedChunk.Position, Md5Hash = chunkHash, CubeData = chunkDataCompressed });
 
