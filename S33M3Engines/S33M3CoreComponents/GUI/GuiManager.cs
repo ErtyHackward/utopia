@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using S33M3DXEngine.Main;
@@ -45,6 +47,7 @@ namespace S33M3CoreComponents.GUI
             }
         }
 
+        private ConcurrentQueue<Action> _guiActions = new ConcurrentQueue<Action>();
 
         /// <summary>Draws the GUI</summary>
         private IGuiVisualizer _guiVisualizer;
@@ -143,6 +146,11 @@ namespace S33M3CoreComponents.GUI
             });
         }
 
+        public void RunInGuiThread(Action action)
+        {
+            _guiActions.Enqueue(action);
+        }
+
         void _d3DEngine_ViewPort_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             _screen.Width = viewport.Width;
@@ -219,6 +227,12 @@ namespace S33M3CoreComponents.GUI
 
         public override void FTSUpdate(GameTime timeSpend)
         {
+            Action action;
+            while (_guiActions.TryDequeue(out action))
+            {
+                action();
+            }
+
             //Check for Mouse Overing states on the gui
             if (_screen.IsMouseOverGui == true && this.CatchExclusiveActions == false)
             {

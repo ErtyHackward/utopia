@@ -15,8 +15,6 @@ namespace Utopia.Shared.Entities
     [ProtoContract(IgnoreListHandling = true)]
     public class EntityCollection : IStaticContainer, IEnumerable<IStaticEntity>
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
         private SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
 
@@ -89,7 +87,7 @@ namespace Utopia.Shared.Entities
                 foreach (var keyValuePair in value)
                 {
                     var entity = (IStaticEntity)keyValuePair.Value;
-                    Add(entity, 0, true);
+                    AddWithId(entity, keyValuePair.Key, 0, true);
                 }
             }
         }
@@ -175,21 +173,28 @@ namespace Utopia.Shared.Entities
                 return 1;
             }
         }
-        
+
         /// <summary>
         /// Adds entity to collection (with locking). Assign new unique id for the entity
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId"></param>
-        public void Add(IStaticEntity entity, uint sourceDynamicId = 0, bool atChunkCreationTime = false)
+        /// <param name="atChunkCreationTime"></param>
+        public void Add(IStaticEntity entity, uint sourceDynamicId, bool atChunkCreationTime = false)
+        {
+            AddWithId(entity, GetFreeId(), sourceDynamicId, atChunkCreationTime);
+        }
+
+        private void AddWithId(IStaticEntity entity, uint staicId, uint sourceDynamicId = 0,
+            bool atChunkCreationTime = false)
         {
             lock (_syncRoot)
             {
-                entity.StaticId = GetFreeId();
+                entity.StaticId = staicId;
                 entity.Container = this;
                 _entities.Add(entity.StaticId, entity);
             }
-            
+
             IsDirty = true;
             OnEntityAdded(new EntityCollectionEventArgs { Entity = entity, SourceDynamicEntityId = sourceDynamicId, AtChunkCreationTime = atChunkCreationTime });
             OnCollectionDirty();
@@ -201,7 +206,7 @@ namespace Utopia.Shared.Entities
         /// <param name="entity"></param>
         public void Add(IStaticEntity entity)
         {
-            Add(entity, 0, false);
+            Add(entity, 0);
         }
 
         /// <summary>
@@ -239,7 +244,7 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceId"></param>
-        public void Remove(IStaticEntity entity, uint sourceId = 0)
+        public void Remove(IStaticEntity entity, uint sourceId)
         {
             bool removed;
             lock (_syncRoot)
@@ -321,7 +326,6 @@ namespace Utopia.Shared.Entities
         /// </summary>
         /// <param name="staticEntityId"></param>
         /// <param name="sourceDynamicEntityId"></param>
-        /// <param name="entity"></param>
         public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId = 0)
         {
             lock (_syncRoot)

@@ -12,7 +12,7 @@ namespace Realms.Client.States
     public class SelectServerGameState : GameState
     {
         private readonly IKernel _iocContainer;
-
+        
         public List<ServerInfo> ServerList { get; set; }
 
         public override string Name
@@ -54,36 +54,39 @@ namespace Realms.Client.States
 
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }
-
+        
         void WebApiServerListReceived(object sender, ServerListResponse e)
         {
-            var selection = _iocContainer.Get<ServerSelectionComponent>();
+            var gui = _iocContainer.Get<GuiManager>();
 
-            if (e.Exception == null)
-            {
-                selection.List.Items.Clear();
+            gui.RunInGuiThread(() => { 
+                var selection = _iocContainer.Get<ServerSelectionComponent>();
+
+                if (e.Exception == null)
+                {
+                    selection.List.Items.Clear();
 
 #if DEBUG
-                if (e.Servers == null)
-                    e.Servers = new List<ServerInfo>();
-                e.Servers.Add(new ServerInfo { ServerAddress = "127.0.0.1", ServerName = "localhost" });
+                    if (e.Servers == null)
+                        e.Servers = new List<ServerInfo>();
+                    e.Servers.Add(new ServerInfo { ServerAddress = "127.0.0.1", ServerName = "localhost" });
 #endif
 
-                if (e.Servers != null)
-                {
-                    foreach (var serverInfo in e.Servers)
+                    if (e.Servers != null)
                     {
-                        selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount) );
+                        foreach (var serverInfo in e.Servers)
+                        {
+                            selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount));
+                        }
+                        ServerList = e.Servers;
                     }
-                    ServerList = e.Servers;
                 }
-            }
-            else
-            {
-                selection.List.Items.Clear();
-                selection.List.Items.Add("Error!");
-            }
-
+                else
+                {
+                    selection.List.Items.Clear();
+                    selection.List.Items.Add("Error!");
+                }
+            });
         }
 
         public override void OnEnabled(GameState previousState)
