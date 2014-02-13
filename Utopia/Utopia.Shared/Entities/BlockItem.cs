@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.Linq;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using System.ComponentModel;
 using SharpDX;
@@ -42,7 +43,7 @@ namespace Utopia.Shared.Entities
 
             // Get the chunk where the entity will be added and check if another entity is present inside this block
             var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.NewBlockPosition);
-            foreach (IBlockLocationRoot entity in workingchunk.Entities.Entities.Values)
+            foreach (var entity in workingchunk.Entities.OfType<IBlockLocationRoot>())
             {
                 if (entity.BlockLocationRoot == BlockLocationRoot)
                 {

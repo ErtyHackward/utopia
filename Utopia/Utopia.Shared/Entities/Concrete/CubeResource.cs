@@ -74,9 +74,8 @@ namespace Utopia.Shared.Entities.Concrete
 
                 // Get the chunk where the entity will be added and check if another block static entity is present inside this block
                 var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.NewBlockPosition);
-                foreach (var staticEntity1 in workingchunk.Entities.Entities.Values.Where(e => e is IBlockLocationRoot))
+                foreach (var staticEntity in workingchunk.Entities.OfType<IBlockLocationRoot>())
                 {
-                    var staticEntity = (IBlockLocationRoot)staticEntity1;
                     if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
                     {
                         impact.Message = "IBlockLocationRoot Entity already present at this location";

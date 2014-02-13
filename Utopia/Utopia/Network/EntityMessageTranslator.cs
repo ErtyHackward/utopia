@@ -4,6 +4,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -178,7 +179,7 @@ namespace Utopia.Network
 
         void _server_MessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
         {
-            var entity = (CharacterEntity)_dynamicEntityManager.GetEntityById(e.Message.DynamicEntityId);
+            var entity = (PlayerCharacter)_dynamicEntityManager.GetEntityById(e.Message.DynamicEntityId);
             
             if (entity != null)
             {
@@ -186,13 +187,26 @@ namespace Utopia.Network
 
                 IToolImpact impact;
 
-                if (e.Message.ToolId != 0)
-                    impact = entity.ToolUse((ITool)entity.FindItemById(e.Message.ToolId));
-                else
+                switch (e.Message.UseType)
                 {
-                    impact = entity.ToolUse(entity.HandTool);
+                    case UseType.Use:
+                        if (e.Message.ToolId != 0)
+                            impact = entity.ToolUse((ITool)entity.FindItemById(e.Message.ToolId));
+                        else
+                        {
+                            impact = entity.ToolUse(entity.HandTool);
+                        }
+                        break;
+                    case UseType.Put:
+                        impact = entity.PutUse();
+                        break;
+                    case UseType.Craft:
+                        impact = entity.CraftUse(e.Message.RecipeIndex);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-
+                
                 // register other entity use message
                 _syncManager.RegisterUseMessage(e.Message, impact);
             }
