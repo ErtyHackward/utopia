@@ -92,10 +92,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         private void ServerConnection_MessageChunkData(object sender, ProtocolMessageEventArgs<ChunkDataMessage> e)
         {            
 #if DEBUG
-            if (e.Message.Position.ToString() == "[0;0;0]")
-            {
-                logger.Debug("Chunk received from server; Position : {0}, Flag :{1}, Hash {2}", e.Message.Position, e.Message.Flag, e.Message.ChunkHash);
-            }
+                //logger.Debug("Chunk received from server; Position : {0}, Flag :{1}, Hash {2}", e.Message.Position, e.Message.Flag, e.Message.ChunkHash);
 #endif
 
             //Bufferize the Data here   
