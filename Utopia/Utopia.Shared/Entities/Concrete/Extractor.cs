@@ -38,6 +38,12 @@ namespace Utopia.Shared.Entities.Concrete
 
             var entity = owner.EntityState.PickedEntityLink.ResolveStatic(LandscapeManager);
 
+            if (entity == null)
+            {
+                impact.Message = "Unable to resolve the link";
+                return impact;
+            }
+
             var cursor = LandscapeManager.GetCursor(entity.Position);
 
             var charEntity = owner as CharacterEntity;
