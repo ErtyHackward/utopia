@@ -232,5 +232,16 @@ namespace Utopia.Server.Managers
             }
             return null;
         }
+
+        public IEnumerable<ClientConnection> Connections()
+        {
+            lock (_syncRoot)
+            {
+                foreach (var connection in _connections.Values)
+                {
+                    yield return connection;
+                }
+            }
+        }
     }
 }

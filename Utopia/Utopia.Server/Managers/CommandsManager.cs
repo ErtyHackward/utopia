@@ -38,6 +38,7 @@ namespace Utopia.Server.Managers
             RegisterCommand(new ServicesCommand());
             RegisterCommand(new SettimeCommand());
             RegisterCommand(new AdditemCommand());
+            RegisterCommand(new SetroleCommand());
         }
 
         public void RegisterCommand(IServerCommand command)
@@ -215,16 +216,21 @@ namespace Utopia.Server.Managers
 
                     bool success = false;
 
-                    switch (pars[2])
+                    var login = _server.ConnectionManager.Connections().Where(c => c.DisplayName == pars[0]).Select(c => c.Login).FirstOrDefault() ?? pars[0];
+                    
+                    switch (pars[1])
                     {
                         case "admin":
-                            success = _server.UsersStorage.SetRole(pars[0], UserRole.Administrator);
+                            success = _server.UsersStorage.SetRole(login, UserRole.Administrator);
                             break;
-                        case "op":
-                            success = _server.UsersStorage.SetRole(pars[0], UserRole.Moderator);
+                        case "moderator":
+                            success = _server.UsersStorage.SetRole(login, UserRole.Moderator);
                             break;
-                        case "normal":
-                            success = _server.UsersStorage.SetRole(pars[0], UserRole.Normal);
+                        case "member":
+                            success = _server.UsersStorage.SetRole(login, UserRole.Member);
+                            break;
+                        case "guest":
+                            success = _server.UsersStorage.SetRole(login, UserRole.Guest);
                             break;
                         default:
                             break;

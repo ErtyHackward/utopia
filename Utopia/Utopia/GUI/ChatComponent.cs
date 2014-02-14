@@ -75,6 +75,7 @@ namespace Utopia.GUI
 
             _server.MessageChat += ServerConnectionMessageChat;
             _server.MessagePing += _server_MessagePing;
+            _server.MessageUseFeedback += _server_MessageUseFeedback;
 
             ChatLineLimit = 30;
             //For 5 seconds =
@@ -152,6 +153,15 @@ namespace Utopia.GUI
         {
             AddMessage(string.Format("<Pong> {0} ms", Console.PingTimer.ElapsedMilliseconds));
             Console.PingTimer.Stop();
+        }
+
+        private void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
+        {
+            if (e.Message.OwnerDynamicId == _server.Player.DynamicId && !e.Message.Impact.Success)
+            {
+                AddMessage(string.Format(" -- {0}", e.Message.Impact.Message));
+                _lastUpdateTime = Stopwatch.GetTimestamp();
+            }
         }
 
         private void SetFontAlphaColor(byte color)

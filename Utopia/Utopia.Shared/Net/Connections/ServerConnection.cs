@@ -17,7 +17,7 @@ namespace Utopia.Shared.Net.Connections
         /// <summary>
         /// Modify this constant to actual value
         /// </summary>
-        public const int ProtocolVersion = 3;
+        public const int ProtocolVersion = 4;
 
         /// <summary>
         /// Gets or sets current client version
@@ -74,7 +74,6 @@ namespace Utopia.Shared.Net.Connections
                 Login = Login, 
                 DisplayName = DisplayName, 
                 Password = Password, 
-                Register = Register, 
                 Version = ClientVersion 
             });
         }

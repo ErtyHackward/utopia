@@ -31,12 +31,9 @@ namespace Utopia.Shared.Entities.Concrete
         {
             var impact = new ToolImpact();
 
-            if (!owner.EntityState.IsEntityPicked)
-            {
-                impact.Message = "Entity should be picked to use";
+            if (!CanDoEntityAction(owner, ref impact))
                 return impact;
-            }
-
+            
             if (owner.EntityState.PickedEntityLink.IsDynamic)
             {
                 impact.Message = "Only static entities allowed to use";

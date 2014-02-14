@@ -110,20 +110,6 @@ namespace Utopia.Server.Managers
         {
             var connection = (ClientConnection)sender;
 
-            // check if user want to register and this login is busy
-            if (e.Message.Register)
-            {
-                if (!_server.UsersStorage.Register(e.Message.Login, e.Message.Password, UserRole.Administrator))
-                {
-                    connection.Send(new ErrorMessage
-                    {
-                        ErrorCode = ErrorCodes.LoginAlreadyRegistered,
-                        Message = "Such login is already registered"
-                    });
-                    return;
-                }
-            }
-
             // check client version
             if (e.Message.Version != ServerConnection.ProtocolVersion)
             {
@@ -167,17 +153,14 @@ namespace Utopia.Server.Managers
                 connection.Login       = e.Message.Login;
                 connection.DisplayName = e.Message.DisplayName;
 
-                ServerDynamicEntity playerEntity;
+                ServerPlayerCharacterEntity playerEntity;
                
-
                 #region Getting player entity
                 if (loginData.State == null)
                 {
                     // create new message
                     playerEntity = GetNewPlayerEntity(connection, DynamicIdHelper.GetNextUniqueId());
-
                     var state = new UserState { EntityId = playerEntity.DynamicEntity.DynamicId };
-
                     _server.UsersStorage.SetData(e.Message.Login, state.Save());
                 }
                 else
@@ -203,6 +186,9 @@ namespace Utopia.Server.Managers
 
                     }
                 }
+
+                playerEntity.PlayerCharacter.IsReadOnly = loginData.Role == UserRole.Guest;
+
                 #endregion
                 
                 _server.EntityFactory.PrepareEntity(playerEntity.DynamicEntity);
@@ -220,7 +206,7 @@ namespace Utopia.Server.Managers
                 };
 
                 connection.Send(gameInfo);
-                connection.Send(new EntityInMessage { Entity = (Entity)playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
+                connection.Send(new EntityInMessage { Entity = playerEntity.DynamicEntity, Link = playerEntity.DynamicEntity.GetLink() });
                 connection.Send(new DateTimeMessage { DateTime = _server.Clock.Now, TimeFactor = _server.Clock.TimeFactor });
             }
             else
@@ -239,7 +225,7 @@ namespace Utopia.Server.Managers
             }
         }
 
-        private ServerPlayerEntity GetNewPlayerEntity(ClientConnection clientConnection, uint entityId)
+        private ServerPlayerCharacterEntity GetNewPlayerEntity(ClientConnection clientConnection, uint entityId)
         {
             var eArgs = new NewPlayerEntityNeededEventArgs { Connection = clientConnection, EntityId = entityId };
             OnPlayerEntityNeeded(eArgs);
