@@ -333,13 +333,13 @@ namespace Utopia.Worlds.Chunks
             //Triggered when player has move a distance of 8 blocks (half chunk distance)
             if (distance > (AbstractChunk.ChunkSize.X / 2d))
             {
-                Range3I _newEventNotificationArea = new Range3I()
+                var newEventNotificationArea = new Range3I
                 {
-                    Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position),
+                    Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - _eventNotificationArea.Size / 2 - Vector3I.One,
                     Size = _eventNotificationArea.Size
                 };
 
-                var chunks2Syncro = _newEventNotificationArea.AllExclude(_eventNotificationArea);
+                var chunks2Syncro = newEventNotificationArea.AllExclude(_eventNotificationArea);
                 if (chunks2Syncro != null)
                 {
                     //Get all new chunk in the area !
@@ -347,7 +347,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         ResyncChunk(chunkPosition);
                     }
-                    _eventNotificationArea = _newEventNotificationArea;
+                    _eventNotificationArea = newEventNotificationArea;
                     logger.Debug("Requesting chunk synchro data");
                 }
 

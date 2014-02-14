@@ -47,6 +47,7 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Holds size of the server area
         /// </summary>
+        [ProtoMember(5)]
         public Vector2I AreaSize { get; set; }
     }
 }

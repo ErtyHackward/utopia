@@ -512,11 +512,13 @@ namespace Utopia.Worlds.Chunks
         private void InitChunks()
         {
             //Init serverEventArea around player
-            int DefaultAreaSize = 16 * 8; //Should be replaced by _server.GameInformations.AreaSize
-            _eventNotificationArea = new Range3I()
+            var areaSize = _server.GameInformations.AreaSize;
+
+            var notificationAreaSize = new Vector3I(areaSize.X / AbstractChunk.ChunkSize.X, 0, areaSize.Y / AbstractChunk.ChunkSize.Z) + Vector3I.One;
+            _eventNotificationArea = new Range3I
             {
-                Size = new Vector3I(DefaultAreaSize / AbstractChunk.ChunkSize.X + 1, 0 + 1, DefaultAreaSize / AbstractChunk.ChunkSize.Z + 1),
-                Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position)
+                Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - notificationAreaSize / 2 - Vector3I.One,
+                Size = notificationAreaSize
             };
 
             //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
