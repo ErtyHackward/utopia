@@ -63,6 +63,8 @@ namespace Realms.Server
 
                     if (_storage.GetUsersCount() == 0)
                         role = UserRole.Administrator;
+                    
+                    logger.Info("Creating new user record {0} {1}", login, role);
 
                     // create or update local registration 
                     _storage.Register(login, passwordHash, role);

@@ -78,7 +78,7 @@ namespace Utopia.Server.Managers
                 }
 
                 // check access
-                if (command is IRoleRestrictedCommand)
+                if (command is IRoleRestrictedCommand && connection.UserRole != UserRole.Administrator)
                 {
                     if (!(command as IRoleRestrictedCommand).HasAccess(connection.UserRole))
                     {
@@ -246,7 +246,7 @@ namespace Utopia.Server.Managers
                             Message = "Unable to update the user, check the login or role name" 
                         });
                     }
-
+                    return true;
                 }
                 #endregion
 
