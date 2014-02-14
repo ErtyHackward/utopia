@@ -517,7 +517,7 @@ namespace Utopia.Worlds.Chunks
             var notificationAreaSize = new Vector3I(areaSize.X / AbstractChunk.ChunkSize.X, 0, areaSize.Y / AbstractChunk.ChunkSize.Z) + Vector3I.One;
             _eventNotificationArea = new Range3I
             {
-                Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - notificationAreaSize / 2 - Vector3I.One,
+                Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - notificationAreaSize / 2,
                 Size = notificationAreaSize
             };
 
