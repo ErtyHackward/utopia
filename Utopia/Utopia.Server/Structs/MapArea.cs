@@ -165,17 +165,6 @@ namespace Utopia.Server.Structs
         }
 
         /// <summary>
-        /// Occurs when some entity at this area changes its equipment
-        /// </summary>
-        public event EventHandler<CharacterEquipmentEventArgs> EntityEquipment;
-
-        private void OnEntityEquipment(CharacterEquipmentEventArgs e)
-        {
-            var handler = EntityEquipment;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
         /// Occurs when some entity appears in one of area chunks
         /// </summary>
         public event EventHandler<EntityCollectionEventArgs> StaticEntityAdded;
@@ -205,6 +194,14 @@ namespace Utopia.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<ProtocolMessageEventArgs<ItemTransferMessage>> TransferMessage;
+
+        public virtual void OnTransferMessage(ProtocolMessageEventArgs<ItemTransferMessage> e)
+        {
+            var handler = TransferMessage;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         /// <summary>
@@ -228,11 +225,6 @@ namespace Utopia.Server.Structs
             Rectangle = new Rectangle(topLeftPoint.X, topLeftPoint.Y, AreaSize.X, AreaSize.Y);
         }
 
-        public void EntityLock(EntityLockMessage msg)
-        {
-            OnEntityLockChanged(new ProtocolMessageEventArgs<EntityLockMessage> { Message = msg });
-        }
-
         public void AddEntity(ServerDynamicEntity entity)
         {
             if (_entities.TryAdd(entity.GetHashCode(), entity))
@@ -242,19 +234,8 @@ namespace Utopia.Server.Structs
                 entity.DynamicEntity.ViewChanged += EntityViewChanged;
                 entity.DynamicEntity.Use += EntityUseHandler;
                 
-                CharacterEntity charEntity;
-                if ((charEntity = entity.DynamicEntity as CharacterEntity) != null)
-                {
-                    charEntity.Equipment.ItemEquipped += EquipmentItemEquipped;
-                }
-                
                 OnEntityAdded(new ServerDynamicEntityEventArgs {Entity = entity});
             }
-        }
-
-        void EquipmentItemEquipped(object sender, CharacterEquipmentEventArgs e)
-        {
-            OnEntityEquipment(e);
         }
 
         public void RemoveEntity(int entityId)
@@ -266,12 +247,6 @@ namespace Utopia.Server.Structs
                 e.PositionChanged -= EntityPositionChanged;
                 e.DynamicEntity.ViewChanged -= EntityViewChanged;
                 e.DynamicEntity.Use -= EntityUseHandler;
-
-                CharacterEntity charEntity;
-                if ((charEntity = e.DynamicEntity as CharacterEntity) != null)
-                {
-                    charEntity.Equipment.ItemEquipped -= EquipmentItemEquipped;
-                }
 
                 OnEntityRemoved(new ServerDynamicEntityEventArgs { Entity = e });
             }

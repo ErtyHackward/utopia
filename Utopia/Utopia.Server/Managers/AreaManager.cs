@@ -196,7 +196,7 @@ namespace Utopia.Server.Managers
             }
         }
 
-        private MapArea GetArea(Vector3D position)
+        public MapArea GetArea(Vector3D position)
         {
             var pos = new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, 
                                    (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
