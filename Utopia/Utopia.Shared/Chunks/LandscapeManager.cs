@@ -8,6 +8,7 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Chunks
 {
@@ -28,17 +29,13 @@ namespace Utopia.Shared.Chunks
         public TChunk GetChunkFromBlock(Vector3D globalPosition)
         {
             return
-                GetChunk(new Vector3I(MathHelper.Floor(globalPosition.X / AbstractChunk.ChunkSize.X),
-                                      MathHelper.Floor(globalPosition.Y / AbstractChunk.ChunkSize.Y),
-                                      MathHelper.Floor(globalPosition.Z / AbstractChunk.ChunkSize.Z)));
+                GetChunk(BlockHelper.EntityToChunkPosition(globalPosition));
         }
         
         public TChunk GetChunkFromBlock(Vector3I blockPosition)
         {
             return
-                GetChunk(new Vector3I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
-                                      MathHelper.Floor((double)blockPosition.Y / AbstractChunk.ChunkSize.Y),
-                                      MathHelper.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
+                GetChunk(BlockHelper.BlockToChunkPosition(blockPosition));
         }
 
         protected LandscapeManager(WorldParameters wp)
