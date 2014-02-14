@@ -92,5 +92,10 @@ namespace Realms.Server
         {
             return _storage.GetUsersCount();
         }
+
+        public bool SetRole(string login, UserRole role)
+        {
+            return _storage.SetRole(login, role);
+        }
     }
 }

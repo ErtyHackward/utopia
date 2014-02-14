@@ -12,14 +12,14 @@
         /// <summary>
         /// Default user rights
         /// </summary>
-        Normal,
+        Normal = 1,
         /// <summary>
         /// User with higher credentials
         /// </summary>
-        Moderator,
+        Moderator = 2,
         /// <summary>
         /// Server administrator, all commands allowed
         /// </summary>
-        Administrator
+        Administrator = 4
     }
 }

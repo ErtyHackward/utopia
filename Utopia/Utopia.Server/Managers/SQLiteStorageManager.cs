@@ -218,6 +218,16 @@ namespace Utopia.Server.Managers
             return 0;
         }
 
+        /// <summary>
+        /// Changes the role of the user
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="role"></param>
+        public bool SetRole(string login, UserRole role)
+        {
+            return Execute(string.Format("UPDATE users SET role = {0} WHERE login = '{1}'", (int)role, login)) == 1;
+        }
+
         public void SaveDynamicEntity(IDynamicEntity entity)
         {
             SaveEntity(entity.DynamicId, entity.ProtoSerialize());

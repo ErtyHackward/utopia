@@ -37,5 +37,12 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <returns></returns>
         int GetUsersCount();
+
+        /// <summary>
+        /// Changes the role of the user
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="role"></param>
+        bool SetRole(string login, UserRole role);
     }
 }
