@@ -10,13 +10,17 @@
         /// </summary>
         Undefinded = 0,
         /// <summary>
-        /// Default user rights
+        /// Read only user, can not modify the world
         /// </summary>
-        Normal = 1,
+        Guest = 1,
+        /// <summary>
+        /// User is allowed to modify the world
+        /// </summary>
+        Member = 2,
         /// <summary>
         /// User with higher credentials
         /// </summary>
-        Moderator = 2,
+        Moderator = 3,
         /// <summary>
         /// Server administrator, all commands allowed
         /// </summary>

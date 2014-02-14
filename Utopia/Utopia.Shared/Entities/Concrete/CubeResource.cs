@@ -42,15 +42,12 @@ namespace Utopia.Shared.Entities.Concrete
 
         public IToolImpact Use(IDynamicEntity owner)
         {
-            if (owner.EntityState.IsBlockPicked)
-            {
-                return BlockImpact(owner);
-            }
+            ToolImpact impact = null;
 
-            var impact = new ToolImpact { 
-                 Message = "No target selected for use" 
-            };
-            return impact;
+            if (!CanDoBlockAction(owner, ref impact))
+                return impact;
+            
+            return BlockImpact(owner);
         }
 
         public IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
@@ -78,7 +75,7 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
                     {
-                        impact.Message = "IBlockLocationRoot Entity already present at this location";
+                        impact.Message = "There is something there, remove it first";
                         return impact;
                     }
                 }

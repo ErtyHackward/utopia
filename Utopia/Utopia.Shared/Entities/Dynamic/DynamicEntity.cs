@@ -208,7 +208,13 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(5)]
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
-        public virtual string ModelName { get; set; } 
+        public virtual string ModelName { get; set; }
+
+        /// <summary>
+        /// Indicates if user can do any changes in the world or not
+        /// </summary>
+        [ProtoMember(6)]
+        public bool IsReadOnly { get; set; }
 
         #endregion
 

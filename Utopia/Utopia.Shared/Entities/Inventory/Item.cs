@@ -160,6 +160,57 @@ namespace Utopia.Shared.Entities.Inventory
             item.Rotation = pos.Rotation;
         }
 
+        protected bool CanDo(IDynamicEntity owner, ref ToolImpact impact)
+        {
+            if (owner.IsReadOnly)
+            {
+                impact.Message = "You don't have the access to modify the world. Ask admins for access.";
+                return false;
+            }
+
+            return true;
+        }
+
+        protected bool CanDoBlockAction(IDynamicEntity owner, ref ToolImpact impact)
+        {
+            if (!owner.EntityState.IsBlockPicked)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "Pick a block"
+                };
+                return false;
+            }
+            return CanDo(owner, ref impact);
+        }
+
+        protected bool CanDoEntityAction(IDynamicEntity owner, ref ToolImpact impact)
+        {
+            if (!owner.EntityState.IsEntityPicked)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "Pick an entity"
+                };
+                return false;
+            }
+            return CanDo(owner, ref impact);
+        }
+
+        protected bool CanDoBlockOrEntityAction(IDynamicEntity owner, ref ToolImpact impact)
+        {
+            if (!owner.EntityState.IsBlockPicked && !owner.EntityState.IsEntityPicked)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "Pick an entity or a block"
+                };
+                return false;
+            }
+            return CanDo(owner, ref impact);
+        }
+
+
         /// <summary>
         /// Executes put operation
         /// Removes one item from the inventory and puts it into 
@@ -171,17 +222,10 @@ namespace Utopia.Shared.Entities.Inventory
         {
             // by default all items can only be dropped to some position
             var impact = new ToolImpact();
-
-            var blockPicked = owner.EntityState.IsBlockPicked;
-            var entityPicked = owner.EntityState.IsEntityPicked;
-
-            // allow to put the item only if user picks something
-            if (!blockPicked && !entityPicked)
-            {
-                impact.Message = "Block or entity should be picked to put";
+            
+            if (!CanDoBlockOrEntityAction(owner, ref impact))
                 return impact;
-            }
-
+            
             var pos = GetPosition(owner);
 
             if (!pos.Valid)

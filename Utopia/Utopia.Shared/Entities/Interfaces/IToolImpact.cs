@@ -14,5 +14,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Indicates if tool use was succeed
         /// </summary>
         bool Success { get; set; }
+
+        /// <summary>
+        /// Gets description of the error
+        /// </summary>
+        string Message { get; set; }
     }
 }

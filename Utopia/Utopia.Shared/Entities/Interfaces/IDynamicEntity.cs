@@ -64,5 +64,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Fires use event from current entity state
         /// </summary>
         IToolImpact ToolUse(ITool tool);
+
+        /// <summary>
+        /// Indicates if user can do any changes in the world or not
+        /// </summary>
+        bool IsReadOnly { get; set; }
     }
 }

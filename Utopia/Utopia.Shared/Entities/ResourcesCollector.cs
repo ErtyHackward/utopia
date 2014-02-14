@@ -28,11 +28,11 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public IToolImpact Use(IDynamicEntity owner)
         {
-            if (!owner.EntityState.IsBlockPicked)
+            var impact = new ToolImpact();
+
+            if (!CanDoBlockAction(owner, ref impact))
             {
-                return new ToolImpact { 
-                    Message = "Expected picked block" 
-                };
+                return impact;
             }
             
             return BlockHit(owner);
