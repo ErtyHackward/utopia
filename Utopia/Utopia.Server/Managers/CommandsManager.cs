@@ -213,21 +213,48 @@ namespace Utopia.Server.Managers
                     if (pars == null || pars.Length != 2)
                         return false;
 
+                    bool success = false;
+
                     switch (pars[2])
                     {
+                        case "admin":
+                            success = _server.UsersStorage.SetRole(pars[0], UserRole.Administrator);
+                            break;
                         case "op":
-                            //_server.UsersStorage.SetRole(pars[0], UserRole.Moderator);
+                            success = _server.UsersStorage.SetRole(pars[0], UserRole.Moderator);
                             break;
                         case "normal":
-                            //_server.UsersStorage.SetRole(pars[0], UserRole.Normal);
+                            success = _server.UsersStorage.SetRole(pars[0], UserRole.Normal);
                             break;
                         default:
                             break;
                     }
+
+                    if (success)
+                    {
+                        connection.Send(new ChatMessage { 
+                            IsServerMessage = true, 
+                            DisplayName = "server", 
+                            Message = "User access level is updated" 
+                        });
+                    }
+                    else
+                    {
+                        connection.Send(new ChatMessage { 
+                            IsServerMessage = true, 
+                            DisplayName = "server", 
+                            Message = "Unable to update the user, check the login or role name" 
+                        });
+                    }
+
                 }
                 #endregion
 
-                OnPlayerCommand(new PlayerCommandEventArgs { Command = command, Params = pars, PlayerEntity = connection.ServerEntity.DynamicEntity });
+                OnPlayerCommand(new PlayerCommandEventArgs { 
+                    Command = command, 
+                    Params = pars, 
+                    PlayerEntity = connection.ServerEntity.DynamicEntity 
+                });
                 return true;
             }
             return false;
