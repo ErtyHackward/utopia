@@ -10,6 +10,8 @@ using System;
 using System.Diagnostics;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Action;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -36,6 +38,7 @@ namespace Utopia.Worlds.Chunks
 #endif
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
+        private Range3I _eventNotificationArea; //Area where the server is sending events, everything outside this Area won't received events
         private int _sliceValue = -1;
 
         #region public methods
@@ -327,8 +330,27 @@ namespace Utopia.Worlds.Chunks
         private void PlayerDisplacementChunkEvents()
         {
             double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, PlayerManager.Player.Position);
-            if (distance > 8)
+            //Triggered when player has move a distance of 8 blocks (half chunk distance)
+            if (distance > (AbstractChunk.ChunkSize.X / 2d))
             {
+                Range3I _newEventNotificationArea = new Range3I()
+                {
+                    Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position),
+                    Size = _eventNotificationArea.Size
+                };
+
+                var chunks2Syncro = _newEventNotificationArea.AllExclude(_eventNotificationArea);
+                if (chunks2Syncro != null)
+                {
+                    //Get all new chunk in the area !
+                    foreach (var chunkPosition in chunks2Syncro)
+                    {
+                        ResyncChunk(chunkPosition);
+                    }
+                    _eventNotificationArea = _newEventNotificationArea;
+                    logger.Debug("Requesting chunk synchro data");
+                }
+
                 _lastPlayerTriggeredPosition = PlayerManager.Player.Position;
                 ChunkNeed2BeSorted = true;
             }

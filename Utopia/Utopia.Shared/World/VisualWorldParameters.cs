@@ -31,7 +31,7 @@ namespace Utopia.Shared.World
         public Vector3I WorldVisibleSize;
         public int WorldVisibleSizeXY;
         public int WorldVisibleSizeXYZ;
-        public Vector2I WorldChunkStartUpPosition;
+        public Vector3I WorldChunkStartUpPosition;
 
         public VisualWorldParameters()
         {
@@ -47,7 +47,7 @@ namespace Utopia.Shared.World
             int X = (MathHelper.Floor(player.Position.X / 16) * 16) - ((VisibleChunkInWorld.X / 2) * 16);
             int Z = (MathHelper.Floor(player.Position.Z / 16) * 16) - ((VisibleChunkInWorld.Y / 2) * 16);
 
-            WorldChunkStartUpPosition = new Vector2I(X, Z);
+            WorldChunkStartUpPosition = new Vector3I(X, 0, Z);
         }
 
         private void newWorldParameters()
