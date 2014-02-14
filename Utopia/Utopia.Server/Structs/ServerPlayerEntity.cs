@@ -2,7 +2,6 @@
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Structs
@@ -37,10 +36,10 @@ namespace Utopia.Server.Structs
             area.EntityUse           += AreaEntityUse;
             area.EntityUseFeedback   += AreaEntityUseFeedback;
             area.BlocksChanged       += AreaBlocksChanged;
-            area.EntityEquipment     += AreaEntityEquipment;
             area.StaticEntityAdded   += AreaStaticEntityAdded;
             area.StaticEntityRemoved += AreaStaticEntityRemoved;
             area.EntityLockChanged   += AreaEntityLockChanged;
+            area.TransferMessage     += AreaTransferMessage;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -61,10 +60,10 @@ namespace Utopia.Server.Structs
             area.EntityUse           -= AreaEntityUse;
             area.EntityUseFeedback   -= AreaEntityUseFeedback;
             area.BlocksChanged       -= AreaBlocksChanged;
-            area.EntityEquipment     -= AreaEntityEquipment;
             area.StaticEntityAdded   -= AreaStaticEntityAdded;
             area.StaticEntityRemoved -= AreaStaticEntityRemoved;
             area.EntityLockChanged   -= AreaEntityLockChanged;
+            area.TransferMessage     -= AreaTransferMessage;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -101,14 +100,6 @@ namespace Utopia.Server.Structs
             });
         }
 
-        void AreaEntityEquipment(object sender, CharacterEquipmentEventArgs e)
-        {
-            if (e.Entity != DynamicEntity)
-            {
-                Connection.Send(new EntityEquipmentMessage { Entity = e.Entity });
-            }
-        }
-
         protected override void AreaEntityOutOfViewRange(object sender, ServerDynamicEntityEventArgs e)
         {
             if (e.Entity.DynamicEntity != DynamicEntity)
@@ -136,6 +127,14 @@ namespace Utopia.Server.Structs
             if (e.Entity != DynamicEntity)
             {
                 Connection.Send(new EntityUseMessage(e));
+            }
+        }
+
+        void AreaTransferMessage(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<ItemTransferMessage> e)
+        {
+            if (e.Message.SourceEntityId != DynamicEntity.DynamicId)
+            {
+                Connection.Send(e.Message);
             }
         }
 

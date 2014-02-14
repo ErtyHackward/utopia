@@ -129,6 +129,11 @@ namespace Utopia.Server.Managers
         {
             var connection = (ClientConnection)sender;
             connection.ServerEntity.ItemTransfer(e.Message);
+
+            e.Message.SourceEntityId = connection.ServerEntity.DynamicEntity.DynamicId;
+
+            // retranslate
+            _server.AreaManager.GetArea(connection.ServerEntity.DynamicEntity.Position).OnTransferMessage(e);
         }
 
         private void ConnectionMessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)

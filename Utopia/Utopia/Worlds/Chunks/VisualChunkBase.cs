@@ -237,15 +237,18 @@ namespace Utopia.Worlds.Chunks
 
         void EntitiesCollectionCleared(object sender, EventArgs e)
         {
-            foreach (var entityList in _visualVoxelEntities.Values)
+            lock (_syncRoot)
             {
-                foreach (IDisposable i in entityList)
+                foreach (var entityList in _visualVoxelEntities.Values)
                 {
-                    i.Dispose();
-                }    
+                    foreach (IDisposable i in entityList)
+                    {
+                        i.Dispose();
+                    }
+                }
+
+                _visualVoxelEntities.Clear();
             }
-            
-            _visualVoxelEntities.Clear();
             EmitterStaticEntities.Clear();
             SoundStaticEntities.Clear();
         }
@@ -360,9 +363,12 @@ namespace Utopia.Worlds.Chunks
         private void RemoveVoxelEntity(EntityCollectionEventArgs e)
         {
             //Remove the entity from Visual Model
-            foreach (var pair in _visualVoxelEntities)
+            lock (_syncRoot)
             {
-                pair.Value.RemoveAll(x => x.Entity == e.Entity);
+                foreach (var pair in _visualVoxelEntities)
+                {
+                    pair.Value.RemoveAll(x => x.Entity == e.Entity);
+                }
             }
 
             var lightEntity = e.Entity as ILightEmitterEntity;
@@ -448,7 +454,10 @@ namespace Utopia.Worlds.Chunks
         {
             lock (_syncRoot)
             {
-                return _visualVoxelEntities;
+                foreach (var visualVoxelEntity in _visualVoxelEntities)
+                {
+                    yield return visualVoxelEntity;
+                }
             }
         }
 

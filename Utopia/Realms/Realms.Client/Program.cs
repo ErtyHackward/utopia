@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System;
 using Ninject;
@@ -53,6 +54,10 @@ namespace Realms.Client
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            var exception = (Exception)e.ExceptionObject;
+
+            logger.Fatal("Unhandled excpetion: {0}\n{1}", exception.Message, exception.StackTrace);
+
             var logPath = Path.Combine(Path.GetTempPath(), string.Format("utopia-client-{0}.log", DateTime.Now.ToShortDateString()));
 
             if (File.Exists(logPath))

@@ -75,6 +75,7 @@ namespace Utopia.Network
             _server.MessageEntityUse += _server_MessageEntityUse;
             _server.MessageEntityEquipment += _server_MessageEntityEquipment;
             _server.MessageUseFeedback += _server_MessageUseFeedback;
+            _server.MessageItemTransfer += _server_MessageItemTransfer;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
@@ -105,6 +106,7 @@ namespace Utopia.Network
             _server.MessageEntityUse -= _server_MessageEntityUse;
             _server.MessageEntityEquipment -= _server_MessageEntityEquipment;
             _server.MessageUseFeedback -= _server_MessageUseFeedback;
+            _server.MessageItemTransfer -= _server_MessageItemTransfer;
         }
 
         //IN Going Server Data concering entities =================================================================
@@ -185,30 +187,21 @@ namespace Utopia.Network
             {
                 entity.EntityState = e.Message.State;
 
-                IToolImpact impact;
-
-                switch (e.Message.UseType)
-                {
-                    case UseType.Use:
-                        if (e.Message.ToolId != 0)
-                            impact = entity.ToolUse((ITool)entity.FindItemById(e.Message.ToolId));
-                        else
-                        {
-                            impact = entity.ToolUse(entity.HandTool);
-                        }
-                        break;
-                    case UseType.Put:
-                        impact = entity.PutUse();
-                        break;
-                    case UseType.Craft:
-                        impact = entity.CraftUse(e.Message.RecipeIndex);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                var impact = entity.ReplayUse(e.Message);
                 
                 // register other entity use message
                 _syncManager.RegisterUseMessage(e.Message, impact);
+            }
+        }
+
+        void _server_MessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
+        {
+            var entity = (PlayerCharacter)_dynamicEntityManager.GetEntityById(e.Message.SourceEntityId);
+
+            if (entity != null)
+            {
+                // todo: handle desync on false
+                entity.ReplayTransfer(e.Message);
             }
         }
 
