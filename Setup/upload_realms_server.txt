@@ -1,0 +1,6 @@
+open utopiarealms.com
+user update xe6ORAXoNO
+binary
+quote PASV
+send "Output\setup_realms_server.exe" /setup_realms_server.exe
+quit
