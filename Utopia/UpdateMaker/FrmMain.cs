@@ -48,6 +48,11 @@ namespace UpdateMaker
                     _ignoredFiles.Add(file);
                 }
             }
+
+            if (File.Exists(Settings.Default.BaseFile))
+            {
+                button2_Click(null, null);
+            }
         }
 
         public void SelectBaseFolder()
