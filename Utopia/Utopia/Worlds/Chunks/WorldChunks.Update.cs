@@ -335,7 +335,7 @@ namespace Utopia.Worlds.Chunks
             {
                 var newEventNotificationArea = new Range3I
                 {
-                    Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - _eventNotificationArea.Size / 2 - Vector3I.One,
+                    Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - _eventNotificationArea.Size / 2,
                     Size = _eventNotificationArea.Size
                 };
 
