@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.IO.Compression;
 using ProtoBuf;
@@ -136,6 +137,9 @@ namespace Utopia.Shared.Configuration
         [Browsable(false)]
         [ProtoMember(14, OverwriteList = true)]
         public List<TreeBluePrint> TreeBluePrints { get; set; }
+
+        [ProtoMember(15, OverwriteList = true)]
+        public List<CharacterClassItem> CharacterClasses { get; set; } 
 
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
@@ -348,6 +352,7 @@ namespace Utopia.Shared.Configuration
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
             Recipes = new List<Recipe>();
             TreeBluePrints = new List<TreeBluePrint>();
+            CharacterClasses = new List<CharacterClassItem>();
         }
 
         private void CreateDefaultValues()
@@ -410,5 +415,21 @@ namespace Utopia.Shared.Configuration
             Flat = 2
         }
         #endregion
+    }
+
+    [ProtoContract]
+    public class CharacterClassItem
+    {
+        [ProtoMember(1)]
+        public string ClassName { get; set; }
+
+        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [ProtoMember(2)]
+        public string ModelName { get; set; }
+
+        public override string ToString()
+        {
+            return ClassName ?? "no name";
+        }
     }
 }

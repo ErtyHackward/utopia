@@ -3,6 +3,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Structs
@@ -57,13 +58,17 @@ namespace Utopia.Server.Structs
                 return;
             }
 
-            // inform client about his inventory change from outside
-            Connection.Send(new ItemTransferMessage
+            var msg =new ItemTransferMessage
             {
                 SourceContainerEntityLink = PlayerCharacter.GetLink(),
                 SourceContainerSlot = e.Slot.GridPosition,
-                ItemsCount = e.Slot.ItemsCount
-            });
+                ItemsCount = e.Slot.ItemsCount,
+                SourceEntityId = PlayerCharacter.DynamicId
+            };
+
+            // inform client about his inventory change from outside
+            Connection.Send(msg);
+            CurrentArea.OnTransferMessage(new ProtocolMessageEventArgs<ItemTransferMessage> { Message = msg });
         }
 
         void Inventory_ItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -75,12 +80,15 @@ namespace Utopia.Server.Structs
             }
 
             // inform client about his inventory change from outside
-            Connection.Send(new ItemTransferMessage { 
+            var msg = new ItemTransferMessage { 
                 DestinationContainerEntityLink = PlayerCharacter.GetLink(), 
                 DestinationContainerSlot = e.Slot.GridPosition, 
                 ItemsCount = e.Slot.ItemsCount, 
-                ItemEntityId = e.Slot.Item.BluePrintId
-            });
+                ItemEntityId = e.Slot.Item.BluePrintId, 
+                SourceEntityId = PlayerCharacter.DynamicId
+            };
+            Connection.Send(msg);
+            CurrentArea.OnTransferMessage(new ProtocolMessageEventArgs<ItemTransferMessage> { Message = msg });
         }
 
         public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, Server server) : base(connection, entity, server)

@@ -108,14 +108,22 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
             }
             else if (!string.IsNullOrEmpty(control.Text))
             {
-                if (control.ColorSet)
+                if (control.CustomFont != null)
                 {
                     ByteColor color = control.Color;
-                    graphics.DrawString(states[stateIndex], control.TextFontId, ref controlBounds, control.Text, ref color, false);
+                    graphics.DrawString(control.CustomFont, ref controlBounds, control.Text, ref color, false, -1, FlatGuiGraphics.Frame.HorizontalTextAlignment.Center, FlatGuiGraphics.Frame.VerticalTextAlignment.Center);
                 }
                 else
                 {
-                    graphics.DrawString(states[stateIndex], control.TextFontId, ref controlBounds, control.Text, false);
+                    if (control.ColorSet)
+                    {
+                        ByteColor color = control.Color;
+                        graphics.DrawString(states[stateIndex], control.TextFontId, ref controlBounds, control.Text, ref color, false);
+                    }
+                    else
+                    {
+                        graphics.DrawString(states[stateIndex], control.TextFontId, ref controlBounds, control.Text, false);
+                    }
                 }
             }
         }

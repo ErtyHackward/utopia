@@ -64,7 +64,7 @@ namespace Utopia.Shared.Entities.Concrete
                     var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
                     if (blockBB.Intersects(ref dynBB))
                     {
-                        impact.Message = "Cannot place a block intersected with a dynamic entity";
+                        impact.Message = "Cannot place a block where someone is standing";
                         return impact;
                     }
                 }
@@ -75,7 +75,7 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
                     {
-                        impact.Message = "There is something there, remove it first";
+                        impact.Message = "There is something there, remove it first " + staticEntity.BlockLocationRoot;
                         return impact;
                     }
                 }

@@ -17,7 +17,7 @@ namespace Utopia.Server.Structs
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly Server _server;
+        protected readonly Server _server;
         
         private Faction _faction;
         private MapArea _currentArea;

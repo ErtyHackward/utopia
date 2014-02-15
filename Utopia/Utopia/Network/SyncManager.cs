@@ -5,6 +5,7 @@ using Ninject;
 using S33M3Resources.Structs;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.GUI;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Messages;
@@ -34,6 +35,7 @@ namespace Utopia.Network
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly ServerComponent _server;
         private readonly IWorldChunks _chunks;
+        private readonly ChatComponent _chat;
         private readonly List<SyncItem> _syncItems = new List<SyncItem>();
 
         /// <summary>
@@ -44,6 +46,10 @@ namespace Utopia.Network
         protected virtual void OnDesyncDetected(DesyncEventArgs e)
         {
             PrepareEvent(e);
+
+#if DEBUG
+            _chat.AddMessage("Desync detected, fixing...");
+#endif
 
             logger.Info("Desync detected, fixing...");
 
@@ -66,11 +72,13 @@ namespace Utopia.Network
 
         public SyncManager(IVisualDynamicEntityManager dynamicEntityManager,
                            ServerComponent server,
-                           IWorldChunks chunks)
+                           IWorldChunks chunks,
+                           ChatComponent chat)
         {
             _dynamicEntityManager = dynamicEntityManager;
             _server = server;
             _chunks = chunks;
+            _chat = chat;
             _server.MessageError += _server_MessageError;
             _server.MessageEntityData += server_MessageEntityData;
         }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
+using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -22,6 +24,7 @@ namespace Utopia.Network
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly IChunkEntityImpactManager _landscapeManager;
         private readonly SyncManager _syncManager;
+        private readonly VoxelModelManager _voxelModelManager;
         private IDynamicEntity _playerEntity;
 
         private int _useToken;
@@ -62,7 +65,8 @@ namespace Utopia.Network
                 PlayerEntityManager playerEntityManager, 
                 IVisualDynamicEntityManager dynamicEntityManager, 
                 IChunkEntityImpactManager landscapeManager,
-                SyncManager syncManager)
+                SyncManager syncManager,
+                VoxelModelManager voxelModelManager)
         {
             _server = server;
 
@@ -76,6 +80,7 @@ namespace Utopia.Network
             _server.MessageEntityEquipment += _server_MessageEntityEquipment;
             _server.MessageUseFeedback += _server_MessageUseFeedback;
             _server.MessageItemTransfer += _server_MessageItemTransfer;
+            _server.MessageEntityVoxelModel += ServerOnMessageEntityVoxelModel;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
@@ -85,9 +90,12 @@ namespace Utopia.Network
             _dynamicEntityManager = dynamicEntityManager;
             _landscapeManager = landscapeManager;
             _syncManager = syncManager;
+            _voxelModelManager = voxelModelManager;
             PlayerEntity = playerEntityManager.PlayerCharacter;
             playerEntityManager.PlayerEntityChanged += (sender, args) => { PlayerEntity = args.PlayerCharacter; };
         }
+
+
 
         void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
         {
@@ -107,6 +115,7 @@ namespace Utopia.Network
             _server.MessageEntityEquipment -= _server_MessageEntityEquipment;
             _server.MessageUseFeedback -= _server_MessageUseFeedback;
             _server.MessageItemTransfer -= _server_MessageItemTransfer;
+            _server.MessageEntityVoxelModel -= ServerOnMessageEntityVoxelModel;
         }
 
         //IN Going Server Data concering entities =================================================================
@@ -202,6 +211,33 @@ namespace Utopia.Network
             {
                 // todo: handle desync on false
                 entity.ReplayTransfer(e.Message);
+            }
+        }
+
+        private void ServerOnMessageEntityVoxelModel(object sender, ProtocolMessageEventArgs<EntityVoxelModelMessage> e)
+        {
+            var entity = (PlayerCharacter)_dynamicEntityManager.GetEntityById(e.Message.EntityLink.DynamicEntityId);
+
+            if (entity != null)
+            {
+                var charClass = entity.EntityFactory.Config.CharacterClasses.FirstOrDefault(c => c.ClassName == e.Message.ClassName);
+                if (charClass != null)
+                {
+                    _dynamicEntityManager.RemoveEntity(entity);
+                    entity.ModelName = charClass.ModelName;
+                    entity.ModelInstance = null;
+                    _dynamicEntityManager.AddEntity(entity, e.Message.EntityLink.DynamicEntityId != _server.Player.DynamicId);
+                }
+            }
+
+            if (entity == null && e.Message.EntityLink.DynamicEntityId == _server.Player.DynamicId)
+            {
+                entity = (PlayerCharacter)PlayerEntity;
+                var charClass = entity.EntityFactory.Config.CharacterClasses.FirstOrDefault(c => c.ClassName == e.Message.ClassName);
+                if (charClass != null)
+                {
+                    entity.ModelName = charClass.ModelName;
+                }
             }
         }
 

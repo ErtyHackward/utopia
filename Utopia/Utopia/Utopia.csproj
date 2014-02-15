@@ -129,6 +129,8 @@
     <Compile Include="Entities\Managers\PickingManager.cs" />
     <Compile Include="Entities\Renderer\CracksRenderer.cs" />
     <Compile Include="Entities\Renderer\SelectedBlocksRenderer.cs" />
+    <Compile Include="GUI\CharacterSelection\CharacterSelectionComponent.cs" />
+    <Compile Include="GUI\CharacterSelection\CharacterSelectionWindow.cs" />
     <Compile Include="GUI\Crafting\CraftingComponent.cs" />
     <Compile Include="GUI\Crafting\CraftingWindow.cs" />
     <Compile Include="GUI\Crafting\ModelControl.cs" />

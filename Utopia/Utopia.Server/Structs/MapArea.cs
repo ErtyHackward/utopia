@@ -202,6 +202,14 @@ namespace Utopia.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<ProtocolMessageEventArgs<EntityVoxelModelMessage>> VoxelModelChanged;
+
+        public void OnEntityVoxelModel(ProtocolMessageEventArgs<EntityVoxelModelMessage> e)
+        {
+            var handler = VoxelModelChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         /// <summary>

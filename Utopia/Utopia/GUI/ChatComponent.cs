@@ -118,6 +118,7 @@ namespace Utopia.GUI
                 _messages.Dequeue(); //Remove the Olds messages (FIFO collection)
             }
 
+            _lastUpdateTime = Stopwatch.GetTimestamp();
             _refreshDisplay = true;
         }
 
@@ -145,8 +146,6 @@ namespace Utopia.GUI
                     else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
                 }
             }
-
-            _lastUpdateTime = Stopwatch.GetTimestamp();
         }
 
         private void _server_MessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
@@ -160,7 +159,6 @@ namespace Utopia.GUI
             if (e.Message.OwnerDynamicId == _server.Player.DynamicId && !e.Message.Impact.Success)
             {
                 AddMessage(string.Format(" -- {0}", e.Message.Impact.Message));
-                _lastUpdateTime = Stopwatch.GetTimestamp();
             }
         }
 

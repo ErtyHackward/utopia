@@ -7,6 +7,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Entities
 {
@@ -32,7 +33,7 @@ namespace Utopia.Shared.Entities
             base.SetPosition(pos, item, owner);
 
             var cubeEntity = (BlockItem)item;
-            cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
+            cubeEntity.BlockLocationRoot = BlockHelper.EntityToBlock(pos.Position);
         }
 
         public override EntityPosition GetPosition(IDynamicEntity owner)

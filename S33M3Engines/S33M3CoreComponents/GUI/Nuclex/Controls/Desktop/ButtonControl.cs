@@ -38,6 +38,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
 
         public SpriteTexture CusomImageLabel { get; set; }
 
+        public SpriteFont CustomFont { get; set; }
+
         /// <summary>Text that will be shown on the button</summary>
         public string Text;
 

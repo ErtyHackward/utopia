@@ -84,5 +84,10 @@ namespace Utopia.Shared.Structs.Helpers
 
             return internalPosition;
         }
+
+        public static Vector3I EntityToBlock(Vector3D position)
+        {
+            return (Vector3I)position;
+        }
     }
 }

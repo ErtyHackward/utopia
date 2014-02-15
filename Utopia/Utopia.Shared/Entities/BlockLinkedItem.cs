@@ -8,6 +8,7 @@ using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 using System.Linq;
 using Utopia.Shared.Entities.Concrete.Interface;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Entities
 {
@@ -54,7 +55,7 @@ namespace Utopia.Shared.Entities
             var cubeEntity = (BlockLinkedItem)item;
 
             cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
-            cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
+            cubeEntity.BlockLocationRoot = BlockHelper.EntityToBlock(pos.Position);
 
         }
 

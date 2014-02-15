@@ -12,6 +12,7 @@ using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
+using Utopia.GUI.CharacterSelection;
 using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
@@ -289,6 +290,7 @@ namespace Realms.Client.States
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
+            var charSelection = _ioc.Get<CharacterSelectionComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
 
@@ -333,6 +335,7 @@ namespace Realms.Client.States
             AddComponent(crafting);
             AddComponent(inventoryEvents);
             AddComponent(cracksRenderer);
+            AddComponent(charSelection);
 
             if (ClientSettings.Current.Settings.GraphicalParameters.ShadowMap)
                 AddComponent(worldShadowMap);

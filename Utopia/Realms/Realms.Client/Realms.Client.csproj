@@ -109,6 +109,7 @@
     <Compile Include="Components\GUI\InGameMenuComponent.cs" />
     <Compile Include="Components\GUI\CreditsComponent.cs" />
     <Compile Include="Components\GUI\Inventory\CraftingInventory.cs" />
+    <Compile Include="Components\GUI\Inventory\SelectionInventory.cs" />
     <Compile Include="Components\GUI\LoadingComponent.cs" />
     <Compile Include="Components\GUI\LoginComponent.cs" />
     <Compile Include="Components\GUI\MainMenuComponent.cs" />
@@ -162,6 +163,7 @@
     </Compile>
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="States\GameScope.cs" />
+    <Compile Include="States\InGameCharSelectionState.cs" />
     <Compile Include="States\InGameCraftingState.cs" />
     <Compile Include="States\InGameInventoryState.cs" />
     <Compile Include="States\InGameMenuState.cs" />

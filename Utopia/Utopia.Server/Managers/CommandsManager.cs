@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Services;
 using Utopia.Shared.Services.Interfaces;
