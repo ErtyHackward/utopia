@@ -15,7 +15,7 @@ namespace Utopia.Shared.Entities
     [ProtoContract(IgnoreListHandling = true)]
     public class EntityCollection : IStaticContainer, IEnumerable<IStaticEntity>
     {
-        private SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
+        private readonly SortedList<uint, IStaticEntity> _entities = new SortedList<uint, IStaticEntity>();
         private readonly object _syncRoot = new object();
 
         #region Events
@@ -165,13 +165,28 @@ namespace Utopia.Shared.Entities
         /// Returns free unique number for this collection
         /// </summary>
         /// <returns></returns>
-        public uint GetFreeId()
+        public uint GetFreeId(uint dynamicEntityId = 0)
         {
+            if (dynamicEntityId == 0)
+            {
+                lock (_syncRoot)
+                {
+                    if (_entities.Count > 0)                    
+                        return _entities[_entities.Keys[_entities.Count - 1]].StaticId + 1;
+                    return 1;
+                }
+            }
+
+            // to reduce id interference of simultaneous actions we will give each entity his own id offset
+            
+            var random = new Random((int)dynamicEntityId);
+            var id = (uint)random.Next(int.MinValue, int.MaxValue);
             lock (_syncRoot)
             {
-                if(_entities.Count > 0)
-                    return _entities[_entities.Keys[_entities.Count - 1]].StaticId + 1;
-                return 1;
+                while (_entities.ContainsKey(id))
+                    id++;
+
+                return id;
             }
         }
 
@@ -185,7 +200,7 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
-                entity.StaticId = GetFreeId();
+                entity.StaticId = GetFreeId(sourceDynamicId);
                 entity.Container = this;
                 _entities.Add(entity.StaticId, entity);
             }
@@ -250,7 +265,7 @@ namespace Utopia.Shared.Entities
                 try
                 {
                     IsDirty = true;
-                    entity.StaticId = GetFreeId();
+                    entity.StaticId = GetFreeId(sourceDynamicId);
                     entity.Container = this;
                     _entities.Add(entity.StaticId, entity);
                 }
