@@ -136,6 +136,7 @@
     <Compile Include="GUI\Inventory\AlphaImageButton.cs" />
     <Compile Include="GUI\Inventory\AlphaImageButtonRenderer.cs" />
     <Compile Include="GUI\Inventory\InventoryEventComponent.cs" />
+    <Compile Include="GUI\TooltipControl.cs" />
     <Compile Include="Network\SyncManager.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />

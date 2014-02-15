@@ -76,7 +76,7 @@ namespace EasyPublish
                 PublishDistributive(issFilePath, programPath, distributivePath);
             }
 
-            Console.WriteLine("Do you want to publish client auto update?");
+            Console.WriteLine("Do you want to publish client auto update? [y/N]");
             if (ReadYN())
             {
                 var realmsPath = Path.Combine(rootFolder, "Utopia", "Realms", "Realms.Client", "bin", "Release", "Realms.exe");
