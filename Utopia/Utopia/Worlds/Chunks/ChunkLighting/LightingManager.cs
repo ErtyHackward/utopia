@@ -267,7 +267,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Propagate lights Algo.
         private void PropagateLight(int X, int Y, int Z, int LightValue, LightComponent lightComp, bool isLightSource, int index)
         {
-
+            
             BlockProfile blockProfile;
             TerraCube cube;
 
@@ -319,14 +319,13 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 PropagateLight(X, Y - 1, Z, LightValue - lightAttenuation, lightComp, false, index - _cubesHolder.MoveY);
             }
 
-            //X + 1, Y, Z
-            PropagateLight(X + 1, Y, Z, LightValue - lightAttenuation, lightComp, false, index + _cubesHolder.MoveX);
+            PropagateLight(X + 1, Y, Z, LightValue - lightAttenuation, lightComp, false, _cubesHolder.FastIndex(index, X, SingleArrayChunkContainer.IdxRelativeMove.X_Plus1));
             //X, Y, Z + 1
-            PropagateLight(X, Y, Z + 1, LightValue - lightAttenuation, lightComp, false, index + _cubesHolder.MoveZ);
+            PropagateLight(X, Y, Z + 1, LightValue - lightAttenuation, lightComp, false, _cubesHolder.FastIndex(index, Z, SingleArrayChunkContainer.IdxRelativeMove.Z_Plus1));
             //X - 1, Y, Z
-            PropagateLight(X - 1, Y, Z, LightValue - lightAttenuation, lightComp, false, index - _cubesHolder.MoveX);
+            PropagateLight(X - 1, Y, Z, LightValue - lightAttenuation, lightComp, false, _cubesHolder.FastIndex(index, X, SingleArrayChunkContainer.IdxRelativeMove.X_Minus1));
             //X, Y, Z - 1
-            PropagateLight(X, Y, Z - 1, LightValue - lightAttenuation, lightComp, false, index - _cubesHolder.MoveZ);
+            PropagateLight(X, Y, Z - 1, LightValue - lightAttenuation, lightComp, false, _cubesHolder.FastIndex(index, Z, SingleArrayChunkContainer.IdxRelativeMove.Z_Minus1));
         }
 
         //Propagate the light inside the chunk entities
