@@ -63,18 +63,20 @@ namespace Utopia.Shared.Entities.Concrete
             if (charEntity != null)
             {
                 var item = (IItem)entity;
-
-                // entity should lose its voxel intance if put into the inventory
-                item.ModelInstance = null;
+                
 
                 if (charEntity.Inventory.PutItem(item))
                 {
                     cursor.RemoveEntity(owner.EntityState.PickedEntityLink, owner.DynamicId);
                     impact.Success = true;
+
+                    // entity should lose its voxel intance if put into the inventory
+                    item.ModelInstance = null;
+
                     return impact;
                 }
 
-                impact.Message = "Unable to put item to the inventory";
+                impact.Message = "Unable to put item to the inventory, is it full?";
                 return impact;
             }
 
