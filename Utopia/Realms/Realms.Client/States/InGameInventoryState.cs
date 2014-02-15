@@ -4,9 +4,7 @@ using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.States;
 using Utopia.Components;
 using Utopia.Entities.Managers;
-using Utopia.Entities.Managers.Interfaces;
 using Utopia.GUI.Inventory;
-using Utopia.Shared.Entities.Concrete;
 
 namespace Realms.Client.States
 {
@@ -65,6 +63,7 @@ namespace Realms.Client.States
 
             var guiManager = _iocContainer.Get<GuiManager>();
             guiManager.SetDialogMode(false);
+            guiManager.Screen.HideToolTip();
 
             var notice = _iocContainer.Get<InventoryEventComponent>();
             notice.EnableComponent();
