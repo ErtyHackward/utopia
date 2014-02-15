@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Forms;
 using Ninject;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3Resources.Structs;
@@ -14,6 +15,7 @@ using S33M3DXEngine;
 using S33M3CoreComponents.Inputs;
 using Utopia.Action;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Net.Web.Responses;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -39,6 +41,8 @@ namespace Utopia.GUI
         private ToolBarUi _toolbarUi;
         
         private readonly InputsManager _inputManager;
+
+        private TooltipControl tooltip;
 
         public bool IsHidden { get; set; }
 
@@ -74,18 +78,39 @@ namespace Utopia.GUI
             _inputManager.KeyboardManager.IsRunning = true;
             IsHidden = false;
 
+            tooltip = new TooltipControl();
+
             _screen.ToolTipShow += _screen_ToolTipShow;
             _screen.ToolTipHide += _screen_ToolTipHide;
         }
 
         void _screen_ToolTipHide(object sender, EventArgs e)
         {
-            
+            tooltip.Close();
         }
 
         void _screen_ToolTipShow(object sender, ToolTipEventArgs e)
         {
+            var cell = e.Control as InventoryCell;
+
+            if (cell != null)
+            {
+                tooltip.SetText(cell.Slot.Item.Name , cell.Slot.Item.Description ?? "This item has no description, try to guess what is it.");
+            }
+
+            var bounds = e.Control.GetAbsoluteBounds();
             
+            if (bounds.Bottom + tooltip.Bounds.Size.Y.Offset > _screen.Height)
+            {
+                tooltip.Bounds.Location = new UniVector(bounds.Left, bounds.Top - tooltip.Bounds.Size.Y);
+            }
+            else
+            {
+                tooltip.Bounds.Location = new UniVector(bounds.Left, bounds.Bottom);    
+            }
+            
+            tooltip.Show(_screen);
+            tooltip.BringToFront();
         }
 
         private void SelectSlot(int index)

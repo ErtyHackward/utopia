@@ -267,7 +267,7 @@ namespace S33M3CoreComponents.GUI
 
             var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2, windowWidth, windowHeight) };
 
-            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });
+            mbWindow.Children.Add(new LabelControl { Text = message, Autosizing = true, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });
 
             var buttonsPlace = new Control { Bounds = new UniRectangle(0, 0, 0, 20), LayoutFlags = ControlLayoutFlags.WholeRowCenter, LeftTopMargin = new SharpDX.Vector2() };
 

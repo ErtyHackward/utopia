@@ -83,6 +83,8 @@ namespace S33M3CoreComponents.GUI.Nuclex
 
         private bool _toolTipActive;
 
+        private Control _toolTipHoveredControl;
+
         /// <summary>
         /// Gets or sets tooltip timeout in milliseconds
         /// </summary>
@@ -140,7 +142,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
 
             focusedControl = new WeakReference<Control>(null);
 
-            TooltipTimeout = 2000;
+            TooltipTimeout = 500;
         }
 
         /// <summary>Width of the screen in pixels</summary>
@@ -478,7 +480,10 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             if (_prevMousePos.X != x || _prevMousePos.Y != y)
             {
-                HideToolTip();
+                _tooltipTimeout = DateTime.Now;
+                if (_toolTipHoveredControl != null && GetTopControl() != _toolTipHoveredControl)
+                    HideToolTip();
+
                 _prevMousePos = new Vector2(x, y);
             }
             desktopControl.ProcessMouseMove(size.X, size.Y, x, y);
@@ -595,9 +600,12 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             if (!_toolTipActive && ((DateTime.Now - _tooltipTimeout).TotalMilliseconds >= TooltipTimeout))
             {
-                if (GetTopControl().ToolTipEnabled)
+                var topControl = GetTopControl();
+
+                if (topControl.ToolTipEnabled)
                 {
-                    OnToolTipShow(new ToolTipEventArgs { Control = desktopControl.MouseOverControl, CursorPos = _prevMousePos });
+                    OnToolTipShow(new ToolTipEventArgs { Control = topControl, CursorPos = _prevMousePos });
+                    _toolTipHoveredControl = topControl;
                     _toolTipActive = true;
                 }
             }
@@ -625,6 +633,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
             {
                 OnToolTipHide();
                 _toolTipActive = false;
+                _toolTipHoveredControl = null;
             }
         }
 
