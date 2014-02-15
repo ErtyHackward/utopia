@@ -47,6 +47,7 @@ namespace Utopia.Server.Managers
             e.Connection.MessageEntityLock          -= ConnectionMessageEntityLock;
             e.Connection.MessageRequestDateTimeSync -= ConnectionOnMessageRequestDateTimeSync;
             e.Connection.MessageGetEntity           -= ConnectionOnMessageGetEntity;
+            e.Connection.MessageEntityVoxelModel    -= ConnectionOnMessageEntityVoxelModel;
 
             if (e.Connection.Authorized)
             {
@@ -76,6 +77,15 @@ namespace Utopia.Server.Managers
             }
         }
 
+        private void ConnectionOnMessageEntityVoxelModel(object sender, ProtocolMessageEventArgs<EntityVoxelModelMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            if (e.Message.EntityLink.DynamicEntityId != connection.ServerEntity.DynamicEntity.DynamicId)
+                return;
+
+            _server.AreaManager.GetArea(connection.ServerEntity.DynamicEntity.Position).OnEntityVoxelModel(e);
+        }
+
         void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
         {
             e.Connection.MessagePosition            += ConnectionMessagePosition;
@@ -86,6 +96,7 @@ namespace Utopia.Server.Managers
             e.Connection.MessageEntityLock          += ConnectionMessageEntityLock;
             e.Connection.MessageRequestDateTimeSync += ConnectionOnMessageRequestDateTimeSync;
             e.Connection.MessageGetEntity           += ConnectionOnMessageGetEntity;
+            e.Connection.MessageEntityVoxelModel    += ConnectionOnMessageEntityVoxelModel;
         }
 
         private void ConnectionOnMessageGetEntity(object sender, ProtocolMessageEventArgs<GetEntityMessage> e)

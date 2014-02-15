@@ -10,6 +10,7 @@ using Realms.Client.Components.GUI.SinglePlayer;
 using Realms.Client.States;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
+using Utopia.GUI.CharacterSelection;
 using Utopia.GUI.Crafting;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Web;
@@ -205,6 +206,8 @@ namespace Realms.Client
             _iocContainer.Bind<ContainerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<CraftingComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<CraftingWindow>().To<CraftingInventory>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<CharacterSelectionComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<CharacterSelectionWindow>().To<SelectionInventory>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryEventComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<Hud>().To<RealmsHud>().InScope(x => GameScope.CurrentGameScope);

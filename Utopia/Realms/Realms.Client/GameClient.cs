@@ -82,6 +82,7 @@ namespace Realms.Client
             stateManager.RegisterState(_iocContainer.Get<InGameMenuState>());
             stateManager.RegisterState(_iocContainer.Get<InGameInventoryState>());
             stateManager.RegisterState(_iocContainer.Get<InGameCraftingState>());
+            stateManager.RegisterState(_iocContainer.Get<InGameCharSelectionState>());
 
             stateManager.SwitchComponent = fade;
             game.GameComponents.Add(stateManager);

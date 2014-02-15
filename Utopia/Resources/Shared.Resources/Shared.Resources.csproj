@@ -151,6 +151,9 @@
     <None Include="Models\Trowel.uvm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Models\UtopMusicStation.uvm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="TexturesPacks\Default\Cracks\ct00_cracks.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -170,6 +173,9 @@
     <None Include="TexturesPacks\Default\Cracks\ct05_cracks.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Sounds\Songs\Luciano Pavarotti - E%27il Sol Dell%27anima.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TexturesPacks\Default\Terran\ct23_Foliage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

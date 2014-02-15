@@ -1,4 +1,5 @@
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.Maths;
 using S33M3CoreComponents.Sprites2D;
 using SharpDX;
 using Utopia.Entities.Voxel;
@@ -15,6 +16,7 @@ namespace Utopia.GUI.Crafting
         private readonly VoxelModelManager _manager;
         private Vector2 _mousePosition;
 
+        public Matrix AlterTransform { get; set; }
 
         public VoxelModelInstance ModelInstance { get; set; }
 
@@ -53,6 +55,7 @@ namespace Utopia.GUI.Crafting
         {
             Rotation = Quaternion.Identity;
             _manager = manager;
+            AlterTransform = Matrix.RotationX(-MathHelper.Pi / 5);
         }
 
         public void SetModel(string modelName)

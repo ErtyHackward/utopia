@@ -28,6 +28,14 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(1, OverwriteList = true)]
         public List<ushort> Toolbar { get; set; }
+
+        /// <summary>
+        /// Tells the last inventory take position
+        /// This allows to prevent mixing of items in the inventory
+        /// On switch tool put the previous active tool to that position (if possible)
+        /// </summary>
+        [ProtoMember(2)]
+        public Vector2I ActiveToolInventoryPosition { get; set; }
         
         public override ushort ClassId
         {
@@ -129,7 +137,14 @@ namespace Utopia.Shared.Entities.Dynamic
                 {
                     case UseType.Use:
                         if (msg.ToolId != 0)
-                            return ToolUse((ITool)FindItemById(msg.ToolId));
+                        {
+                            var tool = FindItemById(msg.ToolId) as ITool;
+
+                            if (tool == null)
+                                return new ToolImpact { Message = "This item is not the tool" };
+
+                            return ToolUse(tool);
+                        }
                         return ToolUse(HandTool);
                     case UseType.Put:
                         return PutUse();
@@ -237,6 +252,17 @@ namespace Utopia.Shared.Entities.Dynamic
 
             slot.ItemsCount = itemTransferMessage.ItemsCount;
 
+            if (!itemTransferMessage.IsSwitch && container == Inventory)
+            {
+                var pos = itemTransferMessage.DestinationContainerSlot;
+                var destContainer = FindContainer(itemTransferMessage.DestinationContainerEntityLink, itemTransferMessage.DestinationContainerSlot, out pos);
+
+                if (destContainer == Equipment)
+                {
+                    ActiveToolInventoryPosition = itemTransferMessage.SourceContainerSlot;
+                }
+            }
+
             return true;
         }
 
@@ -272,7 +298,7 @@ namespace Utopia.Shared.Entities.Dynamic
             var destLink = itemTransferMessage.DestinationContainerEntityLink;
 
             var container = FindContainer(destLink, position, out position);
-
+            
             if (container == null)
                 return false;
 

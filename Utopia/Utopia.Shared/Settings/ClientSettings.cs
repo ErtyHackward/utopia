@@ -230,6 +230,7 @@ namespace Utopia.Shared.Settings
         public KeyWithModifier Inventory;
         public KeyWithModifier ToggleInterface;
         public KeyWithModifier Crafting;
+        public KeyWithModifier CharSelect;
     }
 
     /// <summary>
@@ -366,7 +367,8 @@ namespace Utopia.Shared.Settings
                             Throw = new KeyWithModifier { MainKey = Keys.Back, Modifier = Keys.None, Info = "Throw" },
                             Inventory = new KeyWithModifier { MainKey = Keys.I, Modifier = Keys.None, Info = "Inventory" },
                             ToggleInterface = new KeyWithModifier { MainKey = Keys.Z, Modifier = Keys.Alt, Info = "Toggle Interface" },
-                            Crafting = new KeyWithModifier { MainKey = Keys.O, Info = "Toggle crafting window" }
+                            Crafting = new KeyWithModifier { MainKey = Keys.O, Info = "Toggle crafting window" },
+                            CharSelect = new KeyWithModifier { MainKey = Keys.N, Info = "Toggle character selection window" },
                         },
                         System = new SystemBindingKeys
                         {

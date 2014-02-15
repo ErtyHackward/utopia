@@ -13,6 +13,7 @@ using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
+using Utopia.GUI.CharacterSelection;
 using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Shared.Entities.Interfaces;
@@ -127,6 +128,7 @@ namespace Realms.Client.States
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
+            var charSelection = _ioc.Get<CharacterSelectionComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var pickingManager = _ioc.Get<PickingManager>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
@@ -159,6 +161,7 @@ namespace Realms.Client.States
             AddComponent(inventoryEvents);
             AddComponent(pickingManager);
             AddComponent(cracksRenderer);
+            AddComponent(charSelection);
 
             if (worldShadowMap != null)
                 AddComponent(worldShadowMap);
@@ -287,6 +290,16 @@ namespace Realms.Client.States
                     if (StatesManager.CurrentState.Name != "Crafting")
                     {
                         StatesManager.ActivateGameStateAsync("Crafting", true);
+                    }
+                    else
+                    {
+                        StatesManager.ActivateGameStateAsync("Gameplay");
+                    }
+                    break;
+                case UtopiaActions.SelectCharacter:
+                    if (StatesManager.CurrentState.Name != "CharSelection")
+                    {
+                        StatesManager.ActivateGameStateAsync("CharSelection", true);
                     }
                     else
                     {

@@ -7,9 +7,9 @@ using System;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete.Interface;
-using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -18,6 +18,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     [ProtoContract]
     [ProtoInclude(100, typeof(Door))]
+    [ProtoInclude(101, typeof(MusicPlayer))]
     [Description("Entity of this type will have one of 4 orientations and occupy a block.")]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {

@@ -262,6 +262,8 @@ namespace Utopia.GUI.Inventory
             {
                 IsToolbarSwitching = true;
                 ItemMessageTranslator.Enabled = true;
+                
+
                 if (PlayerManager.PlayerCharacter.Toolbar[e.SlotIndex] != 0)
                 {
                     var player = PlayerManager.PlayerCharacter;
@@ -273,15 +275,31 @@ namespace Utopia.GUI.Inventory
                     if (slot == null)
                         return;
                     
+                    
                     ContainedSlot taken;
                     player.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount);
                     player.Equipment.Equip(EquipmentSlotType.Hand, slot, out taken);
 
                     if (taken != null)
                     {
-                        player.Inventory.PutItem(taken.Item, slot.GridPosition, taken.ItemsCount);
+                        bool returned = false;
+                        var prevPos = player.ActiveToolInventoryPosition;
+
+                        // try to put item on previous pos
+                        if (prevPos.X >= 0 && prevPos.Y >= 0)
+                        {
+                            if (player.Inventory.PeekSlot(prevPos) == null)
+                            {
+                                returned = player.Inventory.PutItem(taken.Item, prevPos, taken.ItemsCount);
+                            }
+                        }
+
+                        // do exchange if we have no place to return
+                        if (!returned)
+                            player.Inventory.PutItem(taken.Item, slot.GridPosition, taken.ItemsCount);
                     }
-                    
+
+                    player.ActiveToolInventoryPosition = slot.GridPosition;
                 }
             }
             finally

@@ -63,7 +63,7 @@ namespace Utopia.GUI.Crafting
 
                 var scale = (float)rMax / sphere.Radius; // Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
 
-                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5) * Matrix.RotationQuaternion(control.Rotation);
+                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * control.AlterTransform * Matrix.RotationQuaternion(control.Rotation);
 
                 control.VisualVoxelModel.Draw(context, control.VoxelEffect, instance);
 

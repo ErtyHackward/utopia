@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Server.Structs
@@ -40,6 +42,7 @@ namespace Utopia.Server.Structs
             area.StaticEntityRemoved += AreaStaticEntityRemoved;
             area.EntityLockChanged   += AreaEntityLockChanged;
             area.TransferMessage     += AreaTransferMessage;
+            area.VoxelModelChanged   += AreaOnVoxelModelChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -64,6 +67,7 @@ namespace Utopia.Server.Structs
             area.StaticEntityRemoved -= AreaStaticEntityRemoved;
             area.EntityLockChanged   -= AreaEntityLockChanged;
             area.TransferMessage     -= AreaTransferMessage;
+            area.VoxelModelChanged   -= AreaOnVoxelModelChanged;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -130,12 +134,25 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void AreaTransferMessage(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<ItemTransferMessage> e)
+        void AreaTransferMessage(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
         {
             if (e.Message.SourceEntityId != DynamicEntity.DynamicId)
             {
                 Connection.Send(e.Message);
             }
+        }
+
+        private void AreaOnVoxelModelChanged(object sender, ProtocolMessageEventArgs<EntityVoxelModelMessage> e)
+        {
+            if (e.Message.EntityLink.DynamicEntityId == DynamicEntity.DynamicId)
+            {
+                var charClass = _server.EntityFactory.Config.CharacterClasses.FirstOrDefault( c=> c.ClassName == e.Message.ClassName);
+
+                if (charClass != null)
+                    DynamicEntity.ModelName = charClass.ModelName;
+            }
+
+            Connection.Send(e.Message);
         }
 
         private void AreaEntityUseFeedback(object sender, EntityUseFeedbackEventArgs e)
