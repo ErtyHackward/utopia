@@ -626,7 +626,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
             return c;
         }
 
-        private void HideToolTip()
+        public void HideToolTip()
         {
             _tooltipTimeout = DateTime.Now;
             if (_toolTipActive)
