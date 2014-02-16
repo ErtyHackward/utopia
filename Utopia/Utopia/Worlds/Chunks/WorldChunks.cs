@@ -574,10 +574,6 @@ namespace Utopia.Worlds.Chunks
                                                        (VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)) / AbstractChunk.ChunkSize.Z));
                         chunkHash.Add(chunkMD5);
                     }
-                    if (chunk.Position.ToString() == "[0;0;0]")
-                    {
-                        logger.Debug("Chunk Init phase requested from server; Position : {0},  Hash {1}", chunk.Position, chunkMD5);
-                    }
 
                 }
             }
@@ -634,11 +630,6 @@ namespace Utopia.Worlds.Chunks
                 chunkHash.Add(md5Hash);
                 chunk.IsServerRequested = true;
                 chunk.IsServerResyncMode = true;
-
-                if (chunk.Position.ToString() == "[0;0;0]")
-                {
-                    logger.Debug("Chunk ResyncClientChunks phase requested from server; Position : {0},  Hash {1}", chunk.Position, md5Hash);
-                }
             }
 
             var chunkRange = new Range3I(
@@ -667,9 +658,18 @@ namespace Utopia.Worlds.Chunks
 
         }
 
-        public void ResyncChunk(Vector3I chunkPosition)
+        /// <summary>
+        /// Will start a chunk resync cycle (Request to server)
+        /// </summary>
+        /// <param name="chunkPosition">The requested chunk</param>
+        /// <param name="forced">If true, will skip some safety checks</param>
+        /// <returns></returns>
+        public bool ResyncChunk(Vector3I chunkPosition, bool forced)
         {
-            var chunk = GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Z); 
+            var chunk = GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Z);
+
+            if (forced == false && (chunk.ThreadStatus != S33M3DXEngine.Threading.ThreadsManager.ThreadStatus.Locked || chunk.State != ChunkState.DisplayInSyncWithMeshes)) 
+                return false;
 
             var md5Hash = chunk.GetMd5Hash();
             
@@ -685,6 +685,8 @@ namespace Utopia.Worlds.Chunks
                     HashesCount = 1,
                     Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
                 });
+
+            return true;
         }
 
         //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).

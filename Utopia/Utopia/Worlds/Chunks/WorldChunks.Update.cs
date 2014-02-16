@@ -342,13 +342,19 @@ namespace Utopia.Worlds.Chunks
                 var chunks2Syncro = newEventNotificationArea.AllExclude(_eventNotificationArea);
                 if (chunks2Syncro != null)
                 {
-                    //Get all new chunk in the area !
+                    bool synchroFullyRequested = true;
+                    //Get all new chunk in the area that are in a state ready to be requested !
+                    //Check that the concerned chunks are in a correct state to be requested.
+
                     foreach (var chunkPosition in chunks2Syncro)
                     {
-                        ResyncChunk(chunkPosition);
+                        if (ResyncChunk(chunkPosition, false) == false)
+                        {
+                            synchroFullyRequested = false;
+                            break;
+                        }
                     }
-                    _eventNotificationArea = newEventNotificationArea;
-                    logger.Debug("Requesting chunk synchro data");
+                    if (synchroFullyRequested) _eventNotificationArea = newEventNotificationArea;
                 }
 
                 _lastPlayerTriggeredPosition = PlayerManager.Player.Position;

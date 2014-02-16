@@ -55,7 +55,7 @@ namespace Utopia.Network
 
             foreach (var chunkPos in e.ChunksToSynchronize)
             {
-                _chunks.ResyncChunk(chunkPos);
+                _chunks.ResyncChunk(chunkPos, true);
             }
 
             foreach (var entityId in e.EntitiesToSynchronize)
