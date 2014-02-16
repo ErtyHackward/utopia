@@ -17,7 +17,7 @@ namespace Utopia.Shared.Net.Connections
         /// <summary>
         /// Modify this constant to actual value
         /// </summary>
-        public const int ProtocolVersion = 5;
+        public const int ProtocolVersion = 6;
 
         /// <summary>
         /// Gets or sets current client version

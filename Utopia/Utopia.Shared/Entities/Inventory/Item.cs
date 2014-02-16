@@ -160,18 +160,22 @@ namespace Utopia.Shared.Entities.Inventory
             item.Rotation = pos.Rotation;
         }
 
-        protected bool CanDo(IDynamicEntity owner, ref ToolImpact impact)
+        protected bool CanDo(IDynamicEntity owner, out IToolImpact impact)
         {
+            impact = null;
             if (owner.IsReadOnly)
             {
-                impact.Message = "You don't have the access to modify the world. Ask admins for access.";
+                impact = new ToolImpact
+                {
+                    Message = "You don't have the access to modify the world. Ask admins for access."
+                };
                 return false;
             }
 
             return true;
         }
 
-        protected bool CanDoBlockAction(IDynamicEntity owner, ref ToolImpact impact)
+        protected bool CanDoBlockAction(IDynamicEntity owner, out IToolImpact impact)
         {
             if (!owner.EntityState.IsBlockPicked)
             {
@@ -181,10 +185,10 @@ namespace Utopia.Shared.Entities.Inventory
                 };
                 return false;
             }
-            return CanDo(owner, ref impact);
+            return CanDo(owner, out impact);
         }
 
-        protected bool CanDoEntityAction(IDynamicEntity owner, ref ToolImpact impact)
+        protected bool CanDoEntityAction(IDynamicEntity owner, out IToolImpact impact)
         {
             if (!owner.EntityState.IsEntityPicked)
             {
@@ -194,11 +198,12 @@ namespace Utopia.Shared.Entities.Inventory
                 };
                 return false;
             }
-            return CanDo(owner, ref impact);
+            return CanDo(owner, out impact);
         }
 
-        protected bool CanDoBlockOrEntityAction(IDynamicEntity owner, ref ToolImpact impact)
+        protected bool CanDoBlockOrEntityAction(IDynamicEntity owner, out IToolImpact impact)
         {
+            impact = null;
             if (!owner.EntityState.IsBlockPicked && !owner.EntityState.IsEntityPicked)
             {
                 impact = new ToolImpact
@@ -207,7 +212,7 @@ namespace Utopia.Shared.Entities.Inventory
                 };
                 return false;
             }
-            return CanDo(owner, ref impact);
+            return CanDo(owner, out impact);
         }
 
 
@@ -221,10 +226,12 @@ namespace Utopia.Shared.Entities.Inventory
         public virtual IToolImpact Put(IDynamicEntity owner)
         {
             // by default all items can only be dropped to some position
-            var impact = new ToolImpact();
+            IToolImpact checkImpact;
             
-            if (!CanDoBlockOrEntityAction(owner, ref impact))
-                return impact;
+            if (!CanDoBlockOrEntityAction(owner, out checkImpact))
+                return checkImpact;
+
+            var impact = new EntityToolImpact();
             
             var pos = GetPosition(owner);
 

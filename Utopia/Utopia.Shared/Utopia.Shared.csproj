@@ -151,7 +151,9 @@
     <Compile Include="Entities\Interfaces\IMoveAI.cs" />
     <Compile Include="Entities\Interfaces\INpc.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
+    <Compile Include="Entities\Inventory\BlockToolImpact.cs" />
     <Compile Include="Entities\Inventory\EntityPosition.cs" />
+    <Compile Include="Entities\Inventory\EntityToolImpact.cs" />
     <Compile Include="Entities\Inventory\PickType.cs" />
     <Compile Include="Entities\Path3D.cs" />
     <Compile Include="Entities\Recipe.cs" />

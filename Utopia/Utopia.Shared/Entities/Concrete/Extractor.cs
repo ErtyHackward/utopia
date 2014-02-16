@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Xml;
 using ProtoBuf;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
@@ -22,11 +23,15 @@ namespace Utopia.Shared.Entities.Concrete
 
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var impact = new ToolImpact();
+            IToolImpact checkImpact;
 
-            if (!CanDoEntityAction(owner, ref impact))
-                return impact;
-            
+            if (!CanDoEntityAction(owner, out checkImpact))
+                return checkImpact;
+
+            var impact = new EntityToolImpact { 
+                SrcBlueprintId = BluePrintId 
+            };
+
             if (owner.EntityState.PickedEntityLink.IsDynamic)
             {
                 impact.Message = "Only static entities allowed to use";
@@ -48,7 +53,8 @@ namespace Utopia.Shared.Entities.Concrete
             if (charEntity != null)
             {
                 var item = (IItem)entity;
-                
+
+                impact.EntityId = entity.StaticId;
                 // entity should lose its voxel intance if put into the inventory
                 item.ModelInstance = null;
 
