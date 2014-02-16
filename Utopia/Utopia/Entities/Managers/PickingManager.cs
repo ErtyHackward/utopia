@@ -507,7 +507,13 @@ namespace Utopia.Entities.Managers
         {
             if (PlayerManager.Player.EntityState.IsBlockPicked)
             {
-                return string.Format("Block picked {0}", PlayerManager.Player.EntityState.PickedBlockPosition);
+                return string.Format("Block picked {0} light : {1}; New Block position {2} light : {3}", 
+                                      PlayerManager.Player.EntityState.PickedBlockPosition,
+                                      _cubesHolder.GetCube(PlayerManager.Player.EntityState.PickedBlockPosition).Cube.EmissiveColor.ToString(),
+                                      PlayerManager.Player.EntityState.NewBlockPosition,
+                                      _cubesHolder.GetCube(PlayerManager.Player.EntityState.NewBlockPosition).Cube.EmissiveColor.ToString()
+                                      );
+                
             }
             else if (PlayerManager.Player.EntityState.IsEntityPicked)
             {

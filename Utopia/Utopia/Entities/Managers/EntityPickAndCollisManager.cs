@@ -77,15 +77,12 @@ namespace Utopia.Entities.Managers
                                           ServerComponent server,
                                           InputsManager input)                                     
         {
-            //_timer = timerManager.AddTimer(1, 100);         //10 times/s
-            //_timer.OnTimerRaised += _timer_OnTimerRaised;
             _input = input;
             _server = server;            
         }
 
         public void Dispose()
         {
-            //_timer.OnTimerRaised -= _timer_OnTimerRaised;
         }
 
         #region private methods
