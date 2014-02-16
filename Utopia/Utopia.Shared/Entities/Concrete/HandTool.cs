@@ -29,11 +29,13 @@ namespace Utopia.Shared.Entities.Concrete
 
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var impact = new ToolImpact();
+            IToolImpact checkImpact;
 
-            if (!CanDoEntityAction(owner, ref impact))
-                return impact;
-            
+            if (!CanDoEntityAction(owner, out checkImpact))
+                return checkImpact;
+
+            var impact = new EntityToolImpact();
+
             if (owner.EntityState.PickedEntityLink.IsDynamic)
             {
                 impact.Message = "Only static entities allowed to use";
@@ -53,6 +55,7 @@ namespace Utopia.Shared.Entities.Concrete
                 var usable = (IUsableEntity)entity;
                 usable.Use();
                 impact.Success = true;
+                impact.EntityId = entity.StaticId;
                 return impact;
             }
 

@@ -28,9 +28,9 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var impact = new ToolImpact();
+            IToolImpact impact;
 
-            if (!CanDoBlockAction(owner, ref impact))
+            if (!CanDoBlockAction(owner, out impact))
             {
                 return impact;
             }
@@ -40,7 +40,10 @@ namespace Utopia.Shared.Entities
 
         private IToolImpact BlockHit(IDynamicEntity owner)
         {
-            var impact = new ToolImpact();
+            var impact = new BlockToolImpact {
+                SrcBlueprintId = BluePrintId,
+                Position = owner.EntityState.PickedBlockPosition
+            };
             
             var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
 
@@ -57,6 +60,7 @@ namespace Utopia.Shared.Entities
             var cube = cursor.Read(out damage);
             if (cube != WorldConfiguration.CubeId.Air)
             {
+                impact.CubeId = cube;
                 var hardness = cursor.PeekProfile().Hardness;
 
                 if (damage == null)
@@ -74,6 +78,7 @@ namespace Utopia.Shared.Entities
                     var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
                     cursor.Write(WorldConfiguration.CubeId.Air);
+                    impact.CubeId = WorldConfiguration.CubeId.Air;
                 }
                 else if (damage.Strength >= hardness)
                 {

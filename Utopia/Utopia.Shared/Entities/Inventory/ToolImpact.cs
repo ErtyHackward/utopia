@@ -8,6 +8,8 @@ namespace Utopia.Shared.Entities.Inventory
     /// Basic tool impact
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(BlockToolImpact))]
+    [ProtoInclude(101, typeof(EntityToolImpact))]
     public class ToolImpact : IToolImpact
     {
         /// <summary>
@@ -21,6 +23,12 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         [ProtoMember(2)]
         public String Message { get; set; }
+
+        /// <summary>
+        /// Source tool blueprintId
+        /// </summary>
+        [ProtoMember(3)]
+        public ushort SrcBlueprintId { get; set; }
 
         public static bool operator ==(ToolImpact left, ToolImpact right)
         {
@@ -40,7 +48,7 @@ namespace Utopia.Shared.Entities.Inventory
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((ToolImpact)obj);
         }
 
@@ -51,15 +59,16 @@ namespace Utopia.Shared.Entities.Inventory
 
         protected bool Equals(ToolImpact other)
         {
-            return Success.Equals(other.Success) && string.Equals(Message, other.Message);
+            return Success.Equals(other.Success) && string.Equals(Message, other.Message) && SrcBlueprintId == other.SrcBlueprintId;
         }
 
+        /// <summary>
+        /// Don't use it, or implement all hierarchy methods
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (Success.GetHashCode() * 397) ^ (Message != null ? Message.GetHashCode() : 0);
-            }
+            throw new NotImplementedException();
         }
     }
 }

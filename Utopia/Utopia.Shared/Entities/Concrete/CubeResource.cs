@@ -42,9 +42,9 @@ namespace Utopia.Shared.Entities.Concrete
 
         public IToolImpact Use(IDynamicEntity owner)
         {
-            ToolImpact impact = null;
+            IToolImpact impact;
 
-            if (!CanDoBlockAction(owner, ref impact))
+            if (!CanDoBlockAction(owner, out impact))
                 return impact;
             
             return BlockImpact(owner);
@@ -53,7 +53,7 @@ namespace Utopia.Shared.Entities.Concrete
         public IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
         {
             var entity = owner;
-            var impact = new ToolImpact();
+            var impact = new BlockToolImpact { SrcBlueprintId = BluePrintId };
 
             if (entity.EntityState.IsBlockPicked)
             {
@@ -87,6 +87,7 @@ namespace Utopia.Shared.Entities.Concrete
                 {
                     cursor.Write(CubeId);
                     impact.Success = true;
+                    impact.CubeId = CubeId;
                     return impact;
                 }
             }
