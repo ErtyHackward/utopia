@@ -76,7 +76,7 @@ namespace Utopia.Shared.Entities
                 if (damage.Strength <= 0)
                 {
                     var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
-                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition);
+                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
                     impact.CubeId = WorldConfiguration.CubeId.Air;
                 }

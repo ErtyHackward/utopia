@@ -98,6 +98,9 @@ namespace Utopia.Server.Structs
 
         public override void Use(EntityUseMessage entityUseMessage)
         {
+            if (entityUseMessage.DynamicEntityId != PlayerCharacter.DynamicId)
+                return;
+
             base.Use(entityUseMessage);
 
             try

@@ -60,6 +60,7 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             var cursor = LandscapeManager.GetCursor(entity.Position);
+            cursor.OwnerDynamicId = owner.DynamicId;
             
             var charEntity = owner as CharacterEntity;
 
@@ -70,7 +71,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                 if (charEntity.Inventory.PutItem(item))
                 {
-                    cursor.RemoveEntity(owner.EntityState.PickedEntityLink, owner.DynamicId);
+                    cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
                     impact.Success = true;
 
                     // entity should lose its voxel intance if put into the inventory

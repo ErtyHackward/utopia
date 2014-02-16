@@ -133,6 +133,8 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public IToolImpact ReplayUse(EntityUseMessage msg)
         {
+            EntityState = msg.State;
+
             switch (msg.UseType)
                 {
                     case UseType.Use:
@@ -235,6 +237,16 @@ namespace Utopia.Shared.Entities.Dynamic
             
             var position = itemTransferMessage.SourceContainerSlot;
             var srcLink = itemTransferMessage.SourceContainerEntityLink;
+
+            // item from nowhere
+            if (srcLink.IsEmpty)
+            {
+                slot = new ContainedSlot { 
+                    Item = (IItem)EntityFactory.CreateFromBluePrint((ushort)itemTransferMessage.ItemEntityId), 
+                    ItemsCount = itemTransferMessage.ItemsCount
+                };
+                return true;
+            }
 
             // detect the container
             var container = FindContainer(srcLink, position, out position);

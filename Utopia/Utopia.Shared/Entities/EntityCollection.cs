@@ -456,7 +456,7 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        public void RemoveAll<T>(Predicate<T> condition) where T : IStaticEntity
+        public void RemoveAll<T>(Predicate<T> condition, uint sourceDynamicId = 0) where T : IStaticEntity
         {
             lock (_syncRoot)
             {
@@ -468,7 +468,8 @@ namespace Utopia.Shared.Entities
                         IsDirty = true;
                         _entities.RemoveAt(i); // O(Count)
                         OnEntityRemoved(new EntityCollectionEventArgs {
-                            Entity = value
+                            Entity = value,
+                            SourceDynamicEntityId = sourceDynamicId
                         });
                         value.Container = null;
                     }
