@@ -93,7 +93,11 @@ namespace Utopia.Shared
             _connection = new SQLiteConnection(csb + @";COMPRESS=TRUE");
             _connection.Open();
 
+#if DEBUG
+            Execute("PRAGMA JOURNAL_MODE=WAL;");
+#else
             Execute("PRAGMA LOCKING_MODE=EXCLUSIVE;PRAGMA JOURNAL_MODE=WAL;");
+#endif
 
             if (createDb) CreateDataBaseInternal();
 

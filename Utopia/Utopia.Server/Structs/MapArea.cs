@@ -46,9 +46,9 @@ namespace Utopia.Server.Structs
         /// <summary>
         /// Occurs when some entity performs use operation
         /// </summary>
-        public event EventHandler<EntityUseEventArgs> EntityUse;
+        public event EventHandler<ProtocolMessageEventArgs<EntityUseMessage>> EntityUse;
 
-        private void OnEntityUse(EntityUseEventArgs e)
+        public void OnEntityUse(ProtocolMessageEventArgs<EntityUseMessage> e)
         {
             var handler = EntityUse;
             if (handler != null) handler(this, e);
@@ -240,7 +240,6 @@ namespace Utopia.Server.Structs
                 // add events to retranslate
                 entity.PositionChanged += EntityPositionChanged;
                 entity.DynamicEntity.ViewChanged += EntityViewChanged;
-                entity.DynamicEntity.Use += EntityUseHandler;
                 
                 OnEntityAdded(new ServerDynamicEntityEventArgs {Entity = entity});
             }
@@ -254,17 +253,12 @@ namespace Utopia.Server.Structs
                 // remove events from re-translating
                 e.PositionChanged -= EntityPositionChanged;
                 e.DynamicEntity.ViewChanged -= EntityViewChanged;
-                e.DynamicEntity.Use -= EntityUseHandler;
 
                 OnEntityRemoved(new ServerDynamicEntityEventArgs { Entity = e });
             }
         }
 
-        void EntityUseHandler(object sender, EntityUseEventArgs e)
-        {
-            // retranslate
-            OnEntityUse(e);
-        }
+
 
         void EntityViewChanged(object sender, EntityViewEventArgs e)
         {

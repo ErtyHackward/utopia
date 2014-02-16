@@ -88,6 +88,9 @@ namespace Utopia.Server.Structs
         
         void AreaStaticEntityRemoved(object sender, EntityCollectionEventArgs e)
         {
+            if (e.SourceDynamicEntityId != 0)
+                return;
+
             Connection.Send(new EntityOutMessage { 
                 EntityId = e.Entity.StaticId, 
                 TakerEntityId = e.SourceDynamicEntityId, 
@@ -97,6 +100,9 @@ namespace Utopia.Server.Structs
 
         void AreaStaticEntityAdded(object sender, EntityCollectionEventArgs e)
         {
+            if (e.SourceDynamicEntityId != 0)
+                return;
+
             Connection.Send(new EntityInMessage { 
                 Entity = e.Entity, 
                 SourceEntityId = e.SourceDynamicEntityId, 
@@ -126,11 +132,11 @@ namespace Utopia.Server.Structs
             }
         }
 
-        private void AreaEntityUse(object sender, EntityUseEventArgs e)
+        private void AreaEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
         {
-            if (e.Entity != DynamicEntity)
+            if (e.Message.DynamicEntityId != DynamicEntity.DynamicId)
             {
-                Connection.Send(new EntityUseMessage(e));
+                Connection.Send(e.Message);
             }
         }
 

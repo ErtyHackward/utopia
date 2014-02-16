@@ -153,6 +153,11 @@ namespace Utopia.Server.Managers
             // handling entity using (tool or just use)
 
             var connection = (ClientConnection)sender;
+            e.Message.DynamicEntityId = connection.ServerEntity.DynamicEntity.DynamicId;
+
+            // retranslate
+            _server.AreaManager.GetArea(connection.ServerEntity.DynamicEntity.Position).OnEntityUse(e);
+
             connection.ServerEntity.Use(e.Message);
         }
 
