@@ -665,12 +665,6 @@ namespace S33M3CoreComponents.Inputs.Actions
                         break;
                     case KeyboardTriggerMode.KeyPressed:
                         //Set the Action Flag if required
-                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _prevKeyboardState.IsKeyUp(_keyboardAction.Binding))
-                        {
-                            _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true;
-                            _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard;
-                        }
-
                         if (_keyboardAction.WithAutoResetButtonPressed && _keyboardAction.StartTimeAutoResetTick == 0 && _curKeyboardState.IsKeyDown(_keyboardAction.Binding))
                         {
                             //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
