@@ -18,6 +18,8 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         private WorldConfiguration _config;
         private int _bigArrayIndex;
 
+        public bool isError { get { return _bigArrayIndex == int.MaxValue; } }
+
         /// <summary>
         /// Occurs when someone tries to write using this cursor
         /// </summary>
@@ -29,8 +31,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _landscapeManager = landscapeManager;
             GlobalPosition = blockPosition;
             _config = config;
-            if (!landscapeManager.CubesHolder.IndexSafe(blockPosition.X, blockPosition.Y, blockPosition.Z, out _bigArrayIndex))
-                throw new IndexOutOfRangeException();
+            landscapeManager.CubesHolder.Index(blockPosition.X, blockPosition.Y, blockPosition.Z, true, out _bigArrayIndex);
         }
 
         public Vector3I GlobalPosition
@@ -56,6 +57,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public BlockTag ReadTag()
         {
             var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
+            if (chunk == null) return null;
             return chunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(_globalPosition));
         }
 
@@ -66,6 +68,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public byte Read<T>(out T tag) where T : BlockTag
         {
             var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
+            if (chunk == null)
+            {
+                tag = null;
+                return 255; //Send back "Error" value;
+            }
             tag = (T)chunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(_globalPosition));
             return Read();
         }

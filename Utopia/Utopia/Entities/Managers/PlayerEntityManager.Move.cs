@@ -268,7 +268,7 @@ namespace Utopia.Entities.Managers
 
         private void CheckHeadUnderWater()
         {
-            if (_cubesHolder.IndexSafe(MathHelper.Floor(CameraWorldPosition.X), MathHelper.Floor(CameraWorldPosition.Y), MathHelper.Floor(CameraWorldPosition.Z), out _headCubeIndex))
+            if (_cubesHolder.IndexYSafe(MathHelper.Floor(CameraWorldPosition.X), MathHelper.Floor(CameraWorldPosition.Y), MathHelper.Floor(CameraWorldPosition.Z), out _headCubeIndex))
             {
                 //Get the cube at the camera position !
                 _headCube = _cubesHolder.Cubes[_headCubeIndex];

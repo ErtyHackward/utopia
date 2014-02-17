@@ -216,7 +216,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="Y">world Y position</param>
         /// <param name="Z">world Z position</param>
         /// <returns></returns>
-        public bool IndexSafe(int X, int Y, int Z, out int index)
+        public bool IndexYSafe(int X, int Y, int Z, out int index)
         {
             if (Y >= AbstractChunk.ChunkSize.Y || Y < 0)
             {
@@ -493,7 +493,7 @@ namespace Utopia.Shared.Chunks
         public bool IsSolidToPlayer(ref Vector3D worldPosition)
         {
             int index;
-            if (IndexSafe(MathHelper.Floor(worldPosition.X), MathHelper.Floor(worldPosition.Y), MathHelper.Floor(worldPosition.Z), out index))
+            if (IndexYSafe(MathHelper.Floor(worldPosition.X), MathHelper.Floor(worldPosition.Y), MathHelper.Floor(worldPosition.Z), out index))
             {
                 TerraCube cube = Cubes[index];
                 return _config.BlockProfiles[cube.Id].IsSolidToEntity;
@@ -520,7 +520,7 @@ namespace Utopia.Shared.Chunks
                 {
                     for (int y = Ymin; y <= Ymax; y++)
                     {
-                        if (IndexSafe(x, y, z, out index))
+                        if (IndexYSafe(x, y, z, out index))
                         {
                             if (_config.BlockProfiles[Cubes[index].Id].IsSolidToEntity)
                             {
@@ -548,7 +548,7 @@ namespace Utopia.Shared.Chunks
 
             while (!_config.BlockProfiles[cubeWithPosition.Cube.Id].IsSolidToEntity && !isIndexInError(index))
             {
-                if (IndexSafe(X, Y, Z, out index))
+                if (IndexYSafe(X, Y, Z, out index))
                 {
                     if (_config.BlockProfiles[Cubes[index].Id].IsSolidToEntity)
                     {
@@ -597,7 +597,7 @@ namespace Utopia.Shared.Chunks
             var result = new TerraCubeResult();
             int cubeIndex;
 
-            if (!IndexSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
+            if (!IndexYSafe(pos.X, pos.Y, pos.Z, out cubeIndex))
             {
                 return result;
             }
@@ -621,7 +621,7 @@ namespace Utopia.Shared.Chunks
             int cubeIndex;
             if (withYCheck)
             {
-                if (!IndexSafe(cubePos.X, cubePos.Y, cubePos.Z, out cubeIndex))
+                if (!IndexYSafe(cubePos.X, cubePos.Y, cubePos.Z, out cubeIndex))
                 {
                     return result;
                 }

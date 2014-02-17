@@ -46,7 +46,13 @@ namespace Utopia.Shared.Entities
             };
             
             var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
-
+            if (cursor == null)
+            {
+                //Impossible to find chunk, chunk not existing, event dropped
+                impact.Message = "Block not existing, event dropped";
+                impact.Dropped = true;
+                return impact;
+            }
             cursor.OwnerDynamicId = owner.DynamicId;
 
             if (cursor.PeekProfile().Hardness == 0)
@@ -76,6 +82,13 @@ namespace Utopia.Shared.Entities
                 if (damage.Strength <= 0)
                 {
                     var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
+                    if (chunk == null)
+                    {
+                        //Impossible to find chunk, chunk not existing, event dropped
+                        impact.Message = "Chunk is not existing, event dropped";
+                        impact.Dropped = true;
+                        return impact;
+                    }
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
                     impact.CubeId = WorldConfiguration.CubeId.Air;

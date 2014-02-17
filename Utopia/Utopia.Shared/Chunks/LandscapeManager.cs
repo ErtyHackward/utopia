@@ -28,14 +28,12 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public TChunk GetChunkFromBlock(Vector3D globalPosition)
         {
-            return
-                GetChunk(BlockHelper.EntityToChunkPosition(globalPosition));
+            return GetChunk(BlockHelper.EntityToChunkPosition(globalPosition));
         }
         
         public TChunk GetChunkFromBlock(Vector3I blockPosition)
         {
-            return
-                GetChunk(BlockHelper.BlockToChunkPosition(blockPosition));
+            return GetChunk(BlockHelper.BlockToChunkPosition(blockPosition));
         }
 
         protected LandscapeManager(WorldParameters wp)

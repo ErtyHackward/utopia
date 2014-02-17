@@ -416,10 +416,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 #endif
         }
 
-
         public override VisualChunk GetChunk(Vector3I position)
         {
-            return _worldChunks.GetChunkFromChunkCoord(position);
+            VisualChunk chunk;
+            _worldChunks.GetSafeChunkFromChunkCoord(position, out chunk);
+            return chunk;
         }
 
         public override TerraCube GetCubeAt(Vector3I vector3I)
@@ -429,7 +430,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public override ILandscapeCursor GetCursor(Vector3I blockPosition)
         {
-            return new SingleArrayLandscapeCursor(this, blockPosition, _wp.Configuration);
+            SingleArrayLandscapeCursor cursor = new SingleArrayLandscapeCursor(this, blockPosition, _wp.Configuration);
+            if (cursor.isError) return null;
+            else return cursor;
         }
 
         #endregion
