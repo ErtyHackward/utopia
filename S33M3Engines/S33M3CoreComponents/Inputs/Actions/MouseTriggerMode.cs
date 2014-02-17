@@ -14,7 +14,13 @@
         /// Happens once on each button press pressed
         /// </summary>
         ButtonPressed,
+        /// <summary>
+        /// The Mouse scrollWheel has been rolled Forward
+        /// </summary>
         ScrollWheelForward,
+        /// <summary>
+        /// The Mouse scrollWheel has been rolled Backward
+        /// </summary>
         ScrollWheelBackWard
     }
 }

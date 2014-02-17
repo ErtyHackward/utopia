@@ -13,6 +13,12 @@ namespace S33M3CoreComponents.Inputs.Actions
         public KeyWithModifier Binding;
         public bool WithTimeElapsed;
         public float MaxTimeElapsedInS;
-        public float StartTimeElapsedInTick;
+        public long StartTimeElapsedInTick;
+        /// <summary>
+        /// Will reset the KeyPressed event, and make it fired again with a given timelapse in s
+        /// </summary>
+        public bool WithAutoResetButtonPressed;
+        public float AutoResetTimeInS;
+        public long StartTimeAutoResetTick;
     }
 }
