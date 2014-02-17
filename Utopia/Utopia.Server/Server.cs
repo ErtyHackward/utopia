@@ -145,7 +145,16 @@ namespace Utopia.Server
 
             Scheduler = new ScheduleManager(Clock);
 
-            LandscapeManager = new ServerLandscapeManager(this, chunksStorage, worldGenerator, EntityFactory, settings.ChunkLiveTimeMinutes, settings.CleanUpInterval, settings.SaveInterval, settings.ChunksCountLimit, wp);
+            LandscapeManager = new ServerLandscapeManager(
+                this, 
+                chunksStorage, 
+                worldGenerator, 
+                EntityFactory, 
+                settings.ChunkLiveTimeMinutes, 
+                settings.CleanUpInterval, 
+                settings.SaveInterval, 
+                settings.ChunksCountLimit, 
+                wp);
 
             EntityManager = new EntityManager(this);
 

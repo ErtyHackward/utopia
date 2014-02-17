@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 
@@ -65,8 +66,11 @@ namespace EasyPublish
             if (ReadYN())
             {
                 var issFilePath = Path.Combine(rootFolder, "Setup", "realms_server.iss");
-                var programPath = Path.Combine(rootFolder, "Utopia", "Realms", "Realms.Server", "bin", "Release", "Realms.Server.exe");
-                var distributivePath = Path.Combine(rootFolder, "Setup", "Output", "setup_realms_server.exe");
+                var releasePath = Path.Combine(rootFolder, "Utopia", "Realms", "Realms.Server", "bin", "Release");
+                var programPath = Path.Combine(releasePath, "Realms.Server.exe");
+                var outputPath = Path.Combine(rootFolder, "Setup", "Output");
+                var distributivePath = Path.Combine(outputPath, "setup_realms_server.exe");
+                var linuxDistributiveFile = Path.Combine(outputPath, "realms.server.tar.gz");
 
                 if (!File.Exists(issFilePath))
                     ShowError("Can't find realms_server.iss file");
@@ -74,6 +78,44 @@ namespace EasyPublish
                     ShowError("Can't find Realms.Server.exe file, try to rebuild the server in release configuration");
 
                 PublishDistributive(issFilePath, programPath, distributivePath);
+
+                // filter files
+                var tempPath = Path.Combine(rootFolder, "Setup", "linux-files");
+
+                if (!Directory.Exists(tempPath))
+                    Directory.CreateDirectory(tempPath);
+
+                if (File.Exists(linuxDistributiveFile))
+                    File.Delete(linuxDistributiveFile);
+
+                var arg = string.Format("/C copy \"{0}\\*\" \"{1}\\\"", releasePath, tempPath);
+
+                Console.WriteLine("Preparing files...");
+                RunCommandSilent("cmd.exe", arg);
+
+                var filterExts = new[] { ".xml", ".pdb" };
+
+                foreach (var file in Directory.EnumerateFiles(tempPath).Where( f => filterExts.Contains(Path.GetExtension(f))))
+                {
+                    File.Delete(file);
+                }
+                
+                // linux version, we will pack to tar.gz
+
+                Console.WriteLine("Compressing realms.server.tar.gz...");
+                RunCommandSilent(Path.Combine(rootFolder, "Setup", "7z.exe"),
+                    string.Format("a -ttar \"{0}\\realms.server.tar\" \"{1}\\*\"", outputPath, tempPath));
+
+                RunCommandSilent(Path.Combine(rootFolder, "Setup", "7z.exe"),
+                    string.Format("a -tgzip \"{0}\\realms.server.tar.gz\" \"{0}\\realms.server.tar\"", outputPath));
+
+                Console.WriteLine("Uploading file...");
+                UploadFile("ftp://update.utopiarealms.com/realms.server.tar.gz", linuxDistributiveFile);
+
+                Console.WriteLine("Cleanup...");
+                Directory.Delete(tempPath, true);
+                File.Delete(Path.Combine(outputPath, "realms.server.tar"));
+                Console.WriteLine();
             }
 
             Console.WriteLine("Do you want to publish client auto update? [y/N]");
@@ -85,6 +127,18 @@ namespace EasyPublish
             }
 
             Console.WriteLine("We're done! Thank you!");
+        }
+
+        private static void RunCommandSilent(string command, string arguments)
+        {
+            var process = new Process();
+            var startInfo = new ProcessStartInfo();
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.FileName = command;
+            startInfo.Arguments = arguments;
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
         }
 
         static void ShowError(string message)

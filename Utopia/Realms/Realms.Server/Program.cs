@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using Ninject;
 using S33M3CoreComponents.Sound;
 using Utopia.Server;
 using Utopia.Server.Interfaces;
@@ -30,27 +29,36 @@ namespace Realms.Server
         }
 
         private static Utopia.Server.Server _server;
-        private static IKernel _iocContainer;
         private static ServerGameplayProvider _gameplay;
         private static Timer _reportAliveTimer;
+        private static WorldParameters _worldParameters;
+        private static XmlSettingsManager<ServerSettings> _settingsManager;
+        private static WorldGenerator _worldGenerator;
+        private static SqliteStorageManager _sqLiteStorageManager;
+        private static EntityFactory _serverFactory;
+        private static ServerWebApi _serverWebApi;
+
 
         static void IocBind(WorldParameters param)
         {
+            _worldParameters = param;
 
-            var settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\server.config");
-            settingsManager.Load();
+            _settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\server.config");
+            _settingsManager.Load();
 
-            if (string.IsNullOrEmpty(settingsManager.Settings.DatabasePath))
-                settingsManager.Settings.DatabasePath = Path.Combine(XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
+            if (string.IsNullOrEmpty(_settingsManager.Settings.DatabasePath))
+                _settingsManager.Settings.DatabasePath = Path.Combine(XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
 
-            _iocContainer.Bind<ISoundEngine>().ToConstant<ISoundEngine>(null);
-            _iocContainer.Bind<ILandscapeManager>().ToConstant<ILandscapeManager>(null);
+            //_iocContainer.Bind<ISoundEngine>().ToConstant<ISoundEngine>(null);
+            //_iocContainer.Bind<ILandscapeManager>().ToConstant<ILandscapeManager>(null);
 
-            var sqLiteStorageManager = new SQLiteStorageManager(settingsManager.Settings.DatabasePath, null, param);
+            Console.WriteLine("Database path is " + _settingsManager.Settings.DatabasePath);
 
-            _iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
-            _iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(settingsManager).InSingletonScope();
-            _iocContainer.Bind<LandscapeBufferManager>().ToSelf();
+            _sqLiteStorageManager = new SqliteStorageManager(_settingsManager.Settings.DatabasePath, null, param);
+
+            //_iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
+            //_iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(_settingsManager).InSingletonScope();
+            //_iocContainer.Bind<LandscapeBufferManager>().ToSelf();
             
             IWorldProcessor processor = null;
             switch (param.Configuration.WorldProcessor)
@@ -59,16 +67,16 @@ namespace Realms.Server
                     processor = new FlatWorldProcessor();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    processor = new UtopiaProcessor(param, _iocContainer.Get<EntityFactory>(), _iocContainer.Get<LandscapeBufferManager>());
+                    processor = new UtopiaProcessor(param, _serverFactory, new LandscapeBufferManager());
                     break;
                 default:
                     break;
             }
 
-            _iocContainer.Rebind<WorldConfiguration>().ToConstant(param.Configuration);
+            //_iocContainer.Rebind<WorldConfiguration>().ToConstant(param.Configuration);
 
-            var worldGenerator = new WorldGenerator(param, processor);
-            _iocContainer.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
+            _worldGenerator = new WorldGenerator(param, processor);
+            //_iocContainer.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
 
             //_iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
             //_iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
@@ -79,12 +87,12 @@ namespace Realms.Server
             
             //_iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
 
-            _iocContainer.Bind<SQLiteStorageManager>().ToConstant(sqLiteStorageManager).InSingletonScope();
-            _iocContainer.Bind<IUsersStorage>().To<ServerUsersStorage>().InSingletonScope();
-            _iocContainer.Bind<IChunksStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
-            _iocContainer.Bind<IEntityStorage>().ToConstant(sqLiteStorageManager).InSingletonScope();
+            //_iocContainer.Bind<SqliteStorageManager>().ToConstant(_sqLiteStorageManager).InSingletonScope();
+            //_iocContainer.Bind<IUsersStorage>().To<ServerUsersStorage>().InSingletonScope();
+            //_iocContainer.Bind<IChunksStorage>().ToConstant(_sqLiteStorageManager).InSingletonScope();
+            //_iocContainer.Bind<IEntityStorage>().ToConstant(_sqLiteStorageManager).InSingletonScope();
 
-            _iocContainer.Bind<ServerWebApi>().ToSelf().InSingletonScope();
+            //_iocContainer.Bind<ServerWebApi>().ToSelf().InSingletonScope();
         }
 
         static void Main(string[] args)
@@ -113,7 +121,7 @@ namespace Realms.Server
                 }
             }
 
-            var serverFactory = new EntityFactory();
+            _serverFactory = new EntityFactory();
 
             EntityFactory.InitializeProtobufInheritanceHierarchy();
 
@@ -121,7 +129,7 @@ namespace Realms.Server
             try
             {
                 conf = WorldConfiguration.LoadFromFile(path);
-                serverFactory.Config = conf;
+                _serverFactory.Config = conf;
                 logger.Info("Realm file {0} loaded", path);
             }
             catch (Exception ex)
@@ -130,9 +138,9 @@ namespace Realms.Server
                 return;
             }
 
-            _iocContainer = new StandardKernel(new NinjectSettings { AllowNullInjection = true });
+            //_iocContainer = new StandardKernel(new NinjectSettings { AllowNullInjection = true });
             System.Net.ServicePointManager.Expect100Continue = false;
-            _iocContainer.Bind<EntityFactory>().ToConstant(serverFactory).InSingletonScope();
+            //_iocContainer.Bind<EntityFactory>().ToConstant(_serverFactory).InSingletonScope();
 
             var wp = new WorldParameters
                 {
@@ -143,37 +151,37 @@ namespace Realms.Server
 
             IocBind(wp);
 
-            var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
 
             Console.WriteLine();
             Console.WriteLine("Please enter the name of the server:");
-            Console.Write("[{0}]>", settings.Settings.ServerName);
+            Console.Write("[{0}]>", _settingsManager.Settings.ServerName);
             var name = Console.ReadLine();
 
             if (!string.IsNullOrEmpty(name))
             {
-                settings.Settings.ServerName = name;
-                settings.Save();
+                _settingsManager.Settings.ServerName = name;
+                _settingsManager.Save();
             }
 
 
+            _serverWebApi = new ServerWebApi();
             _server = new Utopia.Server.Server(
-                settings,
-                _iocContainer.Get<WorldGenerator>(),
-                _iocContainer.Get<IUsersStorage>(),
-                _iocContainer.Get<IChunksStorage>(),
-                _iocContainer.Get<IEntityStorage>(),
-                serverFactory,
+                _settingsManager,
+                _worldGenerator,
+                new ServerUsersStorage(_sqLiteStorageManager, _serverWebApi), 
+                _sqLiteStorageManager,
+                _sqLiteStorageManager,
+                _serverFactory,
                 wp
                 );
 
-            _iocContainer.Rebind<ILandscapeManager>().ToConstant(_server.LandscapeManager);
+            //_iocContainer.Rebind<ILandscapeManager>().ToConstant(_server.LandscapeManager);
 
-            serverFactory.LandscapeManager = _server.LandscapeManager;
-            serverFactory.DynamicEntityManager = _server.AreaManager;
-            serverFactory.GlobalStateManager = _server.GlobalStateManager;
-            serverFactory.ScheduleManager = _server.Scheduler;
-            serverFactory.ServerSide = true;
+            _serverFactory.LandscapeManager = _server.LandscapeManager;
+            _serverFactory.DynamicEntityManager = _server.AreaManager;
+            _serverFactory.GlobalStateManager = _server.GlobalStateManager;
+            _serverFactory.ScheduleManager = _server.Scheduler;
+            _serverFactory.ServerSide = true;
 
             _gameplay = new ServerGameplayProvider(_server, conf);
             
@@ -199,9 +207,8 @@ namespace Realms.Server
 
         static void CommitServerInfo(object state)
         {
-            var webApi = _iocContainer.Get<ServerWebApi>();
-            var settings = _iocContainer.Get<XmlSettingsManager<ServerSettings>>();
-            webApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count, ServerUpdateCompleted);
+            var settings = _settingsManager;
+            _serverWebApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count, ServerUpdateCompleted);
         }
 
         private static void ServerUpdateCompleted(WebEventArgs e)
@@ -219,7 +226,6 @@ namespace Realms.Server
         static void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
         {
             e.PlayerEntity = _gameplay.CreateNewPlayerCharacter(e.Connection.DisplayName, e.EntityId);
-            //e.PlayerEntity = _gameplay.CreateNewPlayerFocusEntity(e.EntityId);
         }
     }
 }

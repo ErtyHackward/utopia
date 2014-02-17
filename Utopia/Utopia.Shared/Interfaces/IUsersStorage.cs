@@ -8,15 +8,6 @@ namespace Utopia.Shared.Interfaces
     public interface IUsersStorage
     {
         /// <summary>
-        /// Tries to register user, or update his passwordHash or role 
-        /// </summary>
-        /// <param name="login">User login</param>
-        /// <param name="passwordHash">user password</param>
-        /// <param name="role">User role id</param>
-        /// <returns>Returns true if register successfull otherwise false</returns>
-        bool Register(string login, string passwordHash, UserRole role);
-
-        /// <summary>
         /// Checks whether the specified user registered and password match
         /// </summary>
         /// <param name="login">User login</param>

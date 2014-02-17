@@ -27,7 +27,7 @@ namespace Realms.Client.Components
         private readonly RealmRuntimeVariables _vars;
         private Server _server;
         private EntityFactory _serverFactory;
-        private SQLiteStorageManager _serverSqliteStorageSinglePlayer;
+        private SqliteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
         private LandscapeBufferManager _landscapeEntityManager;
 
@@ -54,7 +54,7 @@ namespace Realms.Client.Components
             _serverFactory.Config = _worldParam.Configuration;
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
 
-            _serverSqliteStorageSinglePlayer = new SQLiteStorageManager(dbPath, _serverFactory, worldParam);
+            _serverSqliteStorageSinglePlayer = new SqliteStorageManager(dbPath, _serverFactory, worldParam);
             _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);
 
             var settings = new XmlSettingsManager<ServerSettings>(@"Server\localServer.config");
