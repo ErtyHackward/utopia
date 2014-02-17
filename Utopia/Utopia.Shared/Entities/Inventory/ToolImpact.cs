@@ -30,6 +30,11 @@ namespace Utopia.Shared.Entities.Inventory
         [ProtoMember(3)]
         public ushort SrcBlueprintId { get; set; }
 
+        /// <summary>
+        /// Indicates if the event was dropped, it don't need to be send through network
+        /// </summary>
+        public bool Dropped { get; set; }
+
         public static bool operator ==(ToolImpact left, ToolImpact right)
         {
             if (ReferenceEquals(left, right))

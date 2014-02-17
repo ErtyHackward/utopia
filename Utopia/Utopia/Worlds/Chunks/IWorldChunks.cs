@@ -70,6 +70,24 @@ namespace Utopia.Worlds.Chunks
         VisualChunk GetChunkFromChunkCoord(Vector3I chunkPos);
 
         /// <summary>
+        /// Get a world's chunk from a chunk position with bound array check
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Z"></param>
+        /// <param name="chunk"></param>
+        /// <returns></returns>
+        bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk chunk);
+
+        /// <summary>
+        /// Get a world's chunk from a chunk position with bound array check
+        /// </summary>
+        /// <param name="X"></param>
+        /// <param name="Z"></param>
+        /// <param name="chunk"></param>
+        /// <returns></returns>
+        bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk chunk);
+
+        /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>

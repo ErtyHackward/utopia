@@ -339,6 +339,33 @@ namespace Utopia.Worlds.Chunks
             return GetChunk(X, Z);
         }
 
+
+        /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate with array bound test
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk chunk)
+        {
+            return GetSafeChunkFromChunkCoord(chunkPos.X, chunkPos.Z, out chunk);
+        }
+
+        /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate with array bound test
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk chunk)
+        {
+            //From Chunk coordinate to World Coordinate
+            X *= AbstractChunk.ChunkSize.X;
+            Z *= AbstractChunk.ChunkSize.Z;
+
+            return GetSafeChunk(X, Z, out chunk);
+        }
+
         /// <summary>
         /// Get a world's chunk from a chunk position
         /// </summary>

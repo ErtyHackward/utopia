@@ -19,5 +19,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets description of the error
         /// </summary>
         string Message { get; set; }
+
+        /// <summary>
+        /// Indicates if the event was dropped
+        /// </summary>
+        bool Dropped { get; set; }
     }
 }

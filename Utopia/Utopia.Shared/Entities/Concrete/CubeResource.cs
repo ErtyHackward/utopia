@@ -71,6 +71,13 @@ namespace Utopia.Shared.Entities.Concrete
 
                 // Get the chunk where the entity will be added and check if another block static entity is present inside this block
                 var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.NewBlockPosition);
+                if (workingchunk == null)
+                {
+                    //Impossible to find chunk, chunk not existing, event dropped
+                    impact.Message = "Chunk is not existing, event dropped";
+                    impact.Dropped = true;
+                    return impact;
+                }
                 foreach (var staticEntity in workingchunk.Entities.OfType<IBlockLocationRoot>())
                 {
                     if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
@@ -82,7 +89,13 @@ namespace Utopia.Shared.Entities.Concrete
 
                 //Add new block
                 var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-
+                if (cursor == null)
+                {
+                    //Impossible to find chunk, chunk not existing, event dropped
+                    impact.Message = "Block not existing, event dropped";
+                    impact.Dropped = true;
+                    return impact;
+                }
                 if (cursor.Read() == WorldConfiguration.CubeId.Air)
                 {
                     cursor.Write(CubeId);

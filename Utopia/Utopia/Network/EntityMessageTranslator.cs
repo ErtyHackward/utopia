@@ -95,8 +95,6 @@ namespace Utopia.Network
             playerEntityManager.PlayerEntityChanged += (sender, args) => { PlayerEntity = args.PlayerCharacter; };
         }
 
-
-
         void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
         {
             _syncManager.RegisterFeedback(e.Message);
@@ -197,9 +195,16 @@ namespace Utopia.Network
                 entity.EntityState = e.Message.State;
 
                 var impact = entity.ReplayUse(e.Message);
-                
-                // register other entity use message
-                _syncManager.RegisterUseMessage(e.Message, impact);
+
+                if (impact.Dropped == false)
+                {
+                    // register other entity use message only if message was not dropped
+                    _syncManager.RegisterUseMessage(e.Message, impact);
+                }
+                else
+                {
+                    logger.Debug("Impact dropped");
+                }
             }
         }
 
