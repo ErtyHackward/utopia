@@ -54,7 +54,7 @@ namespace Utopia.Entities.Managers
                     }
                     else
                     {
-                        if (_putMode || !(item is ITool))
+                        if ((_putMode || !(item is ITool)) && _isAutoRepeatedEvent == false)
                         {
                             // send put message to the server
                             PlayerCharacter.PutUse();
