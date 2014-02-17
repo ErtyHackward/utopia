@@ -12,17 +12,17 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using Utopia.Shared.World;
-using System.Data.SQLite;
+using Mono.Data.Sqlite;
 
 namespace Utopia.Server.Managers
 {
     /// <summary>
     /// Allows to store all required data in SQLite database
     /// </summary>
-    public class SQLiteStorageManager : SQLiteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage
+    public class SqliteStorageManager : MonoSqliteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage
     {
         private readonly EntityFactory _factory;
-        private SQLiteCommand _worldParametersInsertCmd;
+        private SqliteCommand _worldParametersInsertCmd;
 
         /// <summary>
         /// Returns database creation query 
@@ -47,7 +47,7 @@ namespace Utopia.Server.Managers
             //Upsert a specific chunk
             //SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName], [RealmConfiguration]) VALUES (@WorldName, @SeedName, @realmConfiguration)";
             SqlStatment = "INSERT OR REPLACE INTO worldparameters ([name], [seed]) VALUES (@name, @seed)";
-            _worldParametersInsertCmd = new SQLiteCommand(SqlStatment, Connection);
+            _worldParametersInsertCmd = new SqliteCommand(SqlStatment, Connection);
             _worldParametersInsertCmd.Parameters.Add("@name", System.Data.DbType.String);
             _worldParametersInsertCmd.Parameters.Add("@seed", System.Data.DbType.String);
             //_worldParametersInsertCmd.Parameters.Add("@realmConfiguration", System.Data.DbType.Binary);
@@ -93,6 +93,9 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query(string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1} AND Z={2}", pos.X, pos.Y, pos.Z)))
             {
+                if (reader != null)
+                    return null;
+
                 reader.Read();
                 return reader.IsDBNull(0) ? null : (byte[])reader.GetValue(0);
             }
@@ -121,7 +124,7 @@ namespace Utopia.Server.Managers
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="factory"></param>
-        public SQLiteStorageManager(string filePath, EntityFactory factory, WorldParameters worldParam)
+        public SqliteStorageManager(string filePath, EntityFactory factory, WorldParameters worldParam)
             : base(filePath)
         {
             CreateQueryTemplates();
@@ -178,6 +181,9 @@ namespace Utopia.Server.Managers
             {
                 data = new LoginData();
 
+                if (reader == null)
+                    return false;
+
                 if (!reader.HasRows)
                     return false;
 
@@ -210,6 +216,9 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query("SELECT count(*) FROM users"))
             {
+                if (reader == null)
+                    return 0;
+
                 if (reader.Read())
                 {
                     return reader.GetInt32(0);
@@ -248,6 +257,9 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query(string.Format("SELECT data FROM entities WHERE id={0}", entityId)))
             {
+                if (reader == null)
+                    return null;
+
                 reader.Read();
                 return reader.IsDBNull(0) ? null : (byte[])reader.GetValue(0);
             }
@@ -262,6 +274,9 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query("SELECT state FROM worldparameters"))
             {
+                if (reader == null)
+                    return null;
+
                 reader.Read();
                 return reader.IsDBNull(0) ? null : ((byte[])reader.GetValue(0)).Deserialize<GlobalState>();
             }
@@ -271,7 +286,7 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query("SELECT MAX(id) FROM entities"))
             {
-                if (reader.Read())
+                if (reader != null && reader.Read())
                 {
                     if (reader.IsDBNull(0)) return 0;
                     var maxNumber = reader.GetInt64(0);
@@ -290,7 +305,7 @@ namespace Utopia.Server.Managers
             CheckName(name);
             using (var reader = Query(string.Format("SELECT id FROM models WHERE id = '{0}'", name)))
             {
-                return reader.HasRows;
+                return reader != null && reader.HasRows;
             }
         }
 
@@ -352,6 +367,9 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query("SELECT data FROM models"))
             {
+                if (reader == null)
+                    yield break;
+
                 while (reader.Read())
                 {
                     yield return ((byte[])reader.GetValue(0)).Deserialize<VoxelModel>();

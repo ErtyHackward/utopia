@@ -13,10 +13,10 @@ namespace Realms.Server
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly SQLiteStorageManager _storage;
+        private readonly SqliteStorageManager _storage;
         private readonly ServerWebApi _webApi;
 
-        public ServerUsersStorage(SQLiteStorageManager storage, ServerWebApi webApi)
+        public ServerUsersStorage(SqliteStorageManager storage, ServerWebApi webApi)
         {
             if (storage == null) 
                 throw new ArgumentNullException("storage");

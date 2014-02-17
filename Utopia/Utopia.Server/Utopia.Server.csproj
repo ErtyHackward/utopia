@@ -56,6 +56,10 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Library\Mono.Data.SQLite\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
@@ -70,16 +74,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +85,7 @@
     <Compile Include="Interfaces\IEntityStorage.cs" />
     <Compile Include="Managers\GlobalStateManager.cs" />
     <Compile Include="Managers\LoginManager.cs" />
+    <Compile Include="Managers\MonoSqliteStorage.cs" />
     <Compile Include="Managers\WeatherManager.cs" />
     <Compile Include="Structs\FocusAI.cs" />
     <Compile Include="Structs\MoveAI.cs" />
@@ -122,7 +117,7 @@
     <Compile Include="Structs\UserState.cs" />
     <Compile Include="Utils\DynamicIdHelper.cs" />
     <Compile Include="Utils\IniSettings.cs" />
-    <Compile Include="Managers\SQLiteStorageManager.cs" />
+    <Compile Include="Managers\SqliteStorageManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -140,10 +135,6 @@
     <ProjectReference Include="..\Utopia.Shared\Utopia.Shared.csproj">
       <Project>{0055C413-EA38-4721-943D-DF7E99BD3563}</Project>
       <Name>Utopia.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utopia.Resources\Utopia.Resources.csproj">
-      <Project>{B27F1C32-FC29-4845-AD2B-89DDBFCDFD2F}</Project>
-      <Name>Utopia.Resources</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
