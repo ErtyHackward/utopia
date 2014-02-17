@@ -146,7 +146,7 @@ namespace Realms.Client
                 TriggerType = MouseTriggerMode.ButtonPressed,
                 Binding = MouseButton.LeftButton,
                 WithAutoResetButtonPressed = true,
-                AutoResetTimeInS = 0.3f
+                AutoResetTimeInS = 0.25f
             });
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()

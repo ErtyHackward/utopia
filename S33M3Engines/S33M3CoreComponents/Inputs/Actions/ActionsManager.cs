@@ -452,7 +452,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                                     }
                                 }
 
-                                if (_curMouseState.LeftButton != ButtonState.Pressed)
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.LeftButton != ButtonState.Pressed)
                                 {
                                     _mouseAction.StartTimeAutoResetTick = 0;
                                 }
@@ -482,7 +482,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                                     }
                                 }
 
-                                if (_curMouseState.middleButton != ButtonState.Pressed)
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.middleButton != ButtonState.Pressed)
                                 {
                                     _mouseAction.StartTimeAutoResetTick = 0;
                                 }
@@ -512,7 +512,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                                     }
                                 }
 
-                                if (_curMouseState.rightButton != ButtonState.Pressed)
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.rightButton != ButtonState.Pressed)
                                 {
                                     _mouseAction.StartTimeAutoResetTick = 0;
                                 }
@@ -542,7 +542,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                                     }
                                 }
 
-                                if (_curMouseState.XButton1 != ButtonState.Pressed)
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.XButton1 != ButtonState.Pressed)
                                 {
                                     _mouseAction.StartTimeAutoResetTick = 0;
                                 }
@@ -572,7 +572,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                                     }
                                 }
 
-                                if (_curMouseState.XButton2 != ButtonState.Pressed)
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.XButton2 != ButtonState.Pressed)
                                 {
                                     _mouseAction.StartTimeAutoResetTick = 0;
                                 }
@@ -603,7 +603,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                                     }
                                 }
 
-                                if (_curMouseState.leftButton != ButtonState.Pressed && _curMouseState.rightButton != ButtonState.Pressed)
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.leftButton != ButtonState.Pressed && _curMouseState.rightButton != ButtonState.Pressed)
                                 {
                                     _mouseAction.StartTimeAutoResetTick = 0;
                                 }
@@ -689,7 +689,7 @@ namespace S33M3CoreComponents.Inputs.Actions
                             }
                         }
 
-                        if (_curKeyboardState.IsKeyUp(_keyboardAction.Binding))
+                        if (_keyboardAction.WithAutoResetButtonPressed && _curKeyboardState.IsKeyUp(_keyboardAction.Binding))
                         {
                             _keyboardAction.StartTimeAutoResetTick = 0;
                         }
