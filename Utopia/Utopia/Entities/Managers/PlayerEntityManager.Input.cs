@@ -9,6 +9,8 @@ namespace Utopia.Entities.Managers
     //Handle all Input related stuff for player
     public partial class PlayerEntityManager
     {
+        private bool _isAutoRepeatedEvent;
+
         #region Private Methods
         /// <summary>
         /// Handle Player Actions - Movement and rotation input are not handled here
@@ -40,7 +42,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, out _isAutoRepeatedEvent, CatchExclusiveAction))
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
