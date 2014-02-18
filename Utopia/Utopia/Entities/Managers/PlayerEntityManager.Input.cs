@@ -50,13 +50,25 @@ namespace Utopia.Entities.Managers
 
                     if (item == null)
                     {
-                        HandleHandUse();
+                        if (!_isAutoRepeatedEvent)
+                            HandleHandUse();
                     }
                     else
                     {
-                        if ((_putMode || !(item is ITool)) && _isAutoRepeatedEvent == false)
+                        var tool = item as ITool;
+
+                        if (_isAutoRepeatedEvent)
                         {
-                            // send put message to the server
+                            // don't repeat put actions
+                            if (_putMode || tool == null)
+                                return;
+
+                            if (!tool.RepeatedActionsAllowed)
+                                return;
+                        }
+
+                        if (_putMode || tool == null)
+                        {
                             PlayerCharacter.PutUse();
                         }
                         else

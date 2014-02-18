@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
 using S33M3CoreComponents.Inputs.Actions;
@@ -22,6 +23,10 @@ namespace Utopia.Shared.Entities.Concrete
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private Vector3I _selectionStart;
+
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(1)]
+        public bool RepeatedActionsAllowed { get; set; }
 
         public override ushort ClassId
         {

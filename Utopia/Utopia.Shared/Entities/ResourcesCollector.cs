@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
@@ -20,6 +21,10 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [ProtoMember(1)]
         public int Damage { get; set; }
+
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(2)]
+        public bool RepeatedActionsAllowed { get; set; }
 
         /// <summary>
         /// Using a Collector type Tool Item will start to hit block from world an place it into own bag.

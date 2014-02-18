@@ -65,7 +65,6 @@ namespace Utopia.Shared.Entities.Inventory
         [ProtoMember(7)]
         public StaticEntitySoundSource EmittedSound { get; set; }
 
-
         /// <summary>
         /// Gets or sets voxel model instance
         /// </summary>
@@ -255,7 +254,13 @@ namespace Utopia.Shared.Entities.Inventory
 
 
             var cursor = EntityFactory.LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
-            
+
+            if (cursor == null)
+            {
+                impact.Dropped = true;
+                return impact;
+            }
+
             var entity = (Item)Clone();
 
             SetPosition(pos, entity, owner);
