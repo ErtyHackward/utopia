@@ -16,6 +16,10 @@ namespace Utopia.Shared.Entities.Concrete
     [Description("Allows to extract any kind of entities including a door or a chest.")]
     public class Extractor : Item, ITool
     {
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(1)]
+        public bool RepeatedActionsAllowed { get; set; }
+
         public override ushort ClassId
         {
             get { return EntityClassId.CubeResource; }
@@ -47,6 +51,13 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             var cursor = LandscapeManager.GetCursor(entity.Position);
+
+            if (cursor == null)
+            {
+                impact.Dropped = true;
+                return impact;
+            }
+
             cursor.OwnerDynamicId = owner.DynamicId;
 
             var charEntity = owner as CharacterEntity;
@@ -77,11 +88,10 @@ namespace Utopia.Shared.Entities.Concrete
 
         public override PickType CanPickBlock(BlockProfile blockProfile)
         {
-            // extractor can pick only entities
             if (blockProfile.Id == WorldConfiguration.CubeId.Air)
                 return PickType.Transparent;
             
-            return PickType.Stop;
+            return PickType.Pick;
         }
     }
 }

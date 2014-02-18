@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -17,6 +19,10 @@ namespace Utopia.Shared.Entities.Concrete
         {
             get { return EntityClassId.Hand; }
         }
+
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(1)]
+        public bool RepeatedActionsAllowed { get; set; }
 
         public override PickType CanPickBlock(BlockProfile blockProfile)
         {
@@ -60,6 +66,13 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             var cursor = LandscapeManager.GetCursor(entity.Position);
+
+            if (cursor == null)
+            {
+                impact.Dropped = true;
+                return impact;
+            }
+
             cursor.OwnerDynamicId = owner.DynamicId;
             
             var charEntity = owner as CharacterEntity;

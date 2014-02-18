@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
 using SharpDX;
@@ -18,6 +19,10 @@ namespace Utopia.Shared.Entities.Concrete
     {
         [ProtoMember(1)]
         public byte CubeId { get; private set; }
+
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(2)]
+        public bool RepeatedActionsAllowed { get; set; }
 
         public override ushort ClassId
         {
