@@ -93,7 +93,7 @@ namespace Utopia.Server.Managers
         {
             using (var reader = Query(string.Format("SELECT data FROM chunks WHERE X={0} AND Y={1} AND Z={2}", pos.X, pos.Y, pos.Z)))
             {
-                if (reader != null)
+                if (reader == null)
                     return null;
 
                 reader.Read();
