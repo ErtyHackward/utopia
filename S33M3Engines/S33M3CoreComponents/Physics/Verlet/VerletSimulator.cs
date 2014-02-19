@@ -41,6 +41,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         public float OnOffsettedBlock { get; set; }
         public float OffsetBlockHitted { get; set; }
         public double GroundBelowEntity { get; set; }
+        public bool isInContactWithLadder { get; set; }
 
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
@@ -107,7 +108,8 @@ namespace S33M3CoreComponents.Physics.Verlet
                 {
                     newPosition = _curPosition;
                 }
-                SatisfyConstraints(ref newPosition, ref _prevPosition); //Validate the new location based in constraint (Collision, ...)
+                isInContactWithLadder = false;
+                SatisfyConstraints(ref newPosition, ref _prevPosition);          //Validate the new location based in constraint (Collision, ...)
             }
             else
             {
@@ -122,7 +124,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             _forcesAccum.Z = 0;
 
             //Vertical velocity if not on ground, to make the entity fall !
-            if (_subjectToGravity && !_onGround)
+            if (_subjectToGravity && !_onGround && !isInContactWithLadder)
             {
                 _forcesAccum.Y += -SimulatorCst.Gravity;
             }

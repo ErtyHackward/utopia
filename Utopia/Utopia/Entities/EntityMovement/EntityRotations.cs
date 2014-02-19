@@ -352,6 +352,12 @@ namespace Utopia.Entities.EntityMovement
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.Y += 1.0f;
                         break;
+                    case EntityDisplacementModes.Walking:
+                        if (_physicSimu.isInContactWithLadder)
+                        {
+                            entityMoveVector.Y += 1.0f;
+                        }
+                        break;
                 }
 
             if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Down))
@@ -363,6 +369,12 @@ namespace Utopia.Entities.EntityMovement
                         break;
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.Y -= 1.0f;
+                        break;
+                    case EntityDisplacementModes.Walking:
+                        if (_physicSimu.isInContactWithLadder)
+                        {
+                            entityMoveVector.Y -= 1.0f;
+                        }
                         break;
                 }
 
