@@ -227,6 +227,7 @@ namespace Utopia.Entities.Managers
             {
                 _worldPosition.Y += (_entityRotations.EntityMoveVector.Y * moveModifier * 0.2);
                 _physicSimu.CurPosition = _worldPosition;
+                _physicSimu.Freeze(false, true, false);
                 _entityRotations.EntityMoveVector.Y = 0;
                 moveModifier = 1;
             }

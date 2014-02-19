@@ -215,7 +215,7 @@ namespace Utopia.Shared.Chunks
                 if (previousPosition.Y >= newPositionWithColliding.Y)
                 {
                     //If the movement between 2 Y is too large, use the GroundBelowEntity value
-                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
+                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1 || physicSimu.isInContactWithLadder)
                     {
                         previousPosition.Y = physicSimu.GroundBelowEntity;
                     }
