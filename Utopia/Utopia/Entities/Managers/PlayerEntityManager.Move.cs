@@ -217,12 +217,19 @@ namespace Utopia.Entities.Managers
             }
 
             //Jumping
-            if (_physicSimu.AllowJumping && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+            if ((_physicSimu.AllowJumping || _physicSimu.isInContactWithLadder) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
             {
                 _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
             }
 
             //_physicSimu.PrevPosition -= _entityRotations.EntityMoveVector * _moveDelta * moveModifier;
+            if (_physicSimu.isInContactWithLadder)
+            {
+                _worldPosition.Y += (_entityRotations.EntityMoveVector.Y * moveModifier * 0.2);
+                _physicSimu.CurPosition = _worldPosition;
+                _entityRotations.EntityMoveVector.Y = 0;
+                moveModifier = 1;
+            }
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * moveModifier });
         }
 

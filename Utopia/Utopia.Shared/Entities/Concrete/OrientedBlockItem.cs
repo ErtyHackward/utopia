@@ -19,6 +19,7 @@ namespace Utopia.Shared.Entities.Concrete
     [ProtoContract]
     [ProtoInclude(100, typeof(Door))]
     [ProtoInclude(101, typeof(MusicPlayer))]
+    [ProtoInclude(102, typeof(Ladder))]
     [Description("Entity of this type will have one of 4 orientations and occupy a block.")]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {

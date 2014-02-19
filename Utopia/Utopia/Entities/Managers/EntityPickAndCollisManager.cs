@@ -237,6 +237,13 @@ namespace Utopia.Entities.Managers
         {
             if (entityTesting.WorldBBox.Intersects(ref boundingBox2Evaluate))
             {
+                if (entityTesting.Entity is Ladder)
+                {
+                    physicSimu.isInContactWithLadder = true;
+                    return;
+                }
+
+                //Special treatment in case of an IOrientedSlope entity
                 if (entityTesting.Entity is IOrientedSlope)
                 {
                     IOrientedSlope entity = (IOrientedSlope)entityTesting.Entity;
