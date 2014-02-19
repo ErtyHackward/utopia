@@ -249,14 +249,14 @@ namespace Utopia.Entities.Managers
         private void CheckForEventRaising()
         {
             //Landing on ground after falling event
-            if (_physicSimu.OnGround == false || _physicSimu.isInContactWithLadder || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying || Player.DisplacementMode == EntityDisplacementModes.God)
+            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying || Player.DisplacementMode == EntityDisplacementModes.God)
             {
                 //New "trigger"
-                if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;
+                if (_worldPosition.Y > _fallMaxHeight && !_physicSimu.isInContactWithLadder) _fallMaxHeight = _worldPosition.Y;
             }
             else
             {
-                if (_physicSimu.OnGround == true && _fallMaxHeight != int.MinValue)
+                if (_physicSimu.OnGround == true && _fallMaxHeight != double.MinValue)
                 {
                     if (_fallMaxHeight - _worldPosition.Y >= 0.01)
                     {
@@ -269,7 +269,7 @@ namespace Utopia.Entities.Managers
                         logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
 #endif
                     }
-                    _fallMaxHeight = int.MinValue;
+                    _fallMaxHeight = double.MinValue;
                 }
             }
         }
