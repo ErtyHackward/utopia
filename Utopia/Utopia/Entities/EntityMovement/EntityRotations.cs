@@ -289,7 +289,7 @@ namespace Utopia.Entities.EntityMovement
                         entityMoveVector += _lookAt;
                         break;
                     case EntityDisplacementModes.Walking:
-                        entityMoveVector += _entityBodyZAxis;
+                        entityMoveVector += _physicSimu.isInContactWithLadder ? _lookAt : _entityBodyZAxis;
                         break;
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.Z += 1.0f;
@@ -305,7 +305,7 @@ namespace Utopia.Entities.EntityMovement
                         entityMoveVector -= _lookAt;
                         break;
                     case EntityDisplacementModes.Walking:
-                        entityMoveVector -= _entityBodyZAxis;
+                        entityMoveVector -= _physicSimu.isInContactWithLadder ? _lookAt : _entityBodyZAxis;
                         break;
                     case EntityDisplacementModes.FreeFlying:
                         entityMoveVector.Z -= 1.0f;
@@ -323,7 +323,7 @@ namespace Utopia.Entities.EntityMovement
                         entityMoveVector += _entityEyeXAxis;
                         break;
                     default:
-                        entityMoveVector += _entityBodyXAxis;
+                        entityMoveVector += _physicSimu.isInContactWithLadder ? _entityEyeXAxis : _entityBodyXAxis;
                         break;
                 }
 
@@ -338,7 +338,7 @@ namespace Utopia.Entities.EntityMovement
                         entityMoveVector -= _entityEyeXAxis;
                         break;
                     default:
-                        entityMoveVector -= _entityBodyXAxis;
+                        entityMoveVector -= _physicSimu.isInContactWithLadder ? _entityEyeXAxis : _entityBodyXAxis;
                         break;
                 }
 
