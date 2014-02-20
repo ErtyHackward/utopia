@@ -92,8 +92,8 @@ namespace Utopia.Shared.Entities.Concrete
                 return pos;
 
             var cursor = LandscapeManager.GetCursor(newBlockPos.Value);
-
-            if (cursor.Read() != WorldConfiguration.CubeId.Air || LandscapeManager.GetChunkFromBlock(newBlockPos.Value).Entities.OfType<BlockItem>().Any(i => i.BlockLocationRoot == newBlockPos))
+            
+            if (cursor == null || cursor.Read() != WorldConfiguration.CubeId.Air || LandscapeManager.GetChunkFromBlock(newBlockPos.Value).Entities.OfType<BlockItem>().Any(i => i.BlockLocationRoot == newBlockPos))
                 return pos;
             
             // locate the entity, set translation in World space
