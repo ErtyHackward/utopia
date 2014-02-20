@@ -34,6 +34,32 @@ namespace Utopia.Entities.Managers
                     PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
                     break;
                 case EntityDisplacementModes.Walking:
+
+                    if (_physicSimu.isInContactWithLadder)
+                    {
+                        if (!_physicSimu.OnGround)
+                        {
+                            _physicSimu.AirFriction = 0.25f;
+                            _physicSimu.Friction = 0.25f;
+                        }
+                        else
+                        {
+                            _physicSimu.AirFriction = 0;
+                            if (_stopMovedAction == false)
+                            {
+                                _physicSimu.Friction = _groundCubeProgile.Friction; //0.25f;
+                            }
+                            else
+                            {
+                                //I did stop to move, but I'm on a sliding block => Will slide a little before ending movement
+                                _physicSimu.Friction = _groundCubeProgile.SlidingValue;
+                            }
+                        }
+
+                        PhysicSimulation(ref timeSpent); //Apply physic constraint on new compute location
+                        break;
+                    } 
+                    
                     if (_physicSimu.OnGround)
                     {
                         _physicSimu.AirFriction = 0.0f;

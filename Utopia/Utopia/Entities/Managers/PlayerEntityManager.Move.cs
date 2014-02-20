@@ -112,13 +112,20 @@ namespace Utopia.Entities.Managers
                     FreeFirstPersonMove();
                     break;
                 case EntityDisplacementModes.Walking:
-                    if (_physicSimu.OnGround)
+                    if (_physicSimu.isInContactWithLadder)
                     {
-                        WalkingFirstPersonOnGround(ref timeSpent);
+                        LadderFreeFirstPersonMove(ref timeSpent);
                     }
                     else
                     {
-                        WalkingFirstPersonNotOnGround(ref timeSpent);
+                        if (_physicSimu.OnGround)
+                        {
+                            WalkingFirstPersonOnGround(ref timeSpent);
+                        }
+                        else
+                        {
+                            WalkingFirstPersonNotOnGround(ref timeSpent);
+                        }
                     }
                     break;
                 default:
@@ -135,6 +142,16 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
 
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 20 });            
+        }
+
+        private void LadderFreeFirstPersonMove(ref GameTime timeSpent)
+        {
+            float jumpPower;
+            
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+                _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
+
+            _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 10 }); 
         }
 
         private void FreeFirstPersonMove()
@@ -222,15 +239,6 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
             }
 
-            //_physicSimu.PrevPosition -= _entityRotations.EntityMoveVector * _moveDelta * moveModifier;
-            if (_physicSimu.isInContactWithLadder)
-            {
-                _worldPosition.Y += (_entityRotations.EntityMoveVector.Y * moveModifier * 0.2);
-                _physicSimu.CurPosition = _worldPosition;
-                _physicSimu.Freeze(false, true, false);
-                _entityRotations.EntityMoveVector.Y = 0;
-                moveModifier = 1;
-            }
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * moveModifier });
         }
 
