@@ -485,11 +485,12 @@ namespace Utopia.Entities.Managers
         
         public string GetDebugInfo()
         {
+            var chunk = _landscapeManager.GetChunkFromBlock(new Vector3I(Player.Position.X, Player.Position.Y, Player.Position.Z));
             return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] Chunk : {4}", PlayerCharacter.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),
-                                                                                  _landscapeManager.GetChunkFromBlock(new Vector3I(Player.Position.X, Player.Position.Y, Player.Position.Z)).Position.ToString() 
+                                                                                  chunk == null ?"" : chunk.Position.ToString() 
                                                                                   );            
         }
     }

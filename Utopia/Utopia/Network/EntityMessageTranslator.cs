@@ -177,7 +177,8 @@ namespace Utopia.Network
             if (link.IsStatic)
             {
                 var entity = e.Message.EntityLink.ResolveStatic(_landscapeManager);
-                entity.Locked = e.Message.Lock;
+                if (entity != null)
+                    entity.Locked = e.Message.Lock;
             }
             else
             {

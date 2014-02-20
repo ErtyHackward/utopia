@@ -126,6 +126,8 @@ namespace Utopia.Shared.Entities.Dynamic
             if (link.IsStatic)
             {
                 var entity = link.ResolveStatic(EntityFactory.LandscapeManager);
+                if (entity == null)
+                    return null;
                 return (entity as Container).Content;
             }
             return null;
