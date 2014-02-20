@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.Tools;
-using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.Entities
 {
@@ -17,8 +17,10 @@ namespace Utopia.Shared.Entities
     /// </summary>
     [ProtoContract]
     [ProtoInclude(100, typeof(BasicCollector))]
-    public abstract class ResourcesCollector : Item, ITool
+    public abstract class ResourcesCollector : Item, ITool, ISoundEmitterEntity
     {
+        public ISoundEngine SoundEngine { get; set; }
+
         /// <summary>
         /// Tool block damage
         /// negative values will repair blocks
@@ -106,6 +108,17 @@ namespace Utopia.Shared.Entities
                 }
 
                 damage.Strength -= toolBlockDamage;
+
+                if (toolBlockDamage > 0 && SoundEngine != null)
+                {
+                    var profile = EntityFactory.Config.BlockProfiles[cube];
+                    if (profile.HitSounds.Count > 0)
+                    {
+                        var random = new Random();
+                        var sound = profile.HitSounds[random.Next(0, profile.HitSounds.Count)];
+                        SoundEngine.StartPlay3D(sound, owner.EntityState.PickedBlockPosition);
+                    }
+                }
 
                 if (damage.Strength <= 0)
                 {
