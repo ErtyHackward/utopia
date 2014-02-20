@@ -179,7 +179,7 @@ namespace Utopia.Sounds
                     RegisterStepSound(cube.Id, new SoundMetaData()
                     {
                         Path = walkingSound.FilePath,
-                        Alias = walkingSound.Alias,
+                        Alias = walkingSound.Alias ?? Path.GetFileNameWithoutExtension(walkingSound.FilePath),
                         Volume = walkingSound.Volume,
                         Power = walkingSound.Power
                     }

@@ -125,6 +125,15 @@ namespace Utopia.Shared.Settings
         [ProtoMember(22)]
         public uint Hardness { get; set; }
 
+        [Description("Sound played when entity hits this cube"), Category("Sound")]
+        [ProtoMember(23)]
+        public List<SoundSource> HitSounds { get; set; }
+
+        public BlockProfile()
+        {
+            HitSounds = new List<SoundSource>();
+        }
+
         [ProtoBeforeDeserialization]
         public void BeforeDeserialize()
         {
