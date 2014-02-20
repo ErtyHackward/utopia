@@ -281,6 +281,7 @@
     <Compile Include="Structs\IScheduleManager.cs" />
     <Compile Include="Structs\ScheduleCallType.cs" />
     <Compile Include="Structs\ScheduleTask.cs" />
+    <Compile Include="Tools\CubeSelector.cs" />
     <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
     <Compile Include="World\LandscapeBufferManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntity.cs" />

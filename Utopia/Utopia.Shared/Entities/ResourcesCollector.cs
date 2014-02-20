@@ -1,10 +1,14 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Tools;
+using Utopia.Shared.World.Processors.Utopia.Biomes;
 
 namespace Utopia.Shared.Entities
 {
@@ -25,6 +29,15 @@ namespace Utopia.Shared.Entities
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(2)]
         public bool RepeatedActionsAllowed { get; set; }
+
+        [Description("Allows to set damage for specified types of blocks")]
+        [ProtoMember(3, OverwriteList = true)]
+        public List<CubeDamage> SpecialDamages { get; set; }
+
+        protected ResourcesCollector()
+        {
+            SpecialDamages = new List<CubeDamage>();
+        }
 
         /// <summary>
         /// Using a Collector type Tool Item will start to hit block from world an place it into own bag.
@@ -82,7 +95,17 @@ namespace Utopia.Shared.Entities
                     };
                 }
 
-                damage.Strength -= Damage;
+                var toolBlockDamage = Damage;
+
+                if (SpecialDamages != null)
+                {
+                    var index = SpecialDamages.FindIndex(cd => cd.CubeId == cube);
+
+                    if (index != -1)
+                        toolBlockDamage = SpecialDamages[index].Damage;
+                }
+
+                damage.Strength -= toolBlockDamage;
 
                 if (damage.Strength <= 0)
                 {
@@ -113,6 +136,22 @@ namespace Utopia.Shared.Entities
 
             impact.Message = "Cannot hit air block";
             return impact;
+        }
+    }
+
+    [ProtoContract]
+    public struct CubeDamage
+    {
+        [TypeConverter(typeof(CubeSelector))]
+        [ProtoMember(1)]
+        public byte CubeId { get; set; }
+
+        [ProtoMember(2)]
+        public int Damage { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} => {1}", CubeId, Damage);
         }
     }
 }

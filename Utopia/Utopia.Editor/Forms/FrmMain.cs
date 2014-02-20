@@ -72,6 +72,7 @@ namespace Utopia.Editor.Forms
                     ContainerSetSelector.Configuration = _configuration;
                     BlueprintSelector.Configuration = _configuration;
                     CharacterBlueprintSelector.Configuration = _configuration;
+                    CubeSelector.Configuration = _configuration;
 
                     UpdateImageList();
 
