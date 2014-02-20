@@ -298,7 +298,9 @@ namespace Utopia.Sounds
             _soundEngine.Update3DSounds();
 
             //Get current player chunk
-            var chunk = _worldChunk.GetChunk(MathHelper.Floor(_playerEntityManager.Player.Position.X), MathHelper.Floor(_playerEntityManager.Player.Position.Z));
+            VisualChunk chunk;
+            if (!_worldChunk.GetSafeChunk(MathHelper.Floor(_playerEntityManager.Player.Position.X), MathHelper.Floor(_playerEntityManager.Player.Position.Z), out chunk)) 
+                return;
             var playerPosition = (Vector3I)_playerEntityManager.Player.Position;
 
             //Always active background music linked to player Mood + Time

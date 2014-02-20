@@ -5,6 +5,7 @@ using System.Text;
 using SharpDX;
 using SharpDX.XAudio2;
 using SharpDX.X3DAudio;
+using System.Diagnostics;
 
 namespace S33M3CoreComponents.Sound
 {
@@ -48,5 +49,15 @@ namespace S33M3CoreComponents.Sound
         /// </summary>
         /// <param name="fadeOut">fadeOut time in ms, 0 = directly stopped</param>
         void Stop(uint fadeOut = 0);
+
+        /// <summary>
+        /// Time since the reading start up of the song
+        /// </summary>
+        Stopwatch PlayingTime { get; set;}
+
+        /// <summary>
+        /// Start up sound priority
+        /// </summary>
+        int Priority { get; set; }
     }
 }
