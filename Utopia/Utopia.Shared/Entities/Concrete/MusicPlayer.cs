@@ -18,8 +18,8 @@ namespace Utopia.Shared.Entities.Concrete
         public bool Enabled { get; set; }
 
         [Category("Sound")]
-        [Description("Sound of the door impact on close/open")]
-        [TypeConverter(typeof(ShortSoundSelector))]
+        [Description("Sound played when entity is used")]
+        [TypeConverter(typeof(FullSoundSelector))]
         [ProtoMember(2)]
         public StaticEntitySoundSource MusicTrack { get; set; }
 
