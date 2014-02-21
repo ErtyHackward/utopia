@@ -206,7 +206,7 @@ namespace S33M3CoreComponents.Sound
 
         #region Sounds repository management - creation/buffering
 
-        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, SourceCategory Category, bool? streamedSound = null, float soundPower = 16)
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, SourceCategory Category, bool? streamedSound = null, float soundPower = 16, int priority = 0)
         {
             ISoundDataSource soundDataSource;
 
@@ -251,6 +251,7 @@ namespace S33M3CoreComponents.Sound
                     soundDataSource = new SoundStreamedDataSource(fi);
                 }
 
+                soundDataSource.Priority = priority;
                 soundDataSource.Alias = soundAlias;
                 soundDataSource.Power = soundPower;
                 soundDataSource.Category = Category;
@@ -283,13 +284,13 @@ namespace S33M3CoreComponents.Sound
 
         #region 2d Sound playing
 
-        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, float volume, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
             ISoundVoice soundVoice = null;
             //Get an Idle voice ready to play a buffer
-            if (GetVoice(soundSource, priority, out soundVoice))
+            if (GetVoice(soundSource, out soundVoice))
             {
                 soundVoice.is3DSound = false;
                 soundVoice.IsLooping = playLooped;
@@ -312,41 +313,41 @@ namespace S33M3CoreComponents.Sound
             return soundVoice;
         }
 
-        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay2D(ISoundDataSource soundSource, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay2D(soundSource, soundSource.Volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay2D(soundSource, soundSource.Volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(ISoundDataSourceBase soundSource, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay2D(ISoundDataSourceBase soundSource, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power), soundSource.Volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay2D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power), soundSource.Volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string soundAlias, float volume, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, float volume, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
 
         public ISoundVoice StartPlay2D(string FilePath, string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias, Category), playLooped, fadeIn, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias, Category), playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay2D(string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), playLooped, fadeIn, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
 
         #endregion
 
         #region 3d Sound playing
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, float volume, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
             if (soundSource == null) throw new ArgumentNullException();
 
             ISoundVoice soundVoice = null;
-            if (GetVoice(soundSource, priority, out soundVoice))
+            if (GetVoice(soundSource, out soundVoice))
             {
                 soundVoice.Emitter.Position = position;
                 soundVoice.Emitter.OrientTop = Vector3.UnitY;
@@ -373,30 +374,30 @@ namespace S33M3CoreComponents.Sound
             return soundVoice;
         }
 
-        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSource soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.Volume, playLooped, minDefferedStart, maxDefferedStart, priority);
+            if (soundSource != null) return StartPlay3D(soundSource, position, soundSource.Volume, playLooped, minDefferedStart, maxDefferedStart);
             return null;
         }
 
-        public ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power), position, soundSource.Volume, playLooped, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay3D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power, soundSource.Priority), position, soundSource.Volume, playLooped, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, volume, playLooped, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, volume, playLooped, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
+        public ISoundVoice StartPlay3D(string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, playLooped, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, playLooped, minDefferedStart, maxDefferedStart);
         }
 
         public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias, Category), position, playLooped, minDefferedStart, maxDefferedStart, priority);
+            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias, Category, priority: priority), position, playLooped, minDefferedStart, maxDefferedStart);
         }
 
         #endregion
@@ -477,7 +478,7 @@ namespace S33M3CoreComponents.Sound
             }
         }
 
-        private bool GetVoice(ISoundDataSource dataSource2Bplayed, int priority, out ISoundVoice soundVoice)
+        private bool GetVoice(ISoundDataSource dataSource2Bplayed, out ISoundVoice soundVoice)
         {
             //Get the soundqueue following SoundFormatCategory
             ISoundVoice[] voiceQueue;
@@ -513,7 +514,7 @@ namespace S33M3CoreComponents.Sound
                 else
                 {
                     //If a priority is given, then try to find the oldest sound with lower or equal priority
-                    if (priority > 0 && soundVoice.Priority <= priority)
+                    if (dataSource2Bplayed.Priority > 0 && soundVoice.Priority <= dataSource2Bplayed.Priority)
                     {
                         if (oldestTimerTick < soundVoice.PlayingTime.ElapsedTicks)
                         {

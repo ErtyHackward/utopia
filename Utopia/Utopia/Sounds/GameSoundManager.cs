@@ -211,7 +211,7 @@ namespace Utopia.Sounds
                 {
                     foreach (var biomeSound in biome.AmbientSound)
                     {
-                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.FilePath, biomeSound.Alias, SourceCategory.Music);
+                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.FilePath, biomeSound.Alias, SourceCategory.Music, priority: biomeSound.Priority);
                         if (dataSource != null)
                         {
                             dataSource.Volume = biomeSound.Volume;

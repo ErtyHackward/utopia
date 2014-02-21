@@ -13,5 +13,6 @@ namespace S33M3CoreComponents.Sound
         float Volume { get; set; }
         float Power { get; set; }
         bool isStreamed { get; set; }
+        int Priority { get; set; }
     }
 }
