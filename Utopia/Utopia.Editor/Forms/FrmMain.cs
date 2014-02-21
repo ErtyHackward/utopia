@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Utopia.Editor.Properties;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Services;
@@ -417,9 +418,11 @@ namespace Utopia.Editor.Forms
             var recipesNode = tvMainCategories.Nodes["Recipes"];
             recipesNode.Nodes.Clear();
 
-            foreach (var recipeGroup in _configuration.Recipes.GroupBy(g => g.ResultBlueprintId))
+            foreach (var recipeGroup in _configuration.Recipes.GroupBy(g => g.ContainerBlueprintId))
             {
                 var groupNode = AddSubNode(recipesNode, recipeGroup.Key == 0 ? "Player" : _configuration.BluePrints[recipeGroup.Key].Name, recipeGroup.Key);
+                groupNode.ContextMenuStrip = contextMenuCategories;
+                groupNode.Tag = recipeGroup.Key;
                 
                 foreach (var recipe in recipeGroup)
                 {
@@ -544,7 +547,9 @@ namespace Utopia.Editor.Forms
         //Called when the ADD button is pushed on a Main Category treeview
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tvMainCategories.SelectedNode == null) return;
+            if (tvMainCategories.SelectedNode == null) 
+                return;
+
             switch (tvMainCategories.SelectedNode.Name)
             {
                 case "Entities":
@@ -562,10 +567,36 @@ namespace Utopia.Editor.Forms
                     tvMainCategories.SelectedNode = FindByTag(newValue);
                     break;
                 case "Recipes":
-                    var recipe = new Recipe { Name = "noname" };
+
+                    var possibleBlueprints = _configuration.BluePrints.Values.Where(v => v is Container).Select(bp => bp.BluePrintId).ToList();
+
+                    var resultBpId = (ushort)0;
+
+                    if (possibleBlueprints.Count != 0)
+                    {
+                        // select base entity
+                        var frm =
+                            new FrmBlueprintChoose(
+                                new[] { new KeyValuePair<ushort, string>(0, "Player") }.Concat(
+                                    possibleBlueprints.Select(
+                                        bpid => new KeyValuePair<ushort, string>(bpid, _configuration.BluePrints[bpid].Name))));
+
+                        if (frm.ShowDialog() == DialogResult.OK)
+                        {
+                            resultBpId = frm.SelectedBlueprint;
+                        }
+                        else
+                            return;
+                    }
+                    
+                    var recipe = new Recipe { 
+                        Name = "noname",
+                        ContainerBlueprintId = resultBpId
+                    };
                     _configuration.Recipes.Add(recipe);
                     UpdateTree();
                     tvMainCategories.SelectedNode = FindByTag(recipe);
+
                     break;
                 case "Trees":
                     var tree = new TreeBluePrint() { Name = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF", FoliageSize = new Vector3I(1,1,1) };
@@ -586,10 +617,23 @@ namespace Utopia.Editor.Forms
                     }
                     
                     break;
-                default:
-                    break;
             }
-            if (tvMainCategories.SelectedNode == null) return;
+            if (tvMainCategories.SelectedNode == null) 
+                return;
+
+            if (tvMainCategories.SelectedNode.Parent == tvMainCategories.Nodes["Recipes"])
+            {
+                var recipe = new Recipe { 
+                    Name = "noname", 
+                    ContainerBlueprintId = (ushort)tvMainCategories.SelectedNode.Tag 
+                };
+
+                _configuration.Recipes.Add(recipe);
+                UpdateTree();
+                tvMainCategories.SelectedNode = FindByTag(recipe);
+                return;
+            }
+
             if (tvMainCategories.SelectedNode.Tag is string)
             {
                 AddEntity();

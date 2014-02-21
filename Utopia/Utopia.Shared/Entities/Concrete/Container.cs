@@ -61,7 +61,6 @@ namespace Utopia.Shared.Entities.Concrete
 
         [Category("Container")]
         [Description("How many slots container has")]
-        [ProtoMember(4)]
         public Vector2I ContainerSize
         {
             get { return _content.GridSize; }
