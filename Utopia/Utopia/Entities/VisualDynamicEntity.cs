@@ -19,7 +19,6 @@ namespace Utopia.Entities
         //Server interpolated variables
         private NetworkValue<Vector3D> _netLocation;
         private double _interpolationRate = 0.035;
-        private int _distanceLimit = 3;
         #endregion
 
         #region Public variables/properties
@@ -86,7 +85,6 @@ namespace Utopia.Entities
             if (DynamicEntity is PlayerCharacter)
             {
                 _interpolationRate = 0.1;
-                _distanceLimit = 5;
             }
 
             _netLocation = new NetworkValue<Vector3D>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
@@ -144,21 +142,13 @@ namespace Utopia.Entities
 
             _netLocation.DeltaValue = _netLocation.Value - _netLocation.Interpolated;
             _netLocation.Distance = _netLocation.DeltaValue.Length();
-            if (_netLocation.Distance > _distanceLimit)
+            if (_netLocation.Distance > 0.1)
             {
-                    _netLocation.Interpolated = _netLocation.Value;
+                _netLocation.Interpolated += _netLocation.DeltaValue * _interpolationRate;
 
-                    //Refresh World Entity bounding box - only if entity did move !
-                    VisualVoxelEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
+                //Refresh World Entity bounding box - only if entity did move !
+                VisualVoxelEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
             }
-            else
-                if (_netLocation.Distance > 0.1)
-                {
-                    _netLocation.Interpolated += _netLocation.DeltaValue * _interpolationRate;
-
-                    //Refresh World Entity bounding box - only if entity did move !
-                    VisualVoxelEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
-                }
 
             WorldPosition.Value = _netLocation.Interpolated;
         }
