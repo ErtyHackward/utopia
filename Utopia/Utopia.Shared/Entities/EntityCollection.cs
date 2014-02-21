@@ -75,9 +75,12 @@ namespace Utopia.Shared.Entities
             {
                 var list = new List<KeyValuePair<uint, IEntity>>();
 
-                foreach (var staticEntity in _entities)
+                lock (_syncRoot)
                 {
-                    list.Add(new KeyValuePair<uint, IEntity>(staticEntity.Key, staticEntity.Value));    
+                    foreach (var staticEntity in _entities)
+                    {
+                        list.Add(new KeyValuePair<uint, IEntity>(staticEntity.Key, staticEntity.Value));
+                    }
                 }
 
                 return list;
