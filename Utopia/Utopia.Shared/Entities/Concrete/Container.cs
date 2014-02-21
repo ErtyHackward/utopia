@@ -30,9 +30,38 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(2)]
         public string ClosedState { get; set; }
 
+        [Browsable(false)]
+        [ProtoMember(3)]
+        public SlotContainer<ContainedSlot> Content
+        {
+            get { return _content; }
+            set
+            {
+
+                if (_content == value)
+                    return;
+
+                if (_content != null)
+                {
+                    _content.ItemTaken -= ContentItemsChanged;
+                    _content.ItemPut -= ContentItemsChanged;
+                    _content.ItemExchanged -= ContentItemsChanged;
+                }
+
+                _content = value;
+
+                if (_content != null)
+                {
+                    _content.ItemTaken += ContentItemsChanged;
+                    _content.ItemPut += ContentItemsChanged;
+                    _content.ItemExchanged += ContentItemsChanged;
+                }
+            }
+        }
+
         [Category("Container")]
         [Description("How many slots container has")]
-        [ProtoMember(3)]
+        [ProtoMember(4)]
         public Vector2I ContainerSize
         {
             get { return _content.GridSize; }
@@ -73,33 +102,7 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
 
-        [Browsable(false)]
-        [ProtoMember(3)]
-        public SlotContainer<ContainedSlot> Content 
-        { 
-            get { return _content; }
-            set {
 
-                if (_content == value)
-                    return;
-
-                if (_content != null)
-                {
-                    _content.ItemTaken -= ContentItemsChanged;
-                    _content.ItemPut -= ContentItemsChanged;
-                    _content.ItemExchanged -= ContentItemsChanged;
-                }
-                
-                _content = value;
-
-                if (_content != null)
-                {
-                    _content.ItemTaken += ContentItemsChanged;
-                    _content.ItemPut += ContentItemsChanged;
-                    _content.ItemExchanged += ContentItemsChanged;
-                }
-            }
-        }
 
         protected override void OnInstanceChanged(VoxelModelInstance prev)
         {
