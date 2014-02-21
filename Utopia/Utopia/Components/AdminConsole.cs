@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.GUI;
 using Utopia.Worlds.Chunks;
@@ -96,6 +97,13 @@ namespace Utopia.Components
                             _pingTimer.Restart();
                             _server.ServerConnection.Send(new PingMessage() { Request = true });
                             commandProcessed = true;
+                            break;
+                        case "/resync":
+                            _worldChunk.ResyncChunk((Vector3I)_server.Player.Position, true);
+                            commandProcessed = true;
+                            break;
+                        case "/rebuild":
+                            _worldChunk.RebuildChunk((Vector3I)_server.Player.Position);
                             break;
                         default:
                             break;

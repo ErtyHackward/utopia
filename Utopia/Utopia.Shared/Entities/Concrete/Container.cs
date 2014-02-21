@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
+using BenTools.Mathematics;
 using ProtoBuf;
+using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Models;
@@ -15,6 +17,7 @@ namespace Utopia.Shared.Entities.Concrete
     public class Container : OrientedBlockLinkedItem
     {
         SlotContainer<ContainedSlot> _content;
+        private Vector2I _containerSize;
 
         [Category("Container")]
         [Description("Model state if the container is opened")]
@@ -27,6 +30,15 @@ namespace Utopia.Shared.Entities.Concrete
         [TypeConverter(typeof(ModelStateSelector))]
         [ProtoMember(2)]
         public string ClosedState { get; set; }
+
+        [Category("Container")]
+        [Description("How many slots container has")]
+        [ProtoMember(2)]
+        public Vector2I ContainerSize
+        {
+            get { return _content.GridSize; }
+            set { _content.GridSize = value; }
+        }
 
         public override bool RequiresLock
         {
@@ -119,7 +131,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         public Container()
         {
-            Content = new SlotContainer<ContainedSlot>(this);
+            _content = new SlotContainer<ContainedSlot>(this);
             MountPoint = BlockFace.Top;
         }
 

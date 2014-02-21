@@ -157,5 +157,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="sameSlice">in case of slice mode set this parameter to process only chunks with the same slice mesh, set this to false to process all visible chunks</param>
         /// <returns></returns>
         IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true);
+
+        void RebuildChunk(Vector3I position);
     }
 }

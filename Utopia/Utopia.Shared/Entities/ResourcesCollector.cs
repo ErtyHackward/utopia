@@ -6,6 +6,7 @@ using S33M3CoreComponents.Sound;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Tools;
@@ -19,6 +20,7 @@ namespace Utopia.Shared.Entities
     [ProtoInclude(100, typeof(BasicCollector))]
     public abstract class ResourcesCollector : Item, ITool, ISoundEmitterEntity
     {
+        [Browsable(false)]
         public ISoundEngine SoundEngine { get; set; }
 
         /// <summary>
@@ -132,6 +134,23 @@ namespace Utopia.Shared.Entities
                     }
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
+                    
+                    var charEntity = owner as CharacterEntity;
+                    if (charEntity == null)
+                    {
+                        impact.Message = "Charater entity is expected";
+                        return impact;
+                    }
+                    
+                    // in case of infinite resources we will not add more than 1 block entity 
+                    var existingSlot = charEntity.FindSlot(s => s.Item.BluePrintId == cube);
+
+                    if (!EntityFactory.Config.IsInfiniteResources || existingSlot == null)
+                    {
+                        if (!charEntity.Inventory.PutItem((IItem)EntityFactory.CreateFromBluePrint(cube)))
+                            impact.Message = "Can't put the item to inventory";
+                    }
+
                     impact.CubeId = WorldConfiguration.CubeId.Air;
                 }
                 else if (damage.Strength >= hardness)

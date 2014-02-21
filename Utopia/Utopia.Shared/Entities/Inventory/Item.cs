@@ -265,8 +265,7 @@ namespace Utopia.Shared.Entities.Inventory
 
             SetPosition(pos, entity, owner);
 
-            // put entity into the world
-            cursor.AddEntity(entity, owner.DynamicId);
+
 
             // take entity from the inventory
             var charEntity = owner as CharacterEntity;
@@ -287,12 +286,15 @@ namespace Utopia.Shared.Entities.Inventory
 
                 if (!impact.Success)
                 {
-                    impact.Message = "Unable to put item to the inventory";
+                    impact.Message = "Unable to take an item from the inventory";
+                    return impact;
                 }
 
+                // put entity into the world
+                cursor.AddEntity(entity, owner.DynamicId);
                 return impact;
             }
-
+            
             impact.Message = "CharacterEntity owner is expected";
             return impact;
         }

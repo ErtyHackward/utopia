@@ -422,14 +422,19 @@ namespace Utopia.Editor.Forms
                 string iconName = null;
                 if (recipe.ResultBlueprintId != 0)
                 {
-                    var entity = _configuration.BluePrints[recipe.ResultBlueprintId];
-
-                    if (entity is IVoxelEntity)
+                    if (recipe.ResultBlueprintId < 256)
                     {
-                        var voxelEntity = entity as IVoxelEntity;
-                        iconName = voxelEntity.ModelName;
+                        iconName = "CubeResource_" + _configuration.BlockProfiles[recipe.ResultBlueprintId].Name;
                     }
-
+                    else
+                    {
+                        var entity = _configuration.BluePrints[recipe.ResultBlueprintId];
+                        if (entity is IVoxelEntity)
+                        {
+                            var voxelEntity = entity as IVoxelEntity;
+                            iconName = voxelEntity.ModelName;
+                        }    
+                    }
                 }
 
                 var node = AddSubNode(recipesNode, recipe.Name, recipe, iconName);

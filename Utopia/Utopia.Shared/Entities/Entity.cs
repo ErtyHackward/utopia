@@ -113,11 +113,7 @@ namespace Utopia.Shared.Entities
         [Browsable(false)]
         public uint FactionId { get; set; }
 
-        /// <summary>
-        /// Tells if the entity should be displayed in the toolbar
-        /// </summary>
-        [ProtoMember(14)]
-        public bool ShowInToolbar { get; set; }
+        // Use next proto number => [ProtoMember(15)]
 
         /// <summary>
         /// Gets entity class id

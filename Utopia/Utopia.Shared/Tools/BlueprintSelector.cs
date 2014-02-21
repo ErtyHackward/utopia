@@ -33,6 +33,12 @@ namespace Utopia.Shared.Tools
             if ((string)value == "Choose...")
                 return 0;
 
+            var blockProfile = Configuration.BlockProfiles.FirstOrDefault(bp => bp.Name == (string)value);
+            if (blockProfile != null)
+            {
+                return (ushort)blockProfile.Id;
+            }
+
             var blueprint = Configuration.BluePrints.FirstOrDefault(bp => bp.Value.Name == (string)value);
             return blueprint.Key;
 
@@ -43,16 +49,22 @@ namespace Utopia.Shared.Tools
             if (value is string)
                 return value;
 
-            if ((ushort)value == 0)
+            var bpId = (ushort)value;
+
+            if (bpId == 0)
                 return "Choose...";
 
-            var blueprint = Configuration.BluePrints[(ushort)value];
-            return blueprint.Name;
+            if (bpId < 256)
+            {
+                return Configuration.BlockProfiles[bpId].Name;
+            }
+            
+            return Configuration.BluePrints[bpId].Name;
         }
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(Configuration.BluePrints.Select(bp => bp.Value.Name).ToArray());
+            return new StandardValuesCollection(Configuration.BlockProfiles.Where(bp => bp.Name != "System Reserved").Select(bp => bp.Name).Concat(Configuration.BluePrints.Select(bp => bp.Value.Name)).ToArray());
         }
     }
 

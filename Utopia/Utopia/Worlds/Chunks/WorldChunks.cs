@@ -716,6 +716,12 @@ namespace Utopia.Worlds.Chunks
             return true;
         }
 
+        public void RebuildChunk(Vector3I chunkPosition)
+        {
+            var chunk = GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Z);
+            chunk.State = ChunkState.MeshesChanged;
+        }
+
         //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
