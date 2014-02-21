@@ -25,6 +25,7 @@ namespace Utopia.Shared.Tools
             }
 
             _list = new ListView();
+            _list.Height = 300;
             _list.MultiSelect = false;
             _list.View = View.LargeIcon;
             _list.Click += _list_Click;
