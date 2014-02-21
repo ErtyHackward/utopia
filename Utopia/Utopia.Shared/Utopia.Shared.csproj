@@ -184,7 +184,6 @@
     <Compile Include="Entities\Dynamic\PlayerCharacter.cs" />
     <Compile Include="Entities\Dynamic\RpgCharacterEntity.cs" />
     <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\EntityClassId.cs" />
     <Compile Include="Entities\EntityCollection.cs" />
     <Compile Include="Entities\EntityDisplacementModes.cs" />
     <Compile Include="Entities\EntityFactory.cs" />

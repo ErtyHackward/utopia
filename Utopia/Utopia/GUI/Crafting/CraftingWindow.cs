@@ -80,7 +80,7 @@ namespace Utopia.GUI.Crafting
             _recipesList.Bounds = new UniRectangle(20, 50, 200, 300);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
 
-            foreach (var recipe in _conf.Recipes)
+            foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == 0))
             {
                 _recipesList.Items.Add(recipe);
             }

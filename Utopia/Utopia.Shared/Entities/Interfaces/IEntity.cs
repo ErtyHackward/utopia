@@ -36,11 +36,6 @@ namespace Utopia.Shared.Entities.Interfaces
         double YForceOnSideHit { get; set; }
 
         /// <summary>
-        /// Gets entity class id
-        /// </summary>
-        ushort ClassId { get; }
-
-        /// <summary>
         /// Gets entity BluePrint ID
         /// </summary>
         ushort BluePrintId { get; set; }

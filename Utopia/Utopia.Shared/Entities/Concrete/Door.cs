@@ -54,14 +54,6 @@ namespace Utopia.Shared.Entities.Concrete
             set { _soundEngine = value; }
         }
 
-        public override ushort ClassId
-        {
-            get
-            {
-                return EntityClassId.Door;
-            }
-        }
-
         protected override void OnInstanceChanged(VoxelModelInstance prev)
         {
             if (prev != null)

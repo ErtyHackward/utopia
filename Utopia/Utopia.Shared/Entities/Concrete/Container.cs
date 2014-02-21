@@ -14,10 +14,9 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     [ProtoContract]
     [Description("Allows to store other entities inside this one.")]
-    public class Container : OrientedBlockLinkedItem
+    public class Container : OrientedBlockItem
     {
         SlotContainer<ContainedSlot> _content;
-        private Vector2I _containerSize;
 
         [Category("Container")]
         [Description("Model state if the container is opened")]
@@ -33,7 +32,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         [Category("Container")]
         [Description("How many slots container has")]
-        [ProtoMember(2)]
+        [ProtoMember(3)]
         public Vector2I ContainerSize
         {
             get { return _content.GridSize; }
@@ -72,11 +71,6 @@ namespace Utopia.Shared.Entities.Concrete
                     }
                 }
             }
-        }
-
-        public override ushort ClassId
-        {
-            get { return EntityClassId.Container; }
         }
 
         [Browsable(false)]
@@ -132,7 +126,6 @@ namespace Utopia.Shared.Entities.Concrete
         public Container()
         {
             _content = new SlotContainer<ContainedSlot>(this);
-            MountPoint = BlockFace.Top;
         }
 
         public override object Clone()

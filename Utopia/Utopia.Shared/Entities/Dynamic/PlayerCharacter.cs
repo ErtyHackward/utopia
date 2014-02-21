@@ -36,12 +36,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(2)]
         public Vector2I ActiveToolInventoryPosition { get; set; }
-        
-        public override ushort ClassId
-        {
-            get { return EntityClassId.PlayerCharacter; }
-        }
-        
+
         public PlayerCharacter()
         {
             //Define the default PlayerCharacter ToolBar

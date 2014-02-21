@@ -10,8 +10,6 @@ namespace Utopia.Shared.Entities.Concrete
     [Description("Provides mine-tool functionality.")]
     public class BasicCollector : ResourcesCollector
     {
-        public override ushort ClassId { get { return EntityClassId.BasicCollector; } }
-
         public BasicCollector()
         {
             Name = "Basic Collector Tool";

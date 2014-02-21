@@ -14,12 +14,5 @@ namespace Utopia.Shared.Entities.Concrete
     [Description("Provides ladder functionality. Giving the possibility for the entity to grab it to move without falling")]
     public class Ladder : OrientedBlockItem
     {
-        public override ushort ClassId
-        {
-            get
-            {
-                return EntityClassId.Ladder;
-            }
-        }
     }
 }

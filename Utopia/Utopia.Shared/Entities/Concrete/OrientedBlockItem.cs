@@ -20,14 +20,10 @@ namespace Utopia.Shared.Entities.Concrete
     [ProtoInclude(100, typeof(Door))]
     [ProtoInclude(101, typeof(MusicPlayer))]
     [ProtoInclude(102, typeof(Ladder))]
+    [ProtoInclude(103, typeof(Container))]
     [Description("Entity of this type will have one of 4 orientations and occupy a block.")]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {
-        public override ushort ClassId
-        {
-            get { return EntityClassId.OrientedBlockItem; }
-        }
-
         /// <summary>
         /// Gets or sets item orientation
         /// </summary>

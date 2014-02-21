@@ -20,11 +20,6 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(1)]
         public bool RepeatedActionsAllowed { get; set; }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.CubeResource; }
-        }
-
         public IToolImpact Use(IDynamicEntity owner)
         {
             IToolImpact checkImpact;
