@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
 using SharpDX;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -18,7 +17,7 @@ namespace Utopia.Shared.Entities.Concrete
     public class CubeResource : Item, ITool
     {
         [ProtoMember(1)]
-        public byte CubeId { get; private set; }
+        public byte CubeId { get; set; }
 
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(2)]
@@ -27,16 +26,6 @@ namespace Utopia.Shared.Entities.Concrete
         public override ushort ClassId
         {
             get { return EntityClassId.CubeResource; }
-        }
-
-        public DynamicEntity Parent { get; set; }
-
-        public AbstractChunk ParentChunk { get; set; }
-        
-        public void SetCube(byte cubeId, string cubeName)
-        {
-            CubeId = cubeId;
-            Name = cubeName;
         }
 
         public override IToolImpact Put(IDynamicEntity owner)
@@ -103,6 +92,35 @@ namespace Utopia.Shared.Entities.Concrete
                 }
                 if (cursor.Read() == WorldConfiguration.CubeId.Air)
                 {
+                    if (!EntityFactory.Config.IsInfiniteResources)
+                    {
+                        var charEntity = owner as CharacterEntity;
+                        if (charEntity == null)
+                        {
+                            impact.Message = "Character entity is expected";
+                            return impact;
+                        }
+
+                        var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == StackType);
+
+                        if (slot == null)
+                        {
+                            // we have no more items in the inventory, remove from the hand
+                            slot = charEntity.Equipment[EquipmentSlotType.Hand];
+                            impact.Success = charEntity.Equipment.TakeItem(slot.GridPosition);
+                        }
+                        else
+                        {
+                            impact.Success = charEntity.Inventory.TakeItem(slot.GridPosition);
+                        }
+
+                        if (!impact.Success)
+                        {
+                            impact.Message = "Unable to take an item from the inventory";
+                            return impact;
+                        }
+                    }
+
                     cursor.Write(CubeId);
                     impact.Success = true;
                     impact.CubeId = CubeId;

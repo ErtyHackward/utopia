@@ -591,11 +591,6 @@ namespace Utopia.Entities
 
             return createdIconsTexture;            
         }
-
-        private List<Texture2D> CreateSpritesIcons(ShaderResourceView spriteTextureView)
-        {
-            return new List<Texture2D>();
-        }
         #endregion
         
     }

@@ -167,7 +167,7 @@ namespace Utopia.GUI.Crafting
 
                     cell.Slot = new ContainedSlot
                         {
-                            Item = (Item)_conf.BluePrints[bpId]
+                            Item = (IItem)_player.PlayerCharacter.EntityFactory.CreateFromBluePrint(bpId)
                         };
 
                     cell.CountString = string.Format("{0} / {1}", needItems, haveItems);

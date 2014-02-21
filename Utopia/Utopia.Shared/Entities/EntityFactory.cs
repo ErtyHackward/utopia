@@ -284,13 +284,27 @@ namespace Utopia.Shared.Entities
             }
 
             Entity entity;
-            if (Config.BluePrints.TryGetValue(bluePrintId, out entity) == false)
-            {
-                throw new ArgumentOutOfRangeException("bluePrintId");
-            }
 
-            //Create a clone of this entity.
-            entity = (Entity)entity.Clone();
+            if (bluePrintId < 256)
+            {
+                var res = CreateEntity<CubeResource>();
+                res.BluePrintId = bluePrintId;
+                var profile = Config.BlockProfiles[bluePrintId];
+                res.CubeId = (byte)bluePrintId;
+                res.Name = profile.Name;
+                res.MaxStackSize = Config.CubeStackSize;
+                entity = res;
+            }
+            else
+            {
+                if (Config.BluePrints.TryGetValue(bluePrintId, out entity) == false)
+                {
+                    throw new ArgumentOutOfRangeException("bluePrintId");
+                }
+
+                //Create a clone of this entity.
+                entity = (Entity)entity.Clone();
+            }
 
             InjectFields(entity);
 
@@ -356,21 +370,7 @@ namespace Utopia.Shared.Entities
 
                 foreach (var blueprintSlot in set)
                 {
-                    Item item;
-                    if (blueprintSlot.BlueprintId < 256)
-                    {
-                        var res = CreateEntity<CubeResource>();
-                        res.BluePrintId = blueprintSlot.BlueprintId;
-                        //var res = new CubeResource();
-                        var profile = Config.BlockProfiles[blueprintSlot.BlueprintId];
-                        res.SetCube((byte)blueprintSlot.BlueprintId, profile.Name);
-                        item = res;
-                    }
-                    else
-                    {
-                        item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
-                    }
-
+                    var item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
                     container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
                 }
             }

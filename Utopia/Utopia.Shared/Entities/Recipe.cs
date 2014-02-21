@@ -45,7 +45,7 @@ namespace Utopia.Shared.Entities
 
         public override string ToString()
         {
-            return Name;
+            return Name + (ResultCount == 1 ? "" : " x" + ResultCount);
         }
     }
 

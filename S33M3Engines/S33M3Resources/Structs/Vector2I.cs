@@ -199,5 +199,25 @@ namespace S33M3Resources.Structs
         {
             get { return new Vector2I(); }
         }
+
+        public static Vector2I Min(Vector2I one, Vector2I two)
+        {
+            Vector2I vec;
+
+            vec.X = Math.Min(one.X, two.X);
+            vec.Y = Math.Min(one.Y, two.Y);
+
+            return vec;
+        }
+
+        public static Vector2I Max(Vector2I one, Vector2I two)
+        {
+            Vector2I vec;
+
+            vec.X = Math.Max(one.X, two.X);
+            vec.Y = Math.Max(one.Y, two.Y);
+
+            return vec;
+        }
     }
 }

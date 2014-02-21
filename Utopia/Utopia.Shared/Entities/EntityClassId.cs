@@ -20,6 +20,7 @@ namespace Utopia.Shared.Entities
         public const ushort OrientedBlockItem = 1006;
         public const ushort Stuff = 1007;
         public const ushort Ladder = 1008;
+        public const ushort ProcessingContainer = 1009;
 
         // tools 
         public const ushort CubeResource = 1500;

@@ -4,6 +4,7 @@ using System.Linq;
 using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -39,9 +40,24 @@ namespace Utopia.Shared.Entities.Inventory
             get { return _gridSize; }
             set
             {
+                var prevSize = _gridSize;
+
                 _gridSize = value;
-                //todo: copy of items to new container from old
-                _items = new T[_gridSize.X, _gridSize.Y];
+
+                var newSlots = new T[_gridSize.X, _gridSize.Y];
+
+                if (_items != null)
+                {
+                    var copySize = Vector2I.Min(prevSize, _gridSize);
+                    var range = new Range2I(Vector2I.Zero, copySize);
+
+                    foreach (var pos in range)
+                    {
+                        newSlots[pos.X, pos.Y] = _items[pos.X, pos.Y];
+                    }
+                }
+
+                _items = newSlots;
             }
         }
 
@@ -123,7 +139,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="parentEntity"></param>
         /// <param name="containerGridSize"></param>
-        public SlotContainer(IEntity parentEntity , Vector2I containerGridSize)
+        public SlotContainer(IEntity parentEntity, Vector2I containerGridSize)
         {
             _parentEntity = parentEntity;
             GridSize = containerGridSize;

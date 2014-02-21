@@ -139,8 +139,22 @@ namespace Utopia.Shared.Configuration
         public List<TreeBluePrint> TreeBluePrints { get; set; }
 
         [ProtoMember(15, OverwriteList = true)]
-        public List<CharacterClassItem> CharacterClasses { get; set; } 
+        public List<CharacterClassItem> CharacterClasses { get; set; }
 
+        /// <summary>
+        /// Indicates if cube resources is infinte or not
+        /// </summary>
+        [Description("Indicates if cube resources is infinte or not")]
+        [ProtoMember(16)]
+        public bool IsInfiniteResources { get; set; }
+
+        /// <summary>
+        /// Cube resource stack size
+        /// </summary>
+        [Description("Tells how much items could be in the cube stack")]
+        [ProtoMember(17)]
+        public int CubeStackSize { get; set; }
+        
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
         public Dictionary<int, TreeBluePrint> TreeBluePrintsDico
@@ -201,6 +215,7 @@ namespace Utopia.Shared.Configuration
 
             Factory = factory;
             WorldHeight = 128;
+            CubeStackSize = 50;
 
             InitCollections();
         }
