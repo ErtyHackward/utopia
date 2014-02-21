@@ -22,6 +22,7 @@ namespace S33M3CoreComponents.Sound
         public float Volume { get; set; }
         public float Power { get; set; }
         public bool isStreamed { get; set; }
+        public int Priority { get; set; }
 
         public WaveFormat WaveFormat { get; set; }
         public AudioBuffer AudioBuffer { get; private set; }
