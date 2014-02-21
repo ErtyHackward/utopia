@@ -116,13 +116,6 @@ namespace Utopia.Shared.Entities
         // Use next proto number => [ProtoMember(15)]
 
         /// <summary>
-        /// Gets entity class id
-        /// </summary>
-        [Category("Entity")]
-        [Browsable(false)]
-        public abstract ushort ClassId { get; }
-        
-        /// <summary>
         /// Indicates that the entity must be locked to be used
         /// </summary>
         [Browsable(false)]

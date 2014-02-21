@@ -16,11 +16,6 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(1)]
         public bool RndRotationAroundY { get; set; }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.Plant; }
-        }
-        
         public Plant()
         {
             Name = "Plant";

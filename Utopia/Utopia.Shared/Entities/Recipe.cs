@@ -36,6 +36,17 @@ namespace Utopia.Shared.Entities
         [ProtoMember(4)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Conatiner where this recipe is belong to
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(5)]
+        public ushort ContainerBlueprintId { get; set; }
+
+        [Description("How many seconds needs to create the item, 0 - instantly")]
+        [ProtoMember(6)]
+        public int Time { get; set; }
+
         public Recipe()
         {
             Ingredients = new List<InitSlot>();

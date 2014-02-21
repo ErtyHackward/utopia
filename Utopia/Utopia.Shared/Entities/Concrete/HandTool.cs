@@ -15,11 +15,6 @@ namespace Utopia.Shared.Entities.Concrete
     [EditorHide]
     public class HandTool : Item, ITool
     {
-        public override ushort ClassId
-        {
-            get { return EntityClassId.Hand; }
-        }
-
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(1)]
         public bool RepeatedActionsAllowed { get; set; }

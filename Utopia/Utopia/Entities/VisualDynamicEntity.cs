@@ -5,6 +5,7 @@ using System.Text;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
@@ -82,7 +83,7 @@ namespace Utopia.Entities
             MoveDirection.Value = LookAtDirection.Value;
 
             //Change the default value when Player => The player message arrive much more faster !
-            if (DynamicEntity.ClassId == EntityClassId.PlayerCharacter)
+            if (DynamicEntity is PlayerCharacter)
             {
                 _interpolationRate = 0.1;
                 _distanceLimit = 5;

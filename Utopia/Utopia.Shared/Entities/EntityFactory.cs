@@ -206,65 +206,6 @@ namespace Utopia.Shared.Entities
             return entity;
         }
 
-        /// <summary>
-        /// Returns new entity object by its classId. New entity will have unique ID
-        /// </summary>
-        /// <param name="classId">Entity class identificator</param>
-        /// <returns></returns>
-        public Entity CreateFromClassId(ushort classId)
-        {
-            var entity = CreateCustomEntity(classId); // External implementation of the entity creation.
-
-            if (entity == null)
-            {
-                switch (classId)
-                {
-                    case EntityClassId.PlayerCharacter:
-                        entity = new PlayerCharacter();
-                        break;
-                    case EntityClassId.NonPlayerCharacter:
-                        entity = new Npc();
-                        break;
-                    case EntityClassId.Plant:
-                        entity = new Plant();
-                        break;
-                    case EntityClassId.CubeResource:
-                        entity = new CubeResource();
-                        break;
-                    case EntityClassId.LightSource:
-                        entity = new LightSource();
-                        break;
-                    case EntityClassId.OrientedBlockLinkedItem:
-                        entity = new OrientedBlockLinkedItem();
-                        break;
-                    case EntityClassId.OrientedBlockItem:
-                        entity = new OrientedBlockItem();
-                        break;
-                    case EntityClassId.Container:
-                        entity = new Container();
-                        break;
-                    case EntityClassId.Door:
-                        entity = new Door();
-                        break;
-                    case EntityClassId.BasicCollector:
-                        entity = new BasicCollector();
-                        break;
-                    case EntityClassId.GodEntity:
-                        entity = new GodEntity();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("classId");
-                }
-            }
-
-            InjectFields(entity);
-
-            // allow post produce prepare
-            OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
-
-            return entity;
-        }
-
         public Entity CreateFromBluePrint(IEntity entity)
         {
             return CreateFromBluePrint(entity.BluePrintId);

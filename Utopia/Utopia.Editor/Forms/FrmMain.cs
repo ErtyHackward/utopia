@@ -417,28 +417,33 @@ namespace Utopia.Editor.Forms
             var recipesNode = tvMainCategories.Nodes["Recipes"];
             recipesNode.Nodes.Clear();
 
-            foreach (var recipe in _configuration.Recipes)
+            foreach (var recipeGroup in _configuration.Recipes.GroupBy(g => g.ResultBlueprintId))
             {
-                string iconName = null;
-                if (recipe.ResultBlueprintId != 0)
+                var groupNode = AddSubNode(recipesNode, recipeGroup.Key == 0 ? "Player" : _configuration.BluePrints[recipeGroup.Key].Name, recipeGroup.Key);
+                
+                foreach (var recipe in recipeGroup)
                 {
-                    if (recipe.ResultBlueprintId < 256)
+                    string iconName = null;
+                    if (recipe.ResultBlueprintId != 0)
                     {
-                        iconName = "CubeResource_" + _configuration.BlockProfiles[recipe.ResultBlueprintId].Name;
-                    }
-                    else
-                    {
-                        var entity = _configuration.BluePrints[recipe.ResultBlueprintId];
-                        if (entity is IVoxelEntity)
+                        if (recipe.ResultBlueprintId < 256)
                         {
-                            var voxelEntity = entity as IVoxelEntity;
-                            iconName = voxelEntity.ModelName;
-                        }    
+                            iconName = "CubeResource_" + _configuration.BlockProfiles[recipe.ResultBlueprintId].Name;
+                        }
+                        else
+                        {
+                            var entity = _configuration.BluePrints[recipe.ResultBlueprintId];
+                            if (entity is IVoxelEntity)
+                            {
+                                var voxelEntity = entity as IVoxelEntity;
+                                iconName = voxelEntity.ModelName;
+                            }
+                        }
                     }
-                }
 
-                var node = AddSubNode(recipesNode, recipe.Name, recipe, iconName);
-                node.ContextMenuStrip = contextMenuEntity;
+                    var node = AddSubNode(groupNode, recipe.Name, recipe, iconName);
+                    node.ContextMenuStrip = contextMenuEntity;
+                }
             }
 
             #endregion

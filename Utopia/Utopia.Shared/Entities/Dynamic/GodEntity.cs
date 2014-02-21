@@ -19,11 +19,6 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.GodEntity; }
-        }
-
         /// <summary>
         /// Gets or sets camera rotation
         /// </summary>

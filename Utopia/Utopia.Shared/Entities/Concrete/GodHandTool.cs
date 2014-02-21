@@ -28,11 +28,6 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(1)]
         public bool RepeatedActionsAllowed { get; set; }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.GodHand; }
-        }
-
         public override PickType CanPickBlock(BlockProfile blockProfile)
         {
             if (blockProfile.Id == WorldConfiguration.CubeId.Air)

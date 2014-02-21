@@ -11,7 +11,6 @@ using Utopia.Shared.Entities.Inventory;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
-    [ProtoInclude(100, typeof(Container))]
     [Description("Entity of this type will have one of 4 orientations and will disappear if their linked block is removed.")]
     public class OrientedBlockLinkedItem : BlockLinkedItem, IOrientedSlope
     {
@@ -28,11 +27,6 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         [ProtoMember(2)]
         public bool IsOrientedSlope { get; set; }
-
-        public override ushort ClassId
-        {
-            get { return EntityClassId.OrientedBlockLinkedItem; }
-        }
 
         public OrientedBlockLinkedItem()
         {

@@ -30,14 +30,6 @@ namespace Utopia.Shared.Entities.Concrete
             }
             set { _emittedLightColor = new ByteColor(value.R, value.G, value.B, value.A); }
         }
-        
-        /// <summary>
-        /// Gets entity class id
-        /// </summary>
-        public override ushort ClassId
-        {
-            get { return EntityClassId.LightSource; }
-        }
 
         public LightSource()
         {

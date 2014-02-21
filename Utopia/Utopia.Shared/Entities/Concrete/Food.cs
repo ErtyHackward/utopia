@@ -15,11 +15,6 @@ namespace Utopia.Shared.Entities.Concrete
         [Category("Food")]
         public int Calories { get; set; }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.Food; }
-        }
-
         public override EntityPosition GetPosition(Interfaces.IDynamicEntity owner)
         {
             var pos = new EntityPosition();
