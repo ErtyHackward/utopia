@@ -4,24 +4,30 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Inventory;
+using Utopia.Shared.Configuration;
 
 namespace Realms.Client.Components.GUI.Inventory
 {
-    public class ContainerInventory : InventoryWindow
+    public class ContainerInventory : ContainerWindow
     {
         private readonly SandboxCommonResources _commonResources;
-        private SpriteTexture _stInventoryWindow;
 
-        public ContainerInventory(D3DEngine engine, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
-            base(null, iconFactory, new Point(20,20), new Point(20,20), inputManager)
+
+        public ContainerInventory(
+            D3DEngine engine, 
+            IconFactory iconFactory, 
+            InputsManager inputManager, 
+            SandboxCommonResources commonResources, 
+            WorldConfiguration config,
+            PlayerEntityManager playerEntityManager
+            ) : base(config, playerEntityManager, iconFactory, inputManager)
         {
             _commonResources = commonResources;
-            _stInventoryWindow = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window_container.png");
 
-            CustomWindowImage = _stInventoryWindow;
             Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
-
+            InitializeComponent();
         }
 
         protected override void CellsCreated()
