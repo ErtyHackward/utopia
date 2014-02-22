@@ -1,12 +1,11 @@
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Maths;
-using S33M3CoreComponents.Sprites2D;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities.Models;
 
-namespace Utopia.GUI.Crafting
+namespace Utopia.GUI
 {
     /// <summary>
     /// Shows a 3d model and allows to rotate

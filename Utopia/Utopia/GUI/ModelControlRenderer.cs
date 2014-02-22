@@ -1,16 +1,12 @@
 using System;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Maths;
-using S33M3CoreComponents.Sprites2D;
-using S33M3CoreComponents.Textures;
 using S33M3DXEngine.RenderStates;
 using S33M3Resources.Structs;
 using SharpDX;
-using SharpDX.DXGI;
-using SharpDX.Direct3D11;
 using Utopia.Shared.GameDXStates;
 
-namespace Utopia.GUI.Crafting
+namespace Utopia.GUI
 {
     public class ModelControlRenderer : IFlatControlRenderer<ModelControl>
     {
