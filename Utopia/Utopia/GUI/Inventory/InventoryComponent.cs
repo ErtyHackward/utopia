@@ -35,7 +35,7 @@ namespace Utopia.GUI.Inventory
         private readonly IconFactory _iconFactory;
         private ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
-        private InventoryWindow _containerInventoryWindow;
+        private ContainerWindow _containerInventoryWindow;
 
         private InventoryCell _dragControl;
         private InventoryCell _hoverSlot;
@@ -77,7 +77,7 @@ namespace Utopia.GUI.Inventory
         /// <summary>
         /// Gets or sets optional container inventory window that will popup on container operations
         /// </summary>
-        public InventoryWindow ContainerInventoryWindow
+        public ContainerWindow ContainerInventoryWindow
         {
             get { return _containerInventoryWindow; }
             set 
@@ -515,7 +515,7 @@ namespace Utopia.GUI.Inventory
                 if (_containerInventoryWindow == null)
                     throw new InvalidOperationException("Unable to open container inventory because no inventory windows is associated");
 
-                _containerInventoryWindow.Content = otherParty.Content;
+                _containerInventoryWindow.Container = otherParty;
                 windows.Add(_containerInventoryWindow);
             }
             

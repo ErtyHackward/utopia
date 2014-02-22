@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3Resources.Structs;
 using Utopia.Entities;
@@ -26,7 +27,7 @@ namespace Utopia.GUI.Inventory
         private readonly PlayerEntityManager _player;
         private readonly IconFactory _iconFactory;
         private readonly InputsManager _inputsManager;
-        private readonly Container _container;
+        private Container _container;
 
         protected ListControl _recipesList;
         protected List<InventoryCell> _ingredientCells;
@@ -75,14 +76,31 @@ namespace Utopia.GUI.Inventory
             get { return _resultModel; }
         }
 
-        public ContainerWindow(WorldConfiguration conf, PlayerEntityManager player, IconFactory iconFactory, InputsManager inputsManager, Container container) : 
-            base(container.Content, iconFactory, new Point(20, 300), inputsManager)
+        public Container Container
+        {
+            get { return _container; }
+            set { 
+                _container = value;
+
+                Content = _container.Content;
+
+                foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == _container.BluePrintId))
+                {
+                    _recipesList.Items.Clear();
+                    _recipesList.Items.Add(recipe);
+                }
+
+                _hostModel.SetModel(_container.ModelName);
+            }
+        }
+
+        public ContainerWindow(WorldConfiguration conf, PlayerEntityManager player, IconFactory iconFactory, InputsManager inputsManager) : 
+            base(null, iconFactory, new Point(20, 300), inputsManager)
         {
             _conf = conf;
             _player = player;
             _iconFactory = iconFactory;
             _inputsManager = inputsManager;
-            _container = container;
         }
 
         public virtual void InitializeComponent()
@@ -93,20 +111,13 @@ namespace Utopia.GUI.Inventory
             _recipesList.Bounds = new UniRectangle(250, 250, 200, 100);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
             
-            foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == _container.BluePrintId))
-            {
-                _recipesList.Items.Add(recipe);
-            }
-
             _hostModel = new ModelControl(_iconFactory.VoxelModelManager)
             {
                 Bounds = new UniRectangle(20, 20, 430, 230)
             };
 
             Children.Add(_hostModel);
-
-            _hostModel.SetModel(_container.ModelName);
-
+            
             if (_recipesList.Items.Count > 0)
             {
                 Children.Add(_recipesList);
@@ -205,5 +216,24 @@ namespace Utopia.GUI.Inventory
                 }
             }
         }
+    }
+
+    public class ContainerWindowControlRenderer : IFlatControlRenderer<ContainerWindow>
+    {
+        /// <summary>
+        ///   Renders the specified control using the provided graphics interface
+        /// </summary>
+        /// <param name="control">Control that will be rendered</param>
+        /// <param name="graphics">
+        ///   Graphics interface that will be used to draw the control
+        /// </param>
+        public void Render(
+            ContainerWindow control, IFlatGuiGraphics graphics
+            )
+        {
+            var controlBounds = control.GetAbsoluteBounds();
+            graphics.DrawElement("utopiawindow", ref controlBounds);
+        }
+
     }
 }
