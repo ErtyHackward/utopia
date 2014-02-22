@@ -30,6 +30,8 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public WorldConfiguration Config { get; set; }
 
         /// <summary>
@@ -311,8 +313,15 @@ namespace Utopia.Shared.Entities
 
                 foreach (var blueprintSlot in set)
                 {
-                    var item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
-                    container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
+                    try
+                    {
+                        var item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
+                        container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
+                    }
+                    catch (Exception x)
+                    {
+                        logger.Error("Unable to create the item from blueprint {0}: {1}", blueprintSlot.BlueprintId, x.Message);
+                    }
                 }
             }
         }

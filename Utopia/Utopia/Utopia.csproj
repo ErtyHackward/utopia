@@ -133,11 +133,12 @@
     <Compile Include="GUI\CharacterSelection\CharacterSelectionWindow.cs" />
     <Compile Include="GUI\Crafting\CraftingComponent.cs" />
     <Compile Include="GUI\Crafting\CraftingWindow.cs" />
-    <Compile Include="GUI\Crafting\ModelControl.cs" />
-    <Compile Include="GUI\Crafting\ModelControlRenderer.cs" />
     <Compile Include="GUI\Inventory\AlphaImageButton.cs" />
     <Compile Include="GUI\Inventory\AlphaImageButtonRenderer.cs" />
+    <Compile Include="GUI\Inventory\ContainerWindow.cs" />
     <Compile Include="GUI\Inventory\InventoryEventComponent.cs" />
+    <Compile Include="GUI\ModelControl.cs" />
+    <Compile Include="GUI\ModelControlRenderer.cs" />
     <Compile Include="GUI\TooltipControl.cs" />
     <Compile Include="Network\SyncManager.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
