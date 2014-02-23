@@ -69,6 +69,13 @@ namespace S33M3CoreComponents.Sprites2D
             tex.Dispose();
         }
 
+        public SpriteTexture(Device device, string texturePath, Vector2I screenPosition, ImageLoadInformation imageLoadParam)
+        {
+            Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath, imageLoadParam);
+            CreateResource(device, tex, screenPosition, tex.Description.Format);
+            tex.Dispose();
+        }
+
         public SpriteTexture(Texture2D texture)
         {
             if (texture == null) throw new ArgumentNullException("texture");

@@ -446,7 +446,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
                 string contentPath = element.Attribute("contentPath").Value;
 
                 //Create the SpriteTexture
-                SpriteTexture bitmap = new SpriteTexture(_d3dEngine.Device, _resourceDirectory + @"\" + contentPath + ".png", Vector2I.Zero);
+                ImageLoadInformation imageLoadParam = new ImageLoadInformation()
+                {
+                    BindFlags = BindFlags.ShaderResource,
+                    Format = SharpDX.DXGI.Format.R8G8B8A8_UNorm,
+                    MipLevels = 1
+                };
+
+                SpriteTexture bitmap = new SpriteTexture(_d3dEngine.Device, _resourceDirectory + @"\" + contentPath + ".png", Vector2I.Zero, imageLoadParam);
 
                 this.bitmaps.Add(bitmapName, bitmap);
             }
