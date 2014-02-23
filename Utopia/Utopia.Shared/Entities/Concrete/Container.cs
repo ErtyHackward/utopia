@@ -61,6 +61,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         [Category("Container")]
         [Description("How many slots container has")]
+        [TypeConverter(typeof(Vector2IConverter))]
         public Vector2I ContainerSize
         {
             get { return _content.GridSize; }
@@ -136,8 +137,8 @@ namespace Utopia.Shared.Entities.Concrete
 
             var cont = obj as Container;
 
-            if (cont != null) 
-                cont.Content = new SlotContainer<ContainedSlot>(cont);
+            if (cont != null)
+                cont.Content = new SlotContainer<ContainedSlot>(cont, ContainerSize);
 
             return obj;
         }

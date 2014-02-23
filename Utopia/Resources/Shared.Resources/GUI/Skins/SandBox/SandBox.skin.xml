@@ -351,11 +351,11 @@
       <region source="controls" hplacement="left" vplacement="top" x="150" y="83" w="27" h="27" />
       <region source="controls" hplacement="stretch" vplacement="top" x="176" y="83" w="42" h="27" tiled="true" />
       <region source="controls" hplacement="right" vplacement="top" x="219" y="83" w="27" h="27" />
-      <region id="border-w" source="controls" hplacement="left" vplacement="stretch" x="150" y="110" w="27" h="45" tiled="true" />
+      <region id="border-w" source="controls" hplacement="left" vplacement="stretch" x="150" y="110" w="27" h="42" tiled="true" />
       <region id="client" source="controls" hplacement="stretch" vplacement="stretch" x="180" y="110" w="40" h="40" tiled="true" />
-      <region id="border-e" source="controls" hplacement="right" vplacement="stretch" x="219" y="110" w="27" h="45" tiled="true" />
+      <region id="border-e" source="controls" hplacement="right" vplacement="stretch" x="219" y="110" w="27" h="42" tiled="true" />
       <region id="border-sw" source="controls" hplacement="left" vplacement="bottom" x="150" y="153" w="27" h="27" />
-      <region id="border-s" source="controls" hplacement="stretch" vplacement="bottom" x="177" y="153" w="44" h="27" tiled="true" />
+      <region id="border-s" source="controls" hplacement="stretch" vplacement="bottom" x="177" y="153" w="42" h="27" tiled="true" />
       <region id="border-se" source="controls" hplacement="right" vplacement="bottom" x="219" y="153" w="27" h="27" />
       <text font="title" hplacement="left" vplacement="top" xoffset="8" yoffset="7" color="#ffffff" />
     </frame>

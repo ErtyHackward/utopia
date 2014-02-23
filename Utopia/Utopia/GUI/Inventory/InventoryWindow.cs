@@ -110,7 +110,7 @@ namespace Utopia.GUI.Inventory
             var width = _content.GridSize.X * CellSize + GridOffset.X + 4;
             var height = _content.GridSize.Y * CellSize + GridOffset.Y + 22 + 4; // 22 = bottom line, 4 - bottom side
 
-            Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
+            //Bounds = new UniRectangle(_windowStartPosition.X, _windowStartPosition.Y, width, height);
 
             if (UiGrid != null)
             {
