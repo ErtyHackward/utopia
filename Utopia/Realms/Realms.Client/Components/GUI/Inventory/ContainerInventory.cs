@@ -26,7 +26,7 @@ namespace Realms.Client.Components.GUI.Inventory
         {
             _commonResources = commonResources;
 
-            Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
+            //Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
             InitializeComponent();
         }
 

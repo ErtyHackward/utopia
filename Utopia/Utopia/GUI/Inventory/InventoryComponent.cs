@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ninject;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Sound;
 using S33M3DXEngine;
+using S33M3Resources.Structs.Vertex;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Network;
+using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -20,6 +23,7 @@ using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
+using Utopia.Shared.Settings;
 
 namespace Utopia.GUI.Inventory
 {
@@ -235,6 +239,8 @@ namespace Utopia.GUI.Inventory
         {
             _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
 
+            ContainerInventoryWindow.VoxelEffect = ToDispose(new HLSLVoxelModel(_engine.Device, Path.Combine(ClientSettings.EffectPack, @"Entities\VoxelModel.hlsl"), VertexVoxel.VertexDeclaration));
+            
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
             {
                 Bounds = new UniRectangle(-100, -100, InventoryWindow.CellSize, InventoryWindow.CellSize),

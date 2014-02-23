@@ -91,75 +91,97 @@ namespace Utopia.GUI.Inventory
                 }
 
                 _hostModel.SetModel(_container.ModelName);
+
+                if (_recipesList.Items.Count > 0)
+                {
+                    if (!Children.Contains(_recipesList))
+                    {
+                        Children.Add(_recipesList);
+                        Children.Add(_craftButton);
+                        Children.Add(_resultModel);
+
+                        foreach (var cell in _ingredientCells)
+                        {
+                            Children.Add(cell);
+                        }
+                    }
+                }
+                else
+                {
+                    if (Children.Contains(_recipesList))
+                    {
+                        Children.Remove(_recipesList);
+                        Children.Remove(_craftButton);
+                        Children.Remove(_resultModel);
+
+                        foreach (var cell in _ingredientCells)
+                        {
+                            Children.Remove(cell);
+                        }
+                    }
+                }
             }
         }
 
         public ContainerWindow(WorldConfiguration conf, PlayerEntityManager player, IconFactory iconFactory, InputsManager inputsManager) : 
-            base(null, iconFactory, new Point(20, 300), inputsManager)
+            base(null, iconFactory, new Point(0,0), new Point(20, 200), inputsManager)
         {
             _conf = conf;
             _player = player;
             _iconFactory = iconFactory;
             _inputsManager = inputsManager;
+            Bounds.Size = new UniVector(460, 420);
         }
 
         public virtual void InitializeComponent()
         {
             Children.Clear();
-            
+
             _recipesList = new ListControl { SelectionMode = ListSelectionMode.Single };
-            _recipesList.Bounds = new UniRectangle(250, 250, 200, 100);
+            _recipesList.Bounds = new UniRectangle(170, 200, 200, 130);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
-            
+
             _hostModel = new ModelControl(_iconFactory.VoxelModelManager)
             {
-                Bounds = new UniRectangle(20, 20, 430, 230)
+                Bounds = new UniRectangle(20, 20, 230, 100)
             };
 
             Children.Add(_hostModel);
-            
-            if (_recipesList.Items.Count > 0)
+           
+                
+            // craft button
+
+            const int buttonWidth = 212;
+            const int buttomHeight = 40;
+
+            _craftButton = new ButtonControl
             {
-                Children.Add(_recipesList);
+                Text = "Craft",
+                Bounds = new UniRectangle(200, 340, buttonWidth, buttomHeight)
+            };
+            
+            _resultModel = new ModelControl(_iconFactory.VoxelModelManager)
+            {
+                Bounds = new UniRectangle(230, 20, 230, 230)
+            };
 
-                // craft button
+            _hostModel.Bounds.Size.X = 200;
+                
+            _ingredientsRect = new RectangleF(200, 20, 200, 42);
 
-                const int buttonWidth = 212;
-                const int buttomHeight = 40;
-
-                _craftButton = new ButtonControl
+            _ingredientCells = new List<InventoryCell>();
+            for (int i = 0; i < 6; i++)
+            {
+                var cell = new InventoryCell(null, _iconFactory, new Vector2I(), _inputsManager)
                 {
-                    Text = "Craft",
-                    Bounds = new UniRectangle(340, 300, buttonWidth, buttomHeight)
+                    DrawIconsGroupId = 5,
+                    DrawIconsActiveCellId = 6,
+                    IsVisible = false
                 };
 
-                Children.Add(_craftButton);
-
-                _resultModel = new ModelControl(_iconFactory.VoxelModelManager)
-                {
-                    Bounds = new UniRectangle(230, 20, 230, 230)
-                };
-
-                _hostModel.Bounds.Size.X = 200;
-
-                Children.Add(_resultModel);
-
-                _ingredientsRect = new RectangleF(450, 20, 360, 42);
-
-                _ingredientCells = new List<InventoryCell>();
-                for (int i = 0; i < 6; i++)
-                {
-                    var cell = new InventoryCell(null, _iconFactory, new Vector2I(), _inputsManager)
-                    {
-                        DrawIconsGroupId = 5,
-                        DrawIconsActiveCellId = 6,
-                        IsVisible = false
-                    };
-
-                    _ingredientCells.Add(cell);
-                    Children.Add(cell);
-                }
+                _ingredientCells.Add(cell);
             }
+            
         }
 
         public void Update()
@@ -174,7 +196,7 @@ namespace Utopia.GUI.Inventory
 
             var recipe = (Recipe)_recipesList.SelectedItem;
 
-            var bp = _conf.BluePrints[recipe.ResultBlueprintId];
+            var bp = _player.PlayerCharacter.EntityFactory.CreateFromBluePrint(recipe.ResultBlueprintId);
 
             var voxelEntity = bp as IVoxelEntity;
 

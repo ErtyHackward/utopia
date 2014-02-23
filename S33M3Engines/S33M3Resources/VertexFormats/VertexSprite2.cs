@@ -19,13 +19,20 @@ namespace S33M3Resources.Structs.Vertex
         public Vector3 Position;
         public Vector3 TextureCoordinate;
         public ByteColor Color;
+        public Vector4 Wrap;
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public VertexSprite2(Vector3 position, Vector3 textureCoordinate, ByteColor color)
+        public VertexSprite2(Vector3 position, Vector3 textureCoordinate, ByteColor color) : 
+            this(position, textureCoordinate, color, new Vector4())
         {
-            this.Position = position;
-            this.TextureCoordinate = textureCoordinate;
-            this.Color = color;
+        }
+
+        public VertexSprite2(Vector3 position, Vector3 textureCoordinate, ByteColor color, Vector4 wrap)
+        {
+            Position = position;
+            TextureCoordinate = textureCoordinate;
+            Color = color;
+            Wrap = wrap;
         }
 
         VertexDeclaration IVertexType.VertexDeclaration
@@ -37,11 +44,13 @@ namespace S33M3Resources.Structs.Vertex
         }
         static VertexSprite2()
         {
-            InputElement[] elements = new InputElement[] { 
-                                                            new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0), 
-                                                            new InputElement("TEXCOORD", 0, Format.R32G32B32_Float, InputElement.AppendAligned, 0), 
-                                                            new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0) 
-                                                            };
+            InputElement[] elements =
+            { 
+                new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0), 
+                new InputElement("TEXCOORD", 0, Format.R32G32B32_Float, InputElement.AppendAligned, 0), 
+                new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
+                new InputElement("VARIOUS", 0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0)
+            };
 
             VertexDeclaration = new VertexDeclaration(elements);
         }

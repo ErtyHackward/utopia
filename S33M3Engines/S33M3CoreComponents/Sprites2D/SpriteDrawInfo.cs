@@ -51,19 +51,23 @@ namespace S33M3CoreComponents.Sprites2D
                                                              sourceRect.Top / (float)textureSize.Y,
                                                              size.X / (float)textureSize.X,
                                                              size.Y / (float)textureSize.Y);
+
+            var wrapOffset = new Vector2(sourceRect.X % sourceRect.Width, sourceRect.Y % sourceRect.Height) / textureSize;
+            var wrap = new Vector4(sourceRect.Width / textureSize.X, sourceRectInTexCoord.Left, sourceRect.Height / textureSize.Y, sourceRectInTexCoord.Top);
+            sourceRectInTexCoord.Location -= wrapOffset;
             
             //Create the vertices
             Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top, textureArrayIndex), color, wrap));
 
             Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top, textureArrayIndex), color, wrap));
 
             Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y + size.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color, wrap));
 
             Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y + size.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color, wrap));
 
             //Create the indices
             Indices.Add((ushort)(0 + indiceVertexOffset));
