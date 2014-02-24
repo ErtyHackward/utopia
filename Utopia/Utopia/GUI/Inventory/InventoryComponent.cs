@@ -117,6 +117,7 @@ namespace Utopia.GUI.Inventory
                 var enabled = ItemMessageTranslator.Enabled;
 
                 ItemMessageTranslator.Enabled = false;
+                _containerInventoryWindow.Player.EntityState.PickedEntityLink = _containerInventoryWindow.Container.GetLink();
                 _containerInventoryWindow.Player.CraftUse(recipeIndex);
                 ItemMessageTranslator.Enabled = enabled;
                 _containerInventoryWindow.Update();
