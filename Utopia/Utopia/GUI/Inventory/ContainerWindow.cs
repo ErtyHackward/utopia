@@ -212,7 +212,7 @@ namespace Utopia.GUI.Inventory
 
         private void RecipesListOnSelectionChanged(object sender, EventArgs eventArgs)
         {
-            if (_recipesList.SelectedItem == null)
+            if (_recipesList.Items.Count == 0 || _recipesList.SelectedItem == null)
                 return;
 
             var recipe = (Recipe)_recipesList.SelectedItem;
