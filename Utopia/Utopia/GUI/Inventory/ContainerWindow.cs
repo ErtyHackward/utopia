@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using S33M3CoreComponents.GUI.Nuclex;
@@ -8,6 +7,7 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
 using Utopia.Resources.Effects.Entities;
@@ -17,6 +17,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Point = System.Drawing.Point;
 using RectangleF = S33M3CoreComponents.GUI.Nuclex.RectangleF;
 
 namespace Utopia.GUI.Inventory
@@ -84,9 +85,9 @@ namespace Utopia.GUI.Inventory
 
                 Content = _container.Content;
 
+                _recipesList.Items.Clear();
                 foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == _container.BluePrintId))
                 {
-                    _recipesList.Items.Clear();
                     _recipesList.Items.Add(recipe);
                 }
 
@@ -124,13 +125,13 @@ namespace Utopia.GUI.Inventory
         }
 
         public ContainerWindow(WorldConfiguration conf, PlayerEntityManager player, IconFactory iconFactory, InputsManager inputsManager) : 
-            base(null, iconFactory, new Point(0,0), new Point(20, 200), inputsManager)
+            base(null, iconFactory, new Point(0,0), new Point(40, 200), inputsManager)
         {
             _conf = conf;
             _player = player;
             _iconFactory = iconFactory;
             _inputsManager = inputsManager;
-            Bounds.Size = new UniVector(460, 420);
+            Bounds.Size = new UniVector(435, 387);
         }
 
         public virtual void InitializeComponent()
@@ -138,36 +139,37 @@ namespace Utopia.GUI.Inventory
             Children.Clear();
 
             _recipesList = new ListControl { SelectionMode = ListSelectionMode.Single };
-            _recipesList.Bounds = new UniRectangle(170, 200, 200, 130);
+            _recipesList.Bounds = new UniRectangle(200, 200, 200, 122);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
 
             _hostModel = new ModelControl(_iconFactory.VoxelModelManager)
             {
-                Bounds = new UniRectangle(20, 20, 230, 100)
+                Bounds = new UniRectangle(20, 20, 210, 170)
             };
+            _hostModel.AlterTransform = Matrix.Identity;
 
             Children.Add(_hostModel);
            
                 
             // craft button
 
-            const int buttonWidth = 212;
-            const int buttomHeight = 40;
+            const int buttonWidth = 185;
+            const int buttomHeight = 50;
 
             _craftButton = new ButtonControl
             {
                 Text = "Craft",
-                Bounds = new UniRectangle(200, 340, buttonWidth, buttomHeight)
+                Bounds = new UniRectangle(244, 330, buttonWidth, buttomHeight)
             };
             
             _resultModel = new ModelControl(_iconFactory.VoxelModelManager)
             {
-                Bounds = new UniRectangle(230, 20, 230, 230)
+                Bounds = new UniRectangle(210, 20, 190, 120)
             };
 
             _hostModel.Bounds.Size.X = 200;
                 
-            _ingredientsRect = new RectangleF(200, 20, 200, 42);
+            _ingredientsRect = new RectangleF(200, 145, 200, 42);
 
             _ingredientCells = new List<InventoryCell>();
             for (int i = 0; i < 6; i++)

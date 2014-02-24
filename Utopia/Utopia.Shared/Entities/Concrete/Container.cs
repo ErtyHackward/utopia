@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
-using BenTools.Mathematics;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
@@ -14,7 +17,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     [ProtoContract]
     [Description("Allows to store other entities inside this one.")]
-    public class Container : OrientedBlockItem
+    public class Container : OrientedBlockItem, IContainerEntity
     {
         SlotContainer<ContainedSlot> _content;
 
@@ -142,5 +145,45 @@ namespace Utopia.Shared.Entities.Concrete
 
             return obj;
         }
+
+        public bool TakeItems(ushort blueprintId, int count)
+        {
+            while (count > 0)
+            {
+                var slot = _content.LastOrDefault(s => s.Item.BluePrintId == blueprintId);
+
+                if (slot == null)
+                    break;
+
+                var takeItems = Math.Min(slot.ItemsCount, count);
+
+                _content.TakeItem(slot.GridPosition, takeItems);
+
+                count -= takeItems;
+            }
+
+            return count == 0;
+        }
+
+        public bool PutItems(IItem item, int count)
+        {
+            return _content.PutItem(item, count);
+        }
+
+        public IEnumerator<ContainedSlot> GetEnumerator()
+        {
+            return _content.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    public interface IContainerEntity : IEnumerable<ContainedSlot>
+    {
+        bool TakeItems(ushort blueprintId, int count);
+        bool PutItems(IItem item, int count);
     }
 }
