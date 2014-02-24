@@ -83,8 +83,22 @@ namespace Utopia.GUI.Inventory
             set { 
                 _container = value;
 
+                if (Content != null)
+                {
+                    Content.ItemPut -= Content_ItemsChanged;
+                    Content.ItemTaken -= Content_ItemsChanged;
+                    Content.ItemExchanged -= Content_ItemsChanged;
+                }
+
                 Content = _container.Content;
 
+                if (Content != null)
+                {
+                    Content.ItemPut += Content_ItemsChanged;   
+                    Content.ItemTaken += Content_ItemsChanged;
+                    Content.ItemExchanged += Content_ItemsChanged;
+                }
+                
                 _recipesList.Items.Clear();
                 foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == _container.BluePrintId))
                 {
@@ -124,6 +138,11 @@ namespace Utopia.GUI.Inventory
             }
         }
 
+        void Content_ItemsChanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
+        {
+            RecipesListOnSelectionChanged(null, null);
+        }
+
         public ContainerWindow(WorldConfiguration conf, PlayerEntityManager player, IconFactory iconFactory, InputsManager inputsManager) : 
             base(null, iconFactory, new Point(0,0), new Point(40, 200), inputsManager)
         {
@@ -139,7 +158,7 @@ namespace Utopia.GUI.Inventory
             Children.Clear();
 
             _recipesList = new ListControl { SelectionMode = ListSelectionMode.Single };
-            _recipesList.Bounds = new UniRectangle(200, 200, 200, 122);
+            _recipesList.Bounds = new UniRectangle(200, 200, 200, 120);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
 
             _hostModel = new ModelControl(_iconFactory.VoxelModelManager)

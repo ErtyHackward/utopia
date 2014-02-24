@@ -170,20 +170,17 @@ namespace Utopia.Shared.Entities.Concrete
             return _content.PutItem(item, count);
         }
 
-        public IEnumerator<ContainedSlot> GetEnumerator()
+        public IEnumerable<ContainedSlot> Slots()
         {
-            return _content.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return _content;
         }
     }
 
-    public interface IContainerEntity : IEnumerable<ContainedSlot>
+    public interface IContainerEntity
     {
         bool TakeItems(ushort blueprintId, int count);
         bool PutItems(IItem item, int count);
+
+        IEnumerable<ContainedSlot> Slots();
     }
 }
