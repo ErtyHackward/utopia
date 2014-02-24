@@ -81,7 +81,7 @@ namespace Utopia.Shared.World
                 }
                 if (buffer2Remove.Count > 0)
                 {
-                    logger.Debug("Landscape buffer cleanup, {0} buffers removed", buffer2Remove.Count);
+                    logger.Trace("Landscape buffer cleanup, {0} buffers removed", buffer2Remove.Count);
 
                     //remove the buffer that won't be used anymore
                     foreach (var b in buffer2Remove) _buffers.Remove(b.ChunkLocation);

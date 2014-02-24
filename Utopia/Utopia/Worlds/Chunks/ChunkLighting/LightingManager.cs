@@ -13,11 +13,14 @@ using System.Linq;
 using System.Collections.Generic;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Worlds.Chunks.ChunkLighting
 {
     public class LightingManager : ILightingManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private variable
         private SingleArrayChunkContainer _cubesHolder;
 
@@ -176,6 +179,11 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                                                             MathHelper.Floor(entityWorldPosition.Y),
                                                             MathHelper.Floor(entityWorldPosition.Z));
 
+                if (BlockHelper.EntityToBlock(entityWorldPosition) != entityBlockPosition)
+                {
+                    logger.Debug("HAHAAAA");
+                }
+
                 //Get big array index of this cube
                 int index = _cubesHolder.Index(ref entityBlockPosition);
                 _cubesHolder.Cubes[index].EmissiveColor.R = LightingEntity.EmittedLightColor.R;
@@ -201,6 +209,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             cubeRangeWithBorder.Size.X += 2;
             cubeRangeWithBorder.Size.Z += 2;
 
+            var test = cubeRangeWithBorder.AllExclude(chunk.CubeRange);
             foreach (var BorderCube in cubeRangeWithBorder.AllExclude(chunk.CubeRange))
             {
                 PropagateLightSourcesForced(BorderCube, chunk);
@@ -218,7 +227,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             TerraCube cube = _cubesHolder.Cubes[index];
 
             blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
-            if (blockProfile.IsBlockingLight && !blockProfile.IsEmissiveColorLightSource) return;
+            //if (blockProfile.IsBlockingLight && !blockProfile.IsEmissiveColorLightSource) return;
             PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
 
             if (cube.EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
@@ -347,6 +356,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         {
             foreach (var voxelEntity in chunk.AllEntities())
             {
+
                 if (false /* voxelEntity.Entity is BlockLinkedItem*/)
                 {
                     voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(((BlockLinkedItem)voxelEntity.Entity).BlockLocationRoot)].EmissiveColor;
@@ -354,7 +364,19 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 else
                 {
                     //Find the Cube where the entity is placed, and assign its color to the entity
-                    voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(MathHelper.Floor(voxelEntity.Entity.Position.X), MathHelper.Floor(voxelEntity.Entity.Position.Y), MathHelper.Floor(voxelEntity.Entity.Position.Z))].EmissiveColor;
+                    int index;
+                    var result = _cubesHolder.Index(MathHelper.Floor(voxelEntity.Entity.Position.X), MathHelper.Floor(voxelEntity.Entity.Position.Y), MathHelper.Floor(voxelEntity.Entity.Position.Z), true, out index);
+                    if (result == true)
+                    {
+                        voxelEntity.BlockLight = _cubesHolder.Cubes[index].EmissiveColor;
+
+                        if (voxelEntity.Entity.Position.ToString() == "[X:0,5 Y:74 Z:58,5]")
+                        {
+                            logger.Debug("{0}, {1} , {2}", voxelEntity.Entity.Position, voxelEntity.Entity.Name, voxelEntity.BlockLight);
+                        }                        
+                    }
+
+
                 }   
             }
         }
