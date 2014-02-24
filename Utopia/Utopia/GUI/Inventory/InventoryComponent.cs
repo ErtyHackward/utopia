@@ -12,8 +12,10 @@ using S33M3Resources.Structs.Vertex;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
+using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -92,6 +94,7 @@ namespace Utopia.GUI.Inventory
                 if (_containerInventoryWindow != null)
                 {
                     UnregisterInventoryWindow(_containerInventoryWindow);
+                    _containerInventoryWindow.CraftButton.Pressed -= CraftButton_Pressed;
                 }
 
                 _containerInventoryWindow = value;
@@ -99,7 +102,24 @@ namespace Utopia.GUI.Inventory
                 if (_containerInventoryWindow != null)
                 {
                     RegisterInventoryWindow(_containerInventoryWindow);
+                    _containerInventoryWindow.CraftButton.Pressed += CraftButton_Pressed;
                 }
+            }
+        }
+
+        void CraftButton_Pressed(object sender, EventArgs e)
+        {
+            if (_containerInventoryWindow.CanCraft)
+            {
+                var recipe = (Recipe)_containerInventoryWindow.RecipesList.SelectedItem;
+                var recipeIndex = _containerInventoryWindow.Player.EntityFactory.Config.Recipes.IndexOf(recipe);
+
+                var enabled = ItemMessageTranslator.Enabled;
+
+                ItemMessageTranslator.Enabled = false;
+                _containerInventoryWindow.Player.CraftUse(recipeIndex);
+                ItemMessageTranslator.Enabled = enabled;
+                _containerInventoryWindow.Update();
             }
         }
 

@@ -214,7 +214,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 // check if we have all ingredients
                 foreach (var ingredient in recipe.Ingredients)
                 {
-                    var count = container.Where(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
+                    var count = container.Slots().Where(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
                     if (count < ingredient.Count)
                     {
                         impact.Message = "Not enough ingerdients";
@@ -265,16 +265,6 @@ namespace Utopia.Shared.Entities.Dynamic
             }
 
             return obj;
-        }
-
-        public IEnumerator<ContainedSlot> GetEnumerator()
-        {
-            return Slots().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }
