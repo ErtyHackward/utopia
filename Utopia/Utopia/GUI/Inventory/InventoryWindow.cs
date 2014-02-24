@@ -114,9 +114,9 @@ namespace Utopia.GUI.Inventory
 
             if (UiGrid != null)
             {
-                for (int x = 0; x < _content.GridSize.X; x++)
+                for (int x = 0; x <= UiGrid.GetUpperBound(0); x++)
                 {
-                    for (int y = 0; y < _content.GridSize.Y; y++)
+                    for (int y = 0; y <= UiGrid.GetUpperBound(1); y++)
                     {
                         var cell = UiGrid[x, y];
                         cell.MouseDown -= ControlMouseDown;

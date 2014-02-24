@@ -43,8 +43,9 @@ namespace Utopia.GUI.Crafting
         {
             if (CraftingWindow.CanCraft)
             {
-                var recipeIndex = CraftingWindow.RecipesList.SelectedItems[0];
-
+                var recipe = (Recipe)CraftingWindow.RecipesList.SelectedItem;
+                var recipeIndex = CraftingWindow.Player.EntityFactory.Config.Recipes.IndexOf(recipe);
+                 
                 CraftingWindow.Player.CraftUse(recipeIndex);
                 CraftingWindow.Update();
             }

@@ -14,7 +14,10 @@ namespace Realms.Client.Components.GUI.Inventory
     {
         private readonly SandboxCommonResources _commonResources;
 
-
+        private SpriteTexture _stBtnCraft;
+        private SpriteTexture _stBtnCraftDown;
+        private SpriteTexture _stBtnCraftHover;
+        
         public ContainerInventory(
             D3DEngine engine, 
             IconFactory iconFactory, 
@@ -26,8 +29,18 @@ namespace Realms.Client.Components.GUI.Inventory
         {
             _commonResources = commonResources;
 
+            _stBtnCraft = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close.png"));
+            _stBtnCraftDown = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_down.png"));
+            _stBtnCraftHover = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_hover.png"));
+
             //Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
             InitializeComponent();
+
+            _craftButton.CustomImage = _stBtnCraft;
+            _craftButton.CustomImageDown = _stBtnCraftDown;
+            _craftButton.CustomImageHover = _stBtnCraftHover;
+            _craftButton.CustomFont = _commonResources.FontBebasNeue25;
+            _craftButton.Text = "CRAFT";
         }
 
         protected override void CellsCreated()
@@ -49,6 +62,14 @@ namespace Realms.Client.Components.GUI.Inventory
                     cell.DrawIconsGroupId = 5;
                     cell.DrawIconsActiveCellId = 6;
                 }
+            }
+
+            foreach (var ingredientCell in _ingredientCells)
+            {
+                ingredientCell.CustomBackground = _commonResources.StInventorySlot;
+                ingredientCell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
+                ingredientCell.DrawIconsGroupId = 5;
+                ingredientCell.DrawIconsActiveCellId = 6;
             }
         }
     }

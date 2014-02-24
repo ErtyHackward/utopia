@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Utopia.Shared.Entities.Dynamic
     [ProtoContract]
     [ProtoInclude(100, typeof(RpgCharacterEntity))]
     [ProtoInclude(101, typeof(Npc))]
-    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldInteractingEntity
+    public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldInteractingEntity, IContainerEntity
     {
         /// <summary>
         /// Gets character name
@@ -164,6 +165,11 @@ namespace Utopia.Shared.Entities.Dynamic
             return count == 0;
         }
 
+        public bool PutItems(IItem item, int count)
+        {
+            return Inventory.PutItem(item, count);
+        }
+
         /// <summary>
         /// Fires entity use event for the craft operation
         /// </summary>
@@ -191,21 +197,34 @@ namespace Utopia.Shared.Entities.Dynamic
             try
             {
                 var recipe = EntityFactory.Config.Recipes[recipeIndex];
+                
+                IContainerEntity container;
+                if (recipe.ContainerBlueprintId == 0)
+                {
+                    container = this;
+                }
+                else
+                {
+                    container = (Concrete.Container)EntityState.PickedEntityLink.ResolveStatic(EntityFactory.LandscapeManager);
+
+                    if (container == null)
+                        return impact;
+                }
 
                 // check if we have all ingredients
                 foreach (var ingredient in recipe.Ingredients)
                 {
-                    var count = Slots().Where(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
+                    var count = container.Where(s => s.Item.BluePrintId == ingredient.BlueprintId).Sum(s => s.ItemsCount);
                     if (count < ingredient.Count)
                     {
                         impact.Message = "Not enough ingerdients";
                         return impact;
                     }
                 }
-
+                
                 foreach (var ingredient in recipe.Ingredients)
                 {
-                    if (!TakeItems(ingredient.BlueprintId, ingredient.Count))
+                    if (!container.TakeItems(ingredient.BlueprintId, ingredient.Count))
                     {
                         impact.Message = "Can't take items from the inventory";
                         return impact;
@@ -214,12 +233,12 @@ namespace Utopia.Shared.Entities.Dynamic
                 
                 var item = (Item)EntityFactory.CreateFromBluePrint(recipe.ResultBlueprintId);
                 
-                if (!Inventory.PutItem(item, recipe.ResultCount))
+                if (!container.PutItems(item, recipe.ResultCount))
                 {
                     impact.Message = "Can't put item to the inventory";
                     return impact;
                 }
-
+                
                 impact.Success = true;
                 return impact;
             }
@@ -246,6 +265,16 @@ namespace Utopia.Shared.Entities.Dynamic
             }
 
             return obj;
+        }
+
+        public IEnumerator<ContainedSlot> GetEnumerator()
+        {
+            return Slots().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
