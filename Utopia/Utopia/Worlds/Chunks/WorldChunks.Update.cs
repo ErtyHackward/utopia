@@ -220,7 +220,6 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
                     localChunk.ThreadLockedBy = "PropagateOuterChunkLights";
 #endif
-                    //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
                     S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(localChunk));
                 }
             }
