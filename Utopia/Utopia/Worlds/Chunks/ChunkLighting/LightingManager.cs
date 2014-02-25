@@ -189,7 +189,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 foreach (var surrendingChunk in chunk.SurroundingChunks)
                 {
                     //Propagate the light from light entities linked to border !
-                    foreach (ILightEmitterEntity LightingEntity in surrendingChunk.Entities.Enumerate<ILightEmitterEntity>())
+                    foreach (ILightEmitterEntity LightingEntity in surrendingChunk.OutOfChunkLightSourceStaticEntities)
                     {
                         //Get the Cube where is located the entity
                         Vector3I entityBlockPosition = LightingEntity.Position.ToCubePosition();
@@ -233,7 +233,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             foreach (var surrendingChunk in chunk.SurroundingChunks)
             {
                 //Propagate the light from light entities linked to border !
-                foreach (ILightEmitterEntity LightingEntity in surrendingChunk.Entities.Enumerate<ILightEmitterEntity>())
+                foreach (ILightEmitterEntity LightingEntity in surrendingChunk.OutOfChunkLightSourceStaticEntities)
                 {
                     //Get the Cube where is located the entity
                     Vector3I entityBlockPosition = LightingEntity.Position.ToCubePosition();

@@ -107,7 +107,8 @@ namespace Utopia.Worlds.Chunks
         {
             get { return _serverRequestTime; }
         }
-        
+
+        public List<ILightEmitterEntity> OutOfChunkLightSourceStaticEntities;
         public List<EntityMetaData> EmitterStaticEntities;
         public List<IItem> SoundStaticEntities;
 
@@ -180,6 +181,7 @@ namespace Utopia.Worlds.Chunks
             _voxelModelManager = voxelModelManager;
             _visualVoxelEntities = new Dictionary<string, List<VisualVoxelEntity>>();
             EmitterStaticEntities = new List<EntityMetaData>();
+            OutOfChunkLightSourceStaticEntities = new List<ILightEmitterEntity>();
             SoundStaticEntities = new List<IItem>();
             CubeRange = cubeRange;
             State = ChunkState.Empty;
@@ -249,6 +251,8 @@ namespace Utopia.Worlds.Chunks
 
                 _visualVoxelEntities.Clear();
             }
+
+            OutOfChunkLightSourceStaticEntities.Clear();
             EmitterStaticEntities.Clear();
             SoundStaticEntities.Clear();
         }
@@ -270,6 +274,7 @@ namespace Utopia.Worlds.Chunks
             AddVoxelEntity(e);
             AddParticuleEmitterEntity(e);
             AddSoundEntity(e);
+            AddOutOfChunkLightSourceStaticEntity(e);
         }
 
         public abstract TerraCubeResult GetCube(Vector3I internalPosition);
@@ -389,12 +394,29 @@ namespace Utopia.Worlds.Chunks
             if (item == null || item.EmittedSound == null || item.EmittedSound.FilePath == null) return;
             SoundStaticEntities.Add(item);
         }
-
+        
         private void RemoveSoundEntity(EntityCollectionEventArgs e)
         {
             var item = e.Entity as IItem;
             if (item == null || item.EmittedSound == null || item.EmittedSound.FilePath == null) return;
             SoundStaticEntities.Remove(item);
+        }
+
+        private void AddOutOfChunkLightSourceStaticEntity(EntityCollectionEventArgs e)
+        {
+            var item = e.Entity as ILightEmitterEntity;
+            if (item == null) return;
+            if (this.CubeRange.Contains(item.Position.ToCubePosition()) == false)
+            {
+                OutOfChunkLightSourceStaticEntities.Add(item);
+            }
+        }
+
+        private void RemoveOutOfChunkLightSourceStaticEntity(EntityCollectionEventArgs e)
+        {
+            var item = e.Entity as ILightEmitterEntity;
+            if (item == null) return;
+            OutOfChunkLightSourceStaticEntities.Remove(item);
         }
 
         private void AddParticuleEmitterEntity(EntityCollectionEventArgs e)
@@ -509,6 +531,7 @@ namespace Utopia.Worlds.Chunks
 
             RefreshWorldMatrix();
 
+            OutOfChunkLightSourceStaticEntities.Clear();
             SoundStaticEntities.Clear();
             lock (_syncRoot)
                 _visualVoxelEntities.Clear();
