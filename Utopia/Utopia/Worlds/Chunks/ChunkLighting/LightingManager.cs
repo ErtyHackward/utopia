@@ -215,6 +215,23 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 PropagateLightSourcesForced(BorderCube, chunk);
             }
 
+            //Propagate the light from Entities
+            foreach (var surrendingChunk in chunk.SurroundingChunks)
+            {
+                //Propagate the light from light entities linked to border !
+                foreach (ILightEmitterEntity LightingEntity in surrendingChunk.Entities.Enumerate<ILightEmitterEntity>())
+                {
+                    //Get the Cube where is located the entity
+                    Vector3I entityBlockPosition = LightingEntity.Position.ToCubePosition();
+                    if (chunk.CubeRange.Contains(entityBlockPosition))
+                    {
+                        PropagateLightSourcesForced(entityBlockPosition, chunk);
+                    }
+                }
+            }
+
+
+
             PropagateLightInsideStaticEntities(chunk);
         }
 
