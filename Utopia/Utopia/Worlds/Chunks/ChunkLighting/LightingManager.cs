@@ -174,21 +174,35 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             foreach (ILightEmitterEntity LightingEntity in chunk.Entities.Enumerate<ILightEmitterEntity>())
             {
                 //Get the Cube where is located the entity
-                Vector3D entityWorldPosition = ((IEntity)LightingEntity).Position;
-                Vector3I entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
-                                                            MathHelper.Floor(entityWorldPosition.Y),
-                                                            MathHelper.Floor(entityWorldPosition.Z));
-
-                if (BlockHelper.EntityToBlock(entityWorldPosition) != entityBlockPosition)
-                {
-                    logger.Debug("HAHAAAA");
-                }
+                Vector3I entityBlockPosition = ((IEntity)LightingEntity).Position.ToCubePosition();
 
                 //Get big array index of this cube
                 int index = _cubesHolder.Index(ref entityBlockPosition);
                 _cubesHolder.Cubes[index].EmissiveColor.R = LightingEntity.EmittedLightColor.R;
                 _cubesHolder.Cubes[index].EmissiveColor.G = LightingEntity.EmittedLightColor.G;
                 _cubesHolder.Cubes[index].EmissiveColor.B = LightingEntity.EmittedLightColor.B;
+            }
+
+            //Create the light sources from entities present on surrending chunks, with a block positionned inside me
+            if (chunk.SurroundingChunks != null)
+            {
+                foreach (var surrendingChunk in chunk.SurroundingChunks)
+                {
+                    //Propagate the light from light entities linked to border !
+                    foreach (ILightEmitterEntity LightingEntity in surrendingChunk.Entities.Enumerate<ILightEmitterEntity>())
+                    {
+                        //Get the Cube where is located the entity
+                        Vector3I entityBlockPosition = LightingEntity.Position.ToCubePosition();
+                        if (chunk.CubeRange.Contains(entityBlockPosition))
+                        {
+                            //Get big array index of this cube
+                            int index = _cubesHolder.Index(ref entityBlockPosition);
+                            _cubesHolder.Cubes[index].EmissiveColor.R = LightingEntity.EmittedLightColor.R;
+                            _cubesHolder.Cubes[index].EmissiveColor.G = LightingEntity.EmittedLightColor.G;
+                            _cubesHolder.Cubes[index].EmissiveColor.B = LightingEntity.EmittedLightColor.B;
+                        }
+                    }
+                }
             }
         }
 
@@ -215,7 +229,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 PropagateLightSourcesForced(BorderCube, chunk);
             }
 
-            //Propagate the light from Entities
+            //Propagate the light from Entities located in chunks around me, but that have a light source block inside my chunk !
             foreach (var surrendingChunk in chunk.SurroundingChunks)
             {
                 //Propagate the light from light entities linked to border !
@@ -229,8 +243,6 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     }
                 }
             }
-
-
 
             PropagateLightInsideStaticEntities(chunk);
         }
@@ -374,27 +386,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             foreach (var voxelEntity in chunk.AllEntities())
             {
 
-                if (false /* voxelEntity.Entity is BlockLinkedItem*/)
-                {
-                    voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(((BlockLinkedItem)voxelEntity.Entity).BlockLocationRoot)].EmissiveColor;
-                }
-                else
-                {
-                    //Find the Cube where the entity is placed, and assign its color to the entity
-                    int index;
-                    var result = _cubesHolder.Index(MathHelper.Floor(voxelEntity.Entity.Position.X), MathHelper.Floor(voxelEntity.Entity.Position.Y), MathHelper.Floor(voxelEntity.Entity.Position.Z), true, out index);
-                    if (result == true)
-                    {
-                        voxelEntity.BlockLight = _cubesHolder.Cubes[index].EmissiveColor;
-
-                        if (voxelEntity.Entity.Position.ToString() == "[X:0,5 Y:74 Z:58,5]")
-                        {
-                            logger.Debug("{0}, {1} , {2}", voxelEntity.Entity.Position, voxelEntity.Entity.Name, voxelEntity.BlockLight);
-                        }                        
-                    }
-
-
-                }   
+                voxelEntity.BlockLight = _cubesHolder.Cubes[_cubesHolder.Index(voxelEntity.Entity.Position.ToCubePosition())].EmissiveColor;
             }
         }
         #endregion
