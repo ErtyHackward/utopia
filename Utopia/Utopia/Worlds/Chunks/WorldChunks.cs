@@ -381,7 +381,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public VisualChunk[] GetsurroundingChunkFromChunkCoord(int X, int Z)
+        public VisualChunk[] GetEightSurroundingChunkFromChunkCoord(int X, int Z)
         {
             VisualChunk[] surroundingChunk = new VisualChunk[8];
 
@@ -393,6 +393,25 @@ namespace Utopia.Worlds.Chunks
             surroundingChunk[5] = GetChunkFromChunkCoord(X - 1, Z - 1);
             surroundingChunk[6] = GetChunkFromChunkCoord(X, Z - 1);
             surroundingChunk[7] = GetChunkFromChunkCoord(X + 1, Z - 1);
+
+            return surroundingChunk;
+        }
+
+
+        /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public VisualChunk[] GetFourSurroundingChunkFromChunkCoord(int X, int Z)
+        {
+            VisualChunk[] surroundingChunk = new VisualChunk[4];
+
+            surroundingChunk[0] = GetChunkFromChunkCoord(X + 1, Z);
+            surroundingChunk[1] = GetChunkFromChunkCoord(X, Z + 1);
+            surroundingChunk[2] = GetChunkFromChunkCoord(X - 1, Z);
+            surroundingChunk[3] = GetChunkFromChunkCoord(X, Z - 1);
 
             return surroundingChunk;
         }
