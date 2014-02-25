@@ -184,9 +184,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             }
 
             //Create the light sources from entities present on surrending chunks, with a block positionned inside me
-            if (chunk.SurroundingChunks != null)
+            if (chunk.FourSurroundingChunks != null)
             {
-                foreach (var surrendingChunk in chunk.SurroundingChunks)
+                foreach (var surrendingChunk in chunk.FourSurroundingChunks)
                 {
                     //Propagate the light from light entities linked to border !
                     foreach (ILightEmitterEntity LightingEntity in surrendingChunk.OutOfChunkLightSourceStaticEntities)
@@ -230,7 +230,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             }
 
             //Propagate the light from Entities located in chunks around me, but that have a light source block inside my chunk !
-            foreach (var surrendingChunk in chunk.SurroundingChunks)
+            foreach (var surrendingChunk in chunk.FourSurroundingChunks)
             {
                 //Propagate the light from light entities linked to border !
                 foreach (ILightEmitterEntity LightingEntity in surrendingChunk.OutOfChunkLightSourceStaticEntities)

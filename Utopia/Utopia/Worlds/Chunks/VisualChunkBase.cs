@@ -72,7 +72,8 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         public ChunkGraphics Graphics { get; private set; }
 
-        public VisualChunk[] SurroundingChunks;
+        public VisualChunk[] EightSurroundingChunks;
+        public VisualChunk[] FourSurroundingChunks;
 
 
         public static Int64 ComputeChunkId(int PosiX, int PosiY)
@@ -212,17 +213,19 @@ namespace Utopia.Worlds.Chunks
             //Get the surrounding chunks if BorderChunk is null
             if (IsBorderChunk == false)
             {
-                SurroundingChunks = _worldChunkManager.GetsurroundingChunkFromChunkCoord(Position.X, Position.Z);
+                EightSurroundingChunks = _worldChunkManager.GetEightSurroundingChunkFromChunkCoord(Position.X, Position.Z);
+                FourSurroundingChunks = _worldChunkManager.GetFourSurroundingChunkFromChunkCoord(Position.X, Position.Z);
             }
             else
             {
-                SurroundingChunks = new VisualChunk[0];
+                EightSurroundingChunks = new VisualChunk[0];
+                FourSurroundingChunks = new VisualChunk[0];
             }
         }
 
         public bool SurroundingChunksMinimumState(ChunkState minimumState)
         {
-            foreach (var chunk in SurroundingChunks)
+            foreach (var chunk in EightSurroundingChunks)
             {
                 if (chunk.State < minimumState) return false;
             }
