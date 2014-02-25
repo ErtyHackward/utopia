@@ -113,6 +113,7 @@ namespace Utopia.Server.Managers
             // check client version
             if (e.Message.Version != ServerConnection.ProtocolVersion)
             {
+                logger.Error("Protocol version mismatch Client: {0} Server: {1}", e.Message.Version, ServerConnection.ProtocolVersion);
                 var error = new ErrorMessage
                 {
                     ErrorCode = ErrorCodes.VersionMismatch,
@@ -126,6 +127,7 @@ namespace Utopia.Server.Managers
 
             if (string.IsNullOrEmpty(e.Message.Login) || string.IsNullOrEmpty(e.Message.Password))
             {
+                logger.Error("Invalid login or password");
                 var error = new ErrorMessage
                 {
                     ErrorCode = ErrorCodes.LoginPasswordIncorrect,
@@ -143,7 +145,11 @@ namespace Utopia.Server.Managers
                 var oldConnection = _server.ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
                 {
-                    oldConnection.Send(new ErrorMessage { ErrorCode = ErrorCodes.AnotherInstanceLogged, Message = "Another instance of you connected. You will be disconnected." });
+                    logger.Info("Disconnecting previous instance");
+                    oldConnection.Send(new ErrorMessage { 
+                        ErrorCode = ErrorCodes.AnotherInstanceLogged, 
+                        Message = "Another instance of you connected. You will be disconnected." 
+                    });
                     oldConnection.Disconnect();
                 }
 
