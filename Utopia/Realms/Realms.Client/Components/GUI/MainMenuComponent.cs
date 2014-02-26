@@ -233,7 +233,6 @@ namespace Realms.Client.Components.GUI
             };
             _exitButton.Pressed += delegate { OnExitPressed(); };
             
-            _buttonsGroup.Children.Add(_continueButton);
             _buttonsGroup.Children.Add(_singlePlayer);
             _buttonsGroup.Children.Add(_multiplayer);
             _buttonsGroup.Children.Add(_settingsButton);
