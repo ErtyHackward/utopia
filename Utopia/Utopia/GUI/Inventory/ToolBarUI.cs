@@ -22,6 +22,7 @@ namespace Utopia.GUI.Inventory
     /// </summary>
     public class ToolBarUi : ContainerControl
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly PlayerEntityManager _playerManager;
         private readonly EntityFactory _factory;
         const int ButtonSize = 46;
@@ -101,14 +102,25 @@ namespace Utopia.GUI.Inventory
                 btn.MouseEnter += btn_MouseEnter;
                 btn.MouseLeave += btn_MouseLeave;
 
+                var bluePrintId = _playerManager.PlayerCharacter.Toolbar[x];
 
-                if (_playerManager.PlayerCharacter.Toolbar[x] != 0)
+                if (bluePrintId != 0)
                 {
-                    btn.Slot = _playerManager.PlayerCharacter.FindSlot(s => s.Item.BluePrintId == _playerManager.PlayerCharacter.Toolbar[x]);
+                    btn.Slot = _playerManager.PlayerCharacter.FindSlot(s => s.Item.BluePrintId == bluePrintId);
 
                     if (btn.Slot == null)
                     {
-                        btn.Slot = new ContainedSlot { Item = (IItem)_factory.CreateFromBluePrint(_playerManager.PlayerCharacter.Toolbar[x]) };
+                        try
+                        {
+                            btn.Slot = new ContainedSlot
+                            {
+                                Item = (IItem)_factory.CreateFromBluePrint(bluePrintId)
+                            };
+                        }
+                        catch (ArgumentOutOfRangeException)
+                        {
+                            logger.Error("Unable to create entity from Id = {0}. Configuration was probably changed.", bluePrintId);
+                        }
                     }
                 }
 
