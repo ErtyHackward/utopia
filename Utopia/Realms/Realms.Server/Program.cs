@@ -2,16 +2,13 @@
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using S33M3CoreComponents.Sound;
 using Utopia.Server;
-using Utopia.Server.Interfaces;
 using Utopia.Server.Managers;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Web;
-using Utopia.Shared.Services;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.Processors.Utopia;
@@ -43,23 +40,13 @@ namespace Realms.Server
         {
             _worldParameters = param;
 
-            _settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\server.config");
-            _settingsManager.Load();
-
             if (string.IsNullOrEmpty(_settingsManager.Settings.DatabasePath))
                 _settingsManager.Settings.DatabasePath = Path.Combine(XmlSettingsManager.GetFilePath("", SettingsStorage.ApplicationData), "Server", "MultiPlayer", param.Seed.ToString(), "ServerWorld.db");
-
-            //_iocContainer.Bind<ISoundEngine>().ToConstant<ISoundEngine>(null);
-            //_iocContainer.Bind<ILandscapeManager>().ToConstant<ILandscapeManager>(null);
 
             Console.WriteLine("Database path is " + _settingsManager.Settings.DatabasePath);
 
             _sqLiteStorageManager = new SqliteStorageManager(_settingsManager.Settings.DatabasePath, null, param);
 
-            //_iocContainer.Bind<WorldParameters>().ToConstant(param).InSingletonScope();
-            //_iocContainer.Bind<XmlSettingsManager<ServerSettings>>().ToConstant(_settingsManager).InSingletonScope();
-            //_iocContainer.Bind<LandscapeBufferManager>().ToSelf();
-            
             IWorldProcessor processor = null;
             switch (param.Configuration.WorldProcessor)
             {
@@ -73,26 +60,7 @@ namespace Realms.Server
                     break;
             }
 
-            //_iocContainer.Rebind<WorldConfiguration>().ToConstant(param.Configuration);
-
             _worldGenerator = new WorldGenerator(param, processor);
-            //_iocContainer.Rebind<WorldGenerator>().ToConstant(worldGenerator).InSingletonScope();
-
-            //_iocContainer.Bind<IWorldProcessorConfig>().To<s33m3WorldConfig>().InSingletonScope().Named("s33m3World");
-            //_iocContainer.Bind<IWorldProcessor>().To<s33m3WorldProcessor>().Named("s33m3WorldProcessor");
-            //_iocContainer.Bind<IWorldProcessor>().To<LandscapeLayersProcessor>().Named("LandscapeLayersProcessor");
-
-            //_iocContainer.Bind<IWorldProcessorConfig>().To<ErtyHackwardWorldConfig>().InSingletonScope().Named("ErtyHackwardWorld");
-            //_iocContainer.Bind<IWorldProcessor>().To<PlanWorldProcessor>().InSingletonScope().Named("ErtyHackwardPlanWorldProcessor");
-            
-            //_iocContainer.Bind<WorldGenerator>().ToSelf().WithConstructorArgument("worldParameters", param).WithConstructorArgument("processorsConfig", _iocContainer.Get<IWorldProcessorConfig>());
-
-            //_iocContainer.Bind<SqliteStorageManager>().ToConstant(_sqLiteStorageManager).InSingletonScope();
-            //_iocContainer.Bind<IUsersStorage>().To<ServerUsersStorage>().InSingletonScope();
-            //_iocContainer.Bind<IChunksStorage>().ToConstant(_sqLiteStorageManager).InSingletonScope();
-            //_iocContainer.Bind<IEntityStorage>().ToConstant(_sqLiteStorageManager).InSingletonScope();
-
-            //_iocContainer.Bind<ServerWebApi>().ToSelf().InSingletonScope();
         }
 
         static void Main(string[] args)
@@ -137,32 +105,39 @@ namespace Realms.Server
                 logger.Fatal("Exception when trying to load configuration:\n" + ex.Message);
                 return;
             }
-
-            //_iocContainer = new StandardKernel(new NinjectSettings { AllowNullInjection = true });
+            
             System.Net.ServicePointManager.Expect100Continue = false;
-            //_iocContainer.Bind<EntityFactory>().ToConstant(_serverFactory).InSingletonScope();
+            
+            _settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\server.config");
+            _settingsManager.Load();
+
+            if (string.IsNullOrEmpty(_settingsManager.Settings.Seed))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please enter the seed:");
+                Console.Write("> ");
+                _settingsManager.Settings.Seed = Console.ReadLine();
+                _settingsManager.Save();
+            }
+
+            if (string.IsNullOrEmpty(_settingsManager.Settings.ServerName))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please enter the name of the server:");
+                Console.Write("> ");
+                _settingsManager.Settings.ServerName = Console.ReadLine();
+                _settingsManager.Save();
+            }
+
 
             var wp = new WorldParameters
                 {
                     WorldName = "Utopia",
-                    SeedName = "",
+                    SeedName = _settingsManager.Settings.Seed,
                     Configuration = conf
                 };
 
             IocBind(wp);
-
-
-            Console.WriteLine();
-            Console.WriteLine("Please enter the name of the server:");
-            Console.Write("[{0}]>", _settingsManager.Settings.ServerName);
-            var name = Console.ReadLine();
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                _settingsManager.Settings.ServerName = name;
-                _settingsManager.Save();
-            }
-
 
             _serverWebApi = new ServerWebApi();
             _server = new Utopia.Server.Server(
@@ -174,9 +149,7 @@ namespace Realms.Server
                 _serverFactory,
                 wp
                 );
-
-            //_iocContainer.Rebind<ILandscapeManager>().ToConstant(_server.LandscapeManager);
-
+            
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _serverFactory.DynamicEntityManager = _server.AreaManager;
             _serverFactory.GlobalStateManager = _server.GlobalStateManager;

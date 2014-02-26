@@ -58,6 +58,8 @@ namespace Utopia.Server
         //[DefaultValue("unnamed server")]
         public string ServerName { get; set; }
 
+        public string Seed { get; set; }
+
         public ServerSettings()
         {
             CleanUpInterval = 60000;
