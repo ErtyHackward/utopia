@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Enumerates all possible roles for the user
+    /// Warning: the higher values means more power
     /// </summary>
     public enum UserRole
     {

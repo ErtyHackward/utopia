@@ -19,7 +19,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Allows to store all required data in SQLite database
     /// </summary>
-    public class SqliteStorageManager : MonoSqliteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage
+    public class SqliteStorageManager : MonoSqliteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage, ICustomStorage
     {
         private readonly EntityFactory _factory;
         private SqliteCommand _worldParametersInsertCmd;
@@ -36,9 +36,26 @@ namespace Utopia.Server.Managers
             dbCreate.Append(@"CREATE TABLE [users] ([id] integer PRIMARY KEY AUTOINCREMENT NOT NULL, [login] varchar(120) NOT NULL, [password] char(32) NOT NULL, [role] integer NOT NULL, [lastlogin] datetime NULL, [state] blob NULL); CREATE UNIQUE INDEX IDX_USERS_LOGIN on users (login);");
             dbCreate.Append(@"CREATE TABLE [entities] ([id] integer PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
             dbCreate.Append(@"CREATE TABLE [models] ([id] varchar(120) PRIMARY KEY NOT NULL, [data] blob NOT NULL);");
-            //dbCreate.Append(@"CREATE TABLE [worldparameters] ([name] varchar(120) PRIMARY KEY NOT NULL, [seed] varchar(120) NOT NULL, [configuration] blob NOT NULL);");
             dbCreate.Append(@"CREATE TABLE [worldparameters] ([name] varchar(120) PRIMARY KEY NOT NULL, [seed] varchar(120) NOT NULL, [state] blob NULL);");
             return dbCreate.ToString();
+        }
+
+        private string CreateBansTables()
+        {
+            var dbCreate = new StringBuilder();
+            dbCreate.Append(@"CREATE TABLE [bans] ([login] varchar(120) NOT NULL, [date] integer NOT NULL);");
+            dbCreate.Append(@"CREATE TABLE [vars] ([id] varchar(120) PRIMARY KEY NOT NULL, [value] blob NULL);");
+            return dbCreate.ToString();
+        }
+
+        protected override bool CreateDBConnection(string fileName, bool wipeDatabase = false)
+        {
+            var connection = base.CreateDBConnection(fileName, wipeDatabase);
+
+            if (!TableExists("bans"))
+                Execute(CreateBansTables());
+
+            return connection;
         }
 
         private void CreateQueryTemplates()
@@ -234,7 +251,58 @@ namespace Utopia.Server.Managers
         /// <param name="role"></param>
         public bool SetRole(string login, UserRole role)
         {
-            return Execute(string.Format("UPDATE users SET role = {0} WHERE login = '{1}'", (int)role, login)) == 1;
+            return Execute(string.Format("UPDATE users SET role = {0} WHERE login = '{1}'", (int)role, Escape(login))) == 1;
+        }
+
+
+        public UserRole GetRole(string login)
+        {
+            using (var reader = Query(string.Format("SELECT role FROM users WHERE login = '{0}'", Escape(login))))
+            {
+                if (reader == null)
+                    return UserRole.Undefinded;
+
+                if (reader.Read())
+                {
+                    return (UserRole)reader.GetInt32(0);
+                }
+            }
+
+            return UserRole.Undefinded;
+        }
+
+        public void AddBan(string login, TimeSpan time)
+        {
+            Execute(string.Format("INSERT INTO bans (login,date) VALUES ('{0}',{1})", Escape(login), DateTime.Now.Add(time).ToBinary()));
+        }
+
+        public bool IsBanned(string login, out TimeSpan timeLeft)
+        {
+            timeLeft = new TimeSpan();
+
+            using (var reader = Query(string.Format("SELECT login, date FROM bans WHERE login = '{0}'", Escape(login))))
+            {
+                if (reader == null)
+                    return false;
+
+                if (reader.Read())
+                {
+                    var val = reader.GetInt64(1);
+
+                    var date = DateTime.FromBinary(val);
+
+                    if (date < DateTime.Now)
+                    {
+                        Execute("DELETE FROM bans WHERE login='{0}' and date={1}", Escape(login), val);
+                        return false;
+                    }
+
+                    timeLeft = date - DateTime.Now;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void SaveDynamicEntity(IDynamicEntity entity)
@@ -292,6 +360,35 @@ namespace Utopia.Server.Managers
                     var maxNumber = reader.GetInt64(0);
                     return (uint) maxNumber;
                 } return 0;
+            }
+        }
+
+        public void SetVariable<T>(string id, T value)
+        {
+            if (typeof(T).IsClass)
+            {
+                if (value == null)
+                    InsertBlob(string.Format("INSERT OR REPLACE INTO vars (id, value) values ('{0}', @blob)", Escape(id)), null);
+                else
+                {
+                    InsertBlob(string.Format("INSERT OR REPLACE INTO vars (id, value) values ('{0}', @blob)", Escape(id)), value.ProtoSerialize());
+                }
+            }
+            else
+            {
+                InsertBlob(string.Format("INSERT OR REPLACE INTO vars (id, value) values ('{0}', @blob)", Escape(id)), value.ProtoSerialize());
+            }
+        }
+
+        public T GetVariable<T>(string id, T defaultValue)
+        {
+            using (var reader = Query("SELECT value FROM vars WHERE id = '{0}'", id))
+            {
+                if (reader != null && reader.Read())
+                {
+                    return reader.IsDBNull(0) ? default(T) : ((byte[])reader.GetValue(0)).Deserialize<T>();
+                } 
+                return defaultValue;
             }
         }
 

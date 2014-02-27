@@ -9,6 +9,6 @@ namespace Utopia.Shared.Services.Interfaces
         /// </summary>
         event EventHandler<PlayerCommandEventArgs> PlayerCommand;
 
-        void RegisterCommand(IServerCommand command);
+        void RegisterCommand(IChatCommand command);
     }
 }

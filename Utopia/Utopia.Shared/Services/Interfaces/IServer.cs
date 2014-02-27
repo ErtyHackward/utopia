@@ -1,6 +1,7 @@
 using System;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.World;
 
 namespace Utopia.Shared.Services.Interfaces
@@ -30,5 +31,10 @@ namespace Utopia.Shared.Services.Interfaces
         IServerLandscapeManager LandscapeManager { get; }
 
         IChatManager ChatManager { get; }
+
+        /// <summary>
+        /// Provides storage for various data (key value pairs)
+        /// </summary>
+        ICustomStorage CustomStorage { get; }
     }
 }

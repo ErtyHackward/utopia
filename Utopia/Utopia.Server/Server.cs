@@ -39,6 +39,11 @@ namespace Utopia.Server
         /// Gets main entity storage
         /// </summary>
         public IEntityStorage EntityStorage { get; private set; }
+        
+        /// <summary>
+        /// Provides storage for various data (key value pairs)
+        /// </summary>
+        public ICustomStorage CustomStorage { get; private set; }
 
         /// <summary>
         /// Gets entity manager
@@ -82,6 +87,7 @@ namespace Utopia.Server
         /// Gets chat manager
         /// </summary>
         public ChatManager ChatManager { get; private set; }
+        
         IChatManager IServer.ChatManager { get { return ChatManager; } }
 
         /// <summary>
@@ -123,6 +129,7 @@ namespace Utopia.Server
             IUsersStorage usersStorage,
             IChunksStorage chunksStorage,
             IEntityStorage entityStorage,
+            ICustomStorage customStorage,
             EntityFactory entityFactory,
             WorldParameters wp
             )
@@ -131,6 +138,7 @@ namespace Utopia.Server
             SettingsManager = settingsManager;
             UsersStorage = usersStorage;
             EntityStorage = entityStorage;
+            CustomStorage = customStorage;
             EntityFactory = entityFactory;
             WorldParameters = wp;
 

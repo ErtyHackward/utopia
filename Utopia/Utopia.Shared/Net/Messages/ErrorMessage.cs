@@ -49,6 +49,8 @@ namespace Utopia.Shared.Net.Messages
         /// <summary>
         /// Occurs when server is unable to execute player item transfer operation
         /// </summary>
-        DesyncDetected
+        DesyncDetected,
+        Kicked,
+        Banned
     }
 }
