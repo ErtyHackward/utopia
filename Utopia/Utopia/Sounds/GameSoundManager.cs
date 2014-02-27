@@ -506,10 +506,12 @@ namespace Utopia.Sounds
                     }
                 }
                 //Pickup next biome ambiant sound, and start it !
-                int nextAmbientSoundId = _rnd.Next(0, currentBiome.AmbientSound.Count);
-                _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].Alias, SourceCategory.Music ,false, 3000);
-
-                _previousBiomePlaying = currentBiome;
+                if (currentBiome.AmbientSound.Count > 0)
+                {
+                    int nextAmbientSoundId = _rnd.Next(0, currentBiome.AmbientSound.Count);
+                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].Alias, SourceCategory.Music, false, 3000);
+                    _previousBiomePlaying = currentBiome;
+                }
             }
         }
         #endregion
