@@ -142,6 +142,24 @@ namespace Utopia.Server.Managers
             LoginData loginData;
             if (_server.UsersStorage.Login(e.Message.Login.ToLower(), e.Message.Password, out loginData))
             {
+                TimeSpan banTimeLeft;
+
+                if (_server.UsersStorage.IsBanned(e.Message.Login.ToLower(), out banTimeLeft))
+                {
+                    var error = new ErrorMessage
+                    {
+                        ErrorCode = ErrorCodes.LoginPasswordIncorrect,
+                        Message = "You are banned. Time left: " + banTimeLeft
+                    };
+
+                    connection.Send(error);
+                    logger.Error("User banned {0} ({1})", e.Message.Login,
+                                      connection.Id);
+                    
+                    connection.Disconnect();
+                    return;
+                }
+
                 var oldConnection = _server.ConnectionManager.Find(c => c.UserId == loginData.UserId);
                 if (oldConnection != null)
                 {

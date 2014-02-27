@@ -82,7 +82,19 @@
     <Compile Include="AStar\AStarNode3D.cs" />
     <Compile Include="AStar\AStarList.cs" />
     <Compile Include="ClientConnection.cs" />
+    <Compile Include="Commands\AdditemCommand.cs" />
+    <Compile Include="Commands\BanCommand.cs" />
+    <Compile Include="Commands\KickCommand.cs" />
+    <Compile Include="Commands\SaveCommand.cs" />
+    <Compile Include="Commands\HelpCommand.cs" />
+    <Compile Include="Commands\ServicesCommand.cs" />
+    <Compile Include="Commands\SetroleCommand.cs" />
+    <Compile Include="Commands\SetSpawnPointCommand.cs" />
+    <Compile Include="Commands\SettimeCommand.cs" />
+    <Compile Include="Commands\StatusCommand.cs" />
+    <Compile Include="Commands\UsersCommand.cs" />
     <Compile Include="Interfaces\IEntityStorage.cs" />
+    <Compile Include="Interfaces\IServerChatCommand.cs" />
     <Compile Include="Managers\GlobalStateManager.cs" />
     <Compile Include="Managers\LoginManager.cs" />
     <Compile Include="Managers\MonoSqliteStorage.cs" />
@@ -167,9 +179,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

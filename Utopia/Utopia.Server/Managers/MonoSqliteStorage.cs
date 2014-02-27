@@ -1,10 +1,7 @@
 ﻿using Mono.Data.Sqlite;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Utopia.Server.Managers
 {
@@ -61,7 +58,7 @@ namespace Utopia.Server.Managers
         /// <param name="fileName">the Database Path</param>
         /// <param name="wipeDatabase">Boolean forcing a fresh DB creation, even if the file is existing</param>
         /// <returns>Return true if New Database has been created</returns>
-        protected bool CreateDBConnection(string fileName, bool wipeDatabase = false)
+        protected virtual bool CreateDBConnection(string fileName, bool wipeDatabase = false)
         {
             _path = fileName;
 
@@ -102,7 +99,8 @@ namespace Utopia.Server.Managers
             Execute("PRAGMA LOCKING_MODE=EXCLUSIVE;PRAGMA JOURNAL_MODE=WAL;");
 #endif
 
-            if (createDb) CreateDataBaseInternal();
+            if (createDb) 
+                CreateDataBaseInternal();
 
             return createDb;
         }
@@ -235,6 +233,18 @@ namespace Utopia.Server.Managers
         public int Execute(string format, params object[] pars)
         {
             return Execute(string.Format(format, pars));
+        }
+
+        public bool TableExists(string name)
+        {
+            using (var reader = Query("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", name))
+            {
+                if (reader != null && reader.Read())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

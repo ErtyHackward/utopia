@@ -146,6 +146,7 @@ namespace Realms.Server
                 new ServerUsersStorage(_sqLiteStorageManager, _serverWebApi), 
                 _sqLiteStorageManager,
                 _sqLiteStorageManager,
+                _sqLiteStorageManager,
                 _serverFactory,
                 wp
                 );

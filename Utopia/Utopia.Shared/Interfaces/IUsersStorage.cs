@@ -1,3 +1,4 @@
+using System;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Interfaces
@@ -35,5 +36,17 @@ namespace Utopia.Shared.Interfaces
         /// <param name="login"></param>
         /// <param name="role"></param>
         bool SetRole(string login, UserRole role);
+
+        /// <summary>
+        /// Returns specified user role
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        UserRole GetRole(string login);
+
+        void AddBan(string login, TimeSpan time);
+
+        bool IsBanned(string login, out TimeSpan timeLeft);
+
     }
 }

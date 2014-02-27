@@ -246,6 +246,7 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
+    <Compile Include="Interfaces\ICustomStorage.cs" />
     <Compile Include="Interfaces\IDynamicEntityManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
@@ -267,16 +268,16 @@
     <Compile Include="Services\Interfaces\ICommandsManager.cs" />
     <Compile Include="Services\Interfaces\IRoleRestrictedCommand.cs" />
     <Compile Include="Services\Interfaces\IServer.cs" />
-    <Compile Include="Services\Interfaces\IServerCommand.cs" />
+    <Compile Include="Services\Interfaces\IChatCommand.cs" />
     <Compile Include="Services\Interfaces\IServerLandscapeManager.cs" />
     <Compile Include="Services\ModeratorCommand.cs" />
     <Compile Include="Services\NpcService.cs" />
     <Compile Include="Services\PlayerCommandEventArgs.cs" />
-    <Compile Include="Services\ServerCommands.cs" />
     <Compile Include="Services\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\WaterDynamicService.cs" />
     <Compile Include="Structs\Clock.cs" />
+    <Compile Include="Structs\Helpers\TimeSpanHelper.cs" />
     <Compile Include="Structs\IScheduleManager.cs" />
     <Compile Include="Structs\ScheduleCallType.cs" />
     <Compile Include="Structs\ScheduleTask.cs" />

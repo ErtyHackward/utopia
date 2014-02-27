@@ -87,8 +87,8 @@ namespace Realms.Client.Components
             //var planProcessor = new PlanWorldProcessor(wp, _serverFactory);
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
-            
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
+
+            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _serverFactory.DynamicEntityManager = _server.AreaManager;
             _serverFactory.GlobalStateManager = _server.GlobalStateManager;

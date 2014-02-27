@@ -267,6 +267,16 @@ namespace Utopia.Server
             VisibleGroup = new List<ClientConnection>();
         }
 
+        public void SendChat(string message)
+        {
+            Send(new ChatMessage
+            {
+                IsServerMessage = true,
+                DisplayName = "server",
+                Message = message
+            });
+        }
+
         protected override void OnMessage(IBinaryMessage message)
         {
             switch ((MessageTypes)message.MessageId)

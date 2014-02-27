@@ -1,12 +1,7 @@
 ﻿using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Settings;
-using System.Linq;
 
 namespace Realms.Server
 {
@@ -34,11 +29,17 @@ namespace Realms.Server
 
         public PlayerCharacter CreateNewPlayerCharacter(string name, uint entityId)
         {
-            var dEntity = new PlayerCharacter();
-            dEntity.DynamicId = entityId;
-            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
-            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
-            dEntity.CharacterName = name;
+            var def = new Vector3D(10, 0, 10);
+
+            var pos = _server.CustomStorage.GetVariable("SpawnPosition", def);
+            
+            var dEntity = new PlayerCharacter
+            {
+                DynamicId = entityId,
+                DisplacementMode = EntityDisplacementModes.Walking,
+                Position = pos == def ? _server.LandscapeManager.GetHighestPoint(pos) : pos,
+                CharacterName = name
+            };
 
             // give start items to the player
             var startSetName = _server.WorldParameters.Configuration.StartSet;

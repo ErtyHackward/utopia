@@ -76,9 +76,9 @@ namespace Utopia.Server.Managers
             Broadcast(nick, message, true);
         }
 
-        public void Broadcast(string message, string nick, bool isOperator)
+        public void Broadcast(string message, string nick, bool isServer)
         {
-            _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = nick, Message = message, Operator = isOperator });
+            _server.ConnectionManager.Broadcast(new ChatMessage { DisplayName = nick, Message = message, IsServerMessage = isServer });
         }
     }
 }

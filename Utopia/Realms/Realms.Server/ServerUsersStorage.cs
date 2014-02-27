@@ -99,5 +99,20 @@ namespace Realms.Server
         {
             return _storage.SetRole(login, role);
         }
+
+        public UserRole GetRole(string login)
+        {
+            return _storage.GetRole(login);
+        }
+
+        public void AddBan(string login, TimeSpan time)
+        {
+            _storage.AddBan(login, time);
+        }
+
+        public bool IsBanned(string login, out TimeSpan timeLeft)
+        {
+            return _storage.IsBanned(login, out timeLeft);
+        }
     }
 }

@@ -1,6 +1,6 @@
 namespace Utopia.Shared.Services.Interfaces
 {
-    public interface IServerCommand
+    public interface IChatCommand
     {
         /// <summary>
         /// Command id
