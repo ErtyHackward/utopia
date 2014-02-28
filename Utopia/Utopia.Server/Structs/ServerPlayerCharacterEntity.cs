@@ -130,8 +130,6 @@ namespace Utopia.Server.Structs
 
         public override void ItemTransfer(ItemTransferMessage itm)
         {
-            logger.Info("Transfer " + itm);
-
             _dontSendInventoryEvents = true;
 
             try
