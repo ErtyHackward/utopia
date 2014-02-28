@@ -450,6 +450,7 @@
     <Compile Include="World\Processors\Utopia\LandscapeEntities.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
+    <Compile Include="World\Processors\Utopia\OtherFct\VoronoiZones.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\ErtyHackwardWorldConfig.cs" />
@@ -514,9 +515,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="World\Processors\Utopia\OtherFct\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
