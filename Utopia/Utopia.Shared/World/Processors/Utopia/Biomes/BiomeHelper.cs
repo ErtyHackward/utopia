@@ -58,7 +58,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             enuLandFormType landformtype = (enuLandFormType)landFormType;
 
-            List<List<Biome>> biomeList = _biomesConfig[landformtype];
+            List<List<Biome>> biomeList;
+            if(! _biomesConfig.TryGetValue(landformtype, out biomeList)) return (byte)0;
 
             foreach (var biomesWithSameWeatherHash in biomeList)
             {
@@ -81,7 +82,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 {
                     if (biomesWithSameWeatherHash.Count == 1) return biome.Id;
                     //Compute cell
-                    byte zoneLayer = (byte)(zone * (biomesWithSameWeatherHash.Count - 1));
+                    byte zoneLayer = (byte)(zone * (biomesWithSameWeatherHash.Count));
+                    if (zoneLayer == biomesWithSameWeatherHash.Count) zoneLayer--;
                     return biomesWithSameWeatherHash[zoneLayer].Id;
                 }
             }
