@@ -19,6 +19,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private Variables
+
         //Chunk Population elements
         private List<CubeVein> _cubeVeins = new List<CubeVein>();
         private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
@@ -119,7 +120,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public RangeD TemperatureFilter
         {
             get { return _temperatureFilter; }
-            set { _temperatureFilter = value; }
+            set { _temperatureFilter = value; RefreshWeatherHash(); }
         }
 
         [Description("Moisture range [0.00 to 1.00] inside this biome"), Category("Filter")]
@@ -127,7 +128,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public RangeD MoistureFilter
         {
             get { return _moistureFilter; }
-            set { _moistureFilter = value; }
+            set { _moistureFilter = value; RefreshWeatherHash(); }
         }
 
         [Browsable(false)]
@@ -137,6 +138,30 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             set { _config = value; }
         }
 
+        [Browsable(false)]
+        public byte Id { get; set; }
+        [Browsable(false)]
+        public bool isWeatherBiomes { get; set; }
+        [Browsable(false)]
+        public int WeatherHash { get; set; }
+
+
+        private void RefreshWeatherHash()
+        {
+            if (MoistureFilter.Min == 0 && MoistureFilter.Max == 1 && TemperatureFilter.Min == 0 && TemperatureFilter.Max == 1)
+            {
+                isWeatherBiomes = false;
+                WeatherHash = 0;
+                return;
+            }
+
+            string resultStr = TemperatureFilter.Min.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) +
+                                   TemperatureFilter.Max.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) +
+                                   MoistureFilter.Min.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) +
+                                   MoistureFilter.Max.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture);
+            isWeatherBiomes = true;
+            WeatherHash = resultStr.GetHashCode();
+        }
         #endregion
 
         public Biome(WorldConfiguration config)

@@ -59,7 +59,7 @@ namespace Utopia.Server.Managers
 
             logger.Info("{0} disconnected", e.Connection.RemoteAddress);
 
-            if (e.Connection.Authorized)
+            if (e.Connection.Authorized && e.Connection.ServerEntity != null)
             {
                 // saving the entity
                 _server.EntityStorage.SaveDynamicEntity(e.Connection.ServerEntity.DynamicEntity);
