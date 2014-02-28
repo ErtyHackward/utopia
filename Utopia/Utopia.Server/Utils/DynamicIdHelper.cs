@@ -7,6 +7,8 @@
     {
         private static uint _currentId;
 
+        static object _syncRoot = new object();
+
         public static uint MaximumId
         {
             get { return _currentId; }
@@ -14,12 +16,14 @@
 
         public static uint GetNextUniqueId()
         {
-            return ++_currentId;
+            lock (_syncRoot)
+                return ++_currentId;
         }
 
         public static void SetMaxExistsId(uint id)
         {
-            _currentId = id;
+            lock (_syncRoot)
+                _currentId = id;
         }
 
     }
