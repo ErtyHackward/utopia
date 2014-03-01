@@ -130,7 +130,7 @@ namespace Utopia.Editor
             udOctMoist.Value = (decimal)param.ProcessorParam.MoistureCtrlOctave;
             udFreqMoist.Value = (decimal)param.ProcessorParam.MoistureCtrlFrequency;
 
-            udFreqZone.Value = (decimal)param.ProcessorParam.ZoneCtrlFrequency;
+            udFreqZone.Value = param.ProcessorParam.ZoneCtrlFrequency > 0 ? (decimal)param.ProcessorParam.ZoneCtrlFrequency : (decimal)0.01;
 
             this.maxHeight_ValueChanged(this, null);
             this.trackBar2_ValueChanged(this, null);

@@ -32,6 +32,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabUtopiaProcessor = new System.Windows.Forms.TabControl();
             this.WorldParam = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.udFreqZone = new System.Windows.Forms.NumericUpDown();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.label30 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
             this.maxHeight = new System.Windows.Forms.TrackBar();
@@ -48,6 +53,8 @@
             this.label21 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.udFreqTemp = new System.Windows.Forms.NumericUpDown();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.LandscapeParam = new System.Windows.Forms.TabPage();
@@ -93,15 +100,11 @@
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pgBiomes = new System.Windows.Forms.PropertyGrid();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.udFreqZone = new System.Windows.Forms.NumericUpDown();
-            this.label30 = new System.Windows.Forms.Label();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabUtopiaProcessor.SuspendLayout();
             this.WorldParam.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqZone)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
@@ -110,6 +113,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udFreqMoist)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOctTemp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFreqTemp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.LandscapeParam.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.pContinent.SuspendLayout();
@@ -129,11 +134,6 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.contextMenuUtopia.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udFreqZone)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -170,6 +170,77 @@
             this.WorldParam.TabIndex = 2;
             this.WorldParam.Text = "Global World Parameters";
             this.WorldParam.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Controls.Add(this.label28);
+            this.groupBox5.Controls.Add(this.udFreqZone);
+            this.groupBox5.Controls.Add(this.pictureBox4);
+            this.groupBox5.Controls.Add(this.label30);
+            this.groupBox5.Location = new System.Drawing.Point(6, 251);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(652, 61);
+            this.groupBox5.TabIndex = 8;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Other parameters :";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(133, 28);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(34, 13);
+            this.label28.TabIndex = 15;
+            this.label28.Text = "Freq :";
+            // 
+            // udFreqZone
+            // 
+            this.udFreqZone.DecimalPlaces = 2;
+            this.udFreqZone.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udFreqZone.Location = new System.Drawing.Point(173, 26);
+            this.udFreqZone.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            65536});
+            this.udFreqZone.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udFreqZone.Name = "udFreqZone";
+            this.udFreqZone.Size = new System.Drawing.Size(61, 20);
+            this.udFreqZone.TabIndex = 14;
+            this.udFreqZone.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udFreqZone.ValueChanged += new System.EventHandler(this.udFreqZone_ValueChanged);
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Image = global::Utopia.Editor.Properties.Resources.voronoi;
+            this.pictureBox4.Location = new System.Drawing.Point(6, 19);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(33, 34);
+            this.pictureBox4.TabIndex = 2;
+            this.pictureBox4.TabStop = false;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(45, 29);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(73, 13);
+            this.label30.TabIndex = 0;
+            this.label30.Text = "Biome zones :";
             // 
             // groupBox4
             // 
@@ -414,6 +485,24 @@
             0,
             0});
             this.udFreqTemp.ValueChanged += new System.EventHandler(this.udFreqTemp_ValueChanged);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::Utopia.Editor.Properties.Resources._11;
+            this.pictureBox2.Location = new System.Drawing.Point(6, 59);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(33, 34);
+            this.pictureBox2.TabIndex = 3;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::Utopia.Editor.Properties.Resources._36;
+            this.pictureBox1.Location = new System.Drawing.Point(6, 19);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(33, 34);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
             // 
             // label20
             // 
@@ -970,95 +1059,6 @@
             this.pgBiomes.TabIndex = 0;
             this.pgBiomes.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgBiomes_PropertyValueChanged);
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox5.Controls.Add(this.label28);
-            this.groupBox5.Controls.Add(this.udFreqZone);
-            this.groupBox5.Controls.Add(this.pictureBox4);
-            this.groupBox5.Controls.Add(this.label30);
-            this.groupBox5.Location = new System.Drawing.Point(6, 251);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(652, 61);
-            this.groupBox5.TabIndex = 8;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Other parameters :";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(133, 28);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(34, 13);
-            this.label28.TabIndex = 15;
-            this.label28.Text = "Freq :";
-            // 
-            // udFreqZone
-            // 
-            this.udFreqZone.DecimalPlaces = 2;
-            this.udFreqZone.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.udFreqZone.Location = new System.Drawing.Point(173, 26);
-            this.udFreqZone.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            65536});
-            this.udFreqZone.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.udFreqZone.Name = "udFreqZone";
-            this.udFreqZone.Size = new System.Drawing.Size(61, 20);
-            this.udFreqZone.TabIndex = 14;
-            this.udFreqZone.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udFreqZone.ValueChanged += new System.EventHandler(this.udFreqZone_ValueChanged);
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(45, 29);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(73, 13);
-            this.label30.TabIndex = 0;
-            this.label30.Text = "Biome zones :";
-            // 
-            // pictureBox4
-            // 
-            this.pictureBox4.Image = global::Utopia.Editor.Properties.Resources.voronoi;
-            this.pictureBox4.Location = new System.Drawing.Point(6, 19);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(33, 34);
-            this.pictureBox4.TabIndex = 2;
-            this.pictureBox4.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = global::Utopia.Editor.Properties.Resources._11;
-            this.pictureBox2.Location = new System.Drawing.Point(6, 59);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(33, 34);
-            this.pictureBox2.TabIndex = 3;
-            this.pictureBox2.TabStop = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::Utopia.Editor.Properties.Resources._36;
-            this.pictureBox1.Location = new System.Drawing.Point(6, 19);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(33, 34);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
             // FrmUtopiaProcessorConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1069,6 +1069,10 @@
             this.Size = new System.Drawing.Size(672, 630);
             this.tabUtopiaProcessor.ResumeLayout(false);
             this.WorldParam.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqZone)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxHeight)).EndInit();
@@ -1079,6 +1083,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udFreqMoist)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOctTemp)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFreqTemp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.LandscapeParam.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -1103,12 +1109,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.contextMenuUtopia.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udFreqZone)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

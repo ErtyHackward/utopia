@@ -154,6 +154,11 @@ namespace Utopia.Shared.Configuration
         [Description("Tells how much items could be in the cube stack")]
         [ProtoMember(17)]
         public int CubeStackSize { get; set; }
+
+        [Description("The compatibility configuration version")]
+        [Browsable(false)]
+        [ProtoMember(18)]
+        public int Version { get; set; }
         
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]

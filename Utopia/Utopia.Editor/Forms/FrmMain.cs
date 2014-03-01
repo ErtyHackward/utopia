@@ -205,6 +205,7 @@ namespace Utopia.Editor.Forms
             newConfiguration.ConfigurationName = "noname";
             newConfiguration.CreatedAt = DateTime.Now;
             newConfiguration.WorldProcessor = processorChoose.SelectedProcessor;
+            newConfiguration.Version = 1;
 
             processorChoose.Dispose();
 

@@ -38,39 +38,63 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         }
 
         #region Public Methods
-        //public byte GetBiome(double landFormType, double temperature, double moisture, double zone)
-        //{
-        //    enuLandFormType landformtype = (enuLandFormType)landFormType;
-
-        //    for (byte biomeId = 0; biomeId <= _config.ProcessorParam.Biomes.Count - 1; biomeId++)
-        //    {
-        //        Biome biome = _config.ProcessorParam.Biomes[biomeId];
-        //        //Does this biome support this land form type ?
-        //        if (biome.LandFormFilters.Contains(landformtype))
-        //        {
-        //            //Check the temp range
-        //            if (temperature >= biome.TemperatureFilter.Min &&
-        //                temperature <= biome.TemperatureFilter.Max)
-        //            {
-        //                if (moisture >= biome.MoistureFilter.Min &&
-        //                    moisture <= biome.MoistureFilter.Max)
-        //                {
-        //                    return biomeId;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    //By default return the first Biome from the list
-        //    return (byte)0;
-        //}
-
         public byte GetBiome(double landFormType, double temperature, double moisture, double zone)
+        {
+            switch (_config.Version)
+            {
+                case 0:
+                    return GetBiomeV0(landFormType, temperature, moisture);
+                case 1:
+                    return GetBiomeV1(landFormType, temperature, moisture, zone);
+            }
+
+            //By default return the first Biome from the list
+            return (byte)0;
+        }
+
+        private byte GetBiomeV0(double landFormType, double temperature, double moisture)
         {
             enuLandFormType landformtype = (enuLandFormType)landFormType;
 
+            for (byte biomeId = 0; biomeId <= _config.ProcessorParam.Biomes.Count - 1; biomeId++)
+            {
+                Biome biome = _config.ProcessorParam.Biomes[biomeId];
+                //Does this biome support this land form type ?
+                if (biome.LandFormFilters.Contains(landformtype))
+                {
+                    //Check the temp range
+                    if (temperature >= biome.TemperatureFilter.Min &&
+                        temperature <= biome.TemperatureFilter.Max)
+                    {
+                        if (moisture >= biome.MoistureFilter.Min &&
+                            moisture <= biome.MoistureFilter.Max)
+                        {
+                            return biomeId;
+                        }
+                    }
+                }
+            }
+
+            //By default return the first Biome from the list
+            return (byte)0;
+        }
+
+        private byte GetBiomeV1(double landFormType, double temperature, double moisture, double zone)
+        {
+            switch (_config.Version)
+            {
+                case 0:
+
+                    break;
+
+                case 1:
+                    break;
+            }
+
+            enuLandFormType landformtype = (enuLandFormType)landFormType;
+
             List<WeatherBiomes> biomeList;
-            if(! _biomesConfig.TryGetValue(landformtype, out biomeList)) return (byte)0;
+            if (!_biomesConfig.TryGetValue(landformtype, out biomeList)) return (byte)0;
 
             foreach (var weatherBiome in biomeList)
             {
