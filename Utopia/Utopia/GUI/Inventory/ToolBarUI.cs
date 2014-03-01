@@ -119,6 +119,7 @@ namespace Utopia.GUI.Inventory
                         }
                         catch (ArgumentOutOfRangeException)
                         {
+                            _playerManager.PlayerCharacter.Toolbar[x] = 0;
                             logger.Error("Unable to create entity from Id = {0}. Configuration was probably changed.", bluePrintId);
                         }
                     }
