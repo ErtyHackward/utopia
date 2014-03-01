@@ -140,6 +140,9 @@ namespace Utopia.Shared.Configuration
 
         [ProtoMember(22)]
         public double IslandCtrlSize { get; set; }
+
+        [ProtoMember(23)]
+        public double ZoneCtrlFrequency { get; set; }
         #endregion
 
         public UtopiaProcessorParams()
@@ -177,6 +180,8 @@ namespace Utopia.Shared.Configuration
 
             MoistureCtrlFrequency = 1;
             MoistureCtrlOctave = 2;
+
+            ZoneCtrlFrequency = 1;
 
             ClearAllinternalCollections();
             InitializeLandscapeComponent();

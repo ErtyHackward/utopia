@@ -8,13 +8,24 @@ using Utopia.Shared.World.Processors.Utopia.LandformFct;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
+    //Holder that keep all biomes that have the same Weather parameters together
+    public class WeatherBiomes
+    {
+        public List<Biome> BiomesListe;
+        public int TotalBiomesWeight;
+        public int TotalBiomes;
+        public RangeD Temperature;
+        public RangeD Moisture;
+        public bool isWeatherBiomes;
+    }
+
     public class BiomeHelper
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private Variables
         private UtopiaWorldConfiguration _config;
-        private Dictionary<enuLandFormType, List<List<Biome>>> _biomesConfig;
+        private Dictionary<enuLandFormType, List<WeatherBiomes>> _biomesConfig;
         #endregion
 
         #region Public Properties
@@ -58,38 +69,52 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             enuLandFormType landformtype = (enuLandFormType)landFormType;
 
-            List<List<Biome>> biomeList;
+            List<WeatherBiomes> biomeList;
             if(! _biomesConfig.TryGetValue(landformtype, out biomeList)) return (byte)0;
 
-            foreach (var biomesWithSameWeatherHash in biomeList)
+            foreach (var weatherBiome in biomeList)
             {
-                Biome biome = biomesWithSameWeatherHash[0];
                 //Check the temp range
-                if (biome.isWeatherBiomes)
+                if (weatherBiome.isWeatherBiomes)
                 {
-                    if (temperature >= biome.TemperatureFilter.Min &&
-                        temperature <= biome.TemperatureFilter.Max &&
-                        moisture >= biome.MoistureFilter.Min &&
-                        moisture <= biome.MoistureFilter.Max)
+                    if (temperature >= weatherBiome.Temperature.Min &&
+                        temperature <= weatherBiome.Temperature.Max &&
+                        moisture >= weatherBiome.Moisture.Min &&
+                        moisture <= weatherBiome.Moisture.Max)
                     {
-                        if (biomesWithSameWeatherHash.Count == 1) return biome.Id;
+                        if (weatherBiome.TotalBiomes == 1) return weatherBiome.BiomesListe[0].Id;
                         //Compute cell
-                        byte zoneLayer = (byte)(zone * (biomesWithSameWeatherHash.Count - 1));
-                        return biomesWithSameWeatherHash[zoneLayer].Id;
+                        //byte zoneLayer = (byte)(zone * (weatherBiome.Count));
+                        //if (zoneLayer == weatherBiome.Count) zoneLayer--;
+                        //return weatherBiome[zoneLayer].Id;
+                        return GetBiomeId(weatherBiome, zone);
                     }
                 }
                 else
                 {
-                    if (biomesWithSameWeatherHash.Count == 1) return biome.Id;
+                    if (weatherBiome.TotalBiomes == 1) return weatherBiome.BiomesListe[0].Id;
                     //Compute cell
-                    byte zoneLayer = (byte)(zone * (biomesWithSameWeatherHash.Count));
-                    if (zoneLayer == biomesWithSameWeatherHash.Count) zoneLayer--;
-                    return biomesWithSameWeatherHash[zoneLayer].Id;
+                    //byte zoneLayer = (byte)(zone * (weatherBiome.Count));
+                    //if (zoneLayer == weatherBiome.Count) zoneLayer--;
+                    //return weatherBiome[zoneLayer].Id;
+                    return GetBiomeId(weatherBiome, zone);
                 }
             }
 
             //By default return the first Biome from the list
             return (byte)0;
+        }
+
+        private byte GetBiomeId(WeatherBiomes wb, double zone)
+        {
+            int threeshold = (int)(zone * wb.TotalBiomesWeight);
+            int runningWeight = 0;
+            foreach (var biome in wb.BiomesListe)
+            {
+                runningWeight += biome.ZoneWeight;
+                if (runningWeight >= threeshold) return biome.Id;
+            }
+            return (byte)255; 
         }
         #endregion
 
@@ -125,20 +150,25 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
 
 
-            _biomesConfig = new Dictionary<enuLandFormType, List<List<Biome>>>();
+            _biomesConfig = new Dictionary<enuLandFormType, List<WeatherBiomes>>();
             foreach (var kvp in biomesPerType)
             {
-                List<Biome> biomesWithSameWeatherHash;
+                WeatherBiomes biomesWithSameWeatherHash;
                 //Take all the various weatherHash from the biomes within this enuLandFormType
                 foreach (int weatherHash in kvp.Value.Select(x => x.WeatherHash).Distinct().OrderByDescending(x => x))
                 {
-                    biomesWithSameWeatherHash = new List<Biome>(kvp.Value.Where(x => x.WeatherHash == weatherHash));
+                    biomesWithSameWeatherHash = new WeatherBiomes() { BiomesListe = new List<Biome>(kvp.Value.Where(x => x.WeatherHash == weatherHash).OrderByDescending(x => x.ZoneWeight)) };
+                    biomesWithSameWeatherHash.isWeatherBiomes = biomesWithSameWeatherHash.BiomesListe[0].isWeatherBiomes;
+                    biomesWithSameWeatherHash.Moisture = biomesWithSameWeatherHash.BiomesListe[0].MoistureFilter;
+                    biomesWithSameWeatherHash.Temperature = biomesWithSameWeatherHash.BiomesListe[0].TemperatureFilter;
+                    biomesWithSameWeatherHash.TotalBiomes = biomesWithSameWeatherHash.BiomesListe.Count;
+                    biomesWithSameWeatherHash.TotalBiomesWeight = biomesWithSameWeatherHash.BiomesListe.Sum(x => x.ZoneWeight);
 
                     //Add this List to the Main dictionnary
-                    List<List<Biome>> allBiomesFromLandscapeType;
+                    List<WeatherBiomes> allBiomesFromLandscapeType;
                     if (!_biomesConfig.TryGetValue(kvp.Key, out allBiomesFromLandscapeType))
                     {
-                        allBiomesFromLandscapeType = new List<List<Biome>>();
+                        allBiomesFromLandscapeType = new List<WeatherBiomes>();
                         _biomesConfig[kvp.Key] = allBiomesFromLandscapeType;
                     }
                     allBiomesFromLandscapeType.Add(biomesWithSameWeatherHash);

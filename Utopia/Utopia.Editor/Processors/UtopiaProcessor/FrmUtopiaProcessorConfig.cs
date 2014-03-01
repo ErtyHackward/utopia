@@ -130,6 +130,8 @@ namespace Utopia.Editor
             udOctMoist.Value = (decimal)param.ProcessorParam.MoistureCtrlOctave;
             udFreqMoist.Value = (decimal)param.ProcessorParam.MoistureCtrlFrequency;
 
+            udFreqZone.Value = (decimal)param.ProcessorParam.ZoneCtrlFrequency;
+
             this.maxHeight_ValueChanged(this, null);
             this.trackBar2_ValueChanged(this, null);
         }
@@ -289,6 +291,12 @@ namespace Utopia.Editor
         {
             if (Configuration == null) return;
             Configuration.ProcessorParam.MoistureCtrlOctave = (int)udOctMoist.Value;
+        }
+
+        private void udFreqZone_ValueChanged(object sender, EventArgs e)
+        {
+            if (Configuration == null) return;
+            Configuration.ProcessorParam.ZoneCtrlFrequency = (double)udFreqZone.Value;
         }
     }
 }
