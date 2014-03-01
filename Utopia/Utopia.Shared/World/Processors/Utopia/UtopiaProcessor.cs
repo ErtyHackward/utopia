@@ -197,7 +197,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             underground = new UnderGround(_worldParameters.Seed + 999, mainLandscape, terrainDelimiter).GetLandFormFct();
             temperature = new Temperature(_worldParameters.Seed - 963, _config.ProcessorParam.TempCtrlOctave, _config.ProcessorParam.TempCtrlFrequency).GetLandFormFct();
             moisture = new Moisture(_worldParameters.Seed - 96, _config.ProcessorParam.MoistureCtrlOctave, _config.ProcessorParam.MoistureCtrlFrequency).GetLandFormFct();
-            zones = new VoronoiZones(_worldParameters.Seed + 16, 8).GetLandFormFct();
+            zones = new VoronoiZones(_worldParameters.Seed + 16, _config.ProcessorParam.ZoneCtrlFrequency).GetLandFormFct();
         }
 
         public INoise CreateLandFormFct(Gradient ground_gradient, INoise terrainDelimiter, out INoise landScapeTypeFct)

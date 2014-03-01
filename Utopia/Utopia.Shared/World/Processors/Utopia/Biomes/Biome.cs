@@ -131,6 +131,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             set { _moistureFilter = value; RefreshWeatherHash(); }
         }
 
+        [Description("Influence in case of zone"), Category("Filter")]
+        [ProtoMember(14)]
+        public int ZoneWeight { get; set; }
+
         [Browsable(false)]
         public WorldConfiguration Configuration
         {
