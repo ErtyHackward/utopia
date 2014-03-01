@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Utopia.Server.Interfaces;
+using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
 
@@ -66,6 +67,26 @@ namespace Utopia.Server.Commands
 
             if (success)
             {
+                var con = server.ConnectionManager.Connections().FirstOrDefault(c => c.Login == login);
+
+                if (con != null)
+                {
+                    con.SendChat(string.Format("Your access level is updated ({0}).", newRole));
+
+                    var currentReadOnly = con.ServerEntity.DynamicEntity.IsReadOnly;
+                    var newReadOnly = newRole == UserRole.Guest;
+
+                    if (currentReadOnly != newReadOnly)
+                    {
+                        con.ServerEntity.DynamicEntity.IsReadOnly = newReadOnly;
+                        
+                        server.AreaManager.RemoveEntity(con.ServerEntity);
+                        server.AreaManager.AddEntity(con.ServerEntity);
+
+                        con.Send(new EntityDataMessage { Entity = con.ServerEntity.DynamicEntity });
+                    }
+                }
+
                 connection.SendChat("User access level is updated");
             }
             else
