@@ -61,6 +61,8 @@ namespace Utopia.Server.Managers
 
             if (e.Connection.Authorized && e.Connection.ServerEntity != null)
             {
+                logger.Info("Saving entity Id={0} {1}", e.Connection.ServerEntity.DynamicEntity.DynamicId, e.Connection.DisplayName);
+
                 // saving the entity
                 _server.EntityStorage.SaveDynamicEntity(e.Connection.ServerEntity.DynamicEntity);
 
@@ -82,16 +84,18 @@ namespace Utopia.Server.Managers
         {
             var connection = (ClientConnection)sender;
 
-            _server.ConnectionManager.Broadcast(new ChatMessage { 
+            _server.ConnectionManager.Broadcast(new ChatMessage 
+            { 
                 IsServerMessage = true, 
                 DisplayName = "server",
                 Message = string.Format("{0} joined.", connection.DisplayName), 
                 Operator = true 
             });
-            connection.Send(new ChatMessage { 
+            connection.Send(new ChatMessage 
+            { 
                 IsServerMessage = true,
                 DisplayName = "server",
-                Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName, _server.ConnectionManager.Count), 
+                Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName), 
                 Operator = true 
             });
             connection.Send(new ChatMessage
@@ -140,11 +144,14 @@ namespace Utopia.Server.Managers
 
             // checking login and password
             LoginData loginData;
-            if (_server.UsersStorage.Login(e.Message.Login.ToLower(), e.Message.Password, out loginData))
+
+            var login = e.Message.Login.ToLower();
+
+            if (_server.UsersStorage.Login(login, e.Message.Password, out loginData))
             {
                 TimeSpan banTimeLeft;
 
-                if (_server.UsersStorage.IsBanned(e.Message.Login.ToLower(), out banTimeLeft))
+                if (_server.UsersStorage.IsBanned(login, out banTimeLeft))
                 {
                     var error = new ErrorMessage
                     {
@@ -174,7 +181,7 @@ namespace Utopia.Server.Managers
                 connection.Authorized  = true;
                 connection.UserId      = loginData.UserId;
                 connection.UserRole    = loginData.Role;
-                connection.Login       = e.Message.Login;
+                connection.Login       = login;
                 connection.DisplayName = e.Message.DisplayName;
 
                 ServerPlayerCharacterEntity playerEntity;
@@ -182,10 +189,11 @@ namespace Utopia.Server.Managers
                 #region Getting player entity
                 if (loginData.State == null)
                 {
+                    logger.Info("No state. Creating new entity and the state for " + e.Message.DisplayName);
                     // create new message
                     playerEntity = GetNewPlayerEntity(connection, DynamicIdHelper.GetNextUniqueId());
                     var state = new UserState { EntityId = playerEntity.DynamicEntity.DynamicId };
-                    _server.UsersStorage.SetData(e.Message.Login, state.Save());
+                    _server.UsersStorage.SetData(login, state.Save());
                 }
                 else
                 {
@@ -197,7 +205,7 @@ namespace Utopia.Server.Managers
 
                     if (bytes == null)
                     {
-                        logger.Warn("{0} entity was corrupted, creating new one...", e.Message.DisplayName);
+                        logger.Warn("{0} entity is absent, creating new one... Id={1}", e.Message.DisplayName, state.EntityId);
                         playerEntity = GetNewPlayerEntity(connection, state.EntityId);
                     }
                     else
