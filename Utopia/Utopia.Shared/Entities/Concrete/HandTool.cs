@@ -68,8 +68,13 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
+            if (!entity.IsPickable)
+            {
+                impact.Message = "You need a special tool to pick this item";
+                return impact;
+            }
+
             cursor.OwnerDynamicId = owner.DynamicId;
-            
             var charEntity = owner as CharacterEntity;
 
             if (charEntity != null)

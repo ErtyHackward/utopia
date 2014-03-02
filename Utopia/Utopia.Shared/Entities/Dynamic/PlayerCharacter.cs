@@ -221,7 +221,8 @@ namespace Utopia.Shared.Entities.Dynamic
                     // ok
                     return true;
                 }
-                RollbackItem(itm, slot);
+                if (!RollbackItem(itm, slot))
+                    return false;
             }
 
             // impossible to transfer
@@ -275,7 +276,7 @@ namespace Utopia.Shared.Entities.Dynamic
             return true;
         }
 
-        private void RollbackItem(ItemTransferMessage itm, Slot slot)
+        private bool RollbackItem(ItemTransferMessage itm, Slot slot)
         {
             if (slot != null)
             {
@@ -295,8 +296,10 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (container != null)
                     container.PutItem(slot.Item, position, slot.ItemsCount);
                 else
-                    throw new InvalidOperationException("Unable to rollback");
+                    return false;
             }
+
+            return true;
         }
 
         private bool PutItem(ItemTransferMessage itemTransferMessage, Slot slot)

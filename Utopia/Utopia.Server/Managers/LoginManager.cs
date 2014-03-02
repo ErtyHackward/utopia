@@ -23,6 +23,14 @@ namespace Utopia.Server.Managers
         private readonly Server _server;
         private readonly EntityFactory _factory;
 
+        public event EventHandler<PlayerLoggedEventArgs> PlayerLogged;
+
+        protected virtual void OnPlayerLogged(PlayerLoggedEventArgs e)
+        {
+            var handler = PlayerLogged;
+            if (handler != null) handler(this, e);
+        }
+
         /// <summary>
         /// Occurs when new player entity needed, entity should be placed to PlayerEntity property of the EventArgs class
         /// </summary>
@@ -101,9 +109,16 @@ namespace Utopia.Server.Managers
                 DisplayName = "server",
                 Message = string.Format("Players online: {0}", _server.ConnectionManager.Count)
             });
-            
+
+            if (!string.IsNullOrEmpty(_server.SettingsManager.Settings.MessageOfTheDay))
+            {
+                connection.SendChat("MOTD: " + _server.SettingsManager.Settings.MessageOfTheDay);
+            }
+
             // adding entity to the world
             _server.AreaManager.AddEntity(connection.ServerEntity);
+
+            OnPlayerLogged(new PlayerLoggedEventArgs { ClientConnection = connection });
         }
         
         private void ConnectionMessageLogin(object sender, ProtocolMessageEventArgs<LoginMessage> e)
@@ -264,6 +279,11 @@ namespace Utopia.Server.Managers
                 _server
                 );
         }
+    }
+
+    public class PlayerLoggedEventArgs : EventArgs
+    {
+        public ClientConnection ClientConnection { get; set; }
     }
 
     public class NewPlayerEntityNeededEventArgs : EventArgs

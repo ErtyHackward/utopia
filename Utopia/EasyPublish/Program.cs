@@ -76,7 +76,7 @@ namespace EasyPublish
                     ShowError("Can't find realms_server.iss file");
                 if (!File.Exists(programPath))
                     ShowError("Can't find Realms.Server.exe file, try to rebuild the server in release configuration");
-
+                
                 PublishDistributive(issFilePath, programPath, distributivePath);
 
                 // filter files
@@ -111,6 +111,25 @@ namespace EasyPublish
 
                 Console.WriteLine("Uploading file...");
                 UploadFile("ftp://update.utopiarealms.com/realms.server.tar.gz", linuxDistributiveFile);
+
+                try
+                {
+                    Console.WriteLine("Uploading new version token");
+                    var version = Assembly.LoadFrom(programPath).GetName().Version;
+                    using (var stream = new MemoryStream())
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.Write(version.ToString());
+                        writer.Flush();
+                        stream.Position = 0;
+                        UploadFile("ftp://update.utopiarealms.com/token_server", stream);
+                    }
+                }
+                catch (Exception)
+                {
+                    
+                }
+                
 
                 Console.WriteLine("Cleanup...");
                 Directory.Delete(tempPath, true);

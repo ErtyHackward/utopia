@@ -71,7 +71,8 @@ namespace Utopia.Server.Commands
 
                 if (con != null)
                 {
-                    con.SendChat(string.Format("Your access level is updated ({0}).", newRole));
+                    con.SendChat(string.Format("Your access level is updated by {1} to {0}.", newRole, connection.DisplayName));
+                    con.UserRole = newRole;
 
                     var currentReadOnly = con.ServerEntity.DynamicEntity.IsReadOnly;
                     var newReadOnly = newRole == UserRole.Guest;
