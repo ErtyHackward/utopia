@@ -44,6 +44,7 @@ namespace Utopia.Server.Managers
             RegisterCommand(new KickCommand());
             RegisterCommand(new BanCommand());
             RegisterCommand(new SetSpawnPointCommand());
+            RegisterCommand(new MotdCommand());
         }
 
         public void RegisterCommand(IChatCommand command)

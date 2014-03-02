@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using Utopia.Server;
@@ -9,6 +11,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Web;
+using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.Processors.Utopia;
@@ -34,7 +37,7 @@ namespace Realms.Server
         private static SqliteStorageManager _sqLiteStorageManager;
         private static EntityFactory _serverFactory;
         private static ServerWebApi _serverWebApi;
-
+        private static string _newVersionMessage;
 
         static void IocBind(WorldParameters param)
         {
@@ -161,6 +164,7 @@ namespace Realms.Server
             
             _server.ConnectionManager.Listen();
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+            _server.LoginManager.PlayerLogged += LoginManager_PlayerLogged;
 
             // send alive message each 5 minutes
             _reportAliveTimer = new Timer(CommitServerInfo, null, 0, 1000 * 60 * 5);
@@ -173,6 +177,17 @@ namespace Realms.Server
             _server.ConnectionManager.Dispose();
         }
 
+        static void LoginManager_PlayerLogged(object sender, PlayerLoggedEventArgs e)
+        {
+            if (e.ClientConnection.UserRole == UserRole.Administrator)
+            {
+                if (!string.IsNullOrEmpty(_newVersionMessage))
+                {
+                    e.ClientConnection.SendChat("New server version is available: " + _newVersionMessage);
+                }
+            }
+        }
+
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = (Exception)e.ExceptionObject;
@@ -183,6 +198,30 @@ namespace Realms.Server
         {
             var settings = _settingsManager;
             _serverWebApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count, ServerUpdateCompleted);
+
+            try
+            {
+                var wc = new WebClient();
+                var s = wc.DownloadString("http://update.utopiarealms.com/token_server");
+                var reader = new StringReader(s);
+                Version version;
+                if (Version.TryParse(reader.ReadLine(), out version))
+                {
+                    if (Assembly.GetExecutingAssembly().GetName().Version < version)
+                    {
+                        _newVersionMessage = s;
+
+                        foreach (var connection in _server.ConnectionManager.Connections().Where(c => c.UserRole == UserRole.Administrator))
+                        {
+                            connection.SendChat("New server version is available: " + _newVersionMessage);
+                        }
+                    }
+                }
+            }
+            catch (Exception x)
+            {
+                logger.Error("Exception during update: " + x.Message);
+            }
         }
 
         private static void ServerUpdateCompleted(WebEventArgs e)

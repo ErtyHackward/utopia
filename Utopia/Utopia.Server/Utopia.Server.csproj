@@ -85,6 +85,7 @@
     <Compile Include="Commands\AdditemCommand.cs" />
     <Compile Include="Commands\BanCommand.cs" />
     <Compile Include="Commands\KickCommand.cs" />
+    <Compile Include="Commands\MotdCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ServicesCommand.cs" />

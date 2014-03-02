@@ -49,6 +49,7 @@ namespace Utopia.Shared.Entities
         /// Pickable entity Property
         /// </summary>
         [Category("Entity")]
+        [Description("Indicates if the entity is pickable by the hand. Otherwise you need the Extractor tool")]
         [ProtoMember(5)]
         public bool IsPickable { get; set; }
 

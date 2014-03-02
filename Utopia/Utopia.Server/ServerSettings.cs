@@ -60,6 +60,8 @@ namespace Utopia.Server
 
         public string Seed { get; set; }
 
+        public string MessageOfTheDay { get; set; }
+
         public ServerSettings()
         {
             CleanUpInterval = 60000;
