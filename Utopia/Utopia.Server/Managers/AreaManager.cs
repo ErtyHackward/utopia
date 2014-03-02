@@ -253,7 +253,7 @@ namespace Utopia.Server.Managers
                         prev.OnEntityOutOfViewRange(e.Entity);
                     }
                     
-                    var now = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X + x*MapArea.AreaSize.X, 0,
+                    var now = GetArea(new Vector3D(e.Entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
                                                    e.Entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
 
                     if(Vector2I.DistanceSquared(previousArea.Position, now.Position) > tooFarAway)

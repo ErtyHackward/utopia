@@ -81,7 +81,7 @@ namespace Utopia.Server.Structs
             }
         }
 
-        void AreaEntityLockChanged(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<EntityLockMessage> e)
+        void AreaEntityLockChanged(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
         {
             Connection.Send(e.Message);
         }

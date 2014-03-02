@@ -4,14 +4,9 @@ using System.Collections.Generic;
 using SharpDX;
 using Utopia.Server.Events;
 using Utopia.Shared.ClassExt;
-using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
-using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 
 namespace Utopia.Server.Structs
@@ -21,6 +16,8 @@ namespace Utopia.Server.Structs
     /// </summary>
     public class MapArea
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Size of each Area
         /// </summary>
@@ -240,8 +237,12 @@ namespace Utopia.Server.Structs
                 // add events to retranslate
                 entity.PositionChanged += EntityPositionChanged;
                 entity.DynamicEntity.ViewChanged += EntityViewChanged;
-                
-                OnEntityAdded(new ServerDynamicEntityEventArgs {Entity = entity});
+
+                OnEntityAdded(new ServerDynamicEntityEventArgs { Entity = entity });
+            }
+            else
+            {
+                logger.Error("Failed to add entity to the area {0} {1}", entity.DynamicEntity.DynamicId, Position);
             }
         }
 
@@ -256,10 +257,12 @@ namespace Utopia.Server.Structs
 
                 OnEntityRemoved(new ServerDynamicEntityEventArgs { Entity = e });
             }
+            else
+            {
+                logger.Error("Failed to remove entity from the area {0} {1}", entityId, Position);
+            }
         }
-
-
-
+        
         void EntityViewChanged(object sender, EntityViewEventArgs e)
         {
             // retranslate
@@ -269,12 +272,18 @@ namespace Utopia.Server.Structs
         private void EntityPositionChanged(object sender, ServerDynamicEntityMoveEventArgs e)
         {
             // retranslate
-            OnEntityMoved(new EntityMoveEventArgs { Entity = e.ServerDynamicEntity.DynamicEntity, PreviousPosition = e.PreviousPosition });
+            OnEntityMoved(new EntityMoveEventArgs { 
+                Entity = e.ServerDynamicEntity.DynamicEntity, 
+                PreviousPosition = e.PreviousPosition 
+            });
             
             // we need to tell area manager that entity leaves us, to put it into new area
             if (!_rectangle.Contains(e.ServerDynamicEntity.DynamicEntity.Position.AsVector3()))
             {
-                OnEntityLeave(new EntityLeaveAreaEventArgs { Entity = e.ServerDynamicEntity, PreviousPosition = e.PreviousPosition });
+                OnEntityLeave(new EntityLeaveAreaEventArgs { 
+                    Entity = e.ServerDynamicEntity, 
+                    PreviousPosition = e.PreviousPosition 
+                });
 
                 RemoveEntity(e.ServerDynamicEntity.GetHashCode());
             }

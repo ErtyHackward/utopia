@@ -72,8 +72,7 @@ namespace Utopia.Server.Managers
                 _server.ConnectionManager.Broadcast(new ChatMessage { 
                     IsServerMessage = true,
                     DisplayName = "server",
-                    Message = string.Format("{0} has left the game.", e.Connection.DisplayName), 
-                    Operator = true 
+                    Message = string.Format("{0} has left the game.", e.Connection.DisplayName)
                 });
 
                 e.Connection.ServerEntity.CurrentArea = null;
@@ -88,22 +87,19 @@ namespace Utopia.Server.Managers
             { 
                 IsServerMessage = true, 
                 DisplayName = "server",
-                Message = string.Format("{0} joined.", connection.DisplayName), 
-                Operator = true 
+                Message = string.Format("{0} joined.", connection.DisplayName)
             });
             connection.Send(new ChatMessage 
             { 
                 IsServerMessage = true,
                 DisplayName = "server",
-                Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName), 
-                Operator = true 
+                Message = string.Format("Hello, {0}! Welcome to utopia! Have fun!", connection.DisplayName)
             });
             connection.Send(new ChatMessage
             {
                 IsServerMessage = true,
                 DisplayName = "server",
-                Message = string.Format("Players online: {0}", _server.ConnectionManager.Count),
-                Operator = true
+                Message = string.Format("Players online: {0}", _server.ConnectionManager.Count)
             });
             
             // adding entity to the world

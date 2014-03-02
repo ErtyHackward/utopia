@@ -163,8 +163,8 @@ namespace Utopia.Server.Managers
 
         private void ConnectionMessageDirection(object sender, ProtocolMessageEventArgs<EntityHeadDirectionMessage> e)
         {
-            var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
+            var connection = (ClientConnection)sender;
+            if (e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
             {
                 connection.ServerEntity.DynamicEntity.HeadRotation = e.Message.Rotation;
             }
@@ -172,8 +172,8 @@ namespace Utopia.Server.Managers
 
         private void ConnectionMessagePosition(object sender, ProtocolMessageEventArgs<EntityPositionMessage> e)
         {
-            var connection = sender as ClientConnection;
-            if (connection != null && e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
+            var connection = (ClientConnection)sender;
+            if (e.Message.EntityId == connection.ServerEntity.DynamicEntity.DynamicId)
             {
                 connection.ServerEntity.DynamicEntity.Position = e.Message.Position;
             }
@@ -181,7 +181,7 @@ namespace Utopia.Server.Managers
 
         private void ConnectionMessageEntityLock(object sender, ProtocolMessageEventArgs<EntityLockMessage> e)
         {
-            var connection = (ClientConnection) sender;
+            var connection = (ClientConnection)sender;
             bool success = false;
 
             if (e.Message.Lock)
