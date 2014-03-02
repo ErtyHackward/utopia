@@ -3,6 +3,7 @@ using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
+using Utopia.GUI;
 using Utopia.GUI.Inventory;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
@@ -53,6 +54,7 @@ namespace Utopia.Entities.Managers
         private SingleArrayChunkContainer _cubesHolder;
         private LandscapeBufferManager _bufferManager;
         private readonly ILandscapeManager _landscapeManager;
+        private readonly ChatComponent _chatComponent;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -307,7 +309,8 @@ namespace Utopia.Entities.Managers
                                    VisualWorldParameters visualWorldParameters,
                                    EntityFactory factory,
                                    LandscapeBufferManager bufferManager,
-                                   ILandscapeManager landscapeManager
+                                   ILandscapeManager landscapeManager,
+                                   ChatComponent chatComponent
             )
         {
             _cameraManager = cameraManager;
@@ -317,6 +320,7 @@ namespace Utopia.Entities.Managers
             _factory = factory;
             _bufferManager = bufferManager;
             _landscapeManager = landscapeManager;
+            _chatComponent = chatComponent;
 
             PlayerCharacter = (PlayerCharacter)server.Player;
             
@@ -362,7 +366,7 @@ namespace Utopia.Entities.Managers
 
         void EntityMessageTranslatorEntityLockFailed(object sender, EventArgs e)
         {
-            //TODO: inform that player can't use the item he want
+            _chatComponent.AddMessage(" -- Can't use the entity, it is busy!");
             _lockedEntity = null;
         }
 

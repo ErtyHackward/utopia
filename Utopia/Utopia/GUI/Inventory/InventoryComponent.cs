@@ -556,6 +556,11 @@ namespace Utopia.GUI.Inventory
             
             desktop.UpdateLayout();
 
+            if (otherParty != null && _containerInventoryWindow != null)
+            {
+                _containerInventoryWindow.Update();
+            }
+
             ItemMessageTranslator.Enabled = true;
             _inventoryActive = true;
 
