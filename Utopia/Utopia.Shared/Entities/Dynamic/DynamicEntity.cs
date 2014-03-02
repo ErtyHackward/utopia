@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using ProtoBuf;
 using SharpDX;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -131,54 +130,6 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         /// <summary>
-        /// Gets or sets entity head rotation
-        /// </summary>
-        [Browsable(false)]
-        public virtual Quaternion HeadRotation 
-        {
-            get 
-            {
-                return _headRotation;
-            }
-            set
-            {
-                if (_headRotation != value)
-                {
-                    _headRotation = value;
-                    OnViewChanged(new EntityViewEventArgs { Entity = this });
-                    
-                    // we want to change body rotation
-                    // leave only y-axis rotation for the body
-                    
-                    var head = _headRotation;
-
-                    head.X = 0;
-                    head.Z = 0;
-                    head.Normalize();
-
-                    // calculate the difference between head and body rotation
-                    var headInvert = head;
-                    headInvert.Invert();
-                    var offset = BodyRotation * headInvert;
-                    
-                    // allow to rotate the head up to 160 degrees
-                    if (offset.Angle > 1.6f)
-                    {
-                        // remove excess rotation
-                        head = Quaternion.Lerp(BodyRotation, head, 1f -  1.6f / offset.Angle);
-                        BodyRotation = head;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets entity body rotation
-        /// </summary>
-        [Browsable(false)]
-        public Quaternion BodyRotation { get; set; }
-
-        /// <summary>
         /// Gets or sets dynamic entity id
         /// </summary>
         [ProtoMember(1)]
@@ -215,6 +166,56 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [ProtoMember(6)]
         public bool IsReadOnly { get; set; }
+        
+        /// <summary>
+        /// Gets or sets entity head rotation
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(7)]
+        public virtual Quaternion HeadRotation
+        {
+            get
+            {
+                return _headRotation;
+            }
+            set
+            {
+                if (_headRotation != value)
+                {
+                    _headRotation = value;
+                    OnViewChanged(new EntityViewEventArgs { Entity = this });
+
+                    // we want to change body rotation
+                    // leave only y-axis rotation for the body
+
+                    var head = _headRotation;
+
+                    head.X = 0;
+                    head.Z = 0;
+                    head.Normalize();
+
+                    // calculate the difference between head and body rotation
+                    var headInvert = head;
+                    headInvert.Invert();
+                    var offset = BodyRotation * headInvert;
+
+                    // allow to rotate the head up to 160 degrees
+                    if (offset.Angle > 1.6f)
+                    {
+                        // remove excess rotation
+                        head = Quaternion.Lerp(BodyRotation, head, 1f - 1.6f / offset.Angle);
+                        BodyRotation = head;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets entity body rotation
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(8)]
+        public Quaternion BodyRotation { get; set; }
 
         #endregion
 

@@ -146,7 +146,10 @@ namespace Utopia.Server.Structs
 
         void EntityPositionChanged(object sender, EntityMoveEventArgs e)
         {
-            OnPositionChanged(new ServerDynamicEntityMoveEventArgs { ServerDynamicEntity = this, PreviousPosition = e.PreviousPosition });
+            OnPositionChanged(new ServerDynamicEntityMoveEventArgs { 
+                ServerDynamicEntity = this, 
+                PreviousPosition = e.PreviousPosition 
+            });
         }
 
         /// <summary>

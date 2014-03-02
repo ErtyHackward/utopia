@@ -94,14 +94,11 @@ namespace Utopia.Network
 
                 if (dynEntity.DynamicId == PlayerManager.PlayerCharacter.DynamicId)
                 {
-                    //var prevPosition = PlayerManager.PlayerCharacter.Position;
                     var prevDisplacementMode = PlayerManager.PlayerCharacter.DisplacementMode;
 
                     var playerChar = (PlayerCharacter)dynEntity;
-
-                    PlayerManager.PlayerCharacter.DisplacementMode = prevDisplacementMode;
-                    //playerChar.Position = prevPosition;
-
+                    playerChar.DisplacementMode = prevDisplacementMode;
+                    
                     PlayerManager.PlayerCharacter = playerChar;
                 }
             }

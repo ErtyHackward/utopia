@@ -24,12 +24,6 @@ namespace Utopia.Shared.Net.Messages
         public bool Action { get; set; }
 
         /// <summary>
-        /// Indicates if user is operator
-        /// </summary>
-        [ProtoMember(2)]
-        public bool Operator { get; set; }
-
-        /// <summary>
         /// Gets or sets display name of the sender, can be null if system message
         /// </summary>
         [ProtoMember(3)]
