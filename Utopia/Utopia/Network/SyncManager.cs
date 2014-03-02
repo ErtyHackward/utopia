@@ -152,9 +152,23 @@ namespace Utopia.Network
             if (e.EntitiesToSynchronize == null)
                 e.EntitiesToSynchronize = new List<uint>();
 
-            // we always need to resync our entity
+            // we will resync our entity only if the source entity is close enough
             if (!e.EntitiesToSynchronize.Contains(PlayerManager.PlayerCharacter.DynamicId))
-                e.EntitiesToSynchronize.Add(PlayerManager.PlayerCharacter.DynamicId);
+            {
+                if (e.EntitiesToSynchronize.Count > 0)
+                {
+                    var entity = _dynamicEntityManager.GetEntityById(e.EntitiesToSynchronize[0]);
+
+                    if (Vector3D.DistanceSquared(entity.Position, PlayerManager.PlayerCharacter.Position) < 1024) // (16*2)^2 = 1024 (2 chunks range)
+                    {
+                        e.EntitiesToSynchronize.Add(PlayerManager.PlayerCharacter.DynamicId);
+                    }
+                }
+                else
+                {
+                    e.EntitiesToSynchronize.Add(PlayerManager.PlayerCharacter.DynamicId);
+                }
+            }
 
             // find chunks to resync
             foreach (var entityId in e.EntitiesToSynchronize)

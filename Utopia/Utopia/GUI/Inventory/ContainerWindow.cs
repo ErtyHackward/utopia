@@ -94,12 +94,13 @@ namespace Utopia.GUI.Inventory
 
                 if (Content != null)
                 {
-                    Content.ItemPut += Content_ItemsChanged;   
+                    Content.ItemPut += Content_ItemsChanged;
                     Content.ItemTaken += Content_ItemsChanged;
                     Content.ItemExchanged += Content_ItemsChanged;
                 }
                 
                 _recipesList.Items.Clear();
+                _recipesList.SelectItem = -1;
                 foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == _container.BluePrintId))
                 {
                     _recipesList.Items.Add(recipe);
@@ -120,6 +121,9 @@ namespace Utopia.GUI.Inventory
                             Children.Add(cell);
                         }
                     }
+
+                    _resultModel.SetModel(null);
+                    _ingredientCells.ForEach( c => c.IsVisible = false);
                 }
                 else
                 {
@@ -208,6 +212,8 @@ namespace Utopia.GUI.Inventory
         public void Update()
         {
             RecipesListOnSelectionChanged(null, null);
+            _recipesList.updateSlider();
+            _recipesList.Slider.ThumbPosition = 0;
         }
 
         private void RecipesListOnSelectionChanged(object sender, EventArgs eventArgs)

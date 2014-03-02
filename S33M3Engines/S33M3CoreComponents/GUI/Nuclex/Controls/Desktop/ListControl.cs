@@ -335,7 +335,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         }
 
         /// <summary>Updates the size and position of the list's slider</summary>
-        private void updateSlider()
+        public void updateSlider()
         {
             if ((Screen != null) && (_listRowLocator != null))
             {
