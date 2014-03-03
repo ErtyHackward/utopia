@@ -54,5 +54,10 @@ namespace Utopia.Updater
             Md5Hash = reader.ReadString();
             Compressed = reader.ReadBoolean();
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", SystemPath, Md5Hash);
+        }
     }
 }
