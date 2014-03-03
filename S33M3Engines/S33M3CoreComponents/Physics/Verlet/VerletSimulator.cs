@@ -46,6 +46,41 @@ namespace S33M3CoreComponents.Physics.Verlet
         public bool isInContactWithLadder { get; set; }
         public bool StopMovementAction { get; set; }
 
+        private bool _isSliding;
+        private int _slidingCycles;
+        private int _stopSliddingCounter;
+        public Vector3 SliddingForce;
+        public bool IsSliding
+        {
+            get { return _isSliding; }
+            set
+            {
+                if (!_isSliding && value)
+                {
+                    //logger.Debug("Slide Start detected");
+                    _stopSliddingCounter = 2;
+                    _slidingCycles = 0;
+                    _isSliding = true;
+                }
+                if (_isSliding && !value && _stopSliddingCounter <= 0)
+                {
+                    //logger.Debug("Slide Stop detected");
+                    SliddingForce *= (_slidingCycles/8);
+                    //logger.Debug("START Force {0} with {1} cycle", SliddingForce ,_slidingCycles );
+
+                    Impulses.Add(new Impulse() { ForceApplied = SliddingForce });
+                    StopMovementAction = true;
+
+                    SliddingForce = default(Vector3);
+                    _isSliding = false;
+                }
+
+                if (!value) _stopSliddingCounter--;
+
+                if (_isSliding) _slidingCycles++;
+            }
+        }
+
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
         public float AirFriction { get; set; }

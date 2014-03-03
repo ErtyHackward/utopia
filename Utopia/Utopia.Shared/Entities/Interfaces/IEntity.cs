@@ -91,5 +91,8 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Controller is a class that provides gameplay specific logic
         /// </summary>
         object Controller { get; set; }
+
+        float SlidingValue { get; set; }
+        float Friction { get; set; }
     }
 }
