@@ -157,9 +157,13 @@ namespace UpdateMaker
             updateFile.UpdateToken = hash.ToString();
 
             if (_previousFile != null)
-                updateFile.Files = updateFile.GetChangedFiles(_previousFile);
+                _newFiles = updateFile.GetChangedFiles(_previousFile);
+            else
+            {
+                _newFiles = updateFile.Files;
+            }
 
-            if (updateFile.Files.Count == 0)
+            if (_newFiles.Count == 0)
             {
                 MessageBox.Show("No changes found.");
                 return;
@@ -194,11 +198,12 @@ namespace UpdateMaker
         private string file = "Prepare to upload...";
         private bool finished = false;
         private UpdateFile updateFile;
+        private List<UpdateFileInfo> _newFiles = new List<UpdateFileInfo>(); 
 
         private void Publish()
         {
             // create directories
-            var dirs = updateFile.Files.Select(f => Path.GetDirectoryName(f.SystemPath)).Distinct().ToList();
+            var dirs = _newFiles.Select(f => Path.GetDirectoryName(f.SystemPath)).Distinct().ToList();
 
             foreach (var dir in dirs)
             {
@@ -222,11 +227,11 @@ namespace UpdateMaker
 
             int index = 0;
             // upload files
-            foreach (var updateFileInfo in updateFile.Files)
+            foreach (var updateFileInfo in _newFiles)
             {
                 var url = "ftp://update.utopiarealms.com/files/" + updateFileInfo.SystemPath.Replace('\\', '/');
                 file = updateFileInfo.SystemPath;
-                progress = (float)index / updateFile.Files.Count;
+                progress = (float)index / _newFiles.Count;
                 using (var fs = File.OpenRead(Path.Combine(baseFolderPath, updateFileInfo.SystemPath)))
                 {
                     UploadFile(url, fs);
