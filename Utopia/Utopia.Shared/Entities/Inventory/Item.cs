@@ -292,6 +292,7 @@ namespace Utopia.Shared.Entities.Inventory
 
                 // put entity into the world
                 cursor.AddEntity(entity, owner.DynamicId);
+                impact.EntityId = entity.StaticId;
                 return impact;
             }
             

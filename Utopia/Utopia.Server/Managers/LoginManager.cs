@@ -133,7 +133,7 @@ namespace Utopia.Server.Managers
                 {
                     ErrorCode = ErrorCodes.VersionMismatch,
                     Data = ServerConnection.ProtocolVersion,
-                    Message = "Wrong client version, expected " + ServerConnection.ProtocolVersion
+                    Message = string.Format("Wrong client version ({0}) expected {1}" ,e.Message.Version, ServerConnection.ProtocolVersion)
                 };
                 connection.Send(error);
                 connection.Disconnect();

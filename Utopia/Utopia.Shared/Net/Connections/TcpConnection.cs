@@ -19,6 +19,8 @@ namespace Utopia.Shared.Net.Connections
 
         private EndPoint _endPoint;
 
+        public Exception LastException { get; set; }
+
         public TcpConnectionStatus Status
         {
             get { return _status; }
@@ -71,14 +73,16 @@ namespace Utopia.Shared.Net.Connections
         {
             try
             {
+                LastException = null;
                 Status = TcpConnectionStatus.Connecting;
                 Client.Connect(address, port);
                 Status = TcpConnectionStatus.Connected;
                 _endPoint = Client.Client.RemoteEndPoint;
                 Listen();
             }
-            catch (Exception)
+            catch (Exception x)
             {
+                LastException = x;
                 Status = TcpConnectionStatus.Disconnected;
             }
         }
@@ -110,6 +114,7 @@ namespace Utopia.Shared.Net.Connections
             }
             catch (Exception x)
             {
+                LastException = x;
                 logger.Error("Connection exception: {0}\n{1}", x.Message, x.StackTrace);
                 Status = TcpConnectionStatus.Disconnected;
             }
@@ -169,20 +174,27 @@ namespace Utopia.Shared.Net.Connections
                 }
                 stream.Flush();
             }
-            catch (Exception)
+            catch (Exception x)
             {
+                LastException = x;
                 Status = TcpConnectionStatus.Disconnected;
             }
         }
 
         public void Disconnect()
         {
+            while ((_sendThreadActive || _messages.Count > 0) && Status != TcpConnectionStatus.Disconnected)
+            {
+                Thread.Sleep(10);
+            }
+
             Dispose();
         }
 
         public void Dispose()
         {
             Client.Close();
+            LastException = null;
             Status = TcpConnectionStatus.Disconnected;
         }
     }

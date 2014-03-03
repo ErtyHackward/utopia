@@ -119,8 +119,9 @@ namespace Realms.Client.States
         {
             if (e.Status == TcpConnectionStatus.Disconnected)
             {
+                var serverComponent = _ioc.Get<ServerComponent>();
                 var guiManager = _ioc.Get<GuiManager>();
-                guiManager.MessageBox("Can't connect to the server", "error");
+                guiManager.MessageBox("Can't connect to the server. " + serverComponent.LastErrorText, "error");
                 StatesManager.ActivateGameStateAsync("MainMenu");
             }
         }

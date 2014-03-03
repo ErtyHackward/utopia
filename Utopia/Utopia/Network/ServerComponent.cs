@@ -17,6 +17,7 @@ namespace Utopia.Network
     {
         private ServerConnection _serverConnection;
         private bool _entered;
+        private ErrorMessage _lastError;
 
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
@@ -29,7 +30,7 @@ namespace Utopia.Network
         public string DisplayName { get; set; }
 
         public string Address { get; set; }
-
+        
         public ServerConnection ServerConnection
         {
             get { return _serverConnection; }
@@ -52,7 +53,24 @@ namespace Utopia.Network
             }
         }
 
-        public ErrorMessage LastError { get; set; }
+        public string LastErrorText {
+            get
+            {
+                string text = null;
+
+                if (_lastError != null)
+                {
+                    text = "Server error: " + _lastError.Message;
+                }
+
+                if (_serverConnection.LastException != null)
+                {
+                    text += "Exception: " + _serverConnection.LastException.Message;
+                }
+
+                return text;
+            }
+        }
 
         #endregion
 
@@ -283,7 +301,7 @@ namespace Utopia.Network
 
         protected void OnMessageError(ErrorMessage ea)
         {
-            LastError = ea;
+            _lastError = ea;
             if (MessageError != null) MessageError(this, new ProtocolMessageEventArgs<ErrorMessage> { Message = ea });
         }
 
@@ -494,13 +512,23 @@ namespace Utopia.Network
 
         void _serverConnection_StatusChanged(object sender, TcpConnectionStatusEventArgs e)
         {
+            if (e.Status == TcpConnectionStatus.Disconnected)
+            {
+                foreach (var message in ServerConnection.FetchPendingMessages())
+                {
+                    var error = message as ErrorMessage;
+                    if (error != null)
+                        _lastError = error;
+                }
+            }
+
             OnConnectionStausChanged(e);
         }
         #endregion
 
         #region IDebugInfo Implementation
         public bool ShowDebugInfo { get; set; }
-
+        
         public string GetDebugInfo()
         {
             if (ShowDebugInfo)
