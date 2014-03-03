@@ -12,6 +12,7 @@ using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Chunks
 {
+
     /// <summary>
     /// Base class for chunk landscape management
     /// </summary>
@@ -19,6 +20,9 @@ namespace Utopia.Shared.Chunks
     public abstract class LandscapeManager<TChunk> : ILandscapeManager 
         where TChunk : AbstractChunk
     {
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected WorldParameters _wp;
 
         /// <summary>
@@ -254,7 +258,7 @@ namespace Utopia.Shared.Chunks
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
             {
-                //logger.Debug("STUCK tested {0}, assigned {1}, last Good position tested : {2}", newPositionWithColliding, previousPosition, memo);
+                //logger.Debug("Block STUCK tested {0}, assigned {1}", newPositionWithColliding, previousPosition);
                 newPositionWithColliding = previousPosition;
                 newPositionWithColliding.Y += 0.1;
             }

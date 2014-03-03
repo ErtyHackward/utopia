@@ -136,6 +136,14 @@ namespace Utopia.Shared.Entities
         [Browsable(false)]
         public object Controller { get; set; }
 
+        [Description("Low friction value will make the move on it easier = faster"), Category("Physics")]
+        [ProtoMember(14)]
+        public float Friction { get; set; }
+
+        [Description("When stop moving on the block, will the player continue to move"), Category("Physics")]
+        [ProtoMember(15)]
+        public float SlidingValue { get; set; }
+
         /// <summary>
         /// Returns link to the entity
         /// </summary>
