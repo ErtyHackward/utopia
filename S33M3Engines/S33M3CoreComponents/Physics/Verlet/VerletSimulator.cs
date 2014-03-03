@@ -58,14 +58,14 @@ namespace S33M3CoreComponents.Physics.Verlet
                 if (!_isSliding && value)
                 {
                     //logger.Debug("Slide Start detected");
-                    _stopSliddingCounter = 2;
+                    _stopSliddingCounter = 1;
                     _slidingCycles = 0;
                     _isSliding = true;
                 }
                 if (_isSliding && !value && _stopSliddingCounter <= 0)
                 {
                     //logger.Debug("Slide Stop detected");
-                    SliddingForce *= (_slidingCycles/8);
+                    SliddingForce *= (_slidingCycles/4);
                     //logger.Debug("START Force {0} with {1} cycle", SliddingForce ,_slidingCycles );
 
                     Impulses.Add(new Impulse() { ForceApplied = SliddingForce });
