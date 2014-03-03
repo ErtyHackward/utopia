@@ -10,6 +10,8 @@ namespace S33M3CoreComponents.Physics.Verlet
 {
     public class VerletSimulator
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private Vector3D _curPosition;
 
         private Vector3D _prevPosition;
@@ -29,9 +31,9 @@ namespace S33M3CoreComponents.Physics.Verlet
         bool _withCollisionBounsing = false;
         bool _onGround;
 
-        private List<Impulse> _impulses = new List<Impulse>();
+        private HashSet<Impulse> _impulses = new HashSet<Impulse>();
 
-        public List<Impulse> Impulses { get { return _impulses; } }
+        public HashSet<Impulse> Impulses { get { return _impulses; } }
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool ConstraintOnlyMode { get; set; }
@@ -42,6 +44,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         public float OffsetBlockHitted { get; set; }
         public double GroundBelowEntity { get; set; }
         public bool isInContactWithLadder { get; set; }
+        public bool StopMovementAction { get; set; }
 
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
@@ -129,19 +132,21 @@ namespace S33M3CoreComponents.Physics.Verlet
                 _forcesAccum.Y += -SimulatorCst.Gravity;
             }
 
+            _impulses.RemoveWhere(x => x.ApplyOnlyIfOnGround && OnGround == false);
+
             OnGround = false;
 
-            for (int ImpulseIndex = 0; ImpulseIndex < _impulses.Count; ImpulseIndex++)
+            foreach (var impulse in _impulses)
             {
-                if (_impulses[ImpulseIndex].IsActive)
+                if (impulse.IsActive)
                 {
-                    _forcesAccum += (_impulses[ImpulseIndex].ForceApplied);
-                    _impulses[ImpulseIndex].AmountOfTime -= elapsedTimeS;
+                    _forcesAccum += (impulse.ForceApplied);
+                    impulse.AmountOfTime -= elapsedTimeS;
                 }
             }
 
             //CleanUp impulses
-            _impulses.RemoveAll(x => x.IsActive == false);
+            _impulses.RemoveWhere(x => x.IsActive == false);
         }
 
         private void Verlet(float elapsedTimeS, out Vector3D newPosition)

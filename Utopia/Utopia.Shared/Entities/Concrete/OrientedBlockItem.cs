@@ -36,7 +36,13 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         [ProtoMember(2)]
         public bool IsOrientedSlope { get; set; }
-        
+
+        /// <summary>
+        /// Get or Set value indicating of the slope is sliding
+        /// </summary>
+        [ProtoMember(3)]
+        public bool IsSlidingSlope { get; set; }
+
         public OrientedBlockItem()
         {
             Name = "Oriented Entity";

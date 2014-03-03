@@ -2,6 +2,7 @@
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities.Concrete.Interface;
 
 namespace Utopia.Entities.Voxel
 {
@@ -54,7 +55,17 @@ namespace Utopia.Entities.Voxel
                 _visualVoxelModel = model;
                 if (wrapped.DefaultSize == Vector3.Zero) //No size define, use the default one
                 {
-                    BoundingBox voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
+                    BoundingBox voxelModelBB;
+                    if (Entity is IOrientedSlope)
+                    {
+                        //Use a forced boundingbox for the slope to work properly, this will be a 16*16*16 BB
+                        voxelModelBB = new BoundingBox(new Vector3(-8, 0, -8), new Vector3(8, 16, 8));
+                    }
+                    else
+                    {
+                        //Use the computed Bounding box from the model
+                        voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
+                    }
 
                     if (voxelModelBB != null)
                     {

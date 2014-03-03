@@ -249,7 +249,7 @@ namespace Utopia.Entities.Managers
                     IOrientedSlope entity = (IOrientedSlope)entityTesting.Entity;
                     if (entity.IsOrientedSlope)
                     {
-                        SlopeCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, entity.Orientation);
+                        SlopeCollisionDetection(physicSimu, entityTesting, ref entityBoundingBox, ref boundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, entity.Orientation, entity.IsSlidingSlope);
                         return;
                     }
                 }
@@ -533,10 +533,9 @@ namespace Utopia.Entities.Managers
         }
 
 
-        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation)
+        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, bool isSlidingSlope)
         {
-
-            if (IsSlopeCollisionDetection(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, slopeOrientation))
+            if (IsSlopeCollisionDetection(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, slopeOrientation, isSlidingSlope))
             {
                 Vector3D newPositionWithColliding = previousPosition;
 
@@ -556,10 +555,9 @@ namespace Utopia.Entities.Managers
 
                 newPosition2Evaluate = newPositionWithColliding;
             }
-
         }
 
-        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation)
+        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, bool isSliding)
         {
             Vector3 entityPosition = newPosition2Evaluate.AsVector3();
             float posi = 0.0f;
@@ -589,29 +587,20 @@ namespace Utopia.Entities.Managers
                     break;
             }
 
+            float posiOriginal = posi;
             posi = posi / L;
             float Y = posi * H;
             Y = Math.Min(Math.Max(Y, 0), 1);
 
+            if (isSliding)
+            {
+                return SlidingSlope(physicSimu, entityTesting, Y, ref newPosition2Evaluate, ref previousPosition, slopeOrientation);
+            }
+
             //Apply only if new Y is >= Current Y
             if (entityTesting.WorldBBox.Minimum.Y + Y > newPosition2Evaluate.Y)
             {
-                if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
-                {
-                    newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
-                    previousPosition.Y = newPosition2Evaluate.Y;
-
-                    physicSimu.OnGround = true;
-                    physicSimu.AllowJumping = true;
-
-                    return false;
-                }
-                else
-                {
-                    //Colliding with a slope High slide face
-                    //newPosition2Evaluate = previousPosition;
-                    return true;
-                }
+                return NormalSlope(physicSimu, entityTesting, Y, ref newPosition2Evaluate, ref previousPosition);
             }
             else
             {
@@ -619,6 +608,94 @@ namespace Utopia.Entities.Managers
                 return false;
             }
 
+        }
+
+        private bool NormalSlope(VerletSimulator physicSimu, VisualEntity entityTesting, float Y, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        {
+            if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
+            {
+                //Push up the player, and stabilize its physic simulation
+                newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
+                //previousPosition.Y = newPosition2Evaluate.Y;
+
+                physicSimu.OnGround = true;
+                physicSimu.AllowJumping = true;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool SlidingSlope(VerletSimulator physicSimu, VisualEntity entityTesting, float Y, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation)
+        {
+            if (entityTesting.WorldBBox.Minimum.Y + Y >= newPosition2Evaluate.Y)
+            {
+                if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 1.0f)
+                {                    
+                    Y = Y - (float)(newPosition2Evaluate.Y - Math.Floor(newPosition2Evaluate.Y));
+                    double YVBackup = Y;
+                    bool OnFullBlock = (Y >= 0.8 || Y <= 0.2);
+                    if (Y < 0.001 || Y >= 0.999)
+                    {
+                        Y = 0.02f;
+                    }
+
+                    switch (slopeOrientation)
+                    {
+                        case ItemOrientation.North:
+                            newPosition2Evaluate.Z = newPosition2Evaluate.Z - Y;
+
+                            if (!OnFullBlock)
+                            {
+                                physicSimu.Impulses.Add((new Impulse() { ForceApplied = new Vector3(0, 0, -20f), ApplyOnlyIfOnGround = true, ImpulseId = "SlopeSlidingImpulse" }));
+                                physicSimu.StopMovementAction = true;
+                            }
+
+                            break;
+                        case ItemOrientation.South:
+
+                            newPosition2Evaluate.Z = newPosition2Evaluate.Z + Y;
+
+                            if (!OnFullBlock)
+                            {
+                                physicSimu.Impulses.Add((new Impulse() { ForceApplied = new Vector3(0, 0, 20f), ApplyOnlyIfOnGround = true, ImpulseId = "SlopeSlidingImpulse" }));
+                                physicSimu.StopMovementAction = true;
+                            }
+
+                            break;
+                        case ItemOrientation.East:
+                            newPosition2Evaluate.X = newPosition2Evaluate.X + Y;
+
+                            if (!OnFullBlock)
+                            {
+                                physicSimu.Impulses.Add((new Impulse() { ForceApplied = new Vector3(20f, 0, 0), ApplyOnlyIfOnGround = true, ImpulseId = "SlopeSlidingImpulse" }));
+                                physicSimu.StopMovementAction = true;
+                            }
+
+                            break;
+                        case ItemOrientation.West:
+                            newPosition2Evaluate.X = newPosition2Evaluate.X - Y;
+
+                            if (!OnFullBlock)
+                            {
+                                physicSimu.Impulses.Add((new Impulse() { ForceApplied = new Vector3(-20f, 0, 0), ApplyOnlyIfOnGround = true, ImpulseId = "SlopeSlidingImpulse" }));
+                                physicSimu.StopMovementAction = true;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                physicSimu.AllowJumping = true;
+                return false;
+            }
         }
 
         private void BoundingBoxCollision(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)

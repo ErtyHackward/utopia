@@ -121,6 +121,7 @@ namespace Utopia.Entities.Managers
                         if (_physicSimu.OnGround)
                         {
                             WalkingFirstPersonOnGround(ref timeSpent);
+                            _physicSimu.StopMovementAction = false;
                         }
                         else
                         {
@@ -131,6 +132,7 @@ namespace Utopia.Entities.Managers
                 default:
                     break;
             }
+
         }
 
         private void SwimmingFreeFirstPersonMove(ref GameTime timeSpent)
@@ -177,7 +179,8 @@ namespace Utopia.Entities.Managers
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveForward) ||
                 _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveBackward) ||
                 _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeLeft) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeRight))
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeRight) ||
+                _physicSimu.StopMovementAction)
             {
                 _stopMovedAction = true;
             }
