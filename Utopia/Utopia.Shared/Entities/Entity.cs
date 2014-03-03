@@ -114,12 +114,14 @@ namespace Utopia.Shared.Entities
         [Browsable(false)]
         public uint FactionId { get; set; }
 
+        //[ProtoMember(14)] ==> Not use it for compatibility reason.
+
         [Description("Low friction value will make the move on it easier = faster"), Category("Physics")]
-        [ProtoMember(14)]
+        [ProtoMember(15)]
         public float Friction { get; set; }
 
         [Description("When stop moving on the block, will the player continue to move"), Category("Physics")]
-        [ProtoMember(15)]
+        [ProtoMember(16)]
         public float SlidingValue { get; set; }
 
         /// <summary>
