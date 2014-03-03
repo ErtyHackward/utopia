@@ -210,7 +210,7 @@ namespace Realms.Client.States
             if (e.Status == TcpConnectionStatus.Disconnected)
             {
                 var vars = _ioc.Get<RealmRuntimeVariables>();
-                vars.MessageOnExit = "Server connection was interrupted." + (_serverComponent.LastError == null ? "" : "Server error: " + _serverComponent.LastError.Message);
+                vars.MessageOnExit = "Server connection was interrupted. " + _serverComponent.LastErrorText;
                 StatesManager.ActivateGameState("MainMenu");
             }
         }
