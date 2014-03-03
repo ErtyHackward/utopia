@@ -232,7 +232,14 @@ namespace Utopia.Shared.Chunks
                         }
                         else
                         {
-                            previousPosition.Y = MathHelper.Floor(previousPosition.Y);
+                            if (previousPosition.Y != newPositionWithColliding.Y)
+                            {
+                                previousPosition.Y = MathHelper.Floor(previousPosition.Y);
+                            }
+                            else
+                            {
+                                previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1);
+                            }
                         }
                     }
 
