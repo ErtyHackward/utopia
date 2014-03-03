@@ -614,9 +614,10 @@ namespace Utopia.Entities.Managers
         {
             if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
             {
+
                 //Push up the player, and stabilize its physic simulation
                 newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
-                //previousPosition.Y = newPosition2Evaluate.Y;
+                previousPosition.Y = newPosition2Evaluate.Y;
 
                 physicSimu.OnGround = true;
                 physicSimu.AllowJumping = true;
@@ -632,11 +633,11 @@ namespace Utopia.Entities.Managers
         {
             if (entityTesting.WorldBBox.Minimum.Y + Y >= newPosition2Evaluate.Y)
             {
-                if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 1.0f)
+                if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
                 {                    
                     Y = Y - (float)(newPosition2Evaluate.Y - Math.Floor(newPosition2Evaluate.Y));
                     double YVBackup = Y;
-                    bool OnFullBlock = (Y >= 0.8 || Y <= 0.2);
+                    bool OnFullBlock = entityTesting.WorldBBox.Minimum.Y <= (newPosition2Evaluate.Y + 0.01);
                     if (Y < 0.001 || Y >= 0.999)
                     {
                         Y = 0.02f;
@@ -649,8 +650,9 @@ namespace Utopia.Entities.Managers
 
                             if (!OnFullBlock)
                             {
-                                physicSimu.Impulses.Add((new Impulse() { ForceApplied = new Vector3(0, 0, -20f), ApplyOnlyIfOnGround = true, ImpulseId = "SlopeSlidingImpulse" }));
-                                physicSimu.StopMovementAction = true;
+                                logger.Debug("FORCE started");
+                                //physicSimu.Impulses.Add((new Impulse() { ForceApplied = new Vector3(0, 0, -20f), ApplyOnlyIfOnGround = true, ImpulseId = "SlopeSlidingImpulse" }));
+                                //physicSimu.StopMovementAction = true;
                             }
 
                             break;
@@ -688,8 +690,12 @@ namespace Utopia.Entities.Managers
                         default:
                             break;
                     }
+                    return false;
                 }
-                return false;
+                else
+                {
+                    return true;
+                }
             }
             else
             {

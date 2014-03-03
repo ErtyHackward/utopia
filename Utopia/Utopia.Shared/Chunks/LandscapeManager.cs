@@ -258,7 +258,7 @@ namespace Utopia.Shared.Chunks
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
             if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
             {
-                //logger.Debug("Block STUCK tested {0}, assigned {1}", newPositionWithColliding, previousPosition);
+                logger.Debug("Block STUCK tested {0}, assigned {1}", newPositionWithColliding, previousPosition);
                 newPositionWithColliding = previousPosition;
                 newPositionWithColliding.Y += 0.1;
             }
