@@ -622,7 +622,6 @@ namespace Utopia.Entities.Managers
         {
             if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
             {
-
                 //Push up the player, and stabilize its physic simulation
                 newPosition2Evaluate.Y = entityTesting.WorldBBox.Minimum.Y + Y;
                 previousPosition.Y = newPosition2Evaluate.Y;
@@ -653,6 +652,7 @@ namespace Utopia.Entities.Managers
                     }
 
                     newPosition2Evaluate.Y += entityTesting.Entity.Friction;
+
                     isSliding = true;
 
                     switch (slopeOrientation)
