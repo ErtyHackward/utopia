@@ -81,16 +81,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         private byte GetBiomeV1(double landFormType, double temperature, double moisture, double zone)
         {
-            switch (_config.Version)
-            {
-                case 0:
-
-                    break;
-
-                case 1:
-                    break;
-            }
-
             enuLandFormType landformtype = (enuLandFormType)landFormType;
 
             List<WeatherBiomes> biomeList;
@@ -136,7 +126,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             foreach (var biome in wb.BiomesListe)
             {
                 runningWeight += biome.ZoneWeight;
-                if (runningWeight >= threeshold) return biome.Id;
+                if (runningWeight > threeshold) return biome.Id;
             }
             return (byte)255; 
         }

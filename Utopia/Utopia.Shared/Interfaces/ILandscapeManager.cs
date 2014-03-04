@@ -51,7 +51,7 @@ namespace Utopia.Shared.Interfaces
         /// <param name="physicSimu"></param>
         /// <param name="localEntityBoundingBox"></param>
         /// <param name="newPosition2Evaluate"></param>
-        void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
+        void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition);
 
         Vector3D GetHighestPoint(Vector3D vector2);
     }
