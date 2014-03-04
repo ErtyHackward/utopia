@@ -159,7 +159,7 @@ namespace Utopia.Shared.Chunks
         /// <param name="physicSimu"></param>
         /// <param name="localEntityBoundingBox"></param>
         /// <param name="newPosition2Evaluate"></param>
-        public void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        public void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
         {
             Vector3D newPositionWithColliding = previousPosition;
             TerraCubeWithPosition _collidingCube;
@@ -232,14 +232,7 @@ namespace Utopia.Shared.Chunks
                         }
                         else
                         {
-                            if (previousPosition.Y != newPositionWithColliding.Y)
-                            {
-                                previousPosition.Y = MathHelper.Floor(previousPosition.Y);
-                            }
-                            else
-                            {
-                                previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1);
-                            }
+                            previousPosition.Y = MathHelper.Floor(originalPosition.Y);
                         }
                     }
 
@@ -266,7 +259,7 @@ namespace Utopia.Shared.Chunks
             if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
             {
                 //logger.Debug("Block STUCK tested {0}, assigned {1}", newPositionWithColliding, previousPosition);
-                newPositionWithColliding = previousPosition;
+                newPositionWithColliding = originalPosition;
                 newPositionWithColliding.Y += 0.1;
             }
 
