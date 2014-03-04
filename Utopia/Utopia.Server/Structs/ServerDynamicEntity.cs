@@ -22,6 +22,8 @@ namespace Utopia.Server.Structs
         private Faction _faction;
         private MapArea _currentArea;
         private IDynamicEntity _dynamicEntity;
+        private DateTime _lastSaved;
+        private bool _needSave;
         
         public event EventHandler<ServerDynamicEntityMoveEventArgs> PositionChanged;
 
@@ -29,6 +31,10 @@ namespace Utopia.Server.Structs
         {
             var handler = PositionChanged;
             if (handler != null) handler(this, e);
+        }
+
+        public bool NeedSave {
+            get { return _needSave && _lastSaved.AddSeconds(10) < DateTime.Now; }
         }
 
         /// <summary>
@@ -74,6 +80,13 @@ namespace Utopia.Server.Structs
                 if (_dynamicEntity != null)
                 {
                     _dynamicEntity.PositionChanged -= EntityPositionChanged;
+
+                    var characterEntity = _dynamicEntity as CharacterEntity;
+
+                    if (characterEntity != null)
+                    {
+                        characterEntity.InventoryUpdated -= characterEntity_InventoryUpdated;
+                    }
                 }
 
                 _dynamicEntity = value;
@@ -81,6 +94,13 @@ namespace Utopia.Server.Structs
                 if (_dynamicEntity != null)
                 {
                     _dynamicEntity.PositionChanged += EntityPositionChanged;
+
+                    var characterEntity = _dynamicEntity as CharacterEntity;
+
+                    if (characterEntity != null)
+                    {
+                        characterEntity.InventoryUpdated += characterEntity_InventoryUpdated;
+                    }
 
                     if (_dynamicEntity.FactionId != 0)
                     {
@@ -93,6 +113,11 @@ namespace Utopia.Server.Structs
                     }
                 }
             }
+        }
+
+        void characterEntity_InventoryUpdated(object sender, EventArgs e)
+        {
+            _needSave = true;
         }
 
         /// <summary>
@@ -193,6 +218,13 @@ namespace Utopia.Server.Structs
         public virtual void Equip(EntityEquipmentMessage entityEquipmentMessage) { }
 
         public virtual void ItemTransfer(ItemTransferMessage itemTransferMessage) { }
+
+        public void Save()
+        {
+            _server.EntityStorage.SaveDynamicEntity(_dynamicEntity);
+            _needSave = false;
+            _lastSaved = DateTime.Now;
+        }
     }
 
     public class ServerDynamicEntityMoveEventArgs : EventArgs

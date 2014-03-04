@@ -40,7 +40,6 @@ namespace Utopia.Shared.Entities.Concrete
             get { return _content; }
             set
             {
-
                 if (_content == value)
                     return;
 

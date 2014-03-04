@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using ProtoBuf;
 using Utopia.Server.Structs;
 using Utopia.Server.Utils;
+using Utopia.Shared;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
@@ -50,6 +52,19 @@ namespace Utopia.Server.Managers
             _factory = factory;
             _server.ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
             _server.ConnectionManager.BeforeConnectionRemoved += ConnectionManagerBeforeConnectionRemoved;
+
+            _server.Scheduler.AddTaskPeriodic("Save entities", DateTime.Now, TimeSpan.FromSeconds(10), SaveEntities);
+        }
+
+        private void SaveEntities()
+        {
+            var entitiesToSave = _server.ConnectionManager.Connections().Where(c => c.ServerEntity.NeedSave).Select(c => c.ServerEntity) .ToList();
+
+            using (new PerfLimit("Entities save " + entitiesToSave.Count))
+            foreach (var entity in entitiesToSave)
+            {
+                entity.Save();
+            }
         }
 
         private void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
