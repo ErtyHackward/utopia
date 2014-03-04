@@ -95,7 +95,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
 
-        public delegate void CheckConstraintFct(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
+        public delegate void CheckConstraintFct(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition);
         public CheckConstraintFct ConstraintFct;
 
         public VerletSimulator(ref BoundingBox localBoundingBox)
@@ -205,10 +205,11 @@ namespace S33M3CoreComponents.Physics.Verlet
 
         private void SatisfyConstraints(ref Vector3D futurePosition, ref Vector3D OriginalPosition)
         {
+            Vector3D OriginalPositionBackUp = OriginalPosition;
             foreach (CheckConstraintFct fct in ConstraintFct.GetInvocationList())
             {
                 //This fct will be able to modify the newPosition if needed to satisfy its own constraint !
-                fct(this, ref _localBoundingBox, ref futurePosition, ref OriginalPosition);
+                fct(this, ref _localBoundingBox, ref futurePosition, ref OriginalPosition, ref OriginalPositionBackUp);
             }
             _curPosition = futurePosition;
         }

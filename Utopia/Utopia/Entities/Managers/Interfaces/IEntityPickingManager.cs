@@ -22,6 +22,6 @@ namespace Utopia.Entities.Managers.Interfaces
         /// <returns></returns>
         EntityPickResult CheckEntityPicking(Ray pickingRay);
 
-        void isCollidingWithEntity(VerletSimulator physicSimu,ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
+        void isCollidingWithEntity(VerletSimulator physicSimu,ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition);
     }
 }
