@@ -213,7 +213,7 @@ namespace Utopia.Entities.Managers
 
         //Entity vs Player Collision detection
         //Use by physic engine
-        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox playerBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox playerBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
         {
             if (isDirty) _timer_OnTimerRaised();
 
