@@ -259,6 +259,7 @@
     <Compile Include="Net\Messages\EntityDataMessage.cs" />
     <Compile Include="Net\Messages\GetEntityMessage.cs" />
     <Compile Include="Net\Web\Responses\VerifyResponse.cs" />
+    <Compile Include="PerfLimit.cs" />
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="Entities\Faction.cs" />

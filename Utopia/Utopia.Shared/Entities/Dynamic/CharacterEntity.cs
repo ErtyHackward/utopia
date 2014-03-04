@@ -71,19 +71,44 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         [Browsable(false)]
         public bool IsRealPlayer { get; set; }
-        
+
+        public event EventHandler InventoryUpdated;
+
+        protected virtual void OnInventoryUpdated()
+        {
+            var handler = InventoryUpdated;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         protected CharacterEntity()
         {
+            Initiazlie();
+            HandTool = new HandTool();
+        }
+
+        private void Initiazlie()
+        {
             Equipment = new CharacterEquipment(this);
-            Inventory = new SlotContainer<ContainedSlot>(this, new S33M3Resources.Structs.Vector2I(7,5));
+            Inventory = new SlotContainer<ContainedSlot>(this, new S33M3Resources.Structs.Vector2I(7, 5));
+
+            Equipment.ItemTaken += EquipmentOnItemEvent;
+            Equipment.ItemPut += EquipmentOnItemEvent;
+            Equipment.ItemExchanged += EquipmentOnItemEvent;
+
+            Inventory.ItemTaken += EquipmentOnItemEvent;
+            Inventory.ItemPut += EquipmentOnItemEvent;
+            Inventory.ItemExchanged += EquipmentOnItemEvent;
 
             // we need to have single id scope with two of these containers
             Equipment.JoinIdScope(Inventory);
             Inventory.JoinIdScope(Equipment);
-
-            HandTool = new HandTool();
         }
-        
+
+        private void EquipmentOnItemEvent(object sender, EntityContainerEventArgs<ContainedSlot> entityContainerEventArgs)
+        {
+            OnInventoryUpdated();
+        }
+
         /// <summary>
         /// Returns tool that can be used
         /// </summary>
@@ -257,11 +282,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             if (cont != null)
             {
-                cont.Equipment = new CharacterEquipment(cont);
-                cont.Inventory = new SlotContainer<ContainedSlot>(cont);
-
-                cont.Equipment.JoinIdScope(Inventory);
-                cont.Inventory.JoinIdScope(Equipment);
+                cont.Initiazlie();
             }
 
             return obj;
