@@ -94,6 +94,8 @@ PS_IN VS(VS_IN input)
     PS_IN output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
+
+	//For block that are shorter than full block size on the X/Z axis
 	if(input.Various.y > 0)
 	{
 		newPosition += (faceSpecialOffset[input.VertexInfo.y] * input.Various.y);
@@ -122,9 +124,11 @@ PS_IN VS(VS_IN input)
 
 	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.BiomeData = input.BiomeData;
+	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
+	output.BiomeData.y = saturate(input.BiomeData.y + WeatherGlobalOffset.y);
 	output.Various = input.Various;
 
-	if (SunVector.y < 0)
+	if (SunVector.y < 0 && UseShadowMap)
 	{
 		// commented for debug reason
 		//if (facetype == 0 || facetype == 1)
@@ -146,9 +150,6 @@ PS_IN VS(VS_IN input)
 // ============================================================================
 float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 {
-	if (!UseShadowMap)
-		return 1.0f;
-	
 	// if the sun is under the horisont => dark
 	if (SunVector.y > 0)
 	{
@@ -248,9 +249,10 @@ PS_OUT PS(PS_IN input)
 
 	}
 
-    float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
-    finalColor.rbg *= clamp(shadowFactor, 0.5, 1);
-
+	if (UseShadowMap){
+		float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
+		finalColor.rbg *= clamp(shadowFactor, 0.5, 1);
+	}
 
 	// Apply fog on output color
 	output.Color = finalColor;
