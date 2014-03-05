@@ -16,6 +16,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //When first loaded set property with the first item in the rule list.
             get
             {
+                if (EditorConfigHelper.Config.TreeBluePrints.Exists(x => x.Id == LandscapeEntityBluePrintId) == false)
+                {
+                    LandscapeEntityBluePrintId = EditorConfigHelper.Config.TreeBluePrints[0].Id;
+                }
                 return EditorConfigHelper.Config.TreeBluePrints.First(x => x.Id == LandscapeEntityBluePrintId).Name;
             }
             set
