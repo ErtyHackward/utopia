@@ -19,12 +19,16 @@ namespace Utopia.Worlds.Weather
         #endregion
 
         #region Public properties/variable
+        public float MoistureOffset { get; set;}
+        public float TemperatureOffset { get; set; }
         public IWind Wind { get; set; }
         #endregion
 
         public Weather(IClock clock, ServerComponent server)
         {
             Wind = new Wind(false);
+            MoistureOffset = 0.0f;
+            TemperatureOffset = 0.0f;
             _clock = clock;
             _server = server;
             _server.MessageWeather += ServerConnection_MessageWeather;
@@ -58,6 +62,8 @@ namespace Utopia.Worlds.Weather
         {
             //Assign new wind direction !
             Wind.WindFlow = e.Message.WindDirection;
+            MoistureOffset = e.Message.TemperatureOffset;
+            MoistureOffset = e.Message.MoistureOffset;
         }
         #endregion
     }

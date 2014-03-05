@@ -116,6 +116,9 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.causticPower = clamp( ((length(worldPosition.xyz) - 30) / 20), 0, 1);
 	if(facetype != 3) output.causticPower = 1;
 	output.BiomeData = input.VertexInfo2.yz;
+	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
+	output.BiomeData.y = saturate(input.BiomeData.y + WeatherGlobalOffset.y);
+
     return output;
 }
 

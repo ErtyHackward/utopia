@@ -84,7 +84,6 @@ namespace Utopia.Worlds.GameClocks
 
             _visualClockTime.Time = _clockTime.Value;
         }
-
         #endregion
 
         #region Private methods
