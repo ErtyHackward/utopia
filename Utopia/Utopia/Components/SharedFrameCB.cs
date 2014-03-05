@@ -18,6 +18,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Components
 {
@@ -61,7 +62,7 @@ namespace Utopia.Components
         private StaggingBackBuffer _backBuffer;
         private float _animationValue = 0.0f;
         private float _animationSpeed = 0.5f;
-        private Vector2 _weatherGlobalOffset;
+        private IWeather _weather;
 
 
         public SharedFrameCB(D3DEngine engine,
@@ -69,6 +70,7 @@ namespace Utopia.Components
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              IPlayerManager playerManager,
+                             IWeather weather,
                              [Named("SkyBuffer")] StaggingBackBuffer backBuffer)
             
         {
@@ -78,9 +80,9 @@ namespace Utopia.Components
             _visualWorldParam = visualWorldParam;
             _playerManager = playerManager;
             _backBuffer = backBuffer;
-            DrawOrders.UpdateIndex(0, 0);
+            _weather = weather;
 
-            _weatherGlobalOffset = new Vector2();
+            DrawOrders.UpdateIndex(0, 0);
 
             CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine.Device, "PerFrame");
         }
@@ -99,8 +101,8 @@ namespace Utopia.Components
             CBPerFrame.Values.CameraWorldPosition = _cameraManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
             CBPerFrame.Values.InvertedOrientation = Matrix.Transpose(Matrix.RotationQuaternion(Quaternion.Invert(_cameraManager.ActiveCamera.Orientation.ValueInterp)));
 
-            _weatherGlobalOffset = new Vector2(-1f, -1f);
-            CBPerFrame.Values.WeatherGlobalOffset = _weatherGlobalOffset;
+            CBPerFrame.Values.WeatherGlobalOffset.X = _weather.TemperatureOffset;
+            CBPerFrame.Values.WeatherGlobalOffset.Y = _weather.MoistureOffset;
 
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {

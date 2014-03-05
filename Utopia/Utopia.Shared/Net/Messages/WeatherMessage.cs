@@ -17,6 +17,18 @@ namespace Utopia.Shared.Net.Messages
         public Vector3 WindDirection { get; set; }
 
         /// <summary>
+        /// Current world temperature offset in max range [-1;1]
+        /// </summary>
+        [ProtoMember(2)]
+        public float TemperatureOffset { get; set; }
+
+        /// <summary>
+        /// Current world moisture offset in max range [-1;1]
+        /// </summary>
+        [ProtoMember(3)]
+        public float MoistureOffset { get; set; }
+
+        /// <summary>
         /// Gets a message identification number
         /// </summary>
         public byte MessageId
