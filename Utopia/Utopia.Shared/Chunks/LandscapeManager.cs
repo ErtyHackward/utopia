@@ -181,7 +181,17 @@ namespace Utopia.Shared.Chunks
                     if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        physicSimu.OffsetBlockHitted = offsetValue;
+                        if (_collidingCube.BlockProfile.YBlockOffset == 0 && _collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
+                        {
+                            //Check if an other block is place over the hitted one
+                            var overcube = GetCubeAt(new Vector3I(_collidingCube.Position.X, _collidingCube.Position.Y + 1, _collidingCube.Position.Z));
+                            if (overcube.Id == WorldConfiguration.CubeId.Air)
+                            {
+                                physicSimu.OffsetBlockHitted = offsetValue;
+                            }
+                        }else{
+                            physicSimu.OffsetBlockHitted = offsetValue;
+                        }
                     }
                 }
             }
@@ -202,7 +212,19 @@ namespace Utopia.Shared.Chunks
                     if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        physicSimu.OffsetBlockHitted = offsetValue;
+                        if (_collidingCube.BlockProfile.YBlockOffset == 0 && _collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
+                        {
+                            //Check if an other block is place over the hitted one
+                            var overcube = GetCubeAt(new Vector3I(_collidingCube.Position.X, _collidingCube.Position.Y + 1, _collidingCube.Position.Z));
+                            if (overcube.Id == WorldConfiguration.CubeId.Air)
+                            {
+                                physicSimu.OffsetBlockHitted = offsetValue;
+                            }
+                        }
+                        else
+                        {
+                            physicSimu.OffsetBlockHitted = offsetValue;
+                        }
                     }
                 }
 
