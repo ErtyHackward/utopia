@@ -58,7 +58,7 @@ namespace Utopia.Server.Managers
 
         private void SaveEntities()
         {
-            var entitiesToSave = _server.ConnectionManager.Connections().Where(c => c.ServerEntity.NeedSave).Select(c => c.ServerEntity) .ToList();
+            var entitiesToSave = _server.ConnectionManager.Connections().Where(c => c.ServerEntity != null && c.ServerEntity.NeedSave).Select(c => c.ServerEntity) .ToList();
 
             using (new PerfLimit("Entities save " + entitiesToSave.Count))
             foreach (var entity in entitiesToSave)

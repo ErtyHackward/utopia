@@ -82,7 +82,7 @@
     <Content Include="EffectsPacks\Default\Entities\ColorLine.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Config\Yortopia.realm">
+    <None Include="Config\IslandTEST.realm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="EffectsPacks\Default\Terran\Cracks.hlsl">
