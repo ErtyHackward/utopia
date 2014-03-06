@@ -46,9 +46,7 @@ namespace Utopia.Shared.Services
             _server = server;
             _server.Scheduler.AddPeriodic(TimeSpan.FromSeconds(1), Tick);
             _server.LoginManager.PlayerAuthorized += LoginManager_PlayerAuthorized;
-
-
-            Seasons = new List<Season>();
+            
 
             Day = server.CustomStorage.GetVariable("day", 0);
             SeasonIndex = server.CustomStorage.GetVariable("season", 0);
@@ -104,6 +102,9 @@ namespace Utopia.Shared.Services
 
         private WeatherMessage UpdateWeather()
         {
+            if (Seasons.Count == 0)
+                return new WeatherMessage();
+
             var growing = Day / ( (float)DaysPerSeason / 2 ) <= 1;
 
             Season s1, s2;

@@ -66,7 +66,7 @@ namespace Utopia.Shared.Server.Managers
 
         private void SaveEntities()
         {
-            var entitiesToSave = Enumerable.Where<ClientConnection>(_server.ConnectionManager.Connections(), c => c.ServerEntity != null && c.ServerEntity.NeedSave).Select(c => c.ServerEntity) .ToList();
+            var entitiesToSave = _server.ConnectionManager.Connections().Where(c => c.ServerEntity != null && c.ServerEntity.NeedSave).Select(c => c.ServerEntity) .ToList();
 
             using (new PerfLimit("Entities save " + entitiesToSave.Count))
             foreach (var entity in entitiesToSave)
@@ -130,7 +130,7 @@ namespace Utopia.Shared.Server.Managers
             {
                 IsServerMessage = true,
                 DisplayName = "server",
-                Message = string.Format((string)"Players online: {0}", (object)_server.ConnectionManager.Count)
+                Message = string.Format("Players online: {0}", _server.ConnectionManager.Count)
             });
 
             if (!string.IsNullOrEmpty(_server.SettingsManager.Settings.MessageOfTheDay))
