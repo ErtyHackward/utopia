@@ -5,7 +5,6 @@ using Utopia.Server.Utils;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Services;
 using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
@@ -29,7 +28,12 @@ namespace Utopia.Server
         /// Gets server connection manager
         /// </summary>
         public ConnectionManager ConnectionManager { get; private set; }
-        
+
+        IConnectionManager IServer.ConnectionManager
+        {
+            get { return ConnectionManager; }
+        }
+
         /// <summary>
         /// Gets main users storage
         /// </summary>
@@ -66,7 +70,12 @@ namespace Utopia.Server
         /// Gets schedule manager for dalayed and periodic operations.
         /// </summary>
         public ScheduleManager Scheduler { get; private set; }
-        
+
+        IScheduleManager IServer.Scheduler
+        {
+            get { return Scheduler; }
+        }
+
         /// <summary>
         /// Gets server clock
         /// </summary>
@@ -104,11 +113,6 @@ namespace Utopia.Server
         /// Gets or sets an entity factory
         /// </summary>
         public EntityFactory EntityFactory { get; private set; }
-
-        /// <summary>
-        /// Gets Weather and time Manager
-        /// </summary>
-        public WeatherManager Weather { get; private set; }
 
         /// <summary>
         /// Contains global gameplay variables, like factions list
@@ -151,7 +155,7 @@ namespace Utopia.Server
 
             Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
 
-            Scheduler = new ScheduleManager(Clock);
+            Scheduler = new ScheduleManager();
 
             LandscapeManager = new ServerLandscapeManager(
                 this, 
@@ -177,8 +181,6 @@ namespace Utopia.Server
             CommandsManager = new CommandsManager(this);
 
             ChatManager = new ChatManager(this);
-
-            Weather = new WeatherManager(this);
 
             GlobalStateManager = new GlobalStateManager(this);
             

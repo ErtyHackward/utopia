@@ -10,6 +10,7 @@ namespace Utopia.Shared.Services
     [ProtoContract]
     [ProtoInclude(100, typeof(NpcService))]
     [ProtoInclude(101, typeof(WaterDynamicService))]
+    [ProtoInclude(102, typeof(WeatherService))]
     public abstract class Service : IDisposable
     {
         /// <summary>
