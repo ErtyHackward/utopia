@@ -94,7 +94,7 @@ namespace Utopia.Worlds.Cubes
             else
             {
                 //Add a naturel Offset to StillWater when touching water at the surface !
-                //if(topCube.Id != cube.Id) yBlockOffset = (float)blockProfile.YBlockOffset;
+                if(topCube.Id != cube.Id) yBlockOffset = (float)blockProfile.YBlockOffset;
             }
 
             yBlockOffsetAsByte = (byte)(yBlockOffset * 255);
@@ -104,7 +104,7 @@ namespace Utopia.Worlds.Cubes
             Vector4 vertexInfo2 = new Vector4(yBlockOffset, chunkInfo.Moisture / 255.0f, chunkInfo.Temperature / 255.0f, 0);
             Vector4B vertexInfo1 = new Vector4B((byte)cubeFace,
                                                       (byte)0,          //Is "UP" vertex
-                                                      (byte)0,
+                                                      blockProfile.BiomeColorArrayTexture,
                                                       (byte)0);
 
             long hashVertex;

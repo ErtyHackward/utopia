@@ -57,7 +57,7 @@ struct VS_LIQUID_IN
 {
 	uint4 Position		 : POSITION;
 	float4 Col			 : COLOR;
-	uint4 VertexInfo1	 : INFO0; // x = FaceType, (bool)y = is Upper vertex
+	uint4 VertexInfo1	 : INFO0; // x = FaceType, (bool)y = is Upper vertex, Z = Biome Texture Id
 	float4 VertexInfo2	 : INFO1; // x = Y Modified block Height modificator, Y = Temperature, Z = Moisture
 };
 
@@ -69,6 +69,7 @@ struct PS_IN
 	float causticPower			: VARIOUS1;
 	float4 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
+	uint2 Various				: BIOMEDATAVARIOUS0;
 	float3 AnimationUVW			: TEXCOORD1;
 };
 
@@ -117,7 +118,8 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	if(facetype != 3) output.causticPower = 1;
 	output.BiomeData = input.VertexInfo2.yz;
 	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
-	output.BiomeData.y = saturate(input.BiomeData.y + WeatherGlobalOffset.y);
+	output.BiomeData.y = saturate(output.BiomeData.y + WeatherGlobalOffset.y);
+	output.Various.x = input.VertexInfo1.z;
 
     return output;
 }
@@ -137,7 +139,7 @@ PS_OUT PS(PS_IN input)
 	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.StaticUVW).rgb, 1) * input.EmissiveLight;
 
 	//Change the water surface with the biomeColor
-	float3 biomeColorSampling = {input.BiomeData.x, input.BiomeData.y, 2};
+	float3 biomeColorSampling = { input.BiomeData.x, input.BiomeData.y, input.Various.x };
 	float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, biomeColorSampling);
 	colorInput.r = colorInput.r * biomeColor.r;
 	colorInput.g = colorInput.g * biomeColor.g;

@@ -34,8 +34,8 @@ namespace Utopia.Shared.Services
         public WeatherService()
         {
             Seasons = new List<Season>( new [] { 
-                new Season { Name = "Summer", Temperature = 1, Moisture = 0.5f}, 
-                new Season { Name = "Winter", Temperature = 0, Moisture = 0.7f} 
+                new Season { Name = "Summer", Temperature = 1, Moisture = -0.3f}, 
+                new Season { Name = "Winter", Temperature = -1, Moisture = 0.7f} 
             });
 
             DaysPerSeason = 10;

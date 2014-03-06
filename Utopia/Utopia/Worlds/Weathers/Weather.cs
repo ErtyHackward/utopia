@@ -8,6 +8,7 @@ using Utopia.Worlds.Weathers.SharedComp;
 using Utopia.Worlds.GameClocks;
 using Utopia.Network;
 using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.Weather
 {
@@ -62,8 +63,9 @@ namespace Utopia.Worlds.Weather
         {
             //Assign new wind direction !
             Wind.WindFlow = e.Message.WindDirection;
-            MoistureOffset = e.Message.TemperatureOffset;
-            MoistureOffset = e.Message.MoistureOffset;
+            //Keep the offsetting from server into more real range.
+            TemperatureOffset = MathHelper.FullLerp(-0.3f, 0.3f, -1, 1, e.Message.TemperatureOffset, true);
+            MoistureOffset = MathHelper.FullLerp(-0.3f, 0.3f, -1, 1, e.Message.MoistureOffset, true);
         }
         #endregion
     }

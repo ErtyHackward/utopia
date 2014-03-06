@@ -302,7 +302,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 2,
+                BiomeColorArrayTexture = 1,
                 YBlockOffset = 0.1,
                 Hardness = 0
             });
@@ -326,7 +326,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 2,
+                BiomeColorArrayTexture = 1,
                 Hardness = 0
             });
 
@@ -537,7 +537,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
                 IsSystemCube = true,
-                BiomeColorArrayTexture = 1,
+                BiomeColorArrayTexture = 2,
                 Hardness = 20
             });
 
