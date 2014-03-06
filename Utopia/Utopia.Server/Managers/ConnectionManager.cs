@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
@@ -13,7 +14,7 @@ namespace Utopia.Server.Managers
     /// <summary>
     /// Provides server connection management
     /// </summary>
-    public class ConnectionManager : IDisposable
+    public class ConnectionManager : IDisposable, IConnectionManager
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

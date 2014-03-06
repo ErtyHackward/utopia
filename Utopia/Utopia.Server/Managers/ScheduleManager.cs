@@ -15,18 +15,11 @@ namespace Utopia.Server.Managers
         private readonly Timer _timer;
 
         /// <summary>
-        /// Gets or sets scheduler clock
-        /// </summary>
-        public Clock Clock { get; set; }
-
-        /// <summary>
         /// Creates new instance of scheduler
         /// </summary>
-        /// <param name="clock">Clock for scheduler</param>
         /// <param name="timerInterval">Timer interval (real time)</param>
-        public ScheduleManager(Clock clock, int timerInterval = 100)
+        public ScheduleManager(int timerInterval = 100)
         {
-            Clock = clock;
             _timer = new Timer(TimerCallback, null, 0, timerInterval);
         }
 
@@ -34,7 +27,7 @@ namespace Utopia.Server.Managers
         {
             lock (_syncRoot)
             {
-                var currentTime = Clock.Now;
+                var currentTime = DateTime.Now;
 
                 for (int i = _tasks.Count - 1; i >= 0; i--)
                 {
@@ -167,8 +160,8 @@ namespace Utopia.Server.Managers
                 CallType = ScheduleCallType.Periodic, 
                 CallDelegate = action, 
                 CallInterval = interval, 
-                StartDateTime = Clock.Now,
-                ExecuteAt = Clock.Now.Add(interval).TimeOfDay
+                StartDateTime = DateTime.Now,
+                ExecuteAt = DateTime.Now.Add(interval).TimeOfDay
             };
 
             AddTask(task);
