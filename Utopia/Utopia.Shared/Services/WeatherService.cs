@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Net.Messages;
-using Utopia.Shared.Services.Interfaces;
+using Utopia.Shared.Server;
 
 namespace Utopia.Shared.Services
 {
     [ProtoContract]
     public class WeatherService : Service
     {
-        private IServer _server;
+        private ServerCore _server;
         private DateTime _lastTime;
+        private WeatherMessage _lastMessage;
 
         [Description("All possible seasons")]
         [ProtoMember(1, OverwriteList = true)]
@@ -40,10 +41,13 @@ namespace Utopia.Shared.Services
             DaysPerSeason = 10;
         }
 
-        public override void Initialize(IServer server)
+        public override void Initialize(ServerCore server)
         {
             _server = server;
             _server.Scheduler.AddPeriodic(TimeSpan.FromSeconds(1), Tick);
+            _server.LoginManager.PlayerAuthorized += LoginManager_PlayerAuthorized;
+
+
             Seasons = new List<Season>();
 
             Day = server.CustomStorage.GetVariable("day", 0);
@@ -51,12 +55,23 @@ namespace Utopia.Shared.Services
 
             if (SeasonIndex >= Seasons.Count)
                 SeasonIndex = 0;
+
+            _lastMessage = UpdateWeather();
+        }
+
+        void LoginManager_PlayerAuthorized(object sender, Server.Events.ConnectionEventArgs e)
+        {
+            e.Connection.Send(_lastMessage);
         }
 
         public override void Dispose()
         {
             _server.CustomStorage.SetVariable("day", Day);
             _server.CustomStorage.SetVariable("season", SeasonIndex);
+
+            _server.LoginManager.PlayerAuthorized -= LoginManager_PlayerAuthorized;
+            _server.Scheduler.Remove(Tick);
+
         }
 
         private void Tick()
@@ -79,42 +94,48 @@ namespace Utopia.Shared.Services
 
                 // each day we will recalculate temperature and humidity values
 
-                var growing = Day / ((float)DaysPerSeason / 2) <= 1;
+                _lastMessage = UpdateWeather();
 
-                Season s1, s2;
-                float power;
-
-                if (growing)
-                {
-                    var s1Index = SeasonIndex - 1 < 0 ? Seasons.Count - 1 : SeasonIndex - 1;
-
-                    s1 = Seasons[s1Index];
-                    s2 = Seasons[SeasonIndex];
-
-                    power = Day / ((float)DaysPerSeason) + 0.5f;
-
-                }
-                else
-                {
-                    var s2Index = SeasonIndex + 1 >= Seasons.Count ? 0 : SeasonIndex + 1;
-                    s1 = Seasons[SeasonIndex];
-                    s2 = Seasons[s2Index];
-
-                    power = Day / ((float)DaysPerSeason) - 0.5f;
-                }
-
-                var temperature = Lerp(s1.Temperature, s2.Temperature, power);
-                var moisture = Lerp(s1.Moisture, s2.Moisture, power);
-
-                var msg = new WeatherMessage { 
-                    MoistureOffset = moisture, 
-                    TemperatureOffset = temperature 
-                };
-
-                _server.ConnectionManager.Broadcast(msg);
+                _server.ConnectionManager.Broadcast(_lastMessage);
             }
 
             _lastTime = _server.Clock.Now;
+        }
+
+        private WeatherMessage UpdateWeather()
+        {
+            var growing = Day / ( (float)DaysPerSeason / 2 ) <= 1;
+
+            Season s1, s2;
+            float power;
+
+            if (growing)
+            {
+                var s1Index = SeasonIndex - 1 < 0 ? Seasons.Count - 1 : SeasonIndex - 1;
+
+                s1 = Seasons[s1Index];
+                s2 = Seasons[SeasonIndex];
+
+                power = Day / ( (float)DaysPerSeason ) + 0.5f;
+            }
+            else
+            {
+                var s2Index = SeasonIndex + 1 >= Seasons.Count ? 0 : SeasonIndex + 1;
+                s1 = Seasons[SeasonIndex];
+                s2 = Seasons[s2Index];
+
+                power = Day / ( (float)DaysPerSeason ) - 0.5f;
+            }
+
+            var temperature = Lerp(s1.Temperature, s2.Temperature, power);
+            var moisture = Lerp(s1.Moisture, s2.Moisture, power);
+
+            var msg = new WeatherMessage
+            {
+                MoistureOffset = moisture,
+                TemperatureOffset = temperature
+            };
+            return msg;
         }
 
         private float Lerp(float start, float end, float val)

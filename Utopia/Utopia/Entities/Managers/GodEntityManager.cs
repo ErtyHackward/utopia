@@ -129,7 +129,7 @@ namespace Utopia.Entities.Managers
                                 CameraManager<ICameraFocused> cameraManager,
                                 LandscapeBufferManager bufferManager,
                                 VisualWorldParameters visParameters,
-                                IGlobalStateManager globalStateManager)
+                                GlobalStateManager globalStateManager)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (playerEntity  == null) throw new ArgumentNullException("playerEntity");

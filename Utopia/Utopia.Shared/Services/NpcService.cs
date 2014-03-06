@@ -8,7 +8,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Services.Interfaces;
+using Utopia.Shared.Server;
 using Container = Utopia.Shared.Entities.Concrete.Container;
 
 namespace Utopia.Shared.Services
@@ -19,7 +19,7 @@ namespace Utopia.Shared.Services
     [ProtoContract]
     public class NpcService : Service
     {
-        private IServer _server;
+        private ServerCore _server;
         private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
         //private string[] _names = new[] { "Katia", "Sveta", "Lena", "Dasha" };
 
@@ -57,7 +57,7 @@ namespace Utopia.Shared.Services
             return srvNpc;
         }
 
-        public override void Initialize(IServer server)
+        public override void Initialize(ServerCore server)
         {
             _server = server;
 

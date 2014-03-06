@@ -8,9 +8,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using SharpDX;
-using Utopia.Server.Structs;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Server.Structs;
 
 namespace Utopia.Tests
 {

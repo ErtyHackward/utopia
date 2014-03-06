@@ -4,13 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using Utopia.Server;
-using Utopia.Server.Managers;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Web;
+using Utopia.Shared.Server;
+using Utopia.Shared.Server.Events;
+using Utopia.Shared.Server.Managers;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
@@ -23,12 +24,12 @@ namespace Realms.Server
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static Utopia.Server.Server Server
+        public static Utopia.Shared.Server.ServerCore Server
         {
             get { return _server; }
         }
 
-        private static Utopia.Server.Server _server;
+        private static Utopia.Shared.Server.ServerCore _server;
         private static ServerGameplayProvider _gameplay;
         private static Timer _reportAliveTimer;
         private static WorldParameters _worldParameters;
@@ -143,7 +144,7 @@ namespace Realms.Server
             IocBind(wp);
 
             _serverWebApi = new ServerWebApi();
-            _server = new Utopia.Server.Server(
+            _server = new Utopia.Shared.Server.ServerCore(
                 _settingsManager,
                 _worldGenerator,
                 new ServerUsersStorage(_sqLiteStorageManager, _serverWebApi), 
@@ -177,13 +178,13 @@ namespace Realms.Server
             _server.ConnectionManager.Dispose();
         }
 
-        static void LoginManager_PlayerLogged(object sender, PlayerLoggedEventArgs e)
+        static void LoginManager_PlayerLogged(object sender, ConnectionEventArgs e)
         {
-            if (e.ClientConnection.UserRole == UserRole.Administrator)
+            if (e.Connection.UserRole == UserRole.Administrator)
             {
                 if (!string.IsNullOrEmpty(_newVersionMessage))
                 {
-                    e.ClientConnection.SendChat("New server version is available: " + _newVersionMessage);
+                    e.Connection.SendChat("New server version is available: " + _newVersionMessage);
                 }
             }
         }

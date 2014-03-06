@@ -1,6 +1,6 @@
 ﻿using System;
 using ProtoBuf;
-using Utopia.Shared.Services.Interfaces;
+using Utopia.Shared.Server;
 
 namespace Utopia.Shared.Services
 {
@@ -21,6 +21,6 @@ namespace Utopia.Shared.Services
             
         }
 
-        public abstract void Initialize(IServer server);
+        public abstract void Initialize(ServerCore server);
     }
 }
