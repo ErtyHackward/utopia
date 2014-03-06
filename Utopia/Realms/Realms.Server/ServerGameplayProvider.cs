@@ -10,10 +10,10 @@ namespace Realms.Server
     /// </summary>
     public class ServerGameplayProvider
     {
-        private readonly Utopia.Server.Server _server;
+        private readonly Utopia.Shared.Server.ServerCore _server;
         private readonly WorldConfiguration _config;
 
-        public ServerGameplayProvider(Utopia.Server.Server server, WorldConfiguration config)
+        public ServerGameplayProvider(Utopia.Shared.Server.ServerCore server, WorldConfiguration config)
         {
             _server = server;
             _config = config;

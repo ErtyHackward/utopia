@@ -9,6 +9,7 @@ using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Interfaces;
+using Utopia.Shared.Server;
 using Utopia.Shared.Services.Interfaces;
 using Utopia.Shared.Structs.Helpers;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Utopia.Shared.Services
         private readonly Dictionary<Vector3I, InsideDataProvider> _affectedChunks = new Dictionary<Vector3I, InsideDataProvider>();
         
         private bool _updating;
-        private IServer _server;
+        private ServerCore _server;
         private Timer _updateTimer;
 
         private byte _stillWater;
@@ -41,7 +42,7 @@ namespace Utopia.Shared.Services
             new Vector3I(0, 0, -1) 
         };
 
-        public override void Initialize(IServer server)
+        public override void Initialize(ServerCore server)
         {
             _server = server;
             _server.LandscapeManager.BlockChanged += LandscapeManagerBlockChanged;

@@ -4,12 +4,12 @@ using System.Linq;
 using S33M3CoreComponents.Config;
 using S33M3Resources.Structs;
 using SharpDX;
-using Utopia.Server;
-using Utopia.Server.Managers;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Server;
+using Utopia.Shared.Server.Managers;
 using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
@@ -25,7 +25,7 @@ namespace Realms.Client.Components
     public class LocalServer : IDisposable
     {
         private readonly RealmRuntimeVariables _vars;
-        private Server _server;
+        private ServerCore _server;
         private EntityFactory _serverFactory;
         private SqliteStorageManager _serverSqliteStorageSinglePlayer;
         private WorldParameters _worldParam;
@@ -88,7 +88,7 @@ namespace Realms.Client.Components
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
 
-            _server = new Server(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
+            _server = new ServerCore(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
             _serverFactory.LandscapeManager = _server.LandscapeManager;
             _serverFactory.DynamicEntityManager = _server.AreaManager;
             _serverFactory.GlobalStateManager = _server.GlobalStateManager;

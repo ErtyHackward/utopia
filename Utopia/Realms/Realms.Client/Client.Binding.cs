@@ -12,7 +12,6 @@ using Utopia.Components;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.CharacterSelection;
 using Utopia.GUI.Crafting;
-using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Web;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;

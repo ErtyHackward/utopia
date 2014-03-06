@@ -56,6 +56,9 @@
     <Reference Include="FortuneVoronoi">
       <HintPath>..\..\Library\FortuneVoronoi.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\..\Library\Mono.Data.SQLite\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -148,7 +151,6 @@
     <Compile Include="Entities\EntityParticule.cs" />
     <Compile Include="Entities\Events\UseType.cs" />
     <Compile Include="Entities\GlobalState.cs" />
-    <Compile Include="Entities\Interfaces\IGlobalStateManager.cs" />
     <Compile Include="Entities\Interfaces\IMoveAI.cs" />
     <Compile Include="Entities\Interfaces\INpc.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
@@ -248,6 +250,7 @@
     <Compile Include="ClassExt\StringExtensions.cs" />
     <Compile Include="Interfaces\ICustomStorage.cs" />
     <Compile Include="Interfaces\IDynamicEntityManager.cs" />
+    <Compile Include="Interfaces\IGlobalStateManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.designer.cs">
@@ -256,6 +259,7 @@
     <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
       <DependentUpon>TreeBluePrint.cs</DependentUpon>
     </Compile>
+    <Compile Include="Net\Connections\ClientConnection.cs" />
     <Compile Include="Net\Messages\EntityDataMessage.cs" />
     <Compile Include="Net\Messages\GetEntityMessage.cs" />
     <Compile Include="Net\Web\Responses\VerifyResponse.cs" />
@@ -263,20 +267,70 @@
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="Entities\Faction.cs" />
+    <Compile Include="Server\AStar\AStar.cs" />
+    <Compile Include="Server\AStar\AStarList.cs" />
+    <Compile Include="Server\AStar\AStarNode.cs" />
+    <Compile Include="Server\AStar\AStarNode3D.cs" />
+    <Compile Include="Server\Commands\AdditemCommand.cs" />
+    <Compile Include="Server\Commands\BanCommand.cs" />
+    <Compile Include="Server\Commands\HelpCommand.cs" />
+    <Compile Include="Server\Commands\KickCommand.cs" />
+    <Compile Include="Server\Commands\MotdCommand.cs" />
+    <Compile Include="Server\Commands\SaveCommand.cs" />
+    <Compile Include="Server\Commands\ServicesCommand.cs" />
+    <Compile Include="Server\Commands\SetroleCommand.cs" />
+    <Compile Include="Server\Commands\SetSpawnPointCommand.cs" />
+    <Compile Include="Server\Commands\SettimeCommand.cs" />
+    <Compile Include="Server\Commands\StatusCommand.cs" />
+    <Compile Include="Server\Commands\UsersCommand.cs" />
+    <Compile Include="Server\Events\AreaEntityEventArgs.cs" />
+    <Compile Include="Server\Events\AreaVoxelModelEventArgs.cs" />
+    <Compile Include="Server\Events\ConnectionEventArgs.cs" />
+    <Compile Include="Server\Events\EntityLeaveAreaEventArgs.cs" />
+    <Compile Include="Server\Events\LandscapeManagerChunkEventArgs.cs" />
+    <Compile Include="Server\Interfaces\IEntityStorage.cs" />
+    <Compile Include="Server\Interfaces\IServerChatCommand.cs" />
+    <Compile Include="Server\Managers\AreaManager.cs" />
+    <Compile Include="Server\Managers\ChatManager.cs" />
+    <Compile Include="Server\Managers\CommandsManager.cs" />
+    <Compile Include="Server\Managers\ConnectionManager.cs" />
+    <Compile Include="Server\Managers\EntityManager.cs" />
+    <Compile Include="Server\Managers\GlobalStateManager.cs" />
+    <Compile Include="Server\Managers\LoginManager.cs" />
+    <Compile Include="Server\Managers\MonoSqliteStorage.cs" />
+    <Compile Include="Server\Managers\PerformanceManager.cs" />
+    <Compile Include="Server\Managers\ScheduleManager.cs" />
+    <Compile Include="Server\Managers\ServerLandscapeManager.cs" />
+    <Compile Include="Server\Managers\ServiceManager.cs" />
+    <Compile Include="Server\Managers\SQLiteStorageManager.cs" />
+    <Compile Include="Server\Managers\WeatherManager.cs" />
+    <Compile Include="Server\ServerCore.cs" />
+    <Compile Include="Server\ServerSettings.cs" />
+    <Compile Include="Server\Structs\FocusAI.cs" />
+    <Compile Include="Server\Structs\MapArea.cs" />
+    <Compile Include="Server\Structs\MoveAI.cs" />
+    <Compile Include="Server\Structs\ServerChunk.cs" />
+    <Compile Include="Server\Structs\ServerDynamicEntity.cs" />
+    <Compile Include="Server\Structs\ServerNpc.cs" />
+    <Compile Include="Server\Structs\ServerNpcState.cs" />
+    <Compile Include="Server\Structs\ServerPlayerCharacterEntity.cs" />
+    <Compile Include="Server\Structs\ServerPlayerEntity.cs" />
+    <Compile Include="Server\Structs\ServerPlayerGodEntity.cs" />
+    <Compile Include="Server\Structs\UserState.cs" />
+    <Compile Include="Server\Utils\DynamicIdHelper.cs" />
+    <Compile Include="Server\Utils\IniSettings.cs" />
     <Compile Include="Services\AdministratorCommand.cs" />
-    <Compile Include="Services\Interfaces\IAreaManager.cs" />
-    <Compile Include="Services\Interfaces\IChatManager.cs" />
-    <Compile Include="Services\Interfaces\ICommandsManager.cs" />
     <Compile Include="Services\Interfaces\IRoleRestrictedCommand.cs" />
-    <Compile Include="Services\Interfaces\IServer.cs" />
     <Compile Include="Services\Interfaces\IChatCommand.cs" />
     <Compile Include="Services\Interfaces\IServerLandscapeManager.cs" />
     <Compile Include="Services\ModeratorCommand.cs" />
     <Compile Include="Services\NpcService.cs" />
     <Compile Include="Services\PlayerCommandEventArgs.cs" />
+    <Compile Include="Services\Season.cs" />
     <Compile Include="Services\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\WaterDynamicService.cs" />
+    <Compile Include="Services\WeatherService.cs" />
     <Compile Include="Structs\Clock.cs" />
     <Compile Include="Structs\Helpers\TimeSpanHelper.cs" />
     <Compile Include="Structs\IScheduleManager.cs" />
