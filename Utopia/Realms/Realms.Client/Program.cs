@@ -1,11 +1,9 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System;
-using Ninject;
 using S33M3CoreComponents.Config;
 using System.IO;
+using Utopia.Shared.Helpers;
 
 namespace Realms.Client
 {
@@ -43,6 +41,8 @@ namespace Realms.Client
 #endif
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            DllLoadHelper.LoadUmnanagedLibrary("sqlite3.dll");
 
             using (var main = new GameClient())
             {

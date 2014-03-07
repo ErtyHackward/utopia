@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Helpers;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Web;
@@ -24,7 +25,7 @@ namespace Realms.Server
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static Utopia.Shared.Server.ServerCore Server
+        public static ServerCore Server
         {
             get { return _server; }
         }
@@ -73,6 +74,8 @@ namespace Realms.Server
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             logger.Info("Utopia Realms game server v{1} Protocol: v{0}", ServerConnection.ProtocolVersion, Assembly.GetExecutingAssembly().GetName().Version);
+
+            DllLoadHelper.LoadUmnanagedLibrary("sqlite3.dll");
 
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "main.realm");
 
@@ -144,7 +147,7 @@ namespace Realms.Server
             IocBind(wp);
 
             _serverWebApi = new ServerWebApi();
-            _server = new Utopia.Shared.Server.ServerCore(
+            _server = new ServerCore(
                 _settingsManager,
                 _worldGenerator,
                 new ServerUsersStorage(_sqLiteStorageManager, _serverWebApi), 
