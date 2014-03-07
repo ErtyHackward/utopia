@@ -241,6 +241,7 @@
     <Compile Include="Enums\CubeFaces.cs" />
     <Compile Include="Enums\enuCubeFamilly.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
+    <Compile Include="Helpers\DllLoadHelper.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />
