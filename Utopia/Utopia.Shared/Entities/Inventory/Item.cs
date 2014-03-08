@@ -29,6 +29,7 @@ namespace Utopia.Shared.Entities.Inventory
     [ProtoInclude(105, typeof(Stuff))]
     [ProtoInclude(106, typeof(GodHandTool))]
     [ProtoInclude(107, typeof(Extractor))]
+    [ProtoInclude(108, typeof(MeleeWeapon))]
     public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity
     {
         private VoxelModelInstance _modelInstance;
