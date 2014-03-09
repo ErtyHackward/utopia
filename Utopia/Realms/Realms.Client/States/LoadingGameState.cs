@@ -274,7 +274,6 @@ namespace Realms.Client.States
             var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var chunksWrapper = _ioc.Get<IChunksWrapper>();
             var fadeComponent = _ioc.Get<FadeComponent>();
-            fadeComponent.Visible = false;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
             var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
             var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
