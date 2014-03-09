@@ -121,7 +121,6 @@ namespace Realms.Client.States
             _serverComponent.ConnectionStausChanged += ServerComponentOnConnectionStausChanged;
             
             var fadeComponent = _ioc.Get<FadeComponent>();
-            fadeComponent.Visible = false;
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var adminConsole = _ioc.Get<AdminConsole>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
@@ -322,6 +321,9 @@ namespace Realms.Client.States
 
             var playerEntityManager = _ioc.Get<IPlayerManager>();
             playerEntityManager.EnableComponent();
+
+            var fadeComponent = _ioc.Get<FadeComponent>();
+            fadeComponent.Visible = false;
 
             base.OnEnabled(previousState);
         }
