@@ -271,11 +271,17 @@ namespace Utopia.Entities.Managers
                 {
                     if (_fallMaxHeight - _worldPosition.Y >= 0.01)
                     {
-                        var handler = OnLanding;
-                        if (handler != null)
+                        if (OnLanding != null)
                         {
-                            handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
+                            OnLanding(_fallMaxHeight - _worldPosition.Y, _groundCube);
                         }
+
+                        //Testing purpose
+                        if (_fallMaxHeight - _worldPosition.Y > 5)
+                        {
+                            _postEffectComponent.ActivateEffect("Dead");
+                        }
+
 #if DEBUG
                         logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
 #endif

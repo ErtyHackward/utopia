@@ -159,7 +159,7 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
         public override void LoadContent(DeviceContext context)
         {
             //Done here to be sure that the BackBuffer as been initialized.
-            _effect.SolidBackBuffer.Value = _skyBackBuffer.BackBuffer;
+            _effect.SolidBackBuffer.Value = _skyBackBuffer.RenderTextureView;
 
             _topFace    = new ByteColor(240, 240, 255, 200);
             _side1Face  = new ByteColor(230, 230, 255, 200);

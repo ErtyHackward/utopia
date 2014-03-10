@@ -28,7 +28,7 @@ namespace S33M3DXEngine
         //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
         //CANNOT be use in a multithreaded buffer approch !
         public static bool SingleThreadRenderingOptimization = true;
-        
+
         //public static bool FULLDEBUGMODE = true;
         public static bool FULLDEBUGMODE = false;
         #endregion
@@ -68,8 +68,8 @@ namespace S33M3DXEngine
         public List<string> RunningThreadedWork = new List<string>();
 
         public RenderTargetView RenderTarget { get { return _renderTarget; } }
-
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
+
         public Vector2 BackBufferSize;
         public Texture2D BackBufferTex;
 
@@ -277,13 +277,12 @@ namespace S33M3DXEngine
 
         public void SetRenderTargets(DeviceContext context)
         {
-            context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
+            context.OutputMerger.SetRenderTargets(_depthStencil, _renderTarget);
         }
 
         public void SetRenderTargetsAndViewPort(DeviceContext context)
         {
             SetRenderTargets(context);
-            context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
             context.Rasterizer.SetViewport(_viewPort);
         }
 

@@ -62,6 +62,7 @@ using Utopia.Sounds;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared;
 using Utopia.Worlds.Shadows;
+using Utopia.PostEffects;
 
 namespace Realms.Client
 {
@@ -184,6 +185,7 @@ namespace Realms.Client
             _iocContainer.Bind<ICameraManager>().ToMethod(x => x.Kernel.Get<CameraManager<ICameraFocused>>()).InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
             _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer").WithConstructorArgument("Name", "SkyBuffer");
+            _iocContainer.Bind<PostEffectComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
 
             //Network Related =============================================

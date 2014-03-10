@@ -30,7 +30,7 @@ namespace Utopia
 
         //Not Engine injected constructor
         public UtopiaRender(InputsManager inputManager, Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withComObjectDisposeTracking = false)
-            : base(startingWindowsSize, WindowsCaption,sampleDescription,  ResolutionSize, withComObjectDisposeTracking)
+            : base(startingWindowsSize, WindowsCaption, sampleDescription, ResolutionSize, withComObjectDisposeTracking)
         {
             _inputManager = inputManager;
 
@@ -38,7 +38,7 @@ namespace Utopia
         }
 
         public UtopiaRender(D3DEngine engine, InputsManager inputManager, bool withComObjectDisposeTracking)
-            : base(engine, withComObjectDisposeTracking ,withFullDebug:false)
+            : base(engine, withComObjectDisposeTracking)
         {
             _inputManager = inputManager;
 

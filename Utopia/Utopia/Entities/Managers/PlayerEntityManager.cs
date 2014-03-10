@@ -29,6 +29,7 @@ using SharpDX.Direct3D11;
 using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
 using Utopia.Shared.World;
+using Utopia.PostEffects;
 
 namespace Utopia.Entities.Managers
 {
@@ -55,6 +56,7 @@ namespace Utopia.Entities.Managers
         private LandscapeBufferManager _bufferManager;
         private readonly ILandscapeManager _landscapeManager;
         private readonly ChatComponent _chatComponent;
+        private readonly PostEffectComponent _postEffectComponent;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -310,7 +312,8 @@ namespace Utopia.Entities.Managers
                                    EntityFactory factory,
                                    LandscapeBufferManager bufferManager,
                                    ILandscapeManager landscapeManager,
-                                   ChatComponent chatComponent
+                                   ChatComponent chatComponent,
+                                   PostEffectComponent postEffectComponent
             )
         {
             _cameraManager = cameraManager;
@@ -321,6 +324,7 @@ namespace Utopia.Entities.Managers
             _bufferManager = bufferManager;
             _landscapeManager = landscapeManager;
             _chatComponent = chatComponent;
+            _postEffectComponent = postEffectComponent;
 
             PlayerCharacter = (PlayerCharacter)server.Player;
             

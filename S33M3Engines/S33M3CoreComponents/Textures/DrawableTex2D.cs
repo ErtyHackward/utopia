@@ -86,11 +86,11 @@ namespace S33M3DXEngine.Textures
             //Set the Depth Buffer and Render texture target to the outputMerger
             if (_colorMapRTV != null)
             {
-                _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthMapDSV, _colorMapRTV);
+                _d3dEngine.ImmediateContext.OutputMerger.SetRenderTargets(_depthMapDSV, _colorMapRTV);
             }
             else
             {
-                _d3dEngine.ImmediateContext.OutputMerger.SetTargets(_depthMapDSV);
+                _d3dEngine.ImmediateContext.OutputMerger.SetRenderTargets(_depthMapDSV);
             }
 
             //Set the viewport associated to the Texture renderer
