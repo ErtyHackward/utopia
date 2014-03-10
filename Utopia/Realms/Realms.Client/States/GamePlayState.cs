@@ -37,6 +37,7 @@ using Utopia.Particules;
 using Utopia.Sounds;
 using Utopia.Shared.World;
 using Utopia.Worlds.Shadows;
+using Utopia.PostEffects;
 
 namespace Realms.Client.States
 {
@@ -131,6 +132,7 @@ namespace Realms.Client.States
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var pickingManager = _ioc.Get<PickingManager>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
+            var postEffectComponent = _ioc.Get<PostEffectComponent>();
 
             AddComponent(cameraManager);
             AddComponent(_serverComponent);
@@ -161,6 +163,7 @@ namespace Realms.Client.States
             AddComponent(pickingManager);
             AddComponent(cracksRenderer);
             AddComponent(charSelection);
+            AddComponent(postEffectComponent);
 
             if (worldShadowMap != null)
                 AddComponent(worldShadowMap);

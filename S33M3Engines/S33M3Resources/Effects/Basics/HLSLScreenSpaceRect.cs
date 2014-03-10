@@ -13,7 +13,6 @@ using S33M3Resources.Structs.Vertex;
 
 namespace S33M3Resources.Effects.Basics
 {
-
     public class HLSLScreenSpaceRect : HLSLShaderWrap
     {
         #region Define Constant Buffer Structs !

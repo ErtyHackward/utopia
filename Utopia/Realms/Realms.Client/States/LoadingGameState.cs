@@ -57,6 +57,7 @@ using Utopia.Particules;
 using Utopia.Sounds;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Worlds.Shadows;
+using Utopia.PostEffects;
 
 namespace Realms.Client.States
 {
@@ -293,7 +294,12 @@ namespace Realms.Client.States
             var charSelection = _ioc.Get<CharacterSelectionComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
+            var postEffectComponent = _ioc.Get<PostEffectComponent>();
 
+            //Assign the various Post Processing effect to the component
+            //GrayScale PostEffect
+            IPostEffect grayScale = new PostEffectGrayscale() { Name = "Dead"};
+            postEffectComponent.RegisteredEffects.Add(grayScale.Name, grayScale);
 
             landscapeManager.EntityFactory = clientFactory;
             playerEntityManager.HasMouseFocus = true;
@@ -336,6 +342,7 @@ namespace Realms.Client.States
             AddComponent(inventoryEvents);
             AddComponent(cracksRenderer);
             AddComponent(charSelection);
+            AddComponent(postEffectComponent);
 
             if (ClientSettings.Current.Settings.GraphicalParameters.ShadowMap)
                 AddComponent(worldShadowMap);

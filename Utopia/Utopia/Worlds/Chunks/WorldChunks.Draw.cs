@@ -338,7 +338,7 @@ namespace Utopia.Worlds.Chunks
             _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
             _terraEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _terraEffect.BiomesColors.Value = _biomesColors_View;
-            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
+            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.RenderTextureView;
 
             _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, SharedFrameCb.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
@@ -347,7 +347,7 @@ namespace Utopia.Worlds.Chunks
             _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _liquidEffect.BiomesColors.Value = _biomesColors_View;
             _liquidEffect.AnimatedTextures.Value = _textureAnimation_View;
-            _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
+            _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.RenderTextureView;
 
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _voxelModelInstancedEffect = ToDispose(new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VoxelInstanceData.VertexDeclaration));

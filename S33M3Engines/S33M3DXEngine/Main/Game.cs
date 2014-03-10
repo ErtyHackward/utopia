@@ -97,9 +97,8 @@ namespace S33M3DXEngine.Main
         #endregion
 
         //Constructed Engine
-        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false, bool withFullDebug = false)
+        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false)
         {
-            D3DEngine.FULLDEBUGMODE = withFullDebug;
             Engine = ToDispose(new D3DEngine(startingWindowsSize, WindowsCaption, sampleDescription, ResolutionSize));
 
             Engine.GameWindow.FormClosing += GameWindow_FormClosing;
@@ -112,9 +111,8 @@ namespace S33M3DXEngine.Main
         }
 
         //Injected Engine
-        public Game(D3DEngine engine, bool withDebugObjectTracking = false, bool withFullDebug = false)
+        public Game(D3DEngine engine, bool withDebugObjectTracking = false)
         {
-            D3DEngine.FULLDEBUGMODE = withFullDebug;
             Engine = engine;
             Engine.GameWindow.FormClosing += GameWindow_FormClosing;
             _visibleDrawable = new List<DrawableComponentHolder>();
