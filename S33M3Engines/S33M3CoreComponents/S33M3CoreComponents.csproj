@@ -232,6 +232,16 @@
     <Compile Include="Meshes\Factories\IMeshFactory.cs" />
     <Compile Include="Meshes\Factories\MilkShape3DMeshFactory.cs" />
     <Compile Include="Meshes\Mesh.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\ModelFactory.cs" />
+    <Compile Include="Models\ModelMesh\IModelMeshComponents.cs" />
+    <Compile Include="Models\ModelMesh\ModelMesh.cs" />
+    <Compile Include="Models\ModelMesh\ModelMeshTexture.cs" />
+    <Compile Include="Models\ModelMesh\ModelMesh_PNTC.cs" />
+    <Compile Include="Models\ModelMesh\ModelMesh_PNC.cs" />
+    <Compile Include="Models\ModelMesh\ModelMesh_PN.cs" />
+    <Compile Include="Models\ModelMesh\ModelMesh_PC.cs" />
+    <Compile Include="Models\ModelMesh\ModelMesh_P.cs" />
     <Compile Include="Noise\DomainModifier\ScaleDomain.cs" />
     <Compile Include="Noise\DomainModifier\Turbulence.cs" />
     <Compile Include="Noise\Fractal\FractalBase.cs" />
@@ -352,6 +362,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assimp32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assimp64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Languages.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
