@@ -97,8 +97,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
 
         protected void OnToolTipShow(ToolTipEventArgs e)
         {
-            var handler = ToolTipShow;
-            if (handler != null) handler(this, e);
+            if (ToolTipShow != null) ToolTipShow(this, e);
         }
 
         /// <summary>
@@ -108,8 +107,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
 
         protected void OnToolTipHide()
         {
-            var handler = ToolTipHide;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (ToolTipHide != null) ToolTipHide(this, EventArgs.Empty);
         }
 
         /// <summary>Initializes a new GUI</summary>

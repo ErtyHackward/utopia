@@ -55,9 +55,10 @@ namespace Realms.Client.Components.GUI
                          D3DEngine d3DEngine, 
                          ToolBarUi toolbar, 
                          InputsManager inputManager, 
-                         CameraManager<ICameraFocused> camManager
-                         ) : 
-            base(screen, d3DEngine, toolbar, inputManager, camManager)
+                         CameraManager<ICameraFocused> camManager,
+                         PlayerEntityManager playerEntityManager
+                         ) :
+            base(screen, d3DEngine, toolbar, inputManager, camManager, playerEntityManager)
         {
             _screen = screen;
             _d3DEngine = d3DEngine;

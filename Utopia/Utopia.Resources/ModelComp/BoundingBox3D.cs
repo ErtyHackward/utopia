@@ -9,6 +9,7 @@ using S33M3Resources.VertexFormats;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
+using S33M3Resources.Primitives;
 
 namespace Utopia.Resources.ModelComp
 {
@@ -20,6 +21,7 @@ namespace Utopia.Resources.ModelComp
         private HLSLVertexPositionColor _wrappedEffect;
         //Buffer _vertexBuffer;
         private VertexBuffer<VertexPosition3Color> _vertexBuffer;
+        private IndexBuffer<ushort> _indexBuffer;
         public Matrix BB3dworld;
         #endregion
 
@@ -28,41 +30,28 @@ namespace Utopia.Resources.ModelComp
             _d3dEngine = d3dEngine;
             _worldFocusManager = worldFocusManager;
             _wrappedEffect = effect;
-            CreateBBShape(BBDimension / 2, ref color);
+            CreateBBShape(BBDimension, ref color);
         }
 
         private void CreateBBShape(Vector3 BBDimension, ref ByteColor color)
         {
-            VertexPosition3Color[] ptList = new VertexPosition3Color[24];
-            ptList[0] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, -BBDimension.Z ), Color = color };
-            ptList[1] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[2] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[3] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[4] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[5] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[6] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[7] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
+            Vector3[] position;
+            ushort[] indices;
+            Generator.Box(BBDimension, Generator.PrimitiveType.LineList, out position, out indices);
 
-            ptList[8] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[9] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[10] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[11] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[12] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[13] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[14] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[15] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
+            VertexPosition3Color[] ptList = new VertexPosition3Color[position.Length];
 
-            ptList[16] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[17] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[18] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, -BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[19] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, BBDimension.Y, -BBDimension.Z), Color = color };
-            ptList[20] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[21] = new VertexPosition3Color() { Position = new Vector3(BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[22] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, -BBDimension.Y, BBDimension.Z), Color = color };
-            ptList[23] = new VertexPosition3Color() { Position = new Vector3(-BBDimension.X, BBDimension.Y, BBDimension.Z), Color = color };
-
-            _vertexBuffer = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, 24, PrimitiveTopology.LineList, "BoundingBox3D_vertexBuffer");
+            for (int i = 0; i < ptList.Length; i++)
+            {
+                ptList[i].Position = position[i];
+                ptList[i].Color = color;
+            }
+            
+            _vertexBuffer = new VertexBuffer<VertexPosition3Color>(_d3dEngine.Device, ptList.Length, PrimitiveTopology.LineList, "BoundingBox3D_vertexBuffer");
             _vertexBuffer.SetData(_d3dEngine.ImmediateContext,ptList);
+
+            _indexBuffer = new IndexBuffer<ushort>(_d3dEngine.Device, indices.Length, "BoundingBox3D_indexBuffer");
+            _indexBuffer.SetData(_d3dEngine.ImmediateContext, indices);
         }
 
         public void Update(Vector3 centerPosition, Vector3 scalingSize, float YOffset = 0)
@@ -100,8 +89,9 @@ namespace Utopia.Resources.ModelComp
             _wrappedEffect.Apply(context);
 
             _vertexBuffer.SetToDevice(context, 0);
+            _indexBuffer.SetToDevice(context, 0);
 
-            _d3dEngine.ImmediateContext.Draw(24, 0);
+            _d3dEngine.ImmediateContext.DrawIndexed(_indexBuffer.IndicesCount, 0, 0);
         }
 
         #endregion
@@ -111,6 +101,7 @@ namespace Utopia.Resources.ModelComp
         public void Dispose()
         {
             if (_vertexBuffer != null) _vertexBuffer.Dispose();
+            if (_indexBuffer != null) _indexBuffer.Dispose();
         }
 
         #endregion
