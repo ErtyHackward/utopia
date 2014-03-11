@@ -54,8 +54,8 @@ namespace S33M3DXEngine
         #region Public properties
         public Device Device;
 
-        public delegate void ViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer);
-        public event ViewPortUpdated ViewPort_Updated;
+        public delegate void ScreenSizeUpdated(ViewportF viewport, Texture2DDescription newBackBuffer);
+        public event ScreenSizeUpdated ScreenSize_Updated;
 
         public ViewportF ViewPort { get { return _viewPort; } set { _viewPort = value; } }
         public RenderForm GameWindow { get { return _renderForm; } }
@@ -509,7 +509,7 @@ namespace S33M3DXEngine
             //Refresh the Projection2D Matrix (Doesn't a camera to set it up !)
             Matrix.OrthoOffCenterLH(0, _viewPort.Width, _viewPort.Height, 0, 0, 1, out Projection2D); // Make the 0,0 bottom/left, 1,1 Up/right
 
-            if (ViewPort_Updated != null) ViewPort_Updated(_viewPort, BackBufferTex.Description);
+            if (ScreenSize_Updated != null) ScreenSize_Updated(_viewPort, BackBufferTex.Description);
             ImmediateContext.Rasterizer.SetViewport(_viewPort);
 
             logger.Debug("ViewPort Updated new size Width : {0}px Height : {1}px", BackBufferTex.Description.Width, BackBufferTex.Description.Height);
@@ -561,12 +561,12 @@ namespace S33M3DXEngine
             try
             {
                 //Clean Up event Delegates
-                if (ViewPort_Updated != null)
+                if (ScreenSize_Updated != null)
                 {
                     //Remove all Events associated to this control (That haven't been unsubscribed !)
-                    foreach (Delegate d in ViewPort_Updated.GetInvocationList())
+                    foreach (Delegate d in ScreenSize_Updated.GetInvocationList())
                     {
-                        ViewPort_Updated -= (ViewPortUpdated)d;
+                        ScreenSize_Updated -= (ScreenSizeUpdated)d;
                     }
                 }
 

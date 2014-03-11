@@ -56,7 +56,7 @@ namespace Realms.Client.Components.GUI
             _screen = screen;
             _commonResources = commonResources;
             
-            _engine.ViewPort_Updated += UpdateLayout;
+            _engine.ScreenSize_Updated += UpdateLayout;
 
             _stMenuBg               = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\gameplay_menu.png"));
             _stLabelContinue        = ToDispose(SandboxCommonResources.LoadTexture(engine, "Images\\MainMenu\\main_menu_label_continue.png"));
@@ -66,7 +66,7 @@ namespace Realms.Client.Components.GUI
 
         public override void BeforeDispose()
         {
-            _engine.ViewPort_Updated -= UpdateLayout;
+            _engine.ScreenSize_Updated -= UpdateLayout;
         }
 
         public override void Initialize()

@@ -91,7 +91,7 @@ namespace S33M3CoreComponents.GUI
             _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
             _d3DEngine.GameWindow.KeyUp += GameWindowKeyUp;
 
-            _d3DEngine.ViewPort_Updated += _d3DEngine_ViewPort_Updated;
+            _d3DEngine.ScreenSize_Updated += _d3DEngine_ScreenSize_Updated;
 
             _screen.Width = _d3DEngine.ViewPort.Width;
             _screen.Height = _d3DEngine.ViewPort.Height;
@@ -151,7 +151,7 @@ namespace S33M3CoreComponents.GUI
             _guiActions.Enqueue(action);
         }
 
-        void _d3DEngine_ViewPort_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
+        void _d3DEngine_ScreenSize_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             _screen.Width = viewport.Width;
             _screen.Height = viewport.Height;

@@ -452,7 +452,7 @@ namespace Utopia.Components
             _mainViewData.Scale = 0.1f;
             _currentViewData.Scale = 0.1f;
             _frameViewData.Scale = 0.1f;
-            _d3DEngine.ViewPort_Updated += ViewportUpdated;
+            _d3DEngine.ScreenSize_Updated += ViewportUpdated;
 
             DrawOrders.UpdateIndex(0, 15);
         }

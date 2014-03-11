@@ -55,7 +55,7 @@ namespace Realms.Client.Components.GUI
             _screen = screen;
             _commonResources = commonResources;
 
-            _engine.ViewPort_Updated += UpdateLayout;
+            _engine.ScreenSize_Updated += UpdateLayout;
         }
 
         public override void Initialize()

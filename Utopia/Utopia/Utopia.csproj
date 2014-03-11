@@ -121,7 +121,9 @@
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
+    <Compile Include="GUI\TopPanel\EnergyBar.cs" />
     <Compile Include="GUI\TopPanel\TopPanelContainer.cs" />
+    <Compile Include="GUI\TopPanel\EnergyBarRenderer.cs" />
     <Compile Include="GUI\TopPanel\TopPanelContainerRenderer.cs" />
     <Compile Include="PostEffects\IPostEffect.cs" />
     <Compile Include="PostEffects\PostEffectComponent.cs" />

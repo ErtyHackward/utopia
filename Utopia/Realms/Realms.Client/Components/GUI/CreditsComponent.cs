@@ -31,7 +31,7 @@ namespace Realms.Client.Components.GUI
             _engine = engine;
             _screen = screen;
 
-            _engine.ViewPort_Updated += UpdateLayout;
+            _engine.ScreenSize_Updated += UpdateLayout;
         }
 
         public override void Initialize()

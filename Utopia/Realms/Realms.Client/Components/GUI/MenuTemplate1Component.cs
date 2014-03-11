@@ -27,7 +27,7 @@ namespace Realms.Client.Components.GUI
             CommonResources = commonResources;
             _game = game;
 
-            _engine.ViewPort_Updated += UpdateLayoutInternal;
+            _engine.ScreenSize_Updated += UpdateLayoutInternal;
         }
 
         public override void BeforeDispose()
@@ -41,7 +41,7 @@ namespace Realms.Client.Components.GUI
                 }
             }
 
-            _engine.ViewPort_Updated -= UpdateLayoutInternal;
+            _engine.ScreenSize_Updated -= UpdateLayoutInternal;
         }
 
         #region Private methods

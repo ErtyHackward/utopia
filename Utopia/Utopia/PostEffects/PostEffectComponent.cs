@@ -54,7 +54,7 @@ namespace Utopia.PostEffects
         public PostEffectComponent(D3DEngine engine)
         {
             _engine = engine;
-            _engine.ViewPort_Updated += engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated += engine_ScreenSize_Updated;
 
             _registeredEffects = new Dictionary<string, IPostEffect>();
 
@@ -101,7 +101,7 @@ namespace Utopia.PostEffects
         {
             if (_renderTexture != null) _renderTexture.Dispose();
             if (_renderTextureView != null) _renderTextureView.Dispose();
-            _engine.ViewPort_Updated -= engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated -= engine_ScreenSize_Updated;
         }
 
         #region Public methods
@@ -155,7 +155,7 @@ namespace Utopia.PostEffects
         #endregion
 
         #region Private Methods
-        private void engine_ViewPort_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
+        private void engine_ScreenSize_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             CreateRenderTargets(newBackBuffer);
             if (_activatedEffect != null) _activatedEffect.Activate(_renderTextureView);

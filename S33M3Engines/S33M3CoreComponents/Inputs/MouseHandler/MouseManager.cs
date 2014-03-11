@@ -101,7 +101,7 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
         {
             _engine = engine;
 
-            _engine.ViewPort_Updated += _engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated += _engine_ScreenSize_Updated;
             _engine.GameWindow.GotFocus += GameWindow_GotFocus;
             _engine.GameWindow.LostFocus += GameWindow_LostFocus;
             _engine.GameWindow.Closed += _renderForm_Closed;
@@ -114,7 +114,7 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
 
         public override void BeforeDispose()
         {
-            _engine.ViewPort_Updated -= _engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated -= _engine_ScreenSize_Updated;
             _engine.GameWindow.LostFocus -= GameWindow_LostFocus;
             _engine.GameWindow.Closed -= _renderForm_Closed;
         }
@@ -173,7 +173,7 @@ namespace S33M3CoreComponents.Inputs.MouseHandler
             _centerViewPort = new Vector2I((int)viewport.Width / 2, (int)viewport.Height / 2);
         }
 
-        private void _engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
+        private void _engine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             ComputeCenterViewport(viewport);
         }
