@@ -134,7 +134,7 @@ namespace Utopia.PostEffects
                 //Change RenderTarget to this offline texture
                 //Clear renderTarger
                 _engine.ImmediateContext.ClearRenderTargetView(_renderTargetView, __renderTargetViewDefaultColor);
-                _engine.ImmediateContext.OutputMerger.SetRenderTargets(_engine.DepthStencilTarget, _renderTargetView);
+                _engine.ImmediateContext.OutputMerger.SetTargets(_engine.DepthStencilTarget, _renderTargetView);
                 _postEffectStartDrawDone = true;
             }
             else if (index == _postEffectEndingDrawId && _postEffectStartDrawDone)
