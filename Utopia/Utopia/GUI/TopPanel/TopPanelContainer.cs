@@ -21,7 +21,7 @@ namespace Utopia.GUI.TopPanel
 
         //Child components
         private PanelControl _compassPanel;
-        private PanelControl _mainPanel;
+        private PanelControl _playerPanel;
 
         private EnergyBar _life;
         #endregion
@@ -53,13 +53,13 @@ namespace Utopia.GUI.TopPanel
         private void CreateChildsComponents()
         {
             _compassPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(new UniScalar(1.0f, -150), 0, 150, 150), Color = new ByteColor(255,255,255,128) });
-            _mainPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(0, 0, new UniScalar(1.0f, -150), 75), Color = new ByteColor(255, 255, 255, 128) });
+            _playerPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(0, 0, 150, 75), Color = new ByteColor(255, 255, 255, 128) });
 
-            _life = new EnergyBar() { Bounds = new UniRectangle(5, 5, 500, 30) };
-            _mainPanel.Children.Add(_life);
+            _life = new EnergyBar() { Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10f), new UniScalar(0.33f, 0f)) };
+            _playerPanel.Children.Add(_life);
 
             this.Children.Add(_compassPanel);
-            this.Children.Add(_mainPanel);
+            this.Children.Add(_playerPanel);
         }
 
         private void ScreenSize_Updated(ViewportF viewport, SharpDX.Direct3D11.Texture2DDescription newBackBuffer)

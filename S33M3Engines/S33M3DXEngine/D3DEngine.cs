@@ -277,7 +277,7 @@ namespace S33M3DXEngine
 
         public void SetRenderTargets(DeviceContext context)
         {
-            context.OutputMerger.SetRenderTargets(_depthStencil, _renderTarget);
+            context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
         }
 
         public void SetRenderTargetsAndViewPort(DeviceContext context)

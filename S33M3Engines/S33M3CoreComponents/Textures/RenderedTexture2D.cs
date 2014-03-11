@@ -147,7 +147,7 @@ namespace S33M3CoreComponents.Textures
         #region Public methods
         public void Begin(DeviceContext context)
         {
-            context.OutputMerger.SetRenderTargets(_depthStencilView, _renderTargetView);
+            context.OutputMerger.SetTargets(_depthStencilView, _renderTargetView);
             //Set the viewport associated to the Texture renderer
             context.Rasterizer.SetViewport(Viewport);
 
