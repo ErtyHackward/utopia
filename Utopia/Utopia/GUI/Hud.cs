@@ -19,6 +19,7 @@ using Utopia.Shared.Net.Web.Responses;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
+using Utopia.GUI.TopPanel;
 
 namespace Utopia.GUI
 {
@@ -27,47 +28,51 @@ namespace Utopia.GUI
     /// </summary>
     public class Hud : DrawableGameComponent
     {
+
+        #region Private variables
+        private readonly MainScreen _screen;
+        private readonly D3DEngine _d3DEngine;
+        private readonly CameraManager<ICameraFocused> _camManager;
+        private readonly InputsManager _inputManager;
+        private readonly PlayerEntityManager _playerEntityManager;
+
         private SpriteRenderer _spriteRender;
         private SpriteTexture _crosshair;
         private SpriteFont _font;
-        private readonly MainScreen _screen;
-        private readonly D3DEngine _d3DEngine;
-        private int _selectedSlot;
-        private readonly CameraManager<ICameraFocused> _camManager;
 
-        /// <summary>
-        /// _toolbarUI is a fixed part of the hud
-        /// </summary>
         private ToolBarUi _toolbarUi;
-        
-        private readonly InputsManager _inputManager;
+        private int _selectedSlot;
+        private TopPanelContainer _topPanel;
+        private TooltipControl _tooltip;
+        #endregion
 
-        private TooltipControl tooltip;
-
+        #region Public properties
         public bool IsHidden { get; set; }
 
-        public event EventHandler<SlotClickedEventArgs> SlotClicked;
-        
-        private void OnSlotClicked(SlotClickedEventArgs e)
+        public ToolBarUi ToolbarUi
         {
-            var handler = SlotClicked;
-            if (handler != null) handler(this, e);
+            get { return _toolbarUi; }
+            set { _toolbarUi = value; }
         }
-        
-        public PlayerCharacter Player {
-            get { return PlayerEntityManager.PlayerCharacter; }
-        }
+        #endregion
 
-        [Inject]
-        public PlayerEntityManager PlayerEntityManager { get; set; }
+        #region Events
+        public event EventHandler<SlotClickedEventArgs> SlotClicked;
+        #endregion
 
-        public Hud(MainScreen screen, D3DEngine d3DEngine, ToolBarUi toolbar, InputsManager inputManager, CameraManager<ICameraFocused> camManager)
+        public Hud(MainScreen screen,
+           D3DEngine d3DEngine,
+           ToolBarUi toolbar,
+           InputsManager inputManager,
+           CameraManager<ICameraFocused> camManager,
+           PlayerEntityManager playerEntityManager)
         {
             IsDefferedLoadContent = true;
 
             _screen = screen;
             _inputManager = inputManager;
-            
+            _playerEntityManager = playerEntityManager;
+
             _d3DEngine = d3DEngine;
             DrawOrders.UpdateIndex(0, 10000);
             _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
@@ -78,55 +83,12 @@ namespace Utopia.GUI
             _inputManager.KeyboardManager.IsRunning = true;
             IsHidden = false;
 
-            tooltip = new TooltipControl();
+            _tooltip = new TooltipControl();
+            _topPanel = new TopPanelContainer(d3DEngine);
+            _topPanel.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
 
             _screen.ToolTipShow += _screen_ToolTipShow;
             _screen.ToolTipHide += _screen_ToolTipHide;
-        }
-
-        void _screen_ToolTipHide(object sender, EventArgs e)
-        {
-            tooltip.Close();
-        }
-
-        void _screen_ToolTipShow(object sender, ToolTipEventArgs e)
-        {
-            var cell = e.Control as InventoryCell;
-
-            if (cell != null)
-            {
-                tooltip.SetText(cell.Slot.Item.Name , cell.Slot.Item.Description ?? "This item has no description, try to guess what is it.");
-            }
-
-            var bounds = e.Control.GetAbsoluteBounds();
-            
-            if (bounds.Bottom + tooltip.Bounds.Size.Y.Offset > _screen.Height)
-            {
-                tooltip.Bounds.Location = new UniVector(bounds.Left, bounds.Top - tooltip.Bounds.Size.Y);
-            }
-            else
-            {
-                tooltip.Bounds.Location = new UniVector(bounds.Left, bounds.Bottom);    
-            }
-            
-            tooltip.Show(_screen);
-            tooltip.BringToFront();
-        }
-
-        private void SelectSlot(int index)
-        {
-            // equip the slot
-            _selectedSlot = index;
-            OnSlotClicked(new SlotClickedEventArgs { SlotIndex = index });
-        }
-
-        /// <summary>
-        /// _toolbarUI is a fixed part of the hud
-        /// </summary>
-        public ToolBarUi ToolbarUi
-        {
-            get { return _toolbarUi; }
-            set { _toolbarUi = value; }
         }
 
         public override void LoadContent(DeviceContext context)
@@ -142,18 +104,10 @@ namespace Utopia.GUI
             if (Updatable)
             {
                 _screen.Desktop.Children.Add(ToolbarUi);
+                _screen.Desktop.Children.Add(_topPanel);
                 ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
             }
             //the guimanager will draw the GUI screen, not the Hud !
-        }
-
-        //Refresh Sprite Centering when the viewPort size change !
-        private void D3DEngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
-        {
-            var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
-            //ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
-            //ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
-            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
         }
 
         public override void BeforeDispose()
@@ -162,7 +116,37 @@ namespace Utopia.GUI
             _spriteRender.Dispose();
             _crosshair.Dispose();
             _font.Dispose();
+            _tooltip.Dispose();
+            _topPanel.Dispose();
             _d3DEngine.ViewPort_Updated -= D3DEngineViewPortUpdated;
+        }
+
+        #region Public methods
+        public override void EnableComponent(bool forced)
+        {
+            if (!AutoStateEnabled && !forced)
+                return;
+
+            if (!_screen.Desktop.Children.Contains(ToolbarUi))
+                _screen.Desktop.Children.Add(ToolbarUi);
+
+            if (!_screen.Desktop.Children.Contains(_topPanel))
+            {
+                _screen.Desktop.Children.Add(_topPanel);
+            }
+
+            var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
+
+            ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
+
+            base.EnableComponent();
+        }
+
+        public override void DisableComponent()
+        {
+            _screen.Desktop.Children.Remove(ToolbarUi);
+            _screen.Desktop.Children.Remove(_topPanel);
+            base.DisableComponent();
         }
 
         public override void FTSUpdate(GameTime timeSpend)
@@ -181,7 +165,7 @@ namespace Utopia.GUI
             }
 
             //Process pressed keys by "event"
-            foreach(var keyPressed in _inputManager.KeyboardManager.GetPressedChars())
+            foreach (var keyPressed in _inputManager.KeyboardManager.GetPressedChars())
             {
                 switch (keyPressed)
                 {
@@ -202,7 +186,7 @@ namespace Utopia.GUI
 
             if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBarSelectPrevious))
             {
-                if (Player.Toolbar.Count(i => i != 0) < 2)
+                if (_playerEntityManager.PlayerCharacter.Toolbar.Count(i => i != 0) < 2)
                     return;
 
                 while (true)
@@ -210,9 +194,9 @@ namespace Utopia.GUI
                     _selectedSlot--;
 
                     if (_selectedSlot == -1)
-                        _selectedSlot = Player.Toolbar.Count-1;
+                        _selectedSlot = _playerEntityManager.PlayerCharacter.Toolbar.Count - 1;
 
-                    if (Player.Toolbar[_selectedSlot] != 0)
+                    if (_playerEntityManager.PlayerCharacter.Toolbar[_selectedSlot] != 0)
                         break;
                 }
 
@@ -221,17 +205,17 @@ namespace Utopia.GUI
 
             else if (_inputManager.ActionsManager.isTriggered(UtopiaActions.ToolBarSelectNext))
             {
-                if (Player.Toolbar.Count(i => i != 0) < 2)
+                if (_playerEntityManager.PlayerCharacter.Toolbar.Count(i => i != 0) < 2)
                     return;
 
                 while (true)
                 {
                     _selectedSlot++;
 
-                    if (_selectedSlot == Player.Toolbar.Count)
+                    if (_selectedSlot == _playerEntityManager.PlayerCharacter.Toolbar.Count)
                         _selectedSlot = 0;
 
-                    if (Player.Toolbar[_selectedSlot] != 0)
+                    if (_playerEntityManager.PlayerCharacter.Toolbar[_selectedSlot] != 0)
                         break;
                 }
 
@@ -252,28 +236,59 @@ namespace Utopia.GUI
                 _spriteRender.End(context);
             }
         }
+        #endregion
 
-        public override void EnableComponent(bool forced)
+        #region Private methods
+        //ToolBar UI management ==================================================================
+        private void OnSlotClicked(SlotClickedEventArgs e)
         {
-            if (!AutoStateEnabled && !forced) 
-                return;
+            if (SlotClicked != null) SlotClicked(this, e);
+        }
 
-            if (!_screen.Desktop.Children.Contains(ToolbarUi))
-                _screen.Desktop.Children.Add(ToolbarUi);
+        private void _screen_ToolTipHide(object sender, EventArgs e)
+        {
+            _tooltip.Close();
+        }
 
+        private void _screen_ToolTipShow(object sender, ToolTipEventArgs e)
+        {
+            var cell = e.Control as InventoryCell;
+
+            if (cell != null)
+            {
+                _tooltip.SetText(cell.Slot.Item.Name, cell.Slot.Item.Description ?? "This item has no description, try to guess what is it.");
+            }
+
+            var bounds = e.Control.GetAbsoluteBounds();
+
+            if (bounds.Bottom + _tooltip.Bounds.Size.Y.Offset > _screen.Height)
+            {
+                _tooltip.Bounds.Location = new UniVector(bounds.Left, bounds.Top - _tooltip.Bounds.Size.Y);
+            }
+            else
+            {
+                _tooltip.Bounds.Location = new UniVector(bounds.Left, bounds.Bottom);
+            }
+
+            _tooltip.Show(_screen);
+            _tooltip.BringToFront();
+        }
+
+        private void SelectSlot(int index)
+        {
+            // equip the slot
+            _selectedSlot = index;
+            OnSlotClicked(new SlotClickedEventArgs { SlotIndex = index });
+        }
+
+        //=========================================================================================
+        //Refresh location when the viewport widnows size is changing !
+        private void D3DEngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
+        {
             var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
-
             ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
-
-
-            base.EnableComponent();
         }
-
-        public override void DisableComponent()
-        {
-            _screen.Desktop.Children.Remove(ToolbarUi);
-            base.DisableComponent();
-        }
+        #endregion
     }
 
     public class SlotClickedEventArgs : EventArgs
