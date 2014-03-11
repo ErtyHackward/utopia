@@ -156,7 +156,7 @@ namespace S33M3CoreComponents.Cameras
                       float farPlane)
         {
             _d3dEngine = d3dEngine;
-            d3dEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
+            d3dEngine.ScreenSize_Updated += D3dEngine_ScreenSize_Updated;
             _nearPlane = nearPlane;
             _farPlane = farPlane;
             CameraInitialize();
@@ -172,7 +172,7 @@ namespace S33M3CoreComponents.Cameras
 
         public override void BeforeDispose()
         {
-            _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            _d3dEngine.ScreenSize_Updated -= D3dEngine_ScreenSize_Updated;
 
             if (CameraUpdateOrderChanged != null)
             {
@@ -215,7 +215,7 @@ namespace S33M3CoreComponents.Cameras
             if (CameraUpdateOrderChanged != null) CameraUpdateOrderChanged(this, _cameraPlugin.CameraUpdateOrder);
         }
 
-        private void D3dEngine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
+        private void D3dEngine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             Viewport = viewport;
         }

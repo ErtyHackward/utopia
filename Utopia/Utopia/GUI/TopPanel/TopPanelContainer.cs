@@ -1,5 +1,6 @@
 ﻿using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -17,6 +18,12 @@ namespace Utopia.GUI.TopPanel
         private D3DEngine _d3DEngine;
 
         private int _topPanelheight;
+
+        //Child components
+        private PanelControl _compassPanel;
+        private PanelControl _mainPanel;
+
+        private EnergyBar _life;
         #endregion
 
         #region Public properties
@@ -26,14 +33,16 @@ namespace Utopia.GUI.TopPanel
         {
             _d3DEngine = d3DEngine;
             _topPanelheight = 100;
-            _d3DEngine.ViewPort_Updated += viewPort_Updated;
+            _d3DEngine.ScreenSize_Updated += ScreenSize_Updated;
 
             RefreshSize(_d3DEngine.ViewPort);
+            CreateChildsComponents();
         }
 
         public override void BeforeDispose()
         {
-            _d3DEngine.ViewPort_Updated -= viewPort_Updated;
+            _life.Dispose();
+            _d3DEngine.ScreenSize_Updated -= ScreenSize_Updated;
             base.BeforeDispose();
         }
 
@@ -41,7 +50,19 @@ namespace Utopia.GUI.TopPanel
         #endregion
 
         #region Private Methods
-        private void viewPort_Updated(ViewportF viewport, SharpDX.Direct3D11.Texture2DDescription newBackBuffer)
+        private void CreateChildsComponents()
+        {
+            _compassPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(new UniScalar(1.0f, -150), 0, 150, 150), Color = new ByteColor(255,255,255,128) });
+            _mainPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(0, 0, new UniScalar(1.0f, -150), 75), Color = new ByteColor(255, 255, 255, 128) });
+
+            _life = new EnergyBar() { Bounds = new UniRectangle(5, 5, 500, 30) };
+            _mainPanel.Children.Add(_life);
+
+            this.Children.Add(_compassPanel);
+            this.Children.Add(_mainPanel);
+        }
+
+        private void ScreenSize_Updated(ViewportF viewport, SharpDX.Direct3D11.Texture2DDescription newBackBuffer)
         {
             RefreshSize(viewport);
         }

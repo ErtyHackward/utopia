@@ -81,7 +81,7 @@ namespace Utopia.GUI
             //For 5 seconds =
             _hideChatInTick = 15 * Stopwatch.Frequency;
 
-            _d3dEngine.ViewPort_Updated += LocateChat;
+            _d3dEngine.ScreenSize_Updated += LocateChat;
 
             LocateChat(_d3dEngine.ViewPort, _d3dEngine.BackBufferTex.Description);
             IsHided = false;
@@ -94,7 +94,7 @@ namespace Utopia.GUI
         {
             _server.MessagePing -= _server_MessagePing;
             _server.MessageChat -= ServerConnectionMessageChat;
-            _d3dEngine.ViewPort_Updated -= LocateChat;            
+            _d3dEngine.ScreenSize_Updated -= LocateChat;            
         }
 
         public override void Initialize()

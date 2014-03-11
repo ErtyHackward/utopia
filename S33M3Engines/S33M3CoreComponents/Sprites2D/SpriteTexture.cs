@@ -44,7 +44,7 @@ namespace S33M3CoreComponents.Sprites2D
                            tex.Description.Format);
 
             _d3dEngine = d3dEngine;
-            _d3dEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
+            _d3dEngine.ScreenSize_Updated += D3dEngine_ScreenSize_Updated;
             Width = tex.Description.Width;
             Height = tex.Description.Height;
 
@@ -52,7 +52,7 @@ namespace S33M3CoreComponents.Sprites2D
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        private void D3dEngine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
+        private void D3dEngine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
             ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), Width, Height);
         }
@@ -239,7 +239,7 @@ namespace S33M3CoreComponents.Sprites2D
 
         public override void BeforeDispose()
         {
-            if (_d3dEngine != null) _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            if (_d3dEngine != null) _d3dEngine.ScreenSize_Updated -= D3dEngine_ScreenSize_Updated;
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Realms.Client.Components.GUI
             _engine = engine;
             _screen = screen;
             _commonResources = commonResources;
-            _engine.ViewPort_Updated += EngineViewPortUpdated;
+            _engine.ScreenSize_Updated += EngineViewPortUpdated;
 
             _linen = new ImageControl { Image = _commonResources.StLinenPattern };
             _cubes = new ImageControl { Image = _commonResources.StCubesPattern };
@@ -171,7 +171,7 @@ namespace Realms.Client.Components.GUI
 
         public override void BeforeDispose()
         {
-            _engine.ViewPort_Updated -= EngineViewPortUpdated;
+            _engine.ScreenSize_Updated -= EngineViewPortUpdated;
         }
 
         protected virtual void EngineViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer)

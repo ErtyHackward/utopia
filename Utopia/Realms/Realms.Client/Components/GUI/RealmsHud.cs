@@ -63,7 +63,7 @@ namespace Realms.Client.Components.GUI
             _screen = screen;
             _d3DEngine = d3DEngine;
 
-            _d3DEngine.ViewPort_Updated += UpdateLayout;
+            _d3DEngine.ScreenSize_Updated += UpdateLayout;
         }
 
         private void UpdateLabels()

@@ -36,7 +36,7 @@ namespace Utopia.Components
         public StaggingBackBuffer(D3DEngine engine, string Name)
         {
             _engine = engine;
-            _engine.ViewPort_Updated += engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated += engine_ScreenSize_Updated;
             this.DrawOrders.UpdateIndex(0, 999, Name);
             this.Name = Name;
 
@@ -57,7 +57,7 @@ namespace Utopia.Components
 
             if (_renderTexture != null) _renderTexture.Dispose();
             if (_renderTextureView != null) _renderTextureView.Dispose();
-            _engine.ViewPort_Updated -= engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated -= engine_ScreenSize_Updated;
         }
 
         #region Public Methods
@@ -80,7 +80,7 @@ namespace Utopia.Components
         #endregion
 
         #region Private methods
-        private void engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
+        private void engine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             CreateRenderTargets(newBackBuffer);
 

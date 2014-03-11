@@ -75,7 +75,7 @@ namespace Utopia.GUI
 
             _d3DEngine = d3DEngine;
             DrawOrders.UpdateIndex(0, 10000);
-            _d3DEngine.ViewPort_Updated += D3DEngineViewPortUpdated;
+            _d3DEngine.ScreenSize_Updated += D3DEngineViewPortUpdated;
             ToolbarUi = toolbar;
             toolbar.LayoutFlags = ControlLayoutFlags.Skip;
             _camManager = camManager;
@@ -118,7 +118,7 @@ namespace Utopia.GUI
             _font.Dispose();
             _tooltip.Dispose();
             _topPanel.Dispose();
-            _d3DEngine.ViewPort_Updated -= D3DEngineViewPortUpdated;
+            _d3DEngine.ScreenSize_Updated -= D3DEngineViewPortUpdated;
         }
 
         #region Public methods
