@@ -40,10 +40,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Renderers
         /// </param>
         public void Render(Controls.Arcade.PanelControl control, IFlatGuiGraphics graphics)
         {
+            if (control.HidedPanel) return;
             RectangleF absoluteBound = control.GetAbsoluteBounds();
             ByteColor color = control.Color;
             // This is simple! A panel consists of a single element we need to draw.
-            graphics.DrawElement("panel", ref absoluteBound, ref color);
+            graphics.DrawElement(control.FrameName, ref absoluteBound, ref color);
         }
     }
 }

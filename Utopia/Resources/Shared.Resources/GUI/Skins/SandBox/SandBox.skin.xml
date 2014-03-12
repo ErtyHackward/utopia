@@ -398,5 +398,30 @@
       <text font="default" hplacement="center" vplacement="center" xoffset="1" yoffset="1" color="#3F3F3F" />
       <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
+    <frame name="EnergyBar">
+      <region source="controls" hplacement="stretch" vplacement="stretch" x="92" y="76" w="1" h="1" />
+    </frame>
+    <frame name="LifeEnergyBar">
+      <region source="controls" hplacement="left" vplacement="top" x="224" y="228" w="2" h="23" />
+      <region source="controls" hplacement="stretch" vplacement="top" x="226" y="228" w="1" h="23" />
+      <region source="controls" hplacement="right" vplacement="top" x="232" y="228" w="22" h="23" />
+      <region source="controls" hplacement="left" vplacement="stretch" x="224" y="237" w="2" h="1" />
+      <region source="controls" hplacement="stretch" vplacement="stretch" x="226" y="237" w="1" h="1" />
+      <region source="controls" hplacement="right" vplacement="stretch" x="232" y="251" w="22" h="1" />
+      <region source="controls" hplacement="left" vplacement="bottom" x="224" y="253" w="2" h="2" />
+      <region source="controls" hplacement="stretch" vplacement="bottom" x="226" y="253" w="1" h="2" />
+      <region source="controls" hplacement="right" vplacement="bottom" x="232" y="253" w="22" h="2" />
+    </frame>
+    <frame name="AirEnergyBar">
+      <region source="controls" hplacement="left" vplacement="top" x="192" y="228" w="2" h="23" />
+      <region source="controls" hplacement="stretch" vplacement="top" x="194" y="228" w="1" h="23" />
+      <region source="controls" hplacement="right" vplacement="top" x="200" y="228" w="22" h="23" />
+      <region source="controls" hplacement="left" vplacement="stretch" x="192" y="237" w="2" h="1" />
+      <region source="controls" hplacement="stretch" vplacement="stretch" x="194" y="237" w="1" h="1" />
+      <region source="controls" hplacement="right" vplacement="stretch" x="200" y="251" w="22" h="1" />
+      <region source="controls" hplacement="left" vplacement="bottom" x="192" y="253" w="2" h="2" />
+      <region source="controls" hplacement="stretch" vplacement="bottom" x="194" y="253" w="1" h="2" />
+      <region source="controls" hplacement="right" vplacement="bottom" x="200" y="253" w="22" h="2" />
+    </frame>
   </frames>
 </skin>

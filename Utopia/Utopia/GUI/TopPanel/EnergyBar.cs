@@ -1,4 +1,5 @@
 ﻿using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 using S33M3DXEngine.Buffers;
 using S33M3Resources.VertexFormats;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace Utopia.GUI.TopPanel
 {
-    public class EnergyBar : Control
+    public class EnergyBar : PanelControl
     {
         //Graphics properties
         public TimeSpan TimeFromOldToNewValue { get; set; }

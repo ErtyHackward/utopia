@@ -26,5 +26,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Arcade
     /// <summary>Panel that can host other controls, similar to a window</summary>
     public class PanelControl : Control
     {
+        private string _frameName = "panel";
+
+        public string FrameName
+        {
+            get { return _frameName; }
+            set { _frameName = value; }
+        }
+
+        public bool HidedPanel { get; set; }
     }
 }
