@@ -269,9 +269,9 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls
                 // Determine the controls absolute position based on the absolute
                 // dimensions and position of the parent control
                 RectangleF controlBounds = this.Bounds.ToOffset(
-                  parentBounds.Width, parentBounds.Height
+                  parentBounds.Width + this.Bounds.Size.X.ParentOffset, parentBounds.Height + this.Bounds.Size.Y.ParentOffset
                 );
-                controlBounds.Offset(parentBounds.X, parentBounds.Y);
+                controlBounds.Offset(parentBounds.X + this.Bounds.Location.X.ParentOffset, parentBounds.Y + this.Bounds.Location.Y.ParentOffset);
 
                 // Done, controlBounds now contains the absolute screen coordinates of
                 // the control's boundaries.
