@@ -52,14 +52,23 @@ namespace Utopia.GUI.TopPanel
             _compassPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(new UniScalar(1.0f, -150), 0, 150, 150), Color = new ByteColor(255,255,255,128) });
             _energiesPanel = ToDispose(new PanelControl() { HidedPanel=true, Bounds = new UniRectangle(0, 0, 200, 150), Color = new ByteColor(255, 255, 255, 128) });
 
-            var life = new EnergyBar() { FrameName = "LifeEnergyBar", Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10), 35) };
+            var life = new EnergyBar() { FrameName = "LifeEnergyBar", Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10), 30) };
             _energiesPanel.Children.Add(life);
 
             var lifeBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 4, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 40, 40, 255) };
             life.Children.Add(lifeBar);
 
-            var air = new EnergyBar() { FrameName = "AirEnergyBar", Bounds = new UniRectangle(5, 40, new UniScalar(1.0f, -10f), 35) };
+            var air = new EnergyBar() { FrameName = "AirEnergyBar", Bounds = new UniRectangle(5, 40, new UniScalar(1.0f, -10f), 30) };
             _energiesPanel.Children.Add(air);
+
+            var airBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255) };
+            air.Children.Add(airBar);
+
+            var stamina = new EnergyBar() { FrameName = "StaminaEnergyBar", Bounds = new UniRectangle(5, 75, new UniScalar(1.0f, -10f), 30) };
+            _energiesPanel.Children.Add(stamina);
+
+            var staminaBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 2, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 177, 43, 255) };
+            stamina.Children.Add(staminaBar);
 
             this.Children.Add(_compassPanel);
             this.Children.Add(_energiesPanel);
@@ -74,6 +83,8 @@ namespace Utopia.GUI.TopPanel
         {
             var screenSize = new Vector2I((int)viewport.Width, (int)viewport.Height);
             this.Bounds.Size = new UniVector(screenSize.X, _topPanelheight);
+
+
         }
         #endregion
 

@@ -423,5 +423,16 @@
       <region source="controls" hplacement="stretch" vplacement="bottom" x="194" y="253" w="1" h="2" />
       <region source="controls" hplacement="right" vplacement="bottom" x="200" y="253" w="22" h="2" />
     </frame>
+    <frame name="StaminaEnergyBar">
+      <region source="controls" hplacement="left" vplacement="top" x="160" y="228" w="2" h="23" />
+      <region source="controls" hplacement="stretch" vplacement="top" x="162" y="228" w="1" h="23" />
+      <region source="controls" hplacement="right" vplacement="top" x="168" y="228" w="22" h="23" />
+      <region source="controls" hplacement="left" vplacement="stretch" x="160" y="237" w="2" h="1" />
+      <region source="controls" hplacement="stretch" vplacement="stretch" x="162" y="237" w="1" h="1" />
+      <region source="controls" hplacement="right" vplacement="stretch" x="168" y="251" w="22" h="1" />
+      <region source="controls" hplacement="left" vplacement="bottom" x="160" y="253" w="2" h="2" />
+      <region source="controls" hplacement="stretch" vplacement="bottom" x="162" y="253" w="1" h="2" />
+      <region source="controls" hplacement="right" vplacement="bottom" x="168" y="253" w="22" h="2" />
+    </frame>
   </frames>
 </skin>

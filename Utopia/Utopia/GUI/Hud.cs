@@ -85,6 +85,7 @@ namespace Utopia.GUI
 
             _tooltip = new TooltipControl();
             _topPanel = new TopPanelContainer(d3DEngine);
+            _topPanel.LayoutFlags = ControlLayoutFlags.Skip;
             _topPanel.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
 
             _screen.ToolTipShow += _screen_ToolTipShow;
