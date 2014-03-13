@@ -24,6 +24,144 @@ namespace Utopia.Shared.Entities.Dynamic
         public DynamicEntityState EntityState;
         private Quaternion _headRotation;
 
+        #region Properties
+
+        /// <summary>
+        /// Gets voxel entity model
+        /// </summary>
+        [Browsable(false)]
+        public VoxelModelInstance ModelInstance { get; set; }
+
+        /// <summary>
+        /// Gets or sets entity state (this field should be refreshed before using the tool)
+        /// </summary>
+        [Browsable(false)]
+        DynamicEntityState IDynamicEntity.EntityState
+        {
+            get { return EntityState; }
+            set { EntityState = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets entity position
+        /// </summary>
+        [Browsable(false)]
+        public override Vector3D Position
+        {
+            get
+            {
+                return base.Position;
+            }
+            set
+            {
+                if (base.Position != value)
+                {
+                    var prev = base.Position;
+                    base.Position = value;
+                    OnPositionChanged(new EntityMoveEventArgs { Entity = this, PreviousPosition = prev });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets dynamic entity id
+        /// </summary>
+        [ProtoMember(1)]
+        [Browsable(false)]
+        public uint DynamicId { get; set; }
+
+        /// <summary>
+        /// The displacement mode use by this entity (Walk, swim, fly, ...)
+        /// </summary>
+        [ProtoMember(2)]
+        public EntityDisplacementModes DisplacementMode { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic entity can walk
+        /// </summary>
+        [ProtoMember(3)]
+        public float MoveSpeed { get; set; }
+
+        /// <summary>
+        /// The speed at wich the dynamic is doing move rotation
+        /// </summary>
+        [ProtoMember(4)]
+        public float RotationSpeed { get; set; }
+
+        /// <summary>
+        /// Gets or sets current voxel model name
+        /// </summary>
+        [ProtoMember(5)]
+        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        public virtual string ModelName { get; set; }
+
+        /// <summary>
+        /// Indicates if user can do any changes in the world or not
+        /// </summary>
+        [ProtoMember(6)]
+        public bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets entity head rotation
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(7)]
+        public virtual Quaternion HeadRotation
+        {
+            get
+            {
+                return _headRotation;
+            }
+            set
+            {
+                if (_headRotation != value)
+                {
+                    _headRotation = value;
+                    OnViewChanged(new EntityViewEventArgs { Entity = this });
+
+                    // we want to change body rotation
+                    // leave only y-axis rotation for the body
+
+                    var head = _headRotation;
+
+                    head.X = 0;
+                    head.Z = 0;
+                    head.Normalize();
+
+                    // calculate the difference between head and body rotation
+                    var headInvert = head;
+                    headInvert.Invert();
+                    var offset = BodyRotation * headInvert;
+
+                    // allow to rotate the head up to 160 degrees
+                    if (offset.Angle > 1.6f)
+                    {
+                        // remove excess rotation
+                        head = Quaternion.Lerp(BodyRotation, head, 1f - 1.6f / offset.Angle);
+                        BodyRotation = head;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets entity body rotation
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(8)]
+        public Quaternion BodyRotation { get; set; }
+
+        [ProtoMember(9)]
+        public Energy Health { get; set; }
+
+        [ProtoMember(10)]
+        public Energy Stamina { get; set; }
+
+        [ProtoMember(11)]
+        public Energy Oxygen { get; set; }
+
+        #endregion
+
         #region Events
         /// <summary>
         /// Occurs when entity changes its view direction
@@ -88,136 +226,10 @@ namespace Utopia.Shared.Entities.Dynamic
             HeadRotation = Quaternion.Identity;
             BodyRotation = Quaternion.Identity;
             EntityState = new DynamicEntityState();
+            Health = new Energy();
+            Stamina = new Energy();
+            Oxygen = new Energy();
         }
-
-        #region Properties
-
-        /// <summary>
-        /// Gets voxel entity model
-        /// </summary>
-        [Browsable(false)]
-        public VoxelModelInstance ModelInstance { get; set; }
-        
-        /// <summary>
-        /// Gets or sets entity state (this field should be refreshed before using the tool)
-        /// </summary>
-        [Browsable(false)]
-        DynamicEntityState IDynamicEntity.EntityState
-        {
-            get { return EntityState; }
-            set { EntityState = value; }
-        }
-        
-        /// <summary>
-        /// Gets or sets entity position
-        /// </summary>
-        [Browsable(false)]
-        public override Vector3D Position
-        {
-            get
-            {
-                return base.Position;
-            }
-            set
-            {
-                if (base.Position != value)
-                {
-                    var prev = base.Position;
-                    base.Position = value;
-                    OnPositionChanged(new EntityMoveEventArgs { Entity = this, PreviousPosition = prev });
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets dynamic entity id
-        /// </summary>
-        [ProtoMember(1)]
-        [Browsable(false)]
-        public uint DynamicId { get; set; }
-
-        /// <summary>
-        /// The displacement mode use by this entity (Walk, swim, fly, ...)
-        /// </summary>
-        [ProtoMember(2)]
-        public EntityDisplacementModes DisplacementMode { get; set; }
-
-        /// <summary>
-        /// The speed at wich the dynamic entity can walk
-        /// </summary>
-        [ProtoMember(3)]
-        public float MoveSpeed { get; set; }
-
-        /// <summary>
-        /// The speed at wich the dynamic is doing move rotation
-        /// </summary>
-        [ProtoMember(4)]
-        public float RotationSpeed { get; set; }
-
-        /// <summary>
-        /// Gets or sets current voxel model name
-        /// </summary>
-        [ProtoMember(5)]
-        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
-        public virtual string ModelName { get; set; }
-
-        /// <summary>
-        /// Indicates if user can do any changes in the world or not
-        /// </summary>
-        [ProtoMember(6)]
-        public bool IsReadOnly { get; set; }
-        
-        /// <summary>
-        /// Gets or sets entity head rotation
-        /// </summary>
-        [Browsable(false)]
-        [ProtoMember(7)]
-        public virtual Quaternion HeadRotation
-        {
-            get
-            {
-                return _headRotation;
-            }
-            set
-            {
-                if (_headRotation != value)
-                {
-                    _headRotation = value;
-                    OnViewChanged(new EntityViewEventArgs { Entity = this });
-
-                    // we want to change body rotation
-                    // leave only y-axis rotation for the body
-
-                    var head = _headRotation;
-
-                    head.X = 0;
-                    head.Z = 0;
-                    head.Normalize();
-
-                    // calculate the difference between head and body rotation
-                    var headInvert = head;
-                    headInvert.Invert();
-                    var offset = BodyRotation * headInvert;
-
-                    // allow to rotate the head up to 160 degrees
-                    if (offset.Angle > 1.6f)
-                    {
-                        // remove excess rotation
-                        head = Quaternion.Lerp(BodyRotation, head, 1f - 1.6f / offset.Angle);
-                        BodyRotation = head;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets entity body rotation
-        /// </summary>
-        [Browsable(false)]
-        [ProtoMember(8)]
-        public Quaternion BodyRotation { get; set; }
-
-        #endregion
 
         public override int GetHashCode()
         {
