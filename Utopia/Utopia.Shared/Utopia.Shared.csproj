@@ -146,6 +146,10 @@
     <Compile Include="Entities\Concrete\MusicPlayer.cs" />
     <Compile Include="Entities\Concrete\Stuff.cs" />
     <Compile Include="Entities\Designation.cs" />
+    <Compile Include="Entities\Dynamic\Energy.cs" />
+    <Compile Include="Entities\Dynamic\Energy.designer.cs">
+      <DependentUpon>Energy.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Dynamic\GodEntity.cs" />
     <Compile Include="Entities\Dynamic\GodHandToolState.cs" />
     <Compile Include="Entities\Dynamic\ToolState.cs" />

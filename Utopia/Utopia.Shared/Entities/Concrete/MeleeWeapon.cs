@@ -36,7 +36,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
-            entity.Health -= Damage;
+            entity.Health.CurrentValue -= Damage;
 
             impact.Success = true;
             impact.EntityId = entity.DynamicId;
