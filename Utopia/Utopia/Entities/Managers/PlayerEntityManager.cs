@@ -459,6 +459,8 @@ namespace Utopia.Entities.Managers
 
         public override void FTSUpdate( GameTime timeSpend)
         {
+            StaminaAutoGenerate(timeSpend);
+
             // wait until landscape being loaded
             if (!WorldChunks.IsInitialLoadCompleted) 
                 return;

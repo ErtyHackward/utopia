@@ -227,6 +227,11 @@ namespace Utopia.GUI
             _topPanel.Update(timeSpend);
         }
 
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
+        {
+            _topPanel.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+        }
+
         //Draw at 2d level ! (Last draw called)
         public override void Draw(DeviceContext context, int index)
         {
@@ -238,6 +243,7 @@ namespace Utopia.GUI
                 _spriteRender.End(context);
             }
         }
+
         #endregion
 
         #region Private methods

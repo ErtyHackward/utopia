@@ -208,7 +208,10 @@ namespace Utopia.Entities.Managers
                 //Jumping
                 if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition || _physicSimu.AllowJumping) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                 {
-                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+                    if (GetStaminaForJumping())
+                    {
+                        _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+                    }
                 }
 
                 if (_entityRotations.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
