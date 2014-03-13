@@ -46,10 +46,17 @@ namespace Utopia.GUI.TopPanel
             {
                 if (value == _newValue) return;
                 _newValue = value;
-                if (_previousOldValue == -1)
+                if (Math.Abs(_newValue - Value) < 0.01 && !_startTime.IsRunning) //Less than 1 percent of difference, assign directly !
                 {
-                    _previousOldValue = Value;
-                    _startTime.Restart();
+                    Value = _newValue;
+                }
+                else
+                {
+                    if (_previousOldValue == -1)
+                    {
+                        _previousOldValue = Value;
+                        _startTime.Restart();
+                    }
                 }
             }
         }

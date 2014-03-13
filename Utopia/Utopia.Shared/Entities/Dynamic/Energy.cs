@@ -33,7 +33,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (_maxValue != value)
                 {
                     _maxValue = value;
-                    RaiseChangeNotification(); 
+                    RaiseChangeNotification(0.0f); 
                 }
             }
         }
@@ -47,7 +47,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (_minValue != value)
                 {
                     _minValue = value;
-                    RaiseChangeNotification(); 
+                    RaiseChangeNotification(0.0f); 
                 }
             }
         }
@@ -63,8 +63,9 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (value > _maxValue) value = _maxValue;
                 if (value != _currentValue)
                 {
+                    var amount = value - _currentValue;
                     _currentValue = value;
-                    RaiseChangeNotification();
+                    RaiseChangeNotification(amount);
                 }
             }
         }
@@ -92,9 +93,9 @@ namespace Utopia.Shared.Entities.Dynamic
         }
 
         //Will raise a change Notification Event to subscriber
-        private void RaiseChangeNotification()
+        private void RaiseChangeNotification(float changedAmount)
         {
-            if (ValueChanged != null) ValueChanged(this, new EnergyChangedEventArgs() { EnergyChanged = this });
+            if (ValueChanged != null) ValueChanged(this, new EnergyChangedEventArgs() { EnergyChanged = this, ValueChangedAmount = changedAmount });
         }
 
     }

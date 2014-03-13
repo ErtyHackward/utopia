@@ -103,7 +103,7 @@ namespace Utopia.GUI.TopPanel
             _oxygenFrame = new PanelControl() { FrameName = "AirEnergyBar", Bounds = new UniRectangle(5, 75, new UniScalar(1.0f, -10f), 30) };
             _energiesPanel.Children.Add(_oxygenFrame);
 
-            _oxygenBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255), TimeFromOldToNewInMS = 100 };
+            _oxygenBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255), TimeFromOldToNewInMS = 500 };
             _oxygenFrame.Children.Add(_oxygenBar);
 
             _healthBar.Value = _playerEntityManager.PlayerCharacter.Health.CurrentAsPercent;

@@ -33,6 +33,8 @@ namespace Utopia.Shared.Net.Interfaces
     [ProtoInclude(123, typeof(RequestDateTimeSyncMessage))]
     [ProtoInclude(124, typeof(GetEntityMessage))]
     [ProtoInclude(125, typeof(EntityDataMessage))]
+    [ProtoInclude(126, typeof(EntityHealthMessage))]
+    
     public interface IBinaryMessage
     {
         /// <summary>

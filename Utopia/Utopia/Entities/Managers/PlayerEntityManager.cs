@@ -331,6 +331,7 @@ namespace Utopia.Entities.Managers
             _landscapeManager = landscapeManager;
             _chatComponent = chatComponent;
             _postEffectComponent = postEffectComponent;
+            OnLanding += PlayerEntityManager_OnLanding;
 
             PlayerCharacter = (PlayerCharacter)server.Player;
             
@@ -344,6 +345,8 @@ namespace Utopia.Entities.Managers
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
         }
+
+
 
         void Equipment_ItemEquipped(object sender, CharacterEquipmentEventArgs e)
         {
@@ -403,6 +406,8 @@ namespace Utopia.Entities.Managers
 
         public override void BeforeDispose()
         {
+            OnLanding -= PlayerEntityManager_OnLanding;
+
             // Clean Up event Delegates
             if (OnLanding != null)
             {
@@ -459,7 +464,7 @@ namespace Utopia.Entities.Managers
 
         public override void FTSUpdate( GameTime timeSpend)
         {
-            StaminaAutoGenerate(timeSpend);
+            EnergyFTSUpdate(timeSpend);
 
             // wait until landscape being loaded
             if (!WorldChunks.IsInitialLoadCompleted) 

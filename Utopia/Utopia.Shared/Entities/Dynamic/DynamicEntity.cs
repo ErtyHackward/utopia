@@ -160,6 +160,13 @@ namespace Utopia.Shared.Entities.Dynamic
         [ProtoMember(11)]
         public Energy Oxygen { get; set; }
 
+        [Browsable(false)]
+        [ProtoMember(12)]
+        public DynamicEntityHealthState HealthState { get; set; }
+
+        [Browsable(false)]
+        [ProtoMember(13)]
+        public DynamicEntityAfflictionState Afflictions { get; set; }
         #endregion
 
         #region Events
