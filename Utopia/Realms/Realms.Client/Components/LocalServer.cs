@@ -114,6 +114,11 @@ namespace Realms.Client.Components
             dEntity.Stamina.MaxValue = 100;
             dEntity.Oxygen.MaxValue = 100;
 
+            dEntity.Health.CurrentValue = 100;
+            dEntity.Stamina.CurrentValue = 100;
+            dEntity.Oxygen.CurrentValue = 100;
+
+
             // give start items to the player
             var startSetName = _worldParam.Configuration.StartSet;
             if (!string.IsNullOrEmpty(startSetName))

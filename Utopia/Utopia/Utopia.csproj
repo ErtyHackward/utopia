@@ -121,6 +121,7 @@
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.Energy.cs" />
     <Compile Include="GUI\TopPanel\EnergyBar.cs" />
     <Compile Include="GUI\TopPanel\TopPanelContainer.cs" />
     <Compile Include="GUI\TopPanel\EnergyBarRenderer.cs" />

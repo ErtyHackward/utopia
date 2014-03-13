@@ -84,7 +84,7 @@ namespace Utopia.GUI
             IsHidden = false;
 
             _tooltip = new TooltipControl();
-            _topPanel = new TopPanelContainer(d3DEngine);
+            _topPanel = new TopPanelContainer(d3DEngine, playerEntityManager);
             _topPanel.LayoutFlags = ControlLayoutFlags.Skip;
             _topPanel.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
 
@@ -224,6 +224,7 @@ namespace Utopia.GUI
             }
 
             _toolbarUi.Update(timeSpend);
+            _topPanel.Update(timeSpend);
         }
 
         //Draw at 2d level ! (Last draw called)
