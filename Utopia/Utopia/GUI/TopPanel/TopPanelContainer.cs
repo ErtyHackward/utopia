@@ -72,6 +72,13 @@ namespace Utopia.GUI.TopPanel
             if (_playerEntityManager.PlayerCharacter.Oxygen.CurrentAsPercent == 1.0f) _oxygenFrame.IsVisible = false;
             else _oxygenFrame.IsVisible = true;
         }
+
+        public void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
+        {
+            _healthBar.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+            _staminaBar.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+            _oxygenBar.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+        }
         #endregion
 
 
@@ -84,19 +91,19 @@ namespace Utopia.GUI.TopPanel
             _healthFrame = new PanelControl() { FrameName = "LifeEnergyBar", Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10), 30) };
             _energiesPanel.Children.Add(_healthFrame);
 
-            _healthBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 4, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 40, 40, 255), TimeFromOldToNewInMS = 1000 };
+            _healthBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 4, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 40, 40, 255), TimeFromOldToNewInMS = 500 };
             _healthFrame.Children.Add(_healthBar);
 
             _staminaFrame = new PanelControl() { FrameName = "StaminaEnergyBar", Bounds = new UniRectangle(5, 40, new UniScalar(1.0f, -10f), 30) };
             _energiesPanel.Children.Add(_staminaFrame);
 
-            _staminaBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 2, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 177, 43, 255), TimeFromOldToNewInMS = 1000 };
+            _staminaBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 2, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 177, 43, 255), TimeFromOldToNewInMS = 500 };
             _staminaFrame.Children.Add(_staminaBar);
 
             _oxygenFrame = new PanelControl() { FrameName = "AirEnergyBar", Bounds = new UniRectangle(5, 75, new UniScalar(1.0f, -10f), 30) };
             _energiesPanel.Children.Add(_oxygenFrame);
 
-            _oxygenBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255), TimeFromOldToNewInMS = 1000 };
+            _oxygenBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255), TimeFromOldToNewInMS = 100 };
             _oxygenFrame.Children.Add(_oxygenBar);
 
             _healthBar.Value = _playerEntityManager.PlayerCharacter.Health.CurrentAsPercent;

@@ -21,6 +21,7 @@ namespace Utopia.Shared.Entities.Dynamic
         private float _minValue;
         private float _currentValue;
 
+        [Browsable(false)]
         public bool isNetworkPropagated { get; set; }
 
         [ProtoMember(1)]

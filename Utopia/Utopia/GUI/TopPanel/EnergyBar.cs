@@ -3,6 +3,7 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 using S33M3CoreComponents.Maths;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
+using S33M3Resources.Structs;
 using S33M3Resources.VertexFormats;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace Utopia.GUI.TopPanel
     public class EnergyBar : PanelControl
     {
         private float _newValue;
-        private float _value;
-        private float _previousOldValue;
+        private FTSValue<float> _value = new FTSValue<float>();
+        private float _previousOldValue = -1;
         private Stopwatch _startTime = new Stopwatch();
 
         //Graphics properties
@@ -27,12 +28,11 @@ namespace Utopia.GUI.TopPanel
         /// </summary>
         public float Value
         {
-            get { return _value; }
+            get { return _value.Value; }
             set
             {
-                if (_value == value) return;
-                _value = value;
-                this.Bounds.Size.X.Fraction = _value;
+                if (_value.Value == value) return;
+                _value.Value = value;
             }
         }
 
@@ -45,24 +45,39 @@ namespace Utopia.GUI.TopPanel
             set
             {
                 if (value == _newValue) return;
-                _newValue = value; 
-                _previousOldValue = Value; _startTime.Restart();
+                _newValue = value;
+                if (_previousOldValue == -1)
+                {
+                    _previousOldValue = Value;
+                    _startTime.Restart();
+                }
             }
         }
 
         public void Update(GameTime timeSpend)
         {
+            _value.BackUpValue();
+
             if (_startTime.IsRunning)
             {
                 var factor = (_startTime.ElapsedMilliseconds / (float)TimeFromOldToNewInMS);
                 if (factor > 1.0f)
                 {
+                    _previousOldValue = -1;
                     factor = 1.0f;
                     _startTime.Stop();
                 }
 
                 Value = MathHelper.Lerp(_previousOldValue, _newValue, factor);
             }
+        }
+
+        public void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
+        {
+            //Interpolating bar movements changes
+           _value.ValueInterp = MathHelper.Lerp(_value.ValuePrev, _value.Value, interpolationLd);
+
+           this.Bounds.Size.X.Fraction = _value.ValueInterp;
         }
 
     }

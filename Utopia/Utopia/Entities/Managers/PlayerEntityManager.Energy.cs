@@ -29,14 +29,35 @@ namespace Utopia.Entities.Managers
             //if < X then chance of stun status
         }
 
-        private float _staminaAmountForRunningPerSecond = 2;
+        private float _staminaRegenAmountPerSecond = 5;
+        private void StaminaAutoGenerate(GameTime timeSpent)
+        {
+            var staminaRegenForRunning = _staminaRegenAmountPerSecond * timeSpent.ElapsedGameTimeInS_LD;
+            _playerCharacter.Stamina.CurrentValue += staminaRegenForRunning;
+        }
+
+        private float _staminaAmountForRunningPerSecond = 15;
         private bool GetStaminaForRunning(GameTime timeSpent)
         {
             var staminaNeededForRunning = _staminaAmountForRunningPerSecond * timeSpent.ElapsedGameTimeInS_LD;
 
-            if (_playerCharacter.Stamina.CurrentValue > staminaNeededForRunning)
+            if (_playerCharacter.Stamina.CurrentValue >= staminaNeededForRunning)
             {
                 _playerCharacter.Stamina.CurrentValue -= staminaNeededForRunning;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private float _staminaAmountForJumping = 15;
+        private bool GetStaminaForJumping()
+        {
+            if (_playerCharacter.Stamina.CurrentValue >= _staminaAmountForJumping)
+            {
+                _playerCharacter.Stamina.CurrentValue -= _staminaAmountForJumping;
                 return true;
             }
             else
