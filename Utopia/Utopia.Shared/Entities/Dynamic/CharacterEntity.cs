@@ -41,27 +41,6 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         public SlotContainer<ContainedSlot> Inventory { get; private set; }
 
-        ///// <summary>
-        ///// Gets current health points of the entity
-        ///// </summary>
-        //[ProtoMember(4)]
-        //[Browsable(false)]
-        //public int Health { get; set; }
-
-        ///// <summary>
-        ///// Gets maximum health point of the entity
-        ///// </summary>
-        //[ProtoMember(5)]
-        //public int MaxHealth { get; set; }
-        [ProtoMember(6)]
-        public Energy Health { get; set; }
-
-        [ProtoMember(7)]
-        public Energy Stamina { get; set; }
-
-        [ProtoMember(8)]
-        public Energy Oxygen { get; set; }
-
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
@@ -92,9 +71,6 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             Initialize();
             HandTool = new HandTool();
-            Health = new Energy();
-            Stamina = new Energy();
-            Oxygen = new Energy();
         }
 
         private void Initialize()
