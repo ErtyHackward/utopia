@@ -94,11 +94,16 @@ namespace Utopia.Network
 
                 if (dynEntity.DynamicId == PlayerManager.PlayerCharacter.DynamicId)
                 {
+                    //These are properties not synchronized with server, need to keep the local one !
                     var prevDisplacementMode = PlayerManager.PlayerCharacter.DisplacementMode;
+                    var staminaBckp = new Energy(PlayerManager.PlayerCharacter.Stamina);
+                    var oxygenBckp = new Energy(PlayerManager.PlayerCharacter.Oxygen);
 
                     var playerChar = (PlayerCharacter)dynEntity;
                     playerChar.DisplacementMode = prevDisplacementMode;
-                    
+                    playerChar.Stamina = staminaBckp;
+                    playerChar.Oxygen = oxygenBckp;
+
                     PlayerManager.PlayerCharacter = playerChar;
                 }
             }
