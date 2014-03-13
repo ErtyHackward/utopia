@@ -146,6 +146,8 @@
     <Compile Include="Entities\Concrete\MusicPlayer.cs" />
     <Compile Include="Entities\Concrete\Stuff.cs" />
     <Compile Include="Entities\Designation.cs" />
+    <Compile Include="Entities\Dynamic\DynamicEntityAfflictionState.cs" />
+    <Compile Include="Entities\Dynamic\DynamicEntityHealthState.cs" />
     <Compile Include="Entities\Dynamic\Energy.cs" />
     <Compile Include="Entities\Dynamic\Energy.designer.cs">
       <DependentUpon>Energy.cs</DependentUpon>

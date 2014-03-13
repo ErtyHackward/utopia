@@ -84,5 +84,15 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Represent the oxygen blood saturation of the entity
         /// </summary>
         Energy Oxygen { get; set; }
+
+        /// <summary>
+        /// Health status of the entity
+        /// </summary>
+        DynamicEntityHealthState HealthState { get; set; }
+
+        /// <summary>
+        /// One or more Afflication currently being applied to the entity
+        /// </summary>
+        DynamicEntityAfflictionState Afflictions { get; set; }
     }
 }

@@ -15,6 +15,8 @@ namespace Utopia.Shared.Net.Connections
     /// </summary>
     public class ClientConnection : TcpConnection
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Properties
 
         /// <summary>
@@ -326,6 +328,9 @@ namespace Utopia.Shared.Net.Connections
                     break;
                 case MessageTypes.GetEntity:
                     OnMessageGetEntity((GetEntityMessage)message);
+                    break;
+                case MessageTypes.EntityHealth:
+                    logger.Debug("HANDLE HERE MessageTypes.EntityHealth message");
                     break;
                 default:
                     throw new ArgumentException("Invalid message id");
