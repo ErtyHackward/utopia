@@ -41,18 +41,26 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         public SlotContainer<ContainedSlot> Inventory { get; private set; }
 
-        /// <summary>
-        /// Gets current health points of the entity
-        /// </summary>
-        [ProtoMember(4)]
-        [Browsable(false)]
-        public int Health { get; set; }
+        ///// <summary>
+        ///// Gets current health points of the entity
+        ///// </summary>
+        //[ProtoMember(4)]
+        //[Browsable(false)]
+        //public int Health { get; set; }
 
-        /// <summary>
-        /// Gets maximum health point of the entity
-        /// </summary>
-        [ProtoMember(5)]
-        public int MaxHealth { get; set; }
+        ///// <summary>
+        ///// Gets maximum health point of the entity
+        ///// </summary>
+        //[ProtoMember(5)]
+        //public int MaxHealth { get; set; }
+        [ProtoMember(6)]
+        public Energy Health { get; set; }
+
+        [ProtoMember(7)]
+        public Energy Stamina { get; set; }
+
+        [ProtoMember(8)]
+        public Energy Oxygen { get; set; }
 
         /// <summary>
         /// Gets entityFactory, this field is injected
@@ -82,11 +90,14 @@ namespace Utopia.Shared.Entities.Dynamic
 
         protected CharacterEntity()
         {
-            Initiazlie();
+            Initialize();
             HandTool = new HandTool();
+            Health = new Energy();
+            Stamina = new Energy();
+            Oxygen = new Energy();
         }
 
-        private void Initiazlie()
+        private void Initialize()
         {
             Equipment = new CharacterEquipment(this);
             Inventory = new SlotContainer<ContainedSlot>(this, new S33M3Resources.Structs.Vector2I(7, 5));
@@ -282,7 +293,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             if (cont != null)
             {
-                cont.Initiazlie();
+                cont.Initialize();
             }
 
             return obj;

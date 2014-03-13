@@ -419,6 +419,9 @@ namespace Utopia.Editor.Forms
             var recipesNode = tvMainCategories.Nodes["Recipes"];
             recipesNode.Nodes.Clear();
 
+            //Remove all recipte that are using a not existing bluePrintId
+            _configuration.Recipes.RemoveAll(x => _configuration.BluePrints.Keys.Contains(x.ResultBlueprintId) == false && x.ResultBlueprintId >= 256);
+
             foreach (var recipeGroup in _configuration.Recipes.GroupBy(g => g.ContainerBlueprintId))
             {
                 var groupNode = AddSubNode(recipesNode, recipeGroup.Key == 0 ? "Player" : _configuration.BluePrints[recipeGroup.Key].Name, recipeGroup.Key);
