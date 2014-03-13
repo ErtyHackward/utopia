@@ -2,12 +2,14 @@
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
 using S33M3DXEngine;
+using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Inventory;
 
 namespace Utopia.GUI.TopPanel
@@ -22,16 +24,28 @@ namespace Utopia.GUI.TopPanel
         //Child components
         private PanelControl _compassPanel;
         private PanelControl _energiesPanel;
+        private PlayerEntityManager _playerEntityManager;
+
+        //Energy bars
+        private PanelControl _healthFrame;
+        private EnergyBar _healthBar;
+
+        private PanelControl _oxygenFrame;
+        private EnergyBar _oxygenBar;
+
+        private PanelControl _staminaFrame;
+        private EnergyBar _staminaBar;
         #endregion
 
         #region Public properties
         #endregion
 
-        public TopPanelContainer(D3DEngine d3DEngine)
+        public TopPanelContainer(D3DEngine d3DEngine, PlayerEntityManager playerEntityManager)
         {
             _d3DEngine = d3DEngine;
             _topPanelheight = 100;
             _d3DEngine.ScreenSize_Updated += ScreenSize_Updated;
+            _playerEntityManager = playerEntityManager;
 
             RefreshSize(_d3DEngine.ViewPort);
             CreateChildsComponents();
@@ -44,7 +58,22 @@ namespace Utopia.GUI.TopPanel
         }
 
         #region Public Methods
+        public void Update(GameTime timeSpend)
+        {
+            _healthBar.NewValue = _playerEntityManager.PlayerCharacter.Health.CurrentAsPercent;
+            _staminaBar.NewValue = _playerEntityManager.PlayerCharacter.Stamina.CurrentAsPercent;
+            _oxygenBar.NewValue = _playerEntityManager.PlayerCharacter.Oxygen.CurrentAsPercent;
+
+            _healthBar.Update(timeSpend);
+            _staminaBar.Update(timeSpend);
+            _oxygenBar.Update(timeSpend);
+
+            //Show / Hide Oxygen bar
+            if (_playerEntityManager.PlayerCharacter.Oxygen.CurrentAsPercent == 1.0f) _oxygenFrame.IsVisible = false;
+            else _oxygenFrame.IsVisible = true;
+        }
         #endregion
+
 
         #region Private Methods
         private void CreateChildsComponents()
@@ -52,23 +81,27 @@ namespace Utopia.GUI.TopPanel
             _compassPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(new UniScalar(1.0f, -150), 0, 150, 150), Color = new ByteColor(255,255,255,128) });
             _energiesPanel = ToDispose(new PanelControl() { HidedPanel=true, Bounds = new UniRectangle(0, 0, 200, 150), Color = new ByteColor(255, 255, 255, 128) });
 
-            var life = new EnergyBar() { FrameName = "LifeEnergyBar", Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10), 30) };
-            _energiesPanel.Children.Add(life);
+            _healthFrame = new PanelControl() { FrameName = "LifeEnergyBar", Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10), 30) };
+            _energiesPanel.Children.Add(_healthFrame);
 
-            var lifeBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 4, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 40, 40, 255) };
-            life.Children.Add(lifeBar);
+            _healthBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 4, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 40, 40, 255), TimeFromOldToNewInMS = 1000 };
+            _healthFrame.Children.Add(_healthBar);
 
-            var air = new EnergyBar() { FrameName = "AirEnergyBar", Bounds = new UniRectangle(5, 40, new UniScalar(1.0f, -10f), 30) };
-            _energiesPanel.Children.Add(air);
+            _staminaFrame = new PanelControl() { FrameName = "StaminaEnergyBar", Bounds = new UniRectangle(5, 40, new UniScalar(1.0f, -10f), 30) };
+            _energiesPanel.Children.Add(_staminaFrame);
 
-            var airBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255) };
-            air.Children.Add(airBar);
+            _staminaBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 2, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 177, 43, 255), TimeFromOldToNewInMS = 1000 };
+            _staminaFrame.Children.Add(_staminaBar);
 
-            var stamina = new EnergyBar() { FrameName = "StaminaEnergyBar", Bounds = new UniRectangle(5, 75, new UniScalar(1.0f, -10f), 30) };
-            _energiesPanel.Children.Add(stamina);
+            _oxygenFrame = new PanelControl() { FrameName = "AirEnergyBar", Bounds = new UniRectangle(5, 75, new UniScalar(1.0f, -10f), 30) };
+            _energiesPanel.Children.Add(_oxygenFrame);
 
-            var staminaBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 2, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(255, 177, 43, 255) };
-            stamina.Children.Add(staminaBar);
+            _oxygenBar = new EnergyBar() { FrameName = "EnergyBar", Bounds = new UniRectangle(2, 2 + 7, new UniScalar(1.0f / 3, 0.0f, -24f), new UniScalar(1.0f, -11f)), Color = new ByteColor(63, 25, 255, 255), TimeFromOldToNewInMS = 1000 };
+            _oxygenFrame.Children.Add(_oxygenBar);
+
+            _healthBar.Value = _playerEntityManager.PlayerCharacter.Health.CurrentAsPercent;
+            _staminaBar.Value = _playerEntityManager.PlayerCharacter.Stamina.CurrentAsPercent;
+            _oxygenBar.Value = _playerEntityManager.PlayerCharacter.Oxygen.CurrentAsPercent;
 
             this.Children.Add(_compassPanel);
             this.Children.Add(_energiesPanel);
@@ -83,8 +116,6 @@ namespace Utopia.GUI.TopPanel
         {
             var screenSize = new Vector2I((int)viewport.Width, (int)viewport.Height);
             this.Bounds.Size = new UniVector(screenSize.X, _topPanelheight);
-
-
         }
         #endregion
 

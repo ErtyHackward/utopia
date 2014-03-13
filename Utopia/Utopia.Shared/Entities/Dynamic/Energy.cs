@@ -17,27 +17,43 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public event EventHandler<EnergyChangedEventArgs> ValueChanged;
 
-        private int _maxValue;
-        private int _minValue;
-        private int _currentValue;
+        private float _maxValue;
+        private float _minValue;
+        private float _currentValue;
+
+        public bool isNetworkPropagated { get; set; }
 
         [ProtoMember(1)]
-        public int MaxValue
+        public float MaxValue
         {
             get { return _maxValue; }
-            set { if(_maxValue != value) _maxValue = value;  }
+            set
+            {
+                if (_maxValue != value)
+                {
+                    _maxValue = value;
+                    RaiseChangeNotification(); 
+                }
+            }
         }
 
         [ProtoMember(2)]
-        public int MinValue
+        public float MinValue
         {
             get { return _minValue; }
-            set { if (_minValue != value) _minValue = value; }
+            set
+            {
+                if (_minValue != value)
+                {
+                    _minValue = value;
+                    RaiseChangeNotification(); 
+                }
+            }
         }
 
         [ProtoMember(3)]
         [Browsable(false)]
-        public int CurrentValue
+        public float CurrentValue
         {
             get { return _currentValue; }
             set
@@ -47,6 +63,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (value != _currentValue)
                 {
                     _currentValue = value;
+                    RaiseChangeNotification();
                 }
             }
         }
@@ -61,7 +78,7 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
-        public Energy(Energy energy)
+        public Energy(Energy energy): this()
         {
             this.MaxValue = energy.MaxValue;
             this.MinValue = energy.MinValue;
@@ -70,10 +87,11 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public Energy()
         {
+            isNetworkPropagated = true;
         }
 
         //Will raise a change Notification Event to subscriber
-        public void RaiseChangeNotification()
+        private void RaiseChangeNotification()
         {
             if (ValueChanged != null) ValueChanged(this, new EnergyChangedEventArgs() { EnergyChanged = this });
         }

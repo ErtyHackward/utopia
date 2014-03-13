@@ -217,7 +217,10 @@ namespace Utopia.Entities.Managers
             //Run only if Move forward and run button pressed at the same time.
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
             {
-                moveModifier = 1.5f;
+                if (GetStaminaForRunning(timeSpent))
+                {
+                    moveModifier = 1.5f;
+                }
             }
 
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * 1.2f * moveModifier });

@@ -286,6 +286,8 @@ namespace Utopia.Network
 
         private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
         {
+            if (e.EnergyChanged.isNetworkPropagated == false) return;
+
             _server.ServerConnection.Send(new EntityHealthMessage
             {
                 Health = e.EnergyChanged,
