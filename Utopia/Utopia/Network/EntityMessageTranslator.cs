@@ -43,6 +43,7 @@ namespace Utopia.Network
                         _playerEntity.PositionChanged -= PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged -= PlayerEntityViewChanged;
                         _playerEntity.Use -= PlayerEntityUse;
+                        _playerEntity.Health.ValueChanged -= Health_ValueChanged;
                     }
 
                     _playerEntity = value;
@@ -52,6 +53,7 @@ namespace Utopia.Network
                         _playerEntity.PositionChanged += PlayerEntityPositionChanged;
                         _playerEntity.ViewChanged += PlayerEntityViewChanged;
                         _playerEntity.Use += PlayerEntityUse;
+                        _playerEntity.Health.ValueChanged += Health_ValueChanged;
                     }
                 }
             }
@@ -279,6 +281,15 @@ namespace Utopia.Network
             {
                 Position = e.Entity.Position,
                 EntityId = e.Entity.DynamicId
+            });
+        }
+
+        private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
+        {
+            _server.ServerConnection.Send(new EntityHealthMessage
+            {
+                Health = e.EnergyChanged,
+                EntityId = e.Entity == null ? _playerEntity.DynamicId : e.Entity.DynamicId
             });
         }
     }

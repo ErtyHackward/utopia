@@ -117,5 +117,9 @@ namespace Utopia.Shared.Net.Messages
         /// Server response for GetEntity message
         /// </summary>
         EntityData = 28,
+        /// <summary>
+        /// Entity Health change !
+        /// </summary>
+        EntityHealth = 29,
     }
 }

@@ -110,6 +110,10 @@ namespace Realms.Client.Components
             dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             dEntity.CharacterName = "Local player";
 
+            dEntity.Health.MaxValue = 100;
+            dEntity.Stamina.MaxValue = 100;
+            dEntity.Oxygen.MaxValue = 100;
+
             // give start items to the player
             var startSetName = _worldParam.Configuration.StartSet;
             if (!string.IsNullOrEmpty(startSetName))

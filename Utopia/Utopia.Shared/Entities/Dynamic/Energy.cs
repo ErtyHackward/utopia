@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Entities.Events;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -14,6 +15,8 @@ namespace Utopia.Shared.Entities.Dynamic
     [ProtoContract]
     public partial class Energy
     {
+        public event EventHandler<EnergyChangedEventArgs> ValueChanged;
+
         private int _maxValue;
         private int _minValue;
         private int _currentValue;
@@ -22,14 +25,14 @@ namespace Utopia.Shared.Entities.Dynamic
         public int MaxValue
         {
             get { return _maxValue; }
-            set { _maxValue = value; }
+            set { if(_maxValue != value) _maxValue = value;  }
         }
 
         [ProtoMember(2)]
         public int MinValue
         {
             get { return _minValue; }
-            set { _minValue = value; }
+            set { if (_minValue != value) _minValue = value; }
         }
 
         [ProtoMember(3)]
@@ -39,9 +42,12 @@ namespace Utopia.Shared.Entities.Dynamic
             get { return _currentValue; }
             set
             {
-                if (value < _minValue) { _currentValue = _minValue; return; }
-                if (value > _maxValue) { _currentValue = _maxValue; return; }
-                _currentValue = value;
+                if (value < _minValue) value = _minValue; 
+                if (value > _maxValue) value = _maxValue;
+                if (value != _currentValue)
+                {
+                    _currentValue = value;
+                }
             }
         }
 
@@ -55,6 +61,22 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
+        public Energy(Energy energy)
+        {
+            this.MaxValue = energy.MaxValue;
+            this.MinValue = energy.MinValue;
+            this.CurrentValue = energy.CurrentValue;
+        }
+
+        public Energy()
+        {
+        }
+
+        //Will raise a change Notification Event to subscriber
+        public void RaiseChangeNotification()
+        {
+            if (ValueChanged != null) ValueChanged(this, new EnergyChangedEventArgs() { EnergyChanged = this });
+        }
 
     }
 }

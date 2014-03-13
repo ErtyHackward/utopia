@@ -69,5 +69,20 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Indicates if user can do any changes in the world or not
         /// </summary>
         bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Represent the Health of the entity
+        /// </summary>
+        Energy Health { get; set; }
+
+        /// <summary>
+        /// Represent the stamina of the entity
+        /// </summary>
+        Energy Stamina { get; set; }
+
+        /// <summary>
+        /// Represent the oxygen blood saturation of the entity
+        /// </summary>
+        Energy Oxygen { get; set; }
     }
 }

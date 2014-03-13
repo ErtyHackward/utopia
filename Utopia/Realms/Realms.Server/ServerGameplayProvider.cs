@@ -38,7 +38,10 @@ namespace Realms.Server
                 DynamicId = entityId,
                 DisplacementMode = EntityDisplacementModes.Walking,
                 Position = pos == def ? _server.LandscapeManager.GetHighestPoint(pos) : pos,
-                CharacterName = name
+                CharacterName = name,
+                Health = new Energy() { MaxValue = 100 },
+                Stamina = new Energy() { MaxValue = 100 },
+                Oxygen = new Energy() { MaxValue = 100 }
             };
 
             // give start items to the player
