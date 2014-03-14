@@ -9,17 +9,17 @@ using Utopia.Shared.Net.Interfaces;
 namespace Utopia.Shared.Net.Messages
 {
     /// <summary>
-    /// Message to synchronise an entity Health change
+    /// Message to synchronise an entity Affliction state
     /// </summary>
     [ProtoContract]
-    public class EntityHealthMessage : IBinaryMessage
+    public class EntityAfflictionStateMessage : IBinaryMessage
     {
         /// <summary>
         /// Gets message id
         /// </summary>
         public byte MessageId
         {
-            get { return (byte)MessageTypes.EntityHealth; }
+            get { return (byte)MessageTypes.EntityAfflictionState; }
         }
 
         /// <summary>
@@ -32,6 +32,6 @@ namespace Utopia.Shared.Net.Messages
         /// New Health of the entity
         /// </summary>
         [ProtoMember(2)]
-        public Energy Health { get; set; }
+        public DynamicEntityAfflictionState AfflictionState { get; set; }
     }
 }

@@ -716,6 +716,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
+        //Handle Entity HealthState change
         private void EntityHealthStateChanged(object sender, HealthStateChangeEventArgs e)
         {
             //Check if the entity entered the Dead state
@@ -741,7 +742,8 @@ namespace Utopia.Entities.Managers
 
         private void EntityAfflictionStateChanged(object sender, AfflictionStateChangeEventArgs e)
         {
-            
+            //Handle Affliction change for an entity here if needed
+            //Should "only" trigger visual aspect of it.
         }
 
         #endregion

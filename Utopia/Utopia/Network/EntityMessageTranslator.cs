@@ -83,6 +83,9 @@ namespace Utopia.Network
             _server.MessageUseFeedback += _server_MessageUseFeedback;
             _server.MessageItemTransfer += _server_MessageItemTransfer;
             _server.MessageEntityVoxelModel += ServerOnMessageEntityVoxelModel;
+            _server.MessageEntityHealth += _server_MessageEntityHealth;
+            _server.MessageEntityHealthState += _server_MessageEntityHealthState;
+            _server.MessageEntityAfflictionState += _server_MessageEntityAfflictionState;
 
             if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
@@ -97,10 +100,6 @@ namespace Utopia.Network
             playerEntityManager.PlayerEntityChanged += (sender, args) => { PlayerEntity = args.PlayerCharacter; };
         }
 
-        void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
-        {
-            _syncManager.RegisterFeedback(e.Message);
-        }
 
         public void Dispose()
         {
@@ -116,6 +115,10 @@ namespace Utopia.Network
             _server.MessageUseFeedback -= _server_MessageUseFeedback;
             _server.MessageItemTransfer -= _server_MessageItemTransfer;
             _server.MessageEntityVoxelModel -= ServerOnMessageEntityVoxelModel;
+            _server.MessageEntityHealth -= _server_MessageEntityHealth;
+            _server.MessageEntityHealthState -= _server_MessageEntityHealthState;
+            _server.MessageEntityAfflictionState -= _server_MessageEntityAfflictionState;
+            
         }
 
         //IN Going Server Data concering entities =================================================================
@@ -248,9 +251,46 @@ namespace Utopia.Network
             }
         }
 
+        void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
+        {
+            _syncManager.RegisterFeedback(e.Message);
+        }
+
         void _server_MessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
         {
             _dynamicEntityManager.UpdateEntity((IDynamicEntity)e.Message.Entity);
+        }
+
+        void _server_MessageEntityAfflictionState(object sender, ProtocolMessageEventArgs<EntityAfflictionStateMessage> e)
+        {
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            if (entity != null)
+            {
+                //update the health of the entity
+                entity.Afflictions = e.Message.AfflictionState;
+            }
+        }
+
+        void _server_MessageEntityHealthState(object sender, ProtocolMessageEventArgs<EntityHealthStateMessage> e)
+        {
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            if (entity != null)
+            {
+                //update the health of the entity
+                entity.HealthState = e.Message.HealthState;
+            }
+        }
+
+        void _server_MessageEntityHealth(object sender, ProtocolMessageEventArgs<EntityHealthMessage> e)
+        {
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            if (entity != null)
+            {
+                //update the health of the entity
+                entity.Health.MaxValue = e.Message.Health.MaxValue;
+                entity.Health.MinValue = e.Message.Health.MinValue;
+                entity.Health.CurrentValue = e.Message.Health.CurrentValue;
+            }
         }
         
         //OUT Going Server Data concering current player =================================================================

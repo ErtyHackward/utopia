@@ -170,10 +170,8 @@ namespace Utopia.Shared.Entities.Dynamic
             get { return _healthState; }
             set
             {
-                if (_healthState == value) return; 
-                HealthStateChangeEventArgs eventArg = new HealthStateChangeEventArgs();
-                eventArg.PreviousState = _healthState;
-                eventArg.NewState = value;
+                if (_healthState == value) return;
+                HealthStateChangeEventArgs eventArg = new HealthStateChangeEventArgs() { DynamicEntityId = DynamicId, NewState = value, PreviousState = _healthState };
                 _healthState = value;
                 OnHealthStateChanged(eventArg);
             }
@@ -187,9 +185,7 @@ namespace Utopia.Shared.Entities.Dynamic
             set
             {
                 if (_afflictions == value) return;
-                AfflictionStateChangeEventArgs eventArg = new AfflictionStateChangeEventArgs();
-                eventArg.PreviousState = _afflictions;
-                eventArg.NewState = value;
+                AfflictionStateChangeEventArgs eventArg = new AfflictionStateChangeEventArgs() { DynamicEntityId = DynamicId, NewState = value, PreviousState = _afflictions };
                 _afflictions = value;
                 OnAfflictionStateChanged(eventArg);
             }

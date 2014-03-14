@@ -3,6 +3,7 @@ using Utopia.Action;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3CoreComponents.Cameras;
+using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.Entities.Managers
 {
@@ -10,6 +11,13 @@ namespace Utopia.Entities.Managers
     public partial class PlayerEntityManager
     {
         private bool _isAutoRepeatedEvent;
+        private bool IsRestrictedMode
+        {
+            get
+            {
+                return _playerCharacter.HealthState == DynamicEntityHealthState.Dead;
+            }
+        }
 
         #region Private Methods
         /// <summary>
@@ -17,8 +25,8 @@ namespace Utopia.Entities.Managers
         /// </summary>
         private void inputHandler()
         {
-            if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
-            {
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
+            {                
                 if (Player.DisplacementMode == EntityDisplacementModes.Flying)
                 {
                     DisplacementMode = EntityDisplacementModes.Walking;
@@ -32,7 +40,7 @@ namespace Utopia.Entities.Managers
             if (!HasMouseFocus) 
                 return; //the editor(s) can acquire the mouseFocus
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.DropMode, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.DropMode, CatchExclusiveAction))
             {
                 // switch the drop mode if possible
                 var tool = PlayerCharacter.Equipment.RightTool;
@@ -42,7 +50,7 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, out _isAutoRepeatedEvent, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, out _isAutoRepeatedEvent, CatchExclusiveAction))
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
@@ -90,8 +98,8 @@ namespace Utopia.Entities.Managers
                     _inputsManager.MouseManager.MouseCapture = false;
                 }
             }
-            
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
+
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {
                 // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
                 // like opening a chest or a door  
@@ -99,7 +107,7 @@ namespace Utopia.Entities.Managers
                 HandleHandUse();
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
             {
                 //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
                 // and next, throw the right tool if left tool is already thrown

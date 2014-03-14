@@ -119,7 +119,7 @@ namespace Realms.Client.States
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
             _serverComponent = _ioc.Get<ServerComponent>();
-            _serverComponent.ConnectionStausChanged += ServerComponentOnConnectionStausChanged;
+            _serverComponent.ConnectionStatusChanged += ServerComponentOnConnectionStausChanged;
             
             var fadeComponent = _ioc.Get<FadeComponent>();
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
@@ -196,7 +196,7 @@ namespace Realms.Client.States
             _inputsManager.ActionsManager.KeyboardAction -= ActionsManager_KeyboardAction;
             _inputsManager = null;
 
-            _serverComponent.ConnectionStausChanged -= ServerComponentOnConnectionStausChanged;
+            _serverComponent.ConnectionStatusChanged -= ServerComponentOnConnectionStausChanged;
             _serverComponent = null;
             
             _hud.CraftingButton.Pressed -= CraftingButton_Pressed;

@@ -15,6 +15,8 @@ namespace Utopia.Entities.Managers
     {
         private void EnergyFTSUpdate(GameTime timeSpent)
         {
+            if (_playerCharacter.HealthState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead) return;
+
             //Auto Regen Stamina
             var staminaRegenForRunning = _staminaRegenAmountPerSecond * timeSpent.ElapsedGameTimeInS_LD;
             _playerCharacter.Stamina.CurrentValue += staminaRegenForRunning;
@@ -137,7 +139,7 @@ namespace Utopia.Entities.Managers
             //Change backGround music
             //Add graveyard object at death location
 
-            PlayerCharacter.DisplacementMode = Shared.Entities.EntityDisplacementModes.Flying;
+            DisplacementMode = Shared.Entities.EntityDisplacementModes.Flying;
         }
 
         private void DeactivateDeadState()
@@ -150,7 +152,7 @@ namespace Utopia.Entities.Managers
             //Change backGround music
             //Add graveyard object at death location
 
-            PlayerCharacter.DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
+            DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
         }
         #endregion
 
