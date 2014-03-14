@@ -21,7 +21,19 @@ namespace Utopia.Entities.Managers
 
             if (_playerCharacter.Oxygen.CurrentValue <= 0)
             {
-                _playerCharacter.Health.CurrentValue -= 3;
+                _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Drowning;
+                DrowningDamate(timeSpent);
+            }
+
+            if (IsHeadInsideWater)
+            {
+                OxygenForUnderWaterSwimming(timeSpent);
+            }
+
+            if (!IsHeadInsideWater && _playerCharacter.Oxygen.CurrentAsPercent < 1)
+            {
+                _playerCharacter.Oxygen.CurrentValue = _playerCharacter.Oxygen.MaxValue;
+                _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Normal;
             }
         }
 
@@ -66,14 +78,23 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Oxygen Energy
+        private float _oxygenAmountForUnderWaterPerSecond = 5;
         private void Oxygen_ValueChanged(object sender, Shared.Entities.Events.EnergyChangedEventArgs e)
         {
+        }
+
+        private void OxygenForUnderWaterSwimming(GameTime timeSpent)
+        {
+            var oxygenConsumption = _oxygenAmountForUnderWaterPerSecond * timeSpent.ElapsedGameTimeInS_LD;
+
+            _playerCharacter.Oxygen.CurrentValue -= oxygenConsumption;
         }
 
         #endregion
 
         #region Health Energy
         private float _healthDamagePerFallMeter = 5.0f;
+        private float _healthDamageDrowningPerSecond = 15.0f;
         private void Health_ValueChanged(object sender, Shared.Entities.Events.EnergyChangedEventArgs e)
         {
             if (e.EnergyChanged.CurrentAsPercent <= 0)
@@ -100,6 +121,12 @@ namespace Utopia.Entities.Managers
             if (fallHeight <= 5.0) return;
             var damageComputed = (fallHeight - 5) * _healthDamagePerFallMeter;
             _playerCharacter.Health.CurrentValue -= (float)damageComputed;
+        }
+
+        private void DrowningDamate(GameTime timeSpent)
+        {
+            var healthLost = _healthDamageDrowningPerSecond * timeSpent.ElapsedGameTimeInS_LD;
+            _playerCharacter.Health.CurrentValue -= healthLost;
         }
 
         private void ActivateDeadState()
