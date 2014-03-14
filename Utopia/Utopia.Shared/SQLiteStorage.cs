@@ -168,9 +168,10 @@ namespace Utopia.Shared
                         return cmd.ExecuteReader();
                     }
                 }
-                catch { 
+                catch (Exception e){ 
                     return null; 
                 }
+
             }
         }
 
