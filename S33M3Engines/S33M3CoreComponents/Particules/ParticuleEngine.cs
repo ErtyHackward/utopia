@@ -67,7 +67,7 @@ namespace S33M3CoreComponents.Particules
             //bind the Emitter with this PArticuleEngine for rendering
             emitter.ParentParticuleEngine = this;
             emitter.Initialize(context, _sharedFrameBuffer);
-
+            
             _liveEmitter.Add(emitter);
         }
         #endregion
