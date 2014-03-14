@@ -24,6 +24,9 @@ namespace Utopia.Shared.Entities.Dynamic
         public DynamicEntityState EntityState;
         private Quaternion _headRotation;
 
+        private DynamicEntityHealthState _healthState;
+        private DynamicEntityAfflictionState _afflictions;
+
         #region Properties
 
         /// <summary>
@@ -162,11 +165,36 @@ namespace Utopia.Shared.Entities.Dynamic
 
         [Browsable(false)]
         [ProtoMember(12)]
-        public DynamicEntityHealthState HealthState { get; set; }
+        public DynamicEntityHealthState HealthState
+        {
+            get { return _healthState; }
+            set
+            {
+                if (_healthState == value) return; 
+                HealthStateChangeEventArgs eventArg = new HealthStateChangeEventArgs();
+                eventArg.PreviousState = _healthState;
+                eventArg.NewState = value;
+                _healthState = value;
+                OnHealthStateChanged(eventArg);
+            }
+        }
 
         [Browsable(false)]
         [ProtoMember(13)]
-        public DynamicEntityAfflictionState Afflictions { get; set; }
+        public DynamicEntityAfflictionState Afflictions
+        {
+            get { return _afflictions; }
+            set
+            {
+                if (_afflictions == value) return;
+                AfflictionStateChangeEventArgs eventArg = new AfflictionStateChangeEventArgs();
+                eventArg.PreviousState = _afflictions;
+                eventArg.NewState = value;
+                _afflictions = value;
+                OnAfflictionStateChanged(eventArg);
+            }
+        }
+
         #endregion
 
         #region Events
@@ -174,7 +202,6 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Occurs when entity changes its view direction
         /// </summary>
         public event EventHandler<EntityViewEventArgs> ViewChanged;
-
         protected void OnViewChanged(EntityViewEventArgs e)
         {
             var handler = ViewChanged;
@@ -185,7 +212,6 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Occurs when entity performs "use" operation
         /// </summary>
         public event EventHandler<EntityUseEventArgs> Use;
-
         protected virtual void OnUse(EntityUseEventArgs e)
         {
             var handler = Use;
@@ -219,11 +245,21 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Occurs when entity changes its position
         /// </summary>
         public event EventHandler<EntityMoveEventArgs> PositionChanged;
-
         protected virtual void OnPositionChanged(EntityMoveEventArgs e)
         {
-            var handler = PositionChanged;
-            if (handler != null) handler(this, e);
+            if (PositionChanged != null) PositionChanged(this, e);
+        }
+
+        public event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
+        protected virtual void OnHealthStateChanged(HealthStateChangeEventArgs e)
+        {
+            if (HealthStateChanged != null) HealthStateChanged(this, e);
+        }
+
+        public event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
+        protected virtual void OnAfflictionStateChanged(AfflictionStateChangeEventArgs e)
+        {
+            if (AfflictionStateChanged != null) AfflictionStateChanged(this, e);
         }
 
         #endregion

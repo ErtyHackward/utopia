@@ -226,19 +226,18 @@ namespace Utopia.Network
         {
             var entity = (PlayerCharacter)_dynamicEntityManager.GetEntityById(e.Message.EntityLink.DynamicEntityId);
 
+            //Is the concerned entity being redered (Can be the player itself when in 3th person view or other dynamic entities
             if (entity != null)
             {
                 var charClass = entity.EntityFactory.Config.CharacterClasses.FirstOrDefault(c => c.ClassName == e.Message.ClassName);
                 if (charClass != null)
                 {
-                    _dynamicEntityManager.RemoveEntity(entity);
-                    entity.ModelName = charClass.ModelName;
-                    entity.ModelInstance = null;
-                    _dynamicEntityManager.AddEntity(entity, e.Message.EntityLink.DynamicEntityId != _server.Player.DynamicId);
+                    _dynamicEntityManager.UpdateEntityVoxelBody(entity.DynamicId, charClass.ModelName);
                 }
             }
 
-            if (entity == null && e.Message.EntityLink.DynamicEntityId == _server.Player.DynamicId)
+            //Change the default Player ModelName
+            if (entity == null && e.Message.EntityLink.DynamicEntityId == PlayerEntity.DynamicId)
             {
                 entity = (PlayerCharacter)PlayerEntity;
                 var charClass = entity.EntityFactory.Config.CharacterClasses.FirstOrDefault(c => c.ClassName == e.Message.ClassName);

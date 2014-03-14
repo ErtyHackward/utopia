@@ -26,6 +26,16 @@ namespace Utopia.Shared.Entities.Interfaces
         event EventHandler<EntityUseEventArgs> Use;
 
         /// <summary>
+        /// Occurs when the entity health state change
+        /// </summary>
+        event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
+
+        /// <summary>
+        /// Occurs when the entity Afflication state change
+        /// </summary>
+        event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
+
+        /// <summary>
         /// The speed at wich the dynamic entity can walk
         /// </summary>
         float MoveSpeed { get; set; }

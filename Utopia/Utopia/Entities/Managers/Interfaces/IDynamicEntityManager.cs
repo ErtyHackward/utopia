@@ -28,6 +28,7 @@ namespace Utopia.Entities.Managers.Interfaces
         void RemoveEntityById(uint entityId, bool dispose=true);
 
         IDynamicEntity GetEntityById(uint p);
+
     
         List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
 
@@ -42,6 +43,8 @@ namespace Utopia.Entities.Managers.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         void UpdateEntity(IDynamicEntity entity);
+
+        void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true);
 
         void VoxelDraw(DeviceContext context, Matrix viewProjection);
     }

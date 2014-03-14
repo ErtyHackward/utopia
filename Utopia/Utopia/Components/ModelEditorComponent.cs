@@ -483,7 +483,7 @@ namespace Utopia.Components
         {
             InitializeGui();
 
-            foreach (var model in _manager.Enumerate())
+            foreach (var model in _manager.Enumerate().OrderBy(x => x.VoxelModel.Name))
             {
                 _modelsList.Items.Add(model);
             }
@@ -2771,7 +2771,7 @@ namespace Utopia.Components
             }
 
             _modelsList.Items.Clear();
-            foreach (var model in _manager.Enumerate())
+            foreach (var model in _manager.Enumerate().OrderBy(x => x.VoxelModel.Name))
             {
                 _modelsList.Items.Add(model);
             }
