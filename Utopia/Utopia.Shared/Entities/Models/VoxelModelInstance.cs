@@ -11,6 +11,9 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModelInstance
     {
+
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         // cached intermediate state of the model
         private VoxelModelState _internalState;
@@ -431,7 +434,7 @@ namespace Utopia.Shared.Entities.Models
             {
                 var animation = VoxelModel.Animations.FindIndex(a => a.Name == animationName);
                 if (animation == -1)
-                    throw new ArgumentOutOfRangeException("animationName", "Model have not animation called " + animationName);
+                    logger.Error("AnimationName", "Model have not animation called " + animationName);
 
                 if (_animationIndex != animation)
                     return;

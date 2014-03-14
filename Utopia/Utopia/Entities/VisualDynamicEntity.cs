@@ -42,7 +42,7 @@ namespace Utopia.Entities
 
         public bool WithNetworkInterpolation { get; set; }
 
-        private bool _walking = false;
+        private bool _moving = false;
 
         #endregion
 
@@ -115,23 +115,45 @@ namespace Utopia.Entities
             Networkinterpolation();
         }
 
-        private void CheckWalkingAnimation(ref Vector3D previousPosition, ref Vector3D currentPosition, double threshold)
+        private void CheckMovingAnimation(ref Vector3D previousPosition, ref Vector3D currentPosition, double threshold)
         {
             var distanceSquared = Vector3D.DistanceSquared(previousPosition, currentPosition);
-
-            //Activate / deactivate Model Playing animation
-            if (_walking && distanceSquared < threshold)
+            string animationFrameName;
+            switch (this.DynamicEntity.DisplacementMode)
             {
-                if (ModelInstance != null) 
-                    ModelInstance.Stop("Walk");
-                _walking = false;
+                case EntityDisplacementModes.Flying:
+                    animationFrameName = "Fly";
+                    break;
+                case EntityDisplacementModes.Walking:
+                    animationFrameName = "Walk";
+                    break;
+                case EntityDisplacementModes.Swiming:
+                    animationFrameName = "Walk";
+                    break;
+                case EntityDisplacementModes.FreeFlying:
+                    animationFrameName = "Fly";
+                    break;
+                case EntityDisplacementModes.God:
+                    animationFrameName = "Fly";
+                    break;
+                default:
+                    animationFrameName = "Walk";
+                    break;
             }
 
-            if (!_walking && distanceSquared >= threshold)
+            //Activate / deactivate Model Playing animation
+            if (_moving && distanceSquared < threshold)
             {
-                if (ModelInstance != null) 
-                    ModelInstance.TryPlay("Walk", true);
-                _walking = true;
+                if (ModelInstance != null)
+                    ModelInstance.Stop(animationFrameName);
+                _moving = false;
+            }
+
+            if (!_moving && distanceSquared >= threshold)
+            {
+                if (ModelInstance != null)
+                    ModelInstance.TryPlay(animationFrameName, true);
+                _moving = true;
             }
         }
 
@@ -174,7 +196,7 @@ namespace Utopia.Entities
                 MoveDirection.Value = DynamicEntity.BodyRotation;
             }
 
-            CheckWalkingAnimation(ref WorldPosition.ValuePrev, ref WorldPosition.Value, 0.0001);
+            CheckMovingAnimation(ref WorldPosition.ValuePrev, ref WorldPosition.Value, 0.0001);
         }
 
         //Draw interpolation (Before each Drawing)

@@ -99,13 +99,11 @@ namespace Utopia.Entities.Managers
         {
             if (e.EnergyChanged.CurrentAsPercent <= 0)
             {
-                _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Dead;
                 ActivateDeadState();
             }
             else
             {
-                _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Normal;
-                _postEffectComponent.DeactivateEffect();
+                DeactivateDeadState();
             }
 
             //If lost more than 30pt of life at the same time ! Risk of Stunt effect !
@@ -131,13 +129,28 @@ namespace Utopia.Entities.Managers
 
         private void ActivateDeadState()
         {
+            _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Dead;
             _postEffectComponent.ActivateEffect("Dead");
-            
-            //Change backGround music
-            //Change player model to ghost
-            //Add graveyard object at death location
-            //Change move type to "GhostFlying"
 
+            //Change player model to ghost ==> Will be automatic by the DynamicEntityManager that is listening to the HealthState change event
+
+            //Change backGround music
+            //Add graveyard object at death location
+
+            PlayerCharacter.DisplacementMode = Shared.Entities.EntityDisplacementModes.Flying;
+        }
+
+        private void DeactivateDeadState()
+        {
+            _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Normal;
+            _postEffectComponent.DeactivateEffect();
+
+            //Change player model to Normal ==> Will be automatic by the DynamicEntityManager that is listening to the HealthState change event
+
+            //Change backGround music
+            //Add graveyard object at death location
+
+            PlayerCharacter.DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
         }
         #endregion
 
