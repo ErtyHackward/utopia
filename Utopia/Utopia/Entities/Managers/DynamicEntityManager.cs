@@ -447,7 +447,7 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
             {
                 ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.ModelName, out instances))
+                if (!_models.TryGetValue(entity.ModelInstance.VoxelModel.Name, out instances))
                 {
                     throw new InvalidOperationException("we have no such model");
                 }

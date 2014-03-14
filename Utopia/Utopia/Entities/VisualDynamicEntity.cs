@@ -122,7 +122,7 @@ namespace Utopia.Entities
             switch (this.DynamicEntity.DisplacementMode)
             {
                 case EntityDisplacementModes.Flying:
-                    animationFrameName = "Fly";
+                    animationFrameName = "Flying";
                     break;
                 case EntityDisplacementModes.Walking:
                     animationFrameName = "Walk";
@@ -131,10 +131,10 @@ namespace Utopia.Entities
                     animationFrameName = "Walk";
                     break;
                 case EntityDisplacementModes.FreeFlying:
-                    animationFrameName = "Fly";
+                    animationFrameName = "Flying";
                     break;
                 case EntityDisplacementModes.God:
-                    animationFrameName = "Fly";
+                    animationFrameName = "Flying";
                     break;
                 default:
                     animationFrameName = "Walk";
