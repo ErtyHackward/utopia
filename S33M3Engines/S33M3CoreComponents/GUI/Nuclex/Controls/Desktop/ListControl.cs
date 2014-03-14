@@ -87,6 +87,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                 new UniScalar(1.0f, -20.0f), new UniScalar(0.0f, 0.0f),
                 new UniScalar(0.0f, 20.0f), new UniScalar(1.0f, 0.0f)
                 );
+            _slider.ThumbSmoothMovement = true;
             Children.Add(_slider);
         }
 
