@@ -121,5 +121,13 @@ namespace Utopia.Shared.Net.Messages
         /// Entity Health change !
         /// </summary>
         EntityHealth = 29,
+        /// <summary>
+        /// Health State change
+        /// </summary>
+        EntityHealthState = 30,
+        /// <summary>
+        /// Afflication State change
+        /// </summary>
+        EntityAfflictionState = 31
     }
 }

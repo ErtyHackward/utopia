@@ -34,6 +34,8 @@ namespace Utopia.Shared.Net.Interfaces
     [ProtoInclude(124, typeof(GetEntityMessage))]
     [ProtoInclude(125, typeof(EntityDataMessage))]
     [ProtoInclude(126, typeof(EntityHealthMessage))]
+    [ProtoInclude(127, typeof(EntityHealthStateMessage))]
+    [ProtoInclude(128, typeof(EntityAfflictionStateMessage))]
     
     public interface IBinaryMessage
     {

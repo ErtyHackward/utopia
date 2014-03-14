@@ -103,7 +103,7 @@ namespace Realms.Client.States
                 ThreadsManager.RunAsync(GameplayInitializeAsync);
 
             var serverComponent = _ioc.Get<ServerComponent>();
-            serverComponent.ConnectionStausChanged += serverComponent_ConnectionStausChanged;
+            serverComponent.ConnectionStatusChanged += serverComponent_ConnectionStausChanged;
 
             base.OnEnabled(previousState);
         }
@@ -111,7 +111,7 @@ namespace Realms.Client.States
         public override void OnDisabled(GameState nextState)
         {
             var serverComponent = _ioc.Get<ServerComponent>();
-            serverComponent.ConnectionStausChanged -= serverComponent_ConnectionStausChanged;
+            serverComponent.ConnectionStatusChanged -= serverComponent_ConnectionStausChanged;
 
             base.OnDisabled(nextState);
         }

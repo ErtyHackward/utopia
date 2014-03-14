@@ -332,6 +332,12 @@ namespace Utopia.Shared.Net.Connections
                 case MessageTypes.EntityHealth:
                     logger.Debug("HANDLE HERE MessageTypes.EntityHealth message");
                     break;
+                case MessageTypes.EntityHealthState:
+                    logger.Debug("HANDLE HERE MessageTypes.EntityHealthState message");
+                    break;
+                case MessageTypes.EntityAfflictionState:
+                    logger.Debug("HANDLE HERE MessageTypes.EntityAfflictionState message");
+                    break;
                 default:
                     throw new ArgumentException("Invalid message id");
             }

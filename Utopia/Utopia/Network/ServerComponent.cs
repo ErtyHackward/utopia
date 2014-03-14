@@ -175,14 +175,23 @@ namespace Utopia.Network
         /// Occurs when EntityDataMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityDataMessage>> MessageEntityData;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<TcpConnectionStatusEventArgs> ConnectionStatusChanged;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityHealthMessage>> MessageEntityHealth;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityHealthStateMessage>> MessageEntityHealthState;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityAfflictionStateMessage>> MessageEntityAfflictionState;
 
-        public event EventHandler<TcpConnectionStatusEventArgs> ConnectionStausChanged;
-
-        protected virtual void OnConnectionStausChanged(TcpConnectionStatusEventArgs e)
-        {
-            var handler = ConnectionStausChanged;
-            if (handler != null) handler(this, e);
-        }
 
         #endregion
 
@@ -408,8 +417,27 @@ namespace Utopia.Network
 
         protected virtual void OnMessageEntityData(EntityDataMessage ea)
         {
-            var handler = MessageEntityData;
-            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityDataMessage> { Message = ea });
+            if (MessageEntityData != null) MessageEntityData(this, new ProtocolMessageEventArgs<EntityDataMessage> { Message = ea });
+        }
+
+        protected virtual void OnConnectionStatusChanged(TcpConnectionStatusEventArgs e)
+        {
+            if (ConnectionStatusChanged != null) ConnectionStatusChanged(this, e);
+        }
+
+        protected void OnMessageEntityHealth(EntityHealthMessage ea)
+        {
+            if (MessageEntityHealth != null) MessageEntityHealth(this, new ProtocolMessageEventArgs<EntityHealthMessage>() { Message = ea });
+        }
+
+        protected void OnMessageEntityHealthState(EntityHealthStateMessage ea)
+        {
+            if (MessageEntityHealthState != null) MessageEntityHealthState(this, new ProtocolMessageEventArgs<EntityHealthStateMessage>() { Message = ea });
+        }
+
+        protected void OnMessageEntityAfflictionState(EntityAfflictionStateMessage ea)
+        {
+            if (MessageEntityAfflictionState != null) MessageEntityAfflictionState(this, new ProtocolMessageEventArgs<EntityAfflictionStateMessage>() { Message = ea });
         }
 
         #endregion
@@ -505,6 +533,15 @@ namespace Utopia.Network
                 case MessageTypes.EntityData:
                     OnMessageEntityData((EntityDataMessage)msg);
                     break;
+                case MessageTypes.EntityHealth:
+                    OnMessageEntityHealth((EntityHealthMessage)msg);
+                    break;
+                case MessageTypes.EntityHealthState:
+                    OnMessageEntityHealthState((EntityHealthStateMessage)msg);
+                    break;
+                case MessageTypes.EntityAfflictionState:
+                    OnMessageEntityAfflictionState((EntityAfflictionStateMessage)msg);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");
             }
@@ -522,7 +559,7 @@ namespace Utopia.Network
                 }
             }
 
-            OnConnectionStausChanged(e);
+            OnConnectionStatusChanged(e);
         }
         #endregion
 
