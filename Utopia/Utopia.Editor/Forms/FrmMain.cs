@@ -324,6 +324,8 @@ namespace Utopia.Editor.Forms
         {
             if (_configuration == null)
                 return;
+            //Create System mandatory entities
+            CheckSystemEntityCreation();
 
             tvMainCategories.BeginUpdate();
 
@@ -478,6 +480,17 @@ namespace Utopia.Editor.Forms
             tvMainCategories.EndUpdate();
         }
 
+        private void CheckSystemEntityCreation()
+        {
+            //Create System mandatory entities
+
+            //The SoulStone
+            if (_configuration.BluePrints.Values.Select(x => x.Name).Where(x => x == "SoulStone").Count() == 0)
+            {
+                var entityInstance = Configuration.CreateNewEntity(typeof(Shared.Entities.Concrete.System.SoulStone));
+            }
+        }
+
         private TreeNode AddSubNode(TreeNode parentNode, string label, object tag, string iconName = null)
         {
             var imgIndex = -1;
@@ -507,6 +520,11 @@ namespace Utopia.Editor.Forms
         {
             try
             {
+                //Check Mandatory Fields values !
+//                Configuration.SoulStoneStaticItemId 
+                //Find back the soulstone
+                //Configuration.BluePrints.
+
 
                 // don't store default groups
                 foreach (var bluePrint in Configuration.BluePrints.Values)

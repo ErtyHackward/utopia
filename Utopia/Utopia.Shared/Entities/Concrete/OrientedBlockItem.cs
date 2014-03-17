@@ -10,6 +10,7 @@ using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Structs.Helpers;
+using Utopia.Shared.Entities.Concrete.System;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -21,6 +22,7 @@ namespace Utopia.Shared.Entities.Concrete
     [ProtoInclude(101, typeof(MusicPlayer))]
     [ProtoInclude(102, typeof(Ladder))]
     [ProtoInclude(103, typeof(Container))]
+    [ProtoInclude(104, typeof(SoulStone))]
     [Description("Entity of this type will have one of 4 orientations and occupy a block.")]
     public class OrientedBlockItem : BlockItem, IOrientedSlope
     {

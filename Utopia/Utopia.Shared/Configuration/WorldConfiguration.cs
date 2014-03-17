@@ -159,6 +159,11 @@ namespace Utopia.Shared.Configuration
         [Browsable(false)]
         [ProtoMember(18)]
         public int Version { get; set; }
+
+        [Description("The compatibility configuration version")]
+        [Browsable(false)]
+        [ProtoMember(19)]
+        public ushort SoulStoneStaticItemId { get; set; }
         
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
