@@ -1,4 +1,5 @@
 using System;
+using Utopia.Shared.Entities.Concrete.System;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -59,5 +60,10 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Occurs when the entity Afflication state change
         /// </summary>
         event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
+
+        /// <summary>
+        /// The binded player soulstone
+        /// </summary>
+        SoulStone BindedSoulStone { get; set; }
     }
 }

@@ -325,7 +325,7 @@ namespace Utopia.Editor.Forms
             if (_configuration == null)
                 return;
             //Create System mandatory entities
-            CheckSystemEntityCreation();
+            CreateMandatorySystemEntities();
 
             tvMainCategories.BeginUpdate();
 
@@ -480,17 +480,6 @@ namespace Utopia.Editor.Forms
             tvMainCategories.EndUpdate();
         }
 
-        private void CheckSystemEntityCreation()
-        {
-            //Create System mandatory entities
-
-            //The SoulStone
-            if (_configuration.BluePrints.Values.Select(x => x.Name).Where(x => x == "SoulStone").Count() == 0)
-            {
-                var entityInstance = Configuration.CreateNewEntity(typeof(Shared.Entities.Concrete.System.SoulStone));
-            }
-        }
-
         private TreeNode AddSubNode(TreeNode parentNode, string label, object tag, string iconName = null)
         {
             var imgIndex = -1;
@@ -516,26 +505,50 @@ namespace Utopia.Editor.Forms
             return item;
         }
 
+        private void CreateMandatorySystemEntities()
+        {
+            //Create System mandatory entities
+
+            //The SoulStone
+            if (_configuration.BluePrints.Values.Select(x => x.Name).Where(x => x == "SoulStone").Count() == 0)
+            {
+                var entityInstance = Configuration.CreateNewEntity(typeof(Shared.Entities.Concrete.System.SoulStone));
+            }
+        }
+
+        private bool CheckMandatorySystemEntities()
+        {
+            bool result = true;
+            //Create System mandatory entities
+
+            //The SoulStone
+            if (_configuration.BluePrints.Values.OfType<Utopia.Shared.Entities.Concrete.System.SoulStone>().Count() != 1)
+            {
+                MessageBox.Show(string.Format("Mandatory soulstone entity is missing !"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            return result;
+        }
+
         private void Save(string filePath)
         {
             try
             {
-                //Check Mandatory Fields values !
-//                Configuration.SoulStoneStaticItemId 
-                //Find back the soulstone
-                //Configuration.BluePrints.
-
-
-                // don't store default groups
-                foreach (var bluePrint in Configuration.BluePrints.Values)
+                if (CheckMandatorySystemEntities())
                 {
-                    if (bluePrint.GroupName == _pluralization.Pluralize(bluePrint.GetType().Name))
-                        bluePrint.GroupName = null;
-                }
 
-                Configuration.UpdatedAt = DateTime.Now;
-                Configuration.SaveToFile(filePath);
-                _filePath = filePath;
+                    // don't store default groups
+                    foreach (var bluePrint in Configuration.BluePrints.Values)
+                    {
+                        if (bluePrint.GroupName == _pluralization.Pluralize(bluePrint.GetType().Name))
+                            bluePrint.GroupName = null;
+                    }
+
+                    Configuration.UpdatedAt = DateTime.Now;
+                    Configuration.SaveToFile(filePath);
+                    _filePath = filePath;
+                }
             }
             catch (Exception x)
             {
@@ -683,7 +696,8 @@ namespace Utopia.Editor.Forms
             if (tag is Entity)
             {
                 var entity = (Entity)tvMainCategories.SelectedNode.Tag;
-                _configuration.BluePrints.Remove(entity.BluePrintId);
+                if (!entity.IsSystemEntity) _configuration.BluePrints.Remove(entity.BluePrintId);
+                else return;
             }
             else if (tag is BlockProfile)
             {

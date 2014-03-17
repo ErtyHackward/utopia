@@ -264,7 +264,7 @@ namespace S33M3CoreComponents.GUI
 
             if (buttonsText == null)
                 buttonsText = new[] { "Ok" };
-
+            _inputManager.MouseManager.MouseCapture = false;
             var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2, windowWidth, windowHeight) };
 
             mbWindow.Children.Add(new LabelControl { Text = message, Autosizing = true, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });

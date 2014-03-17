@@ -9,6 +9,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Concrete.System;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -99,7 +100,11 @@ namespace Utopia.Shared.Entities.Dynamic
                 OnAfflictionStateChanged(eventArg);
             }
         }
-        
+
+        [Browsable(false)]
+        [ProtoMember(9)]
+        public SoulStone BindedSoulStone { get; set;}
+
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>

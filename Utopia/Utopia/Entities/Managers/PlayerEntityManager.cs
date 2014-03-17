@@ -30,6 +30,7 @@ using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
 using Utopia.Shared.World;
 using Utopia.PostEffects;
+using S33M3CoreComponents.GUI;
 
 namespace Utopia.Entities.Managers
 {
@@ -97,6 +98,7 @@ namespace Utopia.Entities.Managers
 
         private Faction _faction;
         private PlayerCharacter _playerCharacter;
+        private GuiManager _guiManager;
 
         #endregion
 
@@ -319,7 +321,8 @@ namespace Utopia.Entities.Managers
                                    LandscapeBufferManager bufferManager,
                                    ILandscapeManager landscapeManager,
                                    ChatComponent chatComponent,
-                                   PostEffectComponent postEffectComponent
+                                   PostEffectComponent postEffectComponent,
+                                   GuiManager guiManager
             )
         {
             _cameraManager = cameraManager;
@@ -332,6 +335,7 @@ namespace Utopia.Entities.Managers
             _chatComponent = chatComponent;
             _postEffectComponent = postEffectComponent;
             OnLanding += PlayerEntityManager_OnLanding;
+            _guiManager = guiManager;
 
             PlayerCharacter = (PlayerCharacter)server.Player;
             
