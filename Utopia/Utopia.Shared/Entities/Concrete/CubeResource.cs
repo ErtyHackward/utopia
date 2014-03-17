@@ -23,8 +23,9 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(2)]
         public bool RepeatedActionsAllowed { get; set; }
 
-        public override IToolImpact Put(IDynamicEntity owner)
+        public override IToolImpact Put(IDynamicEntity owner, out Item worldDroppedItem)
         {
+            worldDroppedItem = null;
             // don't allow to put out the cube resource
             return new ToolImpact { Message = "This action is not allowed by design" };
         }

@@ -160,11 +160,6 @@ namespace Utopia.Shared.Configuration
         [ProtoMember(18)]
         public int Version { get; set; }
 
-        [Description("The compatibility configuration version")]
-        [Browsable(false)]
-        [ProtoMember(19)]
-        public ushort SoulStoneStaticItemId { get; set; }
-        
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
         public Dictionary<int, TreeBluePrint> TreeBluePrintsDico
@@ -398,7 +393,7 @@ namespace Utopia.Shared.Configuration
                 newId = (ushort)(BluePrints.Values.Select(x => x.BluePrintId).Max() + 1);
 
             entityInstance.BluePrintId = newId;
-            entityInstance.IsSystemEntity = false;
+            //entityInstance.IsSystemEntity = false;
 
             BluePrints.Add(newId, (Entity)entityInstance);
         }

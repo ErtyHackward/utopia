@@ -1,4 +1,6 @@
 ﻿using S33M3DXEngine.Main;
+using S33M3Resources.Structs;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,42 @@ namespace Utopia.Entities.Managers
     /// </summary>
     public partial class PlayerEntityManager
     {
+        private enum ressurectionStates
+        {
+            PendingRequest,
+            PreventRessurection,
+            None
+        }
+
+        private ressurectionStates ressurectionState = ressurectionStates.None;
+
         private void EnergyFTSUpdate(GameTime timeSpent)
         {
-            if (_playerCharacter.HealthState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead) return;
+            bool isWithinSoulStoneRange = _playerCharacter.BindedSoulStone != null && Vector3D.DistanceSquared(_playerCharacter.BindedSoulStone.Position, _playerCharacter.Position) <= 1024d;
+            if (isWithinSoulStoneRange == false && ressurectionState == ressurectionStates.PreventRessurection) ressurectionState = ressurectionStates.None;
+
+            if (_playerCharacter.HealthState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
+            {
+                if (!isWithinSoulStoneRange || ressurectionState == ressurectionStates.PreventRessurection) return;
+                else
+                {
+                    if (ressurectionState != ressurectionStates.PendingRequest)
+                    {
+                        ressurectionState = ressurectionStates.PendingRequest;
+                        //Show resurect Box
+                        _guiManager.MessageBox("Do you want to be resurrected ?", "SoulStone", new string[] { "Yes", "No" }, ResurectionRequest);
+                    }
+                    return;
+                }
+            }
+
+            //Auto Regen Health if in range of our own soulStone = 32 blocks distances !
+            if (isWithinSoulStoneRange && 
+                _playerCharacter.Health.CurrentAsPercent < 1.0f)
+            {
+                var soulsStoneHealingAmount = _healthSoulStoneGainPerSecond * timeSpent.ElapsedGameTimeInS_LD;
+                _playerCharacter.Health.CurrentValue += soulsStoneHealingAmount;
+            }
 
             //Auto Regen Stamina
             var staminaRegenForRunning = _staminaRegenAmountPerSecond * timeSpent.ElapsedGameTimeInS_LD;
@@ -95,17 +130,30 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Health Energy
+        private void ResurectionRequest(string action)
+        {
+            switch (action.ToLower())
+            {
+                case "yes":
+                    DeactivateDeadState();
+                    ressurectionState = ressurectionStates.None;
+                    break;
+                case "no":
+                    ressurectionState = ressurectionStates.PreventRessurection;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private float _healthSoulStoneGainPerSecond = 5.0f;
         private float _healthDamagePerFallMeter = 5.0f;
         private float _healthDamageDrowningPerSecond = 15.0f;
         private void Health_ValueChanged(object sender, Shared.Entities.Events.EnergyChangedEventArgs e)
         {
-            if (e.EnergyChanged.CurrentAsPercent <= 0)
+            if (e.EnergyChanged.CurrentAsPercent <= 0 && _playerCharacter.HealthState != Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
             {
                 ActivateDeadState();
-            }
-            else
-            {
-                DeactivateDeadState();
             }
 
             //If lost more than 30pt of life at the same time ! Risk of Stunt effect !
@@ -144,6 +192,7 @@ namespace Utopia.Entities.Managers
 
         private void DeactivateDeadState()
         {
+            _playerCharacter.Health.CurrentValue = 10; //This will trigger 
             _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Normal;
             _postEffectComponent.DeactivateEffect();
 
@@ -155,8 +204,6 @@ namespace Utopia.Entities.Managers
             DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
         }
         #endregion
-
-
 
     }
 }

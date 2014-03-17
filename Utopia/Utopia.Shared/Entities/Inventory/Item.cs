@@ -223,10 +223,11 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        public virtual IToolImpact Put(IDynamicEntity owner)
+        public virtual IToolImpact Put(IDynamicEntity owner, out Item worldDroppedItem)
         {
             // by default all items can only be dropped to some position
             IToolImpact checkImpact;
+            worldDroppedItem = null;
             
             if (!CanDoBlockOrEntityAction(owner, out checkImpact))
                 return checkImpact;
@@ -266,8 +267,6 @@ namespace Utopia.Shared.Entities.Inventory
 
             SetPosition(pos, entity, owner);
 
-
-
             // take entity from the inventory
             var charEntity = owner as CharacterEntity;
             if (charEntity != null)
@@ -294,6 +293,7 @@ namespace Utopia.Shared.Entities.Inventory
                 // put entity into the world
                 cursor.AddEntity(entity, owner.DynamicId);
                 impact.EntityId = entity.StaticId;
+                worldDroppedItem = entity;
                 return impact;
             }
             
