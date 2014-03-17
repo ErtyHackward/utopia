@@ -140,11 +140,13 @@
     <Compile Include="Entities\Concrete\Food.cs" />
     <Compile Include="Entities\Concrete\GodHandTool.cs" />
     <Compile Include="Entities\Concrete\HandTool.cs" />
+    <Compile Include="Entities\Concrete\Interface\IOwnerBindable.cs" />
     <Compile Include="Entities\Concrete\ItemOrientation.cs" />
     <Compile Include="Entities\Concrete\Ladder.cs" />
     <Compile Include="Entities\Concrete\MeleeWeapon.cs" />
     <Compile Include="Entities\Concrete\MusicPlayer.cs" />
     <Compile Include="Entities\Concrete\Stuff.cs" />
+    <Compile Include="Entities\Concrete\System\SoulStone.cs" />
     <Compile Include="Entities\Designation.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityAfflictionState.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityHealthState.cs" />
