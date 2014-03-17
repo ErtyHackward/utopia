@@ -249,6 +249,30 @@ namespace Utopia.Shared.Net.Connections
             if (handler != null) handler(this, new ProtocolMessageEventArgs<GetEntityMessage> { Message = ea });
         }
 
+        public event EventHandler<ProtocolMessageEventArgs<EntityHealthMessage>> MessageEntityHealth;
+
+        protected virtual void OnMessageEntityHealth(EntityHealthMessage e)
+        {
+            var handler = MessageEntityHealth;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityHealthMessage> { Message = e});
+        }
+
+        public event EventHandler<ProtocolMessageEventArgs<EntityHealthStateMessage>> MessageEntityHealthState;
+
+        protected virtual void OnMessageEntityHealthState(EntityHealthStateMessage e)
+        {
+            var handler = MessageEntityHealthState;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityHealthStateMessage> { Message = e });
+        }
+
+        public event EventHandler<ProtocolMessageEventArgs<EntityAfflictionStateMessage>> MessageEntityAfflictionState;
+
+        protected virtual void OnMessageEntityAfflictionState(EntityAfflictionStateMessage e)
+        {
+            var handler = MessageEntityAfflictionState;
+            if (handler != null) handler(this, new ProtocolMessageEventArgs<EntityAfflictionStateMessage> { Message = e });
+        }
+
         #endregion
         
         /// <summary>
@@ -330,13 +354,13 @@ namespace Utopia.Shared.Net.Connections
                     OnMessageGetEntity((GetEntityMessage)message);
                     break;
                 case MessageTypes.EntityHealth:
-                    logger.Debug("HANDLE HERE MessageTypes.EntityHealth message");
+                    OnMessageEntityHealth((EntityHealthMessage)message);
                     break;
                 case MessageTypes.EntityHealthState:
-                    logger.Debug("HANDLE HERE MessageTypes.EntityHealthState message");
+                    OnMessageEntityHealthState((EntityHealthStateMessage)message);
                     break;
                 case MessageTypes.EntityAfflictionState:
-                    logger.Debug("HANDLE HERE MessageTypes.EntityAfflictionState message");
+                    OnMessageEntityAfflictionState((EntityAfflictionStateMessage)message);
                     break;
                 default:
                     throw new ArgumentException("Invalid message id");

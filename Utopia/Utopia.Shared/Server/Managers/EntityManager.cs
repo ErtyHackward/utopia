@@ -40,15 +40,18 @@ namespace Utopia.Shared.Server.Managers
 
         void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessagePosition            -= ConnectionMessagePosition;
-            e.Connection.MessageDirection           -= ConnectionMessageDirection;
-            e.Connection.MessageEntityUse           -= ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer        -= ConnectionMessageItemTransfer;
-            e.Connection.MessageEntityEquipment     -= ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock          -= ConnectionMessageEntityLock;
-            e.Connection.MessageRequestDateTimeSync -= ConnectionOnMessageRequestDateTimeSync;
-            e.Connection.MessageGetEntity           -= ConnectionOnMessageGetEntity;
-            e.Connection.MessageEntityVoxelModel    -= ConnectionOnMessageEntityVoxelModel;
+            e.Connection.MessagePosition              -= ConnectionMessagePosition;
+            e.Connection.MessageDirection             -= ConnectionMessageDirection;
+            e.Connection.MessageEntityUse             -= ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer          -= ConnectionMessageItemTransfer;
+            e.Connection.MessageEntityEquipment       -= ConnectionMessageEntityEquipment;
+            e.Connection.MessageEntityLock            -= ConnectionMessageEntityLock;
+            e.Connection.MessageRequestDateTimeSync   -= ConnectionOnMessageRequestDateTimeSync;
+            e.Connection.MessageGetEntity             -= ConnectionOnMessageGetEntity;
+            e.Connection.MessageEntityVoxelModel      -= ConnectionOnMessageEntityVoxelModel;
+            e.Connection.MessageEntityHealth          -= ConnectionOnMessageEntityHealth;
+            e.Connection.MessageEntityHealthState     -= Connection_MessageEntityHealthState;
+            e.Connection.MessageEntityAfflictionState -= Connection_MessageEntityAfflictionState;
 
             if (e.Connection.Authorized)
             {
@@ -89,15 +92,39 @@ namespace Utopia.Shared.Server.Managers
 
         void ConnectionManagerConnectionAdded(object sender, ConnectionEventArgs e)
         {
-            e.Connection.MessagePosition            += ConnectionMessagePosition;
-            e.Connection.MessageDirection           += ConnectionMessageDirection;
-            e.Connection.MessageEntityUse           += ConnectionMessageEntityUse;
-            e.Connection.MessageItemTransfer        += ConnectionMessageItemTransfer;
-            e.Connection.MessageEntityEquipment     += ConnectionMessageEntityEquipment;
-            e.Connection.MessageEntityLock          += ConnectionMessageEntityLock;
-            e.Connection.MessageRequestDateTimeSync += ConnectionOnMessageRequestDateTimeSync;
-            e.Connection.MessageGetEntity           += ConnectionOnMessageGetEntity;
-            e.Connection.MessageEntityVoxelModel    += ConnectionOnMessageEntityVoxelModel;
+            e.Connection.MessagePosition              += ConnectionMessagePosition;
+            e.Connection.MessageDirection             += ConnectionMessageDirection;
+            e.Connection.MessageEntityUse             += ConnectionMessageEntityUse;
+            e.Connection.MessageItemTransfer          += ConnectionMessageItemTransfer;
+            e.Connection.MessageEntityEquipment       += ConnectionMessageEntityEquipment;
+            e.Connection.MessageEntityLock            += ConnectionMessageEntityLock;
+            e.Connection.MessageRequestDateTimeSync   += ConnectionOnMessageRequestDateTimeSync;
+            e.Connection.MessageGetEntity             += ConnectionOnMessageGetEntity;
+            e.Connection.MessageEntityVoxelModel      += ConnectionOnMessageEntityVoxelModel;
+            e.Connection.MessageEntityHealth          += ConnectionOnMessageEntityHealth;
+            e.Connection.MessageEntityHealthState     += Connection_MessageEntityHealthState;
+            e.Connection.MessageEntityAfflictionState += Connection_MessageEntityAfflictionState;
+        }
+
+        private void Connection_MessageEntityAfflictionState(object sender, ProtocolMessageEventArgs<EntityAfflictionStateMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            e.Message.EntityId = connection.ServerEntity.DynamicEntity.DynamicId;
+            connection.ServerEntity.RetranslateMessage(e.Message);
+        }
+
+        private void Connection_MessageEntityHealthState(object sender, ProtocolMessageEventArgs<EntityHealthStateMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            e.Message.EntityId = connection.ServerEntity.DynamicEntity.DynamicId;
+            connection.ServerEntity.RetranslateMessage(e.Message);
+        }
+
+        private void ConnectionOnMessageEntityHealth(object sender, ProtocolMessageEventArgs<EntityHealthMessage> e)
+        {
+            var connection = (ClientConnection)sender;
+            e.Message.EntityId = connection.ServerEntity.DynamicEntity.DynamicId;
+            connection.ServerEntity.RetranslateMessage(e.Message);
         }
 
         private void ConnectionOnMessageGetEntity(object sender, ProtocolMessageEventArgs<GetEntityMessage> e)
@@ -145,7 +172,7 @@ namespace Utopia.Shared.Server.Managers
             e.Message.SourceEntityId = connection.ServerEntity.DynamicEntity.DynamicId;
 
             // retranslate
-            _server.AreaManager.GetArea(connection.ServerEntity.DynamicEntity.Position).OnTransferMessage(e);
+            connection.ServerEntity.RetranslateMessage(e.Message);
         }
 
         private void ConnectionMessageEntityUse(object sender, ProtocolMessageEventArgs<EntityUseMessage> e)
@@ -155,10 +182,9 @@ namespace Utopia.Shared.Server.Managers
 
             var connection = (ClientConnection)sender;
             e.Message.DynamicEntityId = connection.ServerEntity.DynamicEntity.DynamicId;
-
-            // retranslate
-            _server.AreaManager.GetArea(connection.ServerEntity.DynamicEntity.Position).OnEntityUse(e);
-
+            
+            connection.ServerEntity.RetranslateMessage(e.Message);
+            
             connection.ServerEntity.Use(e.Message);
         }
 

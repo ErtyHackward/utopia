@@ -66,7 +66,7 @@ namespace Utopia.Shared.Server.Structs
 
             // inform client about his inventory change from outside
             Connection.Send(msg);
-            CurrentArea.OnTransferMessage(new ProtocolMessageEventArgs<ItemTransferMessage> { Message = msg });
+            CurrentArea.OnCustomMessage(PlayerCharacter.DynamicId, msg);
         }
 
         void Inventory_ItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -86,7 +86,7 @@ namespace Utopia.Shared.Server.Structs
                 SourceEntityId = PlayerCharacter.DynamicId
             };
             Connection.Send(msg);
-            CurrentArea.OnTransferMessage(new ProtocolMessageEventArgs<ItemTransferMessage> { Message = msg });
+            CurrentArea.OnCustomMessage(PlayerCharacter.DynamicId, msg);
         }
 
         public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, ServerCore server) : base(connection, entity, server)
