@@ -26,16 +26,6 @@ namespace Utopia.Shared.Entities.Interfaces
         event EventHandler<EntityUseEventArgs> Use;
 
         /// <summary>
-        /// Occurs when the entity health state change
-        /// </summary>
-        event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
-
-        /// <summary>
-        /// Occurs when the entity Afflication state change
-        /// </summary>
-        event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
-
-        /// <summary>
         /// The speed at wich the dynamic entity can walk
         /// </summary>
         float MoveSpeed { get; set; }
@@ -79,30 +69,5 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Indicates if user can do any changes in the world or not
         /// </summary>
         bool IsReadOnly { get; set; }
-
-        /// <summary>
-        /// Represent the Health of the entity
-        /// </summary>
-        Energy Health { get; set; }
-
-        /// <summary>
-        /// Represent the stamina of the entity
-        /// </summary>
-        Energy Stamina { get; set; }
-
-        /// <summary>
-        /// Represent the oxygen blood saturation of the entity
-        /// </summary>
-        Energy Oxygen { get; set; }
-
-        /// <summary>
-        /// Health status of the entity
-        /// </summary>
-        DynamicEntityHealthState HealthState { get; set; }
-
-        /// <summary>
-        /// One or more Afflication currently being applied to the entity
-        /// </summary>
-        DynamicEntityAfflictionState Afflictions { get; set; }
     }
 }

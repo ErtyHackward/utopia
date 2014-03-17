@@ -25,14 +25,14 @@ namespace Utopia.Network
         private readonly IChunkEntityImpactManager _landscapeManager;
         private readonly SyncManager _syncManager;
         private readonly VoxelModelManager _voxelModelManager;
-        private IDynamicEntity _playerEntity;
+        private ICharacterEntity _playerEntity;
 
         private int _useToken;
         
         /// <summary>
         /// Gets or sets main player entity. All its events will be translated to the server
         /// </summary>
-        public IDynamicEntity PlayerEntity
+        public ICharacterEntity PlayerEntity
         {
             get { return _playerEntity; }
             set {
@@ -163,7 +163,7 @@ namespace Utopia.Network
         {
             if (e.Message.Link.IsDynamic)
             {
-                _dynamicEntityManager.AddEntity((IDynamicEntity)e.Message.Entity, true);
+                _dynamicEntityManager.AddEntity((ICharacterEntity)e.Message.Entity, true);
             }
             else
             {
@@ -258,12 +258,12 @@ namespace Utopia.Network
 
         void _server_MessageEntityEquipment(object sender, ProtocolMessageEventArgs<EntityEquipmentMessage> e)
         {
-            _dynamicEntityManager.UpdateEntity((IDynamicEntity)e.Message.Entity);
+            _dynamicEntityManager.UpdateEntity((ICharacterEntity)e.Message.Entity);
         }
 
         void _server_MessageEntityAfflictionState(object sender, ProtocolMessageEventArgs<EntityAfflictionStateMessage> e)
         {
-            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId) as ICharacterEntity;
             if (entity != null)
             {
                 //update the health of the entity
@@ -273,7 +273,7 @@ namespace Utopia.Network
 
         void _server_MessageEntityHealthState(object sender, ProtocolMessageEventArgs<EntityHealthStateMessage> e)
         {
-            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId) as ICharacterEntity;
             if (entity != null)
             {
                 //update the health of the entity
@@ -283,7 +283,7 @@ namespace Utopia.Network
 
         void _server_MessageEntityHealth(object sender, ProtocolMessageEventArgs<EntityHealthMessage> e)
         {
-            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId) as ICharacterEntity;
             if (entity != null)
             {
                 //update the health of the entity

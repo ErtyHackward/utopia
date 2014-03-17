@@ -25,7 +25,7 @@ namespace Utopia.Entities
         /// <summary>
         /// The Player
         /// </summary>
-        public IDynamicEntity DynamicEntity;
+        public ICharacterEntity DynamicEntity;
 
         /// <summary>
         /// The Player Voxel body
@@ -46,7 +46,7 @@ namespace Utopia.Entities
 
         #endregion
 
-        public VisualDynamicEntity(IDynamicEntity dynamicEntity, VisualVoxelEntity visualEntity)
+        public VisualDynamicEntity(ICharacterEntity dynamicEntity, VisualVoxelEntity visualEntity)
         {
             this.DynamicEntity = dynamicEntity;
             this.VisualVoxelEntity = visualEntity;

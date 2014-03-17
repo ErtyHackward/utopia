@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Entities.Voxel;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
 using Utopia.Shared.Entities.Events;
@@ -21,13 +22,13 @@ namespace Utopia.Entities.Managers.Interfaces
 
         event EventHandler<DynamicEntityEventArgs> EntityRemoved;
 
-        void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation);
+        void AddEntity(ICharacterEntity entity, bool withNetworkInterpolation);
 
-        void RemoveEntity(IDynamicEntity entity);
+        void RemoveEntity(ICharacterEntity entity);
 
         void RemoveEntityById(uint entityId, bool dispose=true);
 
-        IDynamicEntity GetEntityById(uint p);
+        ICharacterEntity GetEntityById(uint p);
 
     
         List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
@@ -36,13 +37,13 @@ namespace Utopia.Entities.Managers.Interfaces
         /// Gets or sets current player entity to display
         /// Set to null in first person mode
         /// </summary>
-        IDynamicEntity PlayerEntity { get; set; }
+        ICharacterEntity PlayerEntity { get; set; }
 
         /// <summary>
         /// Updates existing entity object (in case of visual or equipment changes)
         /// </summary>
         /// <param name="entity"></param>
-        void UpdateEntity(IDynamicEntity entity);
+        void UpdateEntity(ICharacterEntity entity);
 
         void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true);
 

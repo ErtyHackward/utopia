@@ -20,6 +20,9 @@ namespace Utopia.Shared.Entities.Dynamic
     [ProtoInclude(101, typeof(Npc))]
     public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldInteractingEntity, IContainerEntity
     {
+        private DynamicEntityHealthState _healthState;
+        private DynamicEntityAfflictionState _afflictions;
+
         /// <summary>
         /// Gets character name
         /// </summary>
@@ -41,6 +44,62 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         public SlotContainer<ContainedSlot> Inventory { get; private set; }
 
+        /// <summary>
+        /// Health energy. When it depletes the character will die.
+        /// </summary>
+        [ProtoMember(4)]
+        public Energy Health { get; set; }
+
+        /// <summary>
+        /// Allows to performs run and jumps
+        /// </summary>
+        [ProtoMember(5)]
+        public Energy Stamina { get; set; }
+
+        /// <summary>
+        /// Allow to limit time under the water
+        /// </summary>
+        [ProtoMember(6)]
+        public Energy Oxygen { get; set; }
+
+        [Browsable(false)]
+        [ProtoMember(7)]
+        public DynamicEntityHealthState HealthState
+        {
+            get { return _healthState; }
+            set
+            {
+                if (_healthState == value) return;
+                var eventArg = new HealthStateChangeEventArgs 
+                { 
+                    DynamicEntityId = DynamicId, 
+                    NewState = value, 
+                    PreviousState = _healthState 
+                };
+                _healthState = value;
+                OnHealthStateChanged(eventArg);
+            }
+        }
+
+        [Browsable(false)]
+        [ProtoMember(8)]
+        public DynamicEntityAfflictionState Afflictions
+        {
+            get { return _afflictions; }
+            set
+            {
+                if (_afflictions == value) return;
+                var eventArg = new AfflictionStateChangeEventArgs 
+                { 
+                    DynamicEntityId = DynamicId, 
+                    NewState = value, 
+                    PreviousState = _afflictions 
+                };
+                _afflictions = value;
+                OnAfflictionStateChanged(eventArg);
+            }
+        }
+        
         /// <summary>
         /// Gets entityFactory, this field is injected
         /// </summary>
@@ -67,10 +126,29 @@ namespace Utopia.Shared.Entities.Dynamic
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        public event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
+
+        protected virtual void OnHealthStateChanged(HealthStateChangeEventArgs e)
+        {
+            var handler = HealthStateChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
+
+        protected virtual void OnAfflictionStateChanged(AfflictionStateChangeEventArgs e)
+        {
+            var handler = AfflictionStateChanged;
+            if (handler != null) handler(this, e);
+        }
+
         protected CharacterEntity()
         {
             Initialize();
             HandTool = new HandTool();
+            Health = new Energy();
+            Stamina = new Energy();
+            Oxygen = new Energy();
         }
 
         private void Initialize()

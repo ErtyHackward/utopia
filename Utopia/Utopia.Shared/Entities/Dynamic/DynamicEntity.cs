@@ -24,9 +24,6 @@ namespace Utopia.Shared.Entities.Dynamic
         public DynamicEntityState EntityState;
         private Quaternion _headRotation;
 
-        private DynamicEntityHealthState _healthState;
-        private DynamicEntityAfflictionState _afflictions;
-
         #region Properties
 
         /// <summary>
@@ -153,44 +150,6 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         [ProtoMember(8)]
         public Quaternion BodyRotation { get; set; }
-
-        [ProtoMember(9)]
-        public Energy Health { get; set; }
-
-        [ProtoMember(10)]
-        public Energy Stamina { get; set; }
-
-        [ProtoMember(11)]
-        public Energy Oxygen { get; set; }
-
-        [Browsable(false)]
-        [ProtoMember(12)]
-        public DynamicEntityHealthState HealthState
-        {
-            get { return _healthState; }
-            set
-            {
-                if (_healthState == value) return;
-                HealthStateChangeEventArgs eventArg = new HealthStateChangeEventArgs() { DynamicEntityId = DynamicId, NewState = value, PreviousState = _healthState };
-                _healthState = value;
-                OnHealthStateChanged(eventArg);
-            }
-        }
-
-        [Browsable(false)]
-        [ProtoMember(13)]
-        public DynamicEntityAfflictionState Afflictions
-        {
-            get { return _afflictions; }
-            set
-            {
-                if (_afflictions == value) return;
-                AfflictionStateChangeEventArgs eventArg = new AfflictionStateChangeEventArgs() { DynamicEntityId = DynamicId, NewState = value, PreviousState = _afflictions };
-                _afflictions = value;
-                OnAfflictionStateChanged(eventArg);
-            }
-        }
-
         #endregion
 
         #region Events
@@ -212,6 +171,15 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             var handler = Use;
             if (handler != null) handler(this, e);
+        }
+
+        /// <summary>
+        /// Occurs when entity changes its position
+        /// </summary>
+        public event EventHandler<EntityMoveEventArgs> PositionChanged;
+        protected virtual void OnPositionChanged(EntityMoveEventArgs e)
+        {
+            if (PositionChanged != null) PositionChanged(this, e);
         }
 
         /// <summary>
@@ -237,27 +205,6 @@ namespace Utopia.Shared.Entities.Dynamic
             return arg.Impact;
         }
         
-        /// <summary>
-        /// Occurs when entity changes its position
-        /// </summary>
-        public event EventHandler<EntityMoveEventArgs> PositionChanged;
-        protected virtual void OnPositionChanged(EntityMoveEventArgs e)
-        {
-            if (PositionChanged != null) PositionChanged(this, e);
-        }
-
-        public event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
-        protected virtual void OnHealthStateChanged(HealthStateChangeEventArgs e)
-        {
-            if (HealthStateChanged != null) HealthStateChanged(this, e);
-        }
-
-        public event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
-        protected virtual void OnAfflictionStateChanged(AfflictionStateChangeEventArgs e)
-        {
-            if (AfflictionStateChanged != null) AfflictionStateChanged(this, e);
-        }
-
         #endregion
         
         protected DynamicEntity()
@@ -265,9 +212,6 @@ namespace Utopia.Shared.Entities.Dynamic
             HeadRotation = Quaternion.Identity;
             BodyRotation = Quaternion.Identity;
             EntityState = new DynamicEntityState();
-            Health = new Energy();
-            Stamina = new Energy();
-            Oxygen = new Energy();
         }
 
         public override int GetHashCode()
