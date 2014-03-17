@@ -6,6 +6,7 @@ using SharpDX;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Server.Events;
 
@@ -39,17 +40,6 @@ namespace Utopia.Shared.Server.Structs
          * Entity should start listening at AreaEnter and remove listening at AreaLeave
          * Here should be added all required multicast events like direction change and tool using
          */
-
-        /// <summary>
-        /// Occurs when some entity performs use operation
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<EntityUseMessage>> EntityUse;
-
-        public void OnEntityUse(ProtocolMessageEventArgs<EntityUseMessage> e)
-        {
-            var handler = EntityUse;
-            if (handler != null) handler(this, e);
-        }
 
         /// <summary>
         /// Occurs when tool processing is finished
@@ -151,17 +141,6 @@ namespace Utopia.Shared.Server.Structs
         }
 
         /// <summary>
-        /// Occurs when some entity at this area changes its model
-        /// </summary>
-        public event EventHandler<AreaVoxelModelEventArgs> EntityModelChanged;
-
-        private void OnEntityModelChanged(AreaVoxelModelEventArgs e)
-        {
-            var handler = EntityModelChanged;
-            if (handler != null) handler(this, e);
-        }
-
-        /// <summary>
         /// Occurs when some entity appears in one of area chunks
         /// </summary>
         public event EventHandler<EntityCollectionEventArgs> StaticEntityAdded;
@@ -191,14 +170,6 @@ namespace Utopia.Shared.Server.Structs
             if (handler != null) handler(this, e);
         }
 
-        public event EventHandler<ProtocolMessageEventArgs<ItemTransferMessage>> TransferMessage;
-
-        public virtual void OnTransferMessage(ProtocolMessageEventArgs<ItemTransferMessage> e)
-        {
-            var handler = TransferMessage;
-            if (handler != null) handler(this, e);
-        }
-
         public event EventHandler<ProtocolMessageEventArgs<EntityVoxelModelMessage>> VoxelModelChanged;
 
         public void OnEntityVoxelModel(ProtocolMessageEventArgs<EntityVoxelModelMessage> e)
@@ -207,6 +178,17 @@ namespace Utopia.Shared.Server.Structs
             if (handler != null) handler(this, e);
         }
 
+        public event EventHandler<ServerProtocolMessageEventArgs> CustomMessage;
+
+        public void OnCustomMessage(uint sourceId, IBinaryMessage message)
+        {
+            var handler = CustomMessage;
+            if (handler != null) handler(this, new ServerProtocolMessageEventArgs { 
+                DynamicId = sourceId, 
+                Message = message 
+            });
+        }
+        
         #endregion
 
         /// <summary>
@@ -316,6 +298,13 @@ namespace Utopia.Shared.Server.Structs
         {
             return _entities.ContainsKey((int)entityId);
         }
+    }
+
+    public class ServerProtocolMessageEventArgs : EventArgs
+    {
+        public uint DynamicId { get; set; }
+
+        public IBinaryMessage Message { get; set; }
     }
 
     public class EntityUseFeedbackEventArgs : EventArgs

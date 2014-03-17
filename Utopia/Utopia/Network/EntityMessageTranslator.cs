@@ -288,7 +288,6 @@ namespace Utopia.Network
             {
                 //update the health of the entity
                 entity.Health.MaxValue = e.Message.Health.MaxValue;
-                entity.Health.MinValue = e.Message.Health.MinValue;
                 entity.Health.CurrentValue = e.Message.Health.CurrentValue;
             }
         }

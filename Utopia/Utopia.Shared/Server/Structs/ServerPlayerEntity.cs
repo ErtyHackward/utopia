@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
@@ -36,14 +35,13 @@ namespace Utopia.Shared.Server.Structs
         {
             area.EntityView          += AreaEntityView;
             area.EntityMoved         += AreaEntityMoved;
-            area.EntityUse           += AreaEntityUse;
             area.EntityUseFeedback   += AreaEntityUseFeedback;
             area.BlocksChanged       += AreaBlocksChanged;
             area.StaticEntityAdded   += AreaStaticEntityAdded;
             area.StaticEntityRemoved += AreaStaticEntityRemoved;
             area.EntityLockChanged   += AreaEntityLockChanged;
-            area.TransferMessage     += AreaTransferMessage;
             area.VoxelModelChanged   += AreaOnVoxelModelChanged;
+            area.CustomMessage       += AreaCustomMessage;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -57,18 +55,23 @@ namespace Utopia.Shared.Server.Structs
             }
         }
 
+        void AreaCustomMessage(object sender, ServerProtocolMessageEventArgs e)
+        {
+            if (e.DynamicId != DynamicEntity.DynamicId)
+                Connection.Send(e.Message);
+        }
+
         public override void RemoveArea(MapArea area)
         {
             area.EntityView          -= AreaEntityView;
             area.EntityMoved         -= AreaEntityMoved;
-            area.EntityUse           -= AreaEntityUse;
             area.EntityUseFeedback   -= AreaEntityUseFeedback;
             area.BlocksChanged       -= AreaBlocksChanged;
             area.StaticEntityAdded   -= AreaStaticEntityAdded;
             area.StaticEntityRemoved -= AreaStaticEntityRemoved;
             area.EntityLockChanged   -= AreaEntityLockChanged;
-            area.TransferMessage     -= AreaTransferMessage;
             area.VoxelModelChanged   -= AreaOnVoxelModelChanged;
+            area.CustomMessage       -= AreaCustomMessage;
 
             foreach (var serverEntity in area.Enumerate())
             {
@@ -115,9 +118,9 @@ namespace Utopia.Shared.Server.Structs
         {
             if (e.Entity.DynamicEntity != DynamicEntity)
             {
-                Connection.Send(new EntityOutMessage { 
-                    EntityId = e.Entity.DynamicEntity.DynamicId, 
-                    Link = e.Entity.DynamicEntity.GetLink() 
+                Connection.Send(new EntityOutMessage {
+                    EntityId = e.Entity.DynamicEntity.DynamicId,
+                    Link = e.Entity.DynamicEntity.GetLink()
                 });
             }
         }
@@ -126,9 +129,9 @@ namespace Utopia.Shared.Server.Structs
         {
             if (e.Entity.DynamicEntity != DynamicEntity)
             {
-                Connection.Send(new EntityInMessage { 
-                    Entity = e.Entity.DynamicEntity, 
-                    Link = e.Entity.DynamicEntity.GetLink() 
+                Connection.Send(new EntityInMessage {
+                    Entity = e.Entity.DynamicEntity,
+                    Link = e.Entity.DynamicEntity.GetLink()
                 });
             }
         }
@@ -141,19 +144,11 @@ namespace Utopia.Shared.Server.Structs
             }
         }
 
-        void AreaTransferMessage(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
-        {
-            if (e.Message.SourceEntityId != DynamicEntity.DynamicId)
-            {
-                Connection.Send(e.Message);
-            }
-        }
-
         private void AreaOnVoxelModelChanged(object sender, ProtocolMessageEventArgs<EntityVoxelModelMessage> e)
         {
             if (e.Message.EntityLink.DynamicEntityId == DynamicEntity.DynamicId)
             {
-                var charClass = Enumerable.FirstOrDefault<CharacterClassItem>(_server.EntityFactory.Config.CharacterClasses, c=> c.ClassName == e.Message.ClassName);
+                var charClass = _server.EntityFactory.Config.CharacterClasses.FirstOrDefault(c => c.ClassName == e.Message.ClassName);
 
                 if (charClass != null)
                     DynamicEntity.ModelName = charClass.ModelName;

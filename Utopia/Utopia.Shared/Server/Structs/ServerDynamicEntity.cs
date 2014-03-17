@@ -5,6 +5,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Structs;
 
@@ -224,6 +225,15 @@ namespace Utopia.Shared.Server.Structs
             _server.EntityStorage.SaveDynamicEntity(_dynamicEntity);
             _needSave = false;
             _lastSaved = DateTime.Now;
+        }
+
+        /// <summary>
+        /// Retranslates message to the current area
+        /// </summary>
+        /// <param name="message"></param>
+        public void RetranslateMessage(IBinaryMessage message)
+        {
+            CurrentArea.OnCustomMessage(DynamicEntity.DynamicId, message);
         }
     }
 
