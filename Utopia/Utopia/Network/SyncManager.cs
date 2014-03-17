@@ -88,7 +88,7 @@ namespace Utopia.Network
             // update the entity
             if (e.Message.Entity != null)
             {
-                var dynEntity = (IDynamicEntity)e.Message.Entity;
+                var dynEntity = (ICharacterEntity)e.Message.Entity;
 
                 _dynamicEntityManager.UpdateEntity(dynEntity);
 

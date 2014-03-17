@@ -78,7 +78,7 @@ namespace Utopia.Entities.Managers
         private readonly SingleArrayChunkContainer _chunkContainer;
         private IWorldChunks _worldChunks;
         private int _staticEntityViewRange;
-        private IDynamicEntity _playerEntity;
+        private ICharacterEntity _playerEntity;
 
         private HLSLCubeTool _cubeToolEffect;
         private IMeshFactory _milkShapeMeshfactory;
@@ -106,7 +106,7 @@ namespace Utopia.Entities.Managers
         /// Gets or sets current player entity to display
         /// Set to null in first person mode
         /// </summary>
-        public IDynamicEntity PlayerEntity
+        public ICharacterEntity PlayerEntity
         {
             get
             {
@@ -380,7 +380,7 @@ namespace Utopia.Entities.Managers
         /// <param name="entity">the entity</param>
         /// <param name="withNetworkInterpolation">the entity movement will be interpolated between each move/rotate changes</param>
         /// <param name="ForcedModelName">Will overide the define entity model for the voxel body</param>
-        public void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation)
+        public void AddEntity(ICharacterEntity entity, bool withNetworkInterpolation)
         {
             string entityVoxelName = entity.ModelName;
 
@@ -442,7 +442,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public void RemoveEntity(IDynamicEntity entity)
+        public void RemoveEntity(ICharacterEntity entity)
         {
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
             {
@@ -490,7 +490,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public IDynamicEntity GetEntityById(uint p)
+        public ICharacterEntity GetEntityById(uint p)
         {
             VisualDynamicEntity e;
             if (_dynamicEntitiesDico.TryGetValue(p, out e))
@@ -530,7 +530,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public void UpdateEntity(IDynamicEntity entity)
+        public void UpdateEntity(ICharacterEntity entity)
         {
             VisualDynamicEntity visualEntity;
 
@@ -670,7 +670,7 @@ namespace Utopia.Entities.Managers
         }
 
         //Dynamic Entity management
-        private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
+        private VisualDynamicEntity CreateVisualEntity(ICharacterEntity entity)
         {
             return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
         }
@@ -686,7 +686,7 @@ namespace Utopia.Entities.Managers
             else
             {
                 PlayerEntity = null;
-                PlayerEntity = _playerEntityManager.Player;
+                PlayerEntity = (ICharacterEntity)_playerEntityManager.Player;
             }
         }
 
