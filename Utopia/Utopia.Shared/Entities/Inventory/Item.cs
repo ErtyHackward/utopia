@@ -223,11 +223,10 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        public virtual IToolImpact Put(IDynamicEntity owner, out Item worldDroppedItem)
+        public virtual IToolImpact Put(IDynamicEntity owner, Item worldDroppedItem = null)
         {
             // by default all items can only be dropped to some position
             IToolImpact checkImpact;
-            worldDroppedItem = null;
             
             if (!CanDoBlockOrEntityAction(owner, out checkImpact))
                 return checkImpact;
@@ -263,7 +262,15 @@ namespace Utopia.Shared.Entities.Inventory
                 return impact;
             }
 
-            var entity = (Item)Clone();
+            Item entity;
+            if (worldDroppedItem == null)
+            {
+                entity = (Item)Clone();
+            }
+            else
+            {
+                entity = worldDroppedItem;
+            }
 
             SetPosition(pos, entity, owner);
 
@@ -293,7 +300,6 @@ namespace Utopia.Shared.Entities.Inventory
                 // put entity into the world
                 cursor.AddEntity(entity, owner.DynamicId);
                 impact.EntityId = entity.StaticId;
-                worldDroppedItem = entity;
                 return impact;
             }
             

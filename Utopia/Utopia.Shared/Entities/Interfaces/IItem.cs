@@ -62,6 +62,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        IToolImpact Put(IDynamicEntity owner, out Item worldDroppedItem);
+        IToolImpact Put(IDynamicEntity owner, Item worldDroppedItem = null);
     }
 }

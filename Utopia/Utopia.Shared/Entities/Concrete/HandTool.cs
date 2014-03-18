@@ -6,6 +6,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Entities.Concrete.Interface;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -51,6 +52,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
+            //Trigger item activation (Make it play sound, open, ...)
             if (entity is IUsableEntity)
             {
                 var usable = (IUsableEntity)entity;
@@ -68,6 +70,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
+            //Cannot remove the item from the world
             if (!entity.IsPickable)
             {
                 impact.Message = "You need a special tool to pick this item";
@@ -80,21 +83,42 @@ namespace Utopia.Shared.Entities.Concrete
             if (charEntity != null)
             {
                 var item = (IItem)entity;
-                
+                impact.EntityId = entity.StaticId;
 
-                if (charEntity.Inventory.PutItem(item))
+                IOwnerBindable playerBindedItem = entity as IOwnerBindable;
+                if (playerBindedItem != null && playerBindedItem.DynamicEntityOwnerID != charEntity.DynamicId)
                 {
-                    cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
-                    impact.Success = true;
-
-                    // entity should lose its voxel intance if put into the inventory
-                    item.ModelInstance = null;
-
+                    impact.Message = "This item is not binded to you !";
                     return impact;
                 }
 
-                impact.Message = "Unable to put item to the inventory, is it full?";
-                return impact;
+                if (item.IsDestroyedOnWorldRemove == false)
+                {
+                    //Try to put the item into the inventory
+                    if (charEntity.Inventory.PutItem(item))
+                    {
+                        //If inside the inventory, then remove it from the world
+                        cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
+                        impact.Success = true;
+
+                        // entity should lose its voxel intance if put into the inventory
+                        item.ModelInstance = null;
+
+                        return impact;
+                    }
+
+                    impact.Message = "Unable to put item to the inventory, is it full?";
+                    return impact;
+                }
+                else
+                {
+                    item.BeforeDestruction(charEntity);
+                    cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
+                    impact.Success = true;
+                    item.ModelInstance = null;
+                    impact.Message = "Item has been destroyed";
+                    return impact;
+                }
             }
 
             impact.Message = "Expected CharacterEntity owner";
