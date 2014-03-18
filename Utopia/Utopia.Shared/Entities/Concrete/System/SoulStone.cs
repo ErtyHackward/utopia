@@ -69,7 +69,7 @@ namespace Utopia.Shared.Entities.Concrete.System
                 impact.Success = false;
                 return impact;
             }
-
+            
             if (worldDroppedItem == null)
             {
                 SoulStone clonedNewSoulstone = (SoulStone)this.Clone();

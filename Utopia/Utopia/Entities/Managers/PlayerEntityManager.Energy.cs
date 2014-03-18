@@ -23,10 +23,24 @@ namespace Utopia.Entities.Managers
         }
 
         private ressurectionStates ressurectionState = ressurectionStates.None;
+        private Vector3D playerSpawnLocation = default(Vector3D);
+        public Vector3D PlayerSpawnLocation
+        {
+            get { return playerSpawnLocation; }
+            set { playerSpawnLocation = value; }
+        }
 
         private void EnergyFTSUpdate(GameTime timeSpent)
         {
-            bool isWithinSoulStoneRange = _playerCharacter.BindedSoulStone != null && Vector3D.DistanceSquared(_playerCharacter.BindedSoulStone.Position, _playerCharacter.Position) <= 1024d;
+            if (_playerCharacter.BindedSoulStone == null && playerSpawnLocation == default(Vector3D))
+            {
+                //Player not binded to a soulstone, remember player spawn location for ressurection only.
+                playerSpawnLocation = _playerCharacter.Position;
+            }
+
+            Vector3D BindingPosition = _playerCharacter.BindedSoulStone != null ? _playerCharacter.BindedSoulStone.Position : playerSpawnLocation;
+
+            bool isWithinSoulStoneRange = Vector3D.DistanceSquared(BindingPosition, _playerCharacter.Position) <= 1024d;
             if (isWithinSoulStoneRange == false && ressurectionState == ressurectionStates.PreventRessurection) ressurectionState = ressurectionStates.None;
 
             if (_playerCharacter.HealthState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
@@ -44,8 +58,8 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            //Auto Regen Health if in range of our own soulStone = 32 blocks distances !
-            if (isWithinSoulStoneRange && 
+            //Auto Regen Health if in range of our own soulStone = 32 blocks distances, and a soulstone is placed
+            if (isWithinSoulStoneRange && _playerCharacter.BindedSoulStone != null &&
                 _playerCharacter.Health.CurrentAsPercent < 1.0f)
             {
                 var soulsStoneHealingAmount = _healthSoulStoneGainPerSecond * timeSpent.ElapsedGameTimeInS_LD;
