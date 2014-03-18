@@ -145,7 +145,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        public IDynamicEntity Player { get { return PlayerCharacter; } }
+        public ICharacterEntity Player { get { return PlayerCharacter; } }
 
         public Faction Faction { get { return _faction; } }
 
@@ -186,6 +186,11 @@ namespace Utopia.Entities.Managers
                 {
                     _physicSimu.StartSimulation(_worldPosition);
                     _physicSimu.ConstraintOnlyMode = false;
+                }
+                else if (value == EntityDisplacementModes.Dead)
+                {
+                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                    _physicSimu.ConstraintOnlyMode = true;
                 }
                 //Collision detection not activated oustide debug mode when flying !
 #if !DEBUG

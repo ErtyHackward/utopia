@@ -122,6 +122,7 @@ namespace Utopia.Entities
             switch (this.DynamicEntity.DisplacementMode)
             {
                 case EntityDisplacementModes.Flying:
+                case EntityDisplacementModes.Dead:
                     animationFrameName = "Flying";
                     break;
                 case EntityDisplacementModes.Walking:

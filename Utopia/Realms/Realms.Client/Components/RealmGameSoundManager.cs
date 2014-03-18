@@ -30,9 +30,10 @@ namespace Realms.Client.Components
                                     IClock worlClock)
             : base(soundEngine, cameraManager, singleArray, dynamicEntityManager, chunkEntityImpactManager, worldChunk, gameClockTime, playerEntityManager, visualWorldParameters, worlClock)
         {
-            PreLoadSound("Put", @"Sounds\Blocks\put.adpcm.wav", 0.3f, 12.0f);
-            PreLoadSound("Take", @"Sounds\Blocks\take.adpcm.wav", 0.3f, 12.0f);
-            PreLoadSound("Hurt", @"Sounds\Events\hurt.adpcm.wav", 0.3f, 16.0f);
+            PreLoadSound("Put", @"Sounds\Blocks\put.adpcm.wav", 0.3f, 12.0f, 50);
+            PreLoadSound("Take", @"Sounds\Blocks\take.adpcm.wav", 0.3f, 12.0f, 50);
+            PreLoadSound("Hurt", @"Sounds\Events\hurt.adpcm.wav", 0.3f, 16.0f, 100);
+            PreLoadSound("Dying", @"Sounds\Events\dying.adpcm.wav", 0.5f, 16.0f, 1000);
 
             if (playerEntityManager is PlayerEntityManager)
             {

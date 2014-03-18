@@ -33,6 +33,9 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Walking:
                     _gravityInfluence = 1;
                     break;
+                case EntityDisplacementModes.Dead:
+                    _gravityInfluence = 1.5f;
+                    break;
                 case EntityDisplacementModes.Swiming:
                     _gravityInfluence = 1f / 2; // We will move 2 times slower when swimming
                     break;
@@ -107,8 +110,11 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Swiming:
                     SwimmingFreeFirstPersonMove(ref timeSpent);
                     break;
-                case EntityDisplacementModes.God:
+                case EntityDisplacementModes.Dead:
+                    DeadMove();
+                    break;
                 case EntityDisplacementModes.Flying:
+                case EntityDisplacementModes.God:
                     FreeFirstPersonMove();
                     break;
                 case EntityDisplacementModes.Walking:
@@ -167,6 +173,12 @@ namespace Utopia.Entities.Managers
             {
                 _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
             }
+            _physicSimu.CurPosition = _worldPosition;
+        }
+
+        private void DeadMove()
+        {
+            _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
             _physicSimu.CurPosition = _worldPosition;
         }
 
@@ -266,7 +278,11 @@ namespace Utopia.Entities.Managers
         private void CheckForEventRaising()
         {
             //Landing on ground after falling event
-            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying || Player.DisplacementMode == EntityDisplacementModes.God)
+            if (_physicSimu.OnGround == false || 
+                Player.DisplacementMode == EntityDisplacementModes.Swiming || 
+                Player.DisplacementMode == EntityDisplacementModes.Flying || 
+                Player.DisplacementMode == EntityDisplacementModes.God ||
+                Player.DisplacementMode == EntityDisplacementModes.Dead)
             {
                 //New "trigger"
                 if (_worldPosition.Y > _fallMaxHeight && !_physicSimu.isInContactWithLadder) _fallMaxHeight = _worldPosition.Y;

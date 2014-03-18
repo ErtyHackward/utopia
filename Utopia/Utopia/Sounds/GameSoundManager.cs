@@ -22,6 +22,7 @@ using Utopia.Shared.World;
 using Utopia.Shared.Sounds;
 using System.IO;
 using System.Linq;
+using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.Sounds
 {
@@ -45,6 +46,7 @@ namespace Utopia.Sounds
             public string Path;
             public float Volume;
             public float Power;
+            public int Priority;
         }
 
         #region Private Variables
@@ -161,7 +163,7 @@ namespace Utopia.Sounds
             #region Load Derived classes sounds
             foreach (var data in _preLoad)
             {
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias, SourceCategory.FX);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias, SourceCategory.FX, priority:data.Priority);
                 if (dataSource != null)
                 {
                     dataSource.Volume = data.Volume;
@@ -191,7 +193,7 @@ namespace Utopia.Sounds
             {
                 foreach (var sound in pair.Value)
                 {
-                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias, SourceCategory.FX);
+                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias, SourceCategory.FX, priority:100);
                     if (dataSource != null)
                     {
                         dataSource.Volume = sound.Volume;
@@ -255,6 +257,9 @@ namespace Utopia.Sounds
                     case "peace":
                         type = MoodType.Peace;
                         break;
+                    case "dead":
+                        type = MoodType.Dead;
+                        break;
                     default:
                         continue;
                 }
@@ -263,8 +268,8 @@ namespace Utopia.Sounds
                 {
                     Alias = "Mood" + fileMetaData[0],
                     FilePath = moodSoundFile,
-                    Volume = type == MoodType.Peace ? 0.1f : 0.4f,
-                    isStreamed = true
+                    Volume = type == MoodType.Peace ? 0.1f : 0.6f,
+                    isStreamed = true                    
                 };
 
                 if (time == TimeOfDaySound.FullDay)
@@ -301,15 +306,14 @@ namespace Utopia.Sounds
             VisualChunk chunk;
             if (!_worldChunk.GetSafeChunk(MathHelper.Floor(_playerEntityManager.Player.Position.X), MathHelper.Floor(_playerEntityManager.Player.Position.Z), out chunk)) 
                 return;
-            var playerPosition = (Vector3I)_playerEntityManager.Player.Position;
 
             //Always active background music linked to player Mood + Time
-            MoodSoundProcessing(ref playerPosition);
+            MoodSoundProcessing(_playerEntityManager.Player);
 
             //Activate Ambiant sounds following player positions, biomes, times, ...
             if (_biomesParams != null)
             {
-                AmbiantSoundProcessing(chunk, ref playerPosition);
+                AmbiantSoundProcessing(chunk, _playerEntityManager.Player);
             }
 
             //Walking step sound processing
@@ -360,9 +364,9 @@ namespace Utopia.Sounds
             _preLoad.Add(metaData);
         }
 
-        protected void PreLoadSound(string alias, string path, float volume, float power)
+        protected void PreLoadSound(string alias, string path, float volume, float power, int priority)
         {
-            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power });
+            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power, Priority = priority });
         }
 
         #region Walking Sound Processing
@@ -465,18 +469,17 @@ namespace Utopia.Sounds
         #region Biome ambiant Sound Processing
         private ISoundVoice _currentlyPLayingAmbiantSound;
         private Biome _previousBiomePlaying;
-        private void AmbiantSoundProcessing(VisualChunk chunk, ref Vector3I newPlayerPosition)
+        private void AmbiantSoundProcessing(VisualChunk chunk, ICharacterEntity player)
         {
-            ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(newPlayerPosition.X - chunk.ChunkPositionBlockUnit.X, newPlayerPosition.Z - chunk.ChunkPositionBlockUnit.Y);
+            ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(player.Position.ToCubePosition().X - chunk.ChunkPositionBlockUnit.X, player.Position.ToCubePosition().Z - chunk.ChunkPositionBlockUnit.Y);
 
-            //Testing "Fear" Condition !
-            bool playerAboveMaxChunkheight = (columnInfo.MaxHeight - newPlayerPosition.Y < -15);
-            bool playerBelowMaxChunkheight = (columnInfo.MaxHeight - newPlayerPosition.Y > 15);
+            bool playerAboveMaxChunkheight = (columnInfo.MaxHeight - player.Position.ToCubePosition().Y < -15);
+            bool playerBelowMaxChunkheight = (columnInfo.MaxHeight - player.Position.ToCubePosition().Y > 15);
 
             Biome currentBiome = _biomesParams.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
-            //Ambiant sound are just for surface "chunk", of not stop playing them !
-            if (playerAboveMaxChunkheight || playerBelowMaxChunkheight)
+            //Ambiant sound are just for surface "chunk", if not stop playing them !
+            if (playerAboveMaxChunkheight || playerBelowMaxChunkheight || player.HealthState == DynamicEntityHealthState.Dead)
             {
                 if (_currentlyPLayingAmbiantSound != null)
                 {
@@ -519,9 +522,9 @@ namespace Utopia.Sounds
         #region Mood Sound Processing
         private ISoundVoice _currentlyPlayingMoodSound;
         private MoodSoundKey _previousMood = null;
-        private void MoodSoundProcessing(ref Vector3I newPlayerPosition)
+        private void MoodSoundProcessing(ICharacterEntity player)
         {
-            MoodSoundKey currentMood = new MoodSoundKey() { TimeOfDay = GetTimeofDay(), Type = GetMoodType(ref newPlayerPosition) };
+            MoodSoundKey currentMood = new MoodSoundKey() { TimeOfDay = GetTimeofDay(), Type = GetMoodType(player) };
 
             //No sound was playing, or a new one needs to be played
             if (_currentlyPlayingMoodSound == null || 
@@ -560,11 +563,17 @@ namespace Utopia.Sounds
             }
         }
 
-        private MoodType GetMoodType(ref Vector3I newPlayerPosition)
+        private MoodType GetMoodType(ICharacterEntity player)
         {
-          
+            if (player.HealthState == DynamicEntityHealthState.Dead)
+            {
+                return MoodType.Dead;
+            }
+
+            //Add drowning sound !
+
             //Testing "Fear" Condition !
-            bool playerNearBottom = newPlayerPosition.Y <= 30;
+            bool playerNearBottom = player.Position.Y <= 30;
 
             if (playerNearBottom)
             {

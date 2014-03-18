@@ -151,7 +151,9 @@ namespace S33M3CoreComponents.Physics.Verlet
             }
             else
             {
-                newPosition = Vector3D.Zero;
+                //newPosition = Vector3D.Zero;
+                newPosition = _curPosition;
+                logger.Error("Simulate physic called while not running, please avoid !");
             }
         }
 

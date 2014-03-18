@@ -64,7 +64,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Gets main player entity (character or PlayerFocusEntity)
         /// </summary>
-        public IDynamicEntity Player { get { return GodEntity; } }
+        public ICharacterEntity Player { get { return GodEntity; } }
 
         /// <summary>
         /// If camera is inside water

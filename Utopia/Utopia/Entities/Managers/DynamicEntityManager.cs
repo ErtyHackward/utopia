@@ -40,6 +40,7 @@ using Utopia.Resources.Effects.Entities;
 using Utopia.Resources.Effects;
 using Utopia.Resources.Sprites;
 using Utopia.Shared.Configuration;
+using S33M3CoreComponents.Sound;
 
 namespace Utopia.Entities.Managers
 {
@@ -79,6 +80,7 @@ namespace Utopia.Entities.Managers
         private IWorldChunks _worldChunks;
         private int _staticEntityViewRange;
         private ICharacterEntity _playerEntity;
+        private ISoundEngine _soundEngine;
 
         private HLSLCubeTool _cubeToolEffect;
         private IMeshFactory _milkShapeMeshfactory;
@@ -144,7 +146,8 @@ namespace Utopia.Entities.Managers
                                     IPlayerManager playerEntityManager,
                                     ISkyDome skyDome,
                                     SharedFrameCB sharedFrameCB,
-                                    IWorldChunks worldChunks
+                                    IWorldChunks worldChunks,
+                                    ISoundEngine soundEngine
                                     )
         {
             
@@ -152,6 +155,7 @@ namespace Utopia.Entities.Managers
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
             _chunkContainer = chunkContainer;
+            _soundEngine = soundEngine;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
             _playerEntityManager = playerEntityManager;
@@ -395,6 +399,10 @@ namespace Utopia.Entities.Managers
                 //subscribe to entity state/afllication changes
                 entity.AfflictionStateChanged += EntityAfflictionStateChanged;
                 entity.HealthStateChanged += EntityHealthStateChanged;
+                if (entity.DynamicId != PlayerEntity.DynamicId)
+                {
+                    entity.Health.ValueChanged += Health_ValueChanged;
+                }
 
                 ModelAndInstances modelWithInstances;
                 //Does the entity model exist in the collection ?
@@ -459,6 +467,10 @@ namespace Utopia.Entities.Managers
 
                 entity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 entity.HealthStateChanged -= EntityHealthStateChanged;
+                if (entity.DynamicId != PlayerEntity.DynamicId)
+                {
+                    entity.Health.ValueChanged -= Health_ValueChanged;
+                }
 
                 visualEntity.Dispose();
 
@@ -466,13 +478,15 @@ namespace Utopia.Entities.Managers
             }
         }
 
+
+
         public void RemoveEntityById(uint entityId, bool dispose = true)
         {
             VisualDynamicEntity entity;
             if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
             {
                 ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.VisualVoxelEntity.VoxelEntity.ModelName, out instances))
+                if (!_models.TryGetValue(entity.VisualVoxelEntity.VoxelEntity.ModelInstance.VoxelModel.Name, out instances))
                 {
                     throw new InvalidOperationException("we have no such model");
                 }
@@ -484,6 +498,10 @@ namespace Utopia.Entities.Managers
 
                 visualEntity.DynamicEntity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 visualEntity.DynamicEntity.HealthStateChanged -= EntityHealthStateChanged;
+                if (visualEntity.DynamicEntity.DynamicId != PlayerEntity.DynamicId)
+                {
+                    visualEntity.DynamicEntity.Health.ValueChanged -= Health_ValueChanged;
+                }
 
                 if (dispose) visualEntity.Dispose();
                 OnEntityRemoved(new DynamicEntityEventArgs { Entity = visualEntity.DynamicEntity });
@@ -669,6 +687,7 @@ namespace Utopia.Entities.Managers
             if (EntityRemoved != null) EntityRemoved(this, e);
         }
 
+
         //Dynamic Entity management
         private VisualDynamicEntity CreateVisualEntity(ICharacterEntity entity)
         {
@@ -726,14 +745,20 @@ namespace Utopia.Entities.Managers
                     if (e.PreviousState == DynamicEntityHealthState.Dead)
                     {
                         //Force a refresh of voxel body
-                        UpdateEntityVoxelBody(e.DynamicEntityId, null);
+                        UpdateEntityVoxelBody(e.DynamicEntity.DynamicId, null);
                     }
                     break;
                 case DynamicEntityHealthState.Drowning:
                     break;
                 case DynamicEntityHealthState.Dead:
                         //Force a refresh of voxel body
-                        UpdateEntityVoxelBody(e.DynamicEntityId, null);
+                        UpdateEntityVoxelBody(e.DynamicEntity.DynamicId, null);
+
+                        //Play dead sound only if player not active player
+                        if (e.DynamicEntity.DynamicId != PlayerEntity.DynamicId)
+                        {
+                            _soundEngine.StartPlay3D("Dying", 1.0f, e.DynamicEntity.Position.AsVector3());
+                        }
                     break;
                 default:
                     break;
@@ -744,6 +769,15 @@ namespace Utopia.Entities.Managers
         {
             //Handle Affliction change for an entity here if needed
             //Should "only" trigger visual aspect of it.
+        }
+
+        private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
+        {
+            //Action when other player are losing life !
+            if (e.ValueChangedAmount < -10)
+            {
+                _soundEngine.StartPlay3D("Hurt", 1.0f, e.Entity.Position.AsVector3());
+            }
         }
 
         #endregion
