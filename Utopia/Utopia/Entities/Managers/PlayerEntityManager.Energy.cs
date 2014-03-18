@@ -168,12 +168,20 @@ namespace Utopia.Entities.Managers
             if (e.EnergyChanged.CurrentAsPercent <= 0 && _playerCharacter.HealthState != Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
             {
                 ActivateDeadState();
+                return;
             }
 
-            //If lost more than 30pt of life at the same time ! Risk of Stunt effect !
-            if (e.ValueChangedAmount < -30)
+            if (e.ValueChangedAmount < -10)
             {
-                logger.Debug("RISK of STUNT");
+                if (e.ValueChangedAmount < -30)
+                {
+                    _soundEngine.StartPlay2D("Hurt", 1.0f);
+                    logger.Debug("RISK of STUNT");
+                }
+                else
+                {
+                    _soundEngine.StartPlay2D("Hurt", 0.3f);
+                }
             }
         }
 
