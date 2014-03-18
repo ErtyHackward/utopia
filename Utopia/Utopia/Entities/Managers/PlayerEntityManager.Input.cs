@@ -33,6 +33,7 @@ namespace Utopia.Entities.Managers
                 }
                 else
                 {
+                    //ONLY POSSIBLE FOR ADMIN !
                     DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }

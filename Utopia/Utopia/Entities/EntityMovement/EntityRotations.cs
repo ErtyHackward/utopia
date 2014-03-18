@@ -133,6 +133,7 @@ namespace Utopia.Entities.EntityMovement
 
                 switch (_displacementMode)
                 {
+                    case EntityDisplacementModes.Dead:
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
                     case EntityDisplacementModes.Walking:
@@ -285,6 +286,7 @@ namespace Utopia.Entities.EntityMovement
                 {
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Swiming:
+                    case EntityDisplacementModes.Dead:
                     case EntityDisplacementModes.Flying:
                         entityMoveVector += _lookAt;
                         break;
@@ -302,6 +304,7 @@ namespace Utopia.Entities.EntityMovement
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Swiming:
                     case EntityDisplacementModes.Flying:
+                    case EntityDisplacementModes.Dead:
                         entityMoveVector -= _lookAt;
                         break;
                     case EntityDisplacementModes.Walking:
@@ -320,6 +323,7 @@ namespace Utopia.Entities.EntityMovement
                         break;
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
+                    case EntityDisplacementModes.Dead:
                         entityMoveVector += _entityEyeXAxis;
                         break;
                     default:
@@ -335,6 +339,7 @@ namespace Utopia.Entities.EntityMovement
                         break;
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
+                    case EntityDisplacementModes.Dead:
                         entityMoveVector -= _entityEyeXAxis;
                         break;
                     default:
@@ -347,6 +352,7 @@ namespace Utopia.Entities.EntityMovement
                 {
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
+                    case EntityDisplacementModes.Dead:
                         entityMoveVector += Vector3.UnitY;
                         break;                    
                     case EntityDisplacementModes.FreeFlying:
@@ -365,6 +371,7 @@ namespace Utopia.Entities.EntityMovement
                 {
                     case EntityDisplacementModes.God:
                     case EntityDisplacementModes.Flying:
+                    case EntityDisplacementModes.Dead:
                         entityMoveVector -= Vector3.UnitY;
                         break;
                     case EntityDisplacementModes.FreeFlying:

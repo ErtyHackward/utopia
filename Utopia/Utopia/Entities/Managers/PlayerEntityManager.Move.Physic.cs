@@ -22,6 +22,10 @@ namespace Utopia.Entities.Managers
 
             switch (mode)
             {
+                case EntityDisplacementModes.Dead:
+                    _physicSimu.Friction = 0f;
+                    PhysicSimulation(ref timeSpent);
+                    break;
                 case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     _physicSimu.Friction = 0f;

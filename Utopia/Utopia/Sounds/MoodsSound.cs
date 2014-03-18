@@ -15,7 +15,8 @@ namespace Utopia.Sounds
     public enum MoodType
     {
         Peace,
-        Fear
+        Fear,
+        Dead
     }
 
     public class MoodSoundKey

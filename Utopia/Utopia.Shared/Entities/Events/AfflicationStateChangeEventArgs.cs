@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Events
 {
@@ -10,6 +11,6 @@ namespace Utopia.Shared.Entities.Events
     {
         public DynamicEntityAfflictionState PreviousState;
         public DynamicEntityAfflictionState NewState;
-        public uint DynamicEntityId;
+        public IDynamicEntity DynamicEntity;
     }
 }

@@ -15,7 +15,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// </summary>
     [ProtoContract]
     [EditorHide]
-    public class GodEntity : DynamicEntity
+    public class GodEntity : CharacterEntity
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 

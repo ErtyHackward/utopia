@@ -73,7 +73,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (_healthState == value) return;
                 var eventArg = new HealthStateChangeEventArgs 
                 { 
-                    DynamicEntityId = DynamicId, 
+                    DynamicEntity = this, 
                     NewState = value, 
                     PreviousState = _healthState 
                 };
@@ -92,7 +92,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (_afflictions == value) return;
                 var eventArg = new AfflictionStateChangeEventArgs 
                 { 
-                    DynamicEntityId = DynamicId, 
+                    DynamicEntity = this, 
                     NewState = value, 
                     PreviousState = _afflictions 
                 };

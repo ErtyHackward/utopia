@@ -201,6 +201,7 @@ namespace Utopia.Entities.Managers
 
         private void ActivateDeadState()
         {
+            _soundEngine.StartPlay2D("Dying");
             _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Dead;
             _postEffectComponent.ActivateEffect("Dead");
 
@@ -209,7 +210,7 @@ namespace Utopia.Entities.Managers
             //Change backGround music
             //Add graveyard object at death location
 
-            DisplacementMode = Shared.Entities.EntityDisplacementModes.Flying;
+            DisplacementMode = Shared.Entities.EntityDisplacementModes.Dead;
         }
 
         private void DeactivateDeadState()
@@ -223,6 +224,11 @@ namespace Utopia.Entities.Managers
             //Change backGround music
             //Add graveyard object at death location
 
+            _worldPosition = new Vector3D(_playerCharacter.Position.X, _physicSimu.GroundBelowEntity, _playerCharacter.Position.Z);
+            //_playerCharacter.Position = new Vector3D(_playerCharacter.Position.X, _physicSimu.GroundBelowEntity, _playerCharacter.Position.Z);
+            //_physicSimu.CurPosition = _playerCharacter.Position;
+            //_physicSimu.Freeze(false, true, false);
+            _fallMaxHeight = double.MinValue;
             DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
         }
         #endregion
