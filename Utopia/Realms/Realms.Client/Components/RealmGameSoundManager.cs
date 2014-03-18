@@ -37,7 +37,6 @@ namespace Realms.Client.Components
             if (playerEntityManager is PlayerEntityManager)
             {
                 var playerManager = playerEntityManager as PlayerEntityManager;
-                playerManager.OnLanding += playerEntityManager_OnLanding;
             }
         }
 
@@ -51,21 +50,6 @@ namespace Realms.Client.Components
         protected override void PlayBlockTake(Vector3I blockPos)
         {
             SoundEngine.StartPlay3D("Take", new Vector3(blockPos.X + 0.5f, blockPos.Y + 0.5f, blockPos.Z + 0.5f));
-        }
-
-        protected void playerEntityManager_OnLanding(double fallHeight, TerraCubeWithPosition landedCube)
-        {
-            if (fallHeight > 3 && fallHeight <= 10)
-            {
-                SoundEngine.StartPlay2D("Hurt", 0.3f);
-            }
-            else
-            {
-                if (fallHeight > 10)
-                {
-                    SoundEngine.StartPlay2D("Hurt", 1.0f);
-                }
-            }
         }
 
         protected override void StaticEntityAdd(object sender, StaticEventArgs e)

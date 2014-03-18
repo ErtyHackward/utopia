@@ -31,6 +31,7 @@ using Utopia.Entities.EntityMovement;
 using Utopia.Shared.World;
 using Utopia.PostEffects;
 using S33M3CoreComponents.GUI;
+using S33M3CoreComponents.Sound;
 
 namespace Utopia.Entities.Managers
 {
@@ -58,6 +59,8 @@ namespace Utopia.Entities.Managers
         private readonly ILandscapeManager _landscapeManager;
         private readonly ChatComponent _chatComponent;
         private readonly PostEffectComponent _postEffectComponent;
+        private ISoundEngine _soundEngine;
+
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -322,11 +325,13 @@ namespace Utopia.Entities.Managers
                                    ILandscapeManager landscapeManager,
                                    ChatComponent chatComponent,
                                    PostEffectComponent postEffectComponent,
-                                   GuiManager guiManager
+                                   GuiManager guiManager,
+                                   ISoundEngine soundEngine
             )
         {
             _cameraManager = cameraManager;
             _inputsManager = inputsManager;
+            _soundEngine = soundEngine;
             _cubesHolder = cubesHolder;
             _visualWorldParameters = visualWorldParameters;
             _factory = factory;
@@ -338,7 +343,6 @@ namespace Utopia.Entities.Managers
             _guiManager = guiManager;
 
             PlayerCharacter = (PlayerCharacter)server.Player;
-            
             
             ShowDebugInfo = true;
 

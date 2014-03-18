@@ -43,7 +43,7 @@ namespace Utopia.Shared.Entities.Concrete
             impact.Success = true;
             impact.EntityId = entity.DynamicId;
 
-            // TODO: play "hurt" sound
+            // TODO: play "Impact" sound
 
             return impact;
         }
