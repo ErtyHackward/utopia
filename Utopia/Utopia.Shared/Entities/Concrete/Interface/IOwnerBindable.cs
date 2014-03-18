@@ -8,6 +8,6 @@ namespace Utopia.Shared.Entities.Concrete.Interface
 {
     public interface IOwnerBindable
     {
-        int DynamicEntityOwnerID { get; set; }
+        uint DynamicEntityOwnerID { get; set; }
     }
 }

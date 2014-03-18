@@ -22,7 +22,7 @@ namespace Utopia.Shared.Entities.Concrete.System
 
         [ProtoMember(1)]
         [Browsable(false)]
-        public int DynamicEntityOwnerID { get; set;}
+        public uint DynamicEntityOwnerID { get; set;}
 
         public SoulStone()
         {
@@ -58,20 +58,48 @@ namespace Utopia.Shared.Entities.Concrete.System
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        public override IToolImpact Put(IDynamicEntity owner, out Item worldDroppedItem)
+        public override IToolImpact Put(IDynamicEntity owner, Item worldDroppedItem = null)
         {
-            var putResult = base.Put(owner, out worldDroppedItem);
+            //Is the player already binded to a soulstone ?
+            var charEntity = owner as CharacterEntity;
+            if (charEntity.BindedSoulStone != null)
+            {
+                IToolImpact impact = new ToolImpact();
+                impact.Message = "You are already binded to a soulstone.";
+                impact.Success = false;
+                return impact;
+            }
+
+            if (worldDroppedItem == null)
+            {
+                SoulStone clonedNewSoulstone = (SoulStone)this.Clone();
+                clonedNewSoulstone.DynamicEntityOwnerID = charEntity.DynamicId;
+                worldDroppedItem = clonedNewSoulstone as Item;
+            }
+
+            var putResult = base.Put(owner, worldDroppedItem);
 
             if (putResult.Success && worldDroppedItem != null)
             {
                 //The soulStone has been placed into the world !
                 //Bind this entity with the player.
-
-                var charEntity = owner as CharacterEntity;
                 charEntity.BindedSoulStone = worldDroppedItem as SoulStone;
+                DynamicEntityOwnerID = charEntity.DynamicId;
             }
 
             return putResult;      
+        }
+
+        public override void BeforeDestruction(IDynamicEntity destructor)
+        {
+            var charEntity = destructor as CharacterEntity;
+            if (charEntity.DynamicId == this.DynamicEntityOwnerID)
+            {
+                //Unbind the soulstone from player
+                charEntity.BindedSoulStone = null;
+            }
+
+            base.BeforeDestruction(destructor);
         }
 
     }

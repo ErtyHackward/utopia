@@ -72,8 +72,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 var args = EntityUseEventArgs.FromState(this);
                 args.Tool = Equipment.RightTool;
                 args.UseType = UseType.Put;
-                Item worldDroppedItem;
-                args.Impact = Equipment.RightTool.Put(this, out worldDroppedItem);
+                args.Impact = Equipment.RightTool.Put(this);
 
                 OnUse(args);
 

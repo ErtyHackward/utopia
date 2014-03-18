@@ -6,6 +6,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Settings;
+using Utopia.Shared.Entities.Concrete.Interface;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -57,23 +58,44 @@ namespace Utopia.Shared.Entities.Concrete
 
             var charEntity = owner as CharacterEntity;
 
+
+            //Begin World removing logic
             if (charEntity != null)
             {
                 var item = (IItem)entity;
 
-                impact.EntityId = entity.StaticId;
-                // entity should lose its voxel intance if put into the inventory
-                item.ModelInstance = null;
-
-                if (charEntity.Inventory.PutItem(item))
+                IOwnerBindable playerBindedItem = entity as IOwnerBindable;
+                if (playerBindedItem != null && playerBindedItem.DynamicEntityOwnerID != charEntity.DynamicId)
                 {
-                    cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
-                    impact.Success = true;
+                    impact.Message = "This item is not binded to you !";
                     return impact;
+                }
+
+                impact.EntityId = entity.StaticId;
+                if (item.IsDestroyedOnWorldRemove == false)
+                {
+
+                    if (charEntity.Inventory.PutItem(item))
+                    {
+                        cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
+                        impact.Success = true;
+                        // entity should lose its voxel intance if put into the inventory
+                        item.ModelInstance = null;
+                        return impact;
+                    }
+                    else
+                    {
+                        impact.Message = "Unable to put item to the inventory";
+                        return impact;
+                    }
                 }
                 else
                 {
-                    impact.Message = "Unable to put item to the inventory";
+                    item.BeforeDestruction(charEntity);
+                    cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
+                    impact.Success = true;
+                    item.ModelInstance = null;
+                    impact.Message = "Item has been destroyed";
                     return impact;
                 }
             }
