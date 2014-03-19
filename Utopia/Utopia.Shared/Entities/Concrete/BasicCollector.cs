@@ -13,8 +13,6 @@ namespace Utopia.Shared.Entities.Concrete
         public BasicCollector()
         {
             Name = "Basic Collector Tool";
-            IsPlayerCollidable = false;
-            IsPickable = true;
         }
 
         //By default Basic collector use Block configuration for Picking

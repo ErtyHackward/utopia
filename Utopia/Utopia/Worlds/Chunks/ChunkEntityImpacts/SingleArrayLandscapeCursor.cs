@@ -176,7 +176,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
-        public void AddEntity(StaticEntity entity, uint sourceDynamicId = 0)
+        public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
         {
             _landscapeManager.AddEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }

@@ -2,6 +2,7 @@
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
+using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 
 namespace Utopia.Shared.Server.Structs
@@ -149,5 +150,16 @@ namespace Utopia.Shared.Server.Structs
             });
         }
 
+        public override void RetranslateMessage(IBinaryMessage message)
+        {
+            base.RetranslateMessage(message);
+
+            var ehm = message as EntityHealthMessage;
+
+            if (ehm != null)
+            {
+                _playerCharacter.Damage(-ehm.Change);
+            }
+        }
     }
 }

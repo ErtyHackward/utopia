@@ -33,5 +33,11 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         [ProtoMember(2)]
         public Energy Health { get; set; }
+
+        /// <summary>
+        /// Health change
+        /// </summary>
+        [ProtoMember(3)]
+        public float Change { get; set; }
     }
 }

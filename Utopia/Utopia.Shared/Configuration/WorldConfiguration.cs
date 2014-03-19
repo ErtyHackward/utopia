@@ -27,11 +27,6 @@ namespace Utopia.Shared.Configuration
     [ProtoContract]
     public abstract class WorldConfiguration
     {
-        /// <summary>
-        /// Realm format version
-        /// </summary>
-        private const int RealmFormat = 1;
-
         private const string FormatMagic = "s33m3&Erty Hackward";
         
         #region Public Properties
@@ -159,6 +154,11 @@ namespace Utopia.Shared.Configuration
         [Browsable(false)]
         [ProtoMember(18)]
         public int Version { get; set; }
+
+        [Description("Entity that should be created when player die")]
+        [TypeConverter(typeof(BlueprintSelector))]
+        [ProtoMember(19)]
+        public ushort GraveBlueprint { get; set; }
 
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]

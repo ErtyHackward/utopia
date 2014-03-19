@@ -38,7 +38,6 @@ namespace Utopia.Shared.Entities.Concrete
         {
             Name = "Oriented Block linked Entity";
             MountPoint = BlockFace.Top;
-            IsPlayerCollidable = false;
         }
 
         public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
