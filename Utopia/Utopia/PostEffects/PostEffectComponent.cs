@@ -1,4 +1,5 @@
-﻿using S33M3DXEngine;
+﻿using Ninject;
+using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Utopia.Components;
 using Utopia.Resources.Effects.PostEffects;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
@@ -35,9 +37,17 @@ namespace Utopia.PostEffects
         private Dictionary<string, IPostEffect> _registeredEffects;
         private IndexBuffer<ushort> _iBuffer;
         private VertexBuffer<VertexPosition2Texture> _vBuffer;
+
+        private StaggingBackBuffer _backBufferClouds;
         #endregion
 
         #region Public Properties
+        public IPostEffect ActivatedEffect
+        {
+            get { return _activatedEffect; }
+            set { _activatedEffect = value; }
+        }
+
         public ShaderResourceView RenderTextureView
         {
             get { return _renderTextureView; }
@@ -50,10 +60,11 @@ namespace Utopia.PostEffects
             set { _registeredEffects = value; }
         }
         #endregion
-        
-        public PostEffectComponent(D3DEngine engine)
+
+        public PostEffectComponent(D3DEngine engine, [Named("SkyBuffer")] StaggingBackBuffer backBufferClouds)
         {
             _engine = engine;
+            _backBufferClouds = backBufferClouds;
             _engine.ScreenSize_Updated += engine_ScreenSize_Updated;
 
             _registeredEffects = new Dictionary<string, IPostEffect>();
@@ -115,19 +126,35 @@ namespace Utopia.PostEffects
             }
             else
             {
-                _activatedEffect.Activate(_renderTextureView);
+                _activatedEffect.Activate(_renderTextureView, this);
             }
         }
 
         public void DeactivateEffect()
         {
             if (_activatedEffect != null) _activatedEffect.Deactivate();
-            _activatedEffect = null;
+            //_activatedEffect = null;
+        }
+
+        public override void FTSUpdate(GameTime timeSpent)
+        {
+            if (_activatedEffect == null) return;
+            _activatedEffect.FTSUpdate(timeSpent);
+        }
+
+        public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
+        {
+            if (_activatedEffect == null) return;
+            _activatedEffect.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         public override void Draw(SharpDX.Direct3D11.DeviceContext context, int index)
         {
-            if (_activatedEffect == null) return;
+            if (_activatedEffect == null)
+            {
+                if (_backBufferClouds.OffSreenRenderTarget != null) _backBufferClouds.OffSreenRenderTarget = null;
+                return;
+            }
 
             if (index == _postEffectStartingDrawId)
             {
@@ -135,6 +162,7 @@ namespace Utopia.PostEffects
                 //Clear renderTarger
                 _engine.ImmediateContext.ClearRenderTargetView(_renderTargetView, __renderTargetViewDefaultColor);
                 _engine.ImmediateContext.OutputMerger.SetTargets(_engine.DepthStencilTarget, _renderTargetView);
+                _backBufferClouds.OffSreenRenderTarget = _renderTexture;
                 _postEffectStartDrawDone = true;
             }
             else if (index == _postEffectEndingDrawId && _postEffectStartDrawDone)
@@ -158,7 +186,7 @@ namespace Utopia.PostEffects
         private void engine_ScreenSize_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             CreateRenderTargets(newBackBuffer);
-            if (_activatedEffect != null) _activatedEffect.Activate(_renderTextureView);
+            if (_activatedEffect != null) _activatedEffect.RefreshBackBuffer(_renderTextureView);
         }
 
         private void CreateRenderTargets(Texture2DDescription backBufferDesciption)

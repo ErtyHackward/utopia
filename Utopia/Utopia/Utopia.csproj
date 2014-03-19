@@ -147,7 +147,7 @@
     <Compile Include="GUI\ModelControlRenderer.cs" />
     <Compile Include="GUI\TooltipControl.cs" />
     <Compile Include="Network\SyncManager.cs" />
-    <Compile Include="PostEffects\PostEffectGrayscale.cs" />
+    <Compile Include="PostEffects\PostEffectGhost.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />

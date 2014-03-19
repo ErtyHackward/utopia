@@ -297,9 +297,9 @@ namespace Realms.Client.States
             var postEffectComponent = _ioc.Get<PostEffectComponent>();
 
             //Assign the various Post Processing effect to the component
-            //GrayScale PostEffect
-            IPostEffect grayScale = new PostEffectGrayscale() { Name = "Dead"};
-            postEffectComponent.RegisteredEffects.Add(grayScale.Name, grayScale);
+            //Ghost PostEffect
+            IPostEffect ghost = new PostEffectGhost() { Name = "Dead"};
+            postEffectComponent.RegisteredEffects.Add(ghost.Name, ghost);
 
             landscapeManager.EntityFactory = clientFactory;
             playerEntityManager.HasMouseFocus = true;

@@ -87,7 +87,7 @@
     <Compile Include="Effects\Entities\HLSLVoxelModel.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModelInstanced.cs" />
     <Compile Include="Effects\Particules\HLSLCubeColorParticule.cs" />
-    <Compile Include="Effects\PostEffects\HLSLGrayScale.cs" />
+    <Compile Include="Effects\PostEffects\HLSLGhost.cs" />
     <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DBillBoard.cs" />
     <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DImpostor.cs" />
     <Compile Include="Effects\Sprites\HLSLUtopiaPointSprite3DText.cs" />
