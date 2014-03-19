@@ -231,7 +231,7 @@ namespace Utopia.Shared.Server.Structs
         /// Retranslates message to the current area
         /// </summary>
         /// <param name="message"></param>
-        public void RetranslateMessage(IBinaryMessage message)
+        public virtual void RetranslateMessage(IBinaryMessage message)
         {
             CurrentArea.OnCustomMessage(DynamicEntity.DynamicId, message);
         }

@@ -36,16 +36,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
-            entity.Health.isNetworkPropagated = false;
-            entity.Health.CurrentValue -= Damage;
-            entity.Health.isNetworkPropagated = true;
-
-            impact.Success = true;
-            impact.EntityId = entity.DynamicId;
-
-            // TODO: play "Impact" sound
-
-            return impact;
+            return entity.Damage(Damage);
         }
 
         public bool RepeatedActionsAllowed { get; set; }

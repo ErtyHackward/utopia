@@ -97,7 +97,7 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
-        void AddEntity(StaticEntity entity, uint sourceDynamicId = 0);
+        void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);
 
         /// <summary>
         /// Remove static entity from the world

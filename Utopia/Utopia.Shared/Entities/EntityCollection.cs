@@ -184,7 +184,7 @@ namespace Utopia.Shared.Entities
             // to reduce id interference of simultaneous actions we will give each entity his own id offset
             
             var random = new FastRandom((int)dynamicEntityId);
-            var id = (uint)random.Next(int.MinValue, int.MaxValue);
+            var id = (uint)random.Next();
             lock (_syncRoot)
             {
                 while (_entities.ContainsKey(id))

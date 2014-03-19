@@ -48,7 +48,6 @@ namespace Utopia.Shared.Entities.Concrete
         public OrientedBlockItem()
         {
             Name = "Oriented Entity";
-            IsPlayerCollidable = true;
         }
 
         public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)

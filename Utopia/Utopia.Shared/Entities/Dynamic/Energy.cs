@@ -17,9 +17,6 @@ namespace Utopia.Shared.Entities.Dynamic
         private float _maxValue;
         private float _currentValue;
 
-        [Browsable(false)]
-        public bool isNetworkPropagated { get; set; }
-
         [ProtoMember(1)]
         public float MaxValue
         {
@@ -70,7 +67,6 @@ namespace Utopia.Shared.Entities.Dynamic
 
         public Energy()
         {
-            isNetworkPropagated = true;
         }
 
         //Will raise a change Notification Event to subscriber

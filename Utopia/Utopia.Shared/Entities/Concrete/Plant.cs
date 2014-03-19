@@ -20,8 +20,6 @@ namespace Utopia.Shared.Entities.Concrete
         {
             Name = "Plant";
             MountPoint = BlockFace.Top;
-            IsPlayerCollidable = false;
-            IsPickable = true;
         }
     }
 }

@@ -73,7 +73,7 @@ namespace Utopia.Entities.Managers
             if (_playerCharacter.Oxygen.CurrentValue <= 0)
             {
                 _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Drowning;
-                DrowningDamate(timeSpent);
+                DrowningDamage(timeSpent);
             }
 
             if (IsHeadInsideWater)
@@ -190,13 +190,13 @@ namespace Utopia.Entities.Managers
             //The first 5 meter are "free", no damage computed
             if (fallHeight <= 5.0) return;
             var damageComputed = (fallHeight - 5) * _healthDamagePerFallMeter;
-            _playerCharacter.Health.CurrentValue -= (float)damageComputed;
+            _playerCharacter.Damage((float)damageComputed);
         }
 
-        private void DrowningDamate(GameTime timeSpent)
+        private void DrowningDamage(GameTime timeSpent)
         {
             var healthLost = _healthDamageDrowningPerSecond * timeSpent.ElapsedGameTimeInS_LD;
-            _playerCharacter.Health.CurrentValue -= healthLost;
+            _playerCharacter.Damage(healthLost);
         }
 
         private void ActivateDeadState()

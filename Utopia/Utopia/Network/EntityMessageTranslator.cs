@@ -2,11 +2,8 @@
 using System.Linq;
 using Utopia.Entities.Managers;
 using Utopia.Entities.Managers.Interfaces;
-using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -24,8 +21,8 @@ namespace Utopia.Network
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly IChunkEntityImpactManager _landscapeManager;
         private readonly SyncManager _syncManager;
-        private readonly VoxelModelManager _voxelModelManager;
         private ICharacterEntity _playerEntity;
+        private bool _handlingUseMessage;
 
         private int _useToken;
         
@@ -67,8 +64,7 @@ namespace Utopia.Network
                 PlayerEntityManager playerEntityManager, 
                 IVisualDynamicEntityManager dynamicEntityManager, 
                 IChunkEntityImpactManager landscapeManager,
-                SyncManager syncManager,
-                VoxelModelManager voxelModelManager)
+                SyncManager syncManager)
         {
             _server = server;
 
@@ -95,7 +91,6 @@ namespace Utopia.Network
             _dynamicEntityManager = dynamicEntityManager;
             _landscapeManager = landscapeManager;
             _syncManager = syncManager;
-            _voxelModelManager = voxelModelManager;
             PlayerEntity = playerEntityManager.PlayerCharacter;
             playerEntityManager.PlayerEntityChanged += (sender, args) => { PlayerEntity = args.PlayerCharacter; };
         }
@@ -200,7 +195,9 @@ namespace Utopia.Network
             {
                 entity.EntityState = e.Message.State;
 
+                _handlingUseMessage = true;
                 var impact = entity.ReplayUse(e.Message);
+                _handlingUseMessage = false;
 
                 if (impact.Dropped == false)
                 {
@@ -263,7 +260,7 @@ namespace Utopia.Network
 
         void _server_MessageEntityAfflictionState(object sender, ProtocolMessageEventArgs<EntityAfflictionStateMessage> e)
         {
-            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId) as ICharacterEntity;
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
             {
                 //update the health of the entity
@@ -273,7 +270,7 @@ namespace Utopia.Network
 
         void _server_MessageEntityHealthState(object sender, ProtocolMessageEventArgs<EntityHealthStateMessage> e)
         {
-            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId) as ICharacterEntity;
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
             {
                 //update the health of the entity
@@ -283,7 +280,7 @@ namespace Utopia.Network
 
         void _server_MessageEntityHealth(object sender, ProtocolMessageEventArgs<EntityHealthMessage> e)
         {
-            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId) as ICharacterEntity;
+            var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
             {
                 //update the health of the entity
@@ -324,11 +321,14 @@ namespace Utopia.Network
 
         private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
         {
-            if (e.EnergyChanged.isNetworkPropagated == false) return;
+            // we don't need to send our health change during tool use
+            if (_handlingUseMessage) 
+                return;
 
             _server.ServerConnection.Send(new EntityHealthMessage
             {
                 Health = e.EnergyChanged,
+                Change = e.ValueChangedAmount,
                 EntityId = e.Entity == null ? _playerEntity.DynamicId : e.Entity.DynamicId
             });
         }

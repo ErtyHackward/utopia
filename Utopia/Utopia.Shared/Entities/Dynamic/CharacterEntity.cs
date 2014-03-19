@@ -5,11 +5,14 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
+using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Concrete.System;
+using Container = Utopia.Shared.Entities.Concrete.Container;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -21,6 +24,8 @@ namespace Utopia.Shared.Entities.Dynamic
     [ProtoInclude(101, typeof(Npc))]
     public abstract class CharacterEntity : DynamicEntity, ICharacterEntity, IWorldInteractingEntity, IContainerEntity
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private DynamicEntityHealthState _healthState;
         private DynamicEntityAfflictionState _afflictions;
 
@@ -343,6 +348,90 @@ namespace Utopia.Shared.Entities.Dynamic
                 return impact;
             }
         }
+
+        /// <summary>
+        /// Damage handling
+        /// </summary>
+        /// <param name="damage"></param>
+        /// <returns></returns>
+        public IToolImpact Damage(float damage)
+        {
+            var impact = new EntityToolImpact();
+
+            var death = Health.CurrentValue > 0 && Health.CurrentValue - damage <= 0;
+
+            Health.CurrentValue -= damage;
+
+            if (death)
+            {
+                var graveBp = EntityFactory.Config.GraveBlueprint;
+
+                if (graveBp < 256)
+                {
+                    logger.Warn("Unable to create grave entity");
+                    return impact;
+                }
+
+                // first we will find a place for a grave
+
+                var blockPos = Position.ToCubePosition();
+                var cursor = EntityFactory.LandscapeManager.GetCursor(blockPos);
+                cursor.OwnerDynamicId = DynamicId;
+
+                while (cursor.GlobalPosition.Y > 0)
+                {
+                    if (cursor.PeekValue(new Vector3I(0,-1,0) ) != WorldConfiguration.CubeId.Air)
+                        break;
+                    cursor.Move(new Vector3I(0, -1, 0));
+                }
+
+                // check if the grave already exists
+
+                var chunk = EntityFactory.LandscapeManager.GetChunkFromBlock(cursor.GlobalPosition);
+
+                Entity grave = null;
+
+                foreach (var staticEntity in chunk.Entities)
+                {
+                    var entity = (Entity)staticEntity;
+                    if (entity.BluePrintId == graveBp && entity.Position == cursor.GlobalPosition)
+                        grave = entity;
+                }
+                
+                // create new if not
+
+                if (grave == null)
+                {
+                    grave = EntityFactory.CreateFromBluePrint(graveBp);
+                    grave.Position = cursor.GlobalPosition;
+                    cursor.AddEntity((IStaticEntity)grave);
+                }
+                
+                var graveContainer = grave as Container;
+                
+                if (graveContainer != null)
+                {
+                    foreach (var containedSlot in Slots())
+                    {
+                        if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
+                        {
+                            logger.Warn("Can't put all items to the container, it is too small!");
+                            break;
+                        }
+                    }
+                }
+                
+                // remove all items from the player
+
+                foreach (var containedSlot in Slots())
+                {
+                    TakeItems(containedSlot.Item.BluePrintId, containedSlot.ItemsCount);
+                }
+            }
+
+            return impact;
+        }
+
 
         public override object Clone()
         {
