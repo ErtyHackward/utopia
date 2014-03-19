@@ -349,7 +349,7 @@
       <region source="toolbar" hplacement="stretch" vplacement="stretch" x="0" y="11" w="126" h="100" tiled="true" />
     </frame>
     <frame name="WindRose">
-      <region source="WindRose" hplacement="stretch" vplacement="stretch" x="0" y="0" w="200" h="200" />
+      <region source="WindRose" hplacement="stretch" vplacement="stretch" x="0" y="0" w="150" h="75" />
     </frame>
     <frame name="utopiawindow">
       <region source="controls" hplacement="left" vplacement="top" x="150" y="83" w="27" h="27" />

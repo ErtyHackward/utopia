@@ -31,7 +31,7 @@ namespace Utopia.GUI.WindRose
 
         public override void LoadContent(SharpDX.Direct3D11.DeviceContext context)
         {
-            _compassPanel = ToDispose(new PanelControl() { FrameName = "WindRose", Bounds = new UniRectangle(new UniScalar(1.0f, -200), 0, 200, 200)});
+            _compassPanel = ToDispose(new CompassControl() { FrameName = "WindRose", Bounds = new UniRectangle(new UniScalar(1.0f, -160), 10, 150, 75) });
             _guiScreen.Desktop.Children.Add(_compassPanel);
         }
 
