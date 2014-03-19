@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Utopia.GUI.TopPanel
 {
-    public class TopPanelContainerRenderer : IFlatControlRenderer<TopPanelContainer>
+    public class EnergyBarsContainerRenderer : IFlatControlRenderer<EnergyBarsContainer>
     {
-        public void Render(TopPanelContainer control, IFlatGuiGraphics graphics)
+        public void Render(EnergyBarsContainer control, IFlatGuiGraphics graphics)
         {
         }
     }

@@ -58,6 +58,7 @@ using Utopia.Sounds;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Worlds.Shadows;
 using Utopia.PostEffects;
+using Utopia.GUI.WindRose;
 
 namespace Realms.Client.States
 {
@@ -252,6 +253,7 @@ namespace Realms.Client.States
             var chunkStorageManager = _ioc.Get<IChunkStorageManager>(new ConstructorArgument("forceNew", false), new ConstructorArgument("fileName", _vars.LocalDataBasePath));
             
             var inventory = _ioc.Get<InventoryComponent>();
+            var windrose = _ioc.Get<WindRoseComponent>();
             inventory.PlayerInventoryWindow = _ioc.Get<PlayerInventory>();
             inventory.ContainerInventoryWindow = _ioc.Get<ContainerInventory>();
             
@@ -326,6 +328,7 @@ namespace Realms.Client.States
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
             AddComponent(inventory);
+            AddComponent(windrose);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);

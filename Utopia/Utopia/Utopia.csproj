@@ -122,9 +122,10 @@
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Energy.cs" />
-    <Compile Include="GUI\TopPanel\EnergyBar.cs" />
-    <Compile Include="GUI\TopPanel\TopPanelContainer.cs" />
-    <Compile Include="GUI\TopPanel\TopPanelContainerRenderer.cs" />
+    <Compile Include="GUI\EnergyBar\EnergyBar.cs" />
+    <Compile Include="GUI\EnergyBar\EnergyBarsContainer.cs" />
+    <Compile Include="GUI\EnergyBar\EnergyBarsContainerRenderer.cs" />
+    <Compile Include="GUI\WindRose\WindRoseComponent.cs" />
     <Compile Include="PostEffects\IPostEffect.cs" />
     <Compile Include="PostEffects\PostEffectComponent.cs" />
     <Compile Include="Components\VersionWatermark.cs" />
