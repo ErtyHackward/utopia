@@ -31,6 +31,8 @@ namespace Utopia.Components
             }
         }
         public Vector2 SolidStaggingBackBufferSize;
+
+        public Texture2D OffSreenRenderTarget = null;
         #endregion
 
         public StaggingBackBuffer(D3DEngine engine, string Name)
@@ -70,11 +72,25 @@ namespace Utopia.Components
         {
             if (_engine.CurrentMSAASampling.Count <= 1)
             {
-                context.CopyResource(_engine.BackBufferTex, _renderTexture);
+                if (OffSreenRenderTarget == null)
+                {
+                    context.CopyResource(_engine.BackBufferTex, _renderTexture);
+                }
+                else
+                {
+                    context.CopyResource(OffSreenRenderTarget, _renderTexture);
+                }
             }
             else
             {
-                context.ResolveSubresource(_engine.BackBufferTex, 0, _renderTexture, 0, Format.R8G8B8A8_UNorm);
+                if (OffSreenRenderTarget == null)
+                {
+                    context.ResolveSubresource(_engine.BackBufferTex, 0, _renderTexture, 0, Format.R8G8B8A8_UNorm);
+                }
+                else
+                {
+                    context.ResolveSubresource(OffSreenRenderTarget, 0, _renderTexture, 0, Format.R8G8B8A8_UNorm);
+                }
             }
         }
         #endregion

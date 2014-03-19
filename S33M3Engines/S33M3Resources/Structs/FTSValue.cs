@@ -28,7 +28,7 @@ namespace S33M3Resources.Structs
 
         public void Initialize(T value)
         {
-            ValuePrev = Value = value;
+            ValuePrev = Value = ValueInterp = value;
         }
     }
 }
