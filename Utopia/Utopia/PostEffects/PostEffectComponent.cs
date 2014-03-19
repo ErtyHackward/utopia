@@ -205,7 +205,7 @@ namespace Utopia.PostEffects
                 MipLevels = 1,
                 ArraySize = 1,
                 Format = Format.R8G8B8A8_UNorm,
-                SampleDescription = new SampleDescription(1, 0),
+                SampleDescription = _engine.CurrentMSAASampling,
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget,
                 CpuAccessFlags = CpuAccessFlags.None,
