@@ -63,6 +63,7 @@ using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared;
 using Utopia.Worlds.Shadows;
 using Utopia.PostEffects;
+using Utopia.GUI.WindRose;
 
 namespace Realms.Client
 {
@@ -204,6 +205,7 @@ namespace Realms.Client
             _iocContainer.Bind<IClock>().To<WorldClock>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PlayerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<WindRoseComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ContainerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<CraftingComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<CraftingWindow>().To<CraftingInventory>().InScope(x => GameScope.CurrentGameScope);

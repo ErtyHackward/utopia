@@ -28,7 +28,6 @@ namespace Utopia.GUI
     /// </summary>
     public class Hud : DrawableGameComponent
     {
-
         #region Private variables
         private readonly MainScreen _screen;
         private readonly D3DEngine _d3DEngine;
@@ -42,7 +41,7 @@ namespace Utopia.GUI
 
         private ToolBarUi _toolbarUi;
         private int _selectedSlot;
-        private TopPanelContainer _topPanel;
+        private EnergyBarsContainer _energyBar;
         private TooltipControl _tooltip;
         #endregion
 
@@ -84,9 +83,9 @@ namespace Utopia.GUI
             IsHidden = false;
 
             _tooltip = new TooltipControl();
-            _topPanel = new TopPanelContainer(d3DEngine, playerEntityManager);
-            _topPanel.LayoutFlags = ControlLayoutFlags.Skip;
-            _topPanel.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
+            _energyBar = new EnergyBarsContainer(d3DEngine, playerEntityManager);
+            _energyBar.LayoutFlags = ControlLayoutFlags.Skip;
+            _energyBar.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
 
             _screen.ToolTipShow += _screen_ToolTipShow;
             _screen.ToolTipHide += _screen_ToolTipHide;
@@ -105,7 +104,7 @@ namespace Utopia.GUI
             if (Updatable)
             {
                 _screen.Desktop.Children.Add(ToolbarUi);
-                _screen.Desktop.Children.Add(_topPanel);
+                _screen.Desktop.Children.Add(_energyBar);
                 ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
             }
             //the guimanager will draw the GUI screen, not the Hud !
@@ -118,7 +117,7 @@ namespace Utopia.GUI
             _crosshair.Dispose();
             _font.Dispose();
             _tooltip.Dispose();
-            _topPanel.Dispose();
+            _energyBar.Dispose();
             _d3DEngine.ScreenSize_Updated -= D3DEngineViewPortUpdated;
         }
 
@@ -131,9 +130,9 @@ namespace Utopia.GUI
             if (!_screen.Desktop.Children.Contains(ToolbarUi))
                 _screen.Desktop.Children.Add(ToolbarUi);
 
-            if (!_screen.Desktop.Children.Contains(_topPanel))
+            if (!_screen.Desktop.Children.Contains(_energyBar))
             {
-                _screen.Desktop.Children.Add(_topPanel);
+                _screen.Desktop.Children.Add(_energyBar);
             }
 
             var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
@@ -146,7 +145,7 @@ namespace Utopia.GUI
         public override void DisableComponent()
         {
             _screen.Desktop.Children.Remove(ToolbarUi);
-            _screen.Desktop.Children.Remove(_topPanel);
+            _screen.Desktop.Children.Remove(_energyBar);
             base.DisableComponent();
         }
 
@@ -224,12 +223,12 @@ namespace Utopia.GUI
             }
 
             _toolbarUi.Update(timeSpend);
-            _topPanel.Update(timeSpend);
+            _energyBar.Update(timeSpend);
         }
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
-            _topPanel.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
+            _energyBar.VTSUpdate(interpolationHd, interpolationLd, elapsedTime);
         }
 
         //Draw at 2d level ! (Last draw called)

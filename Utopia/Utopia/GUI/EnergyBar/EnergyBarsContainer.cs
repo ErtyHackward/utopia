@@ -14,7 +14,7 @@ using Utopia.GUI.Inventory;
 
 namespace Utopia.GUI.TopPanel
 {
-    public class TopPanelContainer : Control
+    public class EnergyBarsContainer : Control
     {
         #region Private variables
         private D3DEngine _d3DEngine;
@@ -22,7 +22,6 @@ namespace Utopia.GUI.TopPanel
         private int _topPanelheight;
 
         //Child components
-        private PanelControl _compassPanel;
         private PanelControl _energiesPanel;
         private PlayerEntityManager _playerEntityManager;
 
@@ -40,7 +39,7 @@ namespace Utopia.GUI.TopPanel
         #region Public properties
         #endregion
 
-        public TopPanelContainer(D3DEngine d3DEngine, PlayerEntityManager playerEntityManager)
+        public EnergyBarsContainer(D3DEngine d3DEngine, PlayerEntityManager playerEntityManager)
         {
             _d3DEngine = d3DEngine;
             _topPanelheight = 100;
@@ -85,7 +84,6 @@ namespace Utopia.GUI.TopPanel
         #region Private Methods
         private void CreateChildsComponents()
         {
-            _compassPanel = ToDispose(new PanelControl() { Bounds = new UniRectangle(new UniScalar(1.0f, -150), 0, 150, 150), Color = new ByteColor(255,255,255,128) });
             _energiesPanel = ToDispose(new PanelControl() { HidedPanel=true, Bounds = new UniRectangle(0, 0, 200, 150), Color = new ByteColor(255, 255, 255, 128) });
 
             _healthFrame = new PanelControl() { FrameName = "LifeEnergyBar", Bounds = new UniRectangle(5, 5, new UniScalar(1.0f, -10), 30) };
@@ -110,7 +108,6 @@ namespace Utopia.GUI.TopPanel
             _staminaBar.Value = _playerEntityManager.PlayerCharacter.Stamina.CurrentAsPercent;
             _oxygenBar.Value = _playerEntityManager.PlayerCharacter.Oxygen.CurrentAsPercent;
 
-            this.Children.Add(_compassPanel);
             this.Children.Add(_energiesPanel);
         }
 

@@ -38,6 +38,7 @@ using Utopia.Sounds;
 using Utopia.Shared.World;
 using Utopia.Worlds.Shadows;
 using Utopia.PostEffects;
+using Utopia.GUI.WindRose;
 
 namespace Realms.Client.States
 {
@@ -77,7 +78,7 @@ namespace Realms.Client.States
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
             var inventory = _ioc.Get<InventoryComponent>();
-            
+            var windRose = _ioc.Get<WindRoseComponent>();
             
             var chat = _ioc.Get<ChatComponent>();
 
@@ -146,6 +147,7 @@ namespace Realms.Client.States
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
             AddComponent(inventory);
+            AddComponent(windRose);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);
