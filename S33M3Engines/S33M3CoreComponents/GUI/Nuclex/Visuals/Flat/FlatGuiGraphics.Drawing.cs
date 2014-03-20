@@ -164,7 +164,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         //the 2 DrawCustomTexture! 
         public void DrawCustomTexture(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0, ByteColor? color = null)
         {
-
             var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
             var destinationRegion = calculateDestinationRectangle(
               ref bounds, ref offset
@@ -177,6 +176,27 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
             Rectangle srcRegion = new Rectangle(0, 0, customTex.Width, customTex.Height);
             spriteRenderer.Draw(customTex, ref destinationRegion, ref srcRegion, ref drawColor, textureArrayIndex, true, groupId);
+        }
+
+        public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, float rotation, SamplerState sampler, int groupId = 0, ByteColor? color = null)
+        {
+            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
+            var destinationRegion = calculateDestinationRectangle(
+              ref bounds, ref offset
+            );
+
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor, rotation, sampler, drawGroupId: groupId);
+        }
+
+
+        public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0)
+        {
+            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
+            var destinationRegion = calculateDestinationRectangle(
+              ref bounds, ref offset
+            );
+
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor, groupId);
         }
 
         public void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0)
@@ -192,16 +212,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             spriteRenderer.DrawWithWrapping(customTex, ref position, ref size, ref _defaultColor, textureArrayIndex, groupId);
         }
 
-        public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0)
-        {
-
-            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
-            var destinationRegion = calculateDestinationRectangle(
-              ref bounds, ref offset
-            );
-
-            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor, groupId);
-        }
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>

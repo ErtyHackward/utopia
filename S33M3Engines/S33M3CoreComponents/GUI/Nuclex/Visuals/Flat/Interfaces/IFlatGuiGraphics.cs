@@ -65,7 +65,11 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// </remarks>
         void DrawElement(string frameName, ref RectangleF bounds, int groupId = 0);
 
+        void DrawElement(string frameName, ref RectangleF controlBounds, ref ByteColor color, int groupId = 0);
+
         void DrawCustomTexture(SpriteTexture custom, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0, ByteColor? color = null);
+
+        void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, float rotation, SamplerState sampler, int groupId = 0, ByteColor? color = null);
 
         void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0);
 
@@ -116,6 +120,5 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces
         /// <returns>The index of the gap the position is closest to</returns>
         int GetClosestOpening(string frameName, ref RectangleF bounds, string text, ref Vector2 position);
 
-        void DrawElement(string frameName, ref RectangleF controlBounds, ref ByteColor color, int groupId = 0);
     }
 }

@@ -107,6 +107,12 @@ namespace Utopia.Entities.Managers
 
         #region Public variables/properties
 
+        public EntityRotations EntityRotations
+        {
+            get { return _entityRotations; }
+            set { _entityRotations = value; }
+        }
+
         /// <summary>
         /// The Player
         /// </summary>
@@ -184,6 +190,7 @@ namespace Utopia.Entities.Managers
 #endif
                 if (value == EntityDisplacementModes.Walking || value == EntityDisplacementModes.Swiming)
                 {
+                    _fallMaxHeight = double.MinValue;
                     _physicSimu.StartSimulation(_worldPosition);
                     _physicSimu.ConstraintOnlyMode = false;
                 }

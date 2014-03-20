@@ -278,18 +278,18 @@ namespace Utopia.Entities.Managers
         private void CheckForEventRaising()
         {
             //Landing on ground after falling event
-            if (_physicSimu.OnGround == false || 
+            if ((_physicSimu.OnGround == false || 
                 Player.DisplacementMode == EntityDisplacementModes.Swiming || 
                 Player.DisplacementMode == EntityDisplacementModes.Flying || 
                 Player.DisplacementMode == EntityDisplacementModes.God ||
-                Player.DisplacementMode == EntityDisplacementModes.Dead)
+                Player.DisplacementMode == EntityDisplacementModes.Dead) && _physicSimu.isInContactWithLadder == false)
             {
                 //New "trigger"
-                if (_worldPosition.Y > _fallMaxHeight && !_physicSimu.isInContactWithLadder) _fallMaxHeight = _worldPosition.Y;
+                if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;
             }
             else
             {
-                if (_physicSimu.OnGround == true && _fallMaxHeight != double.MinValue)
+                if ((_physicSimu.OnGround == true || _physicSimu.isInContactWithLadder == false) && _fallMaxHeight != double.MinValue)
                 {
                     if (_fallMaxHeight - _worldPosition.Y >= 0.01)
                     {

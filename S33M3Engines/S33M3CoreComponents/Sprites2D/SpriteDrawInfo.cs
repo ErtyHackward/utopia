@@ -23,6 +23,7 @@ namespace S33M3CoreComponents.Sprites2D
         #region Public variables
         public readonly SpriteTexture Texture;
         public readonly SamplerState TextureSampler;
+        public readonly Matrix TextureMatrix = Matrix.Identity;
         public readonly List<VertexSprite2> Vertices;
         public readonly List<ushort> Indices;
         #endregion
@@ -31,6 +32,15 @@ namespace S33M3CoreComponents.Sprites2D
         {
             Texture = texture;
             TextureSampler = textureSampler;
+            Vertices = new List<VertexSprite2>();
+            Indices = new List<ushort>();
+        }
+
+        public SpriteDrawInfo(SpriteTexture texture, SamplerState textureSampler, Matrix textureMatrix)
+        {
+            Texture = texture;
+            TextureSampler = textureSampler;
+            TextureMatrix = textureMatrix;
             Vertices = new List<VertexSprite2>();
             Indices = new List<ushort>();
         }
@@ -145,9 +155,9 @@ namespace S33M3CoreComponents.Sprites2D
             return Texture.GetHashCode() ^ TextureSampler.GetHashCode();
         }
 
-        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler, int groupId)
+        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler, int groupId, float rotation = 0)
         {
-            return texture.GetHashCode() ^ sampler.GetHashCode() ^ groupId.GetHashCode();
+            return texture.GetHashCode() ^ sampler.GetHashCode() ^ groupId.GetHashCode() ^ rotation.GetHashCode();
         }
         #endregion
 
