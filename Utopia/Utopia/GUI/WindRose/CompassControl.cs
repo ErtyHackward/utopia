@@ -1,5 +1,7 @@
 ﻿using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Arcade;
+using S33M3CoreComponents.Sprites2D;
+using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +11,8 @@ namespace Utopia.GUI.WindRose
 {
     public class CompassControl : PanelControl
     {
+        public SpriteTexture CompassTexture { get; set; }
+        public float Rotation { get; set; }
+        public SamplerState sampler { get; set; }
     }
 }

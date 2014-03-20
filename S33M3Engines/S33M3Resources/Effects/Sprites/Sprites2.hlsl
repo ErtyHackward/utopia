@@ -6,6 +6,11 @@ cbuffer PerDraw
 	matrix OrthoProjection;
 };
 
+cbuffer TextureTransform
+{
+	matrix TexMatrix;
+};
+
 //======================================================================================
 // Samplers
 //======================================================================================
@@ -43,7 +48,8 @@ PSInput SpriteVS(in VSInput input)
 	float4 Posi = float4(input.Position.xyz, 1);
 
 	output.Position = mul(Posi, OrthoProjection);
-	output.TexCoord = input.TexCoord.xyz;
+	output.TexCoord = mul(float4(input.TexCoord.xy, 0.0f, 1.0f), TexMatrix);
+	output.TexCoord.z = input.TexCoord.z;
 	output.Color = input.Color;
 	output.Wrap = input.Wrap;
 

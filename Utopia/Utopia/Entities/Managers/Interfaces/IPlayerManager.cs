@@ -1,5 +1,6 @@
 ﻿using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
+using Utopia.Entities.EntityMovement;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -17,6 +18,8 @@ namespace Utopia.Entities.Managers.Interfaces
         /// Gets main player entity (character or PlayerFocusEntity)
         /// </summary>
         ICharacterEntity Player { get; }
+
+        EntityRotations EntityRotations { get; set; }
 
         /// <summary>
         /// Gets player's faction

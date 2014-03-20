@@ -449,5 +449,18 @@ namespace Utopia.Entities.Managers
 
             return true;
         }
+
+
+        public EntityMovement.EntityRotations EntityRotations
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
