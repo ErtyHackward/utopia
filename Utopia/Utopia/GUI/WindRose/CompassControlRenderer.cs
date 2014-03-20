@@ -17,11 +17,12 @@ namespace Utopia.GUI.WindRose
         {
             if (control.HidedPanel) return;
             RectangleF absoluteBound = control.GetAbsoluteBounds();
-            // This is simple! A panel consists of a single element we need to draw.
-            //graphics.DrawElement(control.FrameName, ref absoluteBound, ref color);
 
+            //Draw the DayCircle First
             SharpDX.Rectangle sourceRect = new SharpDX.Rectangle(0, 0, 150, 75);
+            graphics.DrawCustomTexture(control.DayCircle, ref sourceRect, ref absoluteBound, control.RotationDayCycle, control.sampler);
 
+            //Draw the main WindRose for direction
             graphics.DrawCustomTexture(control.CompassTexture, ref sourceRect, ref absoluteBound, control.Rotation, control.sampler);
         }
     }
