@@ -75,6 +75,28 @@ namespace Utopia.GUI.WindRose
         {
             _compassPanel.Rotation = getLookAtYaw(_playerManager.EntityRotations.LookAt);
             _compassPanel.RotationDayCycle = _worldclock.ClockTime.Time + MathHelper.Pi;
+
+            if(_playerManager.Player.BindedSoulStone != null){
+                Vector2 playerLookAtXZ = new Vector2(_playerManager.EntityRotations.LookAt.X, _playerManager.EntityRotations.LookAt.Z);
+
+                Vector2 playerPosition = new Vector2((float)_playerManager.Player.Position.X, (float)_playerManager.Player.Position.Z);
+
+                Vector2 SoulStoneLocation = new Vector2((float)_playerManager.Player.BindedSoulStone.Position.X, (float)_playerManager.Player.BindedSoulStone.Position.Z);
+
+                Vector2 PlayerSoulStoneVector = playerPosition - SoulStoneLocation;
+                PlayerSoulStoneVector.Normalize();
+
+                float dotResult;
+                Vector2.Dot(ref PlayerSoulStoneVector, ref playerLookAtXZ, out dotResult);
+                dotResult *= -1;
+                if (dotResult < 0)
+                {
+                    dotResult = 0;
+                }
+                _compassPanel.SoulStoneFacing = dotResult;
+            }
+            else _compassPanel.SoulStoneFacing = 0.0f; 
+
         }
 
         private static float getLookAtYaw(Vector3 vector)
