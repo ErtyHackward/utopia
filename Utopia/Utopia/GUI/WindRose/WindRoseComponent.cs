@@ -73,7 +73,11 @@ namespace Utopia.GUI.WindRose
 
         public override void FTSUpdate(GameTime timeSpent)
         {
-            _compassPanel.Rotation = getLookAtYaw(_playerManager.EntityRotations.LookAt);
+            double yaw;
+            if (getLookAtYaw(_playerManager.EntityRotations.LookAt, out yaw))
+            {
+                _compassPanel.Rotation = (float)yaw;
+            }
             _compassPanel.RotationDayCycle = _worldclock.ClockTime.Time + MathHelper.Pi;
 
             if(_playerManager.Player.BindedSoulStone != null){
@@ -99,13 +103,13 @@ namespace Utopia.GUI.WindRose
 
         }
 
-        private static float getLookAtYaw(Vector3 vector)
+        private static bool getLookAtYaw(Vector3 vector, out double yaw)
         {
             double dx = vector.X;
             double dz = vector.Z;
-            double yaw = 0;
+            yaw = 0;
             // Set yaw
-            if (dx != 0)
+            if (Math.Abs(dx) > 0.0001)
             {
                 // Set yaw start value based on dx
                 if (dx < 0)
@@ -117,12 +121,9 @@ namespace Utopia.GUI.WindRose
                     yaw = 0.5 * Math.PI;
                 }
                 yaw -= Math.Atan(dz / dx);
+                return true;
             }
-            else if (dz < 0)
-            {
-                yaw = Math.PI;
-            }
-            return (float)yaw;
+            return false;
         }
 
         #region Public Methods
