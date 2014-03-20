@@ -399,7 +399,7 @@ namespace Utopia.Entities.Managers
                 //subscribe to entity state/afllication changes
                 entity.AfflictionStateChanged += EntityAfflictionStateChanged;
                 entity.HealthStateChanged += EntityHealthStateChanged;
-                if (entity.DynamicId != PlayerEntity.DynamicId)
+                if (PlayerEntity == null || entity.DynamicId != PlayerEntity.DynamicId)
                 {
                     entity.Health.ValueChanged += Health_ValueChanged;
                 }
@@ -498,7 +498,7 @@ namespace Utopia.Entities.Managers
 
                 visualEntity.DynamicEntity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 visualEntity.DynamicEntity.HealthStateChanged -= EntityHealthStateChanged;
-                if (visualEntity.DynamicEntity.DynamicId != PlayerEntity.DynamicId)
+                if (PlayerEntity == null || visualEntity.DynamicEntity.DynamicId != PlayerEntity.DynamicId)
                 {
                     visualEntity.DynamicEntity.Health.ValueChanged -= Health_ValueChanged;
                 }
@@ -511,6 +511,10 @@ namespace Utopia.Entities.Managers
         public ICharacterEntity GetEntityById(uint p)
         {
             VisualDynamicEntity e;
+
+            //Is it myself ?
+            if (_playerEntityManager.Player.DynamicId == p) return _playerEntityManager.Player;
+
             if (_dynamicEntitiesDico.TryGetValue(p, out e))
             {
                 return e.DynamicEntity;
