@@ -18,5 +18,6 @@ namespace Utopia.GUI.WindRose
         public float Rotation { get; set; }
         public SamplerState sampler { get; set; }
         public float RotationDayCycle { get; set; }
+        public float SoulStoneFacing { get; set; }
     }
 }

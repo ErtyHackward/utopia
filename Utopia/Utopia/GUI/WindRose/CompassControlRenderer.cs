@@ -34,7 +34,7 @@ namespace Utopia.GUI.WindRose
             SharpDX.Rectangle sourceRectSoulStoneIcon = new SharpDX.Rectangle(0, 0, 25, 25);
             RectangleF absoluteBoundSoulStone = new RectangleF(absoluteBound.X + 62.5f, absoluteBound.Y + 72.5f, 25, 25);
 
-            graphics.DrawCustomTexture(control.SoulStoneIcon, ref sourceRectSoulStoneIcon, ref absoluteBoundSoulStone, 0.0f, control.sampler, 0, SharpDX.Color.Red);
+            graphics.DrawCustomTexture(control.SoulStoneIcon, ref sourceRectSoulStoneIcon, ref absoluteBoundSoulStone, 0.0f, control.sampler, 0, new ByteColor((int)(control.SoulStoneFacing * 255f), 0,0,255));
         }
     }
 }
