@@ -24,6 +24,12 @@ namespace Utopia.GUI.WindRose
 
             //Draw the main WindRose for direction
             graphics.DrawCustomTexture(control.CompassTexture, ref sourceRect, ref absoluteBound, control.Rotation, control.sampler);
+
+            //Draw the Mask Arrow
+            SharpDX.Rectangle sourceRectMaskArrow = new SharpDX.Rectangle(0, 0, 150, 150);
+            RectangleF absoluteBoundMask = new RectangleF(absoluteBound.X, absoluteBound.Y, absoluteBound.Width, 150);
+
+            graphics.DrawCustomTexture(control.MaskArrow, ref sourceRectMaskArrow, ref absoluteBoundMask, 0.0f, control.sampler);
         }
     }
 }
