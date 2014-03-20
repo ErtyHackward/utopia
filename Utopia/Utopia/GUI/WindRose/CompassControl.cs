@@ -13,6 +13,7 @@ namespace Utopia.GUI.WindRose
     {
         public SpriteTexture CompassTexture { get; set; }
         public SpriteTexture DayCircle { get; set; }
+        public SpriteTexture MaskArrow { get; set; }
         public float Rotation { get; set; }
         public SamplerState sampler { get; set; }
         public float RotationDayCycle { get; set; }
