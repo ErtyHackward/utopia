@@ -15,6 +15,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Maths;
+using Utopia.Worlds.GameClocks;
 
 namespace Utopia.GUI.WindRose
 {
@@ -24,6 +25,7 @@ namespace Utopia.GUI.WindRose
         private readonly MainScreen _guiScreen;
         private readonly D3DEngine _engine;
         private readonly IPlayerManager _playerManager;
+        private readonly IClock _worldclock;
 
         private CompassControl _compassPanel;
 
@@ -32,11 +34,12 @@ namespace Utopia.GUI.WindRose
         #region Public Properties
         #endregion
 
-        public WindRoseComponent(MainScreen guiScreen, D3DEngine engine, IPlayerManager playerManager)
+        public WindRoseComponent(MainScreen guiScreen, D3DEngine engine, IPlayerManager playerManager, IClock worldclock)
         {
             _guiScreen = guiScreen;
             _engine = engine;
             _playerManager = playerManager;
+            _worldclock = worldclock;
         }
 
         public override void Initialize()
@@ -58,6 +61,7 @@ namespace Utopia.GUI.WindRose
                          FrameName = "WindRose",
                          Bounds = new UniRectangle(new UniScalar(1.0f, -160), 10, 150, 75),
                          CompassTexture = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\WindRose.png", Vector2I.Zero, imageLoadParam)),
+                         DayCircle = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\DayCircle.png", Vector2I.Zero, imageLoadParam)),
                          sampler = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipLinear)
                      };
 
@@ -68,6 +72,7 @@ namespace Utopia.GUI.WindRose
         public override void FTSUpdate(GameTime timeSpent)
         {
             _compassPanel.Rotation = getLookAtYaw(_playerManager.EntityRotations.LookAt);
+            _compassPanel.RotationDayCycle = _worldclock.ClockTime.Time + MathHelper.Pi;
         }
 
         private static float getLookAtYaw(Vector3 vector)
