@@ -185,7 +185,12 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
               ref bounds, ref offset
             );
 
-            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor, rotation, sampler, drawGroupId: groupId);
+            ByteColor col;
+            if (!color.HasValue)
+                col = _defaultColor;
+            else col = (ByteColor)color;
+
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref col, rotation, sampler, drawGroupId: groupId);
         }
 
 

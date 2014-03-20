@@ -30,6 +30,11 @@ namespace Utopia.GUI.WindRose
             RectangleF absoluteBoundMask = new RectangleF(absoluteBound.X, absoluteBound.Y, absoluteBound.Width, 150);
 
             graphics.DrawCustomTexture(control.MaskArrow, ref sourceRectMaskArrow, ref absoluteBoundMask, 0.0f, control.sampler);
+
+            SharpDX.Rectangle sourceRectSoulStoneIcon = new SharpDX.Rectangle(0, 0, 25, 25);
+            RectangleF absoluteBoundSoulStone = new RectangleF(absoluteBound.X + 62.5f, absoluteBound.Y + 72.5f, 25, 25);
+
+            graphics.DrawCustomTexture(control.SoulStoneIcon, ref sourceRectSoulStoneIcon, ref absoluteBoundSoulStone, 0.0f, control.sampler, 0, SharpDX.Color.Red);
         }
     }
 }

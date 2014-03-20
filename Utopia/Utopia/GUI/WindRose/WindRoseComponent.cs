@@ -63,6 +63,7 @@ namespace Utopia.GUI.WindRose
                          CompassTexture = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\WindRose.png", Vector2I.Zero, imageLoadParam)),
                          DayCircle = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\DayCircle.png", Vector2I.Zero, imageLoadParam)),
                          MaskArrow = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\MaskArrow.png", Vector2I.Zero, imageLoadParam)),
+                         SoulStoneIcon = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\SoulStoneIcon.png", Vector2I.Zero, imageLoadParam)),
                          sampler = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipLinear)
                      };
 
