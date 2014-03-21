@@ -26,14 +26,19 @@ namespace Utopia.Entities.Managers
         private void inputHandler()
         {
             if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
-            {                
+            {
+                if (!Player.CanFly)
+                {
+                    logger.Warn("User want to fly but he can't!");
+                    return;
+                }
+
                 if (Player.DisplacementMode == EntityDisplacementModes.Flying)
                 {
                     DisplacementMode = EntityDisplacementModes.Walking;
                 }
                 else
                 {
-                    //ONLY POSSIBLE FOR ADMIN !
                     DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }

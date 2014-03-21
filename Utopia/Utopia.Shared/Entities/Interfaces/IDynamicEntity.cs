@@ -69,5 +69,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Indicates if user can do any changes in the world or not
         /// </summary>
         bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Indicates if the player can change its mode to fly
+        /// </summary>
+        bool CanFly { get; set; }
     }
 }
