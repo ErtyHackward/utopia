@@ -85,6 +85,6 @@ namespace Utopia.Shared.Entities.Dynamic
         /// </summary>
         /// <param name="change">Use negative value to do the damage, and positive to heal</param>
         /// <returns></returns>
-        IToolImpact HealthImpact(float change, ICharacterEntity SourceEntity, Vector3 HealthChangeHitLocation, Vector3I HealthChangeHitVector)
+        IToolImpact HealthImpact(float change, IDynamicEntity SourceEntity, Vector3 HealthChangeHitLocation, Vector3I HealthChangeHitVector);
     }
 }

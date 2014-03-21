@@ -23,6 +23,7 @@ namespace Utopia.Shared.Entities.Dynamic
     {
         public DynamicEntityState EntityState;
         private Quaternion _headRotation;
+        private EntityDisplacementModes _displacementMode;
 
         #region Properties
 
@@ -74,7 +75,18 @@ namespace Utopia.Shared.Entities.Dynamic
         /// The displacement mode use by this entity (Walk, swim, fly, ...)
         /// </summary>
         [ProtoMember(2)]
-        public EntityDisplacementModes DisplacementMode { get; set; }
+        public EntityDisplacementModes DisplacementMode
+        {
+            get { return _displacementMode; }
+            set
+            {
+                EntityDisplacementModeEventArgs e = new EntityDisplacementModeEventArgs();
+                e.PreviousDisplacement = _displacementMode;
+                e.CurrentDisplacement = value;
+                _displacementMode = value;
+                OnDisplacementModeChanged(e);
+            }
+        }
 
         /// <summary>
         /// The speed at wich the dynamic entity can walk
@@ -160,6 +172,16 @@ namespace Utopia.Shared.Entities.Dynamic
         #endregion
 
         #region Events
+
+        /// <summary>
+        /// Occurs when the displacement mode of the Entity change
+        /// </summary>
+        public event EventHandler<EntityDisplacementModeEventArgs> DisplacementModeChanged;
+        protected void OnDisplacementModeChanged(EntityDisplacementModeEventArgs e)
+        {
+            if (DisplacementModeChanged != null) DisplacementModeChanged(this, e);
+        }
+
         /// <summary>
         /// Occurs when entity changes its view direction
         /// </summary>

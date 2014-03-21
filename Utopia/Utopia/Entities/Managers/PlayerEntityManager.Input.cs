@@ -35,11 +35,11 @@ namespace Utopia.Entities.Managers
 
                 if (Player.DisplacementMode == EntityDisplacementModes.Flying)
                 {
-                    DisplacementMode = EntityDisplacementModes.Walking;
+                    _playerCharacter.DisplacementMode = EntityDisplacementModes.Walking;
                 }
                 else
                 {
-                    DisplacementMode = EntityDisplacementModes.Flying;
+                    _playerCharacter.DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }
 
