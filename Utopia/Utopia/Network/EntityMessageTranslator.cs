@@ -326,7 +326,7 @@ namespace Utopia.Network
 
         private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
         {
-            // we don't need to send our health change during tool use
+            // we don't need to send local player health cause by a tool use, only if health has been change but another way (falling, drowning,...)
             if (_handlingUseMessage) 
                 return;
 
