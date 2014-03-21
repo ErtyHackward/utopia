@@ -7,7 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Events
 {
-    public class HealthStateChangeEventArgs : EventArgs
+    public class EntityHealthStateChangeEventArgs : EventArgs
     {
         public DynamicEntityHealthState PreviousState;
         public DynamicEntityHealthState NewState;

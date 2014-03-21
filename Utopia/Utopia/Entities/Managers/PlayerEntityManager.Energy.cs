@@ -170,7 +170,19 @@ namespace Utopia.Entities.Managers
             _playerCharacter.HealthImpact(-healthLost);
         }
 
-        private void _playerCharacter_HealthStateChanged(object sender, Shared.Entities.Events.HealthStateChangeEventArgs e)
+        void _playerCharacter_HealthChanged(object sender, Shared.Entities.Events.EntityHealthChangeEventArgs e)
+        {
+            if (e.Change > 20)
+            {
+                _soundEngine.StartPlay2D("Hurt", 1.0f);
+            }
+            else
+            {
+                _soundEngine.StartPlay2D("Hurt", 0.3f);
+            }
+        }
+
+        private void playerCharacter_HealthStateChanged(object sender, Shared.Entities.Events.EntityHealthStateChangeEventArgs e)
         {
             switch (e.NewState)
             {

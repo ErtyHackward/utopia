@@ -34,12 +34,6 @@ namespace Utopia.Entities.Managers.Interfaces
         List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
 
         /// <summary>
-        /// Gets or sets current player entity to display
-        /// Set to null in first person mode
-        /// </summary>
-        ICharacterEntity PlayerEntity { get; set; }
-
-        /// <summary>
         /// Updates existing entity object (in case of visual or equipment changes)
         /// </summary>
         /// <param name="entity"></param>

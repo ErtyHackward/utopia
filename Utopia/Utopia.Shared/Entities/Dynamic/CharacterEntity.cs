@@ -13,6 +13,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Concrete.System;
 using Container = Utopia.Shared.Entities.Concrete.Container;
+using SharpDX;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -93,7 +94,7 @@ namespace Utopia.Shared.Entities.Dynamic
             set
             {
                 if (_healthState == value) return;
-                var eventArg = new HealthStateChangeEventArgs 
+                var eventArg = new EntityHealthStateChangeEventArgs 
                 { 
                     DynamicEntity = this, 
                     NewState = value, 
@@ -112,7 +113,7 @@ namespace Utopia.Shared.Entities.Dynamic
             set
             {
                 if (_afflictions == value) return;
-                var eventArg = new AfflictionStateChangeEventArgs 
+                var eventArg = new EntityAfflicationStateChangeEventArgs 
                 { 
                     DynamicEntity = this, 
                     NewState = value, 
@@ -146,27 +147,27 @@ namespace Utopia.Shared.Entities.Dynamic
         public bool IsRealPlayer { get; set; }
 
         public event EventHandler InventoryUpdated;
-
         protected virtual void OnInventoryUpdated()
         {
-            var handler = InventoryUpdated;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (InventoryUpdated != null) InventoryUpdated(this, EventArgs.Empty);
         }
 
-        public event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
-
-        protected virtual void OnHealthStateChanged(HealthStateChangeEventArgs e)
+        public event EventHandler<EntityHealthStateChangeEventArgs> HealthStateChanged;
+        protected virtual void OnHealthStateChanged(EntityHealthStateChangeEventArgs e)
         {
-            var handler = HealthStateChanged;
-            if (handler != null) handler(this, e);
+            if (HealthStateChanged != null) HealthStateChanged(this, e);
         }
 
-        public event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
-
-        protected virtual void OnAfflictionStateChanged(AfflictionStateChangeEventArgs e)
+        public event EventHandler<EntityAfflicationStateChangeEventArgs> AfflictionStateChanged;
+        protected virtual void OnAfflictionStateChanged(EntityAfflicationStateChangeEventArgs e)
         {
-            var handler = AfflictionStateChanged;
-            if (handler != null) handler(this, e);
+            if (AfflictionStateChanged != null) AfflictionStateChanged(this, e);
+        }
+
+        public event EventHandler<EntityHealthChangeEventArgs> HealthChanged;
+        protected virtual void OnHealthChanged(EntityHealthChangeEventArgs e)
+        {
+            if (HealthChanged != null) HealthChanged(this, e);
         }
 
         protected CharacterEntity()
@@ -373,6 +374,16 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <returns></returns>
         public IToolImpact HealthImpact(float change)
         {
+            return HealthImpact(change, null, default(Vector3), default(Vector3I));
+        }
+
+        /// <summary>
+        /// Damage handling
+        /// </summary>
+        /// <param name="change">Use negative value to do the damage, and positive to heal</param>
+        /// <returns></returns>
+        public IToolImpact HealthImpact(float change, IDynamicEntity SourceEntity, Vector3 HealthChangeHitLocation, Vector3I HealthChangeHitLocationNormal)
+        {
             var impact = new EntityToolImpact();
 
             if (HealthState == DynamicEntityHealthState.Dead)
@@ -393,6 +404,16 @@ namespace Utopia.Shared.Entities.Dynamic
             {
                 //Raise trigger here : CharacterEntityHealthChange (Health energy + Contact point + Normal vector for the damage)
                 //Will be subscribed by client to play Hurt sound, show animation on hit point, ...
+                EntityHealthChangeEventArgs e = new EntityHealthChangeEventArgs()
+                {
+                    Change = change,
+                    Health = Health,
+                    ImpactedEntity = this,
+                    SourceEntity = SourceEntity,
+                    HealthChangeHitLocation = HealthChangeHitLocation,
+                    HealthChangeHitLocationNormal = HealthChangeHitLocationNormal
+                };
+                OnHealthChanged(e);
                 impact.Success = true;
             }
 

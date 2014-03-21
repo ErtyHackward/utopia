@@ -128,7 +128,9 @@ namespace Utopia.Entities.Managers
                     {
                         ea.PreviousCharacter = _playerCharacter;
                         _playerCharacter.Equipment.ItemEquipped -= Equipment_ItemEquipped;
-                        _playerCharacter.HealthStateChanged -= _playerCharacter_HealthStateChanged;
+                        _playerCharacter.HealthStateChanged -= playerCharacter_HealthStateChanged;
+                        _playerCharacter.HealthChanged -= _playerCharacter_HealthChanged;
+
                     }
                     _playerCharacter = value;
 
@@ -136,7 +138,9 @@ namespace Utopia.Entities.Managers
                     {
                         ea.PlayerCharacter = _playerCharacter;
                         _playerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
-                        _playerCharacter.HealthStateChanged += _playerCharacter_HealthStateChanged;
+                        _playerCharacter.HealthStateChanged += playerCharacter_HealthStateChanged;
+                        _playerCharacter.HealthChanged += _playerCharacter_HealthChanged;
+
 
                         var rightTool = _playerCharacter.Equipment.RightTool;
                         PutMode = !(rightTool is ITool);
