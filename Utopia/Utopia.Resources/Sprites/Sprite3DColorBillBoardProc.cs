@@ -56,7 +56,7 @@ namespace Utopia.Resources.Sprites
 
         public void SetData(DeviceContext context)
         {
-            if (_isCollectionDirty)
+            if (_isCollectionDirty && _spritesCollection.Count > 0)
             {
                 _vb.SetData(context, _spritesCollection.ToArray());
                 _isCollectionDirty = false;
@@ -65,7 +65,7 @@ namespace Utopia.Resources.Sprites
 
         public void Set2DeviceAndDraw(DeviceContext context)
         {
-            if (_vb.VertexCount == 0) return;
+            if (_spritesCollection.Count == 0) return;
 
             //Set Effect Constant Buffer
             _effect.Begin(context);
