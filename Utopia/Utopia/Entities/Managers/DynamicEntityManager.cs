@@ -370,11 +370,11 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
             {
                 //subscribe to entity state/afllication changes
+                entity.HealthStateChanged += EntityHealthStateChanged;
                 if (!IsLocalPlayer(entity.DynamicId))
                 {
-                    entity.Health.ValueChanged += Health_ValueChanged;
+                    entity.HealthChanged += entity_HealthChanged;
                     entity.AfflictionStateChanged += EntityAfflictionStateChanged;
-                    entity.HealthStateChanged += EntityHealthStateChanged;
                 }
 
                 ModelAndInstances modelWithInstances;
@@ -438,11 +438,11 @@ namespace Utopia.Entities.Managers
                 DynamicEntities.Remove(visualEntity);
                 _dynamicEntitiesDico.Remove(entity.DynamicId);
 
+                entity.HealthStateChanged -= EntityHealthStateChanged;
                 if (!IsLocalPlayer(entity.DynamicId))
                 {
-                    entity.Health.ValueChanged -= Health_ValueChanged;
+                    entity.HealthChanged -= entity_HealthChanged;
                     entity.AfflictionStateChanged -= EntityAfflictionStateChanged;
-                    entity.HealthStateChanged -= EntityHealthStateChanged;
                 }
 
                 visualEntity.Dispose();
@@ -467,11 +467,11 @@ namespace Utopia.Entities.Managers
                 DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
 
+                visualEntity.DynamicEntity.HealthStateChanged -= EntityHealthStateChanged;
                 if (!IsLocalPlayer(entity.DynamicEntity.DynamicId))
                 {
-                    visualEntity.DynamicEntity.Health.ValueChanged -= Health_ValueChanged;
+                    entity.DynamicEntity.HealthChanged -= entity_HealthChanged;
                     visualEntity.DynamicEntity.AfflictionStateChanged -= EntityAfflictionStateChanged;
-                    visualEntity.DynamicEntity.HealthStateChanged -= EntityHealthStateChanged;
                 }
 
                 if (dispose) visualEntity.Dispose();
@@ -735,7 +735,7 @@ namespace Utopia.Entities.Managers
         }
 
         //Handle Entity HealthState change
-        private void EntityHealthStateChanged(object sender, HealthStateChangeEventArgs e)
+        private void EntityHealthStateChanged(object sender, EntityHealthStateChangeEventArgs e)
         {
             //Check if the entity entered the Dead state
             switch (e.NewState)
@@ -754,31 +754,25 @@ namespace Utopia.Entities.Managers
                         UpdateEntityVoxelBody(e.DynamicEntity.DynamicId, null);
 
                         //Play dead sound only if player not active player
-                        _soundEngine.StartPlay3D("Dying", 1.0f, e.DynamicEntity.Position.AsVector3());
+                        if (!IsLocalPlayer(e.DynamicEntity.DynamicId))
+                        {
+                            _soundEngine.StartPlay3D("Dying", 1.0f, e.DynamicEntity.Position.AsVector3());
+                        }
                     break;
                 default:
                     break;
             }
         }
 
-        private void EntityAfflictionStateChanged(object sender, AfflictionStateChangeEventArgs e)
+        private void EntityAfflictionStateChanged(object sender, EntityAfflicationStateChangeEventArgs e)
         {
             //Handle Affliction change for an entity here if needed
             //Should "only" trigger visual aspect of it.
         }
 
-        private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
+        private void entity_HealthChanged(object sender, EntityHealthChangeEventArgs e)
         {
-            //Action when other player are losing life !
-            if (e.ValueChangedAmount <= -10)
-            {
-                //Get entity by ID
-                var dynamicEntity = GetEntityById(e.EntityOwner);
-                if (dynamicEntity != null)
-                {
-                    _soundEngine.StartPlay3D("Hurt", 1.0f, dynamicEntity.Position.AsVector3());
-                }
-            }
+            _soundEngine.StartPlay3D("Hurt", 1.0f, e.ImpactedEntity.Position.AsVector3());
         }
 
         #endregion

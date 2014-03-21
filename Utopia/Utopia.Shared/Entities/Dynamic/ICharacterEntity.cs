@@ -1,3 +1,5 @@
+using S33M3Resources.Structs;
+using SharpDX;
 using System;
 using Utopia.Shared.Entities.Concrete.System;
 using Utopia.Shared.Entities.Events;
@@ -54,12 +56,17 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Occurs when the entity health state change
         /// </summary>
-        event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
+        event EventHandler<EntityHealthStateChangeEventArgs> HealthStateChanged;
 
         /// <summary>
         /// Occurs when the entity Afflication state change
         /// </summary>
-        event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
+        event EventHandler<EntityAfflicationStateChangeEventArgs> AfflictionStateChanged;
+
+        /// <summary>
+        /// Occurs when the entity has its health being modified
+        /// </summary>
+        event EventHandler<EntityHealthChangeEventArgs> HealthChanged;
 
         /// <summary>
         /// The binded player soulstone
@@ -72,5 +79,12 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <param name="change">Use negative value to do the damage, and positive to heal</param>
         /// <returns></returns>
         IToolImpact HealthImpact(float change);
+
+        /// <summary>
+        /// Damage handling
+        /// </summary>
+        /// <param name="change">Use negative value to do the damage, and positive to heal</param>
+        /// <returns></returns>
+        IToolImpact HealthImpact(float change, ICharacterEntity SourceEntity, Vector3 HealthChangeHitLocation, Vector3I HealthChangeHitVector)
     }
 }

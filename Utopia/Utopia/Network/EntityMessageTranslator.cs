@@ -338,7 +338,7 @@ namespace Utopia.Network
             });
         }
 
-        private void _playerEntity_AfflictionStateChanged(object sender, AfflictionStateChangeEventArgs e)
+        private void _playerEntity_AfflictionStateChanged(object sender, EntityAfflicationStateChangeEventArgs e)
         {
             _server.ServerConnection.Send(new EntityAfflictionStateMessage
             {
@@ -347,7 +347,7 @@ namespace Utopia.Network
             });
         }
 
-        private void _playerEntity_HealthStateChanged(object sender, HealthStateChangeEventArgs e)
+        private void _playerEntity_HealthStateChanged(object sender, EntityHealthStateChangeEventArgs e)
         {
             _server.ServerConnection.Send(new EntityHealthStateMessage
             {

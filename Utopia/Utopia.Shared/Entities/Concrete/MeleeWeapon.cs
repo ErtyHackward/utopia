@@ -36,7 +36,7 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
-            return entity.HealthImpact(-Damage);
+            return entity.HealthImpact(-Damage, owner, owner.EntityState.PickPoint, owner.EntityState.PickPointNormal);
         }
 
         public bool RepeatedActionsAllowed { get; set; }
