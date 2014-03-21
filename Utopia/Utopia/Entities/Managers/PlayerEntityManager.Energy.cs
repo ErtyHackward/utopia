@@ -172,14 +172,18 @@ namespace Utopia.Entities.Managers
 
         void _playerCharacter_HealthChanged(object sender, Shared.Entities.Events.EntityHealthChangeEventArgs e)
         {
-            if (e.Change > 20)
+            if (e.Change < -2)
             {
-                _soundEngine.StartPlay2D("Hurt", 1.0f);
+                if (e.Change < -20)
+                {
+                    _soundEngine.StartPlay2D("Hurt", 1.0f);
+                }
+                else
+                {
+                    _soundEngine.StartPlay2D("Hurt", 0.3f);
+                }
             }
-            else
-            {
-                _soundEngine.StartPlay2D("Hurt", 0.3f);
-            }
+
         }
 
         private void playerCharacter_HealthStateChanged(object sender, Shared.Entities.Events.EntityHealthStateChangeEventArgs e)
@@ -193,7 +197,7 @@ namespace Utopia.Entities.Managers
                         _postEffectComponent.DeactivateEffect();
                         _worldPosition = new Vector3D(_playerCharacter.Position.X, _physicSimu.GroundBelowEntity, _playerCharacter.Position.Z);
                         _fallMaxHeight = double.MinValue;
-                        DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
+                        _playerCharacter.DisplacementMode = Shared.Entities.EntityDisplacementModes.Walking;
                     }
                     break;
                 case Utopia.Shared.Entities.Dynamic.DynamicEntityHealthState.Drowning:

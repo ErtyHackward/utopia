@@ -26,6 +26,11 @@ namespace Utopia.Shared.Entities.Interfaces
         event EventHandler<EntityUseEventArgs> Use;
 
         /// <summary>
+        /// Occurs when entity change its displacement mode
+        /// </summary>
+        event EventHandler<EntityDisplacementModeEventArgs> DisplacementModeChanged;
+
+        /// <summary>
         /// The speed at wich the dynamic entity can walk
         /// </summary>
         float MoveSpeed { get; set; }

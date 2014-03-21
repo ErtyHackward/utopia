@@ -160,6 +160,7 @@
     <Compile Include="Entities\EntityParticule.cs" />
     <Compile Include="Entities\Events\EntityAfflicationStateChangeEventArgs.cs" />
     <Compile Include="Entities\Events\EnergyChangedEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityDisplacementModeEventArgs.cs" />
     <Compile Include="Entities\Events\EntityHealthChangeEventArgs.cs" />
     <Compile Include="Entities\Events\EntityHealthStateChangeEventArgs.cs" />
     <Compile Include="Entities\Events\UseType.cs" />

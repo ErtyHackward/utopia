@@ -511,8 +511,6 @@ namespace Utopia.Entities.Managers
         public void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true)
         {
             //If own player, and not body displayed, don't do it
-            if (IsLocalPlayer(entityId)) return;
-
             var entity = (PlayerCharacter)GetEntityById(entityId);
             if (entity != null)
             {
@@ -772,7 +770,10 @@ namespace Utopia.Entities.Managers
 
         private void entity_HealthChanged(object sender, EntityHealthChangeEventArgs e)
         {
-            _soundEngine.StartPlay3D("Hurt", 1.0f, e.ImpactedEntity.Position.AsVector3());
+            if (e.Change < -2)
+            {
+                _soundEngine.StartPlay3D("Hurt", 1.0f, e.ImpactedEntity.Position.AsVector3());
+            }
         }
 
         #endregion

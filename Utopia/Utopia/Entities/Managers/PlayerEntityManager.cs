@@ -130,6 +130,7 @@ namespace Utopia.Entities.Managers
                         _playerCharacter.Equipment.ItemEquipped -= Equipment_ItemEquipped;
                         _playerCharacter.HealthStateChanged -= playerCharacter_HealthStateChanged;
                         _playerCharacter.HealthChanged -= _playerCharacter_HealthChanged;
+                        _playerCharacter.DisplacementModeChanged -= _playerCharacter_DisplacementModeChanged;
 
                     }
                     _playerCharacter = value;
@@ -140,6 +141,7 @@ namespace Utopia.Entities.Managers
                         _playerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
                         _playerCharacter.HealthStateChanged += playerCharacter_HealthStateChanged;
                         _playerCharacter.HealthChanged += _playerCharacter_HealthChanged;
+                        _playerCharacter.DisplacementModeChanged += _playerCharacter_DisplacementModeChanged;
 
 
                         var rightTool = _playerCharacter.Equipment.RightTool;
@@ -176,43 +178,7 @@ namespace Utopia.Entities.Managers
 
         public bool IsHeadInsideWater { get; set; }
 
-        public bool CatchExclusiveAction { get; set; }
-
-        public EntityDisplacementModes DisplacementMode
-        {
-            get { return Player.DisplacementMode; }
-            set
-            {
-                Player.DisplacementMode = value;
-                _entityRotations.SetDisplacementMode(Player.DisplacementMode, _worldPosition + _entityEyeOffset);
-#if DEBUG
-                logger.Info("{0} is now {1}", PlayerCharacter.CharacterName, value.ToString());
-#endif
-                if (value == EntityDisplacementModes.Walking || value == EntityDisplacementModes.Swiming)
-                {
-                    _fallMaxHeight = double.MinValue;
-                    _physicSimu.StartSimulation(_worldPosition);
-                    _physicSimu.ConstraintOnlyMode = false;
-                }
-                else if (value == EntityDisplacementModes.Dead)
-                {
-                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
-                    _physicSimu.ConstraintOnlyMode = true;
-                }
-                //Collision detection not activated oustide debug mode when flying !
-#if !DEBUG
-                else if (value == EntityDisplacementModes.Flying)
-                {
-                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
-                    _physicSimu.ConstraintOnlyMode = true;
-                }
-#endif
-                else
-                {
-                    _physicSimu.StopSimulation();
-                }
-            }
-        }
+        public bool CatchExclusiveAction { get; set; }        
 
         public bool HasMouseFocus { get; set; }
         
@@ -385,6 +351,37 @@ namespace Utopia.Entities.Managers
                 PutMode = false;
             }
         }
+
+        private void _playerCharacter_DisplacementModeChanged(object sender, Shared.Entities.Events.EntityDisplacementModeEventArgs e)
+        {
+            _entityRotations.SetDisplacementMode(e.CurrentDisplacement, _worldPosition + _entityEyeOffset);
+#if DEBUG
+            logger.Info("{0} is now {1}", PlayerCharacter.CharacterName, e.CurrentDisplacement.ToString());
+#endif
+            if (e.CurrentDisplacement == EntityDisplacementModes.Walking || e.CurrentDisplacement == EntityDisplacementModes.Swiming)
+            {
+                _fallMaxHeight = double.MinValue;
+                _physicSimu.StartSimulation(_worldPosition);
+                _physicSimu.ConstraintOnlyMode = false;
+            }
+            else if (e.CurrentDisplacement == EntityDisplacementModes.Dead)
+            {
+                _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                _physicSimu.ConstraintOnlyMode = true;
+            }
+            //Collision detection not activated oustide debug mode when flying !
+#if !DEBUG
+                else if (e.CurrentDisplacement == EntityDisplacementModes.Flying)
+                {
+                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                    _physicSimu.ConstraintOnlyMode = true;
+                }
+#endif
+            else
+            {
+                _physicSimu.StopSimulation();
+            }
+        }
         
         void InventoryComponentSwitchInventory(object sender, InventorySwitchEventArgs e)
         {
@@ -463,9 +460,7 @@ namespace Utopia.Entities.Managers
             _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition + _entityEyeOffset);
             
             // Set displacement mode
-            DisplacementMode = Player.DisplacementMode;
-
-            //_faction = _factory.GlobalStateManager.GlobalState.Factions[PlayerCharacter.FactionId];
+            _playerCharacter.DisplacementMode = Player.DisplacementMode;
         }
 
         /// <summary>

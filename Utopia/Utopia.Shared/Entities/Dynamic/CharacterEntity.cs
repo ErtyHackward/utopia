@@ -424,7 +424,7 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             HealthState = DynamicEntityHealthState.Dead; //Set Dead state to the player
             DisplacementMode = EntityDisplacementModes.Dead; //Set character displacement mode 
-
+            
             //Create grave logic
             var impact = new EntityToolImpact();
 
