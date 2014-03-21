@@ -287,6 +287,8 @@ namespace Utopia.Network
             var entity = _dynamicEntityManager.GetEntityById(e.Message.EntityId);
             if (entity != null)
             {
+                entity.HealthImpact(e.Message.Change);
+
                 //update the health of the entity
                 entity.Health.MaxValue = e.Message.Health.MaxValue;
                 entity.Health.CurrentValue = e.Message.Health.CurrentValue;

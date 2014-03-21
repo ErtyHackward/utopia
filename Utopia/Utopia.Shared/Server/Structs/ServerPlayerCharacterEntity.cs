@@ -158,7 +158,7 @@ namespace Utopia.Shared.Server.Structs
 
             if (ehm != null)
             {
-                _playerCharacter.Damage(-ehm.Change);
+                _playerCharacter.HealthImpact(ehm.Change);
             }
         }
     }

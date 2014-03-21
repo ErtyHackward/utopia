@@ -65,5 +65,12 @@ namespace Utopia.Shared.Entities.Dynamic
         /// The binded player soulstone
         /// </summary>
         SoulStone BindedSoulStone { get; set; }
+
+        /// <summary>
+        /// Damage handling
+        /// </summary>
+        /// <param name="change">Use negative value to do the damage, and positive to heal</param>
+        /// <returns></returns>
+        IToolImpact HealthImpact(float change);
     }
 }

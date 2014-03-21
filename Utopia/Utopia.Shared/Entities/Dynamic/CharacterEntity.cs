@@ -369,15 +369,15 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Damage handling
         /// </summary>
-        /// <param name="damage"></param>
+        /// <param name="change">Use negative value to do the damage, and positive to heal</param>
         /// <returns></returns>
-        public IToolImpact Damage(float damage)
+        public IToolImpact HealthImpact(float change)
         {
             var impact = new EntityToolImpact();
 
-            var death = Health.CurrentValue > 0 && Health.CurrentValue - damage <= 0;
+            var death = Health.CurrentValue > 0 && Health.CurrentValue + change <= 0;
 
-            Health.CurrentValue -= damage;
+            Health.CurrentValue += change;
 
             if (death)
             {
