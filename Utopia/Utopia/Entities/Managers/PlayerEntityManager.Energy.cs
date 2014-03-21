@@ -215,7 +215,7 @@ namespace Utopia.Entities.Managers
 
         private void DeactivateDeadState()
         {
-            _playerCharacter.Health.CurrentValue = 10; //This will trigger 
+            _playerCharacter.HealthImpact(10);
             _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Normal;
             _postEffectComponent.DeactivateEffect();
 
