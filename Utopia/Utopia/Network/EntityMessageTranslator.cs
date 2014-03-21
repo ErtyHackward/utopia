@@ -240,7 +240,7 @@ namespace Utopia.Network
                 }
             }
 
-            //Change the default Player ModelName
+            //Change the local Player default ModelName
             if (entity == null && e.Message.EntityLink.DynamicEntityId == PlayerEntity.DynamicId)
             {
                 entity = (PlayerCharacter)PlayerEntity;
