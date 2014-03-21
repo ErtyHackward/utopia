@@ -63,7 +63,7 @@ namespace Utopia.Entities.Managers
                 _playerCharacter.Health.CurrentAsPercent < 1.0f)
             {
                 var soulsStoneHealingAmount = _healthSoulStoneGainPerSecond * timeSpent.ElapsedGameTimeInS_LD;
-                _playerCharacter.Health.CurrentValue += soulsStoneHealingAmount;
+                _playerCharacter.HealthImpact(soulsStoneHealingAmount);
             }
 
             //Auto Regen Stamina
@@ -190,13 +190,13 @@ namespace Utopia.Entities.Managers
             //The first 5 meter are "free", no damage computed
             if (fallHeight <= 5.0) return;
             var damageComputed = (fallHeight - 5) * _healthDamagePerFallMeter;
-            _playerCharacter.Damage((float)damageComputed);
+            _playerCharacter.HealthImpact(-(float)damageComputed);
         }
 
         private void DrowningDamage(GameTime timeSpent)
         {
             var healthLost = _healthDamageDrowningPerSecond * timeSpent.ElapsedGameTimeInS_LD;
-            _playerCharacter.Damage(healthLost);
+            _playerCharacter.HealthImpact(-healthLost);
         }
 
         private void ActivateDeadState()

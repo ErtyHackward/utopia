@@ -6,7 +6,7 @@ using Utopia.Shared.Entities.Events;
 namespace Utopia.Shared.Entities.Dynamic
 {
     /// <summary>
-    /// Role-playing players and NPC attributes. All parameters can be in range [1; 10]
+    /// Universal character variable like health, stamina, oxygen etc
     /// </summary>
     [TypeConverter(typeof(EnergyTypeConverter))]
     [ProtoContract]
@@ -77,8 +77,9 @@ namespace Utopia.Shared.Entities.Dynamic
         private void RaiseChangeNotification(float changedAmount)
         {
             var handler = ValueChanged;
-            if (handler != null) 
+            if (handler != null)
                 handler(this, new EnergyChangedEventArgs { 
+                    EntityOwner = EntityOwnerId,
                     EnergyChanged = this, 
                     ValueChangedAmount = changedAmount 
                 });
