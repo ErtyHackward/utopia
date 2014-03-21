@@ -87,7 +87,7 @@ namespace Utopia.Entities.Voxel
             List<VertexVoxelInstanced> vertices;
             List<ushort> indices;
             
-            _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[frameIndex].BlockData, out vertices, out indices);
+            _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[frameIndex], out vertices, out indices);
             
             _visualFrames[frameIndex].VertexBuffer.Dispose();
             _visualFrames[frameIndex].IndexBuffer.Dispose();
@@ -122,7 +122,7 @@ namespace Utopia.Entities.Voxel
                 List<VertexVoxelInstanced> vertices;
                 List<ushort> indices;
 
-                _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[i].BlockData, out vertices, out indices);
+                _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[i], out vertices, out indices);
 
                 frame.VertexBuffer = _voxelMeshFactory.InitBuffer(vertices);
                 frame.IndexBuffer = _voxelMeshFactory.InitBuffer(indices);
