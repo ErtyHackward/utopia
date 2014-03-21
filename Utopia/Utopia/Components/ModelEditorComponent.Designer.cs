@@ -54,6 +54,18 @@ namespace Utopia.Components
             public int SizeX;
             public int SizeY;
             public int SizeZ;
+            public bool MirrorLeft;
+            public bool MirrorRight;
+            public bool MirrorTop;
+            public bool MirrorBottom;
+            public bool MirrorFront;
+            public bool MirrorBack;
+            public bool TileLeft;
+            public bool TileRight;
+            public bool TileTop;
+            public bool TileBottom;
+            public bool TileFront;
+            public bool TileBack;
         }
 
         private ButtonControl _backButton;

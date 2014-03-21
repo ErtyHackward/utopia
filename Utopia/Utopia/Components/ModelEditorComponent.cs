@@ -748,6 +748,8 @@ namespace Utopia.Components
             part.Name = e.Name;
             part.IsHead = e.IsHead;
             part.IsArm = e.IsArm;
+
+            NeedSave();
         }
 
         private void OnPartsDeletePressed()
@@ -786,7 +788,14 @@ namespace Utopia.Components
                 return;
             }
 
-            _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogFrameEditStruct { SizeX = 16, SizeY = 16, SizeZ = 16, Name = "noname" }, "Add a new frame", OnFrameAdded);
+            var ds = new DialogFrameEditStruct { 
+                SizeX = 16, 
+                SizeY = 16, 
+                SizeZ = 16, 
+                Name = "noname" 
+            };
+            
+            _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, ds, "Add a new frame", OnFrameAdded);
         }
         private void OnFrameAdded(DialogFrameEditStruct e)
         {
@@ -817,6 +826,20 @@ namespace Utopia.Components
                 SizeZ = size.Z,
                 Name = frame.Name
             };
+
+            args.MirrorBack   = (frame.FrameMirror & FrameMirror.MirrorBack) == FrameMirror.MirrorBack;
+            args.MirrorFront  = (frame.FrameMirror & FrameMirror.MirrorFront) == FrameMirror.MirrorFront;
+            args.MirrorTop    = (frame.FrameMirror & FrameMirror.MirrorTop) == FrameMirror.MirrorTop;
+            args.MirrorBottom = (frame.FrameMirror & FrameMirror.MirrorBottom) == FrameMirror.MirrorBottom;
+            args.MirrorLeft   = (frame.FrameMirror & FrameMirror.MirrorLeft) == FrameMirror.MirrorLeft;
+            args.MirrorRight  = (frame.FrameMirror & FrameMirror.MirrorRight) == FrameMirror.MirrorRight;
+            args.TileBack     = (frame.FrameMirror & FrameMirror.TileBack) == FrameMirror.TileBack;
+            args.TileFront    = (frame.FrameMirror & FrameMirror.TileFront) == FrameMirror.TileFront;
+            args.TileTop      = (frame.FrameMirror & FrameMirror.TileTop) == FrameMirror.TileTop;
+            args.TileBottom   = (frame.FrameMirror & FrameMirror.TileBottom) == FrameMirror.TileBottom;
+            args.TileLeft     = (frame.FrameMirror & FrameMirror.TileLeft) == FrameMirror.TileLeft;
+            args.TileRight    = (frame.FrameMirror & FrameMirror.TileRight) == FrameMirror.TileRight;
+
             
             _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, args, "Edit frame size", OnFrameEdited);
         }
@@ -825,8 +848,25 @@ namespace Utopia.Components
             var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex];
             frame.Name = e.Name;
             frame.BlockData.UpdateChunkSize(new Vector3I(e.SizeX, e.SizeY, e.SizeZ), true);
+
+            frame.FrameMirror = 0;
+            if (e.MirrorBack) frame.FrameMirror |= FrameMirror.MirrorBack;
+            if (e.MirrorFront) frame.FrameMirror |= FrameMirror.MirrorFront;
+            if (e.MirrorTop) frame.FrameMirror |= FrameMirror.MirrorTop;
+            if (e.MirrorBottom) frame.FrameMirror |= FrameMirror.MirrorBottom;
+            if (e.MirrorLeft) frame.FrameMirror |= FrameMirror.MirrorLeft;
+            if (e.MirrorRight) frame.FrameMirror |= FrameMirror.MirrorRight;
+
+            if (e.TileBack) frame.FrameMirror |= FrameMirror.TileBack;
+            if (e.TileFront) frame.FrameMirror |= FrameMirror.TileFront;
+            if (e.TileTop) frame.FrameMirror |= FrameMirror.TileTop;
+            if (e.TileBottom) frame.FrameMirror |= FrameMirror.TileBottom;
+            if (e.TileLeft) frame.FrameMirror |= FrameMirror.TileLeft;
+            if (e.TileRight) frame.FrameMirror |= FrameMirror.TileRight;
+
             RebuildFrameVertices();
             ClearSelection();
+            NeedSave();
         }
 
         private void OnFrameDeletePressed()
@@ -855,6 +895,7 @@ namespace Utopia.Components
             }
 
             _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex].ActiveFrame = byte.MaxValue;
+            NeedSave();
         }
 
         private void OnColorAddPressed()

@@ -4,6 +4,7 @@ using S33M3DXEngine.Main;
 using SharpDX;
 using SharpDX.Direct3D;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs.Vertex;
 using S33M3DXEngine.Buffers;
@@ -240,12 +241,13 @@ namespace Utopia.Entities.Voxel
             return enlarged;
         }
 
-        public void GenerateVoxelFaces(InsideDataProvider blockData, out List<VertexVoxelInstanced> vertices, out List<ushort> indices)
+        public void GenerateVoxelFaces(VoxelFrame frame, out List<VertexVoxelInstanced> vertices, out List<ushort> indices)
         {
-            var size = blockData.ChunkSize;
-            vertices = new List<VertexVoxelInstanced>();
-            indices = new List<ushort>();
-            var dico = new Dictionary<int, int>();
+            var blockData = frame.BlockData;
+            var size      = blockData.ChunkSize;
+            vertices      = new List<VertexVoxelInstanced>();
+            indices       = new List<ushort>();
+            var dico      = new Dictionary<int, int>();
 
 
             for (int x = 0; x < size.X; x++)
@@ -255,25 +257,26 @@ namespace Utopia.Entities.Voxel
                     for (int z = 0; z < size.Z; z++)
                     {
                         byte blockType = blockData.GetBlock(x, y, z);
-                        if (blockType == 0) continue;
+                        if (blockType == 0) 
+                            continue;
                         var vec = new Vector4B(x, y, z, blockType);
                         if (IsEmpty(ref blockData, ref size, x, y, z - 1))
-                            GenerateFaces(ref blockData, CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref frame, CubeFaces.Back, ref dico, vec, ref vertices, ref indices);
                         
                         if (IsEmpty(ref blockData, ref size, x, y - 1, z))
-                            GenerateFaces(ref blockData, CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref frame, CubeFaces.Bottom, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x, y, z + 1))
-                            GenerateFaces(ref blockData, CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref frame, CubeFaces.Front, ref dico, vec, ref vertices, ref indices);
                         
                         if (IsEmpty(ref blockData, ref size, x - 1, y, z))
-                            GenerateFaces(ref blockData, CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref frame, CubeFaces.Left, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x + 1, y, z))
-                            GenerateFaces(ref blockData, CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref frame, CubeFaces.Right, ref dico, vec, ref vertices, ref indices);
 
                         if (IsEmpty(ref blockData, ref size, x, y + 1, z))
-                            GenerateFaces(ref blockData, CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
+                            GenerateFaces(ref frame, CubeFaces.Top, ref dico, vec, ref vertices, ref indices);
                     }
                 }
             }
@@ -287,14 +290,101 @@ namespace Utopia.Entities.Voxel
             return blockData.GetBlock(x, y, z) == 0;
         }
 
+        private bool IsEmpty(ref InsideDataProvider blockData, ref Vector3I size, int x, int y, int z, FrameMirror mirror)
+        {
+            if (x < 0)
+            {
+                if ((mirror & FrameMirror.MirrorLeft) == FrameMirror.MirrorLeft)
+                {
+                    x = 0;
+                } 
+                else if ((mirror & FrameMirror.TileLeft) == FrameMirror.TileLeft)
+                {
+                    x = size.X + x;
+                }
+                else 
+                    return true;
+            }
+            if (x == size.X)
+            {
+                if ((mirror & FrameMirror.MirrorRight) == FrameMirror.MirrorRight)
+                {
+                    x = size.X - 1;
+                }
+                else if ((mirror & FrameMirror.TileRight) == FrameMirror.TileRight)
+                {
+                    x = 0;
+                }
+                else
+                    return true;
+            }
+            if (y < 0)
+            {
+                if ((mirror & FrameMirror.MirrorBottom) == FrameMirror.MirrorBottom)
+                {
+                    y = 0;
+                } 
+                else if ((mirror & FrameMirror.TileBottom) == FrameMirror.TileBottom)
+                {
+                    y = size.Y - 1;
+                } 
+                else 
+                    return true;
+            }
+            if (y == size.Y)
+            {
+                if ((mirror & FrameMirror.MirrorTop) == FrameMirror.MirrorTop)
+                {
+                    y = size.Y - 1;
+                }
+                else if ((mirror & FrameMirror.TileTop) == FrameMirror.TileTop)
+                {
+                    y = 0;
+                }
+                else
+                    return true;
+            }
+
+            if (z < 0)
+            {
+                if ((mirror & FrameMirror.MirrorFront) == FrameMirror.MirrorFront)
+                {
+                    z = 0;
+                } 
+                else if ((mirror & FrameMirror.TileFront) == FrameMirror.TileFront)
+                {
+                    z = size.Z - 1;
+                }
+                else
+                    return true;
+            }
+            if (z == size.Z)
+            {
+                if ((mirror & FrameMirror.MirrorBack) == FrameMirror.MirrorBack)
+                {
+                    z = size.Z - 1;
+                }
+                else if ((mirror & FrameMirror.TileBack) == FrameMirror.TileBack)
+                {
+                    z = 0;
+                }
+                else
+                    return true;
+            }
+
+            return blockData.GetBlock(x, y, z) == 0;
+        }
+
         private byte Avg(int b1, int b2, int b3, int b4)
         {
             return (byte)((b1 + b2 + b3 + b4)/4);
         }
 
-        private void GenerateFaces(ref InsideDataProvider blockData, CubeFaces cubeFace, ref Dictionary<int, int> dico, Vector4B cubePosition, ref List<VertexVoxelInstanced> vertices, ref List<ushort> indices)
+        private void GenerateFaces(ref VoxelFrame voxelFrame, CubeFaces cubeFace, ref Dictionary<int, int> dico, Vector4B cubePosition, ref List<VertexVoxelInstanced> vertices, ref List<ushort> indices)
         {
             // hash and index
+
+            var blockData = voxelFrame.BlockData;
 
             Vector4B topLeft;
             Vector4B topRight;
@@ -316,19 +406,21 @@ namespace Utopia.Entities.Voxel
                 #region Front
                 case CubeFaces.Front:
                     {
-                        var lfront              = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y,     cubePosition.Z + 1) ? 255 : 0;
-                        var ltopFront           = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomFront        = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lrightFront         = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y,     cubePosition.Z + 1) ? 255 : 0;
-                        var lfrontLeft          = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y,     cubePosition.Z + 1) ? 255 : 0;
-                        var ltopLeftFront       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopFrontRight      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomLeftFront    = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomFrontRight   = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
+                        var mirror = cubePosition.Z != chunkSize.Z - 1 ? voxelFrame.FrameMirror : FrameMirror.None;
 
-                        topLeft = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
-                        topRight = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
-                        bottomLeft = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
+                        var lfront              = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y,     cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopFront           = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomFront        = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lrightFront         = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y,     cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lfrontLeft          = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y,     cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopLeftFront       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopFrontRight      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomLeftFront    = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomFrontRight   = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+
+                        topLeft     = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
+                        topRight    = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
+                        bottomLeft  = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
                         bottomRight = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
 
                         hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
@@ -401,19 +493,21 @@ namespace Utopia.Entities.Voxel
                 #region Back
                 case CubeFaces.Back:
                     {
-                        var lback = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
-                        var ltopBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbackRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
-                        var lleftback = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
-                        var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var mirror = cubePosition.Z != 0 ? voxelFrame.FrameMirror : FrameMirror.None;
 
-                        topLeft = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
-                        topRight = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
-                        bottomLeft = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
+                        var lback =             IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y,     cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var ltopBack =          IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomBack =       IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbackRight =        IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y,     cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lleftback =         IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y,     cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var ltopRightBack =     IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var ltopBackLeft =      IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomRightBack =  IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomBackLeft =   IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+
+                        topLeft     = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
+                        topRight    = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
+                        bottomLeft  = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
                         bottomRight = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
 
                         hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
@@ -486,19 +580,21 @@ namespace Utopia.Entities.Voxel
                 #region Top
                 case CubeFaces.Top:
                     {
-                        var ltop = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
-                        var ltopLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
-                        var ltopBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var ltopRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
-                        var ltopFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
+                        var mirror = cubePosition.Y != chunkSize.Y - 1 ? voxelFrame.FrameMirror : FrameMirror.None;
 
-                        topLeft = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
-                        topRight = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
-                        bottomLeft = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
+                        var ltop           = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y + 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var ltopLeft       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var ltopBack       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var ltopRight      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var ltopFront      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopLeftFront  = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopRightBack  = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var ltopBackLeft   = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+
+                        topLeft     = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
+                        topRight    = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
+                        bottomLeft  = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
                         bottomRight = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
 
                         hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
@@ -571,19 +667,21 @@ namespace Utopia.Entities.Voxel
                 #region Bottom
                 case CubeFaces.Bottom:
                     {
-                        var lbottom = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
-                        var lbottomLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
-                        var lbottomBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomright = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
-                        var lbottomFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var mirror = cubePosition.Y != 0 ? voxelFrame.FrameMirror : FrameMirror.None;
 
-                        topLeft = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
-                        topRight = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
-                        bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
+                        var lbottom           = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y - 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lbottomLeft       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lbottomBack       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomright      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lbottomFront      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X,     cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomLeftFront  = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomRightBack  = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomBackLeft   = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+
+                        topLeft     = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
+                        topRight    = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
+                        bottomLeft  = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
                         bottomRight = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
 
                         hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
@@ -656,20 +754,22 @@ namespace Utopia.Entities.Voxel
                 #region Left
                 case CubeFaces.Left:
                     {
-                        var lleft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z) ? 255 : 0;
-                        var ltopLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
-                        var lbottomLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
-                        var lfrontLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
-                        var lleftback = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
-                        var ltopLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomBackLeft = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var mirror = cubePosition.X != 0 ? voxelFrame.FrameMirror : FrameMirror.None;
 
-                        topLeft = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
+                        var lleft            = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y,     cubePosition.Z,     mirror) ? 255 : 0;
+                        var ltopLeft         = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lbottomLeft      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lfrontLeft       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y,     cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lleftback        = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y,     cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var ltopLeftFront    = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopBackLeft     = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomLeftFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomBackLeft  = IsEmpty(ref blockData, ref chunkSize, cubePosition.X - 1, cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+
+                        topLeft     = cubePosition + new Vector4B(0, 1, 0, 0); // topLeftBack
                         bottomRight = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
-                        bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
-                        topRight = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
+                        bottomLeft  = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
+                        topRight    = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
 
                         hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
@@ -741,19 +841,21 @@ namespace Utopia.Entities.Voxel
                 #region Right
                 case CubeFaces.Right:
                     {
-                        var lright = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z) ? 255 : 0;
-                        var ltopRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z) ? 255 : 0;
-                        var lbottomright = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z) ? 255 : 0;
-                        var lbackRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z - 1) ? 255 : 0;
-                        var lrightFront = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1) ? 255 : 0;
-                        var ltopRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1) ? 255 : 0;
-                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1) ? 255 : 0;
-                        var lbottomRightBack = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1) ? 255 : 0;
+                        var mirror = cubePosition.X != chunkSize.X - 1 ? voxelFrame.FrameMirror : FrameMirror.None;
 
-                        topLeft = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
-                        topRight = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
-                        bottomLeft = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
+                        var lright            = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y,     cubePosition.Z,     mirror) ? 255 : 0;
+                        var ltopRight         = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lbottomright      = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z,     mirror) ? 255 : 0;
+                        var lbackRight        = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y,     cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lrightFront       = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y,     cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopFrontRight    = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var ltopRightBack     = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y + 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+                        var lbottomFrontRight = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z + 1, mirror) ? 255 : 0;
+                        var lbottomRightBack  = IsEmpty(ref blockData, ref chunkSize, cubePosition.X + 1, cubePosition.Y - 1, cubePosition.Z - 1, mirror) ? 255 : 0;
+
+                        topLeft     = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
+                        topRight    = cubePosition + new Vector4B(1, 1, 0, 0); // topRightBack
+                        bottomLeft  = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
                         bottomRight = cubePosition + new Vector4B(1, 0, 0, 0); // bottonRightBack
 
                         hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);

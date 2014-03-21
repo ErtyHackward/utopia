@@ -15,8 +15,6 @@ namespace Utopia.Shared.Entities.Models
     [ProtoContract]
     public class VoxelModel
     {
-        public const int ModelFormatVersion = 2;
-
         public VoxelModel()
         {
             Frames = new List<VoxelFrame>();
@@ -75,8 +73,7 @@ namespace Utopia.Shared.Entities.Models
                 voxelModelState.ParentModel = this;
             }
         }
-
-
+        
         /// <summary>
         /// Calculates a md5 hash from a model
         /// </summary>
@@ -84,125 +81,13 @@ namespace Utopia.Shared.Entities.Models
         {
             using (var ms = new MemoryStream())
             {
-                var writer = new BinaryWriter(ms);
-
-                SaveImpl(writer);
-
+                Hash = null;
+                Serializer.Serialize(ms, this);
                 ms.Position = 0;
                 Hash = Md5Hash.Calculate(ms);
             }
         }
-
-        private void SaveImpl(BinaryWriter writer, Md5Hash hash = null)
-        {
-            writer.Write(ModelFormatVersion);
-
-            writer.Write(Name);
-
-            if (hash != null)
-            {
-                writer.Write((byte)16);
-                writer.Write(hash.Bytes);
-            }
-            else writer.Write((byte)0);
-
-            ColorMapping.Write(writer, ColorMapping);
-
-            writer.Write((byte)Frames.Count);
-            foreach (var voxelFrame in Frames)
-            {
-                voxelFrame.Save(writer);
-            }
-            writer.Write((byte)Parts.Count);
-            foreach (var voxelModelPart in Parts)
-            {
-                voxelModelPart.Save(writer);
-            }
-            writer.Write((byte)States.Count);
-            foreach (var voxelModelState in States)
-            {
-                voxelModelState.Save(writer);
-            }
-            writer.Write((byte)Animations.Count);
-            foreach (var voxelModelAnimation in Animations)
-            {
-                voxelModelAnimation.Save(writer);
-            }
-        }
-
-        public void Save(BinaryWriter writer)
-        {
-            UpdateHash();
-            SaveImpl(writer, Hash);
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            var version = reader.ReadInt32();
-
-            if (version != ModelFormatVersion)
-                throw new InvalidDataException("Invalid model format version. Convert models to the v" + ModelFormatVersion + " format to use");
-
-            Name = reader.ReadString();
-
-            var count = reader.ReadByte();
-
-            if (count > 0)
-            {
-                var hash = reader.ReadBytes(count);
-                if (hash.Length != 16)
-                    throw new EndOfStreamException();
-                Hash = new Md5Hash(hash);
-            }
-            else Hash = null;
-
-            ColorMapping = ColorMapping.Read(reader);
-
-            count = reader.ReadByte();
-
-            Frames.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var frame = new VoxelFrame();
-                frame.Load(reader);
-                Frames.Add(frame);
-            }
-
-            count = reader.ReadByte();
-
-            Parts.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var modelPart = new VoxelModelPart();
-                modelPart.Load(reader);
-                Parts.Add(modelPart);
-            }
-
-            count = reader.ReadByte();
-
-            States.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var modelState = new VoxelModelState(this);
-                modelState.Load(reader);
-                States.Add(modelState);
-            }
-
-            count = reader.ReadByte();
-
-            Animations.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var modelState = new VoxelModelAnimation();
-                modelState.Load(reader);
-                Animations.Add(modelState);
-            }
-        }
-
+        
         /// <summary>
         /// Removes a state from index, updates animations indices
         /// </summary>
