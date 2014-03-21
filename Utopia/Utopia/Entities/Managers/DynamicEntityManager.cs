@@ -67,7 +67,8 @@ namespace Utopia.Entities.Managers
         private HLSLVoxelModelInstanced _voxelModelEffect;
         private HLSLVoxelModel _voxelToolEffect;
 
-        private Sprite3DRenderer<Sprite3DTextProc> _dynamicEntityNameRenderer;
+        private Sprite3DRenderer<Sprite3DTextProc> _dynamicEntityNameRenderer; //Rendering Player Name
+        private Sprite3DRenderer<Sprite3DColorBillBoardProc> _dynamicEntityEnergyBarRenderer; //Rendering Player Name
         private SpriteFont _dynamicEntityNameFont;
 
         private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
@@ -95,6 +96,10 @@ namespace Utopia.Entities.Managers
         //Cube Rendering
         private Mesh _cubeMesh;
         private Mesh _cubeMeshBluePrint;
+
+        //HealthBar rendering
+        private ByteColor hbColor = Color.Red;
+        private ByteColor colorReceived = Color.White;
 
         private Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>> _toolsModels = new Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>>();
         
@@ -228,6 +233,12 @@ namespace Utopia.Entities.Managers
                                                                         DXStates.Blenders.Enabled,
                                                                         DXStates.DepthStencils.DepthReadWriteEnabled,
                                                                         context));
+            Sprite3DColorBillBoardProc energyBarProcessor = ToDispose(new Sprite3DColorBillBoardProc(ToDispose(new UtopiaIncludeHandler()), _sharedFrameCB.CBPerFrame, ClientSettings.EffectPack + @"Sprites\PointSpriteColor3DBillBoard.hlsl"));
+            _dynamicEntityEnergyBarRenderer = ToDispose(new Sprite3DRenderer<Sprite3DColorBillBoardProc>(energyBarProcessor,
+                                                                                                         DXStates.Rasters.Default,
+                                                                                                         DXStates.Blenders.Enabled,
+                                                                                                         DXStates.DepthStencils.DepthReadWriteEnabled,
+                                                                                                         context));
         }
 
         public override void UnloadContent()
@@ -289,7 +300,7 @@ namespace Utopia.Entities.Managers
 
             if (index == SPRITENAME_DRAW)
             {
-                DrawEntitiesName(context);
+                DrawEntitiesOverHeadData(context);
                 return;
             }
         }
@@ -576,9 +587,14 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Private Methods
-        private void DrawEntitiesName(DeviceContext context)
+        /// <summary>
+        /// Will draw : Name & Health Bar
+        /// </summary>
+        /// <param name="context"></param>
+        private void DrawEntitiesOverHeadData(DeviceContext context)
         {
             _dynamicEntityNameRenderer.Begin(context, true);
+            _dynamicEntityEnergyBarRenderer.Begin(context, true);
 
             foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance != null && x.ModelInstance.World != Matrix.Zero))
             {
@@ -591,6 +607,7 @@ namespace Utopia.Entities.Managers
                 if (dynamicEntity.DynamicEntity is CharacterEntity)
                 {
                     Name = ((CharacterEntity)dynamicEntity.DynamicEntity).CharacterName;
+                    //Is it the local player ?
                     if (_playerEntity == dynamicEntity.DynamicEntity)
                     {
                         color = Color.Yellow;
@@ -610,9 +627,19 @@ namespace Utopia.Entities.Managers
                 var distance = MVector3.Distance(dynamicEntity.WorldPosition.ValueInterp, _camManager.ActiveCamera.WorldPosition.ValueInterp);
                 float scaling = Math.Min( 0.040f, Math.Max(0.01f, 0.01f / 12 * (float)distance ));
                 _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
+
+                //HBar rendering
+                if (dynamicEntity.DynamicEntity.Health.CurrentAsPercent < 1 && dynamicEntity.DynamicEntity.Health.CurrentAsPercent > 0)
+                {
+                    var size = new Vector2((dynamicEntity.ModelInstance.State.BoundingBox.Maximum.X / 8) * dynamicEntity.DynamicEntity.Health.CurrentAsPercent, 0.1f);
+                    Vector3 hbPosition = textPosition;
+                    hbPosition.Y += 0.05f;
+                    _dynamicEntityEnergyBarRenderer.Processor.Draw(ref hbPosition, ref size, ref hbColor, ref colorReceived);
+                }
             }
 
             _dynamicEntityNameRenderer.End(context);
+            _dynamicEntityEnergyBarRenderer.End(context);
         }
 
         private void DrawTool(IVoxelEntity voxelTool, CharacterEntity charEntity)
