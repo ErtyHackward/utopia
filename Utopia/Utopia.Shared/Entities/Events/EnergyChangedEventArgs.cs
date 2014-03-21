@@ -9,7 +9,7 @@ namespace Utopia.Shared.Entities.Events
 {
     public class EnergyChangedEventArgs : EventArgs
     {
-        public IDynamicEntity Entity { get; set; }
+        public uint EntityOwner { get; set; }
         public float ValueChangedAmount { get; set; }
         public Energy EnergyChanged { get; set; }
     }

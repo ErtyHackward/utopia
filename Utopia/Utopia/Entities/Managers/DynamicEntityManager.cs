@@ -542,6 +542,9 @@ namespace Utopia.Entities.Managers
         /// <param name="ModelName">the voxel body to assign, if null, the default model body will be set</param>
         public void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true)
         {
+            //If own player, and not body displayed, don't do it
+            if (_playerEntity == null && _playerEntityManager.Player.DynamicId == entityId) return;
+
             var entity = (PlayerCharacter)GetEntityById(entityId);
             if (entity != null)
             {
@@ -778,9 +781,14 @@ namespace Utopia.Entities.Managers
         private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
         {
             //Action when other player are losing life !
-            if (e.ValueChangedAmount < -10)
+            if (e.ValueChangedAmount <= -10)
             {
-                _soundEngine.StartPlay3D("Hurt", 1.0f, e.Entity.Position.AsVector3());
+                //Get entity by ID
+                var dynamicEntity = GetEntityById(e.EntityOwner);
+                if (dynamicEntity != null)
+                {
+                    _soundEngine.StartPlay3D("Hurt", 1.0f, dynamicEntity.Position.AsVector3());
+                }
             }
         }
 

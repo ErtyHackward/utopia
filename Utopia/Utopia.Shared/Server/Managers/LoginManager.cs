@@ -255,6 +255,27 @@ namespace Utopia.Shared.Server.Managers
 
                 playerEntity.PlayerCharacter.IsReadOnly = loginData.Role == UserRole.Guest;
 
+                //Check playerEntity.DynamicEntity Initialisation
+                PlayerCharacter player = playerEntity.DynamicEntity as PlayerCharacter;
+                if (player != null)
+                {
+                    if (player.Health.MaxValue == 0 || player.Health.EntityOwnerId == 0)
+                    {
+                        player.Health = new Energy() { MaxValue = 100, CurrentValue = 100 };
+                        logger.Info("PlayerCharacter was missing Health initialization. EntityId : {0}", player.DynamicId);
+                    }
+                    if (player.Stamina.MaxValue == 0 || player.Stamina.EntityOwnerId == 0)
+                    {
+                        player.Stamina = new Energy() { MaxValue = 100, CurrentValue = 100 };
+                        logger.Info("PlayerCharacter was missing Stamina initialization. EntityId : {0}", player.DynamicId);
+                    }
+                    if (player.Oxygen.MaxValue == 0 || player.Oxygen.EntityOwnerId == 0)
+                    {
+                        player.Oxygen = new Energy() { MaxValue = 100, CurrentValue = 100 };
+                        logger.Info("PlayerCharacter was missing Oxygen initialization. EntityId : {0}", player.DynamicId);
+                    }
+                }
+
                 #endregion
                 
                 _server.EntityFactory.PrepareEntity(playerEntity.DynamicEntity);

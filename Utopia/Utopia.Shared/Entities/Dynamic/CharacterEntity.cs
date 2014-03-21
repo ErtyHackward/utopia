@@ -28,6 +28,9 @@ namespace Utopia.Shared.Entities.Dynamic
 
         private DynamicEntityHealthState _healthState;
         private DynamicEntityAfflictionState _afflictions;
+        private Energy _health;
+        private Energy _stamina;
+        private Energy _oxygen;
 
         /// <summary>
         /// Gets character name
@@ -54,19 +57,33 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Health energy. When it depletes the character will die.
         /// </summary>
         [ProtoMember(4)]
-        public Energy Health { get; set; }
+        public Energy Health
+        {
+            get { return _health; }
+            set { _health = value; _health.EntityOwnerId= this.DynamicId; }
+        }
 
         /// <summary>
         /// Allows to performs run and jumps
         /// </summary>
         [ProtoMember(5)]
-        public Energy Stamina { get; set; }
+
+        public Energy Stamina
+        {
+            get { return _stamina; }
+            set { _stamina = value; _stamina.EntityOwnerId = this.DynamicId; }
+        }
 
         /// <summary>
         /// Allow to limit time under the water
         /// </summary>
         [ProtoMember(6)]
-        public Energy Oxygen { get; set; }
+
+        public Energy Oxygen
+        {
+            get { return _oxygen; }
+            set { _oxygen = value; _oxygen.EntityOwnerId = this.DynamicId; }
+        }
 
         [Browsable(false)]
         [ProtoMember(7)]

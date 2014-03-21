@@ -41,6 +41,8 @@ namespace Utopia.Network
                         _playerEntity.ViewChanged -= PlayerEntityViewChanged;
                         _playerEntity.Use -= PlayerEntityUse;
                         _playerEntity.Health.ValueChanged -= Health_ValueChanged;
+                        _playerEntity.HealthStateChanged -= _playerEntity_HealthStateChanged;
+                        _playerEntity.AfflictionStateChanged -= _playerEntity_AfflictionStateChanged;
                     }
 
                     _playerEntity = value;
@@ -51,6 +53,8 @@ namespace Utopia.Network
                         _playerEntity.ViewChanged += PlayerEntityViewChanged;
                         _playerEntity.Use += PlayerEntityUse;
                         _playerEntity.Health.ValueChanged += Health_ValueChanged;
+                        _playerEntity.HealthStateChanged += _playerEntity_HealthStateChanged;
+                        _playerEntity.AfflictionStateChanged += _playerEntity_AfflictionStateChanged;
                     }
                 }
             }
@@ -329,7 +333,25 @@ namespace Utopia.Network
             {
                 Health = e.EnergyChanged,
                 Change = e.ValueChangedAmount,
-                EntityId = e.Entity == null ? _playerEntity.DynamicId : e.Entity.DynamicId
+                EntityId = e.EntityOwner
+            });
+        }
+
+        private void _playerEntity_AfflictionStateChanged(object sender, AfflictionStateChangeEventArgs e)
+        {
+            _server.ServerConnection.Send(new EntityAfflictionStateMessage
+            {
+                EntityId = e.DynamicEntity.DynamicId,
+                AfflictionState = e.NewState
+            });
+        }
+
+        private void _playerEntity_HealthStateChanged(object sender, HealthStateChangeEventArgs e)
+        {
+            _server.ServerConnection.Send(new EntityHealthStateMessage
+            {
+                EntityId = e.DynamicEntity.DynamicId,
+                HealthState = e.NewState
             });
         }
     }

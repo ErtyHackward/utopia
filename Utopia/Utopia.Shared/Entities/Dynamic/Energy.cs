@@ -49,6 +49,10 @@ namespace Utopia.Shared.Entities.Dynamic
             }
         }
 
+        [ProtoMember(4)]
+        [Browsable(false)]
+        public uint EntityOwnerId { get; set; }
+
         [Browsable(false)]
         public float CurrentAsPercent
         {
