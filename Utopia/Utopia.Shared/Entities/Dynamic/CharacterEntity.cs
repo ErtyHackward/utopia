@@ -375,77 +375,103 @@ namespace Utopia.Shared.Entities.Dynamic
         {
             var impact = new EntityToolImpact();
 
-            var death = Health.CurrentValue > 0 && Health.CurrentValue + change <= 0;
+            if (HealthState == DynamicEntityHealthState.Dead)
+            {
+                impact.Message = "The player is dead, cannot be subject to health change";
+                return impact;
+            }
 
             Health.CurrentValue += change;
 
-            if (death)
+            //If change > some Trigger ==> Risk of Afflication change like Stunt !
+
+            if (Health.CurrentValue <= 0 && HealthState != DynamicEntityHealthState.Dead)
             {
-                var graveBp = EntityFactory.Config.GraveBlueprint;
+                impact = ActivateDead();
+            }
+            else
+            {
+                //Raise trigger here : CharacterEntityHealthChange (Health energy + Contact point + Normal vector for the damage)
+                //Will be subscribed by client to play Hurt sound, show animation on hit point, ...
+                impact.Success = true;
+            }
 
-                if (graveBp < 256)
-                {
-                    logger.Warn("Unable to create grave entity");
-                    return impact;
-                }
+            return impact;
+        }
 
-                // first we will find a place for a grave
+        private EntityToolImpact ActivateDead()
+        {
+            HealthState = DynamicEntityHealthState.Dead; //Set Dead state to the player
+            DisplacementMode = EntityDisplacementModes.Dead; //Set character displacement mode 
 
-                var blockPos = Position.ToCubePosition();
-                var cursor = EntityFactory.LandscapeManager.GetCursor(blockPos);
-                cursor.OwnerDynamicId = DynamicId;
+            //Create grave logic
+            var impact = new EntityToolImpact();
 
-                while (cursor.GlobalPosition.Y > 0)
-                {
-                    if (cursor.PeekValue(new Vector3I(0,-1,0) ) != WorldConfiguration.CubeId.Air)
-                        break;
-                    cursor.Move(new Vector3I(0, -1, 0));
-                }
+            var graveBp = EntityFactory.Config.GraveBlueprint;
 
-                // check if the grave already exists
+            if (graveBp < 256)
+            {
+                logger.Warn("Unable to create grave entity");
+                return impact;
+            }
 
-                var chunk = EntityFactory.LandscapeManager.GetChunkFromBlock(cursor.GlobalPosition);
+            // first we will find a place for a grave
 
-                Entity grave = null;
+            var blockPos = Position.ToCubePosition();
+            var cursor = EntityFactory.LandscapeManager.GetCursor(blockPos);
+            cursor.OwnerDynamicId = DynamicId;
 
-                foreach (var staticEntity in chunk.Entities)
-                {
-                    var entity = (Entity)staticEntity;
-                    if (entity.BluePrintId == graveBp && entity.Position == cursor.GlobalPosition)
-                        grave = entity;
-                }
-                
-                // create new if not
+            while (cursor.GlobalPosition.Y > 0)
+            {
+                if (cursor.PeekValue(new Vector3I(0, -1, 0)) != WorldConfiguration.CubeId.Air)
+                    break;
+                cursor.Move(new Vector3I(0, -1, 0));
+            }
 
-                if (grave == null)
-                {
-                    grave = EntityFactory.CreateFromBluePrint(graveBp);
-                    grave.Position = cursor.GlobalPosition;
-                    cursor.AddEntity((IStaticEntity)grave);
-                }
-                
-                var graveContainer = grave as Container;
-                
-                if (graveContainer != null)
-                {
-                    foreach (var containedSlot in Slots())
-                    {
-                        if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
-                        {
-                            logger.Warn("Can't put all items to the container, it is too small!");
-                            break;
-                        }
-                    }
-                }
-                
-                // remove all items from the player
+            // check if the grave already exists
 
+            var chunk = EntityFactory.LandscapeManager.GetChunkFromBlock(cursor.GlobalPosition);
+
+            Entity grave = null;
+
+            foreach (var staticEntity in chunk.Entities)
+            {
+                var entity = (Entity)staticEntity;
+                if (entity.BluePrintId == graveBp && entity.Position == cursor.GlobalPosition)
+                    grave = entity;
+            }
+
+            // create new if not
+
+            if (grave == null)
+            {
+                grave = EntityFactory.CreateFromBluePrint(graveBp);
+                grave.Position = cursor.GlobalPosition;
+                cursor.AddEntity((IStaticEntity)grave);
+            }
+
+            var graveContainer = grave as Container;
+
+            if (graveContainer != null)
+            {
                 foreach (var containedSlot in Slots())
                 {
-                    TakeItems(containedSlot.Item.BluePrintId, containedSlot.ItemsCount);
+                    if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
+                    {
+                        logger.Warn("Can't put all items to the container, it is too small!");
+                        break;
+                    }
                 }
             }
 
+            // remove all items from the player
+
+            foreach (var containedSlot in Slots())
+            {
+                TakeItems(containedSlot.Item.BluePrintId, containedSlot.ItemsCount);
+            }
+
+            impact.Success = true;
             return impact;
         }
 
