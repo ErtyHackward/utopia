@@ -171,7 +171,7 @@ namespace Utopia.Entities.Managers
                 return;
             }
 
-            if (e.ValueChangedAmount < -10)
+            if (e.ValueChangedAmount <= -10)
             {
                 if (e.ValueChangedAmount < -30)
                 {
