@@ -150,6 +150,13 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         [ProtoMember(8)]
         public Quaternion BodyRotation { get; set; }
+
+        /// <summary>
+        /// Indicates if the player can change its mode to fly
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(9)]
+        public bool CanFly { get; set; }
         #endregion
 
         #region Events

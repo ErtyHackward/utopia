@@ -78,10 +78,25 @@ namespace Utopia.Shared.Server.Commands
                     var currentReadOnly = con.ServerEntity.DynamicEntity.IsReadOnly;
                     var newReadOnly = newRole == UserRole.Guest;
 
+                    var currentFly = con.ServerEntity.DynamicEntity.CanFly;
+                    var newFly = newRole == UserRole.Administrator;
+
+                    var updateEntity = false;
+
                     if (currentReadOnly != newReadOnly)
                     {
                         con.ServerEntity.DynamicEntity.IsReadOnly = newReadOnly;
-                        
+                        updateEntity = true;
+                    }
+
+                    if (currentFly != newFly)
+                    {
+                        con.ServerEntity.DynamicEntity.CanFly = newFly;
+                        updateEntity = true;
+                    }
+
+                    if (updateEntity)
+                    {
                         server.AreaManager.RemoveEntity(con.ServerEntity);
                         server.AreaManager.AddEntity(con.ServerEntity);
 

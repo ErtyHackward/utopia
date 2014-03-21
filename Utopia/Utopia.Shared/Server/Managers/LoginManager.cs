@@ -254,9 +254,10 @@ namespace Utopia.Shared.Server.Managers
                 }
 
                 playerEntity.PlayerCharacter.IsReadOnly = loginData.Role == UserRole.Guest;
+                playerEntity.PlayerCharacter.CanFly = loginData.Role == UserRole.Administrator;
 
                 //Check playerEntity.DynamicEntity Initialisation
-                PlayerCharacter player = playerEntity.DynamicEntity as PlayerCharacter;
+                var player = playerEntity.DynamicEntity as PlayerCharacter;
                 if (player != null)
                 {
                     if (player.Health.MaxValue == 0 || player.Health.EntityOwnerId == 0)
