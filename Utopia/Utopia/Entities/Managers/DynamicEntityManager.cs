@@ -491,7 +491,7 @@ namespace Utopia.Entities.Managers
         }
 
         /// <summary>
-        /// Returns entity by a link or null
+        /// Returns entity by a link or null, will also look into the Local player
         /// </summary>
         /// <param name="link"></param>
         /// <returns></returns>
@@ -499,6 +499,8 @@ namespace Utopia.Entities.Managers
         {
             if (!link.IsDynamic)
                 throw new ArgumentException("The link is not pointing to a dynamic entity");
+
+            if (IsLocalPlayer(link.DynamicEntityId)) return _playerEntityManager.Player;
 
             return GetEntityById(link.DynamicEntityId);
         }
@@ -586,7 +588,7 @@ namespace Utopia.Entities.Managers
                 _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
 
                 //HBar rendering
-                if (dynamicEntity.DynamicEntity.Health.CurrentAsPercent < 1 && dynamicEntity.DynamicEntity.Health.CurrentAsPercent > 0)
+                if (!IsLocalPlayer(dynamicEntity.DynamicEntity.DynamicId) && dynamicEntity.DynamicEntity.Health.CurrentAsPercent < 1 && dynamicEntity.DynamicEntity.Health.CurrentAsPercent > 0)
                 {
                     var size = new Vector2((dynamicEntity.ModelInstance.State.BoundingBox.Maximum.X / 8) * dynamicEntity.DynamicEntity.Health.CurrentAsPercent, 0.1f);
                     Vector3 hbPosition = textPosition;
