@@ -264,6 +264,9 @@ namespace S33M3CoreComponents.GUI
 
             if (buttonsText == null)
                 buttonsText = new[] { "Ok" };
+
+            var mouseCapture = _inputManager.MouseManager.MouseCapture;
+
             _inputManager.MouseManager.MouseCapture = false;
             var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2, windowWidth, windowHeight) };
 
@@ -276,16 +279,17 @@ namespace S33M3CoreComponents.GUI
                 var button = new ButtonControl { Text = text, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 20 + 5 * text.Length, 20) };
 
                 buttonsPlace.Bounds.Size.X += button.Bounds.Size.X + 5;
-
-
+                
                 var text1 = text;
                 button.Pressed += delegate
                 {
-
                     _screen.Desktop.Children.Remove(DialogHelper.DialogBg);
                     mbWindow.Close();
                     DialogClosed = true;
-                    if (action != null) action(text1);
+                    if (action != null) 
+                        action(text1);
+
+                    _inputManager.MouseManager.MouseCapture = mouseCapture;
                 };
 
                 buttonsPlace.Children.Add(button);
