@@ -327,14 +327,14 @@ namespace Utopia.Entities.Managers
                 if (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
                    (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
                 {
-                    if (DisplacementMode == EntityDisplacementModes.Walking)
+                    if (_playerCharacter.DisplacementMode == EntityDisplacementModes.Walking)
                     {
-                        DisplacementMode = EntityDisplacementModes.Swiming;
+                        _playerCharacter.DisplacementMode = EntityDisplacementModes.Swiming;
                     }
                 }
                 else
                 {
-                    if (DisplacementMode == EntityDisplacementModes.Swiming) DisplacementMode = EntityDisplacementModes.Walking;
+                    if (_playerCharacter.DisplacementMode == EntityDisplacementModes.Swiming) _playerCharacter.DisplacementMode = EntityDisplacementModes.Walking;
                 }
 
                 //Eyes under water (Used to change view Color)

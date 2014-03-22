@@ -7,7 +7,7 @@ using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Entities.Events
 {
-    public class AfflictionStateChangeEventArgs : EventArgs
+    public class EntityAfflicationStateChangeEventArgs : EventArgs
     {
         public DynamicEntityAfflictionState PreviousState;
         public DynamicEntityAfflictionState NewState;

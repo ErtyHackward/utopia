@@ -1,5 +1,6 @@
 ﻿using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
+using System;
 using Utopia.Entities.EntityMovement;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
@@ -36,5 +37,8 @@ namespace Utopia.Entities.Managers.Interfaces
         /// Affects picking algo
         /// </summary>
         IItem ActiveTool { get; }
+
+        event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
+        event Utopia.Entities.Managers.PlayerEntityManager.LandingGround OnLanding;
     }
 }

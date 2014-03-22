@@ -240,7 +240,7 @@ namespace Utopia.Network
                 }
             }
 
-            //Change the default Player ModelName
+            //Change the local Player default ModelName
             if (entity == null && e.Message.EntityLink.DynamicEntityId == PlayerEntity.DynamicId)
             {
                 entity = (PlayerCharacter)PlayerEntity;
@@ -289,8 +289,10 @@ namespace Utopia.Network
             {
                 //update the health of the entity
                 entity.Health.MaxValue = e.Message.Health.MaxValue;
-
                 entity.HealthImpact(e.Message.Change);
+
+                // sync, most of the time will do nothing
+                entity.Health.CurrentValue = e.Message.Health.CurrentValue;
             }
         }
         
@@ -326,7 +328,7 @@ namespace Utopia.Network
 
         private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
         {
-            // we don't need to send our health change during tool use
+            // we don't need to send local player health caused by a tool use, only if health has been changed but another way (falling, drowning,...)
             if (_handlingUseMessage) 
                 return;
 
@@ -338,7 +340,7 @@ namespace Utopia.Network
             });
         }
 
-        private void _playerEntity_AfflictionStateChanged(object sender, AfflictionStateChangeEventArgs e)
+        private void _playerEntity_AfflictionStateChanged(object sender, EntityAfflicationStateChangeEventArgs e)
         {
             _server.ServerConnection.Send(new EntityAfflictionStateMessage
             {
@@ -347,7 +349,7 @@ namespace Utopia.Network
             });
         }
 
-        private void _playerEntity_HealthStateChanged(object sender, HealthStateChangeEventArgs e)
+        private void _playerEntity_HealthStateChanged(object sender, EntityHealthStateChangeEventArgs e)
         {
             _server.ServerConnection.Send(new EntityHealthStateMessage
             {
