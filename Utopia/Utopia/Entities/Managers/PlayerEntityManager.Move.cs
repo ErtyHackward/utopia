@@ -277,33 +277,36 @@ namespace Utopia.Entities.Managers
 
         private void CheckForEventRaising()
         {
-            //Landing on ground after falling event
-            if ((_physicSimu.OnGround == false || 
-                Player.DisplacementMode == EntityDisplacementModes.Swiming || 
-                Player.DisplacementMode == EntityDisplacementModes.Flying || 
-                Player.DisplacementMode == EntityDisplacementModes.God ||
-                Player.DisplacementMode == EntityDisplacementModes.Dead) && _physicSimu.isInContactWithLadder == false)
+
+            if(Player.DisplacementMode == EntityDisplacementModes.Dead ||
+               Player.DisplacementMode == EntityDisplacementModes.Flying || 
+               Player.DisplacementMode == EntityDisplacementModes.God ||
+               Player.DisplacementMode == EntityDisplacementModes.Swiming ||
+               _physicSimu.isInContactWithLadder)
             {
-                //New "trigger"
-                if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;
+                //Situation where we can't take falling damage.
+                _fallMaxHeight = double.MinValue;
             }
             else
             {
-                if ((_physicSimu.OnGround == true || _physicSimu.isInContactWithLadder == false) && _fallMaxHeight != double.MinValue)
+                //Situation where I have to care of the damage.
+                if (_fallMaxHeight < _worldPosition.Y) _fallMaxHeight = _worldPosition.Y;
+
+                //Check the ground collision
+                if (_physicSimu.OnGround == true && _fallMaxHeight != double.MinValue)
                 {
-                    if (_fallMaxHeight - _worldPosition.Y >= 0.01)
+                    var fallDistance = _fallMaxHeight - _worldPosition.Y;
+                    if (fallDistance >= 0.01) //Check the fall height
                     {
-                        if (OnLanding != null)
-                        {
-                            OnLanding(_fallMaxHeight - _worldPosition.Y, _groundCube);
-                        }
-#if DEBUG
-                        logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
-#endif
+                        OnLanding(fallDistance, _groundCube);
                     }
+#if DEBUG
+                    logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
+#endif
                     _fallMaxHeight = double.MinValue;
                 }
             }
+
         }
 
         private void CheckHeadUnderWater()
