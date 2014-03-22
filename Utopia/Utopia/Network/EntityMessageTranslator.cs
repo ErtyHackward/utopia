@@ -289,8 +289,10 @@ namespace Utopia.Network
             {
                 //update the health of the entity
                 entity.Health.MaxValue = e.Message.Health.MaxValue;
-
                 entity.HealthImpact(e.Message.Change);
+
+                // sync, most of the time will do nothing
+                entity.Health.CurrentValue = e.Message.Health.CurrentValue;
             }
         }
         
@@ -326,7 +328,7 @@ namespace Utopia.Network
 
         private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
         {
-            // we don't need to send local player health cause by a tool use, only if health has been change but another way (falling, drowning,...)
+            // we don't need to send local player health caused by a tool use, only if health has been changed but another way (falling, drowning,...)
             if (_handlingUseMessage) 
                 return;
 

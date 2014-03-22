@@ -28,14 +28,21 @@ namespace Utopia.Shared.Server.Structs
                 {
                     _playerCharacter.Inventory.ItemPut -= Inventory_ItemPut;
                     _playerCharacter.Inventory.ItemTaken -= Inventory_ItemTaken;
+
+                    _playerCharacter.Health.ValueChanged -= Health_ValueChanged;
+                    _playerCharacter.HealthStateChanged -= PlayerCharacter_HealthStateChanged;
                 }
                 
                 _playerCharacter = value;
+                base.DynamicEntity = value;
 
                 if (_playerCharacter != null)
                 {
                     _playerCharacter.Inventory.ItemPut += Inventory_ItemPut;
                     _playerCharacter.Inventory.ItemTaken += Inventory_ItemTaken;
+
+                    _playerCharacter.Health.ValueChanged += Health_ValueChanged;
+                    _playerCharacter.HealthStateChanged += PlayerCharacter_HealthStateChanged;
                 }
             }
         }
@@ -44,8 +51,7 @@ namespace Utopia.Shared.Server.Structs
         {
             get { return base.DynamicEntity; }
             set { 
-                PlayerCharacter = (PlayerCharacter)value;
-                base.DynamicEntity = value; 
+                PlayerCharacter = (PlayerCharacter)value; 
             }
         }
 
@@ -57,7 +63,7 @@ namespace Utopia.Shared.Server.Structs
                 return;
             }
 
-            var msg =new ItemTransferMessage
+            var msg = new ItemTransferMessage
             {
                 SourceContainerEntityLink = PlayerCharacter.GetLink(),
                 SourceContainerSlot = e.Slot.GridPosition,
@@ -93,6 +99,16 @@ namespace Utopia.Shared.Server.Structs
         public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, ServerCore server) : base(connection, entity, server)
         {
             PlayerCharacter = (PlayerCharacter)entity;
+        }
+
+        void PlayerCharacter_HealthStateChanged(object sender, Entities.Events.EntityHealthStateChangeEventArgs e)
+        {
+            logger.Info("Player health state {0}", e.NewState);
+        }
+
+        void Health_ValueChanged(object sender, Entities.Events.EnergyChangedEventArgs e)
+        {
+            logger.Info("Player health change {0}, {1}", e.ValueChangedAmount, e.EnergyChanged.CurrentValue);
         }
 
         public override void Use(EntityUseMessage entityUseMessage)
@@ -133,8 +149,8 @@ namespace Utopia.Shared.Server.Structs
 
             try
             {
-                 if (!PlayerCharacter.ReplayTransfer(itm))
-                     ItemError();
+                if (!PlayerCharacter.ReplayTransfer(itm))
+                    ItemError();
             }
             finally
             {

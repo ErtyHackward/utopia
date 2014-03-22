@@ -14,11 +14,7 @@ namespace Utopia.Shared.Entities.Concrete
         [ProtoMember(1)]
         public int Damage { get; set; }
 
-        public MeleeWeapon()
-        {
-            RepeatedActionsAllowed = true;
-            IsPickable = true;
-        }
+        public bool RepeatedActionsAllowed { get; set; }
 
         public IToolImpact Use(IDynamicEntity owner)
         {
@@ -33,12 +29,11 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (entity == null)
             {
+                impact.Message = "Can't find such entity, desync?";
                 return impact;
             }
 
-            return entity.HealthImpact(-Damage, owner, owner.EntityState.PickPoint, owner.EntityState.PickPointNormal);
+            return entity.HealthImpact(-Damage, owner);
         }
-
-        public bool RepeatedActionsAllowed { get; set; }
     }
 }
