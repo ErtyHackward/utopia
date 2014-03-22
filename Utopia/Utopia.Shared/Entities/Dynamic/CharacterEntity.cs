@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
@@ -13,6 +11,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Concrete.System;
 using Container = Utopia.Shared.Entities.Concrete.Container;
+using SharpDX;
 
 namespace Utopia.Shared.Entities.Dynamic
 {
@@ -60,7 +59,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public Energy Health
         {
             get { return _health; }
-            set { _health = value; _health.EntityOwnerId= this.DynamicId; }
+            set { _health = value; _health.EntityOwnerId= DynamicId; }
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public Energy Stamina
         {
             get { return _stamina; }
-            set { _stamina = value; _stamina.EntityOwnerId = this.DynamicId; }
+            set { _stamina = value; _stamina.EntityOwnerId = DynamicId; }
         }
 
         /// <summary>
@@ -82,7 +81,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public Energy Oxygen
         {
             get { return _oxygen; }
-            set { _oxygen = value; _oxygen.EntityOwnerId = this.DynamicId; }
+            set { _oxygen = value; _oxygen.EntityOwnerId = DynamicId; }
         }
 
         [Browsable(false)]
@@ -93,7 +92,7 @@ namespace Utopia.Shared.Entities.Dynamic
             set
             {
                 if (_healthState == value) return;
-                var eventArg = new HealthStateChangeEventArgs 
+                var eventArg = new EntityHealthStateChangeEventArgs 
                 { 
                     DynamicEntity = this, 
                     NewState = value, 
@@ -112,7 +111,7 @@ namespace Utopia.Shared.Entities.Dynamic
             set
             {
                 if (_afflictions == value) return;
-                var eventArg = new AfflictionStateChangeEventArgs 
+                var eventArg = new EntityAfflicationStateChangeEventArgs 
                 { 
                     DynamicEntity = this, 
                     NewState = value, 
@@ -146,27 +145,27 @@ namespace Utopia.Shared.Entities.Dynamic
         public bool IsRealPlayer { get; set; }
 
         public event EventHandler InventoryUpdated;
-
         protected virtual void OnInventoryUpdated()
         {
-            var handler = InventoryUpdated;
-            if (handler != null) handler(this, EventArgs.Empty);
+            if (InventoryUpdated != null) InventoryUpdated(this, EventArgs.Empty);
         }
 
-        public event EventHandler<HealthStateChangeEventArgs> HealthStateChanged;
-
-        protected virtual void OnHealthStateChanged(HealthStateChangeEventArgs e)
+        public event EventHandler<EntityHealthStateChangeEventArgs> HealthStateChanged;
+        protected virtual void OnHealthStateChanged(EntityHealthStateChangeEventArgs e)
         {
-            var handler = HealthStateChanged;
-            if (handler != null) handler(this, e);
+            if (HealthStateChanged != null) HealthStateChanged(this, e);
         }
 
-        public event EventHandler<AfflictionStateChangeEventArgs> AfflictionStateChanged;
-
-        protected virtual void OnAfflictionStateChanged(AfflictionStateChangeEventArgs e)
+        public event EventHandler<EntityAfflicationStateChangeEventArgs> AfflictionStateChanged;
+        protected virtual void OnAfflictionStateChanged(EntityAfflicationStateChangeEventArgs e)
         {
-            var handler = AfflictionStateChanged;
-            if (handler != null) handler(this, e);
+            if (AfflictionStateChanged != null) AfflictionStateChanged(this, e);
+        }
+
+        public event EventHandler<EntityHealthChangeEventArgs> HealthChanged;
+        protected virtual void OnHealthChanged(EntityHealthChangeEventArgs e)
+        {
+            if (HealthChanged != null) HealthChanged(this, e);
         }
 
         protected CharacterEntity()
@@ -181,7 +180,7 @@ namespace Utopia.Shared.Entities.Dynamic
         private void Initialize()
         {
             Equipment = new CharacterEquipment(this);
-            Inventory = new SlotContainer<ContainedSlot>(this, new S33M3Resources.Structs.Vector2I(7, 5));
+            Inventory = new SlotContainer<ContainedSlot>(this, new Vector2I(7, 5));
 
             Equipment.ItemTaken += EquipmentOnItemEvent;
             Equipment.ItemPut += EquipmentOnItemEvent;
@@ -322,7 +321,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 }
                 else
                 {
-                    container = (Concrete.Container)EntityState.PickedEntityLink.ResolveStatic(EntityFactory.LandscapeManager);
+                    container = (Container)EntityState.PickedEntityLink.ResolveStatic(EntityFactory.LandscapeManager);
 
                     if (container == null)
                         return impact;
@@ -370,82 +369,118 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Damage handling
         /// </summary>
         /// <param name="change">Use negative value to do the damage, and positive to heal</param>
+        /// <param name="sourceEntity">Entity that hits us (or heal)</param>
         /// <returns></returns>
-        public IToolImpact HealthImpact(float change)
+        public IToolImpact HealthImpact(float change, IDynamicEntity sourceEntity = null)
         {
             var impact = new EntityToolImpact();
 
-            var death = Health.CurrentValue > 0 && Health.CurrentValue + change <= 0;
+            if (HealthState == DynamicEntityHealthState.Dead)
+            {
+                impact.Message = "The player is dead, cannot be subject to health change";
+                return impact;
+            }
 
             Health.CurrentValue += change;
 
-            if (death)
+            //If change > some Trigger ==> Risk of Afflication change like Stunt !
+
+            if (Health.CurrentValue <= 0 && HealthState != DynamicEntityHealthState.Dead)
             {
-                var graveBp = EntityFactory.Config.GraveBlueprint;
+                impact = ActivateDead();
+            }
 
-                if (graveBp < 256)
-                {
-                    logger.Warn("Unable to create grave entity");
-                    return impact;
-                }
+            //Raise trigger here : CharacterEntityHealthChange (Health energy + Contact point + Normal vector for the damage)
+            //Will be subscribed by client to play Hurt sound, show animation on hit point, ...
+            var e = new EntityHealthChangeEventArgs
+            {
+                Change = change,
+                Health = Health,
+                ImpactedEntity = this,
+                SourceEntity = sourceEntity,
+                HealthChangeHitLocation = sourceEntity == null ? default(Vector3) : sourceEntity.EntityState.PickPoint,
+                HealthChangeHitLocationNormal = sourceEntity == null ? default(Vector3I) : sourceEntity.EntityState.PickPointNormal
+            };
+            OnHealthChanged(e);
+            impact.Success = true;
+            
 
-                // first we will find a place for a grave
+            return impact;
+        }
 
-                var blockPos = Position.ToCubePosition();
-                var cursor = EntityFactory.LandscapeManager.GetCursor(blockPos);
-                cursor.OwnerDynamicId = DynamicId;
+        private EntityToolImpact ActivateDead()
+        {
+            HealthState = DynamicEntityHealthState.Dead; //Set Dead state to the player
+            DisplacementMode = EntityDisplacementModes.Dead; //Set character displacement mode 
+            
+            //Create grave logic
+            var impact = new EntityToolImpact();
 
-                while (cursor.GlobalPosition.Y > 0)
-                {
-                    if (cursor.PeekValue(new Vector3I(0,-1,0) ) != WorldConfiguration.CubeId.Air)
-                        break;
-                    cursor.Move(new Vector3I(0, -1, 0));
-                }
+            var graveBp = EntityFactory.Config.GraveBlueprint;
 
-                // check if the grave already exists
+            if (graveBp < 256)
+            {
+                logger.Warn("Unable to create grave entity");
+                return impact;
+            }
 
-                var chunk = EntityFactory.LandscapeManager.GetChunkFromBlock(cursor.GlobalPosition);
+            // first we will find a place for a grave
 
-                Entity grave = null;
+            var blockPos = Position.ToCubePosition();
+            var cursor = EntityFactory.LandscapeManager.GetCursor(blockPos);
+            cursor.OwnerDynamicId = DynamicId;
 
-                foreach (var staticEntity in chunk.Entities)
-                {
-                    var entity = (Entity)staticEntity;
-                    if (entity.BluePrintId == graveBp && entity.Position == cursor.GlobalPosition)
-                        grave = entity;
-                }
-                
-                // create new if not
+            while (cursor.GlobalPosition.Y > 0)
+            {
+                if (cursor.PeekValue(new Vector3I(0, -1, 0)) != WorldConfiguration.CubeId.Air)
+                    break;
+                cursor.Move(new Vector3I(0, -1, 0));
+            }
 
-                if (grave == null)
-                {
-                    grave = EntityFactory.CreateFromBluePrint(graveBp);
-                    grave.Position = cursor.GlobalPosition;
-                    cursor.AddEntity((IStaticEntity)grave);
-                }
-                
-                var graveContainer = grave as Container;
-                
-                if (graveContainer != null)
-                {
-                    foreach (var containedSlot in Slots())
-                    {
-                        if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
-                        {
-                            logger.Warn("Can't put all items to the container, it is too small!");
-                            break;
-                        }
-                    }
-                }
-                
-                // remove all items from the player
+            // check if the grave already exists
 
+            var chunk = EntityFactory.LandscapeManager.GetChunkFromBlock(cursor.GlobalPosition);
+
+            Entity grave = null;
+
+            foreach (var staticEntity in chunk.Entities)
+            {
+                var entity = (Entity)staticEntity;
+                if (entity.BluePrintId == graveBp && entity.Position == cursor.GlobalPosition)
+                    grave = entity;
+            }
+
+            // create new if not
+
+            if (grave == null)
+            {
+                grave = EntityFactory.CreateFromBluePrint(graveBp);
+                grave.Position = cursor.GlobalPosition;
+                cursor.AddEntity((IStaticEntity)grave);
+            }
+
+            var graveContainer = grave as Container;
+
+            if (graveContainer != null)
+            {
                 foreach (var containedSlot in Slots())
                 {
-                    TakeItems(containedSlot.Item.BluePrintId, containedSlot.ItemsCount);
+                    if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
+                    {
+                        logger.Warn("Can't put all items to the container, it is too small!");
+                        break;
+                    }
                 }
             }
 
+            // remove all items from the player
+
+            foreach (var containedSlot in Slots())
+            {
+                TakeItems(containedSlot.Item.BluePrintId, containedSlot.ItemsCount);
+            }
+
+            impact.Success = true;
             return impact;
         }
 

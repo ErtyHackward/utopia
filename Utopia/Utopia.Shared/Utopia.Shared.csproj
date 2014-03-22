@@ -158,9 +158,11 @@
     <Compile Include="Entities\Dynamic\GodHandToolState.cs" />
     <Compile Include="Entities\Dynamic\ToolState.cs" />
     <Compile Include="Entities\EntityParticule.cs" />
-    <Compile Include="Entities\Events\AfflicationStateChangeEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityAfflicationStateChangeEventArgs.cs" />
     <Compile Include="Entities\Events\EnergyChangedEventArgs.cs" />
-    <Compile Include="Entities\Events\HealthStateChangeEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityDisplacementModeEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityHealthChangeEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityHealthStateChangeEventArgs.cs" />
     <Compile Include="Entities\Events\UseType.cs" />
     <Compile Include="Entities\GlobalState.cs" />
     <Compile Include="Entities\Interfaces\IMoveAI.cs" />

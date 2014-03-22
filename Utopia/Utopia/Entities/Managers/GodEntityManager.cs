@@ -462,5 +462,10 @@ namespace Utopia.Entities.Managers
                 throw new NotImplementedException();
             }
         }
+
+
+        public event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
+
+        public event PlayerEntityManager.LandingGround OnLanding;
     }
 }

@@ -80,7 +80,6 @@ namespace Utopia.Entities.Managers
         private readonly SingleArrayChunkContainer _chunkContainer;
         private IWorldChunks _worldChunks;
         private int _staticEntityViewRange;
-        private ICharacterEntity _playerEntity;
         private ISoundEngine _soundEngine;
 
         private HLSLCubeTool _cubeToolEffect;
@@ -109,34 +108,6 @@ namespace Utopia.Entities.Managers
 
         #region Public Properties
         public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
-        /// <summary>
-        /// Gets or sets current player entity to display
-        /// Set to null in first person mode
-        /// </summary>
-        public ICharacterEntity PlayerEntity
-        {
-            get
-            {
-                return _playerEntity;
-            }
-            set
-            {
-                if (_playerEntity == value)
-                    return;
-
-                if (_playerEntity != null)
-                {
-                    RemoveEntity(_playerEntity);
-                }
-
-                _playerEntity = value;
-
-                if (_playerEntity != null)
-                {
-                    AddEntity(value, false);
-                }
-            }
-        }
         #endregion
 
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
@@ -171,6 +142,8 @@ namespace Utopia.Entities.Managers
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
 
+            _playerEntityManager.PlayerEntityChanged += _playerEntityManager_PlayerEntityChanged;
+
             DynamicEntities = new List<IVisualVoxelEntityContainer>();
 
             DrawOrders.UpdateIndex(VOXEL_DRAW, 99, "VOXEL_DRAW");
@@ -181,6 +154,7 @@ namespace Utopia.Entities.Managers
 
         public override void BeforeDispose()
         {
+            _playerEntityManager.PlayerEntityChanged -= _playerEntityManager_PlayerEntityChanged;
             _voxelModelManager.VoxelModelAvailable -= VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged -= CamManagerActiveCameraChanged;
             foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
@@ -282,14 +256,6 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool IsEntityVisible(Vector3D pos)
-        {
-            if (_worldChunks.SliceValue == -1)
-                return true;
-
-            return pos.Y < _worldChunks.SliceValue + 1 && pos.Y > _worldChunks.SliceValue - 7;
-        }
-
         public override void Draw(DeviceContext context, int index)
         {
             if (index == VOXEL_DRAW)
@@ -309,7 +275,6 @@ namespace Utopia.Entities.Managers
         {
             // as we store all entites in one collection
             // we will enumerate by all of them and add a player entity separately
-
             yield return _playerEntityManager.Player;
 
             foreach (var entity in _dynamicEntitiesDico.Values.Select(visualDynamicEntity => visualDynamicEntity.DynamicEntity))
@@ -347,9 +312,6 @@ namespace Utopia.Entities.Managers
                     {
                         modelInstance.World = Matrix.Zero;
                     }
-
-                    if (!IsEntityVisible(entityToRender.DynamicEntity.Position))
-                        modelInstance.World = Matrix.Zero;
 
                 }
 
@@ -408,11 +370,11 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
             {
                 //subscribe to entity state/afllication changes
-                entity.AfflictionStateChanged += EntityAfflictionStateChanged;
                 entity.HealthStateChanged += EntityHealthStateChanged;
-                if (PlayerEntity == null || entity.DynamicId != PlayerEntity.DynamicId)
+                if (!IsLocalPlayer(entity.DynamicId))
                 {
-                    entity.Health.ValueChanged += Health_ValueChanged;
+                    entity.HealthChanged += entity_HealthChanged;
+                    entity.AfflictionStateChanged += EntityAfflictionStateChanged;
                 }
 
                 ModelAndInstances modelWithInstances;
@@ -476,11 +438,11 @@ namespace Utopia.Entities.Managers
                 DynamicEntities.Remove(visualEntity);
                 _dynamicEntitiesDico.Remove(entity.DynamicId);
 
-                entity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 entity.HealthStateChanged -= EntityHealthStateChanged;
-                if (entity.DynamicId != PlayerEntity.DynamicId)
+                if (!IsLocalPlayer(entity.DynamicId))
                 {
-                    entity.Health.ValueChanged -= Health_ValueChanged;
+                    entity.HealthChanged -= entity_HealthChanged;
+                    entity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 }
 
                 visualEntity.Dispose();
@@ -488,8 +450,6 @@ namespace Utopia.Entities.Managers
                 OnEntityRemoved(new DynamicEntityEventArgs { Entity = entity });
             }
         }
-
-
 
         public void RemoveEntityById(uint entityId, bool dispose = true)
         {
@@ -507,11 +467,11 @@ namespace Utopia.Entities.Managers
                 DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
                 _dynamicEntitiesDico.Remove(entityId);
 
-                visualEntity.DynamicEntity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 visualEntity.DynamicEntity.HealthStateChanged -= EntityHealthStateChanged;
-                if (PlayerEntity == null || visualEntity.DynamicEntity.DynamicId != PlayerEntity.DynamicId)
+                if (!IsLocalPlayer(entity.DynamicEntity.DynamicId))
                 {
-                    visualEntity.DynamicEntity.Health.ValueChanged -= Health_ValueChanged;
+                    entity.DynamicEntity.HealthChanged -= entity_HealthChanged;
+                    visualEntity.DynamicEntity.AfflictionStateChanged -= EntityAfflictionStateChanged;
                 }
 
                 if (dispose) visualEntity.Dispose();
@@ -523,9 +483,6 @@ namespace Utopia.Entities.Managers
         {
             VisualDynamicEntity e;
 
-            //Is it myself ?
-            if (_playerEntityManager.Player.DynamicId == p) return _playerEntityManager.Player;
-
             if (_dynamicEntitiesDico.TryGetValue(p, out e))
             {
                 return e.DynamicEntity;
@@ -534,7 +491,7 @@ namespace Utopia.Entities.Managers
         }
 
         /// <summary>
-        /// Returns entity by a link or null
+        /// Returns entity by a link or null, will also look into the Local player
         /// </summary>
         /// <param name="link"></param>
         /// <returns></returns>
@@ -542,6 +499,8 @@ namespace Utopia.Entities.Managers
         {
             if (!link.IsDynamic)
                 throw new ArgumentException("The link is not pointing to a dynamic entity");
+
+            if (IsLocalPlayer(link.DynamicEntityId)) return _playerEntityManager.Player;
 
             return GetEntityById(link.DynamicEntityId);
         }
@@ -554,8 +513,6 @@ namespace Utopia.Entities.Managers
         public void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true)
         {
             //If own player, and not body displayed, don't do it
-            if (_playerEntity == null && _playerEntityManager.Player.DynamicId == entityId) return;
-
             var entity = (PlayerCharacter)GetEntityById(entityId);
             if (entity != null)
             {
@@ -579,14 +536,16 @@ namespace Utopia.Entities.Managers
 
             visualEntity.DynamicEntity = entity;
             visualEntity.VisualVoxelEntity.Entity = entity;
-
-            if (_playerEntity != null && entity.DynamicId == _playerEntity.DynamicId)
-                _playerEntity = entity;
         }
 
         #endregion
 
         #region Private Methods
+
+        private bool IsLocalPlayer(uint dynamicId)
+        {
+            return _playerEntityManager.Player.DynamicId == dynamicId;
+        }
         /// <summary>
         /// Will draw : Name & Health Bar
         /// </summary>
@@ -608,7 +567,7 @@ namespace Utopia.Entities.Managers
                 {
                     Name = ((CharacterEntity)dynamicEntity.DynamicEntity).CharacterName;
                     //Is it the local player ?
-                    if (_playerEntity == dynamicEntity.DynamicEntity)
+                    if (IsLocalPlayer(dynamicEntity.DynamicEntity.DynamicId))
                     {
                         color = Color.Yellow;
                     }
@@ -629,7 +588,7 @@ namespace Utopia.Entities.Managers
                 _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
 
                 //HBar rendering
-                if (dynamicEntity.DynamicEntity.Health.CurrentAsPercent < 1 && dynamicEntity.DynamicEntity.Health.CurrentAsPercent > 0)
+                if (!IsLocalPlayer(dynamicEntity.DynamicEntity.DynamicId) && dynamicEntity.DynamicEntity.Health.CurrentAsPercent < 1 && dynamicEntity.DynamicEntity.Health.CurrentAsPercent > 0)
                 {
                     var size = new Vector2((dynamicEntity.ModelInstance.State.BoundingBox.Maximum.X / 8) * dynamicEntity.DynamicEntity.Health.CurrentAsPercent, 0.1f);
                     Vector3 hbPosition = textPosition;
@@ -710,7 +669,7 @@ namespace Utopia.Entities.Managers
             context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
         }
 
-        //Raised Events
+        //Raised Events when an entity is added that is not the local player
         private void OnEntityAdded(DynamicEntityEventArgs e)
         {
             if (EntityAdded != null) EntityAdded(this, e);
@@ -730,16 +689,22 @@ namespace Utopia.Entities.Managers
 
 
         #region Events handling
+
+        private void _playerEntityManager_PlayerEntityChanged(object sender, PlayerEntityChangedEventArgs e)
+        {
+            //Player character has been updated.
+            UpdateEntity(_playerEntityManager.Player);
+        }
+
         private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
         {
             if (e.Camera.CameraType == CameraType.FirstPerson)
             {
-                PlayerEntity = null;
+                RemoveEntity(_playerEntityManager.Player);
             }
             else
             {
-                PlayerEntity = null;
-                PlayerEntity = (ICharacterEntity)_playerEntityManager.Player;
+                AddEntity(_playerEntityManager.Player, false);
             }
         }
 
@@ -770,7 +735,7 @@ namespace Utopia.Entities.Managers
         }
 
         //Handle Entity HealthState change
-        private void EntityHealthStateChanged(object sender, HealthStateChangeEventArgs e)
+        private void EntityHealthStateChanged(object sender, EntityHealthStateChangeEventArgs e)
         {
             //Check if the entity entered the Dead state
             switch (e.NewState)
@@ -789,7 +754,7 @@ namespace Utopia.Entities.Managers
                         UpdateEntityVoxelBody(e.DynamicEntity.DynamicId, null);
 
                         //Play dead sound only if player not active player
-                        if (e.DynamicEntity.DynamicId != PlayerEntity.DynamicId)
+                        if (!IsLocalPlayer(e.DynamicEntity.DynamicId))
                         {
                             _soundEngine.StartPlay3D("Dying", 1.0f, e.DynamicEntity.Position.AsVector3());
                         }
@@ -799,23 +764,17 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private void EntityAfflictionStateChanged(object sender, AfflictionStateChangeEventArgs e)
+        private void EntityAfflictionStateChanged(object sender, EntityAfflicationStateChangeEventArgs e)
         {
             //Handle Affliction change for an entity here if needed
             //Should "only" trigger visual aspect of it.
         }
 
-        private void Health_ValueChanged(object sender, EnergyChangedEventArgs e)
+        private void entity_HealthChanged(object sender, EntityHealthChangeEventArgs e)
         {
-            //Action when other player are losing life !
-            if (e.ValueChangedAmount <= -10)
+            if (e.Change < -2)
             {
-                //Get entity by ID
-                var dynamicEntity = GetEntityById(e.EntityOwner);
-                if (dynamicEntity != null)
-                {
-                    _soundEngine.StartPlay3D("Hurt", 1.0f, dynamicEntity.Position.AsVector3());
-                }
+                _soundEngine.StartPlay3D("Hurt", 1.0f, e.ImpactedEntity.Position.AsVector3());
             }
         }
 
