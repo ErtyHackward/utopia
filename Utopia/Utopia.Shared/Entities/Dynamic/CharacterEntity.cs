@@ -475,7 +475,7 @@ namespace Utopia.Shared.Entities.Dynamic
 
             // remove all items from the player
 
-            foreach (var containedSlot in Slots())
+            foreach (var containedSlot in Slots().ToList())
             {
                 TakeItems(containedSlot.Item.BluePrintId, containedSlot.ItemsCount);
             }

@@ -1,6 +1,7 @@
 ﻿using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete.System;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3CoreComponents.Cameras;
 using Utopia.Shared.Entities.Dynamic;
@@ -105,12 +106,31 @@ namespace Utopia.Entities.Managers
                 }
             }
 
-            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {
-                // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
-                // like opening a chest or a door  
+                if (IsRestrictedMode)
+                {
+                    if (Player.EntityState.IsEntityPicked && !Player.EntityState.PickedEntityLink.IsDynamic)
+                    {
+                        var entity = Player.EntityState.PickedEntityLink.ResolveStatic(_factory.LandscapeManager);
+                        var soulStone = entity as SoulStone;
+                        if (soulStone != null)
+                        {
+                            if (soulStone.DynamicEntityOwnerID == Player.DynamicId)
+                            {
+                                if (_ressurectionState == ressurectionStates.PreventRessurection)
+                                    _ressurectionState = ressurectionStates.None;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
+                    // like opening a chest or a door  
 
-                HandleHandUse();
+                    HandleHandUse();
+                }
             }
 
             if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))

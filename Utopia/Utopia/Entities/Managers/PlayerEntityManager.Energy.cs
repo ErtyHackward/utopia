@@ -23,35 +23,35 @@ namespace Utopia.Entities.Managers
             None
         }
 
-        private ressurectionStates ressurectionState = ressurectionStates.None;
-        private Vector3D playerSpawnLocation = default(Vector3D);
+        private ressurectionStates _ressurectionState = ressurectionStates.None;
+        private Vector3D _playerSpawnLocation = default(Vector3D);
         public Vector3D PlayerSpawnLocation
         {
-            get { return playerSpawnLocation; }
-            set { playerSpawnLocation = value; }
+            get { return _playerSpawnLocation; }
+            set { _playerSpawnLocation = value; }
         }
 
         private void EnergyFTSUpdate(GameTime timeSpent)
         {
-            if (_playerCharacter.BindedSoulStone == null && playerSpawnLocation == default(Vector3D))
+            if (_playerCharacter.BindedSoulStone == null && _playerSpawnLocation == default(Vector3D))
             {
                 //Player not binded to a soulstone, remember player spawn location for ressurection only.
-                playerSpawnLocation = _playerCharacter.Position;
+                _playerSpawnLocation = _playerCharacter.Position;
             }
 
-            Vector3D BindingPosition = _playerCharacter.BindedSoulStone != null ? _playerCharacter.BindedSoulStone.Position : playerSpawnLocation;
+            Vector3D BindingPosition = _playerCharacter.BindedSoulStone != null ? _playerCharacter.BindedSoulStone.Position : _playerSpawnLocation;
 
             bool isWithinSoulStoneRange = Vector3D.DistanceSquared(BindingPosition, _playerCharacter.Position) <= 1024d;
-            if (isWithinSoulStoneRange == false && ressurectionState == ressurectionStates.PreventRessurection) ressurectionState = ressurectionStates.None;
+            if (isWithinSoulStoneRange == false && _ressurectionState == ressurectionStates.PreventRessurection) _ressurectionState = ressurectionStates.None;
 
             if (_playerCharacter.HealthState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
             {
-                if (!isWithinSoulStoneRange || ressurectionState == ressurectionStates.PreventRessurection) return;
+                if (!isWithinSoulStoneRange || _ressurectionState == ressurectionStates.PreventRessurection) return;
                 else
                 {
-                    if (ressurectionState != ressurectionStates.PendingRequest)
+                    if (_ressurectionState != ressurectionStates.PendingRequest)
                     {
-                        ressurectionState = ressurectionStates.PendingRequest;
+                        _ressurectionState = ressurectionStates.PendingRequest;
                         //Show resurect Box
                         _guiManager.MessageBox("Do you want to be resurrected ?", "SoulStone", new string[] { "Yes", "No" }, ResurectionRequest);
                     }
@@ -143,10 +143,10 @@ namespace Utopia.Entities.Managers
             {
                 case "yes":
                     DeactivateDeadState();
-                    ressurectionState = ressurectionStates.None;
+                    _ressurectionState = ressurectionStates.None;
                     break;
                 case "no":
-                    ressurectionState = ressurectionStates.PreventRessurection;
+                    _ressurectionState = ressurectionStates.PreventRessurection;
                     break;
                 default:
                     break;
