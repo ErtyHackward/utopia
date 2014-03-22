@@ -1,6 +1,7 @@
 #include "scripts\products.iss"
 #include "scripts\products\dotnetfx40.iss"
 #include "scripts\products\dxredist.iss"
+#include "scripts\products\crt2013.iss"
 #include "scripts\products\winversion.iss"
 #include "scripts\products\fileversion.iss"
 
@@ -63,6 +64,7 @@ begin
 	dotnetfx40();
 	ExtractTemporaryFile('dxwebsetup.exe');
 	dxredist();
+	crt2013();
 	Result := true;
 end;
 
