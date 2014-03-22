@@ -219,7 +219,7 @@ namespace Utopia.Network
         {
             var entity = (PlayerCharacter)_dynamicEntityManager.GetEntityById(e.Message.SourceEntityId);
 
-            if (entity != null)
+            if (entity != null && entity != PlayerEntity)
             {
                 // todo: handle desync on false
                 entity.ReplayTransfer(e.Message);
