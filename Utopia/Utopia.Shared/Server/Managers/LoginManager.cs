@@ -261,19 +261,22 @@ namespace Utopia.Shared.Server.Managers
                 {
                     if (player.Health.MaxValue == 0 || player.Health.EntityOwnerId == 0)
                     {
-                        player.Health = new Energy() { MaxValue = 100, CurrentValue = 100 };
+                        player.Health.MaxValue = 100;
+                        player.Health.CurrentValue = 100;
                         player.HealthState = DynamicEntityHealthState.Normal;
 
                         logger.Info("PlayerCharacter was missing Health initialization + health state. EntityId : {0}", player.DynamicId);
                     }
                     if (player.Stamina.MaxValue == 0 || player.Stamina.EntityOwnerId == 0)
                     {
-                        player.Stamina = new Energy() { MaxValue = 100, CurrentValue = 100 };
+                        player.Stamina.MaxValue = 100;
+                        player.Stamina.CurrentValue = 100;
                         logger.Info("PlayerCharacter was missing Stamina initialization. EntityId : {0}", player.DynamicId);
                     }
                     if (player.Oxygen.MaxValue == 0 || player.Oxygen.EntityOwnerId == 0)
                     {
-                        player.Oxygen = new Energy() { MaxValue = 100, CurrentValue = 100 };
+                        player.Oxygen.MaxValue = 100;
+                        player.Oxygen.CurrentValue = 100;
                         logger.Info("PlayerCharacter was missing Oxygen initialization. EntityId : {0}", player.DynamicId);
                     }
                 }

@@ -28,9 +28,6 @@ namespace Utopia.Shared.Server.Structs
                 {
                     _playerCharacter.Inventory.ItemPut -= Inventory_ItemPut;
                     _playerCharacter.Inventory.ItemTaken -= Inventory_ItemTaken;
-
-                    _playerCharacter.Health.ValueChanged -= Health_ValueChanged;
-                    _playerCharacter.HealthStateChanged -= PlayerCharacter_HealthStateChanged;
                 }
                 
                 _playerCharacter = value;
@@ -40,9 +37,6 @@ namespace Utopia.Shared.Server.Structs
                 {
                     _playerCharacter.Inventory.ItemPut += Inventory_ItemPut;
                     _playerCharacter.Inventory.ItemTaken += Inventory_ItemTaken;
-
-                    _playerCharacter.Health.ValueChanged += Health_ValueChanged;
-                    _playerCharacter.HealthStateChanged += PlayerCharacter_HealthStateChanged;
                 }
             }
         }
@@ -99,16 +93,6 @@ namespace Utopia.Shared.Server.Structs
         public ServerPlayerCharacterEntity(ClientConnection connection, DynamicEntity entity, ServerCore server) : base(connection, entity, server)
         {
             PlayerCharacter = (PlayerCharacter)entity;
-        }
-
-        void PlayerCharacter_HealthStateChanged(object sender, Entities.Events.EntityHealthStateChangeEventArgs e)
-        {
-            logger.Info("Player health state {0}", e.NewState);
-        }
-
-        void Health_ValueChanged(object sender, Entities.Events.EnergyChangedEventArgs e)
-        {
-            logger.Info("Player health change {0}, {1}", e.ValueChangedAmount, e.EnergyChanged.CurrentValue);
         }
 
         public override void Use(EntityUseMessage entityUseMessage)
@@ -170,11 +154,31 @@ namespace Utopia.Shared.Server.Structs
         {
             base.RetranslateMessage(message);
 
-            var ehm = message as EntityHealthMessage;
-
-            if (ehm != null)
             {
-                _playerCharacter.HealthImpact(ehm.Change);
+                var msg = message as EntityHealthMessage;
+                if (msg != null)
+                {
+                    _playerCharacter.HealthImpact(msg.Change);
+                    return;
+                }
+            }
+
+            {
+                var msg = message as EntityHealthStateMessage;
+                if (msg != null)
+                {
+                    _playerCharacter.HealthState = msg.HealthState;
+                    return;
+                }
+            }
+
+            {
+                var msg = message as EntityAfflictionStateMessage;
+                if (msg != null)
+                {
+                    _playerCharacter.Afflictions = msg.AfflictionState;
+                    return;
+                }
             }
         }
     }
