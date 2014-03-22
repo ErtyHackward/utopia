@@ -254,6 +254,11 @@ namespace S33M3CoreComponents.GUI
             _screen.Update();
         }
 
+        public bool ScreenIsLocked
+        {
+            get { return _screen.Desktop.Children.Contains(DialogHelper.DialogBg); }
+        }
+
         public void MessageBox(string message, string title = "", string[] buttonsText = null, System.Action<string> action = null)
         {
             var screenWidth = _d3DEngine.ViewPort.Width;
@@ -312,6 +317,7 @@ namespace S33M3CoreComponents.GUI
 
         public void SetDialogMode(bool dialogMode)
         {
+            if (_screen.Desktop.Children.Contains(DialogHelper.DialogBg)) _screen.Desktop.Children.Remove(DialogHelper.DialogBg);
             ForceExclusiveMode = dialogMode;
             _inputManager.ActionsManager.IsMouseExclusiveMode = dialogMode;
             _inputManager.MouseManager.MouseCapture = !dialogMode;

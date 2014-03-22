@@ -259,6 +259,8 @@ namespace Realms.Client.States
 
         void ActionsManager_KeyboardAction(object sender, ActionsManagerEventArgs e)
         {
+            var guiManager = _ioc.Get<GuiManager>();
+
             if (StatesManager.CurrentState.Name == "Settings") 
                 return;
 
@@ -278,44 +280,47 @@ namespace Realms.Client.States
             if (StatesManager.CurrentState.Name == "InGameMenu") 
                 return;
 
-            switch (e.Action.ActionId)
+            if (guiManager.ScreenIsLocked == false)
             {
-                case UtopiaActions.OpenInventory:
-                    if (StatesManager.CurrentState.Name != "Inventory")
-                    {
-                        StatesManager.ActivateGameStateAsync("Inventory", true);
-                    }
-                    else
-                    {
-                        StatesManager.ActivateGameStateAsync("Gameplay");
-                    }
-                    break;
-                case UtopiaActions.OpenCrafting:
-                    if (StatesManager.CurrentState.Name != "Crafting")
-                    {
-                        StatesManager.ActivateGameStateAsync("Crafting", true);
-                    }
-                    else
-                    {
-                        StatesManager.ActivateGameStateAsync("Gameplay");
-                    }
-                    break;
-                case UtopiaActions.SelectCharacter:
-                    if (StatesManager.CurrentState.Name != "CharSelection")
-                    {
-                        StatesManager.ActivateGameStateAsync("CharSelection", true);
-                    }
-                    else
-                    {
-                        StatesManager.ActivateGameStateAsync("Gameplay");
-                    }
-                    break;
-                default:
-                    if (e.Action.ActionId == UtopiaActions.EntityUse && StatesManager.CurrentState.Name == "Inventory")
-                    {
-                        StatesManager.ActivateGameStateAsync("Gameplay");
-                    }
-                    break;
+                switch (e.Action.ActionId)
+                {
+                    case UtopiaActions.OpenInventory:
+                        if (StatesManager.CurrentState.Name != "Inventory")
+                        {
+                            StatesManager.ActivateGameStateAsync("Inventory", true);
+                        }
+                        else
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                    case UtopiaActions.OpenCrafting:
+                        if (StatesManager.CurrentState.Name != "Crafting")
+                        {
+                            StatesManager.ActivateGameStateAsync("Crafting", true);
+                        }
+                        else
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                    case UtopiaActions.SelectCharacter:
+                        if (StatesManager.CurrentState.Name != "CharSelection")
+                        {
+                            StatesManager.ActivateGameStateAsync("CharSelection", true);
+                        }
+                        else
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                    default:
+                        if (e.Action.ActionId == UtopiaActions.EntityUse && StatesManager.CurrentState.Name == "Inventory")
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                }
             }
         }
 
