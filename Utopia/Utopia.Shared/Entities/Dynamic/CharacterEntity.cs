@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Collections.Generic;
 using ProtoBuf;
@@ -61,7 +59,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public Energy Health
         {
             get { return _health; }
-            set { _health = value; _health.EntityOwnerId= this.DynamicId; }
+            set { _health = value; _health.EntityOwnerId= DynamicId; }
         }
 
         /// <summary>
@@ -72,7 +70,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public Energy Stamina
         {
             get { return _stamina; }
-            set { _stamina = value; _stamina.EntityOwnerId = this.DynamicId; }
+            set { _stamina = value; _stamina.EntityOwnerId = DynamicId; }
         }
 
         /// <summary>
@@ -83,7 +81,7 @@ namespace Utopia.Shared.Entities.Dynamic
         public Energy Oxygen
         {
             get { return _oxygen; }
-            set { _oxygen = value; _oxygen.EntityOwnerId = this.DynamicId; }
+            set { _oxygen = value; _oxygen.EntityOwnerId = DynamicId; }
         }
 
         [Browsable(false)]
@@ -182,7 +180,7 @@ namespace Utopia.Shared.Entities.Dynamic
         private void Initialize()
         {
             Equipment = new CharacterEquipment(this);
-            Inventory = new SlotContainer<ContainedSlot>(this, new S33M3Resources.Structs.Vector2I(7, 5));
+            Inventory = new SlotContainer<ContainedSlot>(this, new Vector2I(7, 5));
 
             Equipment.ItemTaken += EquipmentOnItemEvent;
             Equipment.ItemPut += EquipmentOnItemEvent;
@@ -323,7 +321,7 @@ namespace Utopia.Shared.Entities.Dynamic
                 }
                 else
                 {
-                    container = (Concrete.Container)EntityState.PickedEntityLink.ResolveStatic(EntityFactory.LandscapeManager);
+                    container = (Container)EntityState.PickedEntityLink.ResolveStatic(EntityFactory.LandscapeManager);
 
                     if (container == null)
                         return impact;
@@ -371,18 +369,9 @@ namespace Utopia.Shared.Entities.Dynamic
         /// Damage handling
         /// </summary>
         /// <param name="change">Use negative value to do the damage, and positive to heal</param>
+        /// <param name="sourceEntity">Entity that hits us (or heal)</param>
         /// <returns></returns>
-        public IToolImpact HealthImpact(float change)
-        {
-            return HealthImpact(change, null, default(Vector3), default(Vector3I));
-        }
-
-        /// <summary>
-        /// Damage handling
-        /// </summary>
-        /// <param name="change">Use negative value to do the damage, and positive to heal</param>
-        /// <returns></returns>
-        public IToolImpact HealthImpact(float change, IDynamicEntity SourceEntity, Vector3 HealthChangeHitLocation, Vector3I HealthChangeHitLocationNormal)
+        public IToolImpact HealthImpact(float change, IDynamicEntity sourceEntity = null)
         {
             var impact = new EntityToolImpact();
 
@@ -400,22 +389,21 @@ namespace Utopia.Shared.Entities.Dynamic
             {
                 impact = ActivateDead();
             }
-            else
+
+            //Raise trigger here : CharacterEntityHealthChange (Health energy + Contact point + Normal vector for the damage)
+            //Will be subscribed by client to play Hurt sound, show animation on hit point, ...
+            var e = new EntityHealthChangeEventArgs
             {
-                //Raise trigger here : CharacterEntityHealthChange (Health energy + Contact point + Normal vector for the damage)
-                //Will be subscribed by client to play Hurt sound, show animation on hit point, ...
-                EntityHealthChangeEventArgs e = new EntityHealthChangeEventArgs()
-                {
-                    Change = change,
-                    Health = Health,
-                    ImpactedEntity = this,
-                    SourceEntity = SourceEntity,
-                    HealthChangeHitLocation = HealthChangeHitLocation,
-                    HealthChangeHitLocationNormal = HealthChangeHitLocationNormal
-                };
-                OnHealthChanged(e);
-                impact.Success = true;
-            }
+                Change = change,
+                Health = Health,
+                ImpactedEntity = this,
+                SourceEntity = sourceEntity,
+                HealthChangeHitLocation = sourceEntity == null ? default(Vector3) : sourceEntity.EntityState.PickPoint,
+                HealthChangeHitLocationNormal = sourceEntity == null ? default(Vector3I) : sourceEntity.EntityState.PickPointNormal
+            };
+            OnHealthChanged(e);
+            impact.Success = true;
+            
 
             return impact;
         }

@@ -247,7 +247,6 @@ namespace Utopia.Shared.Server.Managers
                         using (var ms = new MemoryStream(bytes))
                         {
                             playerEntity.DynamicEntity = Serializer.Deserialize<PlayerCharacter>(ms);
-                            _server.EntityFactory.PrepareEntity(playerEntity.DynamicEntity);
                         }
 
                     }
@@ -263,7 +262,9 @@ namespace Utopia.Shared.Server.Managers
                     if (player.Health.MaxValue == 0 || player.Health.EntityOwnerId == 0)
                     {
                         player.Health = new Energy() { MaxValue = 100, CurrentValue = 100 };
-                        logger.Info("PlayerCharacter was missing Health initialization. EntityId : {0}", player.DynamicId);
+                        player.HealthState = DynamicEntityHealthState.Normal;
+
+                        logger.Info("PlayerCharacter was missing Health initialization + health state. EntityId : {0}", player.DynamicId);
                     }
                     if (player.Stamina.MaxValue == 0 || player.Stamina.EntityOwnerId == 0)
                     {
