@@ -67,6 +67,13 @@ namespace Utopia.Shared.Entities.Inventory
         public StaticEntitySoundSource EmittedSound { get; set; }
 
         /// <summary>
+        /// Gets maximum pick range, 0 means default
+        /// </summary>
+        [Description("Maximum pick range, 0 means default")]
+        [ProtoMember(8)]
+        public float PickRange { get; set; }
+
+        /// <summary>
         /// Gets or sets voxel model instance
         /// </summary>
         [Browsable(false)]

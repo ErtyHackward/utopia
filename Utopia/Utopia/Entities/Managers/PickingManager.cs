@@ -96,7 +96,7 @@ namespace Utopia.Entities.Managers
             if (tool == null)
                 return result;
 
-            var pickedEntityDistance = float.MaxValue;
+            var pickedEntityDistance = tool.PickRange == 0f ? float.MaxValue : tool.PickRange;
             foreach (var entity in PossibleEntities())
             {
                 if (tool.CanPickEntity(entity.Entity) == PickType.Pick)
@@ -351,6 +351,9 @@ namespace Utopia.Entities.Managers
                 epr.Found = false;
 
             var tool = PlayerManager.ActiveTool;
+
+            if (tool.PickRange != 0f)
+                blockPickingDistance = Math.Min(tool.PickRange, blockPickingDistance);
 
             var nbrPointToSample = (int)(Math.Min(blockPickingDistance, epr.Distance) / 0.02);
 

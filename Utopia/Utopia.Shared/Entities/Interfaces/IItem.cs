@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using ProtoBuf;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Settings;
@@ -33,6 +34,11 @@ namespace Utopia.Shared.Entities.Interfaces
         StaticEntitySoundSource PutSound { get; set; }
 
         StaticEntitySoundSource EmittedSound { get; set; }
+
+        /// <summary>
+        /// Gets maximum pick range, 0 means default
+        /// </summary>
+        float PickRange { get; set; }
 
         /// <summary>
         /// Returns new entity position correspoding to the player
