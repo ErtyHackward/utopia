@@ -8,6 +8,7 @@ namespace Utopia.Shared.Entities.Interfaces
         Top = 0x1,
         Sides = 0x2,
         Bottom = 0x4,
-        Any = 0x1 | 0x2 | 0x4
+        TopAndBottom = Top | Bottom,
+        Any = Top | Sides | Bottom,
     }
 }

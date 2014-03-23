@@ -11,10 +11,6 @@ namespace Utopia.Shared.Entities.Concrete
     [Description("Use for different stuff.")]
     public class Stuff : Item
     {
-        public Stuff()
-        {
-            IsPickable = true;
-        }
 
     }
 }
