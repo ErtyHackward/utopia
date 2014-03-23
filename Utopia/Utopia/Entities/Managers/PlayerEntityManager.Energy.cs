@@ -201,8 +201,8 @@ namespace Utopia.Entities.Managers
                 case Utopia.Shared.Entities.Dynamic.DynamicEntityHealthState.Normal:
                     if (e.PreviousState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
                     {
-                        var restore = _playerCharacter.Health.CurrentValue < 0 ? _playerCharacter.Health.CurrentValue : 0;
-                        _playerCharacter.HealthImpact(restore + 10);
+                        //var restore = _playerCharacter.Health.CurrentValue < 0 ? _playerCharacter.Health.CurrentValue : 0;
+                        //_playerCharacter.HealthImpact(restore + 10);
                         _postEffectComponent.DeactivateEffect();
                         _worldPosition = new Vector3D(_playerCharacter.Position.X, _physicSimu.GroundBelowEntity, _playerCharacter.Position.Z);
                         _fallMaxHeight = double.MinValue;
