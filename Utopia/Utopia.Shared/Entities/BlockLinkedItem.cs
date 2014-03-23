@@ -138,7 +138,17 @@ namespace Utopia.Shared.Entities
             // locate the entity
             if (owner.EntityState.PickPointNormal.Y == 1) // = Put on TOP 
             {
-                pos.Position = new Vector3D(owner.EntityState.PickPoint);
+                if (BlockFaceCentered)
+                {
+                    var newBlockPos = owner.EntityState.IsBlockPicked ? owner.EntityState.NewBlockPosition : owner.EntityState.PickPoint.ToCubePosition();
+                    pos.Position = new Vector3D(
+                            newBlockPos + new Vector3(0.5f - (float)owner.EntityState.PickPointNormal.X / 2,
+                            owner.EntityState.PickPoint.Y % 1,
+                            0.5f - (float)owner.EntityState.PickPointNormal.Z / 2)
+                        );
+                }
+                else
+                    pos.Position = new Vector3D(owner.EntityState.PickPoint);
 
             }
             else if (owner.EntityState.PickPointNormal.Y == -1) //PUT on cube Bottom = (Ceiling)
@@ -148,14 +158,18 @@ namespace Utopia.Shared.Entities
             }
             else //Put on a side
             {
-                if (BlockFaceCentered == false || !owner.EntityState.IsBlockPicked)
+                if (BlockFaceCentered)
                 {
-                    pos.Position = new Vector3D(owner.EntityState.PickPoint);
+                    var newBlockPos = owner.EntityState.IsBlockPicked ? owner.EntityState.NewBlockPosition : owner.EntityState.PickPoint.ToCubePosition();
+                    pos.Position = new Vector3D(
+                            newBlockPos + new Vector3(0.5f - (float)owner.EntityState.PickPointNormal.X / 2, 
+                            0.5f, 
+                            0.5f - (float)owner.EntityState.PickPointNormal.Z / 2)
+                        );
                 }
                 else
                 {
-                    var newBlockPos = owner.EntityState.NewBlockPosition;
-                    pos.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)owner.EntityState.PickPointNormal.X / 2, 0.5f, 0.5f - (float)owner.EntityState.PickPointNormal.Z / 2));
+                    pos.Position = new Vector3D(owner.EntityState.PickPoint);
                 }
 
                 pos.Position += new Vector3D(owner.EntityState.PickPointNormal.X == -1 ? -0.01 : 0,

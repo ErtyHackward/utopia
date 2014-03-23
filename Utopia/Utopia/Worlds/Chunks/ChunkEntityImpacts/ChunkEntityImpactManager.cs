@@ -186,7 +186,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         {
             Vector3I entityBlockPosition;
             //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.
-            if (entity is IBlockLinkedEntity)
+            var blockLinkedItem = entity as IBlockLinkedEntity;
+
+            if (blockLinkedItem != null && blockLinkedItem.Linked)
             {
                 entityBlockPosition = ((IBlockLinkedEntity)entity).LinkedCube;
             }
