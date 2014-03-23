@@ -467,5 +467,18 @@ namespace Utopia.Entities.Managers
         public event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
 
         public event PlayerEntityManager.LandingGround OnLanding;
+
+
+        public Particules.UtopiaParticuleEngine UtopiaParticuleEngine
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

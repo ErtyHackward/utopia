@@ -37,7 +37,7 @@ namespace Utopia.Shared.Entities.Events
         public Vector3 HealthChangeHitLocation { get; set; }
 
         /// <summary>
-        /// The normal at the HealthChangeHitLocation, "Straight hit" or from side !
+        /// The normal at the HealthChangeHitLocation
         /// </summary>
         public Vector3I HealthChangeHitLocationNormal { get; set; }
     }

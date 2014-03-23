@@ -95,7 +95,7 @@ namespace Utopia.Shared.Entities
         [ProtoMember(11, OverwriteList=true)]
         [Category("Entity")]
         [Description("Define particules emiting behaviours")]
-        public EntityParticule[] Particules { get; set; }
+        public StaticEntityParticule[] Particules { get; set; }
 
         /// <summary>
         /// Get or sets entity grouping category

@@ -148,6 +148,7 @@
     <Compile Include="Entities\Concrete\Stuff.cs" />
     <Compile Include="Entities\Concrete\System\SoulStone.cs" />
     <Compile Include="Entities\Designation.cs" />
+    <Compile Include="Entities\DynamicEntityParticule.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityAfflictionState.cs" />
     <Compile Include="Entities\Dynamic\DynamicEntityHealthState.cs" />
     <Compile Include="Entities\Dynamic\Energy.cs" />
@@ -157,7 +158,7 @@
     <Compile Include="Entities\Dynamic\GodEntity.cs" />
     <Compile Include="Entities\Dynamic\GodHandToolState.cs" />
     <Compile Include="Entities\Dynamic\ToolState.cs" />
-    <Compile Include="Entities\EntityParticule.cs" />
+    <Compile Include="Entities\StaticEntityParticule.cs" />
     <Compile Include="Entities\Events\EntityAfflicationStateChangeEventArgs.cs" />
     <Compile Include="Entities\Events\EnergyChangedEventArgs.cs" />
     <Compile Include="Entities\Events\EntityDisplacementModeEventArgs.cs" />

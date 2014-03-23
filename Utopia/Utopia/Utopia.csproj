@@ -128,6 +128,7 @@
     <Compile Include="GUI\WindRose\CompassControlRenderer.cs" />
     <Compile Include="GUI\WindRose\WindRoseComponent.cs" />
     <Compile Include="GUI\WindRose\CompassControl.cs" />
+    <Compile Include="Particules\SpriteDynamicEmitter.cs" />
     <Compile Include="PostEffects\IPostEffect.cs" />
     <Compile Include="PostEffects\PostEffectComponent.cs" />
     <Compile Include="Components\VersionWatermark.cs" />
@@ -217,7 +218,7 @@
     <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="Particules\CubeEmitter.cs" />
-    <Compile Include="Particules\SpriteEmitter.cs" />
+    <Compile Include="Particules\SpriteStaticEmitter.cs" />
     <Compile Include="Particules\UtopiaParticuleEngine.cs" />
     <Compile Include="Sounds\MoodsSound.cs" />
     <Compile Include="UtopiaRender.cs" />

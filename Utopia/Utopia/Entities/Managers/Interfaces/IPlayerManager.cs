@@ -2,6 +2,7 @@
 using S33M3DXEngine.Main.Interfaces;
 using System;
 using Utopia.Entities.EntityMovement;
+using Utopia.Particules;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -40,5 +41,6 @@ namespace Utopia.Entities.Managers.Interfaces
 
         event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
         event Utopia.Entities.Managers.PlayerEntityManager.LandingGround OnLanding;
+        UtopiaParticuleEngine UtopiaParticuleEngine { get; set; }
     }
 }
