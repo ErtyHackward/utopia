@@ -192,7 +192,6 @@ namespace Utopia.Entities.Managers
                     _soundEngine.StartPlay2D("Hurt", 0.3f);
                 }
             }
-
         }
 
         private void playerCharacter_HealthStateChanged(object sender, Shared.Entities.Events.EntityHealthStateChangeEventArgs e)

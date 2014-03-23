@@ -434,7 +434,7 @@ namespace Utopia.Shared.Entities.Models
             {
                 var animation = VoxelModel.Animations.FindIndex(a => a.Name == animationName);
                 if (animation == -1)
-                    logger.Error("AnimationName", "Model have not animation called " + animationName);
+                    logger.Debug("{0}", "Model have not animation called " + animationName);
 
                 if (_animationIndex != animation)
                     return;
