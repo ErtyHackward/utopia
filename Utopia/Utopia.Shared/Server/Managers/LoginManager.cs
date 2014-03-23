@@ -264,6 +264,7 @@ namespace Utopia.Shared.Server.Managers
                         player.Health.MaxValue = 100;
                         player.Health.CurrentValue = 100;
                         player.HealthState = DynamicEntityHealthState.Normal;
+                        player.DisplacementMode = EntityDisplacementModes.Walking;
 
                         logger.Info("PlayerCharacter was missing Health initialization + health state. EntityId : {0}", player.DynamicId);
                     }

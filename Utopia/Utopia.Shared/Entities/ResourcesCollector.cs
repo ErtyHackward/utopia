@@ -132,7 +132,7 @@ namespace Utopia.Shared.Entities
                         impact.Dropped = true;
                         return impact;
                     }
-                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
+                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.Linked && e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
                     
                     var charEntity = owner as CharacterEntity;

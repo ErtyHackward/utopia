@@ -36,6 +36,7 @@ namespace Realms.Server
             var dEntity = new PlayerCharacter
             {
                 DynamicId = entityId,
+                HealthState = DynamicEntityHealthState.Normal,
                 DisplacementMode = EntityDisplacementModes.Walking,
                 Position = pos == def ? _server.LandscapeManager.GetHighestPoint(pos) : pos,
                 CharacterName = name,

@@ -19,7 +19,7 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     [ProtoInclude(100, typeof(OrientedBlockLinkedItem))]
     [ProtoInclude(101, typeof(Plant))]
-    [ProtoInclude(102, typeof(LightSource))]
+    [ProtoInclude(102, typeof(LinkedLightSource))]
     public abstract class BlockLinkedItem : Item, IBlockLinkedEntity, IBlockLocationRoot
     {
         /// <summary>
@@ -36,17 +36,46 @@ namespace Utopia.Shared.Entities
         [ProtoMember(2)]
         public Vector3I LinkedCube { get; set; }
 
+        /// <summary>
+        /// Allows to specify the possible face of the block where entity can be attached to
+        /// </summary>
         [Description("Allows to specify the possible face of the block where entity can be attached to")]
         [ProtoMember(3)]
         public BlockFace MountPoint { get; set; }
 
+        /// <summary>
+        /// The entity will be centered into the choosen block face
+        /// </summary>
         [Description("The entity will be centered into the choosen block face")]
         [ProtoMember(4)]
         public bool BlockFaceCentered { get; set; }
         
+        /// <summary>
+        /// The entity cannot be added if the block where it will be placed contain another entity
+        /// </summary>
         [Description("The entity cannot be added if the block where it will be placed contain another entity")]
         [ProtoMember(5)]
         public bool BlockEmptyRequired { get; set; }
+
+        /// <summary>
+        /// Indicates if the item could be mounted without block link (on other entities)
+        /// </summary>
+        [Description("Indicates if the item could be mounted without block link (on other entities)")]
+        [ProtoMember(6)]
+        public bool AllowToFreeMount { get; set; }
+
+        /// <summary>
+        /// Indicates if this item has block link or not
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(7)]
+        public bool NotLinked { get; set; }
+
+        /// <summary>
+        /// Indicates if this item has block link or not
+        /// </summary>
+        [Browsable(false)]
+        public bool Linked { get { return !NotLinked; } set { NotLinked = !value; } }
 
         public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
         {
@@ -54,16 +83,23 @@ namespace Utopia.Shared.Entities
 
             var cubeEntity = (BlockLinkedItem)item;
 
-            cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
-            cubeEntity.BlockLocationRoot = BlockHelper.EntityToBlock(pos.Position);
-
+            if (!owner.EntityState.IsBlockPicked)
+            {
+                cubeEntity.NotLinked = true;
+            }
+            else
+            {
+                cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
+                cubeEntity.BlockLocationRoot = BlockHelper.EntityToBlock(pos.Position);
+                cubeEntity.NotLinked = false;
+            }
         }
 
         public override EntityPosition GetPosition(IDynamicEntity owner)
         {
             var pos = new EntityPosition();
 
-            if (!owner.EntityState.IsBlockPicked)
+            if (!AllowToFreeMount && !owner.EntityState.IsBlockPicked)
                 return pos;
 
             if (!MountPoint.HasFlag(BlockFace.Top) && owner.EntityState.PickPointNormal.Y == 1)
@@ -81,7 +117,7 @@ namespace Utopia.Shared.Entities
                 return pos;
             }
 
-            if (BlockEmptyRequired)
+            if (BlockEmptyRequired && owner.EntityState.IsBlockPicked)
             {
                 //Get the chunk where the entity will be added and check if another entity is not present at the destination root block !
                 var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
@@ -89,7 +125,7 @@ namespace Utopia.Shared.Entities
                 if (workingchunk == null)
                     return pos;
 
-                foreach (var entity in workingchunk.Entities.OfType<BlockLinkedItem>().Where(x => x.LinkedCube == owner.EntityState.PickedBlockPosition))
+                foreach (var entity in workingchunk.Entities.OfType<BlockLinkedItem>().Where(x => x.Linked && x.LinkedCube == owner.EntityState.PickedBlockPosition))
                 {
                     if (entity.BlockLocationRoot == owner.EntityState.NewBlockPosition && entity.LinkedCube == owner.EntityState.PickedBlockPosition)
                     {
@@ -98,8 +134,6 @@ namespace Utopia.Shared.Entities
                     }
                 }
             }
-
-            Vector3 faceOffset = owner.EntityState.PickedBlockFaceOffset;
 
             // locate the entity
             if (owner.EntityState.PickPointNormal.Y == 1) // = Put on TOP 
@@ -114,13 +148,13 @@ namespace Utopia.Shared.Entities
             }
             else //Put on a side
             {
-                if (BlockFaceCentered == false)
+                if (BlockFaceCentered == false || !owner.EntityState.IsBlockPicked)
                 {
                     pos.Position = new Vector3D(owner.EntityState.PickPoint);
                 }
                 else
                 {
-                    Vector3I newBlockPos = owner.EntityState.NewBlockPosition;
+                    var newBlockPos = owner.EntityState.NewBlockPosition;
                     pos.Position = new Vector3D(newBlockPos + new Vector3(0.5f - (float)owner.EntityState.PickPointNormal.X / 2, 0.5f, 0.5f - (float)owner.EntityState.PickPointNormal.Z / 2));
                 }
 

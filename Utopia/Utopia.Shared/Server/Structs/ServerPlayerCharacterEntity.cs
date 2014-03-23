@@ -1,4 +1,5 @@
-﻿using Utopia.Shared.Entities.Dynamic;
+﻿using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Connections;
@@ -168,6 +169,10 @@ namespace Utopia.Shared.Server.Structs
                 if (msg != null)
                 {
                     _playerCharacter.HealthState = msg.HealthState;
+
+                    if (msg.HealthState == DynamicEntityHealthState.Normal)
+                        _playerCharacter.DisplacementMode = EntityDisplacementModes.Walking;
+
                     return;
                 }
             }
