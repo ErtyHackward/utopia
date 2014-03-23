@@ -3339,18 +3339,18 @@ namespace Utopia.Components
 
             foreach (var pos in range)
             {
-                var readFrom = pos;
+                var readFrom = pos - range.Position;
 
                 switch (editorAxis)
                 {
                     case EditorAxis.X:
-                        readFrom.X = range.Size.X - readFrom.X - 1;
+                        readFrom.X = range.Position.X + range.Size.X - readFrom.X - 1;
                         break;
                     case EditorAxis.Y:
-                        readFrom.Y = range.Size.Y - readFrom.Y - 1;
+                        readFrom.Y = range.Position.Y + range.Size.Y - readFrom.Y - 1;
                         break;
                     case EditorAxis.Z:
-                        readFrom.Z = range.Size.Z - readFrom.Z - 1;
+                        readFrom.Z = range.Position.Z + range.Size.Z - readFrom.Z - 1;
                         break;
                 }
 

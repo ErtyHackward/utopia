@@ -164,11 +164,13 @@ namespace Utopia.GUI.Inventory
             {
                 _spriteRender.Begin(false, context);
 
-                var textPos = new Vector2(75, 45);
+                var pos = new Vector2I(25, 100);
+
+                var textPos = new Vector2(pos.X + 50, pos.Y+ 20);
                 var textShadowPos = textPos + new Vector2(1, 1);
                 var color = new ByteColor(255, 255, 255, (int)(255 *_alpha));
                 var colorBlack = new ByteColor(0, 0, 0, (int)(255 * _alpha));
-                var rect = new Rectangle(25, 25, 67 - 25, 67 - 25);
+                var rect = new Rectangle(pos.X, pos.Y, 67 - 25, 67 - 25);
 
                 _spriteRender.Draw(_icon, ref rect, ref color, _textureArrayIndex);
                 _spriteRender.DrawText(_font, _currentItem.Value.Message, ref textShadowPos, ref colorBlack);
