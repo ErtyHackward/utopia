@@ -331,9 +331,12 @@ namespace Utopia.Shared.Chunks
         {
             Vector3I entityBlockPosition;
             //If the entity is of type IBlockLinkedEntity, then it needs to be store inside the chunk where the LinkedEntity belong.
-            if (entity is IBlockLinkedEntity)
+
+            var blockLinkedEntity = entity as IBlockLinkedEntity;
+
+            if (blockLinkedEntity != null && blockLinkedEntity.Linked)
             {
-                entityBlockPosition = ((IBlockLinkedEntity)entity).LinkedCube;
+                entityBlockPosition = blockLinkedEntity.LinkedCube;
             }
             else
             {
