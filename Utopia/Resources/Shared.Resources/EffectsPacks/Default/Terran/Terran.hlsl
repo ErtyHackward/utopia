@@ -203,12 +203,13 @@ PS_OUT PS(PS_IN input)
 	float fogvalue = input.fogPower;
 	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1);  //Clip if fog is complete
 
+	//float4 color = TerraTexture.SampleLevel(SamplerDiffuse, input.UVW, 0);
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	
 	clip(color.a < 0.1f ? -1:1 );    //Remove the pixel if alpha < 0.1
 
-	//Apply Biome Color if the Alpha is < 1
-	if(color.a < 1.0)
+	//Apply Biome Color if the Alpha is < 0.5
+	if(color.a < 0.5)
 	{
 		float3 samplingBiomeColor = {input.BiomeData.xy, input.Various.x };
 	    float4 biomeColor =  BiomesColors.Sample(SamplerBackBuffer, samplingBiomeColor);
@@ -217,6 +218,7 @@ PS_OUT PS(PS_IN input)
 		color.b = color.b * biomeColor.b;
 	}
 
+	color.a = 1.0f;
 	color = color * float4(input.EmissiveLight, 1);
 
 	float4 finalColor = color;
