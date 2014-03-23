@@ -21,7 +21,7 @@ using Utopia.Worlds.Weather;
 
 namespace Utopia.Particules
 {
-    public class SpriteEmitter : BaseComponent, IEmitter
+    public class SpriteStaticEmitter : BaseComponent, IEmitter
     {
         #region Private Variables
         private FastRandom _rnd;
@@ -77,7 +77,7 @@ namespace Utopia.Particules
         }
         #endregion
         
-        public SpriteEmitter(                   
+        public SpriteStaticEmitter(                   
                         ParticuleEngine parentParticuleEngine,                        
                         int textureSamplerId,
                         ShaderResourceView textureParticules,
@@ -144,7 +144,7 @@ namespace Utopia.Particules
 
         }
 
-        public void EmitParticule(EntityParticule particuleMetaData,
+        public void EmitParticule(StaticEntityParticule particuleMetaData,
                                   Vector3D EmittedPosition)
         {
             int nbr = particuleMetaData.EmittedParticulesAmount;

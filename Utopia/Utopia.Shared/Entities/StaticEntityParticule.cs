@@ -17,10 +17,10 @@ namespace Utopia.Shared.Entities
     }
 
     /// <summary>
-    /// Class that will store data in case of an entity can emit particules
+    /// Class that will store data needed for a static entity to emit particules
     /// </summary>
     [ProtoContract]
-    public class EntityParticule
+    public class StaticEntityParticule
     {
         private ByteColor _particuleColor = new ByteColor(255, 255, 255);
 
@@ -55,7 +55,6 @@ namespace Utopia.Shared.Entities
             get { return _particuleColor; }
             set { _particuleColor = value; }
         }
-
         [Description("Color Modifier value for the sprite")]
         [DisplayName("Color Modifier")]
         public Color Color
@@ -67,11 +66,9 @@ namespace Utopia.Shared.Entities
             }
             set { _particuleColor = new ByteColor(value.R, value.G, value.B, value.A); }
         }
-
         [Description("Particule lifeTime in seconds")]
         [ProtoMember(10)]
         public float ParticuleLifeTime { get; set; }
-
         [Description("Rate at wish the particules are emitted in sec.")]
         [ProtoMember(11)]
         public float EmittedParticuleRate { get; set; }

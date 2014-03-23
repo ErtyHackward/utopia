@@ -12,7 +12,7 @@ namespace Utopia.Entities
         public IEntity Entity;
         
         //Particule MetaData Information.
-        public EntityParticule Particule;
+        public StaticEntityParticule Particule;
         public DateTime EntityLastEmitTime;
     }
 }

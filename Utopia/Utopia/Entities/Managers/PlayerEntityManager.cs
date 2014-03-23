@@ -32,6 +32,7 @@ using Utopia.Shared.World;
 using Utopia.PostEffects;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.Sound;
+using Utopia.Particules;
 
 namespace Utopia.Entities.Managers
 {
@@ -60,7 +61,6 @@ namespace Utopia.Entities.Managers
         private readonly ChatComponent _chatComponent;
         private readonly PostEffectComponent _postEffectComponent;
         private ISoundEngine _soundEngine;
-
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -209,6 +209,8 @@ namespace Utopia.Entities.Managers
         /// Contains current locked container or null
         /// </summary>
         public Container LockedContainer { get; set; }
+
+        public UtopiaParticuleEngine UtopiaParticuleEngine { get; set; }
 
         #endregion
 

@@ -84,7 +84,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <returns></returns>
         EntityLink GetLink();
 
-        EntityParticule[] Particules { get; set; }
+        StaticEntityParticule[] Particules { get; set; }
 
         /// <summary>
         /// Gets an optional entity controller

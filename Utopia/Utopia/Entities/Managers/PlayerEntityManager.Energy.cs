@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.GUI;
+using Utopia.Particules;
 using Utopia.Shared.Net.Web.Responses;
 using Utopia.Shared.Structs;
 
@@ -175,6 +176,13 @@ namespace Utopia.Entities.Managers
         {
             if (e.Change < -2)
             {
+                //Only if first person mode !
+                if (_cameraManager.ActiveCamera.CameraType == S33M3CoreComponents.Cameras.CameraType.FirstPerson)
+                {
+                    //Damage indicator in case of First Person damage received
+                    UtopiaParticuleEngine.AddDynamicEntityParticules(_cameraManager.ActiveCamera.WorldPosition.Value, _entityRotations.LookAt, UtopiaParticuleEngine.DynamicEntityParticuleType.Blood);
+                }
+
                 if (e.Change < -20)
                 {
                     _soundEngine.StartPlay2D("Hurt", 1.0f);
