@@ -292,7 +292,7 @@ namespace Utopia.Network
                 entity.HealthImpact(e.Message.Change);
 
                 // sync, most of the time will do nothing
-                entity.Health.CurrentValue = e.Message.Health.CurrentValue;
+                // entity.Health.CurrentValue = e.Message.Health.CurrentValue;
             }
         }
         
