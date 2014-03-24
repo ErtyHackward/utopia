@@ -72,6 +72,7 @@ namespace S33M3DXEngine
 
         public Vector2 BackBufferSize;
         public Texture2D BackBufferTex;
+        public bool isInitialized;
 
         public Matrix Projection2D;
         /// <summary>
@@ -126,10 +127,15 @@ namespace S33M3DXEngine
             this.CurrentMSAASampling = samplingMode;
 
             string errorInit;
+            isInitialized = false;
             if (Initialize(out errorInit) == false)
             {
-                throw new Exception(errorInit);
+                errorInit = "DirectX initialization error, cannot start the game : " + errorInit;
+                System.Windows.Forms.MessageBox.Show(errorInit);
+                logger.Error(errorInit);
+                return;
             }
+            isInitialized = true;
 
             //Init State repo
             RenderStatesRepo.Initialize(this);
@@ -204,6 +210,8 @@ namespace S33M3DXEngine
         #region Public Methods
         public bool Initialize(out string errorMsg)
         {
+            try
+            {
             errorMsg = null;
 
             List<ModeDescription> adapterModes = new List<ModeDescription>();
@@ -233,6 +241,8 @@ namespace S33M3DXEngine
                         errorMsg = "Your graphical card doesn't support at minimum DirectX 10 feature, current feature : " + maxSupportLevel.ToString();
                         return false;
                     }
+
+                    
 
                     int DedicatedGPU = adapter.Description.DedicatedVideoMemory / (1024 * 1024);
                     if (DedicatedGPU < 0) DedicatedGPU = 0;
@@ -273,6 +283,13 @@ namespace S33M3DXEngine
             _renderForm.TopMost = false;
 
             return true;
+
+            }
+            catch (Exception e)
+            {
+                errorMsg = e.Message;
+                return false;
+            }
         }
 
         public void SetRenderTargets(DeviceContext context)
