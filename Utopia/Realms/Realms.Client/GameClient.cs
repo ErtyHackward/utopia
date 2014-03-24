@@ -39,7 +39,8 @@ namespace Realms.Client
 
             //Bings all components
             IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3), Program.StartUpResolution);
-            
+
+            if (_d3dEngine.isInitialized == false) return;
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Resources.Utopia;
 
@@ -52,7 +53,8 @@ namespace Realms.Client
             System.Net.ServicePointManager.Expect100Continue = false;
 
             // Create the Rendering Main LOOP
-            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync); 
+            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync);
+            if (game.Engine.isInitialized == false) ;
             _iocContainer.Bind<Game>().ToConstant(game);
 
             //Everytime a Key binding is change, we need to refresh the Bindings from InputManagers
