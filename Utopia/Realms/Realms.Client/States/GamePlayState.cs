@@ -81,6 +81,8 @@ namespace Realms.Client.States
             var windRose = _ioc.Get<WindRoseComponent>();
             
             var chat = _ioc.Get<ChatComponent>();
+            chat.ActivatedChanged += chat_ActivatedChanged;
+
 
             _hud = (RealmsHud)_ioc.Get<Hud>();
             _hud.CraftingButton.Pressed += CraftingButton_Pressed;
@@ -193,6 +195,12 @@ namespace Realms.Client.States
             base.Initialize(context);
         }
 
+        void chat_ActivatedChanged(object sender, EventArgs e)
+        {
+            var chat = _ioc.Get<ChatComponent>();
+            _hud.DisableNumbersHandling = chat.Activated;
+        }
+
         void CurrentGameScope_Disposed(object sender, EventArgs e)
         {
             _inputsManager.ActionsManager.KeyboardAction -= ActionsManager_KeyboardAction;
@@ -207,6 +215,9 @@ namespace Realms.Client.States
             
             _playerEntityManager.NeedToShowInventory -= playerEntityManager_NeedToShowInventory;
             _playerEntityManager = null;
+
+            var chat = _ioc.Get<ChatComponent>();
+            chat.ActivatedChanged -= chat_ActivatedChanged;
         }
 
         private void ServerComponentOnConnectionStausChanged(object sender, TcpConnectionStatusEventArgs e)
