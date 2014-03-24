@@ -233,7 +233,7 @@ namespace S33M3DXEngine
                     //GetResource Level            
                     FeatureLevel maxSupportLevel = Device.GetSupportedFeatureLevel(adapter);
                     logger.Info("Maximum supported DirectX11 level = {0}", maxSupportLevel.ToString());
-
+                    
                     if (maxSupportLevel == FeatureLevel.Level_9_1 || 
                         maxSupportLevel == FeatureLevel.Level_9_2 || 
                         maxSupportLevel == FeatureLevel.Level_9_3)
@@ -241,8 +241,6 @@ namespace S33M3DXEngine
                         errorMsg = "Your graphical card doesn't support at minimum DirectX 10 feature, current feature : " + maxSupportLevel.ToString();
                         return false;
                     }
-
-                    
 
                     int DedicatedGPU = adapter.Description.DedicatedVideoMemory / (1024 * 1024);
                     if (DedicatedGPU < 0) DedicatedGPU = 0;
@@ -493,7 +491,7 @@ namespace S33M3DXEngine
                 Format = Format.R32_Typeless,
                 SampleDescription = CurrentMSAASampling,
                 Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
+                BindFlags = BindFlags.DepthStencil,
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
             };
