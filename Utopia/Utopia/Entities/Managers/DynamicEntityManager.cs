@@ -308,7 +308,10 @@ namespace Utopia.Entities.Managers
                     var modelInstance = pairs.Value;
                     //Draw only the entities that are in Client view range
                     //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
-                    if (MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
+                    bool isInRenderingRange = MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange;
+                    //Can only see dead persons if your are dead yourself or if its your own body !
+                    bool showCharacters = entityToRender.DynamicEntity.HealthState != DynamicEntityHealthState.Dead || IsLocalPlayer(entityToRender.DynamicEntity.DynamicId) || _playerEntityManager.Player.HealthState == DynamicEntityHealthState.Dead;
+                    if (isInRenderingRange && showCharacters)
                     {
                         modelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(entityToRender.WorldPosition.ValueInterp.AsVector3());
                         modelInstance.LightColor = entityToRender.ModelLight.ValueInterp;
@@ -317,12 +320,11 @@ namespace Utopia.Entities.Managers
                     {
                         modelInstance.World = Matrix.Zero;
                     }
-
                 }
 
                 if (modelAndInstances.Value.VisualModel != null && modelAndInstances.Value.Instances != null)
                 {
-                    var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero).ToList();
+                    var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero).ToList(); //Draw only those where the matrix is different than Zero
                     modelAndInstances.Value.VisualModel.DrawInstanced(_d3DEngine.ImmediateContext, _voxelModelEffect, instancesToDraw);
                 }
             }
