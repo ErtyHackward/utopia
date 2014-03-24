@@ -48,6 +48,8 @@ namespace Utopia.GUI
         #region Public properties
         public bool IsHidden { get; set; }
 
+        public bool DisableNumbersHandling { get; set; }
+
         public ToolBarUi ToolbarUi
         {
             get { return _toolbarUi; }
@@ -164,23 +166,23 @@ namespace Utopia.GUI
                 }
             }
 
-            //Process pressed keys by "event"
-            foreach (var keyPressed in _inputManager.KeyboardManager.GetPressedChars())
+            if (!DisableNumbersHandling)
             {
-                switch (keyPressed)
+                foreach (var keyPressed in _inputManager.KeyboardManager.GetPressedChars())
                 {
-                    case '1': SelectSlot(0); break;
-                    case '2': SelectSlot(1); break;
-                    case '3': SelectSlot(2); break;
-                    case '4': SelectSlot(3); break;
-                    case '5': SelectSlot(4); break;
-                    case '6': SelectSlot(5); break;
-                    case '7': SelectSlot(6); break;
-                    case '8': SelectSlot(7); break;
-                    case '9': SelectSlot(8); break;
-                    case '0': SelectSlot(9); break;
-                    default:
-                        break;
+                    switch (keyPressed)
+                    {
+                        case '1': SelectSlot(0); break;
+                        case '2': SelectSlot(1); break;
+                        case '3': SelectSlot(2); break;
+                        case '4': SelectSlot(3); break;
+                        case '5': SelectSlot(4); break;
+                        case '6': SelectSlot(5); break;
+                        case '7': SelectSlot(6); break;
+                        case '8': SelectSlot(7); break;
+                        case '9': SelectSlot(8); break;
+                        case '0': SelectSlot(9); break;
+                    }
                 }
             }
 

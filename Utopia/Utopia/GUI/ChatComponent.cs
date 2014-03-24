@@ -53,6 +53,17 @@ namespace Utopia.GUI
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when chat component is activated or deactivated
+        /// </summary>
+        public event EventHandler ActivatedChanged;
+
+        protected virtual void OnActivatedChanged()
+        {
+            var handler = ActivatedChanged;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public int ChatLineLimit { get; set; }
         public bool IsHided { get; set; }
         public bool Activated
@@ -60,8 +71,12 @@ namespace Utopia.GUI
             get { return _activated; }
             private set
             {
+                if (_activated == value)
+                    return;
+
                 _activated = value;
                 _imanager.ActionsManager.IsFullExclusiveMode = value;
+                OnActivatedChanged();
             }
         }
 
