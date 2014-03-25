@@ -247,7 +247,7 @@ namespace Utopia.Entities.Voxel
             var size      = blockData.ChunkSize;
             vertices      = new List<VertexVoxelInstanced>();
             indices       = new List<ushort>();
-            var dico      = new Dictionary<int, int>();
+            var dico      = new Dictionary<long, int>();
 
 
             for (int x = 0; x < size.X; x++)
@@ -380,7 +380,12 @@ namespace Utopia.Entities.Voxel
             return (byte)((b1 + b2 + b3 + b4)/4);
         }
 
-        private void GenerateFaces(ref VoxelFrame voxelFrame, CubeFaces cubeFace, ref Dictionary<int, int> dico, Vector4B cubePosition, ref List<VertexVoxelInstanced> vertices, ref List<ushort> indices)
+        private long Compress(byte faceType, byte x, byte y, byte z, byte color)
+        {
+            return faceType + (x << 8) + (y << 16) + ((long)z << 32) + ((long)color << 40);
+        }
+
+        private void GenerateFaces(ref VoxelFrame voxelFrame, CubeFaces cubeFace, ref Dictionary<long, int> dico, Vector4B cubePosition, ref List<VertexVoxelInstanced> vertices, ref List<ushort> indices)
         {
             // hash and index
 
@@ -393,10 +398,10 @@ namespace Utopia.Entities.Voxel
 
             var chunkSize = blockData.ChunkSize;
             var cubeColor = blockData.GetBlock(cubePosition.X, cubePosition.Y, cubePosition.Z);
-            var cubeFaceType = (int)cubeFace;
+            var cubeFaceType = (byte)cubeFace;
             var faceTypeByte = (byte)cubeFace;
             int vertexOffset0, vertexOffset1, vertexOffset2, vertexOffset3;
-            int hashVertex;
+            long hashVertex;
             bool vertexInDico;
             int generatedVertex = 0;
             var verticeCubeOffset = vertices.Count;
@@ -423,7 +428,7 @@ namespace Utopia.Entities.Voxel
                         bottomLeft  = cubePosition + new Vector4B(0, 0, 1, 0); // bottomLeftFront
                         bottomRight = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
 
-                        hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topLeft.X, topLeft.Y, topLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
                         if (!vertexInDico)
                         {
@@ -437,7 +442,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topRight.X, topRight.Y, topRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
                         if (!vertexInDico)
                         {
@@ -451,7 +456,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomLeft.X << 6) + (bottomLeft.Y << 12) + (bottomLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomLeft.X, bottomLeft.Y, bottomLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
                         if (!vertexInDico)
                         {
@@ -465,7 +470,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomRight.X << 6) + (bottomRight.Y << 12) + (bottomRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomRight.X, bottomRight.Y, bottomRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
                         if (!vertexInDico)
                         {
@@ -510,7 +515,7 @@ namespace Utopia.Entities.Voxel
                         bottomLeft  = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
                         bottomRight = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
 
-                        hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topRight.X, topRight.Y, topRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
                         if (!vertexInDico)
                         {
@@ -524,7 +529,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topLeft.X, topLeft.Y, topLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
                         if (!vertexInDico)
                         {
@@ -538,7 +543,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomRight.X << 6) + (bottomRight.Y << 12) + (bottomRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomRight.X, bottomRight.Y, bottomRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
                         if (!vertexInDico)
                         {
@@ -552,7 +557,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomLeft.X << 6) + (bottomLeft.Y << 12) + (bottomLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomLeft.X, bottomLeft.Y, bottomLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
                         if (!vertexInDico)
                         {
@@ -597,7 +602,7 @@ namespace Utopia.Entities.Voxel
                         bottomLeft  = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
                         bottomRight = cubePosition + new Vector4B(1, 1, 1, 0); // topRightFront
 
-                        hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topLeft.X, topLeft.Y, topLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
                         if (!vertexInDico)
                         {
@@ -611,7 +616,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomRight.X << 6) + (bottomRight.Y << 12) + (bottomRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomRight.X, bottomRight.Y, bottomRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
                         if (!vertexInDico)
                         {
@@ -625,7 +630,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomLeft.X << 6) + (bottomLeft.Y << 12) + (bottomLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomLeft.X, bottomLeft.Y, bottomLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
                         if (!vertexInDico)
                         {
@@ -639,7 +644,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topRight.X, topRight.Y, topRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
                         if (!vertexInDico)
                         {
@@ -684,7 +689,7 @@ namespace Utopia.Entities.Voxel
                         bottomLeft  = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
                         bottomRight = cubePosition + new Vector4B(1, 0, 0, 0); // bottomRightBack
 
-                        hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topLeft.X, topLeft.Y, topLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
                         if (!vertexInDico)
                         {
@@ -698,7 +703,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomLeft.X << 6) + (bottomLeft.Y << 12) + (bottomLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomLeft.X, bottomLeft.Y, bottomLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
                         if (!vertexInDico)
                         {
@@ -712,7 +717,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topRight.X, topRight.Y, topRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
                         if (!vertexInDico)
                         {
@@ -726,7 +731,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomRight.X << 6) + (bottomRight.Y << 12) + (bottomRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomRight.X, bottomRight.Y, bottomRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
                         if (!vertexInDico)
                         {
@@ -771,7 +776,7 @@ namespace Utopia.Entities.Voxel
                         bottomLeft  = cubePosition + new Vector4B(0, 0, 0, 0); // bottomLeftBack
                         topRight    = cubePosition + new Vector4B(0, 1, 1, 0); // topLeftFront
 
-                        hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topLeft.X, topLeft.Y, topLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
                         if (!vertexInDico)
                         {
@@ -785,7 +790,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topRight.X, topRight.Y, topRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
                         if (!vertexInDico)
                         {
@@ -799,7 +804,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomLeft.X << 6) + (bottomLeft.Y << 12) + (bottomLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomLeft.X, bottomLeft.Y, bottomLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
                         if (!vertexInDico)
                         {
@@ -813,7 +818,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomRight.X << 6) + (bottomRight.Y << 12) + (bottomRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomRight.X, bottomRight.Y, bottomRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
                         if (!vertexInDico)
                         {
@@ -858,7 +863,7 @@ namespace Utopia.Entities.Voxel
                         bottomLeft  = cubePosition + new Vector4B(1, 0, 1, 0); // bottomRightFront
                         bottomRight = cubePosition + new Vector4B(1, 0, 0, 0); // bottonRightBack
 
-                        hashVertex = cubeFaceType + (topRight.X << 6) + (topRight.Y << 12) + (topRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topRight.X, topRight.Y, topRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset0);
                         if (!vertexInDico)
                         {
@@ -872,7 +877,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (topLeft.X << 6) + (topLeft.Y << 12) + (topLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, topLeft.X, topLeft.Y, topLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset1);
                         if (!vertexInDico)
                         {
@@ -886,7 +891,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomLeft.X << 6) + (bottomLeft.Y << 12) + (bottomLeft.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomLeft.X, bottomLeft.Y, bottomLeft.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset2);
                         if (!vertexInDico)
                         {
@@ -900,7 +905,7 @@ namespace Utopia.Entities.Voxel
                             generatedVertex++;
                         }
 
-                        hashVertex = cubeFaceType + (bottomRight.X << 6) + (bottomRight.Y << 12) + (bottomRight.Z << 18) + (cubeColor << 24);
+                        hashVertex = Compress(cubeFaceType, bottomRight.X, bottomRight.Y, bottomRight.Z, cubeColor);
                         vertexInDico = dico.TryGetValue(hashVertex, out vertexOffset3);
                         if (!vertexInDico)
                         {
