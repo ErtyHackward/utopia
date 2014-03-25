@@ -101,8 +101,8 @@ namespace Utopia.Components
             CBPerFrame.Values.CameraWorldPosition = _cameraManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
             CBPerFrame.Values.InvertedOrientation = Matrix.Transpose(Matrix.RotationQuaternion(Quaternion.Invert(_cameraManager.ActiveCamera.Orientation.ValueInterp)));
 
-            CBPerFrame.Values.WeatherGlobalOffset.X = _weather.TemperatureOffset;
-            CBPerFrame.Values.WeatherGlobalOffset.Y = _weather.MoistureOffset;
+            CBPerFrame.Values.WeatherGlobalOffset.X = _weather.MoistureOffset;
+            CBPerFrame.Values.WeatherGlobalOffset.Y = _weather.TemperatureOffset;
 
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {

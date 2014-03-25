@@ -125,7 +125,7 @@ PS_IN VS(VS_IN input)
 	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.BiomeData = input.BiomeData;
 	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
-	output.BiomeData.y = saturate(input.BiomeData.y + WeatherGlobalOffset.y);
+	output.BiomeData.y = saturate(output.BiomeData.y + WeatherGlobalOffset.y);
 	output.Various = input.Various;
 
 	if (SunVector.y < 0 && UseShadowMap)
