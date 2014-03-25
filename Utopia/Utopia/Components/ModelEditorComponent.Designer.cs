@@ -457,6 +457,7 @@ namespace Utopia.Components
             _saveButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Save" };
             _saveButton.Pressed += delegate { OnSaveClicked(); };
 
+#if DEBUG
             var exportButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Export" };
             exportButton.Pressed += delegate { OnExport(); };
             var importButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import" };
@@ -467,19 +468,26 @@ namespace Utopia.Components
             var importAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import all" };
             importAllButton.Pressed += delegate { OnImportAll(); };
 
+            var publishAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish All" };
+            publishAllButton.Pressed += delegate { OnPublishAll(); };
+#endif
             var publishButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish" };
             publishButton.Pressed += delegate { OnPublish(); };
 
-            var publishAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish All" };
-            publishAllButton.Pressed += delegate { OnPublishAll(); };
+            var downloadButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 140, 20), Text = "Load from server" };
+            downloadButton.Pressed += delegate { OnLoadServerModels(); };
+            
 
             _mainToolsGroup.Children.Add(_saveButton);
+#if DEBUG
             _mainToolsGroup.Children.Add(importButton);
             _mainToolsGroup.Children.Add(exportButton);
             _mainToolsGroup.Children.Add(importAllButton);
             _mainToolsGroup.Children.Add(exportAllButton);
-            _mainToolsGroup.Children.Add(publishButton);
             _mainToolsGroup.Children.Add(publishAllButton);
+#endif
+            _mainToolsGroup.Children.Add(publishButton);
+            _mainToolsGroup.Children.Add(downloadButton);
 
             #endregion
 

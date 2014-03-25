@@ -164,14 +164,6 @@ namespace Utopia.Network
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<UseFeedbackMessage>> MessageUseFeedback;
         /// <summary>
-        /// Occurs when GetVoxelModelsMessage is received
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<GetVoxelModelsMessage>> MessageGetVoxelModels;
-        /// <summary>
-        /// Occurs when VoxelModelDataMessage is received
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
-        /// <summary>
         /// Occurs when EntityDataMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<EntityDataMessage>> MessageEntityData;
@@ -200,7 +192,6 @@ namespace Utopia.Network
 
         public ServerComponent()
         {
-            
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
         }
 
@@ -405,16 +396,6 @@ namespace Utopia.Network
             if (MessageUseFeedback != null) MessageUseFeedback(this, new ProtocolMessageEventArgs<UseFeedbackMessage> { Message = ea });
         }
 
-        protected void OnMessageGetVoxelModels(GetVoxelModelsMessage ea)
-        {
-            if (MessageGetVoxelModels != null) MessageGetVoxelModels(this, new ProtocolMessageEventArgs<GetVoxelModelsMessage> { Message = ea });
-        }
-
-        protected void OnMessageVoxelModelData(VoxelModelDataMessage ea)
-        {
-            if (MessageVoxelModelData != null) MessageVoxelModelData(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
-        }
-
         protected virtual void OnMessageEntityData(EntityDataMessage ea)
         {
             if (MessageEntityData != null) MessageEntityData(this, new ProtocolMessageEventArgs<EntityDataMessage> { Message = ea });
@@ -523,12 +504,6 @@ namespace Utopia.Network
                     break;
                 case MessageTypes.UseFeedback:
                     OnMessageUseFeedback((UseFeedbackMessage)msg);
-                    break;
-                case MessageTypes.GetVoxelModels:
-                    OnMessageGetVoxelModels((GetVoxelModelsMessage)msg);
-                    break;
-                case MessageTypes.VoxelModelData:
-                    OnMessageVoxelModelData((VoxelModelDataMessage)msg);
                     break;
                 case MessageTypes.EntityData:
                     OnMessageEntityData((EntityDataMessage)msg);

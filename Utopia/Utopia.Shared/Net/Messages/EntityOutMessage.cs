@@ -1,6 +1,5 @@
 using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages

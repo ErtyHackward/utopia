@@ -56,8 +56,7 @@ namespace Utopia.Shared.Net.Web
             var handler = TokenVerified;
             if (handler != null) handler(this, e);
         }
-
-
+        
         /// <summary>
         /// Sends a token request to the server and fires TokenReceived event when done
         /// </summary>
@@ -98,7 +97,7 @@ namespace Utopia.Shared.Net.Web
 
             nvc.Add("name", Path.GetFileNameWithoutExtension(filePath));
 
-            List<UploadFileInfo> files = new List<UploadFileInfo>();
+            var files = new List<UploadFileInfo>();
 
             files.Add(new UploadFileInfo
                 {
@@ -115,6 +114,16 @@ namespace Utopia.Shared.Net.Web
             });
 
             HttpUploadFiles(ServerUrl + string.Format("/api/models?access_token={0}", Token), files, nvc);
+        }
+
+        /// <summary>
+        /// Requests a list of all available models
+        /// </summary>
+        /// <param name="callback"></param>
+        public void GetModelsListAsync(Action<ModelsListResponse> callback)
+        {
+            CheckToken();
+            GetRequestAsync(ServerUrl + string.Format("/api/models/list?access_token={0}", Token), callback);
         }
     }
 }

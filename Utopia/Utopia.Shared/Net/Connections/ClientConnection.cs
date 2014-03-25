@@ -195,28 +195,6 @@ namespace Utopia.Shared.Net.Connections
         }
 
         /// <summary>
-        /// Occurs when GetVoxelModelsMessage is received
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<GetVoxelModelsMessage>> MessageGetVoxelModels;
-
-        protected void OnMessageGetVoxelModels(GetVoxelModelsMessage ea)
-        {
-            var handler = MessageGetVoxelModels;
-            if (handler != null) handler(this, new ProtocolMessageEventArgs<GetVoxelModelsMessage> { Message = ea });
-        }
-
-        /// <summary>
-        /// Occurs when VoxelModelDataMessage is received
-        /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
-
-        protected void OnMessageVoxelModelData(VoxelModelDataMessage ea)
-        {
-            var handler = MessageVoxelModelData;
-            if (handler != null) handler(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
-        }
-
-        /// <summary>
         /// Occurs when RequestDateTimeSyncMessage is received
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<RequestDateTimeSyncMessage>> MessageRequestDateTimeSync;
@@ -337,12 +315,6 @@ namespace Utopia.Shared.Net.Connections
                     break;
                 case MessageTypes.EntityLock:
                     OnMessageEntityLock((EntityLockMessage)message);
-                    break;
-                case MessageTypes.GetVoxelModels:
-                    OnMessageGetVoxelModels((GetVoxelModelsMessage)message);
-                    break;
-                case MessageTypes.VoxelModelData:
-                    OnMessageVoxelModelData((VoxelModelDataMessage)message);
                     break;
                 case MessageTypes.RequestDateTimeSync:
                     OnMessageRequestDateTimeSync((RequestDateTimeSyncMessage)message);

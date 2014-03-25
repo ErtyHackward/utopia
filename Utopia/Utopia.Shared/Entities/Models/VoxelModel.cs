@@ -65,6 +65,12 @@ namespace Utopia.Shared.Entities.Models
         [ProtoMember(7)]
         public ColorMapping ColorMapping { get; set; }
 
+        /// <summary>
+        /// Gets or sets model author nickname
+        /// </summary>
+        [ProtoMember(8)]
+        public string Author { get; set; }
+
         [ProtoAfterDeserialization]
         public void Deserialized()
         {
@@ -123,9 +129,14 @@ namespace Utopia.Shared.Entities.Models
 
         public static VoxelModel LoadFromFile(string path)
         {
-            using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
+            return LoadFromStream(File.OpenRead(path));
+        }
+
+        public static VoxelModel LoadFromStream(Stream stream)
+        {
+            using (var fs = new GZipStream(stream, CompressionMode.Decompress))
             {
-                return Serializer.Deserialize<VoxelModel>(fs);   
+                return Serializer.Deserialize<VoxelModel>(fs);
             }
         }
 
