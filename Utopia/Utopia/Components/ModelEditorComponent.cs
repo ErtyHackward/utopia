@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Ninject;
@@ -28,6 +31,7 @@ using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Resources.Effects.Entities;
+using Matrix = SharpDX.Matrix;
 
 namespace Utopia.Components
 {
@@ -2914,8 +2918,26 @@ namespace Utopia.Components
 
                 _visualVoxelModel.VoxelModel.SaveToFile(path);
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 512, Height = 512 }))
-                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, Path.ChangeExtension(path, ".png"));
+                var imgPath = Path.ChangeExtension(path, ".png");
+
+                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 2048, Height = 2048 }))
+                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, imgPath);
+
+                Image img;
+                
+                using (var fs = File.OpenRead(imgPath))
+                    img = Image.FromStream(fs);
+
+                var newImage = new Bitmap(512, 512);
+                using (var gr = Graphics.FromImage(newImage))
+                {
+                    gr.SmoothingMode = SmoothingMode.HighQuality;
+                    gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    gr.DrawImage(img, new System.Drawing.Rectangle(0, 0, 512, 512));
+                }
+
+                newImage.Save(imgPath, ImageFormat.Png);
 
                 WebApi.UploadModel(path);
 
