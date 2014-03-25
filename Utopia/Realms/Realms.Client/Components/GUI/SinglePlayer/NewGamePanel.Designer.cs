@@ -164,7 +164,8 @@ namespace Realms.Client.Components.GUI.SinglePlayer
                 catch (Exception error)
                 {
                     logger.Error("Error while loading the configuration file : {0}", error);
-                    throw;
+                    _guiManager.MessageBox("Unable to load the configuration: " + error.Message);
+                    return;
                 }
             }
 
