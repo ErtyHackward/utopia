@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Utopia.Updater
 {
@@ -40,7 +42,7 @@ namespace Utopia.Updater
 
         public List<UpdateFileInfo> GetChangedFiles(UpdateFile previousVersion)
         {
-            List<UpdateFileInfo> changedFiles = new List<UpdateFileInfo>();
+            var changedFiles = new List<UpdateFileInfo>();
             foreach (var updateFileInfo in Files)
             {
                 var file = previousVersion.Files.Find(uf => uf.SystemPath == updateFileInfo.SystemPath);
@@ -52,6 +54,14 @@ namespace Utopia.Updater
             }
 
             return changedFiles;
+        }
+
+        public List<string> GetRemovedFiles(UpdateFile previousVersion)
+        {
+            return
+                previousVersion.Files.Where(f => !Files.Exists(x => x.SystemPath.Equals(f.SystemPath, StringComparison.CurrentCultureIgnoreCase )))
+                    .Select(f => f.SystemPath)
+                    .ToList();
         }
 
         public void Save(BinaryWriter writer)
