@@ -46,6 +46,10 @@ namespace Realms.Client.States
             AddComponent(_modelEditor);
             AddComponent(gui);
             AddComponent(iconFactory);
+
+            var vars = _ioc.Get<RealmRuntimeVariables>();
+            _modelEditor.Author = vars.DisplayName;
+
             base.Initialize(context);
         }
 

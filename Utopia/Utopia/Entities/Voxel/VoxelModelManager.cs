@@ -2,12 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Ninject;
 using Utopia.Network;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Net.Connections;
-using Utopia.Shared.Net.Messages;
 using S33M3DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
@@ -17,8 +16,9 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VoxelModelManager : GameComponent
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private bool _initialized;
-        private ServerComponent _server;
         private readonly object _syncRoot = new object();
         private readonly Dictionary<string, VisualVoxelModel> _models = new Dictionary<string, VisualVoxelModel>();
         private HashSet<string> _pendingModels = new HashSet<string>();
@@ -39,36 +39,7 @@ namespace Utopia.Entities.Voxel
         public IVoxelModelStorage VoxelModelStorage { get; set; }
 
         [Inject]
-        public ServerComponent Server
-        {
-            get { return _server; }
-            set { 
-                _server = value;
-                _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
-            }
-        }
-
-        [Inject]
         public VoxelMeshFactory VoxelMeshFactory { get; set; }
-
-        public override void BeforeDispose()
-        {
-            if (_server != null)
-                _server.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
-        }
-
-        void ServerConnectionMessageVoxelModelData(object sender, ProtocolMessageEventArgs<VoxelModelDataMessage> e)
-        {
-            lock (_syncRoot)
-            {
-                _models.Add(e.Message.VoxelModel.Name, new VisualVoxelModel(e.Message.VoxelModel, VoxelMeshFactory));
-                _pendingModels.Remove(e.Message.VoxelModel.Name);
-            }
-
-            _receivedModels.Enqueue(e.Message.VoxelModel);
-            
-            VoxelModelStorage.Save(e.Message.VoxelModel);
-        }
 
         /// <summary>
         /// Request a missing model from the server
@@ -85,8 +56,43 @@ namespace Utopia.Entities.Voxel
             }
 
             // don't request the model before we are initialized or already requested
-            if (requested && _initialized && _server != null)
-                _server.ServerConnection.Send(new GetVoxelModelsMessage { Names = new[] { name } });
+            if (requested && _initialized)
+            {
+                logger.Info("Downloading model: {0}", name);
+                var req = WebRequest.Create(string.Format("http://utopiarealms.com/models/{0}/download", Uri.EscapeDataString(name)));
+                req.BeginGetResponse(ModelReceived, req);
+            }
+            
+        }
+
+        private void ModelReceived(IAsyncResult ar)
+        {
+            var req = (HttpWebRequest)ar.AsyncState;
+
+            try
+            {
+                var response = req.EndGetResponse(ar);
+
+                using (var stream = response.GetResponseStream())
+                {
+                    var voxelModel = VoxelModel.LoadFromStream(stream);
+
+                    lock (_syncRoot)
+                    {
+                        _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, VoxelMeshFactory));
+                        _pendingModels.Remove(voxelModel.Name);
+                    }
+
+                    _receivedModels.Enqueue(voxelModel);
+                    VoxelModelStorage.Save(voxelModel);
+                }
+
+                response.Close();
+            }
+            catch (Exception x)
+            {
+                logger.Error("Unable to download the model: {0}", x.Message);
+            }
         }
 
         /// <summary>

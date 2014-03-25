@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Ninject;
@@ -146,6 +145,8 @@ namespace Utopia.Components
         #endregion
 
         #region Properties
+
+        public string Author { get; set; }
 
         /// <summary>
         /// Gets current editor camera transformation
@@ -426,13 +427,14 @@ namespace Utopia.Components
         /// <summary>
         /// Creates new editor component
         /// </summary>
-        /// <param name="d3DEngine"></param>
-        /// <param name="screen"></param>
-        /// <param name="manager"> </param>
-        /// <param name="meshFactory"> </param>
-        /// <param name="gui"> </param>
-        /// <param name="inputManager"> </param>
-        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui, InputsManager inputManager, IconFactory iconFactory)
+        public ModelEditorComponent(
+            D3DEngine d3DEngine, 
+            MainScreen screen, 
+            VoxelModelManager manager, 
+            VoxelMeshFactory meshFactory, 
+            GuiManager gui, 
+            InputsManager inputManager, 
+            IconFactory iconFactory)
         {
             _inputManager = inputManager;
             _iconFactory = iconFactory;
@@ -454,7 +456,14 @@ namespace Utopia.Components
             _frameViewData.Scale = 0.1f;
             _d3DEngine.ScreenSize_Updated += ViewportUpdated;
 
+            _manager.VoxelModelAvailable += ManagerVoxelModelAvailable;
+
             DrawOrders.UpdateIndex(0, 15);
+        }
+
+        void ManagerVoxelModelAvailable(object sender, VoxelModelReceivedEventArgs e)
+        {
+            UpdateModelsList(_visualVoxelModel);
         }
 
         private void InitPlanes(Vector3I chunkSize)
@@ -2842,19 +2851,7 @@ namespace Utopia.Components
                 var visualModel = new VisualVoxelModel(voxelModel, _meshFactory);
                 _manager.SaveModel(visualModel);
 
-                _modelsList.Items.Clear();
-                var index = 0;
-                int i = 0;
-                foreach (var model in _manager.Enumerate())
-                {
-                    _modelsList.Items.Add(model);
-                    if (model == visualModel)
-                        index = i;
-                    i++;
-                }
-
-                _modelsList.SelectedItems.Clear();
-                _modelsList.SelectedItems.Add(index);
+                UpdateModelsList(visualModel);
                 
                 _gui.MessageBox("Model imported", "Success");
             }
@@ -2862,6 +2859,34 @@ namespace Utopia.Components
             {
                 _gui.MessageBox(x.Message, "Error");
             }
+        }
+
+        private void UpdateModelsList(VisualVoxelModel selected = null)
+        {
+            _modelsList.Items.Clear();
+            var index = 0;
+            int i = 0;
+            foreach (var model in _manager.Enumerate())
+            {
+                _modelsList.Items.Add(model);
+                if (model == selected)
+                    index = i;
+                i++;
+            }
+
+            _modelsList.SelectedItems.Clear();
+            _modelsList.SelectedItems.Add(index);
+        }
+
+        private void OnLoadServerModels()
+        {
+            WebApi.GetModelsListAsync(m => 
+            {
+                foreach (var model in m.Models)
+                {
+                    _manager.GetModel(model.Name);     
+                }
+            });
         }
 
         private void OnPublish()
@@ -2881,6 +2906,11 @@ namespace Utopia.Components
 
                 if (File.Exists(path))
                     File.Delete(path);
+
+                if (string.IsNullOrEmpty(_visualVoxelModel.VoxelModel.Author))
+                {
+                    _visualVoxelModel.VoxelModel.Author = Author;
+                }
 
                 _visualVoxelModel.VoxelModel.SaveToFile(path);
 
@@ -2910,6 +2940,12 @@ namespace Utopia.Components
             {
                 var modelPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".uvm");
                 var previewPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".png");
+
+                if (string.IsNullOrEmpty(_visualVoxelModel.VoxelModel.Author))
+                {
+                    _visualVoxelModel.VoxelModel.Author = Author;
+                }
+
                 visualVoxelModel.VoxelModel.SaveToFile(modelPath);
 
                 // create icon

@@ -64,7 +64,6 @@ namespace Utopia.Shared.Net.Web
         /// Performs a post http request, use IAsyncResult.State as WebRequest class
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="pars"></param>
         /// <param name="callback"></param>
         public static void GetRequestAsync<T>(string url, Action<T> callback) where T : WebEventArgs, new()
         {

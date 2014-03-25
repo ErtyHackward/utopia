@@ -98,14 +98,6 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         UseFeedback = 23,
         /// <summary>
-        /// Requests one or more voxel models
-        /// </summary>
-        GetVoxelModels = 24,
-        /// <summary>
-        /// Contains requested voxel model
-        /// </summary>
-        VoxelModelData = 25,
-        /// <summary>
         /// Client request server DateTime for syncing server <-> Client time
         /// </summary>
         RequestDateTimeSync = 26,
