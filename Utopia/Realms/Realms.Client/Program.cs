@@ -58,6 +58,16 @@ namespace Realms.Client
 
             logger.Fatal("Unhandled excpetion: {0}\n{1}", exception.Message, exception.StackTrace);
 
+            if (exception.InnerException != null)
+            {
+                logger.Fatal("Inner exception: {0}\n{1}", exception.InnerException.Message, exception.InnerException.StackTrace);
+
+                if (exception.InnerException.InnerException != null)
+                {
+                    logger.Fatal("Inner exception 2: {0}\n{1}", exception.InnerException.InnerException.Message, exception.InnerException.InnerException.StackTrace);
+                }
+            }
+
             var logPath = Path.Combine(Path.GetTempPath(), string.Format("utopia-client-{0}.log", DateTime.Now.ToShortDateString()));
 
             if (File.Exists(logPath))
