@@ -121,7 +121,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             //Yield Default Configurations files
             foreach (var defaultFile in Directory.GetFiles("Config", "*.realm"))
             {
-                yield return "Default " +  Path.GetFileNameWithoutExtension(defaultFile);
+                yield return "System config : " +  Path.GetFileNameWithoutExtension(defaultFile);
             }
 
             foreach (var file in Directory.GetFiles(path).Where(x => x.EndsWith(".realm")))
@@ -178,10 +178,10 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         private WorldConfiguration GetConfigurationObject()
         {
             WorldConfiguration config = null;
-            if (_configurationsFiles.SelectedItem.ToString().StartsWith("Default "))
+            if (_configurationsFiles.SelectedItem.ToString().StartsWith("System config : "))
             {
                 //Create new default RealmConfiguration
-                var path = Directory.GetFiles("Config", _configurationsFiles.SelectedItem.ToString().Replace("Default ", "") + ".realm")[0];
+                var path = Directory.GetFiles("Config", _configurationsFiles.SelectedItem.ToString().Replace("System config : ", "") + ".realm")[0];
 
                 config = WorldConfiguration.LoadFromFile(path);
             }
