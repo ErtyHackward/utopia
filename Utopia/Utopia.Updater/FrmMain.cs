@@ -29,7 +29,9 @@ namespace Utopia.Updater
 
         public void StartGame()
         {
-            Process.Start(Path.Combine(_basePath, "Realms.exe"));
+            var psi = new ProcessStartInfo(Path.Combine(_basePath, "Realms.exe"));
+            psi.WorkingDirectory = _basePath;
+            Process.Start(psi);
             Application.Exit();
         }
 

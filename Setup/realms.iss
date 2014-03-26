@@ -17,7 +17,7 @@ Source: ..\Utopia\Realms\Realms.Client\bin\Release\*; DestDir: {app}; Excludes: 
 
 [Setup]
 VersionInfoVersion=1.2.2
-VersionInfoCompany=Utopia
+VersionInfoCompany=April32
 VersionInfoDescription=Utopia
 VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2013-2014
 VersionInfoProductName=Utopia realms
@@ -37,26 +37,28 @@ WizardImageFile=setupTitle.bmp
 WizardSmallImageFile=setupSmallRealms.bmp
 UninstallDisplayIcon=..\Media\Utopia2.ico
 OutputBaseFilename=setup_realms
+ArchitecturesInstallIn64BitMode=x64
 
 [Icons]
 Name: {group}\Utopia Realms; Filename: {app}\Launcher.exe
 
 [Run]
+Filename: {app}\Launcher.exe; Parameters: -createshortcut; Description: {cm:CreateDesktopIcon,Utopia Realms}; Flags: postinstall
 Filename: {app}\Launcher.exe; Description: {cm:LaunchProgram,Utopia Realms}; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{app}\TexturesPacks\Default\AnimatedTextures\ArrayAnimatedTextures.dds"
-Type: filesandordirs; Name: "{app}\TexturesPacks\Default\BiomesColors\ArrayBiomesColors.dds"
-Type: filesandordirs; Name: "{app}\TexturesPacks\Default\Particules\ArrayParticules.dds"
-Type: filesandordirs; Name: "{app}\TexturesPacks\Default\Terran\ArrayTerran.dds"
+Type: filesandordirs; Name: {app}\TexturesPacks\Default\AnimatedTextures\ArrayAnimatedTextures.dds
+Type: filesandordirs; Name: {app}\TexturesPacks\Default\BiomesColors\ArrayBiomesColors.dds
+Type: filesandordirs; Name: {app}\TexturesPacks\Default\Particules\ArrayParticules.dds
+Type: filesandordirs; Name: {app}\TexturesPacks\Default\Terran\ArrayTerran.dds
 
-Type: dirifempty; Name: "{app}\TexturesPacks\Default\AnimatedTextures\"
-Type: dirifempty; Name: "{app}\TexturesPacks\Default\BiomesColors\"
-Type: dirifempty; Name: "{app}\TexturesPacks\Default\Particules\"
-Type: dirifempty; Name: "{app}\TexturesPacks\Default\Terran\"
-Type: dirifempty; Name: "{app}\TexturesPacks\Default\"
-Type: dirifempty; Name: "{app}\TexturesPacks\"
-Type: dirifempty; Name: "{app}"
+Type: dirifempty; Name: {app}\TexturesPacks\Default\AnimatedTextures\
+Type: dirifempty; Name: {app}\TexturesPacks\Default\BiomesColors\
+Type: dirifempty; Name: {app}\TexturesPacks\Default\Particules\
+Type: dirifempty; Name: {app}\TexturesPacks\Default\Terran\
+Type: dirifempty; Name: {app}\TexturesPacks\Default\
+Type: dirifempty; Name: {app}\TexturesPacks\
+Type: dirifempty; Name: {app}
 
 [Code]
 function InitializeSetup(): Boolean;
@@ -69,7 +71,7 @@ begin
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
-var 
+var
 	ProcessMsgPage: TOutputProgressWizardPage;
 	ResultCode: Integer;
 begin
@@ -77,12 +79,12 @@ begin
   begin
     	ProcessMsgPage := CreateOutputProgressPage(CustomMessage('postprocess'),CustomMessage('postprocess'));
 		ProcessMsgPage.Show;
-		
+
 		Exec(ExpandConstant('{app}\PacksOptimize.exe'), ExpandConstant('action=createtexturearray path="{app}\TexturesPacks"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-		
-    Exec('netsh', ExpandConstant('advfirewall firewall add rule name="Utopia Realms Updater" dir=in action=allow program="{app}\Launcher.exe" enable=yes'),'', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+
+		Exec('netsh', ExpandConstant('advfirewall firewall add rule name="Utopia Realms Updater" dir=in action=allow program="{app}\Launcher.exe" enable=yes'),'', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 		Exec('netsh', ExpandConstant('advfirewall firewall add rule name="Utopia Realms" dir=in action=allow program="{app}\Realms.exe" enable=yes'),'', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-		
+
 		ProcessMsgPage.Hide;
   end;
 end;
