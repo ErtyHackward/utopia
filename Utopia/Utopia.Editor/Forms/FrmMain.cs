@@ -77,8 +77,6 @@ namespace Utopia.Editor.Forms
 
                     UpdateImageList();
 
-                    
-
                 }
                 else
                 {
