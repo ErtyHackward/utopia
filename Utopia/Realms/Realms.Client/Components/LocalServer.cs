@@ -24,6 +24,8 @@ namespace Realms.Client.Components
     /// </summary>
     public class LocalServer : IDisposable
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly RealmRuntimeVariables _vars;
         private ServerCore _server;
         private EntityFactory _serverFactory;
@@ -53,6 +55,8 @@ namespace Realms.Client.Components
             _serverFactory = new EntityFactory();
             _serverFactory.Config = _worldParam.Configuration;
             var dbPath = Path.Combine(_vars.ApplicationDataPath, "Server", "Singleplayer", worldParam.WorldName, "ServerWorld.db");
+
+            logger.Info("Local world db path is {0}", dbPath);
 
             _serverSqliteStorageSinglePlayer = new SqliteStorageManager(dbPath, _serverFactory, worldParam);
             _serverSqliteStorageSinglePlayer.Register("local", "qwe123".GetSHA1Hash(), UserRole.Administrator);

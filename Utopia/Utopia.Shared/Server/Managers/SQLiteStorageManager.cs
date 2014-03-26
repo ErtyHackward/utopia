@@ -24,6 +24,25 @@ namespace Utopia.Shared.Server.Managers
         private SqliteCommand _worldParametersInsertCmd;
 
         /// <summary>
+        /// Creates new instance of SQLite storage manager
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="factory"></param>
+        public SqliteStorageManager(string filePath, EntityFactory factory, WorldParameters worldParam)
+            : base(filePath)
+        {
+            CreateQueryTemplates();
+
+            if (_isDataBaseCreated)
+            {
+                //Create Database file with configuration information
+                InsertWorldParametersData(worldParam, filePath);
+            }
+
+            _factory = factory;
+        }
+
+        /// <summary>
         /// Returns database creation query 
         /// </summary>
         /// <returns></returns>
@@ -133,25 +152,6 @@ namespace Utopia.Shared.Server.Managers
                 }
                 trans.Commit();
             }
-        }
-
-        /// <summary>
-        /// Creates new instance of SQLite storage manager
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="factory"></param>
-        public SqliteStorageManager(string filePath, EntityFactory factory, WorldParameters worldParam)
-            : base(filePath)
-        {
-            CreateQueryTemplates();
-
-            if (_isDataBaseCreated)
-            {
-                //Create Database file with configuration information
-                InsertWorldParametersData(worldParam, filePath);
-            }
-
-            _factory = factory;
         }
 
         /// <summary>

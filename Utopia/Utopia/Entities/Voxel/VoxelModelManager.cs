@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Ninject;
-using Utopia.Network;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
 using S33M3DXEngine.Main;

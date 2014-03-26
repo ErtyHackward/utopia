@@ -90,7 +90,11 @@ namespace Utopia.Shared.Server.Managers
                 DataSource = _path
             };
 
-            _connection = new SqliteConnection(csb + @";COMPRESS=TRUE");
+            var connectionString = csb + @";COMPRESS=TRUE";
+
+            logger.Info("Sqlite connection string is {0}", connectionString);
+            
+            _connection = new SqliteConnection(connectionString);
             _connection.Open();
 
 #if DEBUG
