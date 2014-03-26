@@ -355,6 +355,54 @@ namespace Utopia.Shared.Configuration
             }
         }
 
+        //Will assign Array id to Cube profiles
+        public void InitCubesProfiles()
+        {
+            Dictionary<string, uint> IdFiles = new Dictionary<string, uint>();
+            uint currentId = 0;
+            //Check all existing Textures, and assign them ids that will be use in texture array
+            foreach (var file in Directory.GetFiles(ClientSettings.TexturePack + @"Terran/", @"ct*.png"))
+            {
+                IdFiles[Path.GetFileName(file)] = currentId;
+
+                var size = GetPNGSize(file);
+
+                //Multi Frame texture ?
+                if (size.Height != size.Width)
+                {
+                    //Compute the nbr of frames present in the image
+                    uint nbrFrames = size.Height / size.Width;
+                    currentId += (nbrFrames - 1);
+                }
+                currentId++;
+            }
+
+            foreach (var profile in BlockProfiles.Where(x => x != null && x.Name != "System Reserved"))
+            {
+                //Assign each block profile a texture id !
+                foreach(var blockTexture in profile.Textures)
+                {
+                    blockTexture.TextureArrayId = IdFiles[blockTexture.Name];
+                }
+                
+            }
+        }
+
+        private Size<uint> GetPNGSize(string filePath)
+        {
+            var buff = new byte[32];
+            using (var d = File.OpenRead(filePath))
+            {
+                d.Read(buff, 0, 32);
+            }
+            const int wOff = 16;
+            const int hOff = 20;
+            Size<uint> imageSize = new Size<uint>();
+            imageSize.Width = BitConverter.ToUInt32(new[] { buff[wOff + 3], buff[wOff + 2], buff[wOff + 1], buff[wOff + 0], }, 0);
+            imageSize.Height = BitConverter.ToUInt32(new[] { buff[hOff + 3], buff[hOff + 2], buff[hOff + 1], buff[hOff + 0], }, 0);
+            return imageSize;
+        }
+
         public void InjectMandatoryObjects()
         {
             CreateDefaultValues();
