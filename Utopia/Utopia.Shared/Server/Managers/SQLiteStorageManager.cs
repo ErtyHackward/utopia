@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Text;
-using Mono.Data.Sqlite;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities;
@@ -18,10 +18,10 @@ namespace Utopia.Shared.Server.Managers
     /// <summary>
     /// Allows to store all required data in SQLite database
     /// </summary>
-    public class SqliteStorageManager : MonoSqliteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage, ICustomStorage
+    public class SqliteStorageManager : SQLiteStorage, IUsersStorage, IChunksStorage, IEntityStorage, IVoxelModelStorage, ICustomStorage
     {
         private readonly EntityFactory _factory;
-        private SqliteCommand _worldParametersInsertCmd;
+        private SQLiteCommand _worldParametersInsertCmd;
 
         /// <summary>
         /// Creates new instance of SQLite storage manager
@@ -82,7 +82,7 @@ namespace Utopia.Shared.Server.Managers
             //Upsert a specific chunk
             //SqlStatment = "INSERT OR REPLACE INTO WorldParameters ([WorldName], [SeedName], [RealmConfiguration]) VALUES (@WorldName, @SeedName, @realmConfiguration)";
             SqlStatment = "INSERT OR REPLACE INTO worldparameters ([name], [seed]) VALUES (@name, @seed)";
-            _worldParametersInsertCmd = new SqliteCommand(SqlStatment, Connection);
+            _worldParametersInsertCmd = new SQLiteCommand(SqlStatment, Connection);
             _worldParametersInsertCmd.Parameters.Add("@name", System.Data.DbType.String);
             _worldParametersInsertCmd.Parameters.Add("@seed", System.Data.DbType.String);
             //_worldParametersInsertCmd.Parameters.Add("@realmConfiguration", System.Data.DbType.Binary);

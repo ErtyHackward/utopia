@@ -130,12 +130,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\Library\Mono.Data.SQLite\sqlite3.dll">
-      <Link>x86\sqlite3.dll</Link>
+    <Content Include="..\..\..\Library\System.Data.SQLite\x64\sqlite3.dll">
+      <Link>x64\sqlite3.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\..\Library\Mono.Data.SQLite\x64\sqlite3.dll">
-      <Link>x64\sqlite3.dll</Link>
+    <Content Include="..\..\..\Library\System.Data.SQLite\x86\sqlite3.dll">
+      <Link>x86\sqlite3.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
