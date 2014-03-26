@@ -22,3 +22,5 @@ Utopia.Server.pdb
 Utopia.Shared.pdb
 Launcher.exe
 SharpDX.MediaFoundation.xml
+Ninject.pdb
+protobuf-net.pdb
