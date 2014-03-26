@@ -26,6 +26,8 @@ namespace Utopia.Entities.Managers
 
         private ressurectionStates _ressurectionState = ressurectionStates.None;
         private Vector3D _playerSpawnLocation = default(Vector3D);
+        private bool _isWithinSoulStoneRange;
+
         public Vector3D PlayerSpawnLocation
         {
             get { return _playerSpawnLocation; }
@@ -42,12 +44,12 @@ namespace Utopia.Entities.Managers
 
             Vector3D BindingPosition = _playerCharacter.BindedSoulStone != null ? _playerCharacter.BindedSoulStone.Position : _playerSpawnLocation;
 
-            bool isWithinSoulStoneRange = Vector3D.DistanceSquared(BindingPosition, _playerCharacter.Position) <= 1024d;
-            if (isWithinSoulStoneRange == false && _ressurectionState == ressurectionStates.PreventRessurection) _ressurectionState = ressurectionStates.None;
+            _isWithinSoulStoneRange = Vector3D.DistanceSquared(BindingPosition, _playerCharacter.Position) <= 1024d;
+            if (_isWithinSoulStoneRange == false && _ressurectionState == ressurectionStates.PreventRessurection) _ressurectionState = ressurectionStates.None;
 
             if (_playerCharacter.HealthState == Shared.Entities.Dynamic.DynamicEntityHealthState.Dead)
             {
-                if (!isWithinSoulStoneRange || _ressurectionState == ressurectionStates.PreventRessurection) return;
+                if (!_isWithinSoulStoneRange || _ressurectionState == ressurectionStates.PreventRessurection) return;
                 else
                 {
                     if (_ressurectionState != ressurectionStates.PendingRequest)
@@ -58,14 +60,6 @@ namespace Utopia.Entities.Managers
                     }
                     return;
                 }
-            }
-
-            //Auto Regen Health if in range of our own soulStone = 32 blocks distances, and a soulstone is placed
-            if (isWithinSoulStoneRange && _playerCharacter.BindedSoulStone != null &&
-                _playerCharacter.Health.CurrentAsPercent < 1.0f)
-            {
-                var soulsStoneHealingAmount = _healthSoulStoneGainPerSecond * timeSpent.ElapsedGameTimeInS_LD;
-                _playerCharacter.HealthImpact(soulsStoneHealingAmount);
             }
 
             //Auto Regen Stamina
@@ -87,6 +81,21 @@ namespace Utopia.Entities.Managers
             {
                 _playerCharacter.Oxygen.CurrentValue = _playerCharacter.Oxygen.MaxValue;
                 _playerCharacter.HealthState = Shared.Entities.Dynamic.DynamicEntityHealthState.Normal;
+            }
+        }
+
+        /// <summary>
+        /// Will be called +/- second
+        /// </summary>
+        private void energyUpdateTimer_OnTimerRaised(float elapsedTimeInS)
+        {
+            //This is updated here, every second to avoid to send to server 40 times per second the updated amount of life
+            //Auto Regen Health if in range of our own soulStone = 32 blocks distances, and a soulstone is placed
+            if (_isWithinSoulStoneRange && _playerCharacter.BindedSoulStone != null &&
+                _playerCharacter.Health.CurrentAsPercent < 1.0f)
+            {
+                var soulsStoneHealingAmount = _healthSoulStoneGainPerSecond * elapsedTimeInS;
+                _playerCharacter.HealthImpact(soulsStoneHealingAmount);
             }
         }
 

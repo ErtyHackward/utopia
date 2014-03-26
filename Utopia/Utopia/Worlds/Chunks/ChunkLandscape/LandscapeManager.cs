@@ -62,7 +62,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             _landscapeEntityManager = landscapeEntityManager;
             
             //Add a new Timer trigger
-            _timer = timerManager.AddTimer(0, 10000);
+            _timer = timerManager.AddTimer(10000);
             _timer.OnTimerRaised += _timer_OnTimerRaised;
 
             Initialize();
@@ -104,7 +104,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
 
         //Perform Maintenance task every 10 seconds
-        private void _timer_OnTimerRaised()
+        private void _timer_OnTimerRaised(float elapsedTimeInS)
         {
             ChunkBufferCleanup();
         }

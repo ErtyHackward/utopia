@@ -23,18 +23,12 @@ namespace S33M3CoreComponents.Timers
         }
 
         #region Public methods
-        public GameTimer AddTimer(int timerId, long timerFrequency)
+        public GameTimer AddTimer(long timerFrequencyMS)
         {
             GameTimer newTimer = ToDispose(new GameTimer());
-            newTimer.TimerId = timerId;
-            newTimer.Initialize(timerFrequency);
+            newTimer.Initialize(timerFrequencyMS);
             Timers.Add(newTimer);
             return newTimer;
-        }
-
-        public void RemoveTimer(int timerId)
-        {
-            Timers.RemoveAll(x => x.TimerId == timerId);
         }
 
         public void RemoveTimer(GameTimer timer)
@@ -46,7 +40,7 @@ namespace S33M3CoreComponents.Timers
         {
             for (int i = 0; i < Timers.Count; i++)
             {
-                Timers[i].Update();
+                Timers[i].Update(timeSpend);
             }
         }
         #endregion
@@ -55,34 +49,34 @@ namespace S33M3CoreComponents.Timers
         #endregion
         public class GameTimer : IDisposable
         {
-            public delegate void timerRaised();
+            public delegate void timerRaised(float elapsedTimeInS);
             public event timerRaised OnTimerRaised;
 
-            private long _nextTriggerTick;
+            private Stopwatch timer = new Stopwatch();
             private long _frequency;
+            private float _elapsedTotalTime;
             public int TimerId;
 
             /// <summary>
             /// The timer frenquency in ms
             /// </summary>
-            /// <param name="timerFrequency"></param>
-            public void Initialize(long timerFrequency)
+            /// <param name="timerFrequencyMs"></param>
+            public void Initialize(long timerFrequencyMs)
             {
-                _frequency = timerFrequency;
-                SetNextTrigger();
+                timer = new Stopwatch();
+                _elapsedTotalTime = 0;
+                timer.Start();
+                _frequency = timerFrequencyMs;
             }
 
-            private void SetNextTrigger()
+            public void Update(GameTime timeSpend)
             {
-                _nextTriggerTick = Stopwatch.GetTimestamp() + (Stopwatch.Frequency * _frequency / 1000);
-            }
-
-            public void Update()
-            {
-                if (Stopwatch.GetTimestamp() > _nextTriggerTick)
+                _elapsedTotalTime += timeSpend.ElapsedGameTimeInS_LD;
+                if (timer.ElapsedMilliseconds > _frequency)
                 {
-                    if (OnTimerRaised != null) OnTimerRaised();
-                    SetNextTrigger();
+                    if (OnTimerRaised != null) OnTimerRaised(_elapsedTotalTime);
+                    _elapsedTotalTime = 0;
+                    timer.Restart();
                 }
             }
 

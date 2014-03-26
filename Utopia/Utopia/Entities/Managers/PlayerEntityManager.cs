@@ -33,6 +33,7 @@ using Utopia.PostEffects;
 using S33M3CoreComponents.GUI;
 using S33M3CoreComponents.Sound;
 using Utopia.Particules;
+using S33M3CoreComponents.Timers;
 
 namespace Utopia.Entities.Managers
 {
@@ -61,6 +62,8 @@ namespace Utopia.Entities.Managers
         private readonly ChatComponent _chatComponent;
         private readonly PostEffectComponent _postEffectComponent;
         private ISoundEngine _soundEngine;
+        private TimerManager.GameTimer _energyUpdateTimer;
+
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -306,9 +309,11 @@ namespace Utopia.Entities.Managers
                                    ChatComponent chatComponent,
                                    PostEffectComponent postEffectComponent,
                                    GuiManager guiManager,
-                                   ISoundEngine soundEngine
+                                   ISoundEngine soundEngine,
+                                   TimerManager timerManager
             )
         {
+
             _cameraManager = cameraManager;
             _inputsManager = inputsManager;
             _soundEngine = soundEngine;
@@ -329,12 +334,13 @@ namespace Utopia.Entities.Managers
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
             VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, voxelModelManager);
 
+            //Add a new Timer trigger
+            _energyUpdateTimer = timerManager.AddTimer(1000); //A timer that will be raised every second
+            _energyUpdateTimer.OnTimerRaised += energyUpdateTimer_OnTimerRaised;
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
         }
-
-
 
         void Equipment_ItemEquipped(object sender, CharacterEquipmentEventArgs e)
         {
@@ -426,6 +432,7 @@ namespace Utopia.Entities.Managers
         public override void BeforeDispose()
         {
             OnLanding -= PlayerEntityManager_OnLanding;
+            _energyUpdateTimer.OnTimerRaised -= energyUpdateTimer_OnTimerRaised;
 
             // Clean Up event Delegates
             if (OnLanding != null)
