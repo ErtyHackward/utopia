@@ -87,7 +87,7 @@ namespace Utopia.Shared.GraphicManagers
                     currentId += (nbrFrames - 1);
 
                     textureMeta.isAnimated = true;
-                    textureMeta.NbrFrame = nbrFrames;
+                    textureMeta.NbrFrame = (byte)nbrFrames;
                     lcm.Add(nbrFrames);
                 }
 
@@ -149,7 +149,7 @@ namespace Utopia.Shared.GraphicManagers
                                 Texture2D newTexture = Texture2D.FromStream<Texture2D>(_engine.Device, textureMemoryStream, (int)textureMemoryStream.Length, ImageInfo);
                                 cubeTextures.Add(newTexture);
                             }
-                            sourceRect.Y += meta.Size.Height;
+                            sourceRect.Y += meta.Size.Width;
                         }
                     }
 
@@ -178,7 +178,7 @@ namespace Utopia.Shared.GraphicManagers
         {
             public Size<int> Size;
             public bool isAnimated;
-            public int NbrFrame;
+            public byte NbrFrame;
             public int TextureArrayId;
             public string TextureName;
         }

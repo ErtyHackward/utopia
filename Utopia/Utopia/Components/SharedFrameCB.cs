@@ -123,12 +123,15 @@ namespace Utopia.Components
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
+        public override void FTSUpdate(GameTime timeSpent)
+        {
+            CBPerFrame.Values.TextureFrameAnimation += 0.0250f; //1 FPS Default value
+            if (CBPerFrame.Values.TextureFrameAnimation >= _visualWorldParam.CubeTextureManager.TexturesAnimationLCM) CBPerFrame.Values.TextureFrameAnimation = 0.0f;
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _animationValue += (_animationSpeed * elapsedTime);
-
-            CBPerFrame.Values.TextureFrameAnimation += 0.1f;
-            if (CBPerFrame.Values.TextureFrameAnimation >= _visualWorldParam.CubeTextureManager.TexturesAnimationLCM) CBPerFrame.Values.TextureFrameAnimation = 0.0f;
 
             while(_animationValue >= 1.0) _animationValue -= 1.0f;
         }
