@@ -40,17 +40,19 @@ namespace Utopia.Editor
 
         public void Initialize(string utopiaPath)
         {
-            if (_engine != null)
-                throw new ApplicationException("The IconManager is already initialized");
+            if (_engine == null)
+            {
 
-            _utopiaFolder = utopiaPath;
-            ClientSettings.PathRoot = _utopiaFolder;
-            ClientSettings.EffectPack = Path.Combine(_utopiaFolder, @"EffectsPacks\Default\");
-            ClientSettings.TexturePack = Path.Combine(_utopiaFolder, @"TexturesPacks\Default\");
+                _utopiaFolder = utopiaPath;
+                ClientSettings.PathRoot = _utopiaFolder;
+                ClientSettings.EffectPack = Path.Combine(_utopiaFolder, @"EffectsPacks\Default\");
+                ClientSettings.TexturePack = Path.Combine(_utopiaFolder, @"TexturesPacks\Default\");
 
-            _engine = new D3DEngine();
-            DXStates.CreateStates(_engine);
-            var modelsStorage = new FileModelStorage(Path.Combine(_utopiaFolder, "Models"));
+                _engine = new D3DEngine();
+                DXStates.CreateStates(_engine);
+            }
+
+            var modelsStorage = new ModelSQLiteStorage(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Realms", "Common", "models.db"));
             var voxelMeshFactory = new VoxelMeshFactory(_engine);
             _modelManager = new VoxelModelManager();
             _modelManager.VoxelModelStorage = modelsStorage;
