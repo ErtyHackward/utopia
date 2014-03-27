@@ -156,14 +156,15 @@ namespace Utopia.Shared.Settings
         public string Name { get; set; }
 
         [ProtoMember(2)]
-        public float AnimationSpeed { get; set; }
+        public byte AnimationSpeed { get; set; }
 
         [Browsable(false)]
         [ProtoMember(3)]
-        public int AnimationFrames { get; set; }
+        public byte AnimationFrames { get; set; }
 
         [Browsable(false)]
         public int TextureArrayId { get; set; } //Need to be filled in at runtime.
+
         [Browsable(false)]
         public bool isAnimated { get { return AnimationFrames > 1; } }
 
