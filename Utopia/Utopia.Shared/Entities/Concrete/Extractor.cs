@@ -17,6 +17,7 @@ namespace Utopia.Shared.Entities.Concrete
     [Description("Allows to extract any kind of entities including a door or a chest.")]
     public class Extractor : Item, ITool
     {
+        [Category("Gameplay")]
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(1)]
         public bool RepeatedActionsAllowed { get; set; }
