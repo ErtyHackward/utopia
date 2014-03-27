@@ -39,6 +39,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Allows to specify the possible face of the block where entity can be attached to
         /// </summary>
+        [Category("BlockLinkedItem")]
         [Description("Allows to specify the possible face of the block where entity can be attached to")]
         [ProtoMember(3)]
         public BlockFace MountPoint { get; set; }
@@ -46,6 +47,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// The entity will be centered into the choosen block face
         /// </summary>
+        [Category("BlockLinkedItem")]
         [Description("The entity will be centered into the choosen block face")]
         [ProtoMember(4)]
         public bool BlockFaceCentered { get; set; }
@@ -53,6 +55,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// The entity cannot be added if the block where it will be placed contain another entity
         /// </summary>
+        [Category("BlockLinkedItem")]
         [Description("The entity cannot be added if the block where it will be placed contain another entity")]
         [ProtoMember(5)]
         public bool BlockEmptyRequired { get; set; }
@@ -60,9 +63,10 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Indicates if the item could be mounted without block link (on other entities)
         /// </summary>
+        [Category("BlockLinkedItem")]
         [Description("Indicates if the item could be mounted without block link (on other entities)")]
         [ProtoMember(6)]
-        public bool AllowToFreeMount { get; set; }
+        public bool AllowFreeMount { get; set; }
 
         /// <summary>
         /// Indicates if this item has block link or not
@@ -99,7 +103,7 @@ namespace Utopia.Shared.Entities
         {
             var pos = new EntityPosition();
 
-            if (!AllowToFreeMount && !owner.EntityState.IsBlockPicked)
+            if (!AllowFreeMount && !owner.EntityState.IsBlockPicked)
                 return pos;
 
             if (!MountPoint.HasFlag(BlockFace.Top) && owner.EntityState.PickPointNormal.Y == 1)

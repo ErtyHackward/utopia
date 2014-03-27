@@ -25,12 +25,14 @@ namespace Utopia.Shared.Entities.Concrete
         /// <summary>
         /// Gets landscape manager, this field is injected
         /// </summary>
+        [Category("OrientedBlockItem")]
         [ProtoMember(2)]
         public bool IsOrientedSlope { get; set; }
 
         /// <summary>
         /// Get or Set value indicating of the slope is sliding
         /// </summary>
+        [Category("OrientedBlockItem")]
         [ProtoMember(3)]
         public bool IsSlidingSlope { get; set; }
 
