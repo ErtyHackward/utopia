@@ -366,13 +366,13 @@ namespace Utopia.Shared.World.Processors.Utopia
                         //Create Bottom Lava lake
                         if (Y <= 3 && cube == UtopiaProcessorParams.CubeId.Air)
                         {
-                            cube = UtopiaProcessorParams.CubeId.StillLava;
+                            cube = UtopiaProcessorParams.CubeId.LavaStill;
                         }
 
                         //Place "StillWater" block at SeaLevel
                         if (Y == _config.ProcessorParam.WaterLevel && cube == UtopiaProcessorParams.CubeId.Air && valueUnderground == 1)
                         {
-                            cube = UtopiaProcessorParams.CubeId.StillWater;
+                            cube = UtopiaProcessorParams.CubeId.WaterStill;
                         }
 
                         //Save block if changed
@@ -486,7 +486,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else //This block is not Stone (Air, Water, or BedRock)
                         {
-                            if (cubeId == UtopiaProcessorParams.CubeId.StillWater)
+                            if (cubeId == UtopiaProcessorParams.CubeId.WaterStill)
                             {
                                 if (mustPlacedSnow)
                                 {
@@ -502,7 +502,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             {
                                 if (inWaterMaxLevel > 0 && cubeId == UtopiaProcessorParams.CubeId.Air)
                                 {
-                                    ChunkCubes[index] = UtopiaProcessorParams.CubeId.StillWater;
+                                    ChunkCubes[index] = UtopiaProcessorParams.CubeId.WaterStill;
                                 }
                             }
                         }

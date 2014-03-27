@@ -363,6 +363,8 @@ namespace S33M3CoreComponents.Maths
         /// <returns></returns>
         public static int LCM(List<int> Numbers)
         {
+            if (Numbers == null) return 0;
+
             int lcmResult = -1;
             int workingNumber;
 

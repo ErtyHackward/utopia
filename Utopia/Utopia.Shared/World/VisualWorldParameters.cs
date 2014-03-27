@@ -44,9 +44,9 @@ namespace Utopia.Shared.World
 
         public VisualWorldParameters(WorldParameters worldParameters, IDynamicEntity player, Vector2I visibleChunkInWorld, CubeTexturesManager cubeTextureManager)
         {
+            CubeTextureManager = cubeTextureManager;
             VisibleChunkInWorld = visibleChunkInWorld;
             WorldParameters = worldParameters;
-            CubeTextureManager = cubeTextureManager;
 
             //Find the chunk location
             int X = (MathHelper.Floor(player.Position.X / 16) * 16) - ((VisibleChunkInWorld.X / 2) * 16);

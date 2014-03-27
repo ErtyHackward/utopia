@@ -1,4 +1,5 @@
-﻿using S33M3DXEngine;
+﻿using S33M3CoreComponents.Maths;
+using S33M3DXEngine;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.Textures;
 using SharpDX.Direct3D11;
@@ -26,6 +27,11 @@ namespace Utopia.Shared.GraphicManagers
         #region public properties
         public ShaderResourceView CubeArrayTexture;
         public Dictionary<string, CubeTextureInfo> CubeTexturesMeta;
+        
+        /// <summary>
+        /// Give the LCM from all animated texture frame count
+        /// </summary>
+        public int TexturesAnimationLCM { get; set; }
         #endregion
 
         public CubeTexturesManager(D3DEngine engine)
@@ -61,6 +67,7 @@ namespace Utopia.Shared.GraphicManagers
 
         private void CreateTexturesMetaData()
         {
+            List<int> lcm = new List<int>();
             CubeTexturesMeta = new Dictionary<string, CubeTextureInfo>();
             int currentId = 0;
             //Check all existing Textures, and assign them ids that will be use in texture array
@@ -80,13 +87,16 @@ namespace Utopia.Shared.GraphicManagers
                     currentId += (nbrFrames - 1);
 
                     textureMeta.isAnimated = true;
-                    textureMeta.NbrFrame = (int)nbrFrames;
+                    textureMeta.NbrFrame = nbrFrames;
+                    lcm.Add(nbrFrames);
                 }
 
                 CubeTexturesMeta[fileName] = textureMeta;
 
                 currentId++;
             }
+
+            TexturesAnimationLCM = MathHelper.LCM(lcm);
         }
 
         private void CreateTextureResources(DeviceContext context, FilterFlags MIPfilterFlag)
