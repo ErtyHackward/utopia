@@ -242,8 +242,11 @@ namespace Utopia.Entities.Renderer
         {
             //Prepare Textured Block rendering when equiped ==============================================================
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
-            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
-            ToDispose(_cubeTextureView);
+
+            _cubeTextureView = _visualWorldParameters.CubeTextureManager.CubeArrayTexture;
+            //ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
+            //ToDispose(_cubeTextureView);
+
             //Create Vertex/Index Buffer to store the loaded cube mesh.
             _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
             _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, "Block IB"));

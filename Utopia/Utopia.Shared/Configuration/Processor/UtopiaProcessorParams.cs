@@ -257,7 +257,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 50
             });
 
@@ -279,7 +279,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 0,
                 Hardness = 50
             });
@@ -301,7 +301,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 1,
                 YBlockOffset = 0.1,
                 Hardness = 0
@@ -325,7 +325,7 @@ namespace Utopia.Shared.Configuration
                 IsTaggable = true,
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 1,
                 Hardness = 0
             });
@@ -348,7 +348,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -375,7 +375,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 SlidingValue = 0.05f,
                 Hardness = 0
             });
@@ -398,7 +398,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.3f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 40
             });
 
@@ -420,7 +420,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 100
             });
 
@@ -442,7 +442,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 80
             });
 
@@ -464,7 +464,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 1000
             });
 
@@ -486,7 +486,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 150
             });
 
@@ -508,7 +508,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 86,
@@ -536,7 +536,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 2,
                 Hardness = 20
             });
@@ -547,19 +547,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Snow",
                 Description = "A cube",
                 Id = 15,
-                Tex_Top = new TextureData("Swow.png"),
-                Tex_Bottom = new TextureData("Swow.png"),
-                Tex_Back = new TextureData("Swow.png"),
-                Tex_Front = new TextureData("Swow.png"),
-                Tex_Left = new TextureData("Swow.png"),
-                Tex_Right = new TextureData("Swow.png"),
+                Tex_Top = new TextureData("Snow.png"),
+                Tex_Bottom = new TextureData("Snow.png"),
+                Tex_Back = new TextureData("Snow.png"),
+                Tex_Front = new TextureData("Snow.png"),
+                Tex_Left = new TextureData("Snow.png"),
+                Tex_Right = new TextureData("Snow.png"),
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 YBlockOffset = 0.9,
                 Friction = 0.35f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 10
             });
 
@@ -582,7 +582,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 100
             });
 
@@ -605,7 +605,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -633,7 +633,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -654,7 +654,7 @@ namespace Utopia.Shared.Configuration
             //cactusFlower.IsSystemEntity = false;      
             //cactusFlower.MaxStackSize = 99;
             //yield return cactusFlower;
-            return null;
+            return new List<IEntity>();
         }
         #endregion
 

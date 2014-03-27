@@ -313,6 +313,7 @@ namespace Utopia.Particules
             //for each define cubes profiles, merge 6 faces color sampled to give a collections a sampled color per Cube (24 colors)
             foreach (var blockProfile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
+                if (blockProfile.Textures == null) continue;
                 List<Color> colorArray = new List<Color>();
                 colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Name]);
                 colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Name]);

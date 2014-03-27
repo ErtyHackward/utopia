@@ -13,6 +13,7 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using System.Linq;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.World;
 
 namespace Utopia.Entities
 {
@@ -28,7 +29,7 @@ namespace Utopia.Entities
             public IndexBuffer<ushort> Ib;
         }
 
-        private WorldConfiguration _config;
+        private VisualWorldParameters _config;
         private readonly D3DEngine _d3DEngine;
         private HLSLCubeTool _cubeEffect;
         private IMeshFactory _milkShapeMeshfactory;
@@ -46,7 +47,7 @@ namespace Utopia.Entities
             get { return _cubeEffect; }
         }
 
-        public TerraCubes(D3DEngine d3DEngine, WorldConfiguration config)
+        public TerraCubes(D3DEngine d3DEngine, VisualWorldParameters config)
         {
             _d3DEngine = d3DEngine;
             _config = config;
@@ -63,11 +64,10 @@ namespace Utopia.Entities
         {
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
 
-            // todo: load textures only once in whole project
-            ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
-            ToDispose(_cubeTextureView);
+            _cubeTextureView = _config.CubeTextureManager.CubeArrayTexture;
+            //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, _d3DEngine.ImmediateContext, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
 
-            foreach (var cube in _config.GetAllCubesProfiles())
+            foreach (var cube in _config.WorldParameters.Configuration.GetAllCubesProfiles())
             {
                 CubePack pack;
 

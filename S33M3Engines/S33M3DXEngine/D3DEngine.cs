@@ -29,8 +29,8 @@ namespace S33M3DXEngine
         //CANNOT be use in a multithreaded buffer approch !
         public static bool SingleThreadRenderingOptimization = true;
 
-        //public static bool FULLDEBUGMODE = true;
-        public static bool FULLDEBUGMODE = false;
+        public static bool FULLDEBUGMODE = true;
+        //public static bool FULLDEBUGMODE = false;
         #endregion
 
         #region Private variables
