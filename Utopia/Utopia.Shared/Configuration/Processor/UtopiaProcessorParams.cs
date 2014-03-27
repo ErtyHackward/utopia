@@ -206,8 +206,8 @@ namespace Utopia.Shared.Configuration
                     new CubeVein(){ Name = "GoldOre Vein",CubeId = UtopiaProcessorParams.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
                     new CubeVein(){ Name = "CoalOre Vein",CubeId = UtopiaProcessorParams.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
                     new CubeVein(){ Name = "MoonStone Vein",CubeId = UtopiaProcessorParams.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = UtopiaProcessorParams.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = UtopiaProcessorParams.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                    new CubeVein(){ Name = "DynamicWater",CubeId = UtopiaProcessorParams.CubeId.WaterFlow, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = UtopiaProcessorParams.CubeId.LavaFlow, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
                 }
             };
 
@@ -287,7 +287,7 @@ namespace Utopia.Shared.Configuration
             //StillWater Block
             yield return (new BlockProfile()
             {
-                Name = "StillWater",
+                Name = "Water_still",
                 Description = "A cube",
                 Id = 4,
                 Tex_Top = new TextureData("Water.png"),
@@ -310,7 +310,7 @@ namespace Utopia.Shared.Configuration
             //DynamicWater Block
             yield return (new BlockProfile()
             {
-                Name = "DynamicWater",
+                Name = "Water_flow",
                 Description = "A cube",
                 Id = 5,
                 Tex_Top = new TextureData("Water.png"),
@@ -589,7 +589,7 @@ namespace Utopia.Shared.Configuration
             //StillLava Block
             yield return (new BlockProfile()
             {
-                Name = "StillLava",
+                Name = "Lava_still",
                 Description = "A cube",
                 Id = 17,
                 Tex_Top = new TextureData("Lava.png"),
@@ -617,7 +617,7 @@ namespace Utopia.Shared.Configuration
             //DynamicLava Block
             yield return (new BlockProfile()
             {
-                Name = "DynamicLava",
+                Name = "Lava_flow",
                 Description = "A cube",
                 Id = 18,
                 Tex_Top = new TextureData("Lava.png"),
@@ -780,8 +780,8 @@ namespace Utopia.Shared.Configuration
             public const byte Stone = 1;
             public const byte Dirt = 2;
             public const byte Grass = 3;
-            public const byte StillWater = 4;
-            public const byte DynamicWater = 5;
+            public const byte WaterStill = 4;
+            public const byte WaterFlow = 5;
             public const byte LightWhite = 6;
             public const byte Rock = 7;
             public const byte Sand = 8;
@@ -793,8 +793,8 @@ namespace Utopia.Shared.Configuration
             public const byte Foliage = 14;
             public const byte Snow = 15;
             public const byte Ice = 16;
-            public const byte StillLava = 17;
-            public const byte DynamicLava = 18;
+            public const byte LavaStill = 17;
+            public const byte LavaFlow = 18;
         }
 
         public static class BluePrintId

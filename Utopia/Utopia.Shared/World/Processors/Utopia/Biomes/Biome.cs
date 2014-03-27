@@ -183,8 +183,8 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-                    if (vein.CubeId != UtopiaProcessorParams.CubeId.DynamicLava &&
-                        vein.CubeId != UtopiaProcessorParams.CubeId.DynamicWater)
+                    if (vein.CubeId != UtopiaProcessorParams.CubeId.LavaFlow &&
+                        vein.CubeId != UtopiaProcessorParams.CubeId.WaterFlow)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
@@ -195,7 +195,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     }
                     else
                     {
-                        if (vein.CubeId == UtopiaProcessorParams.CubeId.DynamicLava)
+                        if (vein.CubeId == UtopiaProcessorParams.CubeId.LavaFlow)
                         {
                             //Get Rnd chunk Location.
                             int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
