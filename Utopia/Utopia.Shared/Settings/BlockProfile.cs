@@ -3,6 +3,8 @@ using ProtoBuf;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs;
 using System.ComponentModel;
+using System.Globalization;
+using System;
 
 namespace Utopia.Shared.Settings
 {
@@ -145,17 +147,24 @@ namespace Utopia.Shared.Settings
         }
     }
 
+
     [ProtoContract]
+    [TypeConverter(typeof(TextureDataTypeConverter))]
     public class TextureData
     {
         [ProtoMember(1)]
-        public string Name;
-        [ProtoMember(2)]
-        public float Speed;
-        [ProtoMember(3)]
-        public uint AnimationFrames;
+        public string Name { get; set; }
 
-        public uint TextureArrayId; //Need to be filled in at runtime.
+        [ProtoMember(2)]
+        public float AnimationSpeed { get; set; }
+
+        [Browsable(false)]
+        [ProtoMember(3)]
+        public int AnimationFrames { get; set; }
+
+        [Browsable(false)]
+        public int TextureArrayId { get; set; } //Need to be filled in at runtime.
+        [Browsable(false)]
         public bool isAnimated { get { return AnimationFrames > 1; } }
 
         public TextureData()
@@ -165,6 +174,20 @@ namespace Utopia.Shared.Settings
         public TextureData(string name)
         {
             this.Name = name;
+        }
+
+        //Property Grid editing Purpose
+        public class TextureDataTypeConverter : ExpandableObjectConverter
+        {
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {   //This method is used to shown information in the PropertyGrid.
+                if (destinationType == typeof(string))
+                {
+                    TextureData d = (TextureData)value;
+                    return (d.isAnimated ? string.Format("{0} [anim. {1} frames]", d.Name, d.AnimationFrames): d.Name);
+                }
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
         }
     }
 }

@@ -62,6 +62,12 @@ namespace Utopia.Entities
 
         #endregion
 
+        public VisualWorldParameters VisualWorldParameters
+        {
+            get { return _visualWorldParameters; }
+            set { _visualWorldParameters = value; }
+        }
+
         public WorldConfiguration Configuration
         {
             get { return _visualWorldParameters.WorldParameters.Configuration; }
@@ -109,11 +115,15 @@ namespace Utopia.Entities
             if (_visualWorldParameters.WorldParameters != null && _visualWorldParameters.WorldParameters.Configuration != null)
             {
                 List<Texture2D> icons = new List<Texture2D>();
-                ShaderResourceView cubeTextureView;
-                ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
-                                                      Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
-                                                      FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
-                                                      out cubeTextureView);
+
+                ShaderResourceView cubeTextureView = _visualWorldParameters.CubeTextureManager.CubeArrayTexture;
+
+                //ShaderResourceView cubeTextureView;
+                //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
+                //                                      Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
+                //                                      FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
+                //                                      out cubeTextureView);
+
                 icons = Create3DBlockIcons(context, cubeTextureView, IconSize);
 
                 _nbrCubeIcon = icons.Count;
@@ -131,7 +141,7 @@ namespace Utopia.Entities
                 {
                     icon.Dispose();
                 }
-                cubeTextureView.Dispose();
+                //cubeTextureView.Dispose();
                 //foreach (var tex in spriteTextures) tex.Dispose();
 
 

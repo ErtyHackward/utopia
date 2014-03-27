@@ -64,6 +64,7 @@ using Utopia.Shared;
 using Utopia.Worlds.Shadows;
 using Utopia.PostEffects;
 using Utopia.GUI.WindRose;
+using Utopia.Shared.GraphicManagers;
 
 namespace Realms.Client
 {
@@ -132,6 +133,7 @@ namespace Realms.Client
             _iocContainer.Bind<SinglePlayerMenuState>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<CubeTexturesManager>().ToSelf().InSingletonScope();
 
             //Network Related =============================================
             _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();

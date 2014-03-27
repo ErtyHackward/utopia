@@ -11,6 +11,8 @@ using Utopia.Entities.Voxel;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
+using Utopia.Shared.GraphicManagers;
+using Utopia.Shared.World;
 
 namespace Utopia.Editor
 {
@@ -24,11 +26,19 @@ namespace Utopia.Editor
         private IconFactory _iconFactory;
         private VoxelModelManager _modelManager;
         private ShaderResourceView _cubeTextureView;
+        private CubeTexturesManager _textureManager;
+        private VisualWorldParameters _visualWorldParameters;
 
         public VoxelModelManager ModelManager
         {
             get { return _modelManager; }
             set { _modelManager = value; }
+        }
+
+        public IconFactory IconFactory
+        {
+            get { return _iconFactory; }
+            set { _iconFactory = value; }
         }
 
         public Size2 IconSize { get; set; }
@@ -57,18 +67,30 @@ namespace Utopia.Editor
             _modelManager.VoxelMeshFactory = voxelMeshFactory;
             _modelManager.Initialize();
 
-            _iconFactory = new IconFactory(_engine, _modelManager, new Shared.World.VisualWorldParameters());
+            _visualWorldParameters = new VisualWorldParameters();
+            _textureManager = new CubeTexturesManager(_engine);
+            _textureManager.Initialization(_engine.ImmediateContext, FilterFlags.Point);
+            _cubeTextureView = _textureManager.CubeArrayTexture;
 
-            
-            ArrayTexture.CreateTexture2DFromFiles(_engine.Device, _engine.ImmediateContext,
-                                                    Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
-                                                    FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
-                                                    out _cubeTextureView);
+            _visualWorldParameters.CubeTextureManager = _textureManager;
+
+            _iconFactory = new IconFactory(_engine, _modelManager, _visualWorldParameters);
+
+            //ArrayTexture.CreateTexture2DFromFiles(_engine.Device, _engine.ImmediateContext,
+            //                                        Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
+            //                                        FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
+            //                                        out _cubeTextureView);
         }
 
         public Dictionary<string, Image> GenerateIcons(WorldConfiguration configuration)
         {
             var result = new Dictionary<string, Image>();
+
+            if (configuration.isCubesProfilesIDInitialized == false)
+            {
+                _visualWorldParameters.WorldParameters.Configuration = configuration;
+                _visualWorldParameters.InitCubesProfiles();
+            }
 
             _iconFactory.Configuration = configuration;
             _iconFactory.LoadContent(_engine.ImmediateContext);
@@ -106,7 +128,7 @@ namespace Utopia.Editor
 
         public void Dispose()
         {
-            _cubeTextureView.Dispose();
+            _textureManager.Dispose();
             _modelManager.Dispose();
             _iconFactory.Dispose();
         }
