@@ -80,7 +80,7 @@ namespace Utopia.Shared.World
                 foreach (var profile in WorldParameters.Configuration.BlockProfiles.Where(x => x != null && x.Name != "System Reserved" && x.Textures != null))
                 {
                     //Assign each block profile a texture id !
-                    foreach (var blockTexture in profile.Textures.Where(x => x != null))
+                    foreach (var blockTexture in profile.Textures.Where(x => x != null && x.Texture.Name != null))
                     {
                         blockTexture.TextureArrayId = CubeTextureManager.CubeTexturesMeta[blockTexture.Texture.Name].TextureArrayId;
                         blockTexture.Texture.AnimationFrames = CubeTextureManager.CubeTexturesMeta[blockTexture.Texture.Name].NbrFrame;
