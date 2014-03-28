@@ -206,8 +206,8 @@ namespace Utopia.Shared.Configuration
                     new CubeVein(){ Name = "GoldOre Vein",CubeId = UtopiaProcessorParams.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
                     new CubeVein(){ Name = "CoalOre Vein",CubeId = UtopiaProcessorParams.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
                     new CubeVein(){ Name = "MoonStone Vein",CubeId = UtopiaProcessorParams.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = UtopiaProcessorParams.CubeId.DynamicWater, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = UtopiaProcessorParams.CubeId.DynamicLava, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                    new CubeVein(){ Name = "DynamicWater",CubeId = UtopiaProcessorParams.CubeId.WaterFlow, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",CubeId = UtopiaProcessorParams.CubeId.LavaFlow, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
                 }
             };
 
@@ -223,19 +223,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Stone",
                 Description = "A cube",
                 Id = 1,
-                Tex_Top = 1,
-                Tex_Bottom = 1,
-                Tex_Back = 1,
-                Tex_Front = 1,
-                Tex_Left = 1,
-                Tex_Right = 1,
+                Tex_Top = new TextureData("Stone.png"),
+                Tex_Bottom = new TextureData("Stone.png"),
+                Tex_Back = new TextureData("Stone.png"),
+                Tex_Front = new TextureData("Stone.png"),
+                Tex_Left = new TextureData("Stone.png"),
+                Tex_Right = new TextureData("Stone.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 100
             });
 
@@ -245,19 +245,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Dirt",
                 Description = "A cube",
                 Id = 2,
-                Tex_Top = 2,
-                Tex_Bottom = 2,
-                Tex_Back = 2,
-                Tex_Front = 2,
-                Tex_Left = 2,
-                Tex_Right = 2,
+                Tex_Top = new TextureData("Dirt.png"),
+                Tex_Bottom = new TextureData("Dirt.png"),
+                Tex_Back = new TextureData("Dirt.png"),
+                Tex_Front = new TextureData("Dirt.png"),
+                Tex_Left = new TextureData("Dirt.png"),
+                Tex_Right = new TextureData("Dirt.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 50
             });
 
@@ -267,19 +267,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Grass",
                 Description = "A cube",
                 Id = 3,
-                Tex_Top = 0,
-                Tex_Bottom = 2,
-                Tex_Back = 3,
-                Tex_Front = 3,
-                Tex_Left = 3,
-                Tex_Right = 3,
+                Tex_Top = new TextureData("Grass.png"),
+                Tex_Bottom = new TextureData("Dirt.png"),
+                Tex_Back = new TextureData("GrassSide.png"),
+                Tex_Front = new TextureData("GrassSide.png"),
+                Tex_Left = new TextureData("GrassSide.png"),
+                Tex_Right = new TextureData("GrassSide.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 0,
                 Hardness = 50
             });
@@ -287,21 +287,21 @@ namespace Utopia.Shared.Configuration
             //StillWater Block
             yield return (new BlockProfile()
             {
-                Name = "StillWater",
+                Name = "Water_still",
                 Description = "A cube",
                 Id = 4,
-                Tex_Top = 5,
-                Tex_Bottom = 5,
-                Tex_Back = 5,
-                Tex_Front = 5,
-                Tex_Left = 5,
-                Tex_Right = 5,
+                Tex_Top = new TextureData("Water.png"),
+                Tex_Bottom = new TextureData("Water.png"),
+                Tex_Back = new TextureData("Water.png"),
+                Tex_Front = new TextureData("Water.png"),
+                Tex_Left = new TextureData("Water.png"),
+                Tex_Right = new TextureData("Water.png"),
                 LightAbsorbed = 20,
                 IsSeeThrough = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 1,
                 YBlockOffset = 0.1,
                 Hardness = 0
@@ -310,22 +310,22 @@ namespace Utopia.Shared.Configuration
             //DynamicWater Block
             yield return (new BlockProfile()
             {
-                Name = "DynamicWater",
+                Name = "Water_flow",
                 Description = "A cube",
                 Id = 5,
-                Tex_Top = 5,
-                Tex_Bottom = 5,
-                Tex_Back = 5,
-                Tex_Front = 5,
-                Tex_Left = 5,
-                Tex_Right = 5,
+                Tex_Top = new TextureData("Water.png"),
+                Tex_Bottom = new TextureData("Water.png"),
+                Tex_Back = new TextureData("Water.png"),
+                Tex_Front = new TextureData("Water.png"),
+                Tex_Left = new TextureData("Water.png"),
+                Tex_Right = new TextureData("Water.png"),
                 LightAbsorbed = 20,
                 IsSeeThrough = true,
                 IsBlockingWater = true,
                 IsTaggable = true,
                 CubeFamilly = Enums.enuCubeFamilly.Liquid,
                 Friction = 0.3f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 1,
                 Hardness = 0
             });
@@ -336,19 +336,19 @@ namespace Utopia.Shared.Configuration
                 Name = "LightWhite",
                 Description = "A cube",
                 Id = 6,
-                Tex_Top = 1,
-                Tex_Bottom = 1,
-                Tex_Back = 1,
-                Tex_Front = 1,
-                Tex_Left = 1,
-                Tex_Right = 1,
+                Tex_Top = new TextureData("Stone.png"),
+                Tex_Bottom = new TextureData("Stone.png"),
+                Tex_Back = new TextureData("Stone.png"),
+                Tex_Front = new TextureData("Stone.png"),
+                Tex_Left = new TextureData("Stone.png"),
+                Tex_Right = new TextureData("Stone.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -363,19 +363,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Rock",
                 Description = "A cube",
                 Id = 7,
-                Tex_Top = 6,
-                Tex_Bottom = 6,
-                Tex_Back = 6,
-                Tex_Front = 6,
-                Tex_Left = 6,
-                Tex_Right = 6,
+                Tex_Top = new TextureData("Rock.png"),
+                Tex_Bottom = new TextureData("Rock.png"),
+                Tex_Back = new TextureData("Rock.png"),
+                Tex_Front = new TextureData("Rock.png"),
+                Tex_Left = new TextureData("Rock.png"),
+                Tex_Right = new TextureData("Rock.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 SlidingValue = 0.05f,
                 Hardness = 0
             });
@@ -386,19 +386,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Sand",
                 Description = "A cube",
                 Id = 8,
-                Tex_Top = 7,
-                Tex_Bottom = 7,
-                Tex_Back = 7,
-                Tex_Front = 7,
-                Tex_Left = 7,
-                Tex_Right = 7,
+                Tex_Top = new TextureData("Sand.png"),
+                Tex_Bottom = new TextureData("Sand.png"),
+                Tex_Back = new TextureData("Sand.png"),
+                Tex_Front = new TextureData("Sand.png"),
+                Tex_Left = new TextureData("Sand.png"),
+                Tex_Right = new TextureData("Sand.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.3f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 40
             });
 
@@ -408,19 +408,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Gravel",
                 Description = "A cube",
                 Id = 9,
-                Tex_Top = 8,
-                Tex_Bottom = 8,
-                Tex_Back = 8,
-                Tex_Front = 8,
-                Tex_Left = 8,
-                Tex_Right = 8,
+                Tex_Top = new TextureData("Gravel.png"),
+                Tex_Bottom = new TextureData("Gravel.png"),
+                Tex_Back = new TextureData("Gravel.png"),
+                Tex_Front = new TextureData("Gravel.png"),
+                Tex_Left = new TextureData("Gravel.png"),
+                Tex_Right = new TextureData("Gravel.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 100
             });
 
@@ -430,19 +430,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Trunk",
                 Description = "A cube",
                 Id = 10,
-                Tex_Top = 10,
-                Tex_Bottom = 10,
-                Tex_Back = 9,
-                Tex_Front = 9,
-                Tex_Left = 9,
-                Tex_Right = 9,
+                Tex_Top = new TextureData("TreeSlide.png"),
+                Tex_Bottom = new TextureData("TreeSlide.png"),
+                Tex_Back = new TextureData("TreeTrunk.png"),
+                Tex_Front = new TextureData("TreeTrunk.png"),
+                Tex_Left = new TextureData("TreeTrunk.png"),
+                Tex_Right = new TextureData("TreeTrunk.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 80
             });
 
@@ -452,19 +452,19 @@ namespace Utopia.Shared.Configuration
                 Name = "GoldOre",
                 Description = "A cube",
                 Id = 11,
-                Tex_Top = 11,
-                Tex_Bottom = 11,
-                Tex_Back = 11,
-                Tex_Front = 11,
-                Tex_Left = 11,
-                Tex_Right = 11,
+                Tex_Top = new TextureData("GoldStone.png"),
+                Tex_Bottom = new TextureData("GoldStone.png"),
+                Tex_Back = new TextureData("GoldStone.png"),
+                Tex_Front = new TextureData("GoldStone.png"),
+                Tex_Left = new TextureData("GoldStone.png"),
+                Tex_Right = new TextureData("GoldStone.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 1000
             });
 
@@ -474,19 +474,19 @@ namespace Utopia.Shared.Configuration
                 Name = "CoalOre",
                 Description = "A cube",
                 Id = 12,
-                Tex_Top = 12,
-                Tex_Bottom = 12,
-                Tex_Back = 12,
-                Tex_Front = 12,
-                Tex_Left = 12,
-                Tex_Right = 12,
+                Tex_Top = new TextureData("CoalStone.png"),
+                Tex_Bottom = new TextureData("CoalStone.png"),
+                Tex_Back = new TextureData("CoalStone.png"),
+                Tex_Front = new TextureData("CoalStone.png"),
+                Tex_Left = new TextureData("CoalStone.png"),
+                Tex_Right = new TextureData("CoalStone.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 150
             });
 
@@ -496,19 +496,19 @@ namespace Utopia.Shared.Configuration
                 Name = "MoonStone",
                 Description = "A cube",
                 Id = 13,
-                Tex_Top = 13,
-                Tex_Bottom = 13,
-                Tex_Back = 13,
-                Tex_Front = 13,
-                Tex_Left = 13,
-                Tex_Right = 13,
+                Tex_Top = new TextureData("MoonStone.png"),
+                Tex_Bottom = new TextureData("MoonStone.png"),
+                Tex_Back = new TextureData("MoonStone.png"),
+                Tex_Front = new TextureData("MoonStone.png"),
+                Tex_Left = new TextureData("MoonStone.png"),
+                Tex_Right = new TextureData("MoonStone.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 86,
@@ -523,12 +523,12 @@ namespace Utopia.Shared.Configuration
                 Name = "Foliage",
                 Description = "A cube",
                 Id = 14,
-                Tex_Top = 15,
-                Tex_Bottom = 15,
-                Tex_Back = 15,
-                Tex_Front = 15,
-                Tex_Left = 15,
-                Tex_Right = 15,
+                Tex_Top = new TextureData("FoliageLight.png"),
+                Tex_Bottom = new TextureData("FoliageLight.png"),
+                Tex_Back = new TextureData("FoliageLight.png"),
+                Tex_Front = new TextureData("FoliageLight.png"),
+                Tex_Left = new TextureData("FoliageLight.png"),
+                Tex_Right = new TextureData("FoliageLight.png"),
                 LightAbsorbed = 255,
                 IsSeeThrough = true,
                 IsPickable = true,
@@ -536,7 +536,7 @@ namespace Utopia.Shared.Configuration
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.25f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 BiomeColorArrayTexture = 2,
                 Hardness = 20
             });
@@ -547,19 +547,19 @@ namespace Utopia.Shared.Configuration
                 Name = "Snow",
                 Description = "A cube",
                 Id = 15,
-                Tex_Top = 17,
-                Tex_Bottom = 17,
-                Tex_Back = 17,
-                Tex_Front = 17,
-                Tex_Left = 17,
-                Tex_Right = 17,
+                Tex_Top = new TextureData("Snow.png"),
+                Tex_Bottom = new TextureData("Snow.png"),
+                Tex_Back = new TextureData("Snow.png"),
+                Tex_Front = new TextureData("Snow.png"),
+                Tex_Left = new TextureData("Snow.png"),
+                Tex_Right = new TextureData("Snow.png"),
                 IsPickable = true,
                 IsSolidToEntity = true,
                 IsBlockingWater = true,
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 YBlockOffset = 0.9,
                 Friction = 0.35f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 10
             });
 
@@ -569,12 +569,12 @@ namespace Utopia.Shared.Configuration
                 Name = "Ice",
                 Description = "A cube",
                 Id = 16,
-                Tex_Top = 18,
-                Tex_Bottom = 18,
-                Tex_Back = 18,
-                Tex_Front = 18,
-                Tex_Left = 18,
-                Tex_Right = 18,
+                Tex_Top = new TextureData("Ice.png"),
+                Tex_Bottom = new TextureData("Ice.png"),
+                Tex_Back = new TextureData("Ice.png"),
+                Tex_Front = new TextureData("Ice.png"),
+                Tex_Left = new TextureData("Ice.png"),
+                Tex_Right = new TextureData("Ice.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
@@ -582,22 +582,22 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 Hardness = 100
             });
 
             //StillLava Block
             yield return (new BlockProfile()
             {
-                Name = "StillLava",
+                Name = "Lava_still",
                 Description = "A cube",
                 Id = 17,
-                Tex_Top = 19,
-                Tex_Bottom = 19,
-                Tex_Back = 19,
-                Tex_Front = 19,
-                Tex_Left = 19,
-                Tex_Right = 19,
+                Tex_Top = new TextureData("Lava.png"),
+                Tex_Bottom = new TextureData("Lava.png"),
+                Tex_Back = new TextureData("Lava.png"),
+                Tex_Front = new TextureData("Lava.png"),
+                Tex_Left = new TextureData("Lava.png"),
+                Tex_Right = new TextureData("Lava.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
@@ -605,7 +605,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -617,15 +617,15 @@ namespace Utopia.Shared.Configuration
             //DynamicLava Block
             yield return (new BlockProfile()
             {
-                Name = "DynamicLava",
+                Name = "Lava_flow",
                 Description = "A cube",
                 Id = 18,
-                Tex_Top = 19,
-                Tex_Bottom = 19,
-                Tex_Back = 19,
-                Tex_Front = 19,
-                Tex_Left = 19,
-                Tex_Right = 19,
+                Tex_Top = new TextureData("Lava.png"),
+                Tex_Bottom = new TextureData("Lava.png"),
+                Tex_Back = new TextureData("Lava.png"),
+                Tex_Front = new TextureData("Lava.png"),
+                Tex_Left = new TextureData("Lava.png"),
+                Tex_Right = new TextureData("Lava.png"),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
@@ -633,7 +633,7 @@ namespace Utopia.Shared.Configuration
                 CubeFamilly = Enums.enuCubeFamilly.Solid,
                 Friction = 0.15f,
                 SlidingValue = 0.05f,
-                IsSystemCube = true,
+                IsSystemCube = false,
                 IsEmissiveColorLightSource = true,
                 EmissiveColorA = 255,
                 EmissiveColorR = 255,
@@ -642,66 +642,19 @@ namespace Utopia.Shared.Configuration
                 IsTaggable = true,
                 Hardness = 200
             });
-
-            //Cactus Block
-            yield return (new BlockProfile()
-            {
-                Name = "Cactus",
-                Description = "A cube",
-                Id = 19,
-                Tex_Top = 22,
-                Tex_Bottom = 22,
-                Tex_Back = 20,
-                Tex_Front = 20,
-                Tex_Left = 20,
-                Tex_Right = 20,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                SlidingValue = 0.0f,
-                IsSystemCube = true,
-                SideOffsetMultiplier = 1,
-                Hardness = 50
-            });
-
-            //CactusTop Block
-            yield return (new BlockProfile()
-            {
-                Name = "CactusTop",
-                Description = "A cube",
-                Id = 20,
-                Tex_Top = 21,
-                Tex_Bottom = 22,
-                Tex_Back = 20,
-                Tex_Front = 20,
-                Tex_Left = 20,
-                Tex_Right = 20,
-                LightAbsorbed = 255,
-                IsPickable = true,
-                IsSolidToEntity = true,
-                IsBlockingWater = true,
-                CubeFamilly = Enums.enuCubeFamilly.Solid,
-                Friction = 0.25f,
-                SlidingValue = 0.0f,
-                IsSystemCube = true,
-                SideOffsetMultiplier = 1,
-                Hardness = 50
-            });
         }
 
         public IEnumerable<IEntity> InjectDefaultEntities()
         {
-            Plant cactusFlower = Config.Factory.CreateEntity<Plant>();
-            cactusFlower.Name = "Cactus Flower";
-            cactusFlower.MountPoint = BlockFace.Top;
-            cactusFlower.RndRotationAroundY = true;
-            cactusFlower.ModelName = "Flower4";
-            cactusFlower.IsSystemEntity = false;      
-            cactusFlower.MaxStackSize = 99;
-            yield return cactusFlower;
+            //Plant cactusFlower = Config.Factory.CreateEntity<Plant>();
+            //cactusFlower.Name = "Cactus Flower";
+            //cactusFlower.MountPoint = BlockFace.Top;
+            //cactusFlower.RndRotationAroundY = true;
+            //cactusFlower.ModelName = "Flower4";
+            //cactusFlower.IsSystemEntity = false;      
+            //cactusFlower.MaxStackSize = 99;
+            //yield return cactusFlower;
+            return new List<IEntity>();
         }
         #endregion
 
@@ -827,8 +780,8 @@ namespace Utopia.Shared.Configuration
             public const byte Stone = 1;
             public const byte Dirt = 2;
             public const byte Grass = 3;
-            public const byte StillWater = 4;
-            public const byte DynamicWater = 5;
+            public const byte WaterStill = 4;
+            public const byte WaterFlow = 5;
             public const byte LightWhite = 6;
             public const byte Rock = 7;
             public const byte Sand = 8;
@@ -840,11 +793,8 @@ namespace Utopia.Shared.Configuration
             public const byte Foliage = 14;
             public const byte Snow = 15;
             public const byte Ice = 16;
-            public const byte StillLava = 17;
-            public const byte DynamicLava = 18;
-            public const byte Cactus = 19;
-            public const byte CactusTop = 20;
-            public const byte Error = 255;
+            public const byte LavaStill = 17;
+            public const byte LavaFlow = 18;
         }
 
         public static class BluePrintId

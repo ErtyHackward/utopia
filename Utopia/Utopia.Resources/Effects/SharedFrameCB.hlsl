@@ -14,5 +14,6 @@ cbuffer PerFrame
 	float3 CameraWorldPosition;    //The camera in world position coordinate
 	matrix InvertedOrientation;	   //The inverted Matrix view
 	float2 WeatherGlobalOffset;	   //Global Offset assigned to temp for texture sampling
+	float TextureFrameAnimation;    //An animation counter for texture animated texture
 };
 

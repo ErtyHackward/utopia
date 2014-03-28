@@ -21,6 +21,7 @@ namespace Utopia.Resources.VertexFormats
         public ByteColor Color;
         public Vector4B VertexInfo;  //(bool)x = is Upper vertex;  y = facetype, z = not used, w = Offset
         public Vector4B BiomeInfo;   //X = Temperature, Y = Moisture, Z = ArrayTextureID for Biome, W SideOffset multiplier
+        public Vector2B Animation;   // X = Speed, Y = NbrFrames
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -34,37 +35,32 @@ namespace Utopia.Resources.VertexFormats
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("INFO", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
                                                             new InputElement("BIOMEINFO", 0, Format.R8G8_UNorm, InputElement.AppendAligned, 0),
-                                                            new InputElement("VARIOUS", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0)
+                                                            new InputElement("VARIOUS", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("ANIMATION", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B biomeInfo)
-        {
-            this.VertexInfo = new Vector4B();
-            this.Color = lighting;
-            this.Position = position;
-            this.Position.W = textureArrayId;
-            this.BiomeInfo = biomeInfo;
-        }
 
-        public VertexCubeSolid(Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo)
+        public VertexCubeSolid(Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo, byte animationSpeed, byte maxAnimationFrame)
         {
             this.VertexInfo = vertexInfo;
             this.Color = lighting;
             this.Position = position;
             this.Position.W = textureArrayId;
             this.BiomeInfo = biomeInfo;
+            Animation = new Vector2B() { X = animationSpeed, Y = maxAnimationFrame };
         }
 
-        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo)
+        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo, byte animationSpeed, byte maxAnimationFrame)
         {
             this.VertexInfo = vertexInfo;
             this.Color = lighting;
             this.Position = position;
             this.Position.W = textureArrayId;
             this.BiomeInfo = biomeInfo;
+            Animation = new Vector2B() { X = animationSpeed, Y = maxAnimationFrame };
         }
     }
 }

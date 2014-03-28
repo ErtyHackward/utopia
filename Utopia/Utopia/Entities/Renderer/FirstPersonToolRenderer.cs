@@ -242,8 +242,11 @@ namespace Utopia.Entities.Renderer
         {
             //Prepare Textured Block rendering when equiped ==============================================================
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
-            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
-            ToDispose(_cubeTextureView);
+
+            _cubeTextureView = _visualWorldParameters.CubeTextureManager.CubeArrayTexture;
+            //ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
+            //ToDispose(_cubeTextureView);
+
             //Create Vertex/Index Buffer to store the loaded cube mesh.
             _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
             _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, "Block IB"));
@@ -326,12 +329,12 @@ namespace Utopia.Entities.Renderer
 
             //Prapare to creation a new mesh with the correct texture mapping ID
             var materialChangeMapping = new Dictionary<int, int>();
-            materialChangeMapping[0] = blockProfile.Tex_Back;    //Change the Back Texture Id
-            materialChangeMapping[1] = blockProfile.Tex_Front;   //Change the Front Texture Id
-            materialChangeMapping[2] = blockProfile.Tex_Bottom;  //Change the Bottom Texture Id
-            materialChangeMapping[3] = blockProfile.Tex_Top;     //Change the Top Texture Id
-            materialChangeMapping[4] = blockProfile.Tex_Left;    //Change the Left Texture Id
-            materialChangeMapping[5] = blockProfile.Tex_Right;   //Change the Right Texture Id
+            materialChangeMapping[0] = (byte)blockProfile.Tex_Back.TextureArrayId;    //Change the Back Texture Id
+            materialChangeMapping[1] = (byte)blockProfile.Tex_Front.TextureArrayId;   //Change the Front Texture Id
+            materialChangeMapping[2] = (byte)blockProfile.Tex_Bottom.TextureArrayId;  //Change the Bottom Texture Id
+            materialChangeMapping[3] = (byte)blockProfile.Tex_Top.TextureArrayId;     //Change the Top Texture Id
+            materialChangeMapping[4] = (byte)blockProfile.Tex_Left.TextureArrayId;    //Change the Left Texture Id
+            materialChangeMapping[5] = (byte)blockProfile.Tex_Right.TextureArrayId;   //Change the Right Texture Id
 
             //Create the cube Mesh from the blue Print one
             _cubeMesh = _cubeMeshBluePrint.Clone(materialChangeMapping);

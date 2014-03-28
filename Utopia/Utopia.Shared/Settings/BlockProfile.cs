@@ -3,6 +3,8 @@ using ProtoBuf;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs;
 using System.ComponentModel;
+using System.Globalization;
+using System;
 
 namespace Utopia.Shared.Settings
 {
@@ -99,22 +101,6 @@ namespace Utopia.Shared.Settings
             set { _biomeColorArrayTexture = value; }
         }
 
-        //Texture id foreach face
-        [ProtoMember(20)]
-        public byte[] Textures = new byte[6];
-        [Description("Front texture Id"), Category("Textures")]
-        public byte Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }
-        [Description("Back texture Id"), Category("Textures")]
-        public byte Tex_Back { get { return Textures[(int)CubeFaces.Back]; } set { Textures[(int)CubeFaces.Back] = value; } }
-        [Description("Left texture Id"), Category("Textures")]
-        public byte Tex_Left { get { return Textures[(int)CubeFaces.Left]; } set { Textures[(int)CubeFaces.Left] = value; } }
-        [Description("Right texture Id"), Category("Textures")]
-        public byte Tex_Right { get { return Textures[(int)CubeFaces.Right]; } set { Textures[(int)CubeFaces.Right] = value; } }
-        [Description("Top texture Id"), Category("Textures")]
-        public byte Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
-        [Description("Bottom texture Id"), Category("Textures")]
-        public byte Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
-
         private List<SoundSource> _walkingOverSound = new List<SoundSource>();
 
         [Description("Sound played when entity walk over a this cube"), Category("Sound")]
@@ -128,6 +114,21 @@ namespace Utopia.Shared.Settings
         [Description("Sound played when entity hits this cube"), Category("Sound")]
         [ProtoMember(23)]
         public List<SoundSource> HitSounds { get; set; }
+
+        [ProtoMember(24)]
+        public TextureData[] Textures = new TextureData[6];
+        [Description("Front texture Id"), Category("Textures")]
+        public TextureData Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }
+        [Description("Back texture Id"), Category("Textures")]
+        public TextureData Tex_Back { get { return Textures[(int)CubeFaces.Back]; } set { Textures[(int)CubeFaces.Back] = value; } }
+        [Description("Left texture Id"), Category("Textures")]
+        public TextureData Tex_Left { get { return Textures[(int)CubeFaces.Left]; } set { Textures[(int)CubeFaces.Left] = value; } }
+        [Description("Right texture Id"), Category("Textures")]
+        public TextureData Tex_Right { get { return Textures[(int)CubeFaces.Right]; } set { Textures[(int)CubeFaces.Right] = value; } }
+        [Description("Top texture Id"), Category("Textures")]
+        public TextureData Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
+        [Description("Bottom texture Id"), Category("Textures")]
+        public TextureData Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
 
         public BlockProfile()
         {
@@ -143,6 +144,51 @@ namespace Utopia.Shared.Settings
         public override string ToString()
         {
             return Name;
+        }
+    }
+
+
+    [ProtoContract]
+    [TypeConverter(typeof(TextureDataTypeConverter))]
+    public class TextureData
+    {
+        [ProtoMember(1)]
+        public string Name { get; set; }
+
+        [ProtoMember(2)]
+        public byte AnimationSpeed { get; set; }
+
+        [Browsable(false)]
+        [ProtoMember(3)]
+        public byte AnimationFrames { get; set; }
+
+        [Browsable(false)]
+        public int TextureArrayId { get; set; } //Need to be filled in at runtime.
+
+        [Browsable(false)]
+        public bool isAnimated { get { return AnimationFrames > 1; } }
+
+        public TextureData()
+        {
+        }
+
+        public TextureData(string name)
+        {
+            this.Name = name;
+        }
+
+        //Property Grid editing Purpose
+        public class TextureDataTypeConverter : ExpandableObjectConverter
+        {
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {   //This method is used to shown information in the PropertyGrid.
+                if (destinationType == typeof(string))
+                {
+                    TextureData d = (TextureData)value;
+                    return (d.isAnimated ? string.Format("{0} [anim. {1} frames]", d.Name, d.AnimationFrames): d.Name);
+                }
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
         }
     }
 }
