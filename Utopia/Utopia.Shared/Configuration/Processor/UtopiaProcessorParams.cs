@@ -377,7 +377,8 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.25f,
                 IsSystemCube = false,
                 SlidingValue = 0.05f,
-                Hardness = 0
+                Hardness = 200,
+                Indestructible = true
             });
 
             //Sand Block

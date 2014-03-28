@@ -131,7 +131,10 @@ namespace Utopia.Shared.Settings
         public TextureData Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
         [Description("Bottom texture Id"), Category("Textures")]
         public TextureData Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
-        [Description("Animation speed in FPS for animated textures"), Category("Textures")]
+
+        [Description("Indestructible block"), Category("General")]
+        [ProtoMember(25)]
+        public bool Indestructible { get; set; }
 
         public BlockProfile()
         {
