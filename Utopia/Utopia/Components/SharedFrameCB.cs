@@ -51,6 +51,8 @@ namespace Utopia.Components
             public Matrix InvertedOrientation;
             [FieldOffset(240)]
             public Vector2 WeatherGlobalOffset;
+            [FieldOffset(248)]
+            public float TextureFrameAnimation;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -63,7 +65,6 @@ namespace Utopia.Components
         private float _animationValue = 0.0f;
         private float _animationSpeed = 0.5f;
         private IWeather _weather;
-
 
         public SharedFrameCB(D3DEngine engine,
                              CameraManager<ICameraFocused> cameraManager,
@@ -122,9 +123,16 @@ namespace Utopia.Components
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
+        public override void FTSUpdate(GameTime timeSpent)
+        {
+            CBPerFrame.Values.TextureFrameAnimation += 0.0250f; //1 FPS Default value
+            if (CBPerFrame.Values.TextureFrameAnimation >= _visualWorldParam.CubeTextureManager.TexturesAnimationLCM) CBPerFrame.Values.TextureFrameAnimation = 0.0f;
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _animationValue += (_animationSpeed * elapsedTime);
+
             while(_animationValue >= 1.0) _animationValue -= 1.0f;
         }
 

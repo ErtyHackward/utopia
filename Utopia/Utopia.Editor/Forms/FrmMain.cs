@@ -65,7 +65,6 @@ namespace Utopia.Editor.Forms
                             break;
                     }
 
-                    // generate icons for the configuration
                     _icons = Program.IconManager.GenerateIcons(_configuration);
 
                     containerEditor.Configuration = _configuration;
@@ -76,8 +75,6 @@ namespace Utopia.Editor.Forms
                     CubeSelector.Configuration = _configuration;
 
                     UpdateImageList();
-
-                    
 
                 }
                 else

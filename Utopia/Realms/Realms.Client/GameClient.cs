@@ -14,6 +14,7 @@ using Utopia.Shared.Net.Web;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 using System.Reflection;
+using Utopia.Shared.GraphicManagers;
 
 namespace Realms.Client
 {
@@ -90,6 +91,10 @@ namespace Realms.Client
             game.GameComponents.Add(stateManager);
 
             stateManager.ActivateGameStateAsync("StartUp");
+
+            //Cube Texture manager !
+            var cubeTextureManager = _iocContainer.Get<CubeTexturesManager>();
+            cubeTextureManager.Initialization(_d3dEngine.ImmediateContext, TexturePackConfig.Current.Settings.enuSamplingFilter);
 
             game.GameStateManager = stateManager;
 
