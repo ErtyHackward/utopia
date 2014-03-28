@@ -80,7 +80,9 @@ namespace Utopia.Shared.Entities
             }
             cursor.OwnerDynamicId = owner.DynamicId;
 
-            if (cursor.PeekProfile().Hardness == 0)
+            var test = cursor.PeekProfile();
+
+            if (cursor.PeekProfile().Indestructible)
             {
                 impact.Message = "Indestrutible cube, cannot be removed !";
                 return impact;
@@ -102,7 +104,7 @@ namespace Utopia.Shared.Entities
                     };
                 }
 
-                var toolBlockDamage = Damage;
+                var toolBlockDamage = Damage + 100;
 
                 if (SpecialDamages != null)
                 {
