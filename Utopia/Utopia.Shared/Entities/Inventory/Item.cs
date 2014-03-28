@@ -39,18 +39,21 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets or sets current voxel model name
         /// </summary>
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [Category("Appearance")]
         [ProtoMember(1)]
         public string ModelName { get; set; }
 
         /// <summary>
         /// Gets an item description
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(2)]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(3)]
         public int MaxStackSize { get; set; }
 
@@ -70,6 +73,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets maximum pick range, 0 means default
         /// </summary>
         [Description("Maximum pick range, 0 means default")]
+        [Category("Gameplay")]
         [ProtoMember(8)]
         public float PickRange { get; set; }
 
@@ -97,9 +101,11 @@ namespace Utopia.Shared.Entities.Inventory
             get { return BluePrintId.ToString(CultureInfo.InvariantCulture); }            
         }
 
+
         /// <summary>
         /// Gets possible slot types where the item can be put to
         /// </summary>
+        [Category("Gameplay")]
         public EquipmentSlotType AllowedSlots { get; set; }
 
         // -------------------------------------------------------------------------

@@ -96,7 +96,7 @@
             this.pgDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgDetails.Location = new System.Drawing.Point(3, 3);
             this.pgDetails.Name = "pgDetails";
-            this.pgDetails.Size = new System.Drawing.Size(661, 640);
+            this.pgDetails.Size = new System.Drawing.Size(661, 392);
             this.pgDetails.TabIndex = 0;
             this.pgDetails.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgDetails_PropertyValueChanged);
             // 
@@ -284,7 +284,7 @@
             treeNode8,
             treeNode9});
             this.tvMainCategories.SelectedImageIndex = 0;
-            this.tvMainCategories.Size = new System.Drawing.Size(182, 621);
+            this.tvMainCategories.Size = new System.Drawing.Size(182, 373);
             this.tvMainCategories.TabIndex = 5;
             this.tvMainCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMainCategories_AfterSelect);
             this.tvMainCategories.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseDown);
@@ -338,7 +338,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.containerEditor);
             this.splitContainer1.Panel2.Controls.Add(this.entityListView);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            this.splitContainer1.Size = new System.Drawing.Size(859, 646);
+            this.splitContainer1.Size = new System.Drawing.Size(859, 398);
             this.splitContainer1.SplitterDistance = 188;
             this.splitContainer1.TabIndex = 8;
             // 
@@ -350,7 +350,7 @@
             this.containerEditor.Icons = null;
             this.containerEditor.Location = new System.Drawing.Point(3, 3);
             this.containerEditor.Name = "containerEditor";
-            this.containerEditor.Size = new System.Drawing.Size(661, 640);
+            this.containerEditor.Size = new System.Drawing.Size(661, 392);
             this.containerEditor.TabIndex = 1;
             this.containerEditor.Text = "containerEditor1";
             this.containerEditor.Visible = false;
@@ -362,7 +362,7 @@
             this.entityListView.LargeImageList = this.largeImageList;
             this.entityListView.Location = new System.Drawing.Point(3, 3);
             this.entityListView.Name = "entityListView";
-            this.entityListView.Size = new System.Drawing.Size(661, 640);
+            this.entityListView.Size = new System.Drawing.Size(661, 392);
             this.entityListView.TabIndex = 2;
             this.entityListView.UseCompatibleStateImageBehavior = false;
             this.entityListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.entityListView_MouseDoubleClick);
@@ -391,7 +391,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(859, 670);
+            this.ClientSize = new System.Drawing.Size(859, 422);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "FrmMain";

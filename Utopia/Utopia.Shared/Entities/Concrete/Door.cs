@@ -47,7 +47,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         private ISoundEngine _soundEngine;
 
-
+        [Browsable(false)]
         public ISoundEngine SoundEngine
         {
             get { return _soundEngine; }

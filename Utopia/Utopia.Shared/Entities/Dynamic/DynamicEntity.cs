@@ -74,6 +74,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// The displacement mode use by this entity (Walk, swim, fly, ...)
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(2)]
         public EntityDisplacementModes DisplacementMode
         {
@@ -91,25 +92,29 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// The speed at wich the dynamic entity can walk
         /// </summary>
+        [Category("Physics")]
         [ProtoMember(3)]
         public float MoveSpeed { get; set; }
 
         /// <summary>
         /// The speed at wich the dynamic is doing move rotation
         /// </summary>
+        [Category("Physics")]
         [ProtoMember(4)]
         public float RotationSpeed { get; set; }
 
         /// <summary>
         /// Gets or sets current voxel model name
         /// </summary>
-        [ProtoMember(5)]
+        [Category("Appearance")]
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [ProtoMember(5)]
         public virtual string ModelName { get; set; }
 
         /// <summary>
         /// Indicates if user can do any changes in the world or not
         /// </summary>
+        [Browsable(false)]
         [ProtoMember(6)]
         public bool IsReadOnly { get; set; }
 

@@ -55,6 +55,7 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Health energy. When it depletes the character will die.
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(4)]
         public Energy Health
         {
@@ -65,8 +66,8 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Allows to performs run and jumps
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(5)]
-
         public Energy Stamina
         {
             get { return _stamina; }
@@ -76,8 +77,8 @@ namespace Utopia.Shared.Entities.Dynamic
         /// <summary>
         /// Allow to limit time under the water
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(6)]
-
         public Energy Oxygen
         {
             get { return _oxygen; }

@@ -214,6 +214,16 @@
   <ItemGroup>
     <None Include="Resources\voronoi.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\Library\System.Data.SQLite\x64\sqlite3.dll">
+      <Link>x64\sqlite3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Library\System.Data.SQLite\x86\sqlite3.dll">
+      <Link>x86\sqlite3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -28,13 +28,14 @@ namespace Utopia.Shared.Entities
         /// Gets or sets Entity ID used in configuration to distinguish entities of the same final type
         /// </summary>
         [ReadOnly(true)]
+        [Category("Entity")]
         [ProtoMember(1)]
         public ushort BluePrintId { get; set; }
 
         /// <summary>
         /// Entity maximum size
         /// </summary>
-        [Category("Entity")]
+        [Category("Appearance")]
         [ProtoMember(3)]
         public Vector3 DefaultSize { get; set; }
 
@@ -48,7 +49,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Pickable entity Property
         /// </summary>
-        [Category("Entity")]
+        [Category("Gameplay")]
         [Description("Indicates if the entity is pickable by the hand. Otherwise you need the Extractor tool")]
         [ProtoMember(5)]
         public bool IsPickable { get; set; }
@@ -56,7 +57,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Player Collision checked entity Property
         /// </summary>
-        [Category("Entity")]
+        [Category("Gameplay")]
         [ProtoMember(6)]
         public bool IsPlayerCollidable { get; set; }
 
@@ -70,14 +71,14 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets model collision type
         /// </summary>
-        [Category("Entity")]
+        [Category("Physics")]
         [ProtoMember(8)]
         public EntityCollisionType CollisionType { get; set; }
 
         /// <summary>
         /// TODO: finish description
         /// </summary>
-        [Category("Entity")]
+        [Category("Physics")]
         [ProtoMember(9)]
         public double YForceOnSideHit { get; set; }
 
@@ -93,7 +94,7 @@ namespace Utopia.Shared.Entities
         }
         
         [ProtoMember(11, OverwriteList=true)]
-        [Category("Entity")]
+        [Category("Appearance")]
         [Description("Define particules emiting behaviours")]
         public StaticEntityParticule[] Particules { get; set; }
 
@@ -116,11 +117,13 @@ namespace Utopia.Shared.Entities
 
         //[ProtoMember(14)] ==> Not use it for compatibility reason.
 
-        [Description("Low friction value will make the move on it easier = faster"), Category("Physics")]
+        [Description("Low friction value will make the move on it easier = faster")]
+        [Category("Physics")]
         [ProtoMember(15)]
         public float Friction { get; set; }
 
-        [Description("When stop moving on the block, will the player continue to move"), Category("Physics")]
+        [Description("When stop moving on the block, will the player continue to move")]
+        [Category("Physics")]
         [ProtoMember(16)]
         public float SlidingValue { get; set; }
 
