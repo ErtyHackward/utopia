@@ -73,7 +73,7 @@ namespace Utopia.Shared.GraphicManagers
             //Check all existing Textures, and assign them ids that will be use in texture array
             foreach (var file in Directory.GetFiles(ClientSettings.TexturePack + @"Terran/", @"*.png").OrderBy(x => x))
             {
-                string fileName = Path.GetFileName(file);
+                string fileName = Path.GetFileNameWithoutExtension(file);
 
                 var size = GetPNGSize(file);
 
@@ -125,7 +125,7 @@ namespace Utopia.Shared.GraphicManagers
             //Get all file and create a list of stream !
             foreach (string file in Directory.GetFiles(ClientSettings.TexturePack + @"Terran/", @"*.png").OrderBy(x => x))
             {
-                var meta = CubeTexturesMeta[Path.GetFileName(file)];
+                var meta = CubeTexturesMeta[Path.GetFileNameWithoutExtension(file)];
 
                 if (meta.isAnimated)
                 {

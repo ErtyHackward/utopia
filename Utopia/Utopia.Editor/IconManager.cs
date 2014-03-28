@@ -121,11 +121,45 @@ namespace Utopia.Editor
                 memStr.Position = 0;
                 result.Add("CubeResource_" + cubeprofiles.Name, new Bitmap(memStr));
                 memStr.Dispose();
-
                 i++;
             }
 
+            //Create texture icons
+            foreach (var textureFile in Directory.GetFiles(ClientSettings.TexturePack + @"Terran\", "*.png"))
+            {
+                //Load Image
+                Bitmap img = new Bitmap(textureFile);
+
+                int NbrFrames = img.Height / img.Width;
+                //Generate texture ICON
+                Bitmap resized = Copy(img, new System.Drawing.Rectangle() { X=0, Y=0, Width = img.Width, Height = img.Width });
+
+                result.Add("TextureCube_" + Path.GetFileNameWithoutExtension(textureFile) + "@" + NbrFrames, resized);
+            }
+
             return result;
+        }
+
+        private Bitmap Copy(Bitmap srcBitmap, System.Drawing.Rectangle srcRegion)
+        {
+            // Create the new bitmap and associated graphics object
+            Bitmap destBitmap = new Bitmap(32, 32);
+            //Graphics g = Graphics.FromImage(bmp);
+
+            //// Draw the specified section of the source bitmap to the new one
+            //g.DrawImage(srcBitmap, 0, 0, section, GraphicsUnit.Pixel);
+
+            //// Clean up
+            //g.Dispose();
+
+            using (Graphics grD = Graphics.FromImage(destBitmap))
+            {
+                grD.DrawImage(srcBitmap, srcRegion, srcRegion, GraphicsUnit.Pixel);
+            }
+
+
+            // Return the bitmap
+            return destBitmap;
         }
 
         public void Dispose()

@@ -5,6 +5,8 @@ using S33M3Resources.Structs;
 using System.ComponentModel;
 using System.Globalization;
 using System;
+using System.Drawing.Design;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Settings
 {
@@ -129,6 +131,7 @@ namespace Utopia.Shared.Settings
         public TextureData Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
         [Description("Bottom texture Id"), Category("Textures")]
         public TextureData Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
+        [Description("Animation speed in FPS for animated textures"), Category("Textures")]
 
         public BlockProfile()
         {
@@ -152,29 +155,54 @@ namespace Utopia.Shared.Settings
     [TypeConverter(typeof(TextureDataTypeConverter))]
     public class TextureData
     {
+        [ProtoContract]
+        public class TextureMeta
+        {
+            [Browsable(true)]
+            [ProtoMember(1)]
+            public string Name { get; set; }
+            [Browsable(false)]
+            [ProtoMember(2)]
+            public byte AnimationFrames { get; set; }
+
+            public override string ToString()
+            {
+                if (AnimationFrames > 1)
+                {
+                    return string.Format("{0} [anim. {1} frames]", Name, AnimationFrames);
+                }
+                else
+                {
+                    return Name;
+                }
+            }
+        }
+
         [ProtoMember(1)]
-        public string Name { get; set; }
+        [Description("Texture file name")]
+        [Editor(typeof(TextureSelector), typeof(UITypeEditor))]
+        public TextureMeta Texture { get; set; }
 
         [ProtoMember(2)]
+        [Description("Texture speed animation in fps")]
         public byte AnimationSpeed { get; set; }
-
-        [Browsable(false)]
-        [ProtoMember(3)]
-        public byte AnimationFrames { get; set; }
 
         [Browsable(false)]
         public int TextureArrayId { get; set; } //Need to be filled in at runtime.
 
         [Browsable(false)]
-        public bool isAnimated { get { return AnimationFrames > 1; } }
+        public bool isAnimated { get { return Texture == null ? false : (Texture.AnimationFrames > 1); } }
 
         public TextureData()
         {
+            AnimationSpeed = 20;
+            if (this.Texture == null) this.Texture = new TextureMeta();
         }
 
         public TextureData(string name)
+            :base()
         {
-            this.Name = name;
+            this.Texture = new TextureMeta() { Name = name };
         }
 
         //Property Grid editing Purpose
@@ -185,7 +213,7 @@ namespace Utopia.Shared.Settings
                 if (destinationType == typeof(string))
                 {
                     TextureData d = (TextureData)value;
-                    return (d.isAnimated ? string.Format("{0} [anim. {1} frames]", d.Name, d.AnimationFrames): d.Name);
+                    return d.Texture.ToString();
                 }
                 return base.ConvertTo(context, culture, value, destinationType);
             }

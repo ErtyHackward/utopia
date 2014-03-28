@@ -72,7 +72,6 @@ namespace Utopia.Shared.World
             InitCubesProfiles();
         }
 
-
         //Will assign Array id to Cube profiles
         public void InitCubesProfiles()
         {
@@ -83,8 +82,8 @@ namespace Utopia.Shared.World
                     //Assign each block profile a texture id !
                     foreach (var blockTexture in profile.Textures.Where(x => x != null))
                     {
-                        blockTexture.TextureArrayId = CubeTextureManager.CubeTexturesMeta[blockTexture.Name].TextureArrayId;
-                        blockTexture.AnimationFrames = CubeTextureManager.CubeTexturesMeta[blockTexture.Name].NbrFrame;
+                        blockTexture.TextureArrayId = CubeTextureManager.CubeTexturesMeta[blockTexture.Texture.Name].TextureArrayId;
+                        blockTexture.Texture.AnimationFrames = CubeTextureManager.CubeTexturesMeta[blockTexture.Texture.Name].NbrFrame;
                     }
                 }
                 WorldParameters.Configuration.isCubesProfilesIDInitialized = true;
