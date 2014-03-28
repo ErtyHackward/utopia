@@ -61,7 +61,7 @@ namespace Utopia.Worlds.Cubes
 
         public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk, ref TerraCube topCube, Dictionary<long, int> verticeDico)
         {
-            byte yBlockOffsetAsByte = 0;
+            int yBlockOffsetAsInt = 0;
             float yBlockOffset = 0;
             int verticeCubeOffset = chunk.Graphics.LiquidCubeVertices.Count;
             int indiceCubeOffset = chunk.Graphics.LiquidCubeIndices.Count;
@@ -84,8 +84,6 @@ namespace Utopia.Worlds.Cubes
             Vector4B bottomLeft;
             Vector4B bottomRight;
 
-            int cubeFaceType = (int)cubeFace;
-
             //GetBlock Offset
             if (blockProfile.IsTaggable && tag is ICubeYOffsetModifier)
             {
@@ -97,11 +95,11 @@ namespace Utopia.Worlds.Cubes
                 if(topCube.Id != cube.Id) yBlockOffset = (float)blockProfile.YBlockOffset;
             }
 
-            yBlockOffsetAsByte = (byte)(yBlockOffset * 255);
+            yBlockOffsetAsInt = (int)(yBlockOffset * 255);
 
             ChunkColumnInfo chunkInfo = chunk.BlockData.GetColumnInfo(new Vector2I(cubePosition.X, cubePosition.Z));
 
-            Vector4 vertexInfo2 = new Vector4(yBlockOffset, chunkInfo.Moisture / 255.0f, chunkInfo.Temperature / 255.0f, 0);
+            Vector4B vertexInfo2 = new Vector4B(chunkInfo.Moisture, chunkInfo.Temperature, (byte)0, (byte)0);
             Vector4B vertexInfo1 = new Vector4B((byte)cubeFace,
                                                       (byte)0,          //Is "UP" vertex
                                                       blockProfile.BiomeColorArrayTexture,
@@ -133,12 +131,15 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BackLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor BackRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 1, yBlockOffsetAsInt);
+                    topRight = cubePosition + new Vector4B(1, 1, 1, yBlockOffsetAsInt);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 1, yBlockOffsetAsInt);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 1, yBlockOffsetAsInt);
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    vertexInfo2.Z = blockProfile.Tex_Front.AnimationSpeed;
+                    vertexInfo2.W = blockProfile.Tex_Front.Texture.AnimationFrames;
+
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset0);
                     if (vertexInDico == false)
                     {
@@ -150,7 +151,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset1);
                     if (vertexInDico == false)
                     {
@@ -210,12 +211,15 @@ namespace Utopia.Worlds.Cubes
                     ByteColor FrontLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor FrontRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    topLeft = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(1, 1, 0, yBlockOffsetAsInt);
+                    topRight = cubePosition + new Vector4B(0, 1, 0, yBlockOffsetAsInt);
+                    bottomLeft = cubePosition + new Vector4B(1, 0, 0, yBlockOffsetAsInt);
+                    bottomRight = cubePosition + new Vector4B(0, 0, 0, yBlockOffsetAsInt);
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    vertexInfo2.Z = blockProfile.Tex_Back.AnimationSpeed;
+                    vertexInfo2.W = blockProfile.Tex_Back.Texture.AnimationFrames;
+
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset0);
                     if (vertexInDico == false)
                     {
@@ -227,7 +231,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset1);
                     if (vertexInDico == false)
                     {
@@ -288,12 +292,15 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BottomLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor BottomRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 0, yBlockOffsetAsInt);
+                    topRight = cubePosition + new Vector4B(1, 1, 0, yBlockOffsetAsInt);
+                    bottomLeft = cubePosition + new Vector4B(0, 1, 1, yBlockOffsetAsInt);
+                    bottomRight = cubePosition + new Vector4B(1, 1, 1, yBlockOffsetAsInt);
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    vertexInfo2.Z = blockProfile.Tex_Top.AnimationSpeed;
+                    vertexInfo2.W = blockProfile.Tex_Top.Texture.AnimationFrames;
+
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset0);
                     if (vertexInDico == false)
                     {
@@ -305,7 +312,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)bottomRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset1);
                     if (vertexInDico == false)
                     {
@@ -317,7 +324,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)bottomLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset2);
                     if (vertexInDico == false)
                     {
@@ -329,7 +336,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset3);
                     if (vertexInDico == false)
                     {
@@ -366,10 +373,13 @@ namespace Utopia.Worlds.Cubes
                     ByteColor TopLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor TopRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    topLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 0, 1, yBlockOffsetAsInt);
+                    topRight = cubePosition + new Vector4B(1, 0, 1, yBlockOffsetAsInt);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, yBlockOffsetAsInt);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 0, yBlockOffsetAsInt);
+
+                    vertexInfo2.Z = blockProfile.Tex_Bottom.AnimationSpeed;
+                    vertexInfo2.W = blockProfile.Tex_Bottom.Texture.AnimationFrames;
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset0);
@@ -444,12 +454,15 @@ namespace Utopia.Worlds.Cubes
                     ByteColor RightLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor RightRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 0, yBlockOffsetAsInt);
+                    bottomRight = cubePosition + new Vector4B(0, 0, 1, yBlockOffsetAsInt);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, yBlockOffsetAsInt);
+                    topRight = cubePosition + new Vector4B(0, 1, 1, yBlockOffsetAsInt);
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    vertexInfo2.Z = blockProfile.Tex_Left.AnimationSpeed;
+                    vertexInfo2.W = blockProfile.Tex_Left.Texture.AnimationFrames;
+
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset0);
                     if (vertexInDico == false)
                     {
@@ -461,7 +474,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset1);
                     if (vertexInDico == false)
                     {
@@ -521,12 +534,15 @@ namespace Utopia.Worlds.Cubes
                     ByteColor LeftLeftBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor;
                     ByteColor LeftRightBottom_Cube = _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor;
 
-                    topLeft = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(1, 1, 1, yBlockOffsetAsInt);
+                    topRight = cubePosition + new Vector4B(1, 1, 0, yBlockOffsetAsInt);
+                    bottomLeft = cubePosition + new Vector4B(1, 0, 1, yBlockOffsetAsInt);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 0, yBlockOffsetAsInt);
 
-                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    vertexInfo2.Z = blockProfile.Tex_Right.AnimationSpeed;
+                    vertexInfo2.W = blockProfile.Tex_Right.Texture.AnimationFrames;
+
+                    hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset0);
                     if (vertexInDico == false)
                     {
@@ -538,7 +554,7 @@ namespace Utopia.Worlds.Cubes
                         generatedVertex++;
                     }
 
-                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsByte << 48);
+                    hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffsetAsInt << 48);
                     vertexInDico = verticeDico.TryGetValue(hashVertex, out vertexOffset1);
                     if (vertexInDico == false)
                     {
