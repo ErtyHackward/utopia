@@ -12,6 +12,8 @@ namespace Utopia.Shared.Net.Web
 {
     public abstract class UtopiaWebApiBase : IDisposable
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected const string ServerUrl = "http://utopiarealms.com";
 
         /// <summary>

@@ -30,7 +30,7 @@ namespace Realms.Server
             get { return _server; }
         }
 
-        private static Utopia.Shared.Server.ServerCore _server;
+        private static ServerCore _server;
         private static ServerGameplayProvider _gameplay;
         private static Timer _reportAliveTimer;
         private static WorldParameters _worldParameters;
@@ -114,9 +114,31 @@ namespace Realms.Server
             }
             
             System.Net.ServicePointManager.Expect100Continue = false;
-            
-            _settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\server.config");
+
+            var configFileName = "server.config";
+            var port = 4815;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                var argument = args[i];
+                if (argument == "-conf" && args.Length > i + 1)
+                {
+                    configFileName = args[i + 1];
+                }
+                if (argument == "-port" && args.Length > i + 1)
+                {
+                    port = int.Parse(args[i + 1]);
+                }
+            }
+
+            _settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\" + configFileName);
             _settingsManager.Load();
+
+            if (_settingsManager.Settings.ServerPort != port)
+            {
+                _settingsManager.Settings.ServerPort = port;
+                _settingsManager.Save();
+            }
 
             if (string.IsNullOrEmpty(_settingsManager.Settings.Seed))
             {
@@ -127,7 +149,7 @@ namespace Realms.Server
                 _settingsManager.Save();
             }
 
-            if (string.IsNullOrEmpty(_settingsManager.Settings.ServerName))
+            if (string.IsNullOrEmpty(_settingsManager.Settings.ServerName) || _settingsManager.Settings.ServerName == "unnamed server")
             {
                 Console.WriteLine();
                 Console.WriteLine("Please enter the name of the server:");
@@ -136,6 +158,14 @@ namespace Realms.Server
                 _settingsManager.Save();
             }
 
+            if (string.IsNullOrEmpty(_settingsManager.Settings.ServerDescription))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please enter the server description:");
+                Console.Write("> ");
+                _settingsManager.Settings.ServerDescription = Console.ReadLine();
+                _settingsManager.Save();
+            }
 
             var wp = new WorldParameters
                 {
@@ -170,6 +200,8 @@ namespace Realms.Server
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.PlayerLogged += LoginManager_PlayerLogged;
 
+            _server.UsersStorage.DefaultRole = _server.CustomStorage.GetVariable("DefaultRole", UserRole.Guest);
+
             // send alive message each 5 minutes
             _reportAliveTimer = new Timer(CommitServerInfo, null, 0, 1000 * 60 * 5);
 
@@ -201,7 +233,13 @@ namespace Realms.Server
         static void CommitServerInfo(object state)
         {
             var settings = _settingsManager;
-            _serverWebApi.AliveUpdateAsync(settings.Settings.ServerName, settings.Settings.ServerPort, (uint)_server.ConnectionManager.Count, ServerUpdateCompleted);
+            
+            _serverWebApi.AliveUpdateAsync(
+                settings.Settings.ServerName, 
+                settings.Settings.ServerDescription, 
+                settings.Settings.ServerPort, 
+                (uint)_server.ConnectionManager.Count, 
+                ServerUpdateCompleted);
 
             try
             {

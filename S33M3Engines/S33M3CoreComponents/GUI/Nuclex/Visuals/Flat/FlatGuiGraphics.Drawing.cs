@@ -222,7 +222,15 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1, int groupId = 0)
+        public void DrawString(
+            string frameName, 
+            int frameFontId, 
+            ref RectangleF bounds, 
+            string text, 
+            ref ByteColor color, 
+            bool withMaxWidth, 
+            int carretPosition = -1,  
+            int groupId = 0)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
@@ -236,7 +244,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1, int groupId = 0)
+        public void DrawString(
+            string frameName, 
+            int frameFontId, 
+            ref RectangleF bounds, 
+            string text, 
+            bool withMaxWidth, 
+            int carretPosition = -1, 
+            int groupId = 0)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
@@ -248,14 +263,21 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         }
 
 
-        public void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1,
-                                     FlatGuiGraphics.Frame.HorizontalTextAlignment HorizontalPlacement = Frame.HorizontalTextAlignment.Left,
-                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement = Frame.VerticalTextAlignment.Top, int groupId = 0)
+        public void DrawString(
+            SpriteFont font, 
+            ref RectangleF bounds, 
+            string text, 
+            ref ByteColor color, 
+            bool withMaxWidth, 
+            int carretPosition = -1,
+            Frame.HorizontalTextAlignment horizontalPlacement = Frame.HorizontalTextAlignment.Left,
+            Frame.VerticalTextAlignment verticalPlacement = Frame.VerticalTextAlignment.Top, 
+            int groupId = 0)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
 
-            var position = positionText(ref bounds, text, font, HorizontalPlacement, VerticalPlacement);
+            var position = positionText(ref bounds, text, font, horizontalPlacement, verticalPlacement);
             spriteRenderer.DrawText(font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition, SpriteRenderer.TextFontPosition.RelativeToFontUp, groupId);
         }
 

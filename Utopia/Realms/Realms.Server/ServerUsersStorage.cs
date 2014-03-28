@@ -16,12 +16,16 @@ namespace Realms.Server
         private readonly SqliteStorageManager _storage;
         private readonly ServerWebApi _webApi;
 
+        public UserRole DefaultRole { get; set; }
+
         public ServerUsersStorage(SqliteStorageManager storage, ServerWebApi webApi)
         {
             if (storage == null) 
                 throw new ArgumentNullException("storage");
             if (webApi == null) 
                 throw new ArgumentNullException("webApi");
+
+            DefaultRole = UserRole.Guest;
 
             _storage = storage;
             _webApi = webApi;
@@ -59,7 +63,7 @@ namespace Realms.Server
                 
                 if (responce != null && responce.Valid)
                 {
-                    var role = UserRole.Guest;
+                    var role = DefaultRole;
 
                     if (_storage.GetUsersCount() == 0)
                         role = UserRole.Administrator;

@@ -286,6 +286,7 @@
     <Compile Include="Server\AStar\AStarNode3D.cs" />
     <Compile Include="Server\Commands\AdditemCommand.cs" />
     <Compile Include="Server\Commands\BanCommand.cs" />
+    <Compile Include="Server\Commands\DefaultRoleCommand.cs" />
     <Compile Include="Server\Commands\HelpCommand.cs" />
     <Compile Include="Server\Commands\KickCommand.cs" />
     <Compile Include="Server\Commands\MotdCommand.cs" />

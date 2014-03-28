@@ -222,7 +222,7 @@ namespace Utopia.Network
                 ServerConnection.Dispose();
 
             Address = address;
-
+            
             if (ServerConnection != null)
                 ServerConnection.Dispose();
             ServerConnection = new ServerConnection();
@@ -247,7 +247,15 @@ namespace Utopia.Network
 
             if (ServerConnection.Status != TcpConnectionStatus.Connected)
             {
-                ServerConnection.Connect(Address, 4815);
+                var port = 4815;
+                var addr = Address;
+                if (Address.Contains(":"))
+                {
+                    addr = Address.Substring(0, Address.IndexOf(':'));
+                    port = int.Parse(Address.Substring(Address.IndexOf(':') + 1));
+                }
+
+                ServerConnection.Connect(addr, port);
             }
             else
             {
