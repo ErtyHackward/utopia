@@ -249,6 +249,7 @@
     <Compile Include="Enums\CubeFaces.cs" />
     <Compile Include="Enums\enuCubeFamilly.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
+    <Compile Include="GraphicManagers\CubeTexturesManager.cs" />
     <Compile Include="Helpers\DllLoadHelper.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
@@ -350,6 +351,7 @@
     <Compile Include="Structs\ScheduleCallType.cs" />
     <Compile Include="Structs\ScheduleTask.cs" />
     <Compile Include="Tools\CubeSelector.cs" />
+    <Compile Include="Tools\TextureSelector.cs" />
     <Compile Include="Tools\Vector2IConverter.cs" />
     <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
     <Compile Include="World\LandscapeBufferManager.cs" />

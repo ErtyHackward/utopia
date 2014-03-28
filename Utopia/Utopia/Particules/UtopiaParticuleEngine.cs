@@ -106,7 +106,7 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, _landscapeManager, 32, _weather));
+            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, _landscapeManager, 32, _weather));
             AddEmitter(_d3dEngine.ImmediateContext, _cubeEmitter);
 
             //Create the various dynamic Particules type
