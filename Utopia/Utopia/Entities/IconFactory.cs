@@ -11,6 +11,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using System.Collections.Generic;
 using SharpDX.DXGI;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
@@ -211,7 +212,7 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
-        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, Size2 iconSize, DeviceContext context = null)
+        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, Size2 iconSize, VoxelModelState state = null, DeviceContext context = null)
         {
             if (context == null)
                 context = _d3DEngine.ImmediateContext;
@@ -240,7 +241,11 @@ namespace Utopia.Entities
 
             var instance = visualVoxelModel.VoxelModel.CreateInstance();
 
-            var state = visualVoxelModel.VoxelModel.GetMainState();
+            if (state == null)
+            {
+                var iconState = visualVoxelModel.VoxelModel.States.FirstOrDefault(s => string.Equals(s.Name, "Icon", StringComparison.CurrentCultureIgnoreCase));
+                state = iconState ?? visualVoxelModel.VoxelModel.GetMainState();
+            }
 
             instance.SetState(state);
 
@@ -268,8 +273,6 @@ namespace Utopia.Entities
             _d3DEngine.SetRenderTargetsAndViewPort(context);
 
             return tex2D;
-            
-            
         }
 
         private void CreateVoxelIcons(DeviceContext context)

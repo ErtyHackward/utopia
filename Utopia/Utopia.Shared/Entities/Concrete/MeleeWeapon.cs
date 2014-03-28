@@ -10,10 +10,12 @@ namespace Utopia.Shared.Entities.Concrete
     [ProtoContract]
     public class MeleeWeapon : Item, ITool
     {
+        [Category("Gameplay")]
         [Description("Weapon damage")]
         [ProtoMember(1)]
         public int Damage { get; set; }
 
+        [Category("Gameplay")]
         public bool RepeatedActionsAllowed { get; set; }
 
         public IToolImpact Use(IDynamicEntity owner)

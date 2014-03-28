@@ -20,6 +20,7 @@ namespace Utopia.Shared.Entities.Concrete
             set { _emittedLightColor = value; }
         }
 
+        [Category("LightSource")]
         [DisplayName("EmittedLightColor")]
         public Color EditorColor
         {

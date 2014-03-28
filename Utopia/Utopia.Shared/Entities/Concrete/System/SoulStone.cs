@@ -1,11 +1,7 @@
 ﻿using ProtoBuf;
 using S33M3Resources.Structs;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -24,13 +20,6 @@ namespace Utopia.Shared.Entities.Concrete.System
         [Browsable(false)]
         public uint DynamicEntityOwnerID { get; set;}
 
-        public SoulStone()
-        {
-            GroupName = "System entities";
-            Name = "SoulStone";
-            IsSystemEntity = true;
-        }
-
         [ProtoMember(2)]
         [Browsable(false)]
         public ByteColor EmittedLightColor
@@ -39,6 +28,7 @@ namespace Utopia.Shared.Entities.Concrete.System
             set { _emittedLightColor = value; }
         }
 
+        [Category("LightSource")]
         [DisplayName("EmittedLightColor")]
         public Color EditorColor
         {
@@ -50,6 +40,12 @@ namespace Utopia.Shared.Entities.Concrete.System
             set { _emittedLightColor = new ByteColor(value.R, value.G, value.B, value.A); }
         }
 
+        public SoulStone()
+        {
+            GroupName = "System entities";
+            Name = "SoulStone";
+            IsSystemEntity = true;
+        }
 
         /// <summary>
         /// Executes put operation

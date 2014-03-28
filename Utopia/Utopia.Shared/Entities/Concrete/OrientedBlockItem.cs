@@ -36,12 +36,14 @@ namespace Utopia.Shared.Entities.Concrete
         /// <summary>
         /// Gets or sets value indicating if entity can climb on this entity by the angle of 45 degree
         /// </summary>
+        [Category("OrientedBlockItem")]
         [ProtoMember(2)]
         public bool IsOrientedSlope { get; set; }
 
         /// <summary>
         /// Get or Set value indicating of the slope is sliding
         /// </summary>
+        [Category("OrientedBlockItem")]
         [ProtoMember(3)]
         public bool IsSlidingSlope { get; set; }
 

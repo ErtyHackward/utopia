@@ -46,6 +46,7 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
 
+        [Browsable(false)]
         public ISoundEngine SoundEngine { get; set; }
     }
 }

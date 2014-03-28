@@ -377,11 +377,7 @@ namespace S33M3CoreComponents.Sprites2D
                     textWidth += desc.Width;
                 }
             }
-
-            textWidth += length; // spacing between characters
-
-            //var test = MeasureString3(text);
-
+            
             return new Vector2(textWidth, textHeight);
         }
 

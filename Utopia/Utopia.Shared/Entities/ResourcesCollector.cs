@@ -27,13 +27,16 @@ namespace Utopia.Shared.Entities
         /// Tool block damage
         /// negative values will repair blocks
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(1)]
         public int Damage { get; set; }
 
+        [Category("Gameplay")]
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(2)]
         public bool RepeatedActionsAllowed { get; set; }
 
+        [Category("Gameplay")]
         [Description("Allows to set damage for specified types of blocks")]
         [ProtoMember(3, OverwriteList = true)]
         public List<CubeDamage> SpecialDamages { get; set; }
