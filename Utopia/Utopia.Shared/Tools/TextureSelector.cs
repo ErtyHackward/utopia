@@ -85,7 +85,8 @@ namespace Utopia.Shared.Tools
             if (_list == null) Initialize();
             _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
 
-            if (value != null)
+            var v = value as Utopia.Shared.Settings.TextureData.TextureMeta;
+            if (v != null && v.Name != null)
             {
                 var currentItem = _list.FindItemWithText(((Utopia.Shared.Settings.TextureData.TextureMeta)value).Name);
 

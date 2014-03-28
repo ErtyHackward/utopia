@@ -167,6 +167,8 @@ namespace Utopia.Shared.Settings
 
             public override string ToString()
             {
+                if (Name == null) return "";
+
                 if (AnimationFrames > 1)
                 {
                     return string.Format("{0} [anim. {1} frames]", Name, AnimationFrames);

@@ -290,7 +290,7 @@ namespace Utopia.Particules
             foreach (var file in Directory.GetFiles( _cubeTexturePath, _fileNamePatern))
             {
                 //Get Texture ID.
-                string fileName = Path.GetFileName(file);
+                string fileName = Path.GetFileNameWithoutExtension(file);
 
                 //Load files
                 using (var image = (Bitmap)Bitmap.FromFile(file))
@@ -313,7 +313,7 @@ namespace Utopia.Particules
             //for each define cubes profiles, merge 6 faces color sampled to give a collections a sampled color per Cube (24 colors)
             foreach (var blockProfile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
-                if (blockProfile.Textures == null) continue;
+                if (blockProfile.Textures == null || blockProfile.Textures.Count(x => x.Texture.Name == null) > 0) continue;
                 List<Color> colorArray = new List<Color>();
                 colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
                 colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
