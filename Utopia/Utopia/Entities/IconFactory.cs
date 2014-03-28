@@ -519,12 +519,12 @@ namespace Utopia.Entities
                 // 4 = Left
                 // 5 = Right
                 //The value attached to it is simply the TextureID from the texture array to use.
-                MaterialChangeMapping[0] = profile.Textures == null ? 0 : (byte)profile.Tex_Back.TextureArrayId; //Change the Back Texture Id
-                MaterialChangeMapping[1] = profile.Textures == null ? 0 : (byte)profile.Tex_Front.TextureArrayId; //Change the Front Texture Id
-                MaterialChangeMapping[2] = profile.Textures == null ? 0 : (byte)profile.Tex_Bottom.TextureArrayId; //Change the Bottom Texture Id
-                MaterialChangeMapping[3] = profile.Textures == null ? 0 : (byte)profile.Tex_Top.TextureArrayId; //Change the Top Texture Id
-                MaterialChangeMapping[4] = profile.Textures == null ? 0 : (byte)profile.Tex_Left.TextureArrayId; //Change the Left Texture Id
-                MaterialChangeMapping[5] = profile.Textures == null ? 0 :  (byte)profile.Tex_Right.TextureArrayId; //Change the Right Texture Id
+                MaterialChangeMapping[0] = profile.Textures == null ? 0 : profile.Tex_Back.TextureArrayId; //Change the Back Texture Id
+                MaterialChangeMapping[1] = profile.Textures == null ? 0 : profile.Tex_Front.TextureArrayId; //Change the Front Texture Id
+                MaterialChangeMapping[2] = profile.Textures == null ? 0 : profile.Tex_Bottom.TextureArrayId; //Change the Bottom Texture Id
+                MaterialChangeMapping[3] = profile.Textures == null ? 0 : profile.Tex_Top.TextureArrayId; //Change the Top Texture Id
+                MaterialChangeMapping[4] = profile.Textures == null ? 0 : profile.Tex_Left.TextureArrayId; //Change the Left Texture Id
+                MaterialChangeMapping[5] = profile.Textures == null ? 0 : profile.Tex_Right.TextureArrayId; //Change the Right Texture Id
 
                 Mesh mesh = meshBluePrint.Clone(MaterialChangeMapping);
                 //Stored the mesh data inside the buffers
