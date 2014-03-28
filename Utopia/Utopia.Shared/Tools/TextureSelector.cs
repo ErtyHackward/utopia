@@ -107,14 +107,17 @@ namespace Utopia.Shared.Tools
 
             _service.DropDownControl(_list);
             Utopia.Shared.Settings.TextureData.TextureMeta meta = new Settings.TextureData.TextureMeta();
-            if (_list.Tag.GetType() == typeof(string))
+            if (_list.Tag != null)
             {
-                meta.Name = (string)_list.Tag;
-            }
-            else
-            {
-                meta.Name = ((Utopia.Shared.Settings.TextureData.TextureMeta)_list.Tag).Name;
-                meta.AnimationFrames = 1;
+                if (_list.Tag.GetType() == typeof(string))
+                {
+                    meta.Name = (string)_list.Tag;
+                }
+                else
+                {
+                    meta.Name = ((Utopia.Shared.Settings.TextureData.TextureMeta)_list.Tag).Name;
+                    meta.AnimationFrames = 1;
+                }
             }
 
             return meta;
