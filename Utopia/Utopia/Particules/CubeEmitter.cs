@@ -315,12 +315,12 @@ namespace Utopia.Particules
             {
                 if (blockProfile.Textures == null) continue;
                 List<Color> colorArray = new List<Color>();
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
                 _cubeColorSampled.Add(blockProfile.Id, colorArray.ToArray());
             }
 
