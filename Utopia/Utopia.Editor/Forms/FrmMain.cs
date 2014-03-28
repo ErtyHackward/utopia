@@ -48,6 +48,9 @@ namespace Utopia.Editor.Forms
 
                 if (_configuration != null)
                 {
+
+                    CheckFileIntegrity();
+
                     Text = _configuration.ConfigurationName + " with processor : " + _configuration.WorldProcessor + " - realm editor";
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
@@ -65,7 +68,6 @@ namespace Utopia.Editor.Forms
                             break;
                     }
 
-                    // generate icons for the configuration
                     _icons = Program.IconManager.GenerateIcons(_configuration);
 
                     containerEditor.Configuration = _configuration;
@@ -76,8 +78,6 @@ namespace Utopia.Editor.Forms
                     CubeSelector.Configuration = _configuration;
 
                     UpdateImageList();
-
-                    
 
                 }
                 else
@@ -92,6 +92,24 @@ namespace Utopia.Editor.Forms
             }
         }
 
+        private void CheckFileIntegrity()
+        {
+            //Upgrade to version 2
+            if (Configuration.Version < 2)
+            {
+                //Init Textures arrays
+                foreach (var blockp in Configuration.BlockProfiles)
+                {
+                    blockp.Textures = new TextureData[6];
+                    for (int i = 0; i < 6; i++)
+                    {
+                        blockp.Textures[i] = new TextureData();
+                    }
+                }
+                Configuration.Version = 2;
+            }
+        }
+
         private void UpdateImageList()
         {
             //Removes all image above _entitiesOffset
@@ -101,6 +119,7 @@ namespace Utopia.Editor.Forms
             largeImageList.Images.Clear();
 
             ModelSelector.Models.Clear();
+            TextureSelector.TextureIcons.Clear();
 
             //Create Items icons
             foreach (var visualVoxelModel in Program.IconManager.ModelManager.Enumerate())
@@ -121,6 +140,20 @@ namespace Utopia.Editor.Forms
                 imageList1.Images.Add(_icons["CubeResource_" + cubeprofiles.Name]);
                 largeImageList.Images.Add("CubeResource_" + cubeprofiles.Name, _icons["CubeResource_" + cubeprofiles.Name]);
                 _icons["CubeResource_" + cubeprofiles.Name].Tag = imageList1.Images.Count - 1;
+            }
+
+            //Create Texture icons
+            foreach (var icon in _icons.Where(x => x.Key.StartsWith("TextureCube_")))
+            {
+                string[] IconName = icon.Key.Replace("TextureCube_", "").Split('@');
+                string finalName;
+                if (int.Parse(IconName[1]) > 1)
+                {
+                    finalName = string.Format("{0} [anim. {1} frames]", IconName[0], IconName[1]);
+                }
+                else finalName = string.Format("{0}", IconName[0]);
+
+                TextureSelector.TextureIcons.Add(finalName, icon.Value);
             }
 
             tvMainCategories.Refresh();
@@ -205,7 +238,7 @@ namespace Utopia.Editor.Forms
             newConfiguration.ConfigurationName = "noname";
             newConfiguration.CreatedAt = DateTime.Now;
             newConfiguration.WorldProcessor = processorChoose.SelectedProcessor;
-            newConfiguration.Version = 1;
+            newConfiguration.Version = 2;
 
             processorChoose.Dispose();
 
@@ -516,16 +549,58 @@ namespace Utopia.Editor.Forms
             }
         }
 
-        private bool CheckMandatorySystemEntities()
+        private bool CheckConfiguration()
         {
             bool result = true;
-            //Create System mandatory entities
-
             //The SoulStone
             if (_configuration.BluePrints.Values.OfType<Utopia.Shared.Entities.Concrete.System.SoulStone>().Count() != 1)
             {
                 MessageBox.Show(string.Format("Mandatory soulstone entity is missing !"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
+            }
+
+            //Check If the per block per texture all speed animation are the same.
+            foreach (var profile in _configuration.BlockProfiles.Where(x => x!= null && x.Textures != null))
+            {
+                if (profile.Name == "Air" || profile.Name == "System Reserved") continue;
+
+                Dictionary<string, TextureData> BlockTextures = new Dictionary<string, TextureData>();
+                foreach (var BlockTexture in profile.Textures.Where(x => x != null))
+                {
+                    if (BlockTexture.Texture.Name == null)
+                    {
+                        MessageBox.Show(string.Format("The block {0} doesn't have all its texture assigned !", profile.Name), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+
+                    TextureData d;
+                    if (BlockTextures.TryGetValue(BlockTexture.Texture.Name, out d) == false)
+                    {
+                        //Is not existing add it
+                        BlockTextures[BlockTexture.Texture.Name] = BlockTexture;
+                        continue;
+                    }
+
+                    //Existing texture
+                    if (d.AnimationSpeed != BlockTexture.AnimationSpeed)
+                    {
+                        MessageBox.Show(string.Format("The texture {0} for the block {1} is used multiple times with different animation speed, the speed must be equal !", BlockTexture.Texture.Name, profile.Name), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+                }
+            }
+
+            //Clean up file name
+            foreach (var blockp in Configuration.BlockProfiles.Where(x => x != null))
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    if (blockp.Textures[i].Texture.Name != null)
+                    {
+                        var array = blockp.Textures[i].Texture.Name.Split(' ');
+                        blockp.Textures[i].Texture.Name = array[0];
+                    }
+                }
             }
 
             return result;
@@ -535,7 +610,7 @@ namespace Utopia.Editor.Forms
         {
             try
             {
-                if (CheckMandatorySystemEntities())
+                if (CheckConfiguration())
                 {
 
                     // don't store default groups
@@ -1023,6 +1098,7 @@ namespace Utopia.Editor.Forms
             if (node != null)
                 tvMainCategories.SelectedNode = node;
         }
+
 
     }
 }

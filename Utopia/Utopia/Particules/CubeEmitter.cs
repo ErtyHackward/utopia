@@ -284,14 +284,13 @@ namespace Utopia.Particules
 
         private void CreateColorsSetPerCubeTexture()
         {
-            Dictionary<int, Color[]> perBitmapColorSampling = new Dictionary<int, Color[]>(); ;
+            Dictionary<string, Color[]> perBitmapColorSampling = new Dictionary<string, Color[]>(); ;
 
             //Sample each cubeTextures bmp
             foreach (var file in Directory.GetFiles( _cubeTexturePath, _fileNamePatern))
             {
                 //Get Texture ID.
-                string fileName = Path.GetFileName(file);
-                int id = int.Parse(fileName.Substring(2, fileName.IndexOf('_') - 2));
+                string fileName = Path.GetFileNameWithoutExtension(file);
 
                 //Load files
                 using (var image = (Bitmap)Bitmap.FromFile(file))
@@ -307,20 +306,21 @@ namespace Utopia.Particules
                             colorArray[i] = new Color(color.R, color.G, color.B, color.A);
                         }
                     }
-                    perBitmapColorSampling.Add(id, colorArray);
+                    perBitmapColorSampling.Add(fileName, colorArray);
                 }
             }
             
             //for each define cubes profiles, merge 6 faces color sampled to give a collections a sampled color per Cube (24 colors)
             foreach (var blockProfile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
+                if (blockProfile.Textures == null || blockProfile.Textures.Count(x => x.Texture.Name == null) > 0) continue;
                 List<Color> colorArray = new List<Color>();
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
+                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
                 _cubeColorSampled.Add(blockProfile.Id, colorArray.ToArray());
             }
 

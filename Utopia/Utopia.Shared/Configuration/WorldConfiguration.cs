@@ -284,23 +284,18 @@ namespace Utopia.Shared.Configuration
             //Get New Cube ID.
             //We keep the id from 0 to 99 for "System" cubes
             //101 to 254 for Custom created cubes
-            byte newProfileId;
-            if (BlockProfiles.Where(x => x != null).Count(x => x.Id > 99) >= 1)
-            {
-                newProfileId = (byte)(BlockProfiles.Where(x => x.Id > 99).Select(y => y.Id).Max() + 1);
-            }
-            else newProfileId = 100;
+            byte newProfileId = (byte)(BlockProfiles.Max(x => x.Id) + 1);
 
             BlockProfile newCubeProfile = new BlockProfile()
             {
                 Name = "NewCustomCube",
                 Id = newProfileId,
-                Tex_Top = 1,
-                Tex_Bottom = 1,
-                Tex_Back = 1,
-                Tex_Front = 1,
-                Tex_Left = 1,
-                Tex_Right = 1,
+                Tex_Top = new TextureData(),
+                Tex_Bottom = new TextureData(),
+                Tex_Back = new TextureData(),
+                Tex_Front = new TextureData(),
+                Tex_Left = new TextureData(),
+                Tex_Right = new TextureData(),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
@@ -326,7 +321,8 @@ namespace Utopia.Shared.Configuration
             //Get cube profile id
             int profileID = 0;
             while(BlockProfiles[profileID] != profile) profileID++;
-            if (profileID <= 99) return false; //Don't remove system cube
+            if (profileID <= 18) return false; //Don't remove system cube
+            
             //New Array
             BlockProfile[] newArray = new BlockProfile[255];
 
@@ -355,6 +351,9 @@ namespace Utopia.Shared.Configuration
             }
         }
 
+        public bool isCubesProfilesIDInitialized { get; set; }
+
+      
         public void InjectMandatoryObjects()
         {
             CreateDefaultValues();
@@ -401,16 +400,6 @@ namespace Utopia.Shared.Configuration
         //Definition of default cube profile
         protected virtual void CreateDefaultCubeProfiles()
         {
-            FilledUpReservedCubeInArray();
-        }
-
-        private void FilledUpReservedCubeInArray()
-        {
-            //Field up to 100 included for Reserved Cube ID
-            for (byte currentCubeId = (byte)(BlockProfiles.Where(x => x != null && x.Id < 100).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
-            {
-                BlockProfiles[currentCubeId] = new BlockProfile { Name = "System Reserved", Id = currentCubeId };
-            }
         }
 
         protected virtual void CreateDefaultEntities()
