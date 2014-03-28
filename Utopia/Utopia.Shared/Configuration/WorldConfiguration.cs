@@ -284,7 +284,7 @@ namespace Utopia.Shared.Configuration
             //Get New Cube ID.
             //We keep the id from 0 to 99 for "System" cubes
             //101 to 254 for Custom created cubes
-            byte newProfileId = (byte)(BlockProfiles.Max(x => x.Id) + 1);
+            byte newProfileId = (byte)(BlockProfiles.Where(x => x != null).Max(x => x.Id) + 1);
 
             BlockProfile newCubeProfile = new BlockProfile()
             {
