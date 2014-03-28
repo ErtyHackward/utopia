@@ -1000,9 +1000,19 @@ namespace Utopia.Components
             UpdateCamera();
         }
 
+        private bool _askedSave;
+
         private void AskModelSave(Action<string> callback)
         {
-            _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" }, callback );
+            if (_askedSave)
+                return;
+            _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" },
+                s =>
+                {
+                    _askedSave = false;
+                    callback(s);
+                });
+            _askedSave = true;
         }
 
         private void OnModelSaveConfirm(string button)
@@ -2782,6 +2792,26 @@ namespace Utopia.Components
             }
         }
 
+        private void OnRenderPng()
+        {
+            if (_visualVoxelModel == null)
+            {
+                _gui.MessageBox("No model is selected to be rendered.", "Error");
+                return;
+            }
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia",
+                        _visualVoxelModel.VoxelModel.Name + ".png");
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            if (File.Exists(path))
+                File.Delete(path);
+
+            RenderPng(path);
+        }
+
+
         private void OnExportAll()
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
@@ -2920,24 +2950,7 @@ namespace Utopia.Components
 
                 var imgPath = Path.ChangeExtension(path, ".png");
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 2048, Height = 2048 }))
-                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, imgPath);
-
-                Image img;
-                
-                using (var fs = File.OpenRead(imgPath))
-                    img = Image.FromStream(fs);
-
-                var newImage = new Bitmap(512, 512);
-                using (var gr = Graphics.FromImage(newImage))
-                {
-                    gr.SmoothingMode = SmoothingMode.HighQuality;
-                    gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    gr.DrawImage(img, new System.Drawing.Rectangle(0, 0, 512, 512));
-                }
-
-                newImage.Save(imgPath, ImageFormat.Png);
+                RenderPng(imgPath);
 
                 WebApi.UploadModel(path);
 
@@ -2947,6 +2960,29 @@ namespace Utopia.Components
             {
                 _gui.MessageBox(x.Message, "Error");
             }
+        }
+
+        private void RenderPng(string filePath)
+        {
+            using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 2048, Height = 2048 }))
+                Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, filePath);
+
+            Image img;
+
+            using (var fs = File.OpenRead(filePath))
+                img = Image.FromStream(fs);
+
+            var newImage = new Bitmap(512, 512);
+            using (var gr = Graphics.FromImage(newImage))
+            {
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                gr.DrawImage(img, new System.Drawing.Rectangle(0, 0, 512, 512));
+            }
+
+            newImage.Save(filePath, ImageFormat.Png);
+            _gui.MessageBox("Image was saved to 'MyDocuments\\Utopia'");
         }
 
         private void OnPublishAll()

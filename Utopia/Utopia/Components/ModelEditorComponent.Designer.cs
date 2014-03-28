@@ -460,6 +460,9 @@ namespace Utopia.Components
             var exportButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Export" };
             exportButton.Pressed += delegate { OnExport(); };
 
+            var renderButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Render png" };
+            renderButton.Pressed += delegate { OnRenderPng(); };
+
 #if DEBUG
 
             var importButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import" };
@@ -488,6 +491,7 @@ namespace Utopia.Components
             _mainToolsGroup.Children.Add(exportAllButton);
             _mainToolsGroup.Children.Add(publishAllButton);
 #endif
+            _mainToolsGroup.Children.Add(renderButton);
             _mainToolsGroup.Children.Add(publishButton);
             _mainToolsGroup.Children.Add(downloadButton);
 
