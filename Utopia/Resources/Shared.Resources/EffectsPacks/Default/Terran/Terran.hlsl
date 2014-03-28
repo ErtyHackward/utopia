@@ -57,9 +57,9 @@ SamplerState SamplerDiffuse;
 //Vertex shader Input
 struct VS_IN
 {
-	uint4 Position		 : POSITION;
+	uint4 Position		 : POSITION; // X = XPosi, Y = YPosi, Z = ZPosi, W = not used
 	float4 Col			 : COLOR;
-	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
+	uint4 VertexInfo	 : INFO;	  // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
 	float2 BiomeData     : BIOMEINFO; //X = Moisture, Y = Temperature
 	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome, Y SideOffset multiplier
 	uint4 Animation      : ANIMATION;  // X = Speed, Y = NbrFrames

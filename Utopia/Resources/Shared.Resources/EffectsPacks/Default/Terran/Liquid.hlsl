@@ -37,8 +37,6 @@ static const float3 facenormals[6] = {
 												{1,0,0}
 												};
 
-static const float SHADOW_EPSILON = 0.001f;
-
 //--------------------------------------------------------------------------------------
 // Texture Samplers
 //--------------------------------------------------------------------------------------
@@ -55,10 +53,11 @@ SamplerState SamplerOverlay;
 
 struct VS_LIQUID_IN
 {
-	uint4 Position		 : POSITION;
+	uint4 Position		 : POSITION;   // X = XPosi, Y = YPosi, Z = ZPosi,  W =  Y Modified block Height modificator
 	float4 Col			 : COLOR;
-	uint4 VertexInfo1	 : INFO0; // x = FaceType, (bool)y = is Upper vertex, Z = Biome Texture Id
-	float4 VertexInfo2	 : INFO1; // x = Y Modified block Height modificator, Y = Temperature, Z = Moisture
+	uint4 VertexInfo1	 : INFO;       // x = FaceType, (bool)y = is Upper vertex, Z = Biome Texture Id,
+	float2 BiomeInfo	 : BIOMEINFO;  // x = Moisture, y = Temperature
+	uint2 Animation      : ANIMATION;  // x = animation Speed, y = Animation NbrFrames
 	uint ArrayId         : ARRAYID;
 };
 
@@ -93,7 +92,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
 	float YOffset = 0;
-	if(input.VertexInfo1.y == 1) YOffset = input.VertexInfo2.x;
+	if (input.VertexInfo1.y == 1) YOffset = input.Position.w / 255.0f;
 	newPosition.y -= (YOffset + (PopUpValue * 128));
 
     float4 worldPosition = mul(newPosition, World);
@@ -106,6 +105,13 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
 						input.ArrayId);
 
+	//Animate texture !
+	if (input.Animation.y > 0)
+	{
+		int animationFrame = ((TextureFrameAnimation * input.Animation.x) % input.Animation.y);
+		output.StaticUVW.z += animationFrame;
+	}
+
 	output.AnimationUVW = float3(output.StaticUVW.xy / 8.0f, Various.y * 61);
 
 	output.EmissiveLight.rgb = saturate(input.Col.rgb +  SunColor * input.Col.a);
@@ -117,7 +123,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.causticPower = clamp( ((length(worldPosition.xyz) - 30) / 20), 0, 1);
 	if(facetype != 3) output.causticPower = 1;
-	output.BiomeData = input.VertexInfo2.yz;
+	output.BiomeData = input.BiomeInfo.xy;
 	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
 	output.BiomeData.y = saturate(output.BiomeData.y + WeatherGlobalOffset.y);
 	output.Various.x = input.VertexInfo1.z;

@@ -55,8 +55,6 @@ namespace Utopia.Worlds.Cubes
             Vector4B bottomLeft;
             Vector4B bottomRight;
 
-            int cubeFaceType = (int)cubeFace;
-
             //x = Is Upper VErtex or not
             //y = Cube Face
             //z = Not used
@@ -101,10 +99,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BackLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ?_cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor BackRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ?_cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 1, 0);
+                    topRight = cubePosition + new Vector4B(1, 1, 1, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 1, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 1, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -180,10 +178,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor FrontLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor FrontRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(1, 1, 0, 0);
+                    topRight = cubePosition + new Vector4B(0, 1, 0, 0);
+                    bottomLeft = cubePosition + new Vector4B(1, 0, 0, 0);
+                    bottomRight = cubePosition + new Vector4B(0, 0, 0, 0);
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -258,10 +256,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BottomLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor BottomRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 0, 0);
+                    topRight = cubePosition + new Vector4B(1, 1, 0, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 1, 1, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 1, 1, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -337,10 +335,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor TopLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor TopRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 0, 1, 0);
+                    topRight = cubePosition + new Vector4B(1, 0, 1, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 0, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -412,10 +410,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor RightLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor RightRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 0, 0);
+                    bottomRight = cubePosition + new Vector4B(0, 0, 1, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0);
+                    topRight = cubePosition + new Vector4B(0, 1, 1, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -489,10 +487,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor LeftLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor LeftRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(1, 1, 1, 0);
+                    topRight = cubePosition + new Vector4B(1, 1, 0, 0);
+                    bottomLeft = cubePosition + new Vector4B(1, 0, 1, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 0, 0);
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
