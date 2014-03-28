@@ -59,6 +59,7 @@ struct VS_LIQUID_IN
 	float4 Col			 : COLOR;
 	uint4 VertexInfo1	 : INFO0; // x = FaceType, (bool)y = is Upper vertex, Z = Biome Texture Id
 	float4 VertexInfo2	 : INFO1; // x = Y Modified block Height modificator, Y = Temperature, Z = Moisture
+	uint ArrayId         : ARRAYID;
 };
 
 struct PS_IN
@@ -103,7 +104,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.StaticUVW = float3(
 						(input.Position.x * texmul1[facetype]) + (input.Position.z * texmul2[facetype]), 
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
-						input.Position.w );
+						input.ArrayId);
 
 	output.AnimationUVW = float3(output.StaticUVW.xy / 8.0f, Various.y * 61);
 

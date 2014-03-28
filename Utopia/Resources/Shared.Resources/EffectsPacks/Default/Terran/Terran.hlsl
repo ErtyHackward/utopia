@@ -62,7 +62,8 @@ struct VS_IN
 	uint4 VertexInfo	 : INFO;   // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
 	float2 BiomeData     : BIOMEINFO; //X = Moisture, Y = Temperature
 	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome, Y SideOffset multiplier
-	uint2 Animation      : ANIMATION;  // X = Speed, Y = NbrFrames
+	uint4 Animation      : ANIMATION;  // X = Speed, Y = NbrFrames
+	uint ArrayId         : ARRAYID;
 };
 
 struct PS_IN
@@ -118,7 +119,7 @@ PS_IN VS(VS_IN input)
 	output.UVW = float3(
 						(input.Position.x * texmul1[facetype]) + (input.Position.z * texmul2[facetype]), 
 						((input.Position.y * texmul3[facetype]) + YOffset) + (input.Position.z * texmul4[facetype]),
-						input.Position.w );
+						input.ArrayId);
 
 	//Animate texture !
 	if (input.Animation.y > 0)
