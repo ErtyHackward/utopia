@@ -26,7 +26,7 @@
       <text font="title" hplacement="left" vplacement="top" xoffset="8" yoffset="7" color="#ffffff" />
     </frame>
     <frame name="label">
-      <text font="default" hplacement="left" vplacement="center" yoffset="0" color="#3F3F3F" />
+      <text font="default" hplacement="left" vplacement="top" yoffset="0" color="#3F3F3F" />
       <text font="BebasFont" hplacement="center" vplacement="center" yoffset="0" color="#3F3F3F" />
     </frame>
     <frame name="labelBold">

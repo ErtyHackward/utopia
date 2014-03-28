@@ -22,6 +22,13 @@ namespace Utopia.Shared.Server.Managers
     {
         private readonly EntityFactory _factory;
         private SQLiteCommand _worldParametersInsertCmd;
+        
+
+        public UserRole DefaultRole
+        {
+            get { throw new NotSupportedException(); }
+            set { throw new NotSupportedException(); }
+        }
 
         /// <summary>
         /// Creates new instance of SQLite storage manager
@@ -183,7 +190,7 @@ namespace Utopia.Shared.Server.Managers
             
             return 1 == Execute(string.Format("INSERT INTO users (login, password, role) VALUES ('{0}', '{1}', {2})", Escape(login), Escape(passwordHash), (int)role));
         }
-
+        
         /// <summary>
         /// Checks whether the specified user registered and password match
         /// </summary>

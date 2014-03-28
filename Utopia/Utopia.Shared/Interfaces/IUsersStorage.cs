@@ -9,6 +9,11 @@ namespace Utopia.Shared.Interfaces
     public interface IUsersStorage
     {
         /// <summary>
+        /// Gets or sets new user role (except first one)
+        /// </summary>
+        UserRole DefaultRole { get; set; }
+
+        /// <summary>
         /// Checks whether the specified user registered and password match
         /// </summary>
         /// <param name="login">User login</param>

@@ -38,10 +38,24 @@ namespace Realms.Client.States
 
             selection.BackPressed += SelectionBackPressed;
             selection.ConnectPressed += SelectionConnectPressed;
-
+            
             webApi.ServerListReceived += WebApiServerListReceived;
 
             base.Initialize(context);
+        }
+
+        void List_SelectionChanged(object sender, EventArgs e)
+        {
+            var selection = _iocContainer.Get<ServerSelectionComponent>();
+
+            if (selection.List.SelectedItems.Count != 1)
+            {
+                selection.Description = "";
+                return;
+            }
+
+            var server = ServerList[selection.List.SelectedItems[0]];
+            selection.Description = server.Description;
         }
 
         void SelectionConnectPressed(object sender, EventArgs e)
@@ -50,7 +64,9 @@ namespace Realms.Client.States
             var vars = _iocContainer.Get<RealmRuntimeVariables>();
 
             vars.SinglePlayer = false;
-            vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;
+
+            var item = ServerList[selection.List.SelectedItems[0]];
+            vars.CurrentServerAddress = item.ServerAddress + ":" + item.Port;
 
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }
@@ -97,7 +113,15 @@ namespace Realms.Client.States
             selection.List.Items.Clear();
             selection.List.Items.Add("Loading...");
 
+            selection.List.SelectionChanged += List_SelectionChanged;
+
             webApi.GetServersListAsync();
+        }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            var selection = _iocContainer.Get<ServerSelectionComponent>();
+            selection.List.SelectionChanged -= List_SelectionChanged;
         }
 
         void SelectionBackPressed(object sender, EventArgs e)
