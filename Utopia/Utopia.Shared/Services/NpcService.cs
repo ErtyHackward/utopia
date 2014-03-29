@@ -97,8 +97,11 @@ namespace Utopia.Shared.Services
                     {
                         var n = (Npc)item;
 
-                        n.Name = r.Next(_names);
-
+                        if (!(item is Animal))
+                        {
+                            n.Name = r.Next(_names);
+                        }
+                        
                         var npc = CreateNpc(n, _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + move, 72, 30)));
                         npc.Faction = faction;
                     }

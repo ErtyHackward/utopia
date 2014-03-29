@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
@@ -193,10 +194,21 @@ namespace Utopia.Shared.Server.Managers
             }
         }
 
+        private Vector2I WorldToArea(Vector3D position)
+        {
+            return new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X,
+                                   (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
+        }
+
+        private Vector2I WorldToArea(Vector3 position)
+        {
+            return new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X,
+                                   (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
+        }
+
         public MapArea GetArea(Vector3D position)
         {
-            var pos = new Vector2I((int)Math.Floor(position.X / (MapArea.AreaSize.X)) * MapArea.AreaSize.X, 
-                                   (int)Math.Floor(position.Z / (MapArea.AreaSize.Y)) * MapArea.AreaSize.Y);
+            var pos = WorldToArea(position);
             MapArea area;
             if (_areas.ContainsKey(pos))
             {
@@ -410,11 +422,35 @@ namespace Utopia.Shared.Server.Managers
             return result;
         }
 
-        public IEnumerable<IDynamicEntity> EnumerateAround(SharpDX.Vector3 pos)
+        public IEnumerable<IDynamicEntity> EnumerateAround(Vector3 pos)
         {
             var area = GetArea(new Vector3D(pos));
-
             return area.Enumerate().Select(s => s.DynamicEntity);
+        }
+
+        public IEnumerable<ServerDynamicEntity> EnumerateAround(Vector3D pos, float distance)
+        {
+            var startPos = WorldToArea(pos - new Vector3(distance));
+            var endPos   = WorldToArea(pos + new Vector3(distance));
+
+            var range = new Range2I(startPos, endPos - startPos + Vector2I.One);
+
+            var distanceSquare = distance * distance;
+
+            foreach (var areaPos in range)
+            {
+                MapArea area;
+                if (_areas.TryGetValue(areaPos, out area))
+                {
+                    foreach (var serverEntity in area.Enumerate())
+                    {
+                        if (Vector3D.DistanceSquared(serverEntity.DynamicEntity.Position, pos) < distanceSquare)
+                        {
+                            yield return serverEntity;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

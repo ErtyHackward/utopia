@@ -511,15 +511,16 @@ namespace Utopia.Entities.Managers
         /// Change the voxel body from a dynamic entity
         /// </summary>
         /// <param name="entityId">The concerned dynamic entity</param>
-        /// <param name="ModelName">the voxel body to assign, if null, the default model body will be set</param>
-        public void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true)
+        /// <param name="modelName">the voxel body to assign, if null, the default model body will be set</param>
+        /// <param name="assignModelToEntity"></param>
+        public void UpdateEntityVoxelBody(uint entityId, string modelName = null, bool assignModelToEntity = true)
         {
             //If own player, and not body displayed, don't do it
-            var entity = (PlayerCharacter)GetEntityById(entityId);
+            var entity = (CharacterEntity)GetEntityById(entityId);
             if (entity != null)
             {
                 RemoveEntityById(entityId);
-                if (assignModelToEntity && ModelName != null) entity.ModelName = ModelName;
+                if (assignModelToEntity && modelName != null) entity.ModelName = modelName;
                 entity.ModelInstance = null;
                 AddEntity(entity, _playerEntityManager.Player.DynamicId != entityId);
             }
