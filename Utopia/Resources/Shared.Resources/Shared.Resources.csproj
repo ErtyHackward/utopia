@@ -88,9 +88,6 @@
     <Content Include="TexturesPacks\Default\Terran\CoalStone.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\Default\Terran\diamond_ore.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="TexturesPacks\Default\Terran\Dirt.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -101,9 +98,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\Default\Terran\FoliageLight.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Terran\furnace_front_on.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\Default\Terran\Glass.png">
@@ -124,12 +118,6 @@
     <Content Include="TexturesPacks\Default\Terran\Ice.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TexturesPacks\Default\Terran\iron_ore.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Terran\lapis_ore.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="TexturesPacks\Default\Terran\Lava.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -137,15 +125,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\Default\Terran\Plank.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Terran\portal.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Terran\pumpkin_face_on.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TexturesPacks\Default\Terran\redstone_ore.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TexturesPacks\Default\Terran\Rock.png">
