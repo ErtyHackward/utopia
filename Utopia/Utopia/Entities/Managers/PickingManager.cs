@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
@@ -105,7 +106,23 @@ namespace Utopia.Entities.Managers
                     if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
                         var localStaticEntityBb = entity.VoxelEntity.ModelInstance.State.BoundingBox;
-                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
+
+                        var staticEntity = entity.Entity as IStaticEntity;
+                        var dynamicEntity = entity.Entity as IDynamicEntity;
+
+                        var rotation = Quaternion.Identity;
+
+                        if (staticEntity != null)
+                        {
+                            rotation = staticEntity.Rotation;
+                        }
+                        if (dynamicEntity != null)
+                        {
+                            rotation = dynamicEntity.BodyRotation;
+                        }
+
+
+                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(rotation));          //Rotate the BoundingBox
                         //Recompute the World bounding box of the entity based on a new Entity BoundingBox
                         entity.SetEntityVoxelBB(localStaticEntityBb); //Will automaticaly apply a 1/16 scaling on the boundingbox
                     }
@@ -174,6 +191,8 @@ namespace Utopia.Entities.Managers
             var activeModelState = instance.State;
 
             var visualModel = visualVoxelEntity.VisualVoxelModel;
+            if (visualModel == null)
+                return false;
 
             //For each Part in the model (A model can be composed of several parts)
             for (int partId = 0; partId < visualModel.VoxelModel.Parts.Count; partId++)

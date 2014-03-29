@@ -44,13 +44,13 @@ namespace Utopia.Shared.Server.Structs
                     if (_checkCounter++ > 10)
                     {
                         _checkCounter = 0;
-                        //// try to find target
-                        //_mapAreas.Find(area =>
+                        // try to find target
+                        //Npc.Server.AreaManager.Find(area =>
                         //                   {
                         //                       foreach (var serverEntity in area.Enumerate())
                         //                       {
                         //                           if (serverEntity.GetType() != this.GetType() &&
-                        //                               Vector3D.Distance(serverEntity.DynamicEntity.Position, DynamicEntity.Position) < 10)
+                        //                               Vector3D.Distance(serverEntity.DynamicEntity.Position, Npc.DynamicEntity.Position) < 10)
                         //                           {
                         //                               _target = serverEntity.DynamicEntity;
                         //                               return true;
