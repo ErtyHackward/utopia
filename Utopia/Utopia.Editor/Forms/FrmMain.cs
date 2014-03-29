@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using Utopia.Editor.Properties;
 using Utopia.Shared.Configuration;
@@ -1099,6 +1100,43 @@ namespace Utopia.Editor.Forms
                 tvMainCategories.SelectedNode = node;
         }
 
+        private void checkConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_configuration == null)
+                return;
 
+            var sb = new StringBuilder();
+            var problemFound = false;
+            sb.AppendLine("Configuration check report");
+            sb.AppendLine();
+
+            #region check how much items without recipes
+            var items = _configuration.BluePrints.Values.OfType<Item>().Where(i => !_configuration.Recipes.Exists(r => r.ResultBlueprintId == i.BluePrintId)).ToList();
+            if (items.Count > 0)
+            {
+                problemFound = true;
+                sb.AppendLine("Detected uncraftable items:");
+
+                foreach (var item in items)
+                {
+                    sb.AppendLine(item.ToString());
+                }
+                sb.AppendLine();
+            }
+            #endregion
+            
+            if (!problemFound)
+            {
+                sb.AppendLine("No problems found!");
+            }
+            else
+            {
+                sb.AppendLine("No more problems");
+            }
+
+            var filePath = Path.ChangeExtension(Path.GetTempFileName(), ".txt");
+            File.WriteAllText(filePath, sb.ToString());
+            Process.Start(filePath).WaitForExit();
+        }
     }
 }
