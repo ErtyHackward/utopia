@@ -99,7 +99,7 @@ namespace Utopia.Editor.Forms
             if (Configuration.Version < 2)
             {
                 //Init Textures arrays
-                foreach (var blockp in Configuration.BlockProfiles)
+                foreach (var blockp in Configuration.BlockProfiles.Where( x => x.Textures == null))
                 {
                     blockp.Textures = new TextureData[6];
                     for (int i = 0; i < 6; i++)
@@ -107,7 +107,7 @@ namespace Utopia.Editor.Forms
                         blockp.Textures[i] = new TextureData();
                     }
                 }
-                Configuration.Version = 2;
+                //Configuration.Version = 2;
             }
         }
 
