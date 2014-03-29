@@ -53,33 +53,32 @@ namespace Utopia.Entities.Voxel
             else
             {
                 _visualVoxelModel = model;
-                if (wrapped.DefaultSize == Vector3.Zero) //No size define, use the default one
+
+                BoundingBox voxelModelBB;
+                if (Entity is IOrientedSlope)
                 {
-                    BoundingBox voxelModelBB;
-                    if (Entity is IOrientedSlope)
-                    {
-                        //Use a forced boundingbox for the slope to work properly, this will be a 16*16*16 BB
-                        voxelModelBB = new BoundingBox(new Vector3(-8, 0, -8), new Vector3(8, 16, 8));
-                    }
-                    else
-                    {
-                        //Use the computed Bounding box from the model
-                        voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
-                    }
-
-                    if (voxelModelBB != null)
-                    {
-                        LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
-
-                        //Add instance rotation, if existing
-                        if (Entity is IStaticEntity)
-                        {
-                            LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)Entity).Rotation));
-                        }
-
-                        ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
-                    }
+                    //Use a forced boundingbox for the slope to work properly, this will be a 16*16*16 BB
+                    voxelModelBB = new BoundingBox(new Vector3(-8, 0, -8), new Vector3(8, 16, 8));
                 }
+                else
+                {
+                    //Use the computed Bounding box from the model
+                    voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
+                }
+
+                if (voxelModelBB != null)
+                {
+                    LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
+
+                    //Add instance rotation, if existing
+                    if (Entity is IStaticEntity)
+                    {
+                        LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)Entity).Rotation));
+                    }
+
+                    ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
+                }
+                
             }
         }
 

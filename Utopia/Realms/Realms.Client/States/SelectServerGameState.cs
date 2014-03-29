@@ -85,7 +85,7 @@ namespace Realms.Client.States
 #if DEBUG
                     if (e.Servers == null)
                         e.Servers = new List<ServerInfo>();
-                    e.Servers.Add(new ServerInfo { ServerAddress = "127.0.0.1", ServerName = "localhost" });
+                    e.Servers.Add(new ServerInfo { ServerAddress = "127.0.0.1", Port = 4815, ServerName = "localhost" });
 #endif
 
                     if (e.Servers != null)

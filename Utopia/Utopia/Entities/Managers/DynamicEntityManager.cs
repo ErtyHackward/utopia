@@ -352,7 +352,7 @@ namespace Utopia.Entities.Managers
                     }
                     else if (charEntity.Equipment.RightTool is IVoxelEntity)
                     {
-                        IVoxelEntity voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
+                        var voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
                         if (!string.IsNullOrEmpty(voxelItem.ModelName)) //Check if a voxel model is associated with the entity
                         {
                             DrawTool(voxelItem, charEntity);
@@ -367,7 +367,6 @@ namespace Utopia.Entities.Managers
         /// </summary>
         /// <param name="entity">the entity</param>
         /// <param name="withNetworkInterpolation">the entity movement will be interpolated between each move/rotate changes</param>
-        /// <param name="ForcedModelName">Will overide the define entity model for the voxel body</param>
         public void AddEntity(ICharacterEntity entity, bool withNetworkInterpolation)
         {
             string entityVoxelName = entity.ModelName;
@@ -407,19 +406,15 @@ namespace Utopia.Entities.Managers
                     _models.Add(entityVoxelName, modelWithInstances);
                 }
 
-                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
-                newEntity.WithNetworkInterpolation = withNetworkInterpolation;
-                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
-                DynamicEntities.Add(newEntity);
+                VoxelModelInstance instance;
 
                 //If the Model has a Voxel Model (Search by Name)
                 if (modelWithInstances.VisualModel != null)
                 {
                     //Create a new Instance of the Model
-                    var instance = new VoxelModelInstance(modelWithInstances.VisualModel.VoxelModel);
+                    instance = new VoxelModelInstance(modelWithInstances.VisualModel.VoxelModel);
                     entity.ModelInstance = instance;
                     modelWithInstances.Instances.Add(entity.DynamicId, instance);
-                    _dynamicEntitiesDico[entity.DynamicId].ModelInstance = instance;
                 }
                 else
                 {
@@ -427,6 +422,11 @@ namespace Utopia.Entities.Managers
                     modelWithInstances.Instances.Add(entity.DynamicId, null);
                 }
 
+                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
+                newEntity.WithNetworkInterpolation = withNetworkInterpolation;
+                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
+                DynamicEntities.Add(newEntity);
+                
                 OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });
             }
         }
@@ -729,7 +729,6 @@ namespace Utopia.Entities.Managers
                         modelAndInstances.Value.Instances[id] = instance;
 
                         var vde = _dynamicEntitiesDico[id];
-                        vde.ModelInstance = instance;
                         vde.DynamicEntity.ModelInstance = instance;
                     }
                 }
