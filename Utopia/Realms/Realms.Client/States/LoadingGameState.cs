@@ -117,9 +117,9 @@ namespace Realms.Client.States
             base.OnDisabled(nextState);
         }
 
-        void serverComponent_ConnectionStausChanged(object sender, TcpConnectionStatusEventArgs e)
+        void serverComponent_ConnectionStausChanged(object sender, ServerConnectionStatusEventArgs e)
         {
-            if (e.Status == TcpConnectionStatus.Disconnected)
+            if (e.Status == TcpConnectionStatus.Disconnected && e.Final)
             {
                 var serverComponent = _ioc.Get<ServerComponent>();
                 var guiManager = _ioc.Get<GuiManager>();
@@ -156,7 +156,7 @@ namespace Realms.Client.States
                     serverComponent.ServerConnection.Status != TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-                    serverComponent.BindingServer("127.0.0.1");
+                    serverComponent.BindingServer("127.0.0.1", null);
                     serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", wp.WorldName, "ClientWorldCache.db");
                 }
@@ -167,7 +167,7 @@ namespace Realms.Client.States
                     serverComponent.ServerConnection.Status != TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-                    serverComponent.BindingServer(_vars.CurrentServerAddress);
+                    serverComponent.BindingServer(_vars.CurrentServerAddress, _vars.CurrentServerLocalAddress);
 
                     // take server address without port to create server password hash
                     var srvAddr = _vars.CurrentServerAddress.Contains(":")

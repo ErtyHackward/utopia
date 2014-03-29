@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using Utopia.Shared.Configuration;
@@ -237,6 +238,7 @@ namespace Realms.Server
             _serverWebApi.AliveUpdateAsync(
                 settings.Settings.ServerName, 
                 settings.Settings.ServerDescription, 
+                LocalIPAddress(),
                 settings.Settings.ServerPort, 
                 (uint)_server.ConnectionManager.Count, 
                 ServerUpdateCompleted);
@@ -264,6 +266,22 @@ namespace Realms.Server
             {
                 logger.Error("Exception during update: " + x.Message);
             }
+        }
+
+        static string LocalIPAddress()
+        {
+            IPHostEntry host;
+            string localIP = "";
+            host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIP = ip.ToString();
+                    break;
+                }
+            }
+            return localIP;
         }
 
         private static void ServerUpdateCompleted(WebEventArgs e)

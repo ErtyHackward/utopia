@@ -67,6 +67,7 @@ namespace Realms.Client.States
 
             var item = ServerList[selection.List.SelectedItems[0]];
             vars.CurrentServerAddress = item.ServerAddress + ":" + item.Port;
+            vars.CurrentServerLocalAddress = string.IsNullOrEmpty(item.LocalAddress) ? null : item.LocalAddress + ":" + item.Port;
 
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }

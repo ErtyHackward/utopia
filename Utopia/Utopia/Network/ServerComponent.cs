@@ -18,6 +18,8 @@ namespace Utopia.Network
         private ServerConnection _serverConnection;
         private bool _entered;
         private ErrorMessage _lastError;
+        private bool _tryingGlobal;
+        private bool _needToTryLocal;
 
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
@@ -30,6 +32,8 @@ namespace Utopia.Network
         public string DisplayName { get; set; }
 
         public string Address { get; set; }
+
+        public string LocalAddress { get; set; }
         
         public ServerConnection ServerConnection
         {
@@ -170,7 +174,7 @@ namespace Utopia.Network
         /// <summary>
         /// Occurs when the connection status has changed
         /// </summary>
-        public event EventHandler<TcpConnectionStatusEventArgs> ConnectionStatusChanged;
+        public event EventHandler<ServerConnectionStatusEventArgs> ConnectionStatusChanged;
         /// <summary>
         /// Occurs when the connection status has changed
         /// </summary>
@@ -216,17 +220,29 @@ namespace Utopia.Network
                 ServerConnection.Dispose();
         }
 
-        public bool BindingServer(string address)
+        public bool BindingServer(string address, string localAddress)
         {
             if (ServerConnection != null && ServerConnection.Status == TcpConnectionStatus.Connected) 
                 ServerConnection.Dispose();
 
             Address = address;
+            LocalAddress = localAddress;
             
             if (ServerConnection != null)
                 ServerConnection.Dispose();
             ServerConnection = new ServerConnection();
             return true;
+        }
+
+        private void ParseAddress(string address, out string addr, out int port)
+        {
+            port = 4815;
+            addr = address;
+            if (address.Contains(":"))
+            {
+                addr = address.Substring(0, address.IndexOf(':'));
+                port = int.Parse(address.Substring(address.IndexOf(':') + 1));
+            }
         }
 
         public void ConnectToServer(string userName, string displayName, string passwordHash)
@@ -247,13 +263,12 @@ namespace Utopia.Network
 
             if (ServerConnection.Status != TcpConnectionStatus.Connected)
             {
-                var port = 4815;
-                var addr = Address;
-                if (Address.Contains(":"))
-                {
-                    addr = Address.Substring(0, Address.IndexOf(':'));
-                    port = int.Parse(Address.Substring(Address.IndexOf(':') + 1));
-                }
+                string addr;
+                int port;
+
+                ParseAddress(Address, out addr, out port);
+                _tryingGlobal = true;
+                _needToTryLocal = !string.IsNullOrEmpty(LocalAddress);
 
                 ServerConnection.Connect(addr, port);
             }
@@ -409,7 +424,7 @@ namespace Utopia.Network
             if (MessageEntityData != null) MessageEntityData(this, new ProtocolMessageEventArgs<EntityDataMessage> { Message = ea });
         }
 
-        protected virtual void OnConnectionStatusChanged(TcpConnectionStatusEventArgs e)
+        protected virtual void OnConnectionStatusChanged(ServerConnectionStatusEventArgs e)
         {
             if (ConnectionStatusChanged != null) ConnectionStatusChanged(this, e);
         }
@@ -532,6 +547,7 @@ namespace Utopia.Network
 
         void _serverConnection_StatusChanged(object sender, TcpConnectionStatusEventArgs e)
         {
+            bool final = true;
             if (e.Status == TcpConnectionStatus.Disconnected)
             {
                 foreach (var message in ServerConnection.FetchPendingMessages())
@@ -540,9 +556,34 @@ namespace Utopia.Network
                     if (error != null)
                         _lastError = error;
                 }
+
+                if (_tryingGlobal && _needToTryLocal)
+                {
+                    // doing second attempt
+                    string addr;
+                    int port;
+
+                    ParseAddress(LocalAddress, out addr, out port);
+                    _tryingGlobal = false;
+                    _needToTryLocal = false;
+                    final = false;
+
+                    ServerConnection.Connect(addr, port);
+                }
             }
 
-            OnConnectionStatusChanged(e);
+            if (e.Status == TcpConnectionStatus.Connected)
+            {
+                _needToTryLocal = false;
+            }
+
+            var ea = new ServerConnectionStatusEventArgs 
+            { 
+                Status = e.Status,
+                Final = final
+            };
+
+            OnConnectionStatusChanged(ea);
         }
         #endregion
 
@@ -565,4 +606,9 @@ namespace Utopia.Network
 
     }
 
+
+    public class ServerConnectionStatusEventArgs : TcpConnectionStatusEventArgs
+    {
+        public bool Final { get; set; }
+    }
 }

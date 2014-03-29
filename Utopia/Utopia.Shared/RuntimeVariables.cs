@@ -16,6 +16,11 @@
         public string CurrentServerAddress { get; set; }
 
         /// <summary>
+        /// Gets selected server local address (for the case if connecting from the intranet)
+        /// </summary>
+        public string CurrentServerLocalAddress { get; set; }
+
+        /// <summary>
         /// Logged user email
         /// </summary>
         public string Login { get; set; }
