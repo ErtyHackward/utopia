@@ -73,12 +73,12 @@ namespace Utopia.Entities
 
                 //Prapare to creation of a new mesh with the correct texture mapping ID
                 var materialChangeMapping = new Dictionary<int, int>();
-                materialChangeMapping[0] = (byte)cube.Tex_Back.TextureArrayId;    //Change the Back Texture Id
-                materialChangeMapping[1] = (byte)cube.Tex_Front.TextureArrayId;   //Change the Front Texture Id
-                materialChangeMapping[2] = (byte)cube.Tex_Bottom.TextureArrayId;  //Change the Bottom Texture Id
-                materialChangeMapping[3] = (byte)cube.Tex_Top.TextureArrayId;     //Change the Top Texture Id
-                materialChangeMapping[4] = (byte)cube.Tex_Left.TextureArrayId;    //Change the Left Texture Id
-                materialChangeMapping[5] = (byte)cube.Tex_Right.TextureArrayId;   //Change the Right Texture Id
+                materialChangeMapping[0] = cube.Tex_Back.TextureArrayId;    //Change the Back Texture Id
+                materialChangeMapping[1] = cube.Tex_Front.TextureArrayId;   //Change the Front Texture Id
+                materialChangeMapping[2] = cube.Tex_Bottom.TextureArrayId;  //Change the Bottom Texture Id
+                materialChangeMapping[3] = cube.Tex_Top.TextureArrayId;     //Change the Top Texture Id
+                materialChangeMapping[4] = cube.Tex_Left.TextureArrayId;    //Change the Left Texture Id
+                materialChangeMapping[5] = cube.Tex_Right.TextureArrayId;   //Change the Right Texture Id
 
                 pack.Mesh = _cubeMeshBluePrint.Clone(materialChangeMapping);
                 
