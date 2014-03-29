@@ -164,7 +164,22 @@ namespace Utopia.Entities.Managers
                     if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
                         var localStaticEntityBb = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
-                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
+
+                        var staticEntity = entity.Entity as IStaticEntity;
+                        var dynamicEntity = entity.Entity as IDynamicEntity;
+
+                        var rotation = Quaternion.Identity;
+
+                        if (staticEntity != null)
+                        {
+                            rotation = staticEntity.Rotation;
+                        }
+                        if (dynamicEntity != null)
+                        {
+                            rotation = dynamicEntity.BodyRotation;
+                        }
+
+                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(rotation));          //Rotate the BoundingBox
                         //Recompute the World bounding box of the entity based on a new Entity BoundingBox
                         entity.SetEntityVoxelBB(localStaticEntityBb); //Will automaticaly apply a 1/16 scaling on the boundingbox
                     }
@@ -179,7 +194,7 @@ namespace Utopia.Entities.Managers
                                 Vector3 tmpPickPoint;
                                 Vector3I tmpPickNormal;
 
-                                if (!ModelRayIntersection(entity, pickingRay, out tmpPickPoint, out tmpPickNormal, out currentDistance))
+                                if (!PickingManager.ModelRayIntersection(entity, pickingRay, out tmpPickPoint, out tmpPickNormal, out currentDistance))
                                     continue;
 
                                 result.PickPoint = tmpPickPoint;
@@ -362,100 +377,6 @@ namespace Utopia.Entities.Managers
                 physicSimu.Impulses.Add(new Impulse { ForceApplied = forceDirection * 3 });
                 entityTesting.SkipOneCollisionTest = true;
             }
-        }
-
-        private bool ModelRayIntersection(VisualEntity entity, Ray pickRay, out Vector3 intersectionPoint, out Vector3I normal, out float dist)
-        {
-            intersectionPoint = new Vector3();
-            normal = new Vector3I();
-            dist = float.MaxValue;
-
-            var visualVoxelEntity = entity as VisualVoxelEntity;
-            if (visualVoxelEntity == null) 
-                return false;
-
-            var instance = visualVoxelEntity.VoxelEntity.ModelInstance;
-
-            int index;
-            bool collisionDetected = false;
-            //Check Against all existing "Sub-Cube" model
-
-            //Get current Active state = A model can have multiple "State" (Like open, close, mid open, ...)
-            var activeModelState = instance.State;
-
-            var visualModel = visualVoxelEntity.VisualVoxelModel;
-
-            //For each Part in the model (A model can be composed of several parts)
-            for (int partId = 0; partId < visualModel.VoxelModel.Parts.Count; partId++)
-            {
-                VoxelModelPartState partState = activeModelState.PartsStates[partId];
-
-                // it is possible that there is no frame, so no need to check it
-                if (partState.ActiveFrame == byte.MaxValue)
-                    continue;
-
-                VoxelModelPart part = visualModel.VoxelModel.Parts[partId];
-                BoundingBox frameBoundingBox = visualModel.VisualVoxelFrames[partState.ActiveFrame].BoundingBox;
-
-                //Get Current Active part Frame = In animation case, the frame will be different when time passing by ... (Time depends)
-                var activeframe = visualModel.VoxelModel.Frames[partState.ActiveFrame]; //one active at a time
-
-                Matrix invertedEntityWorldMatrix = partState.GetTransformation() * Matrix.RotationQuaternion(instance.Rotation) * instance.World;
-                Matrix entityWorldMatrix = invertedEntityWorldMatrix;
-                invertedEntityWorldMatrix.Invert();
-
-                // convert ray to entity space
-                var ray = pickRay.Transform(invertedEntityWorldMatrix);
-
-                float partDistance;
-                // if we don't intersect part BB then there is no reason to check each block BB
-                if (!Collision.RayIntersectsBox(ref ray, ref frameBoundingBox, out partDistance))
-                    continue;
-                
-                // don't check part that is far than already found intersection
-                if (partDistance >= dist)
-                    continue;
-                
-                //Check each frame Body part
-                Vector3I chunkSize = activeframe.BlockData.ChunkSize;
-                byte[] data = activeframe.BlockData.BlockBytes;
-
-                index = -1;
-                //Get all sub block not empty
-                for (var z = 0; z < chunkSize.Z; z++)
-                {
-                    for (var x = 0; x < chunkSize.X; x++)
-                    {
-                        for (var y = 0; y < chunkSize.Y; y++)
-                        {
-                            index++;
-
-                            //Get cube
-                            if (data[index] > 0)
-                            {
-                                //Collision checking against this ray
-                                var box = new BoundingBox(new Vector3(x, y, z), new Vector3(x + 1, y + 1, z + 1));
-
-                                float blockDist;
-                                if (Collision.RayIntersectsBox(ref ray, ref box, out blockDist) && blockDist < dist)
-                                {
-                                    dist = blockDist;
-                                    Collision.RayIntersectsBox(ref ray, ref box, out intersectionPoint);
-                                    normal = box.GetPointNormal(intersectionPoint);
-
-                                    intersectionPoint = Vector3.TransformCoordinate(intersectionPoint, entityWorldMatrix);
-
-                                    collisionDetected = true;
-                                }
-
-                                
-                            }
-                        }
-                    }
-                }
-            }
-
-            return collisionDetected;
         }
 
         private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)

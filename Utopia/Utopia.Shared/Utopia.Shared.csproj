@@ -128,6 +128,7 @@
     <Compile Include="Configuration\Processor\UtopiaProcessorParams.cs" />
     <Compile Include="Configuration\UtopiaWorldConfiguration.cs" />
     <Compile Include="Entities\BlockItem.cs" />
+    <Compile Include="Entities\Concrete\Animal.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
     <Compile Include="Entities\Concrete\Extractor.cs" />
     <Compile Include="Entities\Concrete\Food.cs" />
