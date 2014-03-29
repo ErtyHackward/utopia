@@ -8,6 +8,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -264,16 +265,24 @@ namespace Utopia.Shared.Entities
         /// <param name="entity"></param>
         protected virtual void InjectFields(IEntity entity)
         {
-            if (entity is IWorldInteractingEntity)
+            var interactingEntity = entity as IWorldInteractingEntity;
+            if (interactingEntity != null)
             {
-                var item = entity as IWorldInteractingEntity;
+                var item = interactingEntity;
                 item.EntityFactory = this;
             }
 
-            if (entity is ISoundEmitterEntity)
+            var emitterEntity = entity as ISoundEmitterEntity;
+            if (emitterEntity != null)
             {
-                var item = entity as ISoundEmitterEntity;
+                var item = emitterEntity;
                 item.SoundEngine = SoundEngine;
+            }
+
+            var custInit = entity as ICustomInitialization;
+            if (custInit != null)
+            {
+                custInit.Initialize(this);
             }
         }
         

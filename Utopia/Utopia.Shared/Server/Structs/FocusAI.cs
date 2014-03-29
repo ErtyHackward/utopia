@@ -45,19 +45,13 @@ namespace Utopia.Shared.Server.Structs
                     {
                         _checkCounter = 0;
                         // try to find target
-                        //Npc.Server.AreaManager.Find(area =>
-                        //                   {
-                        //                       foreach (var serverEntity in area.Enumerate())
-                        //                       {
-                        //                           if (serverEntity.GetType() != this.GetType() &&
-                        //                               Vector3D.Distance(serverEntity.DynamicEntity.Position, Npc.DynamicEntity.Position) < 10)
-                        //                           {
-                        //                               _target = serverEntity.DynamicEntity;
-                        //                               return true;
-                        //                           }
-                        //                       }
-                        //                       return false;
-                        //                   });
+                        foreach (var serverDynamicEntity in Npc.Server.AreaManager.EnumerateAround(Npc.DynamicEntity.Position, 10f))
+                        {
+                            if (serverDynamicEntity.DynamicEntity == _parentNpc.Character)
+                                continue;
+
+                            _target = serverDynamicEntity.DynamicEntity;
+                        }
                     }
                 }
             }

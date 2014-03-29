@@ -39,7 +39,13 @@ namespace Utopia.Entities.Managers.Interfaces
         /// <param name="entity"></param>
         void UpdateEntity(ICharacterEntity entity);
 
-        void UpdateEntityVoxelBody(uint entityId, string ModelName = null, bool assignModelToEntity = true);
+        /// <summary>
+        /// Change the voxel body from a dynamic entity
+        /// </summary>
+        /// <param name="entityId">The concerned dynamic entity</param>
+        /// <param name="modelName">the voxel body to assign, if null, the default model body will be set</param>
+        /// <param name="assignModelToEntity"></param>
+        void UpdateEntityVoxelBody(uint entityId, string modelName = null, bool assignModelToEntity = true);
 
         void VoxelDraw(DeviceContext context, Matrix viewProjection);
     }
