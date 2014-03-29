@@ -64,6 +64,7 @@ struct VS_IN
 	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome, Y SideOffset multiplier
 	uint4 Animation      : ANIMATION;  // X = Speed, Y = NbrFrames
 	uint ArrayId         : ARRAYID;
+	uint Dummy           : DUMMY;
 };
 
 struct PS_IN

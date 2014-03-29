@@ -23,6 +23,7 @@ namespace Utopia.Resources.VertexFormats
         public Vector4B BiomeInfo;   //X = Moisture, Y = Temperature, Z = ArrayTextureID for Biome, W SideOffset multiplier
         public Vector4B Animation;   // X = Speed, Y = NbrFrames
         public ushort ArrayId;
+        public ushort Dummy;
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -38,7 +39,8 @@ namespace Utopia.Resources.VertexFormats
                                                             new InputElement("BIOMEINFO", 0, Format.R8G8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("VARIOUS", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0),
                                                             new InputElement("ANIMATION", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
-                                                            new InputElement("ARRAYID", 0, Format.R16_UInt, InputElement.AppendAligned, 0)
+                                                            new InputElement("ARRAYID", 0, Format.R16_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("DUMMY", 0, Format.R16_UInt, InputElement.AppendAligned, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);
@@ -52,6 +54,7 @@ namespace Utopia.Resources.VertexFormats
             this.Position = position;
             this.ArrayId = (ushort)textureArrayId;
             this.BiomeInfo = biomeInfo;
+            Dummy = 0;
             Animation = new Vector4B() { X = animationSpeed, Y = maxAnimationFrame };
         }
     }
