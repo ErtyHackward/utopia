@@ -118,6 +118,7 @@ namespace Realms.Server
 
             var configFileName = "server.config";
             var port = 4815;
+            string desc = null;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -129,6 +130,10 @@ namespace Realms.Server
                 if (argument == "-port" && args.Length > i + 1)
                 {
                     port = int.Parse(args[i + 1]);
+                }
+                if (argument == "-desc" && args.Length > i + 1)
+                {
+                    desc = args[i + 1];
                 }
             }
 
@@ -161,11 +166,18 @@ namespace Realms.Server
 
             if (string.IsNullOrEmpty(_settingsManager.Settings.ServerDescription))
             {
-                Console.WriteLine();
-                Console.WriteLine("Please enter the server description:");
-                Console.Write("> ");
-                _settingsManager.Settings.ServerDescription = Console.ReadLine();
-                _settingsManager.Save();
+                if (desc != null)
+                {
+                    _settingsManager.Settings.ServerDescription = desc;
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter the server description:");
+                    Console.Write("> ");
+                    _settingsManager.Settings.ServerDescription = Console.ReadLine();
+                    _settingsManager.Save();
+                }
             }
 
             var wp = new WorldParameters
