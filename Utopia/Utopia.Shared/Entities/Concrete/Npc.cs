@@ -6,6 +6,7 @@ using Utopia.Shared.Entities.Dynamic;
 namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
+    [ProtoInclude(100, typeof(Animal))]
     [Description("Basic dynamic entity")]
     public class Npc : CharacterEntity
     {
@@ -15,6 +16,5 @@ namespace Utopia.Shared.Entities.Concrete
             Name = "NPC";
             MoveSpeed = 2.2f;
         }
-
     }
 }

@@ -38,7 +38,7 @@ namespace Utopia.Entities
 
         public FTSValue<Color3> ModelLight = new FTSValue<Color3>();
 
-        public VoxelModelInstance ModelInstance { get; set; }
+        public VoxelModelInstance ModelInstance { get { return VisualVoxelEntity.VoxelEntity.ModelInstance; } }
 
         public bool WithNetworkInterpolation { get; set; }
 
