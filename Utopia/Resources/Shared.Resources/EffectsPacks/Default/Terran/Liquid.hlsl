@@ -59,7 +59,7 @@ struct VS_LIQUID_IN
 	float2 BiomeInfo	 : BIOMEINFO;  // x = Moisture, y = Temperature
 	uint2 Animation      : ANIMATION;  // x = animation Speed, y = Animation NbrFrames
 	uint ArrayId         : ARRAYID;
-	//uint Dummy           : DUMMY;
+	uint Dummy           : DUMMY;
 };
 
 struct PS_IN
