@@ -11,6 +11,7 @@ namespace Realms.Client.States
 {
     public class SelectServerGameState : GameState
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IKernel _iocContainer;
         
         public List<ServerInfo> ServerList { get; set; }
@@ -68,6 +69,8 @@ namespace Realms.Client.States
             var item = ServerList[selection.List.SelectedItems[0]];
             vars.CurrentServerAddress = item.ServerAddress + ":" + item.Port;
             vars.CurrentServerLocalAddress = string.IsNullOrEmpty(item.LocalAddress) ? null : item.LocalAddress + ":" + item.Port;
+
+            logger.Info("Connecting to {0} {1}", item.ServerName, item.ServerAddress);
 
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }

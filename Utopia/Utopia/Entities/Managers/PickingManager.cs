@@ -105,6 +105,9 @@ namespace Utopia.Entities.Managers
                     //Refresh entity bounding box world
                     if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
+                        if (entity.VoxelEntity.ModelInstance == null)
+                            continue; 
+
                         var localStaticEntityBb = entity.VoxelEntity.ModelInstance.State.BoundingBox;
 
                         var staticEntity = entity.Entity as IStaticEntity;
