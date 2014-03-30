@@ -109,6 +109,7 @@
     <Compile Include="Chunks\ChunkDataProvider.cs" />
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
+    <Compile Include="Chunks\ChunkSpawnableEntity.cs" />
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />

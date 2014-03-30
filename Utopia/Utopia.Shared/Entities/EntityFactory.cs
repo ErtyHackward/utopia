@@ -230,6 +230,7 @@ namespace Utopia.Shared.Entities
 
             Entity entity;
 
+            //Block creation
             if (bluePrintId < 256)
             {
                 var res = CreateEntity<CubeResource>();

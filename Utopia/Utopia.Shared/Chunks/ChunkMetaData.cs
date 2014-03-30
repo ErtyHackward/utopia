@@ -11,6 +11,8 @@ namespace Utopia.Shared.Chunks
         public byte ChunkMasterBiomeType;
         [ProtoMember(2)]
         public byte ChunkMaxHeightBuilt;
+        [ProtoMember(3)]
+        public bool IsWild;
 
         public ChunkMetaData()
         {
@@ -25,6 +27,11 @@ namespace Utopia.Shared.Chunks
         public void setChunkMaxHeightBuilt(ChunkColumnInfo[] columnsInfo)
         {
             ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
+        }
+
+        public void setChunkWildStatus(ChunkColumnInfo[] columnsInfo)
+        {
+            IsWild = (columnsInfo.Count(x => x.IsWild) / (float)columnsInfo.Length) > 0.6;
         }
 
         public void Save(System.IO.BinaryWriter writer)
