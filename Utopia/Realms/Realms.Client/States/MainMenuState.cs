@@ -6,6 +6,7 @@ using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sound;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
+using Utopia.Shared.Net.Web;
 using Utopia.Shared.Settings;
 
 namespace Realms.Client.States
@@ -55,6 +56,7 @@ namespace Realms.Client.States
             menu.LogoutPressed += MenuLogoutPressed;
             menu.ExitPressed += MenuExitPressed;
 
+            var guiManager = _ioc.Get<GuiManager>();
             if (_vars.DisposeGameComponents)
             {
                 _vars.DisposeGameComponents = false;
@@ -64,7 +66,6 @@ namespace Realms.Client.States
 
                 if (!string.IsNullOrEmpty(_vars.MessageOnExit))
                 {
-                    var guiManager = _ioc.Get<GuiManager>();
                     guiManager.MessageBox(_vars.MessageOnExit, "Information");
                     _vars.MessageOnExit = null;
                 }
@@ -80,8 +81,7 @@ namespace Realms.Client.States
 
             base.OnEnabled(previousState);
         }
-
-
+        
 
         public override void OnDisabled(GameState nextState)
         {
@@ -121,6 +121,15 @@ namespace Realms.Client.States
 
         void MenuMultiplayerPressed(object sender, EventArgs e)
         {
+            var guiManager = _ioc.Get<GuiManager>();
+            var webApi = _ioc.Get<ClientWebApi>();
+
+            if (string.IsNullOrEmpty(webApi.Token))
+            {
+                guiManager.MessageBox("Server authorization was failed. Did you confirm your email? (check the spam folder). You will unable to play multiplayer without confirmation.", "error");
+                return;
+            }
+
             _vars.SinglePlayer = false;
             StatesManager.ActivateGameStateAsync("SelectServer");
         }
