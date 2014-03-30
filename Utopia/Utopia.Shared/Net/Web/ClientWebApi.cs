@@ -11,6 +11,8 @@ namespace Utopia.Shared.Net.Web
     /// </summary>
     public class ClientWebApi : UtopiaWebApiBase
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static string ClientId;
         public static string ClientSecret;
 
@@ -27,6 +29,8 @@ namespace Utopia.Shared.Net.Web
         private void OnTokenReceived(TokenResponse e)
         {
             Token = e != null ? e.AccessToken : null;
+
+            logger.Info("Token responce {0}", Token);
 
             var handler = TokenReceived;
             if (handler != null) handler(this, e);
@@ -50,6 +54,8 @@ namespace Utopia.Shared.Net.Web
 
         protected virtual void OnTokenVerified(VerifyResponse e)
         {
+            logger.Info("Token verify responce active: {0}", e.Active);
+
             if (e.Active == 0)
                 Token = null;
 
@@ -64,6 +70,7 @@ namespace Utopia.Shared.Net.Web
         /// <param name="passwordHash"></param>
         public void OauthTokenAsync(string email, string passwordHash)
         {
+            logger.Info("Requesting token for {0} {1}...", email, passwordHash.Substring(0,10));
             GetRequestAsync<TokenResponse>(ServerUrl + "/oauth/token?" + string.Format("username={0}&password={1}&client_id={2}&client_secret={3}&grant_type=password&mode=login", Uri.EscapeDataString(email), passwordHash, ClientId, ClientSecret), OnTokenReceived);
         }
 
@@ -73,6 +80,7 @@ namespace Utopia.Shared.Net.Web
         /// <param name="token"></param>
         public void OauthVerifyTokenAsync(string token)
         {
+            logger.Info("Verifying token {0}", token);
             Token = token;
             GetRequestAsync<VerifyResponse>(ServerUrl + string.Format("/oauth/verify?access_token={0}", token), OnTokenVerified);
         }

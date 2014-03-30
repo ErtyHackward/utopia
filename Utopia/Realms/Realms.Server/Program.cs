@@ -117,7 +117,7 @@ namespace Realms.Server
             System.Net.ServicePointManager.Expect100Continue = false;
 
             var configFileName = "server.config";
-            var port = 4815;
+            var port = 0;
             string desc = null;
 
             for (int i = 0; i < args.Length; i++)
@@ -139,8 +139,9 @@ namespace Realms.Server
 
             _settingsManager = new XmlSettingsManager<ServerSettings>(@"Server\" + configFileName);
             _settingsManager.Load();
+            
 
-            if (_settingsManager.Settings.ServerPort != port)
+            if (port != 0 && _settingsManager.Settings.ServerPort != port)
             {
                 _settingsManager.Settings.ServerPort = port;
                 _settingsManager.Save();
