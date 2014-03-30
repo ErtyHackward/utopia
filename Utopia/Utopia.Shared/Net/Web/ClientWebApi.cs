@@ -54,7 +54,7 @@ namespace Utopia.Shared.Net.Web
 
         protected virtual void OnTokenVerified(VerifyResponse e)
         {
-            logger.Info("Token verify responce active: {0}", e.Active);
+            logger.Info("Token verify response active: {0}", e.Active);
 
             if (e.Active == 0)
                 Token = null;
