@@ -136,6 +136,10 @@ namespace Utopia.Shared.Settings
         [ProtoMember(25)]
         public bool Indestructible { get; set; }
 
+        [Description("Block health impact when hitted, < 0 = damge, > 0 = Healing per second value"), Category("General")]
+        [ProtoMember(26)]
+        public int HealthModification { get; set; }
+
         public BlockProfile()
         {
             HitSounds = new List<SoundSource>();
