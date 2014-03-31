@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Chunks
@@ -20,13 +21,21 @@ namespace Utopia.Shared.Chunks
             //When first loaded set property with the first item in the rule list.
             get
             {
-                if (BluePrintId == 0) BluePrintId = EditorConfigHelper.Config.BluePrints.Min(x => x.Value.BluePrintId);
+                if (BluePrintId == 0)
+                {
+                    var bluePrintId = EditorConfigHelper.Config.BluePrints.Values.Min(x => x.BluePrintId);
+                    if( EditorConfigHelper.Config.BluePrints[bluePrintId] is StaticEntity) this.isChunkGenerationSpawning = true;
+                    BluePrintId = bluePrintId;
+                }
                 return EditorConfigHelper.Config.BluePrints[BluePrintId].Name;
             }
             set
             {
                 //Get ID from name, name must be unic !
-                BluePrintId = EditorConfigHelper.Config.BluePrints.Values.First(x => x.Name == value).BluePrintId;
+                var entityBluePrint = EditorConfigHelper.Config.BluePrints.Values.First(x => x.Name == value);
+                if (entityBluePrint is StaticEntity) this.isChunkGenerationSpawning = true;
+                else this.isChunkGenerationSpawning = false;
+                BluePrintId = entityBluePrint.BluePrintId;
             }
         }
 

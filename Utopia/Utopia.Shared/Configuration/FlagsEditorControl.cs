@@ -22,6 +22,7 @@ namespace Utopia.Shared.Configuration
         public FlagsEditorControl()
         {
             lvwItems = new System.Windows.Forms.CheckedListBox();
+            lvwItems.CheckOnClick = true;
             SuspendLayout();
 
             lvwItems.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -35,23 +36,20 @@ namespace Utopia.Shared.Configuration
             bottomMenu.GripStyle = ToolStripGripStyle.Hidden;
             Controls.Add(bottomMenu);
 
+            okeyButton = new ToolStripButton();
+            okeyButton.Click += new EventHandler(okeyButton_Click);
+            okeyButton.Text = "Ok";
+            bottomMenu.Items.Add(okeyButton);
+
             buttonReset = new ToolStripButton();
             buttonReset.Click += new EventHandler(buttonReset_Click);
             buttonReset.Text = "Reset";
-            buttonReset.DisplayStyle = ToolStripItemDisplayStyle.Image;
             bottomMenu.Items.Add(buttonReset);
 
             cancelButton = new ToolStripButton();
             cancelButton.Click += new EventHandler(cancelButton_Click);
             cancelButton.Text = "Cancel";
-            cancelButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             bottomMenu.Items.Add(cancelButton);
-
-            okeyButton = new ToolStripButton();
-            okeyButton.Click += new EventHandler(okeyButton_Click);
-            okeyButton.Text = "Ok";
-            okeyButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            bottomMenu.Items.Add(okeyButton);
 
             Font = new System.Drawing.Font("Tahoma", 8.25F);
             ResumeLayout(false);
