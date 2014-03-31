@@ -110,6 +110,9 @@
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkSpawnableEntity.cs" />
+    <Compile Include="Chunks\ChunkSpawnableEntity.designer.cs">
+      <DependentUpon>ChunkSpawnableEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
@@ -122,7 +125,15 @@
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
+    <Compile Include="Configuration\CheckValuesEditor.cs" />
     <Compile Include="Configuration\EditorConfigHelper.cs" />
+    <Compile Include="Configuration\FlagsEditor.cs" />
+    <Compile Include="Configuration\CheckValuesEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\FlagsEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Configuration\FlatWorldConfiguration.cs" />
     <Compile Include="Configuration\Processor\FlatProcessorParams.cs" />
     <Compile Include="Configuration\IProcessorParams.cs" />

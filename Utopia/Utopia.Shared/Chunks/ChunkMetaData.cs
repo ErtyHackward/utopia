@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using ProtoBuf;
 using Utopia.Shared.Tools.BinarySerializer;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.Chunks
 {
@@ -13,15 +14,20 @@ namespace Utopia.Shared.Chunks
         public byte ChunkMaxHeightBuilt;
         [ProtoMember(3)]
         public bool IsWild;
+        [ProtoMember(4, OverwriteList = true)]
+        public List<ChunkSpawnableEntity> SpawnableEntities;
 
         public ChunkMetaData()
         {
+            SpawnableEntities = new List<ChunkSpawnableEntity>();
         }
 
         public ChunkMetaData(ChunkMetaData copyFrom)
         {
             ChunkMasterBiomeType = copyFrom.ChunkMasterBiomeType;
             ChunkMaxHeightBuilt = copyFrom.ChunkMaxHeightBuilt;
+            IsWild = copyFrom.IsWild;
+            SpawnableEntities = new List<ChunkSpawnableEntity>(copyFrom.SpawnableEntities);
         }
 
         public void setChunkMaxHeightBuilt(ChunkColumnInfo[] columnsInfo)

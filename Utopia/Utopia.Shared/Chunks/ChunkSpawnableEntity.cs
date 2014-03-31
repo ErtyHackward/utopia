@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using System.Text;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Chunks
@@ -34,10 +36,24 @@ namespace Utopia.Shared.Chunks
         public ChunkSpawningDayTime SpawningDayTime { get; set; }
         [ProtoMember(7)]
         [Description("The spawning season(s), if empty will spawn inside all existing seasons")]
-        public List<Season> SpawningSeasons { get; set; }
+        //public List<string> SpawningSeasons { get; set; }
+
+        private List<string> _spawningSeasons;
+        [Editor(typeof(SpawningSeasonsEditor), typeof(UITypeEditor))]
+        public List<string> SpawningSeasons
+        {
+            get { return _spawningSeasons; }
+            set { _spawningSeasons = value; }
+        }
+
         [ProtoMember(8)]
-        [Description("Can this entity be present at first chunk generation time ?")]
+        [Browsable(false)]
         public bool isChunkGenerationSpawning { get; set; }
+
+        public override string ToString()
+        {
+            return EntityName;
+        }
     }
 
     public enum ChunkSpawningPlace
