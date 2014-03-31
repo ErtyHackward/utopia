@@ -33,22 +33,26 @@ namespace Utopia.Shared.Chunks
         public ChunkSpawningPlace SpawningPlace { get; set; }
         [ProtoMember(6)]
         [Description("The spawning time")]
+        [Editor(typeof(FlagsEditor), typeof(UITypeEditor))]
         public ChunkSpawningDayTime SpawningDayTime { get; set; }
         [ProtoMember(7)]
         [Description("The spawning season(s), if empty will spawn inside all existing seasons")]
-        //public List<string> SpawningSeasons { get; set; }
-
-        private List<string> _spawningSeasons;
         [Editor(typeof(SpawningSeasonsEditor), typeof(UITypeEditor))]
-        public List<string> SpawningSeasons
-        {
-            get { return _spawningSeasons; }
-            set { _spawningSeasons = value; }
-        }
-
+        public List<string> SpawningSeasons { get; set;}
         [ProtoMember(8)]
         [Browsable(false)]
         public bool isChunkGenerationSpawning { get; set; }
+
+        public ChunkSpawnableEntity()
+        {
+            //Assign default values
+            SpawningDayTime = ChunkSpawningDayTime.Day | ChunkSpawningDayTime.Night;
+            MaxEntityAmount = 1;
+            SpawningChance = 1.0;
+            isWildChunkNeeded = true;
+            SpawningPlace = ChunkSpawningPlace.Surface;
+            SpawningSeasons = new List<string>();
+        }
 
         public override string ToString()
         {
@@ -63,10 +67,11 @@ namespace Utopia.Shared.Chunks
         InsideGround
     }
 
+    [Flags]
     public enum ChunkSpawningDayTime
     {
-        Day,
-        Night,
-        DayAndNight
+        Never = 0,
+        Day = 1,
+        Night = 2
     }
 }

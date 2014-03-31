@@ -529,8 +529,8 @@ namespace Utopia.Shared.World.Processors.Utopia
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
             masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+            chunkMetaData.SpawnableEntities = new List<ChunkSpawnableEntity>(masterBiome.SpawnableEntities); 
             InsertMicrolandscapeStaticEntities(dataCursor, chunk, chunkRnd, entityFactory, landscapeEntities);
-
         }
 
         /// <summary>

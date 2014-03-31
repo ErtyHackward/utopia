@@ -10,6 +10,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
+using System.Linq;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -73,14 +74,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             get { return _cubeVeins; }
             set { _cubeVeins = value; }
-        }
-
-        [Description("Entities spawning configuration"), Category("Population")]
-        [ProtoMember(7)]
-        public List<BiomeEntity> BiomeEntities
-        {
-            get { return _biomeEntities; }
-            set { _biomeEntities = value; }
         }
 
         [Description("Biome linked ambient music"), Category("Sound")]
@@ -240,14 +233,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
         {
-
-            //int nbr = 0;
-            foreach (BiomeEntity entity in BiomeEntities)
+            foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.isChunkGenerationSpawning))
             {
                 //Entity population
-                for (int i = 0; i < entity.EntityPerChunk; i++)
+                for (int i = 0; i < entity.MaxEntityAmount; i++)
                 {
-                    if (rnd.NextDouble() <= entity.ChanceOfSpawning)
+                    if (rnd.NextDouble() <= entity.SpawningChance)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
@@ -255,13 +246,10 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
 
                         PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
-                        //nbr++;
                     }
                 }
             }
-
             //logger.Warn("{0} | {1}", chunk.Position, nbr);
-
         }
 
         #endregion
