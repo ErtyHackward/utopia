@@ -23,6 +23,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         //Chunk Population elements
         private List<CubeVein> _cubeVeins = new List<CubeVein>();
         private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
+        private List<ChunkSpawnableEntity> _spawnableEntities = new List<ChunkSpawnableEntity>();
         private List<Cavern> _caverns = new List<Cavern>();
         private BiomeTrees _biomeTrees = new BiomeTrees();
         private List<BiomeSoundSource> _ambientSound = new List<BiomeSoundSource>();
@@ -56,8 +57,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         [Browsable(false)]
         [ProtoMember(4)]
-        public byte GroundCube { get; set; }
-        
+        public byte GroundCube { get; set; }        
 
         [Description("Under surface layer size"), Category("Composition")]
         [ProtoMember(5)]
@@ -134,6 +134,14 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [Description("Influence in case of zone"), Category("Filter")]
         [ProtoMember(14)]
         public int ZoneWeight { get; set; }
+
+        [Description("Entities that can spawn inside chunk"), Category("Population")]
+        [ProtoMember(15)]
+        public List<ChunkSpawnableEntity> SpawnableEntities
+        {
+            get { return _spawnableEntities; }
+            set { _spawnableEntities = value; }
+        }
 
         [Browsable(false)]
         public WorldConfiguration Configuration
