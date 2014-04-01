@@ -71,7 +71,6 @@ namespace Utopia.Shared.Interfaces
         /// <returns></returns>
         byte PeekValue<T>(Vector3I moveVector, out T tag) where T: BlockTag;
 
-
         /// <summary>
         /// Return Cube profile
         /// </summary>
