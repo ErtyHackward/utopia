@@ -84,7 +84,7 @@ namespace Realms.Server
             {
                 if (args.Length == 0)
                 {
-                    logger.Fatal("Could not file realm to use. Specify realm configuration file path.");
+                    logger.Fatal("Could not find the realm file. Specify realm configuration file path.");
                     return;
                 }
 

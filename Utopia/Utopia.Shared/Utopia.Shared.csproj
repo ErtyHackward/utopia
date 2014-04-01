@@ -275,6 +275,7 @@
     <Compile Include="Interfaces\ICustomStorage.cs" />
     <Compile Include="Interfaces\IDynamicEntityManager.cs" />
     <Compile Include="Interfaces\IGlobalStateManager.cs" />
+    <Compile Include="Interfaces\IWorldProcessorBuffered.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.designer.cs">
@@ -539,7 +540,6 @@
     <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />
     <Compile Include="World\WorldConfigs\FlatWorldConfig.cs" />
     <Compile Include="World\Processors\FlatWorldProcessor.cs" />
-    <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
     <Compile Include="World\WorldParameters.cs" />
   </ItemGroup>
