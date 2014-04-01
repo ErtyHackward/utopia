@@ -1,6 +1,7 @@
 ﻿using Utopia.Shared.Chunks;
 using Utopia.Shared.Structs;
 using System;
+using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Interfaces
 {
