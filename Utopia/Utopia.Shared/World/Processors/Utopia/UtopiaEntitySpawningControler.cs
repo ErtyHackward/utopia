@@ -53,10 +53,16 @@ namespace Utopia.Shared.World.Processors.Utopia
                     //Y base = Original world generated ground height (Before any player modification)
                     y = chunk.BlockData.ColumnsInfo[columnInfoIndex].MaxGroundHeight;
                     cursor.SetInternalPosition(x, y, z);
-                    //Check that the block above is "Air"
-                    if (cursor.Peek(CursorRelativeMovement.Up) != WorldConfiguration.CubeId.Air) return false;
-                    //Check that the block below is "Solid"
-                    BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Read()];
+                    //Move up until Air Block
+                    while (cursor.Read() != WorldConfiguration.CubeId.Air)
+                    {
+                        //Move up, if top chunk height exit
+                        if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
+                    }
+                    //I stopped on an Air
+
+                    //Check that the block below me is well "Solid to entity"
+                    BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Peek(CursorRelativeMovement.Down)];
                     if (!blockSpawnProfile.IsSolidToEntity) return false;
                     //Get Chunk master biome
                     byte masterBiomeId = chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType;
