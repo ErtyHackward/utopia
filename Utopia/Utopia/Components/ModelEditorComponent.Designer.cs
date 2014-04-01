@@ -347,9 +347,14 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_framesGroup);
 
-            OnFrameToolSelected(FrameEditorTools.Edit);
-            
+            if (_framesList.SelectedItems.Count == 0 && _framesList.Items.Count > 0)
+                _framesList.SelectItem = 0;
 
+            if (_frameEditorTool == FrameEditorTools.None)
+                _frameEditorTool = FrameEditorTools.Edit;
+
+            OnFrameToolSelected(_frameEditorTool);
+            
             UpdateLayout();
         }
 
@@ -431,15 +436,42 @@ namespace Utopia.Components
 
             var layoutModeButton = new StickyButtonControl { Text = "Layout" };
             layoutModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            layoutModeButton.Pressed += delegate { Mode = EditorMode.ModelLayout; OnLayoutMode(); };
+            layoutModeButton.Pressed += delegate {
+                if (VisualVoxelModel == null)
+                {
+                    _gui.MessageBox("Select or create a model before entering");
+                    layoutModeButton.Release();
+                    mainModeButton.Sticked = true;
+                    return;
+                }
+                Mode = EditorMode.ModelLayout; OnLayoutMode(); 
+            };
 
             var frameModeButton = new StickyButtonControl { Text = "Frame" };
             frameModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            frameModeButton.Pressed += delegate { Mode = EditorMode.FrameEdit; OnFrameMode(); };
+            frameModeButton.Pressed += delegate {
+                if (VisualVoxelModel == null)
+                {
+                    _gui.MessageBox("Select or create a model before entering");
+                    frameModeButton.Release();
+                    mainModeButton.Sticked = true;
+                    return;
+                }
+                Mode = EditorMode.FrameEdit; OnFrameMode(); 
+            };
 
             var animationModeButton = new StickyButtonControl { Text = "Anim" };
             animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            animationModeButton.Pressed += delegate { Mode = EditorMode.MainView; OnAnimationMode(); };
+            animationModeButton.Pressed += delegate {
+                if (VisualVoxelModel == null)
+                {
+                    _gui.MessageBox("Select or create a model before entering");
+                    animationModeButton.Release();
+                    mainModeButton.Sticked = true;
+                    return;
+                }
+                Mode = EditorMode.MainView; OnAnimationMode(); 
+            };
 
             _modesButtonsGroup.Children.Add(mainModeButton);
             _modesButtonsGroup.Children.Add(layoutModeButton);
