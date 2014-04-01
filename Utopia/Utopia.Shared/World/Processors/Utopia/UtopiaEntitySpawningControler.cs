@@ -64,12 +64,15 @@ namespace Utopia.Shared.World.Processors.Utopia
                     //Check that the block below me is well "Solid to entity"
                     BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Peek(CursorRelativeMovement.Down)];
                     if (!blockSpawnProfile.IsSolidToEntity) return false;
-                    //Get Chunk master biome
-                    byte masterBiomeId = chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType;
-                    //Get biome surface block layer
-                    byte surfaceBiomeCube = _config.ProcessorParam.Biomes[masterBiomeId].SurfaceCube;
-                    //If the entity need a Wild chunk, then it can only spawn on a cube surface equal to the default biome surface cube !
-                    if (entity.isWildChunkNeeded && surfaceBiomeCube != blockSpawnProfile.Id) return false;
+                    if (entity.isWildChunkNeeded)
+                    {
+                        //Get Chunk master biome
+                        byte masterBiomeId = chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType;
+                        //Get biome surface block layer
+                        byte surfaceBiomeCube = _config.ProcessorParam.Biomes[masterBiomeId].SurfaceCube;
+                        //If the entity need a Wild chunk, then it can only spawn on a cube surface equal to the default biome surface cube !
+                        if (surfaceBiomeCube != blockSpawnProfile.Id) return false;
+                    }
 
                     // Hurray it can spawn ! :D
                     //Add some randomnes on the cube where it will spawn
