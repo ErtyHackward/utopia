@@ -212,7 +212,7 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
-        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, Size2 iconSize, VoxelModelState state = null, DeviceContext context = null)
+        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, Size2 iconSize, VoxelModelState state = null, DeviceContext context = null, Matrix transform = default(Matrix))
         {
             if (context == null)
                 context = _d3DEngine.ImmediateContext;
@@ -259,7 +259,12 @@ namespace Utopia.Entities
 
             var scale = (float)rMax / sphere.Radius; // Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
 
-            instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+            if (transform == default(Matrix))
+                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5) * transform;
+            else
+            {
+                instance.World = transform;
+            }
 
             visualVoxelModel.Draw(context, _voxelEffect, instance);
 
