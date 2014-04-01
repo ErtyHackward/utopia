@@ -22,7 +22,7 @@ using Utopia.Shared.World.Processors.Utopia.OtherFct;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
-    public class UtopiaProcessor : IWorldProcessor
+    public class UtopiaProcessor : IWorldProcessor, IWorldProcessorBuffered
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -74,6 +74,24 @@ namespace Utopia.Shared.World.Processors.Utopia
         {
         }
         #region Public Methods
+
+        /// <summary>
+        /// Flush a buffered chunk from Buffer
+        /// </summary>
+        /// <param name="chunkPosition"></param>
+        public void FlushBufferedChunks(Vector3I chunkPosition)
+        {
+            _landscapeBufferManager.FlushBufferedChunk(chunkPosition);
+        }
+
+        /// <summary>
+        /// Flush a list of buffered chunk from Buffer
+        /// </summary>
+        /// <param name="chunkPosition"></param>
+        public void FlushBufferedChunks(Vector3I[] chunkPosition)
+        {
+            foreach (var chunk in chunkPosition) FlushBufferedChunks(chunk);
+        }
 
         public void Generate(Range3I generationRange, GeneratedChunk[,,] chunks)
         {

@@ -64,6 +64,16 @@ namespace Utopia.Shared.World
             S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CleanUpTreadedWork(vwp, _lastSinglePlayerChunkPosition));
         }
 
+        public void FlushBufferedChunk(Vector3I chunkPosition)
+        {
+            //Clean Up LandscapeChunkBuffer that are too far from current player position for single player mode
+            lock (_syncLock)
+            {
+                //Remove the buffered data
+                _buffers.Remove(chunkPosition);
+            }
+        }
+
         private void CleanUpTreadedWork(VisualWorldParameters vwp, Vector3I lastSinglePlayerChunkPosition)
         {
             //Single Player Mode = Remove buffer data based on current player chunk position

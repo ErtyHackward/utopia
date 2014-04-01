@@ -61,18 +61,19 @@ namespace Utopia.Shared.Server.Managers
         }
 
         public event EventHandler<LandscapeManagerChunkEventArgs> ChunkUnloaded;
-
         protected void OnChunkUnloaded(LandscapeManagerChunkEventArgs e)
         {
             e.Chunk.BlocksChanged -= ChunkBlocksChanged;
             e.Chunk.Entities.CollectionDirty -= EntitiesCollectionDirty;
+
+            //Flush the generator buffered chunk if needed.
+            _generator.FlushBuffers(e.Chunk.Position);
 
             var handler = ChunkUnloaded;
             if (handler != null) handler(this, e);
         }
 
         public event EventHandler<ServerLandscapeManagerBlockChangedEventArgs> BlockChanged;
-
         private void OnBlockChanged(ServerLandscapeManagerBlockChangedEventArgs e)
         {
             var handler = BlockChanged;
@@ -119,6 +120,7 @@ namespace Utopia.Shared.Server.Managers
             SaveInterval = saveInterval;
             ChunkCountLimit = chunksLimit;
             EntityFactory = factory;
+            
 
             if (chunksStorage == null) throw new ArgumentNullException("chunksStorage");
             if (generator == null) throw new ArgumentNullException("generator");
