@@ -274,7 +274,11 @@ xcopy "$(SolutionDir)Utopia.Updater\bin\Release\Launcher.exe" "$(TargetDir)" /Y
 if $(ConfigurationName) == ReleasePublish (
 PacksOptimize.exe action=Compilation "'path=$(TargetDir)'" "'includePath=$(TargetDir)Effects'" debugcompil=0
 ) ELSE (
-PacksOptimize.exe action=None "'path=$(TargetDir)'" "'includePath=$(TargetDir)Effects'" debugcompil=1
+if $(ConfigurationName) == Release (
+PacksOptimize.exe action=Compilation "'path=$(TargetDir)'" "'includePath=$(TargetDir)Effects'" debugcompil=1
+) ELSE (
+PacksOptimize.exe action=cleanup "'path=$(TargetDir)'"
+)
 )
 xcopy "$(SolutionDir)Utopia.Updater\bin\Release\Launcher.exe" "$(TargetDir)" /Y
 xcopy "$(SolutionDir)Utopia.Editor\bin\Release\Utopia.Editor.exe" "$(TargetDir)" /Y
