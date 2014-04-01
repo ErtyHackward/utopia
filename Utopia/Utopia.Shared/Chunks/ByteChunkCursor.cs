@@ -154,11 +154,10 @@ namespace Utopia.Shared.Chunks
         public void Write(byte cubeId)
         {
             _chunkData[_arrayIndex] = cubeId;
-            //Check for new max height
 
+            //Check for new max height
             int index2D = _internalPosition.X * AbstractChunk.ChunkSize.Z + _internalPosition.Z;
-            if (_internalPosition.Y > _chunkColumn[index2D].MaxHeight) 
-                _chunkColumn[index2D].MaxHeight = (byte)_internalPosition.Y;
+            if (_internalPosition.Y > _chunkColumn[index2D].MaxHeight) _chunkColumn[index2D].MaxHeight = (byte)_internalPosition.Y;
         }
 
         public bool Move(CursorRelativeMovement relativeMove)

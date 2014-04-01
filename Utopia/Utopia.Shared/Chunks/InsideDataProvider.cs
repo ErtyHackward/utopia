@@ -352,7 +352,7 @@ namespace Utopia.Shared.Chunks
                 }
 
                 _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
-                RefreshMetaData(ref inChunkPosition);
+                RefreshMetaData(ref inChunkPosition, blockValue);
                 SetTag(tag, inChunkPosition);
             }
 
@@ -399,7 +399,7 @@ namespace Utopia.Shared.Chunks
                 for (var i = 0; i < positions.Length; i++)
                 {
                     _blockBytes[positions[i].X * _chunkSize.Y + positions[i].Y + positions[i].Z * _chunkSize.Y * _chunkSize.X] = values[i];
-                    RefreshMetaData(ref positions[i]);
+                    RefreshMetaData(ref positions[i], values[i]);
                 }
 
                 if (tags != null)
@@ -443,19 +443,41 @@ namespace Utopia.Shared.Chunks
             return _chunkColumns[inChunkPositionZ * _chunkSize.X + inChunkPositionX];
         }
 
-        private void RefreshMetaData(ref Vector3I inChunkPosition)
+        private void RefreshMetaData(ref Vector3I inChunkPosition, byte newBlockValue)
         {
-            //Must look from World Top to bottom to recompute the new High Block !
-            int yPosi = _chunkSize.Y - 1;
-            while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
+            int indexColumn = inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z;
+            if (newBlockValue != WorldConfiguration.CubeId.Air)
             {
-                yPosi--;
+                //Change being made above surface !
+                if (ColumnsInfo[indexColumn].MaxHeight < inChunkPosition.Y)
+                {
+                    ColumnsInfo[indexColumn].MaxHeight = (byte)inChunkPosition.Y;
+                    ChunkMetaData.setChunkMaxHeightBuilt((byte)inChunkPosition.Y);
+                    if (ColumnsInfo[indexColumn].IsWild)
+                    {
+                        ColumnsInfo[indexColumn].IsWild = false;
+                        ChunkMetaData.setChunkWildStatus(ColumnsInfo);
+                    }
+                }
             }
-
-            //Compute 2D index of ColumnInfo and update ColumnInfo
-            int index2D = inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z;
-            ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
-            ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
+            else
+            {
+                //Change being made at the surface (Block removed)
+                if (ColumnsInfo[indexColumn].MaxHeight <= inChunkPosition.Y)
+                {
+                    int yPosi = inChunkPosition.Y - 1;
+                    while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
+                    {
+                        yPosi--;
+                    }
+                    ChunkMetaData.setChunkMaxHeightBuilt((byte)yPosi);
+                    if (ColumnsInfo[indexColumn].IsWild)
+                    {
+                        ColumnsInfo[indexColumn].IsWild = false;
+                        ChunkMetaData.setChunkWildStatus(ColumnsInfo);
+                    }
+                }
+            }
         }
         #endregion
 

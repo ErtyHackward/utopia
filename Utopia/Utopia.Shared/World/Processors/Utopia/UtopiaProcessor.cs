@@ -127,7 +127,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         }
 
         /// <summary>
-        /// Specialy created to render quickl the landscape in order to be used by LandscapeItem Manager
+        /// Specialy created to render quickly the landscape in order to be used by LandscapeItem Manager
         /// </summary>
         /// <param name="chunkBytes"></param>
         /// <param name="chunkPosition"></param>
@@ -436,6 +436,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         Temperature = (byte)(temperature * 255),
                         MaxHeight = byte.MaxValue,
                         Zone = (byte)(zoneValue * 255),
+                        IsWild = true
                     };
 
                     mustPlacedSnow = (temperature < 0.2 && moisture > 0.5);
@@ -603,7 +604,6 @@ namespace Utopia.Shared.World.Processors.Utopia
                             groundSpawing = staticEntity.SpawningType == SpawningType.Ground;
                         }
 
-
                         StaticEntity landscapeStaticEntity = null;
                         //Find Y spawning position
                         if (groundSpawing)
@@ -659,6 +659,8 @@ namespace Utopia.Shared.World.Processors.Utopia
         private void RefreshChunkMetaData(ChunkMetaData metaData, ChunkColumnInfo[] columnsInfo)
         {
             metaData.setChunkMaxHeightBuilt(columnsInfo);
+            //A generated chunk is always considered as wild !
+            metaData.IsWild = true;
         }
 
         #endregion

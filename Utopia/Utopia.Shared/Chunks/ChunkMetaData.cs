@@ -35,6 +35,11 @@ namespace Utopia.Shared.Chunks
             ChunkMaxHeightBuilt = columnsInfo.Max(x => x.MaxHeight);
         }
 
+        public void setChunkMaxHeightBuilt(byte newColumnHeight)
+        {
+            if (ChunkMaxHeightBuilt < newColumnHeight) ChunkMaxHeightBuilt = newColumnHeight;
+        }
+
         public void setChunkWildStatus(ChunkColumnInfo[] columnsInfo)
         {
             IsWild = (columnsInfo.Count(x => x.IsWild) / (float)columnsInfo.Length) > 0.6;
