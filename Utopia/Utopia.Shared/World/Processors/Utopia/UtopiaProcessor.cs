@@ -608,7 +608,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         //Find Y spawning position
                         if (groundSpawing)
                         {
-                            dataCursor.SetInternalPosition(MathHelper.Floor(x), entity.RootLocation.Y, MathHelper.Floor(z));
+                            dataCursor.GlobalPosition = new Vector3I(MathHelper.Floor(x), entity.RootLocation.Y, MathHelper.Floor(z));
                             //Loop until I hit the ground, with a maximum of Y - 15 blocks
                             for (int y = entity.RootLocation.Y; y > entity.RootLocation.Y - 15 && y > 0; y--)
                             {
@@ -616,7 +616,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                 {
                                     //Add Static item here on the ground !
                                     landscapeStaticEntity = (StaticEntity)entityFactory.CreateFromBluePrint(staticEntity.ItemblueprintId);
-                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.InternalPosition.Y + 1, z + chunkWorldPosition.Y);
+                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.GlobalPosition.Y + 1, z + chunkWorldPosition.Y);
                                     break;
                                 }
                                 dataCursor.Move(CursorRelativeMovement.Down);
@@ -624,7 +624,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                         }
                         else
                         {
-                            dataCursor.SetInternalPosition(MathHelper.Floor(x), entity.RootLocation.Y + 1, MathHelper.Floor(z));
+                            dataCursor.GlobalPosition = new Vector3I(MathHelper.Floor(x), entity.RootLocation.Y + 1, MathHelper.Floor(z));
                             //Loop until I hit the ground, with a maximum of Y + 15 blocks
                             for (int y = entity.RootLocation.Y + 1; y <= entity.RootLocation.Y + 15 && y < AbstractChunk.ChunkSize.Y; y++)
                             {
@@ -632,7 +632,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                                 {
                                     //Add Static item here on the ground !
                                     landscapeStaticEntity = (StaticEntity)entityFactory.CreateFromBluePrint(staticEntity.ItemblueprintId);
-                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.InternalPosition.Y - 0.25, z + chunkWorldPosition.Y);
+                                    landscapeStaticEntity.Position = new Vector3D(x + chunkWorldPosition.X, dataCursor.GlobalPosition.Y - 0.25, z + chunkWorldPosition.Y);
                                     break;
                                 }
                                 dataCursor.Move(CursorRelativeMovement.Up);
