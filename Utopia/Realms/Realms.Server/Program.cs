@@ -19,6 +19,7 @@ using Utopia.Shared.World;
 using Utopia.Shared.World.Processors;
 using Utopia.Shared.World.Processors.Utopia;
 using S33M3CoreComponents.Config;
+using Utopia.Shared.Chunks;
 
 namespace Realms.Server
 {
@@ -54,6 +55,7 @@ namespace Realms.Server
             _sqLiteStorageManager = new SqliteStorageManager(_settingsManager.Settings.DatabasePath, null, param);
 
             IWorldProcessor processor = null;
+            IEntitySpawningControler entitySpawningControler = null;
             switch (param.Configuration.WorldProcessor)
             {
                 case WorldConfiguration.WorldProcessors.Flat:
@@ -61,12 +63,14 @@ namespace Realms.Server
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
                     processor = new UtopiaProcessor(param, _serverFactory, new LandscapeBufferManager());
+                    entitySpawningControler = new UtopiaEntitySpawningControler((UtopiaWorldConfiguration)param.Configuration);
                     break;
                 default:
                     break;
             }
 
             _worldGenerator = new WorldGenerator(param, processor);
+            _worldGenerator.EntitySpawningControler = entitySpawningControler;
         }
 
         static void Main(string[] args)

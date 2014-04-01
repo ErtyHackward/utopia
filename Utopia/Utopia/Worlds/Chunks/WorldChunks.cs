@@ -820,7 +820,6 @@ namespace Utopia.Worlds.Chunks
                     line4 = string.Format("Biomes MetaData : Chunk Biome Type {0}, Column Biome Type {1}", _utopiaProcessorParam.Biomes[c.BlockData.ChunkMetaData.ChunkMasterBiomeType].Name, _utopiaProcessorParam.Biomes[columnInfo.Biome].Name);
                 }
 
-
                 return string.Join("\r\n", line0, line1, line2, line3, line4);
             }
             else

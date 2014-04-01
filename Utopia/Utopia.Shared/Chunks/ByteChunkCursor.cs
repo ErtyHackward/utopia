@@ -8,7 +8,7 @@ using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Chunks
 {
-    public class ByteChunkCursor : ILandscapeCursor
+    public class ByteChunkCursor
     {
         #region Private Variables
         private byte[] _chunkData;
@@ -17,28 +17,27 @@ namespace Utopia.Shared.Chunks
         private ChunkColumnInfo[] _chunkColumn;
         #endregion
 
-        /// <summary>
-        /// Occurs when someone tries to write using this cursor ==> Not raised here !
-        /// </summary>
-        public event EventHandler<LandscapeCursorBeforeWriteEventArgs> BeforeWrite;
-
         #region Public Properties
-        public Vector3I GlobalPosition
+        public byte[] ChunkData
         {
-            get
-            {
-                return _internalPosition;
-            }
-            set
-            {
-                SetInternalPosition(value);
-            }
+            get { return _chunkData; }
+            set { _chunkData = value; }
         }
-
-        /// <summary>
-        /// Not used here
-        /// </summary>
-        public uint OwnerDynamicId { get; set; }
+        public Vector3I InternalPosition
+        {
+            get { return _internalPosition; }
+            set { _internalPosition = value; }
+        }
+        public int ArrayIndex
+        {
+            get { return _arrayIndex; }
+            set { _arrayIndex = value; }
+        }
+        public ChunkColumnInfo[] ChunkColumn
+        {
+            get { return _chunkColumn; }
+            set { _chunkColumn = value; }
+        }
         #endregion
 
         public ByteChunkCursor(byte[] chunkData, Vector3I internalChunkPosition, ChunkColumnInfo[] chunkColumn)
@@ -54,24 +53,31 @@ namespace Utopia.Shared.Chunks
             _chunkColumn = chunkColumn;
         }
 
-        public ByteChunkCursor(){}
-
-        public ILandscapeCursor Clone()
+        public ByteChunkCursor(ByteChunkCursor cursor)
         {
-            return CloneCursor();
+            ChunkData = cursor.ChunkData;
+            ArrayIndex = cursor.ArrayIndex;
+            InternalPosition = cursor.InternalPosition;
+            _chunkColumn = cursor.ChunkColumn;
         }
 
-        public ByteChunkCursor CloneCursor()
+        public ByteChunkCursor Clone()
         {
-            return new ByteChunkCursor()
-            {
-                _arrayIndex = this._arrayIndex,
-                _chunkColumn = this._chunkColumn,
-                _chunkData = this._chunkData,
-                _internalPosition = this._internalPosition
-            };
+            return new ByteChunkCursor(this);
         }
         #region Public Methods
+
+        public void SetInternalPosition(Vector3I internalChunkPosition)
+        {
+            _internalPosition = internalChunkPosition;
+            _arrayIndex = _internalPosition.Z * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y + _internalPosition.X * AbstractChunk.ChunkSize.Y + _internalPosition.Y;
+        }
+
+        public void SetInternalPosition(int x, int y, int z)
+        {
+            SetInternalPosition(new Vector3I(x, y, z));   
+        }
+
         public bool IsCubePresent(byte CubeId, Vector3I relativeRange)
         {
             //Save Position
@@ -145,17 +151,7 @@ namespace Utopia.Shared.Chunks
             return _chunkData[_arrayIndex];
         }
 
-        public BlockTag ReadTag()
-        {
-            throw new NotImplementedException();
-        }
-
-        public byte Read<T>(out T tag) where T : BlockTag
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Write(byte cubeId, BlockTag tag = null, uint sourceDynamicId = 0)
+        public void Write(byte cubeId)
         {
             _chunkData[_arrayIndex] = cubeId;
 
@@ -168,7 +164,6 @@ namespace Utopia.Shared.Chunks
         {
             return Move((int)relativeMove);
         }
-
         /// <summary>
         /// Move the cursor in the chunk
         /// </summary>
@@ -292,7 +287,7 @@ namespace Utopia.Shared.Chunks
             switch (relativeMove)
             {
                 case 1://X + 1
-                    return _chunkData[_arrayIndex + (AbstractChunk.ChunkSize.Y)];
+                    return _chunkData[_arrayIndex + ( AbstractChunk.ChunkSize.Y)];
                 case 2://X - 1
                     return _chunkData[_arrayIndex - (AbstractChunk.ChunkSize.Y)];
                 case 5://Y + 1
@@ -308,60 +303,9 @@ namespace Utopia.Shared.Chunks
             }
         }
 
-        public byte PeekValue(Vector3I moveVector)
-        {
-            int _indexOffest = 0;
-            _indexOffest += moveVector.Y;
-            _indexOffest += (moveVector.X * (AbstractChunk.ChunkSize.Y));
-            _indexOffest += (moveVector.Z * (AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y));
-            return _chunkData[_arrayIndex + _indexOffest];
-        }
-
-        public byte PeekValue<T>(Vector3I moveVector, out T tag) where T : BlockTag
-        {
-            throw new NotImplementedException();
-        }
-
-        public Settings.BlockProfile PeekProfile()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Settings.BlockProfile PeekProfile(Vector3I moveVector)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ILandscapeCursor Move(Vector3I moveVector)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddEntity(Entities.Interfaces.IStaticEntity entity, uint sourceDynamicId = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Entities.Interfaces.IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Private Methods
-        private void SetInternalPosition(Vector3I internalChunkPosition)
-        {
-            _internalPosition = internalChunkPosition;
-            _arrayIndex = _internalPosition.Z * AbstractChunk.ChunkSize.X * AbstractChunk.ChunkSize.Y + _internalPosition.X * AbstractChunk.ChunkSize.Y + _internalPosition.Y;
-        }
-
-
-        private void SetInternalPosition(int x, int y, int z)
-        {
-            SetInternalPosition(new Vector3I(x, y, z));
-        }
         #endregion
-        
     }
 }

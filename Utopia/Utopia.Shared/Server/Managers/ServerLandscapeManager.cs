@@ -297,7 +297,7 @@ namespace Utopia.Shared.Server.Managers
                         if (data == null)
                         {
                             var generatedChunk = _generator.GetChunk(position);
-
+                            
                             if (generatedChunk != null)
                             {
                                 chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };

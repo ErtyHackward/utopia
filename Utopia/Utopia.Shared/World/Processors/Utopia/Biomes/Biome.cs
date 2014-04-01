@@ -267,7 +267,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="rnd">Random generator for vein creation</param>
         private void PopulateChunkWithResource(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int qt, FastRandom rnd)
         {
-            cursor.GlobalPosition = new Vector3I(x, y, z);
+            cursor.SetInternalPosition(x, y, z);
             int nbrCubePlaced;
             if (cursor.Read() == UtopiaProcessorParams.CubeId.Stone)
             {
@@ -296,7 +296,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         /// <param name="z">InsideChunk Z starting position</param>
         private void PopulateChunkWithLiquidSources(byte cubeId, ByteChunkCursor cursor, int x, int y, int z, int liquidPower)
         {
-            cursor.GlobalPosition = new Vector3I(x, y, z);
+            cursor.SetInternalPosition(x, y, z);
 
             //Check if this source is candidate as valid source = Must be surrended by 5 solid blocks and ahave one side block going to Air
             if (cursor.Read() != UtopiaProcessorParams.CubeId.Air)
@@ -335,7 +335,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
             if (isFalling)
             {
-                sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.CloneCursor(), liquidSource.Item2));
+                sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), liquidSource.Item2));
             }
             else
             {
@@ -346,7 +346,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.East);
                         liquidSource.Item1.Write(cubeId);
-                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.CloneCursor(), power));
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
                         liquidSource.Item1.Move(CursorRelativeMovement.West);
                     }
 
@@ -354,7 +354,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.West);
                         liquidSource.Item1.Write(cubeId);
-                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.CloneCursor(), power));
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
                         liquidSource.Item1.Move(CursorRelativeMovement.East);
                     }
 
@@ -362,7 +362,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.North);
                         liquidSource.Item1.Write(cubeId);
-                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.CloneCursor(), power));
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
                         liquidSource.Item1.Move(CursorRelativeMovement.South);
                     }
 
@@ -370,7 +370,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                     {
                         liquidSource.Item1.Move(CursorRelativeMovement.South);
                         liquidSource.Item1.Write(cubeId);
-                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.CloneCursor(), power));
+                        sourcesWithPower.Enqueue(new Tuple<ByteChunkCursor, int>(liquidSource.Item1.Clone(), power));
                     }
                 }
             }
@@ -383,7 +383,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         private void PopulateChunkWithCave(ByteChunkCursor cursor, int x, int y, int z, int layers, byte cubeId, FastRandom rnd)
         {
-            cursor.GlobalPosition = new Vector3I(x, y, z);
+            cursor.SetInternalPosition(x, y, z);
 
             int caveRadius = rnd.Next(3, 8);
 
@@ -406,7 +406,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                             continue;
                         }
 
-                        cursor.GlobalPosition = new Vector3I (X, y + l, Z);
+                        cursor.SetInternalPosition(X, y + l, Z);
                         if (l <= 1 && rnd.NextDouble() < 0.3)
                         {
                             cursor.Write(cubeId);
@@ -431,7 +431,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 
         private void PopulateChunkWithItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ushort bluePrintId, int x, int y, int z, FastRandom rnd, EntityFactory entityFactory, bool isBlockCentered = true)
         {
-            cursor.GlobalPosition = new Vector3I(x, y, z);
+            cursor.SetInternalPosition(x, y, z);
 
             //Check that the block above is "Air"
             if (cursor.Peek(CursorRelativeMovement.Up) != UtopiaProcessorParams.CubeId.Air) return;

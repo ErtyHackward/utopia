@@ -36,7 +36,6 @@ namespace Utopia.Shared.Server.Structs
 
         public ServerChunk() : base(new InsideDataProvider())
         {
-            
         }
 
         /// <summary>

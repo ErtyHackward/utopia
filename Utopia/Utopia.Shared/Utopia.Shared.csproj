@@ -115,6 +115,8 @@
     </Compile>
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
+    <Compile Include="Chunks\IEntitySpawningControler.cs" />
+    <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
@@ -325,6 +327,7 @@
     <Compile Include="Server\Managers\CommandsManager.cs" />
     <Compile Include="Server\Managers\ConnectionManager.cs" />
     <Compile Include="Server\Managers\EntityManager.cs" />
+    <Compile Include="Server\Managers\EntitySpawningManager.cs" />
     <Compile Include="Server\Managers\GlobalStateManager.cs" />
     <Compile Include="Server\Managers\LoginManager.cs" />
     <Compile Include="Server\Managers\PerformanceManager.cs" />

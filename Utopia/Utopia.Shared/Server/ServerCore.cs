@@ -102,6 +102,11 @@ namespace Utopia.Shared.Server
         /// </summary>
         public GlobalStateManager GlobalStateManager { get; private set; }
 
+        /// <summary>
+        /// Contains the logic behind chunk's entities spawning.
+        /// </summary>
+        public EntitySpawningManager EntitySpawningManager { get; private set; }
+
         public WorldParameters WorldParameters { get; private set; }
 
         #endregion
@@ -167,6 +172,8 @@ namespace Utopia.Shared.Server
             GlobalStateManager = new GlobalStateManager(this);
             
             LoginManager = new LoginManager(this, EntityFactory);
+
+            EntitySpawningManager = new EntitySpawningManager(this, worldGenerator.EntitySpawningControler);
 
             Services.Initialize();
         }

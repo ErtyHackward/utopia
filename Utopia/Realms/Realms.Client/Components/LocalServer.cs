@@ -16,6 +16,7 @@ using Utopia.Shared.World;
 using Utopia.Shared.World.Processors.Utopia;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.World.Processors;
+using Utopia.Shared.Chunks;
 
 namespace Realms.Client.Components
 {
@@ -68,6 +69,7 @@ namespace Realms.Client.Components
             //Utopia New Landscape Test
 
             IWorldProcessor processor = null;
+            IEntitySpawningControler entitySpawningControler = null;
             switch (worldParam.Configuration.WorldProcessor)
             {
                 case WorldConfiguration.WorldProcessors.Flat:
@@ -75,12 +77,14 @@ namespace Realms.Client.Components
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
                     processor = new UtopiaProcessor(worldParam, _serverFactory, _landscapeEntityManager);
+                    entitySpawningControler = new UtopiaEntitySpawningControler((UtopiaWorldConfiguration)worldParam.Configuration);
                     break;
                 default:
                     break;
             }
 
             var worldGenerator = new WorldGenerator(worldParam, processor);
+            worldGenerator.EntitySpawningControler = entitySpawningControler;
 
             //Old s33m3 landscape
             //IWorldProcessor processor1 = new s33m3WorldProcessor(worldParam);
