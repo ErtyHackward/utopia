@@ -63,8 +63,9 @@ namespace Utopia.Shared.Chunks
     public enum ChunkSpawningPlace
     {
         Surface,
-        InsideCave,
-        InsideGround
+        FloorInsideCave,
+        CeilingInsideCave,
+        AirAboveSurface
     }
 
     [Flags]
