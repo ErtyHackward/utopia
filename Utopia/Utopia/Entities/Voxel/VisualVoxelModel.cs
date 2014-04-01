@@ -66,14 +66,7 @@ namespace Utopia.Entities.Voxel
             vf.IndexBuffer.Dispose();
             vf.VertexBuffer.Dispose();
             
-            foreach (var voxelModelState in VoxelModel.States)
-            {
-                foreach (var ps in voxelModelState.PartsStates)
-                {
-                    if (ps.ActiveFrame == index)
-                        ps.ActiveFrame = byte.MaxValue;
-                }
-            }
+            VoxelModel.RemoveFrameAt(index);
 
             ArrayHelper.RemoveAt(ref _visualFrames, index);
         }

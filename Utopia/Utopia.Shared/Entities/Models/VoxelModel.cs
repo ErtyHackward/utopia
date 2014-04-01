@@ -172,6 +172,44 @@ namespace Utopia.Shared.Entities.Models
 
             return States[mainIndex];
         }
+
+        public void AddPart(VoxelModelPart part)
+        {
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.PartsStates.Add(new VoxelModelPartState());
+            }
+
+            Parts.Add(part);
+        }
+
+        public void RemovePartAt(int selectedPartIndex)
+        {
+            Parts.RemoveAt(selectedPartIndex);
+
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.PartsStates.RemoveAt(selectedPartIndex);
+            }
+        }
+
+        public void RemoveFrameAt(int index)
+        {
+            Frames.RemoveAt(index);
+            
+            foreach (var voxelModelState in States)
+            {
+                foreach (var ps in voxelModelState.PartsStates)
+                {
+                    if (ps.ActiveFrame == index)
+                        ps.ActiveFrame = byte.MaxValue;
+                    if (ps.ActiveFrame == byte.MaxValue)
+                        continue;
+                    if (ps.ActiveFrame > index)
+                        ps.ActiveFrame--;
+                }
+            }
+        }
     }
 
     public static class VoxelExtensions

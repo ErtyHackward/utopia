@@ -719,13 +719,8 @@ namespace Utopia.Components
             part.Name = e.Name;
             part.IsHead = e.IsHead;
             part.IsArm = e.IsArm;
-
-            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
-            {
-                voxelModelState.PartsStates.Add(new VoxelModelPartState());
-            }
-
-            _visualVoxelModel.VoxelModel.Parts.Add(part);
+            
+            _visualVoxelModel.VoxelModel.AddPart(part);
             _visualVoxelModel.BuildMesh();
             _partsList.Items.Add(part);
 
@@ -772,16 +767,8 @@ namespace Utopia.Components
                 _gui.MessageBox("Please select a part to delete");
                 return;
             }
-
-            _visualVoxelModel.VoxelModel.Parts.RemoveAt(SelectedPartIndex);
-
-            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
-            {
-                voxelModelState.PartsStates.RemoveAt(SelectedPartIndex);
-            }
-
-            _visualVoxelModel.RemoveFrameAt(SelectedPartIndex);
-
+            
+            _visualVoxelModel.VoxelModel.RemovePartAt(SelectedPartIndex);
             _partsList.Items.RemoveAt(SelectedPartIndex);
 
             if (_partsList.Items.Count > 0 && SelectedPartIndex == 0)
@@ -791,6 +778,9 @@ namespace Utopia.Components
             }
             else
                 SelectedPartIndex = SelectedPartIndex - 1;
+
+            _visualVoxelModel.BuildMesh();
+            _instance.UpdateStates();
         }
 
         private void OnFrameAddPressed()
@@ -895,8 +885,12 @@ namespace Utopia.Components
                 return;
             }
 
-            // TODO: implement frame delete
+            _visualVoxelModel.RemoveFrameAt(SelectedFrameIndex);
+            _visualVoxelModel.BuildMesh();
+            _framesList.Items.RemoveAt(SelectedFrameIndex);
 
+            _framesList.SelectItem = 0;
+            _selectedFrameIndex = 0;
         }
 
         private void OnFrameHidePressed()
@@ -1546,7 +1540,7 @@ namespace Utopia.Components
                     }
                     break;
                 case EditorMode.FrameEdit:
-                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1)
+                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1 && _selectedFrameIndex != byte.MaxValue)
                     {
                         var frame = _visualVoxelModel.VoxelModel.Frames[_selectedFrameIndex];
                         var box = new BoundingBox(new Vector3(), frame.BlockData.ChunkSize);
@@ -3083,7 +3077,8 @@ namespace Utopia.Components
                 return;
             }
 
-
+            _clipboardState.Name = VisualVoxelModel.VoxelModel.States[SelectedStateIndex].Name;
+            
             VisualVoxelModel.VoxelModel.States[SelectedStateIndex] = _clipboardState;
             _clipboardState = new VoxelModelState(_clipboardState);
             NeedSave();
