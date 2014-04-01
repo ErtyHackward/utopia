@@ -93,7 +93,6 @@ namespace Utopia.Shared.Chunks
             }
         }
         
-
         #endregion
         
         protected AbstractChunk(ChunkDataProvider blockDataProvider)
