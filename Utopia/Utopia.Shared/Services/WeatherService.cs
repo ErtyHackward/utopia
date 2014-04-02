@@ -4,6 +4,7 @@ using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Server;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Services
 {
@@ -11,7 +12,6 @@ namespace Utopia.Shared.Services
     public class WeatherService : Service
     {
         private ServerCore _server;
-        private DateTime _lastTime;
         private WeatherMessage _lastMessage;
 
         [Description("All possible seasons")]
@@ -44,9 +44,9 @@ namespace Utopia.Shared.Services
         public override void Initialize(ServerCore server)
         {
             _server = server;
-            _server.Scheduler.AddPeriodic(TimeSpan.FromSeconds(1), Tick);
             _server.LoginManager.PlayerAuthorized += LoginManager_PlayerAuthorized;
-            
+
+            server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 1, 0, 0, server.Clock, PerDayTrigger));
 
             Day = server.CustomStorage.GetVariable("day", 0);
             SeasonIndex = server.CustomStorage.GetVariable("season", 0);
@@ -68,36 +68,24 @@ namespace Utopia.Shared.Services
             _server.CustomStorage.SetVariable("season", SeasonIndex);
 
             _server.LoginManager.PlayerAuthorized -= LoginManager_PlayerAuthorized;
-            _server.Scheduler.Remove(Tick);
-
         }
 
-        private void Tick()
+        private void PerDayTrigger()
         {
-            if (_lastTime.Date != _server.Clock.Now.Date)
+            if (Day++ >= DaysPerSeason)
             {
-                // new day
-
-                if (Day++ >= DaysPerSeason)
+                if (SeasonIndex++ >= Seasons.Count)
                 {
-                    if (SeasonIndex++ >= Seasons.Count)
-                    {
-                        // new year
-                        SeasonIndex = 0;
-                    }
-
-                    // new season
-                    Day = 0;
+                    // new year
+                    SeasonIndex = 0;
                 }
-
-                // each day we will recalculate temperature and humidity values
-
-                _lastMessage = UpdateWeather();
-
-                _server.ConnectionManager.Broadcast(_lastMessage);
+                // new season
+                Day = 0;
             }
 
-            _lastTime = _server.Clock.Now;
+            // each day we will recalculate temperature and humidity values
+            _lastMessage = UpdateWeather();
+            _server.ConnectionManager.Broadcast(_lastMessage);
         }
 
         private WeatherMessage UpdateWeather()

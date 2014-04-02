@@ -140,9 +140,9 @@ namespace Utopia.Shared.Server
 
             ConnectionManager = new ConnectionManager(SettingsManager.Settings.ServerPort);
 
-            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
-
             Scheduler = new ScheduleManager();
+
+            Clock = new Clock(this, DateTime.Now, TimeSpan.FromMinutes(20));
 
             LandscapeManager = new ServerLandscapeManager(
                 this, 
@@ -176,6 +176,15 @@ namespace Utopia.Shared.Server
             EntitySpawningManager = new EntitySpawningManager(this, worldGenerator.EntitySpawningControler);
 
             Services.Initialize();
+
+            //Check if the weather Service is assigned to get back the Number of days per year !
+            int daysPerYear = 10;
+            foreach (var s in Services)
+            {
+                Utopia.Shared.Services.WeatherService ws = s as Utopia.Shared.Services.WeatherService;
+                if (ws != null) daysPerYear = ws.DaysPerSeason * ws.Seasons.Count;
+            }
+            Clock.CalendarDaysPerYear = daysPerYear;
         }
 
         /// <summary>
@@ -183,6 +192,7 @@ namespace Utopia.Shared.Server
         /// </summary>
         public void Dispose()
         {
+            Clock.Dispose();
             AreaManager.Dispose();
             ConnectionManager.Dispose();
             LandscapeManager.Dispose();
