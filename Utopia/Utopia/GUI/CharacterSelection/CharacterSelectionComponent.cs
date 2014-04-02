@@ -59,7 +59,7 @@ namespace Utopia.GUI.CharacterSelection
 
             if (SelectionWindow.ClassList.Items.Count > 0 && SelectionWindow.ClassList.SelectedItems.Count == 0)
             {
-                SelectionWindow.ClassList.SelectItem = 0;
+                SelectionWindow.ClassList.SelectItem(0);
             }
 
             SelectionWindow.LayoutFlags = ControlLayoutFlags.Center;

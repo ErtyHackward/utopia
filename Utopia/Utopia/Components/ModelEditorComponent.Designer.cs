@@ -348,7 +348,7 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Add(_framesGroup);
 
             if (_framesList.SelectedItems.Count == 0 && _framesList.Items.Count > 0)
-                _framesList.SelectItem = 0;
+                _framesList.SelectItem(0);
 
             if (_frameEditorTool == FrameEditorTools.None)
                 _frameEditorTool = FrameEditorTools.Edit;

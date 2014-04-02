@@ -767,6 +767,12 @@ namespace Utopia.Components
                 _gui.MessageBox("Please select a part to delete");
                 return;
             }
+
+            if (_visualVoxelModel.VoxelModel.Parts.Count == 1)
+            {
+                _gui.MessageBox("Model must have at least one part");
+                return;
+            }
             
             _visualVoxelModel.VoxelModel.RemovePartAt(SelectedPartIndex);
             _partsList.Items.RemoveAt(SelectedPartIndex);
@@ -779,6 +785,7 @@ namespace Utopia.Components
             else
                 SelectedPartIndex = SelectedPartIndex - 1;
 
+            _partsList.SelectItem(SelectedPartIndex);
             _visualVoxelModel.BuildMesh();
             _instance.UpdateStates();
         }
@@ -889,7 +896,7 @@ namespace Utopia.Components
             _visualVoxelModel.BuildMesh();
             _framesList.Items.RemoveAt(SelectedFrameIndex);
 
-            _framesList.SelectItem = 0;
+            _framesList.SelectItem(0);
             _selectedFrameIndex = 0;
         }
 
@@ -972,7 +979,6 @@ namespace Utopia.Components
                 }
             }
             
-
             _visualVoxelModel.BuildMesh();
         }
 
@@ -1022,12 +1028,6 @@ namespace Utopia.Components
 
         private void OnStateAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             _stateEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogStateEditStruct(), "Add a new state", OnStateAdded);
             
         }
@@ -1043,12 +1043,6 @@ namespace Utopia.Components
         
         private void OnStateEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             if (SelectedStateIndex == -1)
             {
                 _gui.MessageBox("Select a state to edit");
@@ -1067,11 +1061,6 @@ namespace Utopia.Components
 
         private void OnStateDeleteButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before delete");
-                return;
-            }
             if (VisualVoxelModel.VoxelModel.States.Count == 1)
             {
                 _gui.MessageBox("Model should have at least one state");
@@ -1080,18 +1069,17 @@ namespace Utopia.Components
 
             _statesList.Items.RemoveAt(SelectedStateIndex);
             VisualVoxelModel.VoxelModel.RemoveStateAt(SelectedStateIndex);
+
+            _statesList.SelectItem(0);
+            SelectedStateIndex = 0;
+            UpdateCamera();
         }
 
         private void OnAnimationsAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct(), "Add a new animation", OnAnimationAdded);
         }
+
         private void OnAnimationAdded(DialogAnimationEditStruct e)
         {
             if (string.IsNullOrEmpty(e.Name))
@@ -1108,12 +1096,6 @@ namespace Utopia.Components
         
         private void OnAnimationsEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before edit");
-                return;
-            }
-
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to edit");
@@ -1133,12 +1115,6 @@ namespace Utopia.Components
 
         private void OnAnimationsDeleteButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before delete");
-                return;
-            }
-
             VisualVoxelModel.VoxelModel.Animations.RemoveAt(SelectedAnimationIndex);
             _animationsList.Items.RemoveAt(SelectedAnimationIndex);
 
@@ -1146,11 +1122,6 @@ namespace Utopia.Components
 
         private void OnAnimationStepAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to add step to");
@@ -1181,12 +1152,6 @@ namespace Utopia.Components
 
         private void OnAnimationStepEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before edit");
-                return;
-            }
-
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to edit");
