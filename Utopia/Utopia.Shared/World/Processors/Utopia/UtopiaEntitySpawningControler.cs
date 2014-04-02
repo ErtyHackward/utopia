@@ -49,53 +49,137 @@ namespace Utopia.Shared.World.Processors.Utopia
             int y;
             switch (entity.SpawningPlace)
             {
-                case ChunkSpawningPlace.Surface:
-                    //Y base = Original world generated ground height (Before any player modification)
-                    y = chunk.BlockData.ColumnsInfo[columnInfoIndex].MaxGroundHeight;
-                    cursor.SetInternalPosition(x, y, z);
-                    //Move up until Air Block
-                    while (cursor.Read() != WorldConfiguration.CubeId.Air)
-                    {
-                        //Move up, if top chunk height exit
-                        if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
-                    }
-                    //I stopped on an Air
-
-                    //Check that the block below me is well "Solid to entity"
-                    BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Peek(CursorRelativeMovement.Down)];
-                    if (!blockSpawnProfile.IsSolidToEntity) return false;
-                    if (entity.isWildChunkNeeded)
-                    {
-                        //Get Chunk master biome
-                        byte masterBiomeId = chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType;
-                        //Get biome surface block layer
-                        byte surfaceBiomeCube = _config.ProcessorParam.Biomes[masterBiomeId].SurfaceCube;
-                        //If the entity need a Wild chunk, then it can only spawn on a cube surface equal to the default biome surface cube !
-                        if (surfaceBiomeCube != blockSpawnProfile.Id) return false;
-                    }
-
-                    // Hurray it can spawn ! :D
-                    //Add some randomnes on the cube where it will spawn
-                    double XOffset = rnd.NextDouble(0.2, 0.8);
-                    double ZOffset = rnd.NextDouble(0.2, 0.8);
-
-                    entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, y + 1, chunk.Position.Z + z + ZOffset);
-                    break;
                 case ChunkSpawningPlace.FloorInsideCave:
-                    break;
                 case ChunkSpawningPlace.CeilingInsideCave:
-                    break;
+                    return CaveSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
                 case ChunkSpawningPlace.AirAboveSurface:
-                    break;
+                    return CaveSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
+                case ChunkSpawningPlace.Surface:
+                    return AirSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
                 default:
-                    break;
+                    return SurfaceSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
             }
-
-            return true;
         }
         #endregion
 
         #region Private methods
+        private bool SurfaceSpawnLogic(int x, int z, ChunkSpawnableEntity entity, AbstractChunk chunk, ByteChunkCursor cursor, FastRandom rnd, out Vector3D entitySpawnLocation)
+        {
+            entitySpawnLocation = default(Vector3D);
+
+            int y;
+            int columnInfoIndex = x * AbstractChunk.ChunkSize.Z + z;
+            //Y base = Original world generated ground height (Before any player modification)
+            y = chunk.BlockData.ColumnsInfo[columnInfoIndex].MaxGroundHeight;
+            cursor.SetInternalPosition(x, y, z);
+            //Move up until Air Block
+            while (cursor.Read() != WorldConfiguration.CubeId.Air)
+            {
+                //Move up, if top chunk height exit
+                if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
+            }
+            //I stopped on an Air, go down until not air block
+            while (cursor.Read() == WorldConfiguration.CubeId.Air)
+            {
+                //Move down, until block other than Air
+                if (cursor.Move(CursorRelativeMovement.Down) == false) return false;
+            }
+
+            //Move back to the Air block
+            if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
+
+            //Check that the block is well "Solid to entity"
+            BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Peek(CursorRelativeMovement.Down)];
+            if (!blockSpawnProfile.IsSolidToEntity) return false;
+            if (entity.isWildChunkNeeded)
+            {
+                //Get Chunk master biome
+                byte masterBiomeId = chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType;
+                //Get biome surface block layer
+                byte surfaceBiomeCube = _config.ProcessorParam.Biomes[masterBiomeId].SurfaceCube;
+                //If the entity need a Wild chunk, then it can only spawn on a cube surface equal to the default biome surface cube !
+                if (surfaceBiomeCube != blockSpawnProfile.Id) return false;
+            }
+
+            // Hurray it can spawn ! :D
+            //Add some randomnes on the cube where it will spawn
+            double XOffset, ZOffset;
+            XOffset = rnd.NextDouble(0.2, 0.8);
+            ZOffset = rnd.NextDouble(0.2, 0.8);
+
+            entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, cursor.InternalPosition.Y, chunk.Position.Z + z + ZOffset);
+
+            return true;
+        }
+
+        private bool CaveSpawnLogic(int x, int z, ChunkSpawnableEntity entity, AbstractChunk chunk, ByteChunkCursor cursor, FastRandom rnd, out Vector3D entitySpawnLocation)
+        {
+            entitySpawnLocation = default(Vector3D);
+            int y;
+            int columnInfoIndex = x * AbstractChunk.ChunkSize.Z + z;
+            
+            cursor.SetInternalPosition(x, 1, z);
+            //Move up until Air Block
+            while (cursor.Read() != WorldConfiguration.CubeId.Air)
+            {
+                //Move up, if top chunk height exit
+                if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
+            }
+
+            int YFloorSpawning = cursor.InternalPosition.Y;
+
+            int MaximumSpawningHeight = chunk.BlockData.ColumnsInfo[columnInfoIndex].MaxGroundHeight - 10;
+            if (MaximumSpawningHeight <= 0) MaximumSpawningHeight = 1;
+            //Move up until "solid" Block
+            while (cursor.Read() == WorldConfiguration.CubeId.Air && cursor.InternalPosition.Y <= MaximumSpawningHeight)
+            {
+                //Move up, if top chunk height exit
+                if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
+            }
+
+            if (cursor.InternalPosition.Y > MaximumSpawningHeight) return false;
+
+            // Hurray it can spawn ! :D
+            //Add some randomnes on the cube where it will spawn
+            double XOffset, ZOffset;
+            XOffset = rnd.NextDouble(0.2, 0.8);
+            ZOffset = rnd.NextDouble(0.2, 0.8);
+
+            if (entity.SpawningPlace == ChunkSpawningPlace.FloorInsideCave)
+            {
+                entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, YFloorSpawning, chunk.Position.Z + z + ZOffset);
+            }
+            else
+            {
+                entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, cursor.InternalPosition.Y - 1, chunk.Position.Z + z + ZOffset);
+            }
+
+            return true;
+        }
+        
+        private bool AirSpawnLogic(int x, int z, ChunkSpawnableEntity entity, AbstractChunk chunk, ByteChunkCursor cursor, FastRandom rnd, out Vector3D entitySpawnLocation)
+        {
+            entitySpawnLocation = default(Vector3D);
+            int y;
+            int columnInfoIndex = x * AbstractChunk.ChunkSize.Z + z;
+            //Y base = Original world generated ground height (Before any player modification)
+            y = rnd.Next(chunk.BlockData.ColumnsInfo[columnInfoIndex].MaxHeight + 5, AbstractChunk.ChunkSize.Y);
+
+            if (y <= 0 || y >= AbstractChunk.ChunkSize.Y) return false;
+
+            cursor.SetInternalPosition(x, y, z);
+
+            if (cursor.Read() != WorldConfiguration.CubeId.Air) return false;
+
+            // Hurray it can spawn ! :D
+            //Add some randomnes on the cube where it will spawn
+            double XOffset, ZOffset;
+            XOffset = rnd.NextDouble(0.2, 0.8);
+            ZOffset = rnd.NextDouble(0.2, 0.8);
+
+            entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, cursor.InternalPosition.Y, chunk.Position.Z + z + ZOffset);
+            return true;
+        }
         #endregion
     }
 }
