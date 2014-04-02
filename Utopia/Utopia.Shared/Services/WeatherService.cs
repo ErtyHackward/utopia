@@ -74,7 +74,7 @@ namespace Utopia.Shared.Services
 
         private void Tick()
         {
-            if (_lastTime > _server.Clock.Now)
+            if (_lastTime.Date != _server.Clock.Now.Date)
             {
                 // new day
 
