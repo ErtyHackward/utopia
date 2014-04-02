@@ -272,6 +272,11 @@ namespace Utopia.Shared.Server.Managers
             }
         }
 
+        public IEnumerable<ServerChunk> GetBufferedChunks()
+        {
+            return _chunks.Values;
+        }
+
         /// <summary>
         /// Gets chunk. First it tries to get cached in memory value, then it checks the database, and then it generates the chunk
         /// </summary>
