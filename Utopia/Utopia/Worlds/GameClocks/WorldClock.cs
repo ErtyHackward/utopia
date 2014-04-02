@@ -112,8 +112,6 @@ namespace Utopia.Worlds.GameClocks
             _clockTime.ValuePrev = base._clockTime.Value;
         }
         #endregion
-
-
     }
 }
 

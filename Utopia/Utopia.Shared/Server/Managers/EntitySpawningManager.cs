@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Server.Managers
 {
@@ -15,9 +16,8 @@ namespace Utopia.Shared.Server.Managers
         {
             _server = server;
             _entitySpawningControler = entitySpawningControler;
-            
-            //Register a thread timer based on "In game" time value (Like 1 hours ingame passed), this will start a "look up" through the various
-            //Server chunk currently handled, and will do an entity spawning refresh on each chunk.
+
+            _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 0, 1, 0, server.Clock, SpawningLookup));
         }
 
         /// <summary>
