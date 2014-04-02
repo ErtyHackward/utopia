@@ -103,7 +103,7 @@ namespace PacksOptimize
 
                     break;
                 default:
-                    Console.WriteLine("Unknown Action value parameters");
+                    Console.WriteLine("Unknown Action value parameters : {0}", action.ToLower());
                     return;
             }
         }
