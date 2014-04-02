@@ -57,7 +57,7 @@ namespace Utopia.GUI.Crafting
 
             if (CraftingWindow.RecipesList.Items.Count > 0 && CraftingWindow.RecipesList.SelectedItems.Count == 0)
             {
-                CraftingWindow.RecipesList.SelectItem = 0;
+                CraftingWindow.RecipesList.SelectItem(0);
             }
 
             CraftingWindow.LayoutFlags = ControlLayoutFlags.Center;
