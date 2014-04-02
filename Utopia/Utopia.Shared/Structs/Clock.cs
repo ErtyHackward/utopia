@@ -9,9 +9,12 @@ namespace Utopia.Shared.Structs
     /// </summary>
     public class Clock : IDisposable
     {
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public class GameClockTimer : IDisposable
         {
-            public delegate void timerRaised();
+            public delegate void timerRaised(DateTime gametime);
             private event timerRaised OnTimerRaised;
             private DateTime _lastTriggerTime = new DateTime();
             private TimeSpan _triggerSpan;
@@ -28,8 +31,12 @@ namespace Utopia.Shared.Structs
 
                 _triggerSpan = new TimeSpan(0, 0, 0, NbrSeconds, 0);
 
-                _lastTriggerTime = new DateTime(1900, 1, 1, 0, 0, 0);
-                var currentDateTime = worldClock.Now;
+                WorldTimeChanged(worldClock.Now);
+            }
+
+            public void WorldTimeChanged(DateTime currentDateTime)
+            {
+                _lastTriggerTime = new DateTime(2000, 1, 1, 0, 0, 0);
 
                 while (_lastTriggerTime < currentDateTime)
                 {
@@ -44,8 +51,8 @@ namespace Utopia.Shared.Structs
                 DateTime currentTime = _worldClock.Now;
                 if (currentTime - _lastTriggerTime >= _triggerSpan)
                 {
-                    if (OnTimerRaised != null) OnTimerRaised();
-                    _lastTriggerTime = currentTime;
+                    _lastTriggerTime += _triggerSpan;
+                    if (OnTimerRaised != null) OnTimerRaised(_lastTriggerTime);
                 }
             }
 
@@ -162,7 +169,7 @@ namespace Utopia.Shared.Structs
         }
 
         //Will be raised at every game day
-        private void PerDayTrigger()
+        private void PerDayTrigger(DateTime gametime)
         {
             //Update Calendar date/year
             _currentGameCalendar.Day += 1;
@@ -177,6 +184,9 @@ namespace Utopia.Shared.Structs
         {
             _clockStartTime = DateTime.Now;
             _gameStartTime = time;
+
+            //Refresh Timer !
+            foreach (var t in _clockTimers) t.WorldTimeChanged(this.Now);
         }
 
         public void SetCurrentTimeOfDay(TimeSpan time)

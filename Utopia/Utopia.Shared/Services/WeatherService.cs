@@ -70,7 +70,7 @@ namespace Utopia.Shared.Services
             _server.LoginManager.PlayerAuthorized -= LoginManager_PlayerAuthorized;
         }
 
-        private void PerDayTrigger()
+        private void PerDayTrigger(DateTime gametime)
         {
             if (Day++ >= DaysPerSeason)
             {
