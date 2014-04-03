@@ -45,6 +45,8 @@ namespace Utopia.Shared.Server.Managers
 
             foreach (var chunk in _landscapeManager.GetBufferedChunks())
             {
+                //if (chunk.LastSpawningRefresh + TimeSpan.FromDays(1) > gametime)
+                //    continue;
                 //TODO Check if chunk can start a spawning refresh. Need to add a LastSpawningRefresh value + the trick to avoid all chunk to be refreshed at the same time.
 
                 var chunkBiome = _worldParam.ProcessorParam.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
