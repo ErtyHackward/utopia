@@ -33,7 +33,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
         private LandscapeBufferManager _landscapeBufferManager;
-
+        private UtopiaEntitySpawningControler _spawnControler;
         //Landscape entities generators
 
         #endregion
@@ -66,6 +66,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
             _landscapeBufferManager = landscapeEntityManager;
             LandscapeEntities = new LandscapeEntities(_landscapeBufferManager, _worldParameters);
+            _spawnControler = new UtopiaEntitySpawningControler(_config);
 
             landscapeEntityManager.Processor = this;
         }
@@ -116,13 +117,14 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
                 var metaData = CreateChunkMetaData(columnsInfo);
-                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
+                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
+                chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
+
+                PopulateChunk(chunk, chunkBytes, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
 
                 RefreshChunkMetaData(metaData, columnsInfo);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
-                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
-                chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
 
@@ -539,15 +541,15 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// </summary>
         /// <param name="ChunkCubes"></param>
         /// <param name="chunkMetaData"></param>
-        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
+        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
         {
             //Get Chunk Master Biome
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
-            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
+            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, chunk.BlockData.ColumnsInfo);
 
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
-            masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
+            masterBiome.GenerateChunkItems(dataCursor, chunk, masterBiome, chunkRnd, entityFactory, _spawnControler);
             chunkMetaData.SpawnableEntities = new List<ChunkSpawnableEntity>(masterBiome.SpawnableEntities); 
             InsertMicrolandscapeStaticEntities(dataCursor, chunk, chunkRnd, entityFactory, landscapeEntities);
         }
