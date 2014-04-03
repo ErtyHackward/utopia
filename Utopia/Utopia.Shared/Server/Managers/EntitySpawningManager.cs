@@ -6,8 +6,10 @@ using System.Linq;
 using System.Text;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Server.Structs;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World;
+using Utopia.Shared.ClassExt;
 
 namespace Utopia.Shared.Server.Managers
 {
@@ -21,6 +23,9 @@ namespace Utopia.Shared.Server.Managers
         private readonly UtopiaWorldConfiguration _worldParam;
         private FastRandom _fastRandom;
 
+        private TimeSpan _chunkUpdateCycle = new TimeSpan(1, 0, 0, 0); // A minimum of one day must be passed before a chunk can be do a spawn refresh again !
+        private int _maxChunkRefreshPerCycle = 20; //Maximum of 20 chunk update per cycle
+
         public EntitySpawningManager(ServerCore server, IEntitySpawningControler entitySpawningControler)
         {
             _server = server;
@@ -32,22 +37,40 @@ namespace Utopia.Shared.Server.Managers
             //This spawn logic can only be down on UtopiaWorldConfiguration and associated processor.
             if (_worldParam != null)
             {
-                _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 0, 1, 0, server.Clock, UtopiaSpawningLookup));
+                _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 0, 0, 15, server.Clock, UtopiaSpawningLookup));
             }
         }
 
+        List<ServerChunk> _chunks4Processing = new List<ServerChunk>();
+
         /// <summary>
-        /// This method should be called every "in game hour".
+        /// Method responsible to do chunk spawn logic
         /// </summary>
         private void UtopiaSpawningLookup(DateTime gametime)
         {
-            logger.Debug("SpawningLookup raised {0}", gametime);
+            logger.Debug("New chunk spawn cycle started at {0}", gametime);
 
-            foreach (var chunk in _landscapeManager.GetBufferedChunks())
+            //Logic to "Randomize" and limit the number of chunk to update per cycle ======================================================
+
+            //Get the chunks that are under server management and are candidate for a refresh !
+            IEnumerable<ServerChunk> serverChunks = _landscapeManager.GetBufferedChunks().Where(x => (gametime - x.LastSpawningRefresh) > _chunkUpdateCycle);
+
+            //Get the chunk not in the processing list => New chunk to process
+            List<ServerChunk> newChunks = serverChunks.Where(x => _chunks4Processing.Contains(x) == false).ToList();
+            newChunks.Shuffle();
+            _chunks4Processing.AddRange(newChunks);
+
+            //Get the chunk not handled anymore by the server and remove them from the processing list
+            IEnumerable<ServerChunk> removedChunks = _chunks4Processing.Where(x => serverChunks.Contains(x) == false);
+            foreach(var chunkRemoved in removedChunks)
             {
-                //if (chunk.LastSpawningRefresh + TimeSpan.FromDays(1) > gametime)
-                //    continue;
-                //TODO Check if chunk can start a spawning refresh. Need to add a LastSpawningRefresh value + the trick to avoid all chunk to be refreshed at the same time.
+                _chunks4Processing.Remove(chunkRemoved);
+            }
+
+            //Process _maxChunkRefreshPerCycle at maximum
+            for (int i = 0; _chunks4Processing.Count > 0 && i < _maxChunkRefreshPerCycle; i++)
+            {
+                ServerChunk chunk = _chunks4Processing[0];
 
                 var chunkBiome = _worldParam.ProcessorParam.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
@@ -81,7 +104,12 @@ namespace Utopia.Shared.Server.Managers
                         //Create the entity at the entityLocation place !
                     }
                 }
+
+                chunk.LastSpawningRefresh = gametime;
+                _chunks4Processing.RemoveAt(0);
             }
+
+            logger.Debug("Chunks spawning process, _chunks4Processing size {0}", _chunks4Processing.Count);
         }
 
     }
