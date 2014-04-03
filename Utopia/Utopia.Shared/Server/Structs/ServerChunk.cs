@@ -24,6 +24,11 @@ namespace Utopia.Shared.Server.Structs
         public bool NeedSave { get; set; }
 
         /// <summary>
+        /// Gets or sets last chunk refresh in game time
+        /// </summary>
+        public DateTime LastSpawningRefresh { get; set; }
+
+        /// <summary>
         /// Occurs when some of containing blocks was changed
         /// </summary>
         public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlocksChanged;
