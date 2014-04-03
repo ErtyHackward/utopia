@@ -272,9 +272,19 @@ namespace Utopia.Shared.Server.Managers
             }
         }
 
+        /// <summary>
+        /// Returns a copy of list of all chunks in memory
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ServerChunk> GetBufferedChunks()
         {
-            return _chunks.Values;
+            List<ServerChunk> chunks;
+            lock (_chunks)
+            {
+                chunks = new List<ServerChunk>(_chunks.Values);
+            }
+
+            return chunks;
         }
 
         /// <summary>
