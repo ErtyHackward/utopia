@@ -116,6 +116,7 @@
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\IEntitySpawningControler.cs" />
+    <Compile Include="ClassExt\ListExtension.cs" />
     <Compile Include="Structs\GameCalendar.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
