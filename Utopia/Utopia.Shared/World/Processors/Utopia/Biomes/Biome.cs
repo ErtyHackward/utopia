@@ -11,6 +11,7 @@ using Utopia.Shared.Entities.Interfaces;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
 using System.Linq;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -231,25 +232,57 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
+        public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, FastRandom rnd, EntityFactory entityFactory, UtopiaEntitySpawningControler spawnControler)
         {
+
+            //foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.isChunkGenerationSpawning))
+            //{
+            //    //Entity population
+            //    for (int i = 0; i < entity.MaxEntityAmount; i++)
+            //    {
+            //        if (rnd.NextDouble() <= entity.SpawningChance)
+            //        {
+            //            //Get Rnd chunk Location.
+            //            int x = rnd.Next(0, 16);
+            //            int z = rnd.Next(0, 16);
+            //            int y = columnInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
+
+            //            PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
+            //        }
+            //    }
+            //}
+            ////logger.Warn("{0} | {1}", chunk.Position, nbr);
             foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.isChunkGenerationSpawning))
             {
-                //Entity population
                 for (int i = 0; i < entity.MaxEntityAmount; i++)
                 {
-                    if (rnd.NextDouble() <= entity.SpawningChance)
+                    Vector3D entityPosition;
+                    if (spawnControler.TryGetSpawnLocation(entity, chunk, cursor, rnd, out entityPosition))
                     {
-                        //Get Rnd chunk Location.
-                        int x = rnd.Next(0, 16);
-                        int z = rnd.Next(0, 16);
-                        int y = columnInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
+                        //Create the entity
+                        var createdEntity = entityFactory.CreateFromBluePrint(entity.BluePrintId);
+                        var chunkWorldPosition = chunk.BlockPosition;
 
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
+                        //Should take into account the SpawnLocation ! (Ceiling or not !)
+                        if (createdEntity is IBlockLinkedEntity)
+                        {
+                            Vector3I linkedCubePosition = BlockHelper.EntityToBlock(entityPosition);
+                            linkedCubePosition.Y--;
+                            ((IBlockLinkedEntity)createdEntity).LinkedCube = linkedCubePosition;
+                        }
+
+                        if (createdEntity is BlockLinkedItem)
+                        {
+                            Vector3I LocationCube = BlockHelper.EntityToBlock(entityPosition);
+                            ((BlockLinkedItem)createdEntity).BlockLocationRoot = LocationCube;
+                        }
+
+                        createdEntity.Position = entityPosition;
+
+                        chunk.Entities.Add((StaticEntity)createdEntity);
                     }
                 }
             }
-            //logger.Warn("{0} | {1}", chunk.Position, nbr);
         }
 
         #endregion

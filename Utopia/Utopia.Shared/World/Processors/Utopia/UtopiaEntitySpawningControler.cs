@@ -53,9 +53,8 @@ namespace Utopia.Shared.World.Processors.Utopia
                 case ChunkSpawningPlace.CeilingInsideCave:
                     return CaveSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
                 case ChunkSpawningPlace.AirAboveSurface:
-                    return CaveSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
-                case ChunkSpawningPlace.Surface:
                     return AirSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
+                case ChunkSpawningPlace.Surface:
                 default:
                     return SurfaceSpawnLogic(x, z, entity, chunk, cursor, rnd, out entitySpawnLocation);
             }
@@ -107,7 +106,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             XOffset = rnd.NextDouble(0.2, 0.8);
             ZOffset = rnd.NextDouble(0.2, 0.8);
 
-            entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, cursor.InternalPosition.Y, chunk.Position.Z + z + ZOffset);
+            entitySpawnLocation = new Vector3D(chunk.BlockPosition.X + x + XOffset, cursor.InternalPosition.Y, chunk.BlockPosition.Z + z + ZOffset);
 
             return true;
         }
@@ -147,11 +146,11 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             if (entity.SpawningPlace == ChunkSpawningPlace.FloorInsideCave)
             {
-                entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, YFloorSpawning, chunk.Position.Z + z + ZOffset);
+                entitySpawnLocation = new Vector3D(chunk.BlockPosition.X + x + XOffset, YFloorSpawning, chunk.BlockPosition.Z + z + ZOffset);
             }
             else
             {
-                entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, cursor.InternalPosition.Y - 1, chunk.Position.Z + z + ZOffset);
+                entitySpawnLocation = new Vector3D(chunk.BlockPosition.X + x + XOffset, cursor.InternalPosition.Y - 1, chunk.BlockPosition.Z + z + ZOffset);
             }
 
             return true;
@@ -177,7 +176,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             XOffset = rnd.NextDouble(0.2, 0.8);
             ZOffset = rnd.NextDouble(0.2, 0.8);
 
-            entitySpawnLocation = new Vector3D(chunk.Position.X + x + XOffset, cursor.InternalPosition.Y, chunk.Position.Z + z + ZOffset);
+            entitySpawnLocation = new Vector3D(chunk.BlockPosition.X + x + XOffset, cursor.InternalPosition.Y, chunk.BlockPosition.Z + z + ZOffset);
             return true;
         }
         #endregion
