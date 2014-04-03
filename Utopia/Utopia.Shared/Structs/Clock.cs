@@ -9,27 +9,26 @@ namespace Utopia.Shared.Structs
     /// </summary>
     public class Clock : IDisposable
     {
-
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public class GameClockTimer : IDisposable
         {
-            public delegate void timerRaised(DateTime gametime);
-            private event timerRaised OnTimerRaised;
-            private DateTime _lastTriggerTime = new DateTime();
+            public delegate void TimerRaised(DateTime gametime);
+            private event TimerRaised OnTimerRaised;
+            private DateTime _lastTriggerTime;
             private TimeSpan _triggerSpan;
             private Clock _worldClock;
 
-            public GameClockTimer(int Year, int Day, int Hours, int Minute, Clock worldClock, timerRaised callBack)
+            public GameClockTimer(int year, int day, int hours, int minute, Clock worldClock, TimerRaised callBack)
             {
                 OnTimerRaised += callBack;
                 _worldClock = worldClock;
-                int NbrSeconds = Minute * 60;
-                NbrSeconds += Hours * (60 * 60);
-                NbrSeconds += Day * (60 * 60 * 24);
-                NbrSeconds += Year * (60 * 60 * 24 * worldClock.CalendarDaysPerYear);
+                int nbrSeconds = minute * 60;
+                nbrSeconds += hours * (60 * 60);
+                nbrSeconds += day * (60 * 60 * 24);
+                nbrSeconds += year * (60 * 60 * 24 * worldClock.CalendarDaysPerYear);
 
-                _triggerSpan = new TimeSpan(0, 0, 0, NbrSeconds, 0);
+                _triggerSpan = new TimeSpan(0, 0, 0, nbrSeconds, 0);
 
                 WorldTimeChanged(worldClock.Now);
             }
@@ -63,7 +62,7 @@ namespace Utopia.Shared.Structs
                     //Remove all Events associated to this control (That haven't been unsubscribed !)
                     foreach (Delegate d in OnTimerRaised.GetInvocationList())
                     {
-                        OnTimerRaised -= (timerRaised)d;
+                        OnTimerRaised -= (TimerRaised)d;
                     }
                 }
             }
