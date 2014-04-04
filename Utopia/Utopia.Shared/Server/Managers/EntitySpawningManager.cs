@@ -117,7 +117,7 @@ namespace Utopia.Shared.Server.Managers
                         {
                             staticEntity.Position = entityLocation;
 
-                            if (chunk.Entities.Count(e => e.BluePrintId == spawnableEntity.BluePrintId) >= spawnableEntity.MaxEntityAmount)
+                            if (chunk.Entities.Where(e => e.BluePrintId == spawnableEntity.BluePrintId).CountAtLeast(spawnableEntity.MaxEntityAmount))
                                 continue;
 
                             var cursor = _server.LandscapeManager.GetCursor(entityLocation);
@@ -132,7 +132,7 @@ namespace Utopia.Shared.Server.Managers
                             if (radius < 8) continue; //A minimum radius of 8 blocks distance is needed (= 1 chunk), otherwhile it could create new everytime.
                             if (radius != 0f)
                             {
-                                if (_server.AreaManager.EnumerateAround(entityLocation, radius).Take(spawnableEntity.MaxEntityAmount).Count() == spawnableEntity.MaxEntityAmount)
+                                if (_server.AreaManager.EnumerateAround(entityLocation, radius).CountAtLeast(spawnableEntity.MaxEntityAmount))
                                     continue;
                             }
 
