@@ -232,26 +232,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             }
         }
 
-        public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, FastRandom rnd, EntityFactory entityFactory, UtopiaEntitySpawningControler spawnControler)
+        //Will send back a dictionnary with the entity amount that have been generated
+        public Dictionary<ushort, int> GenerateChunkStaticItems(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, FastRandom rnd, EntityFactory entityFactory, UtopiaEntitySpawningControler spawnControler)
         {
+            Dictionary<ushort, int> entityAmount = new Dictionary<ushort, int>();
 
-            //foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.isChunkGenerationSpawning))
-            //{
-            //    //Entity population
-            //    for (int i = 0; i < entity.MaxEntityAmount; i++)
-            //    {
-            //        if (rnd.NextDouble() <= entity.SpawningChance)
-            //        {
-            //            //Get Rnd chunk Location.
-            //            int x = rnd.Next(0, 16);
-            //            int z = rnd.Next(0, 16);
-            //            int y = columnInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
-
-            //            PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
-            //        }
-            //    }
-            //}
-            ////logger.Warn("{0} | {1}", chunk.Position, nbr);
             foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.IsChunkGenerationSpawning))
             {
                 for (int i = 0; i < entity.MaxEntityAmount; i++)
@@ -280,9 +265,13 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         createdEntity.Position = entityPosition;
 
                         chunk.Entities.Add((StaticEntity)createdEntity);
+                        if (!entityAmount.ContainsKey(createdEntity.BluePrintId)) entityAmount[createdEntity.BluePrintId] = 0;
+                        entityAmount[createdEntity.BluePrintId]++;
                     }
                 }
             }
+
+            return entityAmount;
         }
 
         #endregion

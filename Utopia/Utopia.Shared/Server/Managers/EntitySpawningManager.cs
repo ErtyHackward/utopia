@@ -71,6 +71,8 @@ namespace Utopia.Shared.Server.Managers
 
                 foreach (var spawnableEntity in chunkBiome.SpawnableEntities)
                 {
+                    bool isStaticEntity = _configuration.BluePrints[spawnableEntity.BluePrintId] is IStaticEntity;
+
                     //Remark : isChunkGenerationSpawning is set to true for static entities, and false for dynamic entities, maybe worth renaming the properties
                     //The aim of it is to avoid dynamic entity creation at chunk generation time (Pure chunk).
                     //Apply creation constaint :
@@ -78,7 +80,7 @@ namespace Utopia.Shared.Server.Managers
                     if (spawnableEntity.IsWildChunkNeeded && chunk.BlockData.ChunkMetaData.IsWild == false) 
                         continue;
 
-                    if (chunk.PureGenerated && _configuration.BluePrints[spawnableEntity.BluePrintId] is IStaticEntity)
+                    if (chunk.PureGenerated && isStaticEntity)
                         continue;
 
                     bool isDayTime = gametime.TimeOfDay > TimeSpan.FromHours(8) && gametime.TimeOfDay < TimeSpan.FromHours(20);
@@ -108,15 +110,20 @@ namespace Utopia.Shared.Server.Managers
                     if (_entitySpawningControler.TryGetSpawnLocation(spawnableEntity, chunk, chunkCursor, _fastRandom, out entityLocation))
                     {
                         var entity = _server.EntityFactory.CreateFromBluePrint(spawnableEntity.BluePrintId);
-
                         var staticEntity = entity as IStaticEntity;
+
+                        //Check the maximum amount of static entities;
+                        int MaxEntityAmount;
+                        chunk.BlockData.ChunkMetaData.InitialSpawnableEntitiesAmount.TryGetValue(spawnableEntity.BluePrintId, out MaxEntityAmount);
+                        if (MaxEntityAmount == 0) 
+                            continue;
+
+                        if (chunk.Entities.Where(e => e.BluePrintId == spawnableEntity.BluePrintId).CountAtLeast(MaxEntityAmount))
+                            continue;
 
                         if (staticEntity != null)
                         {
                             staticEntity.Position = entityLocation;
-
-                            if (chunk.Entities.Where(e => e.BluePrintId == spawnableEntity.BluePrintId).CountAtLeast(spawnableEntity.MaxEntityAmount))
-                                continue;
 
                             var cursor = _server.LandscapeManager.GetCursor(entityLocation);
                             logger.Debug("Spawning new static entity : {0} at location {1}", staticEntity.Name, entityLocation);
@@ -124,7 +131,6 @@ namespace Utopia.Shared.Server.Managers
                         }
 
                         var charEntity = entity as CharacterEntity;
-
                         if (charEntity != null)
                         {
                             var radius = spawnableEntity.DynamicEntitySpawnRadius;
