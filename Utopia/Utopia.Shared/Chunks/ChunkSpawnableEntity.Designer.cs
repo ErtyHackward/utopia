@@ -24,7 +24,7 @@ namespace Utopia.Shared.Chunks
                 if (BluePrintId == 0)
                 {
                     var bluePrintId = EditorConfigHelper.Config.BluePrints.Values.Min(x => x.BluePrintId);
-                    if( EditorConfigHelper.Config.BluePrints[bluePrintId] is StaticEntity) this.isChunkGenerationSpawning = true;
+                    if( EditorConfigHelper.Config.BluePrints[bluePrintId] is StaticEntity) this.IsChunkGenerationSpawning = true;
                     BluePrintId = bluePrintId;
                 }
                 return EditorConfigHelper.Config.BluePrints[BluePrintId].Name;
@@ -33,8 +33,8 @@ namespace Utopia.Shared.Chunks
             {
                 //Get ID from name, name must be unic !
                 var entityBluePrint = EditorConfigHelper.Config.BluePrints.Values.First(x => x.Name == value);
-                if (entityBluePrint is StaticEntity) this.isChunkGenerationSpawning = true;
-                else this.isChunkGenerationSpawning = false;
+                if (entityBluePrint is StaticEntity) this.IsChunkGenerationSpawning = true;
+                else this.IsChunkGenerationSpawning = false;
                 BluePrintId = entityBluePrint.BluePrintId;
             }
         }

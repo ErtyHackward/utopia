@@ -252,7 +252,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             //    }
             //}
             ////logger.Warn("{0} | {1}", chunk.Position, nbr);
-            foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.isChunkGenerationSpawning))
+            foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.IsChunkGenerationSpawning))
             {
                 for (int i = 0; i < entity.MaxEntityAmount; i++)
                 {

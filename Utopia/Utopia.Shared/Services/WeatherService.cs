@@ -31,6 +31,13 @@ namespace Utopia.Shared.Services
         [Browsable(false)]
         public int SeasonIndex { get; set; }
 
+        /// <summary>
+        /// Gets current season or null if no seasons exists
+        /// </summary>
+        public Season CurrentSeason {
+            get { return Seasons.Count > 0 ? Seasons[SeasonIndex] : null; }
+        }
+
         public WeatherService()
         {
             Seasons = new List<Season>( new [] { 

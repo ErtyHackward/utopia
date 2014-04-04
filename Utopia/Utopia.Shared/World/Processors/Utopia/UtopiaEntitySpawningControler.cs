@@ -90,7 +90,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Check that the block is well "Solid to entity"
             BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Peek(CursorRelativeMovement.Down)];
             if (!blockSpawnProfile.IsSolidToEntity) return false;
-            if (entity.isWildChunkNeeded)
+            if (entity.IsWildChunkNeeded)
             {
                 //Get Chunk master biome
                 byte masterBiomeId = chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType;

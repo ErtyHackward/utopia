@@ -52,7 +52,7 @@ namespace Utopia.Shared.Services
             }
 
             npc.Position = position;
-            var srvNpc = _server.AreaManager.CreateNpc(npc);
+            var srvNpc = _server.EntityManager.AddNpc(npc);
             _aliveNpc.Add(srvNpc);
             return srvNpc;
         }
