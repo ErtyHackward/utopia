@@ -13,6 +13,8 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public partial class ChunkSpawnableEntity
     {
+        private float _dynamicEntitySpawnRadius;
+
         [Browsable(false)]
         [ProtoMember(1)]
         public ushort BluePrintId { get; set; }
@@ -52,7 +54,15 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         [ProtoMember(9)]
         [Description("Defines the radius for NPC's area where MaxEntityAmount is used")]
-        public float DynamicEntitySpawnRadius { get; set; }
+        public float DynamicEntitySpawnRadius
+        {
+            get { return _dynamicEntitySpawnRadius; }
+            set
+            {
+                if (value < 8) value = 8;
+                _dynamicEntitySpawnRadius = value;
+            }
+        }
 
         public ChunkSpawnableEntity()
         {
@@ -63,6 +73,7 @@ namespace Utopia.Shared.Chunks
             IsWildChunkNeeded = true;
             SpawningPlace = ChunkSpawningPlace.Surface;
             SpawningSeasons = new List<string>();
+            DynamicEntitySpawnRadius = 32;
         }
 
         public override string ToString()

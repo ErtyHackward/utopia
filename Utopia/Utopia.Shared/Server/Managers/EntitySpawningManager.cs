@@ -82,14 +82,15 @@ namespace Utopia.Shared.Server.Managers
 
                     if (chunk.PureGenerated && _configuration.BluePrints[spawnableEntity.BluePrintId] is IStaticEntity)
                         continue;
-                    
+
+                    bool isDayTime = gametime.TimeOfDay > TimeSpan.FromHours(8) && gametime.TimeOfDay < TimeSpan.FromHours(20);
                     // check daytime constraints
                     if (!spawnableEntity.SpawningDayTime.HasFlag(ChunkSpawningDayTime.Day) &&
-                        _server.Clock.Now.TimeOfDay > TimeSpan.FromHours(6))
+                        isDayTime)
                         continue;
 
                     if (!spawnableEntity.SpawningDayTime.HasFlag(ChunkSpawningDayTime.Night) &&
-                        _server.Clock.Now.TimeOfDay < TimeSpan.FromHours(6))
+                        !isDayTime)
                         continue;
                     
                     // check season constraint
@@ -128,7 +129,7 @@ namespace Utopia.Shared.Server.Managers
                         if (charEntity != null)
                         {
                             var radius = spawnableEntity.DynamicEntitySpawnRadius;
-
+                            if (radius < 8) continue; //A minimum radius of 8 blocks distance is needed (= 1 chunk), otherwhile it could create new everytime.
                             if (radius != 0f)
                             {
                                 if (_server.AreaManager.EnumerateAround(entityLocation, radius).Take(spawnableEntity.MaxEntityAmount).Count() == spawnableEntity.MaxEntityAmount)
