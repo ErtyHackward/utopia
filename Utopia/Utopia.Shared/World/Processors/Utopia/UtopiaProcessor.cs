@@ -546,11 +546,10 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Get Chunk Master Biome
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
             ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, chunk.BlockData.ColumnsInfo);
-
+            
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
-            masterBiome.GenerateChunkItems(dataCursor, chunk, masterBiome, chunkRnd, entityFactory, _spawnControler);
-            chunkMetaData.SpawnableEntities = new List<ChunkSpawnableEntity>(masterBiome.SpawnableEntities); 
+            chunkMetaData.InitialSpawnableEntitiesAmount = masterBiome.GenerateChunkStaticItems(dataCursor, chunk, masterBiome, chunkRnd, entityFactory, _spawnControler);
             InsertMicrolandscapeStaticEntities(dataCursor, chunk, chunkRnd, entityFactory, landscapeEntities);
         }
 
