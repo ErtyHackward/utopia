@@ -127,7 +127,7 @@ namespace Utopia.Shared.Server.Structs
             Movement.Update(gameTime);
             Focus.Update(gameTime);
 
-            AISelect();
+            //AISelect();
             DoAction();
         }
 
