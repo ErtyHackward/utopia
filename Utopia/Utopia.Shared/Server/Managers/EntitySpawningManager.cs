@@ -116,7 +116,7 @@ namespace Utopia.Shared.Server.Managers
                         {
                             staticEntity.Position = entityLocation;
 
-                            if (chunk.Entities.Count(e => e.BluePrintId == spawnableEntity.BluePrintId) >= spawnableEntity.MaxEntityAmount)
+                            if (chunk.Entities.Where(e => e.BluePrintId == spawnableEntity.BluePrintId).CountAtLeast(spawnableEntity.MaxEntityAmount))
                                 continue;
 
                             var cursor = _server.LandscapeManager.GetCursor(entityLocation);
@@ -131,7 +131,7 @@ namespace Utopia.Shared.Server.Managers
 
                             if (radius != 0f)
                             {
-                                if (_server.AreaManager.EnumerateAround(entityLocation, radius).Take(spawnableEntity.MaxEntityAmount).Count() == spawnableEntity.MaxEntityAmount)
+                                if (_server.AreaManager.EnumerateAround(entityLocation, radius).CountAtLeast(spawnableEntity.MaxEntityAmount))
                                     continue;
                             }
 
