@@ -57,8 +57,11 @@ namespace Utopia.Shared.Server.Managers
 
             //Get the chunk not in the processing list => New chunk to process
             List<ServerChunk> newChunks = serverChunks.Where(x => _chunks4Processing.Contains(x) == false).ToList();
-            newChunks.Shuffle();
-            _chunks4Processing.AddRange(newChunks);
+            if (newChunks.Count > 0)
+            {
+                _chunks4Processing.AddRange(newChunks);
+                _chunks4Processing.Shuffle(); //Shuffle all chunks that must be updated.
+            }
 
             //Get the chunk not handled anymore by the server and remove them from the processing list
             IEnumerable<ServerChunk> removedChunks = _chunks4Processing.Where(x => serverChunks.Contains(x) == false);
