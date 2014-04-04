@@ -39,7 +39,7 @@ namespace Utopia.Shared.Server.Managers
             //This spawn logic can only be down on UtopiaWorldConfiguration and associated processor.
             if (_configuration != null)
             {
-                _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 0, 0, 15, server.Clock, UtopiaSpawningLookup));
+                _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 0, 0, 15, server.Clock, UtopiaSpawningLookup));    
             }
         }
         
@@ -48,8 +48,6 @@ namespace Utopia.Shared.Server.Managers
         /// </summary>
         private void UtopiaSpawningLookup(DateTime gametime)
         {
-            logger.Debug("New chunk spawn cycle started at {0}", gametime);
-
             //Logic to "Randomize" and limit the number of chunk to update per cycle ======================================================
 
             //Get the chunks that are under server management and are candidate for a refresh !
@@ -121,6 +119,7 @@ namespace Utopia.Shared.Server.Managers
                                 continue;
 
                             var cursor = _server.LandscapeManager.GetCursor(entityLocation);
+                            logger.Debug("Spawning new static entity : {0} at location {1}", staticEntity.Name, entityLocation);
                             cursor.AddEntity(staticEntity);
                         }
 
@@ -137,16 +136,17 @@ namespace Utopia.Shared.Server.Managers
                             }
 
                             charEntity.Position = entityLocation;
+                            logger.Debug("Spawning new dynamic entity : {0} at location {1}", charEntity.Name, entityLocation);
                             _server.EntityManager.AddNpc(charEntity);
                         }
                     }
                 }
 
                 chunk.LastSpawningRefresh = gametime;
-            }            
-            _chunks4Processing.RemoveRange(0, _maxChunkRefreshPerCycle);
+            }
 
-            logger.Debug("Chunks spawning process, _chunks4Processing size {0}", _chunks4Processing.Count);
+            if (_chunks4Processing.Count < _maxChunkRefreshPerCycle) _chunks4Processing.Clear();
+            else _chunks4Processing.RemoveRange(0, _maxChunkRefreshPerCycle);
         }
 
     }
