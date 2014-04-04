@@ -23,7 +23,7 @@ namespace Realms.Client
         /// </summary>
         [STAThread]
         static void Main(string[] args)
-        {            
+        {
             foreach (var arg in args)
             {
                 if (arg.ToLower() == "-nolandscapebuffer") Utopia.Shared.World.LandscapeBufferManager.WithoutLandscapeBuffer = true;

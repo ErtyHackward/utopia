@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
-using System.Text;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Chunks
 {
@@ -19,29 +16,43 @@ namespace Utopia.Shared.Chunks
         [Browsable(false)]
         [ProtoMember(1)]
         public ushort BluePrintId { get; set; }
+
         [ProtoMember(2)]
         [Description("Chance of spawning for the entity [0;1]")]
         public double SpawningChance { get; set; }
+
         [ProtoMember(3)]
         [Description("Maximum amount of entity per chunk")]
         public ushort MaxEntityAmount { get; set; }
+
         [ProtoMember(4)]
         [Description("Does it require the chunk to be wild to spawn ?")]
-        public bool isWildChunkNeeded { get; set; }
+        public bool IsWildChunkNeeded { get; set; }
+
         [ProtoMember(5)]
         [Description("The spawning place")]
         public ChunkSpawningPlace SpawningPlace { get; set; }
+
         [ProtoMember(6)]
         [Description("The spawning time")]
         [Editor(typeof(FlagsEditor), typeof(UITypeEditor))]
         public ChunkSpawningDayTime SpawningDayTime { get; set; }
+
         [ProtoMember(7)]
         [Description("The spawning season(s), if empty will spawn inside all existing seasons")]
         [Editor(typeof(SpawningSeasonsEditor), typeof(UITypeEditor))]
         public List<string> SpawningSeasons { get; set;}
+
         [ProtoMember(8)]
         [Browsable(false)]
-        public bool isChunkGenerationSpawning { get; set; }
+        public bool IsChunkGenerationSpawning { get; set; }
+
+        /// <summary>
+        /// Defines the radius for NPC's area where MaxEntityAmount is used
+        /// </summary>
+        [ProtoMember(9)]
+        [Description("Defines the radius for NPC's area where MaxEntityAmount is used")]
+        public float DynamicEntitySpawnRadius { get; set; }
 
         public ChunkSpawnableEntity()
         {
@@ -49,7 +60,7 @@ namespace Utopia.Shared.Chunks
             SpawningDayTime = ChunkSpawningDayTime.Day | ChunkSpawningDayTime.Night;
             MaxEntityAmount = 1;
             SpawningChance = 1.0;
-            isWildChunkNeeded = true;
+            IsWildChunkNeeded = true;
             SpawningPlace = ChunkSpawningPlace.Surface;
             SpawningSeasons = new List<string>();
         }
@@ -71,7 +82,6 @@ namespace Utopia.Shared.Chunks
     [Flags]
     public enum ChunkSpawningDayTime
     {
-        Never = 0,
         Day = 1,
         Night = 2
     }
