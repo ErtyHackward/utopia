@@ -134,12 +134,11 @@ namespace Utopia.Shared.Server.Managers
                         if (charEntity != null)
                         {
                             var radius = spawnableEntity.DynamicEntitySpawnRadius;
-                            if (radius < 8) continue; //A minimum radius of 8 blocks distance is needed (= 1 chunk), otherwhile it could create new everytime.
-                            if (radius != 0f)
-                            {
-                                if (_server.AreaManager.EnumerateAround(entityLocation, radius).CountAtLeast(spawnableEntity.MaxEntityAmount))
-                                    continue;
-                            }
+                            if (radius < 8) 
+                                continue; //A minimum radius of 8 blocks distance is needed (= 1 chunk), otherwhile it could create new everytime.
+                            if (_server.AreaManager.EnumerateAround(entityLocation, radius).CountAtLeast(spawnableEntity.MaxEntityAmount))
+                                continue;
+                            
 
                             charEntity.Position = entityLocation;
                             logger.Debug("Spawning new dynamic entity : {0} at location {1}", charEntity.Name, entityLocation);
