@@ -719,13 +719,8 @@ namespace Utopia.Components
             part.Name = e.Name;
             part.IsHead = e.IsHead;
             part.IsArm = e.IsArm;
-
-            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
-            {
-                voxelModelState.PartsStates.Add(new VoxelModelPartState());
-            }
-
-            _visualVoxelModel.VoxelModel.Parts.Add(part);
+            
+            _visualVoxelModel.VoxelModel.AddPart(part);
             _visualVoxelModel.BuildMesh();
             _partsList.Items.Add(part);
 
@@ -773,15 +768,13 @@ namespace Utopia.Components
                 return;
             }
 
-            _visualVoxelModel.VoxelModel.Parts.RemoveAt(SelectedPartIndex);
-
-            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
+            if (_visualVoxelModel.VoxelModel.Parts.Count == 1)
             {
-                voxelModelState.PartsStates.RemoveAt(SelectedPartIndex);
+                _gui.MessageBox("Model must have at least one part");
+                return;
             }
-
-            _visualVoxelModel.RemoveFrameAt(SelectedPartIndex);
-
+            
+            _visualVoxelModel.VoxelModel.RemovePartAt(SelectedPartIndex);
             _partsList.Items.RemoveAt(SelectedPartIndex);
 
             if (_partsList.Items.Count > 0 && SelectedPartIndex == 0)
@@ -791,6 +784,10 @@ namespace Utopia.Components
             }
             else
                 SelectedPartIndex = SelectedPartIndex - 1;
+
+            _partsList.SelectItem(SelectedPartIndex);
+            _visualVoxelModel.BuildMesh();
+            _instance.UpdateStates();
         }
 
         private void OnFrameAddPressed()
@@ -895,8 +892,12 @@ namespace Utopia.Components
                 return;
             }
 
-            // TODO: implement frame delete
+            _visualVoxelModel.RemoveFrameAt(SelectedFrameIndex);
+            _visualVoxelModel.BuildMesh();
+            _framesList.Items.RemoveAt(SelectedFrameIndex);
 
+            _framesList.SelectItem(0);
+            _selectedFrameIndex = 0;
         }
 
         private void OnFrameHidePressed()
@@ -978,7 +979,6 @@ namespace Utopia.Components
                 }
             }
             
-
             _visualVoxelModel.BuildMesh();
         }
 
@@ -1028,12 +1028,6 @@ namespace Utopia.Components
 
         private void OnStateAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             _stateEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogStateEditStruct(), "Add a new state", OnStateAdded);
             
         }
@@ -1049,12 +1043,6 @@ namespace Utopia.Components
         
         private void OnStateEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             if (SelectedStateIndex == -1)
             {
                 _gui.MessageBox("Select a state to edit");
@@ -1073,11 +1061,6 @@ namespace Utopia.Components
 
         private void OnStateDeleteButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before delete");
-                return;
-            }
             if (VisualVoxelModel.VoxelModel.States.Count == 1)
             {
                 _gui.MessageBox("Model should have at least one state");
@@ -1086,18 +1069,17 @@ namespace Utopia.Components
 
             _statesList.Items.RemoveAt(SelectedStateIndex);
             VisualVoxelModel.VoxelModel.RemoveStateAt(SelectedStateIndex);
+
+            _statesList.SelectItem(0);
+            SelectedStateIndex = 0;
+            UpdateCamera();
         }
 
         private void OnAnimationsAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct(), "Add a new animation", OnAnimationAdded);
         }
+
         private void OnAnimationAdded(DialogAnimationEditStruct e)
         {
             if (string.IsNullOrEmpty(e.Name))
@@ -1114,12 +1096,6 @@ namespace Utopia.Components
         
         private void OnAnimationsEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before edit");
-                return;
-            }
-
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to edit");
@@ -1139,12 +1115,6 @@ namespace Utopia.Components
 
         private void OnAnimationsDeleteButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before delete");
-                return;
-            }
-
             VisualVoxelModel.VoxelModel.Animations.RemoveAt(SelectedAnimationIndex);
             _animationsList.Items.RemoveAt(SelectedAnimationIndex);
 
@@ -1152,11 +1122,6 @@ namespace Utopia.Components
 
         private void OnAnimationStepAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to add step to");
@@ -1187,12 +1152,6 @@ namespace Utopia.Components
 
         private void OnAnimationStepEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before edit");
-                return;
-            }
-
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to edit");
@@ -1546,7 +1505,7 @@ namespace Utopia.Components
                     }
                     break;
                 case EditorMode.FrameEdit:
-                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1)
+                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1 && _selectedFrameIndex != byte.MaxValue)
                     {
                         var frame = _visualVoxelModel.VoxelModel.Frames[_selectedFrameIndex];
                         var box = new BoundingBox(new Vector3(), frame.BlockData.ChunkSize);
@@ -3083,7 +3042,8 @@ namespace Utopia.Components
                 return;
             }
 
-
+            _clipboardState.Name = VisualVoxelModel.VoxelModel.States[SelectedStateIndex].Name;
+            
             VisualVoxelModel.VoxelModel.States[SelectedStateIndex] = _clipboardState;
             _clipboardState = new VoxelModelState(_clipboardState);
             NeedSave();

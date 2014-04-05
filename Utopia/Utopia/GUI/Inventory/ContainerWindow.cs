@@ -100,7 +100,7 @@ namespace Utopia.GUI.Inventory
                 }
                 
                 _recipesList.Items.Clear();
-                _recipesList.SelectItem = -1;
+                _recipesList.SelectItem(-1);
                 foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == _container.BluePrintId))
                 {
                     _recipesList.Items.Add(recipe);

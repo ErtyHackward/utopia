@@ -4,6 +4,7 @@ using System;
 using S33M3CoreComponents.Config;
 using System.IO;
 using Utopia.Shared.Helpers;
+using Utopia.Shared.Net.Web;
 
 namespace Realms.Client
 {
@@ -49,7 +50,6 @@ namespace Realms.Client
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 main.Run();
             }
-
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -67,6 +67,8 @@ namespace Realms.Client
                     logger.Fatal("Inner exception 2: {0}\n{1}", exception.InnerException.InnerException.Message, exception.InnerException.InnerException.StackTrace);
                 }
             }
+
+            ClientWebApi.SendBugReport(exception);
 
             var logPath = Path.Combine(Path.GetTempPath(), string.Format("utopia-client-{0}.log", DateTime.Now.ToShortDateString()));
 

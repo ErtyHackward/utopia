@@ -97,7 +97,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             {
                 _configurationsFiles.Items.Add(configurationFile);
             }
-            _configurationsFiles.SelectItem = 0;
+            _configurationsFiles.SelectItem(0);
 
             _btCreate = ToDispose(new ButtonControl()
             {
