@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Reflection;
+using System.Text;
+using SharpDX;
 using Utopia.Shared.Net.Web.Responses;
 
 namespace Utopia.Shared.Net.Web
@@ -89,6 +92,40 @@ namespace Utopia.Shared.Net.Web
         {
             if (string.IsNullOrEmpty(Token))
                 throw new InvalidOperationException("Token check operation failed because login procedure was not completed");
+        }
+
+        public static void SendBugReport(Exception x)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("System info:");
+            sb.AppendLine("Is64BitOperatingSystem: " + Environment.Is64BitOperatingSystem);
+            sb.AppendLine("Is64BitProcess: " + Environment.Is64BitProcess);
+            sb.AppendLine("OS: " + Environment.OSVersion);
+            sb.AppendLine("ProcessorCount: " + Environment.ProcessorCount);
+            sb.AppendLine("RuntimeVersion: " + Environment.Version);
+            sb.AppendLine("WorkingSet: " + (Environment.WorkingSet/(1024*1024)) + "MB");
+            sb.AppendLine();
+
+            sb.AppendLine(x.Message);
+            sb.AppendLine(x.StackTrace);
+
+            if (x.InnerException != null)
+            {
+                sb.AppendLine();
+                sb.AppendLine("Inner Exception:");
+                sb.AppendLine(x.InnerException.Message);
+                sb.AppendLine(x.InnerException.StackTrace);
+
+                if (x.InnerException.InnerException != null)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("Inner Inner Exception:");
+                    sb.AppendLine(x.InnerException.InnerException.Message);
+                    sb.AppendLine(x.InnerException.InnerException.StackTrace);
+                }
+            }
+
+            PostRequest<WebEventArgs>(ServerUrl +"/api/bugs", string.Format("version={0}&report={1}",Assembly.GetEntryAssembly().GetName().Version,Uri.EscapeDataString(sb.ToString())));
         }
 
         public void GetServersListAsync()

@@ -387,6 +387,9 @@ namespace Utopia.Entities.Managers
 
             var instance = visualVoxelEntity.VoxelEntity.ModelInstance;
 
+            if (instance == null)
+                return false;
+
             int index;
             bool collisionDetected = false;
             //Check Against all existing "Sub-Cube" model

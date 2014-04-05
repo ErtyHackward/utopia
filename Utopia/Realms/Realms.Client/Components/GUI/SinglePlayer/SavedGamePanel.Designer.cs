@@ -81,7 +81,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
             if (_savedGameList.Items.Count > 0)
             {
-                _savedGameList.SelectItem = 0;
+                _savedGameList.SelectItem(0);
             }
         }
 
