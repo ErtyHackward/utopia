@@ -20,6 +20,7 @@ namespace Utopia.Shared.Entities
     [ProtoInclude(100, typeof(OrientedBlockLinkedItem))]
     [ProtoInclude(101, typeof(Plant))]
     [ProtoInclude(102, typeof(LinkedLightSource))]
+    [ProtoInclude(103, typeof(GrowingEntity))]
     public abstract class BlockLinkedItem : Item, IBlockLinkedEntity, IBlockLocationRoot
     {
         /// <summary>
