@@ -127,7 +127,7 @@ namespace Utopia.Shared.Server.Structs
             Movement.Update(gameTime);
             Focus.Update(gameTime);
 
-            //AISelect();
+            AISelect();
             DoAction();
         }
 
@@ -160,14 +160,7 @@ namespace Utopia.Shared.Server.Structs
         {
             if (State != ServerNpcState.Idle)
                 return;
-            
-            if (Faction.Designations.Any(d => d is DigDesignation))
-            {
-                if (!EquipItem<BasicCollector>())
-                    return;
-
-                State = ServerNpcState.UsingBlock;
-            }            
+          
         }
 
         /// <summary>
