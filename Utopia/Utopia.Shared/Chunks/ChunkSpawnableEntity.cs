@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Chunks
 {
@@ -42,7 +43,7 @@ namespace Utopia.Shared.Chunks
 
         [ProtoMember(7)]
         [Description("The spawning season(s), if empty will spawn inside all existing seasons")]
-        [Editor(typeof(SpawningSeasonsEditor), typeof(UITypeEditor))]
+        [Editor(typeof(Season.SeasonsEditor), typeof(UITypeEditor))]
         public List<string> SpawningSeasons { get; set;}
 
         [ProtoMember(8)]

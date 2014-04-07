@@ -120,6 +120,7 @@ namespace Utopia.Editor.Forms
             largeImageList.Images.Clear();
 
             ModelSelector.Models.Clear();
+            ModelSelector.MultiStatesModels.Clear();
             TextureSelector.TextureIcons.Clear();
 
             //Create Items icons
@@ -131,6 +132,7 @@ namespace Utopia.Editor.Forms
                 _icons[visualVoxelModel.VoxelModel.Name].Tag = imageList1.Images.Count - 1; //Add Image Index in imageList
 
                 ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                if (visualVoxelModel.VoxelModel.States.Count > 1) ModelSelector.MultiStatesModels.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
             }
 
             _cubeOffset = imageList1.Images.Count;
