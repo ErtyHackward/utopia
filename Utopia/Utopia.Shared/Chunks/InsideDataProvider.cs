@@ -466,7 +466,7 @@ namespace Utopia.Shared.Chunks
                 if (ColumnsInfo[indexColumn].MaxHeight <= inChunkPosition.Y)
                 {
                     int yPosi = inChunkPosition.Y - 1;
-                    while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
+                    while (yPosi > 0 && GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air)
                     {
                         yPosi--;
                     }
