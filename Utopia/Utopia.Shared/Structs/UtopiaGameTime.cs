@@ -5,15 +5,15 @@ using Utopia.Shared.Services;
 namespace Utopia.Shared.Structs
 {
     [ProtoContract]
-    public struct GameTime
+    public struct UtopiaGameTime
     {
         private const int SecondsPerMinute = 60;
         private const int SecondsPerHour = SecondsPerMinute * 60;
         private const int SecondsPerDay = SecondsPerHour * 24;
 
-        static GameTime()
+        static UtopiaGameTime()
         {
-            TimeConfiguration = new GameTimeConfiguration();
+            TimeConfiguration = new UtopiaGameTimeConfiguration();
             TimeConfiguration.DaysPerSeason = 10;
             TimeConfiguration.DayLength = 1200;
             TimeConfiguration.Seasons = new List<Season>();
@@ -32,7 +32,7 @@ namespace Utopia.Shared.Structs
             TimeConfiguration.Seasons.Add(new Season { Name = "Late Winter",    Temperature = -0.65f,   Moisture = 0.5f });
         }
 
-        public static GameTimeConfiguration TimeConfiguration { get; set; }
+        public static UtopiaGameTimeConfiguration TimeConfiguration { get; set; }
 
         /// <summary>
         /// Amount of seconds passed from the begginning of the world
@@ -118,44 +118,44 @@ namespace Utopia.Shared.Structs
             return string.Format("{0} {1} {2} {3:00}:{4:00}", Year, Season.Name, Day, Hour, Minute);
         }
 
-        public static bool operator >(GameTime t1, GameTime t2)
+        public static bool operator >(UtopiaGameTime t1, UtopiaGameTime t2)
         {
             return t1.TotalSeconds > t2.TotalSeconds;
         }
 
-        public static bool operator <(GameTime t1, GameTime t2)
+        public static bool operator <(UtopiaGameTime t1, UtopiaGameTime t2)
         {
             return t1.TotalSeconds < t2.TotalSeconds;
         }
 
-        public static bool operator ==(GameTime t1, GameTime t2)
+        public static bool operator ==(UtopiaGameTime t1, UtopiaGameTime t2)
         {
             return t1.TotalSeconds == t2.TotalSeconds;
         }
 
-        public static bool operator !=(GameTime t1, GameTime t2)
+        public static bool operator !=(UtopiaGameTime t1, UtopiaGameTime t2)
         {
             return !(t1 == t2);
         }
 
-        public static GameTime operator +(GameTime t1, GameTimeSpan s1)
+        public static UtopiaGameTime operator +(UtopiaGameTime t1, UtopiaGameTimeSpan s1)
         {
             t1.TotalSeconds += s1.TotalSeconds;
             return t1;
         }
 
-        public static GameTime operator -(GameTime t1, GameTimeSpan s1)
+        public static UtopiaGameTime operator -(UtopiaGameTime t1, UtopiaGameTimeSpan s1)
         {
             t1.TotalSeconds -= s1.TotalSeconds;
             return t1;
         }
 
-        public static GameTimeSpan operator -(GameTime t1, GameTime t2)
+        public static UtopiaGameTimeSpan operator -(UtopiaGameTime t1, UtopiaGameTime t2)
         {
-            return GameTimeSpan.FromSeconds(t1.TotalSeconds - t2.TotalSeconds);
+            return UtopiaGameTimeSpan.FromSeconds(t1.TotalSeconds - t2.TotalSeconds);
         }
 
-        public bool Equals(GameTime other)
+        public bool Equals(UtopiaGameTime other)
         {
             return TotalSeconds == other.TotalSeconds;
         }
@@ -163,7 +163,7 @@ namespace Utopia.Shared.Structs
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is GameTime && Equals((GameTime)obj);
+            return obj is UtopiaGameTime && Equals((UtopiaGameTime)obj);
         }
 
         public override int GetHashCode()
