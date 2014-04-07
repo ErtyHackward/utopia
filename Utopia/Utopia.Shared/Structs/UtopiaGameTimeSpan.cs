@@ -4,7 +4,7 @@ using Utopia.Shared.Services;
 namespace Utopia.Shared.Structs
 {
     [ProtoContract]
-    public struct GameTimeSpan
+    public struct UtopiaGameTimeSpan
     {
         private const int SecondsPerMinute = 60;
         private const int SecondsPerHour = SecondsPerMinute * 60;
@@ -33,7 +33,7 @@ namespace Utopia.Shared.Structs
 
         public int TotalSeasons
         {
-            get { return TotalDays / GameTime.TimeConfiguration.DaysPerSeason; }
+            get { return TotalDays / UtopiaGameTime.TimeConfiguration.DaysPerSeason; }
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public int Days
         {
-            get { return TotalDays % GameTime.TimeConfiguration.DaysPerSeason + 1; }
+            get { return TotalDays % UtopiaGameTime.TimeConfiguration.DaysPerSeason + 1; }
         }
 
         /// <summary>
@@ -73,12 +73,12 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public Season Season
         {
-            get { return GameTime.TimeConfiguration.Seasons[TotalDays % GameTime.TimeConfiguration.DaysPerSeason]; }
+            get { return UtopiaGameTime.TimeConfiguration.Seasons[TotalDays % UtopiaGameTime.TimeConfiguration.DaysPerSeason]; }
         }
 
         public int SeasonNumber
         {
-            get { return TotalDays % GameTime.TimeConfiguration.DaysPerSeason + 1; }
+            get { return TotalDays % UtopiaGameTime.TimeConfiguration.DaysPerSeason + 1; }
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public int TotalYears
         {
-            get { return (int)(TotalSeconds / SecondsPerDay / GameTime.TimeConfiguration.DaysPerYear) + 1; }
+            get { return (int)(TotalSeconds / SecondsPerDay / UtopiaGameTime.TimeConfiguration.DaysPerYear) + 1; }
         }
 
         public override string ToString()
@@ -103,62 +103,62 @@ namespace Utopia.Shared.Structs
             return string.Format("{0:00}:{1:00}", Hours, Minutes);
         }
 
-        public static bool operator >(GameTimeSpan t1, GameTimeSpan t2)
+        public static bool operator >(UtopiaGameTimeSpan t1, UtopiaGameTimeSpan t2)
         {
             return t1.TotalSeconds > t2.TotalSeconds;
         }
 
-        public static bool operator <(GameTimeSpan t1, GameTimeSpan t2)
+        public static bool operator <(UtopiaGameTimeSpan t1, UtopiaGameTimeSpan t2)
         {
             return t1.TotalSeconds < t2.TotalSeconds;
         }
 
-        public static bool operator ==(GameTimeSpan t1, GameTimeSpan t2)
+        public static bool operator ==(UtopiaGameTimeSpan t1, UtopiaGameTimeSpan t2)
         {
             return t1.TotalSeconds == t2.TotalSeconds;
         }
 
-        public static bool operator !=(GameTimeSpan t1, GameTimeSpan t2)
+        public static bool operator !=(UtopiaGameTimeSpan t1, UtopiaGameTimeSpan t2)
         {
             return !(t1 == t2);
         }
 
-        public static GameTimeSpan operator +(GameTimeSpan t1, GameTimeSpan t2)
+        public static UtopiaGameTimeSpan operator +(UtopiaGameTimeSpan t1, UtopiaGameTimeSpan t2)
         {
             return FromSeconds(t1.TotalSeconds + t2.TotalSeconds);
         }
 
-        public static GameTimeSpan operator -(GameTimeSpan t1, GameTimeSpan t2)
+        public static UtopiaGameTimeSpan operator -(UtopiaGameTimeSpan t1, UtopiaGameTimeSpan t2)
         {
             return FromSeconds(t1.TotalSeconds - t2.TotalSeconds);
         }
 
-        public static GameTimeSpan FromSeconds(long seconds)
+        public static UtopiaGameTimeSpan FromSeconds(long seconds)
         {
-            return new GameTimeSpan { TotalSeconds = seconds };
+            return new UtopiaGameTimeSpan { TotalSeconds = seconds };
         }
 
-        public static GameTimeSpan FromMinutes(int minutes)
+        public static UtopiaGameTimeSpan FromMinutes(int minutes)
         {
-            return new GameTimeSpan { TotalSeconds = minutes * 60 };
+            return new UtopiaGameTimeSpan { TotalSeconds = minutes * 60 };
         }
 
-        public static GameTimeSpan FromHours(int hours)
+        public static UtopiaGameTimeSpan FromHours(int hours)
         {
-            return new GameTimeSpan { TotalSeconds = hours * 60 * 60 };
+            return new UtopiaGameTimeSpan { TotalSeconds = hours * 60 * 60 };
         }
 
-        public static GameTimeSpan FromDays(int days)
+        public static UtopiaGameTimeSpan FromDays(int days)
         {
-            return new GameTimeSpan { TotalSeconds = (long)days * 24 * 60 * 60 };
+            return new UtopiaGameTimeSpan { TotalSeconds = (long)days * 24 * 60 * 60 };
         }
 
-        public static GameTimeSpan FromSeasons(int seasons)
+        public static UtopiaGameTimeSpan FromSeasons(int seasons)
         {
-            return new GameTimeSpan { TotalSeconds = (long)seasons * GameTime.TimeConfiguration.DaysPerSeason * 24 * 60 * 60 };
+            return new UtopiaGameTimeSpan { TotalSeconds = (long)seasons * UtopiaGameTime.TimeConfiguration.DaysPerSeason * 24 * 60 * 60 };
         }
 
-        public bool Equals(GameTimeSpan other)
+        public bool Equals(UtopiaGameTimeSpan other)
         {
             return TotalSeconds == other.TotalSeconds;
         }
@@ -166,7 +166,7 @@ namespace Utopia.Shared.Structs
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is GameTimeSpan && Equals((GameTimeSpan)obj);
+            return obj is UtopiaGameTimeSpan && Equals((UtopiaGameTimeSpan)obj);
         }
 
         public override int GetHashCode()
