@@ -111,18 +111,17 @@ namespace Utopia.Shared.Server.Managers
                     {
                         var entity = _server.EntityFactory.CreateFromBluePrint(spawnableEntity.BluePrintId);
                         var staticEntity = entity as IStaticEntity;
-
-                        //Check the maximum amount of static entities;
-                        int MaxEntityAmount;
-                        chunk.BlockData.ChunkMetaData.InitialSpawnableEntitiesAmount.TryGetValue(spawnableEntity.BluePrintId, out MaxEntityAmount);
-                        if (MaxEntityAmount == 0) 
-                            continue;
-
-                        if (chunk.Entities.Where(e => e.BluePrintId == spawnableEntity.BluePrintId).CountAtLeast(MaxEntityAmount))
-                            continue;
-
+                        
                         if (staticEntity != null)
                         {
+                            //Check the maximum amount of static entities;
+                            int maxEntityAmount;
+                            chunk.BlockData.ChunkMetaData.InitialSpawnableEntitiesAmount.TryGetValue(spawnableEntity.BluePrintId, out maxEntityAmount);
+                            if (maxEntityAmount == 0)
+                                continue;
+                            if (chunk.Entities.Where(e => e.BluePrintId == spawnableEntity.BluePrintId).CountAtLeast(maxEntityAmount))
+                                continue;
+
                             staticEntity.Position = entityLocation;
 
                             var cursor = _server.LandscapeManager.GetCursor(entityLocation);
@@ -133,13 +132,10 @@ namespace Utopia.Shared.Server.Managers
                         var charEntity = entity as CharacterEntity;
                         if (charEntity != null)
                         {
-                            var radius = spawnableEntity.DynamicEntitySpawnRadius;
-                            if (radius < 8) 
-                                continue; //A minimum radius of 8 blocks distance is needed (= 1 chunk), otherwhile it could create new everytime.
+                            var radius = Math.Max(8, spawnableEntity.DynamicEntitySpawnRadius);
                             if (_server.AreaManager.EnumerateAround(entityLocation, radius).CountAtLeast(spawnableEntity.MaxEntityAmount))
                                 continue;
                             
-
                             charEntity.Position = entityLocation;
                             logger.Debug("Spawning new dynamic entity : {0} at location {1}", charEntity.Name, entityLocation);
                             _server.EntityManager.AddNpc(charEntity);
@@ -150,8 +146,10 @@ namespace Utopia.Shared.Server.Managers
                 chunk.LastSpawningRefresh = gametime;
             }
 
-            if (_chunks4Processing.Count < _maxChunkRefreshPerCycle) _chunks4Processing.Clear();
-            else _chunks4Processing.RemoveRange(0, _maxChunkRefreshPerCycle);
+            if (_chunks4Processing.Count < _maxChunkRefreshPerCycle) 
+                _chunks4Processing.Clear();
+            else 
+                _chunks4Processing.RemoveRange(0, _maxChunkRefreshPerCycle);
         }
 
     }
