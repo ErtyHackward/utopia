@@ -59,57 +59,5 @@ namespace Utopia.Shared.Chunks
                 return new StandardValuesCollection(EditorConfigHelper.Config.BluePrints.Values.Select(x => x.Name).OrderBy(x => x).ToList());
             }
         }
-
-        internal class SpawningSeasonsEditor : UITypeEditor
-        {
-            private CheckValuesEditorControl<string> editor = null;
-            private List<string> _seasons;
-
-            // we tell to the designer host that this editor is a DropDown editor
-            public override UITypeEditorEditStyle GetEditStyle(System.ComponentModel.ITypeDescriptorContext context)
-            {
-                return UITypeEditorEditStyle.DropDown;
-            }
-
-            public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
-            {
-                List<string> values = value as List<string>;
-
-                _seasons = new List<string>();
-                var weatherService = EditorConfigHelper.Config.Services.OfType<WeatherService>().FirstOrDefault();
-                if (weatherService != null)
-                {
-                    foreach (var s in weatherService.Seasons)
-                    {
-                        _seasons.Add(s.Name);
-                    }
-                }
-
-                if (provider != null)
-                {
-                    // use windows forms editor service to show drop down
-                    IWindowsFormsEditorService edSvc = provider.GetService(typeof(IWindowsFormsEditorService))
-                            as IWindowsFormsEditorService;
-                    if (edSvc == null) return value;
-
-                    if (editor == null)
-                        editor = new CheckValuesEditorControl<string>();
-
-                    // prepare list
-                    editor.Begin(edSvc, _seasons, values);
-
-                    // show drop down now
-                    edSvc.DropDownControl(editor);
-
-                    // now we take the result
-                    value = new List<string>(editor.GetSelectedValues());
-
-                    // reset
-                    editor.End();
-                }
-
-                return value;
-            }
-        }
     }
 }

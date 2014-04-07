@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Utopia.Shared.Services
 {
     [ProtoContract]
-    public class Season
+    public partial class Season
     {
         [Description("Name of the season")]
         [ProtoMember(1)]

@@ -283,7 +283,7 @@ namespace Utopia.Worlds.Chunks
 
         public abstract TerraCubeResult GetCube(Vector3I internalPosition);
 
-        public void UpdateEntityGrowLevel(uint entityID, GrowLevel newEntityState)
+        public void UpdateEntityGrowLevel(uint entityID, GrowLevel newEntityGrowLevel)
         {
             //Find the Entity, ID, assign the new State for the entity.
         }

@@ -4,6 +4,9 @@ using System.Drawing;
 using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Inventory;
 
 namespace Utopia.Shared.Tools
 {
@@ -13,11 +16,12 @@ namespace Utopia.Shared.Tools
     public class ModelSelector : UITypeEditor
     {
         public static Dictionary<string, Image> Models = new Dictionary<string, Image>();
+        public static Dictionary<string, Image> MultiStatesModels = new Dictionary<string, Image>();
 
         private IWindowsFormsEditorService _service;
         private ListView _list;
 
-        private void Initialize()
+        private void Initialize(bool isMultiStatesModels = false)
         {
             if (_list != null)
             {
@@ -38,7 +42,7 @@ namespace Utopia.Shared.Tools
             _list.SmallImageList = imgList;
 
 
-            foreach (var model in Models)
+            foreach (var model in isMultiStatesModels ? MultiStatesModels : Models)
             {
                 imgList.Images.Add(model.Value);
                 var item = new ListViewItem();
@@ -81,7 +85,11 @@ namespace Utopia.Shared.Tools
         //The returned Value of the Entity, in our case its the entitty name stored inside the object Tag.
         public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            if (_list == null) Initialize();
+            if (_list == null)
+            {
+                bool isGrowingModel = context.Instance.GetType().IsSubclassOf(typeof(GrowingEntity));
+                Initialize(isGrowingModel);
+            }
             _service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
 
             if (value != null)
@@ -103,8 +111,8 @@ namespace Utopia.Shared.Tools
                 }
             }
 
-
             _service.DropDownControl(_list);
+
             return _list.Tag;
         }
 
