@@ -121,6 +121,9 @@
     <Compile Include="Entities\Concrete\PlantGrowingEntity.cs" />
     <Compile Include="Entities\Concrete\TreeGrowingEntity.cs" />
     <Compile Include="Structs\GameCalendar.cs" />
+    <Compile Include="Structs\GameTime.cs" />
+    <Compile Include="Structs\GameTimeConfiguration.cs" />
+    <Compile Include="Structs\GameTimeSpan.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
