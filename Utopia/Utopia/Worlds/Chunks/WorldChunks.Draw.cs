@@ -278,9 +278,10 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
                     continue;
                 
+                //For Each different entity Model
                 foreach (var pair in chunk.AllPairs())
                 {
-                    // update instances data
+                    // For each instance of the model - update data
                     foreach (var staticEntity in pair.Value)
                     {
                         //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
