@@ -32,6 +32,7 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Resources.Effects.Entities;
 using Matrix = SharpDX.Matrix;
+using System.Globalization;
 
 namespace Utopia.Components
 {
@@ -2986,7 +2987,7 @@ namespace Utopia.Components
             }
 
             float rotationAngle;
-            if (!float.TryParse(_rotateAngleInput.Text, out rotationAngle))
+            if (!float.TryParse(_rotateAngleInput.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out rotationAngle))
             {
                 _gui.MessageBox("Invalid angle value");
                 return;
@@ -3071,13 +3072,10 @@ namespace Utopia.Components
             }
 
             float scaleFactor;
-            if (!float.TryParse(_scaleAngleInput.Text, out scaleFactor))
+            if (!float.TryParse(_scaleAngleInput.Text, NumberStyles.Float ,CultureInfo.InvariantCulture, out scaleFactor))
             {
-                if (!float.TryParse(_scaleAngleInput.Text.Replace('.', ','), out scaleFactor))
-                {
-                    _gui.MessageBox("Invalid factor value");
-                    return;
-                }
+                _gui.MessageBox("Invalid factor value");
+                return;
             }
 
             var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
