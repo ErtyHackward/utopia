@@ -1,5 +1,6 @@
 using System;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Server.Structs
 {
@@ -26,7 +27,7 @@ namespace Utopia.Shared.Server.Structs
         /// <summary>
         /// Gets or sets last chunk refresh in game time
         /// </summary>
-        public DateTime LastSpawningRefresh { get; set; }
+        public UtopiaTime LastSpawningRefresh { get; set; }
 
         /// <summary>
         /// Occurs when some of containing blocks was changed

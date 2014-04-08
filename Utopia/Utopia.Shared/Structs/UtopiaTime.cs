@@ -4,16 +4,19 @@ using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Structs
 {
+    /// <summary>
+    /// Represents ingame time. Contains seasons instead of months. Provides variable season length.
+    /// </summary>
     [ProtoContract]
-    public struct UtopiaGameTime
+    public struct UtopiaTime
     {
         private const int SecondsPerMinute = 60;
         private const int SecondsPerHour = SecondsPerMinute * 60;
         private const int SecondsPerDay = SecondsPerHour * 24;
 
-        static UtopiaGameTime()
+        static UtopiaTime()
         {
-            TimeConfiguration = new UtopiaGameTimeConfiguration();
+            TimeConfiguration = new UtopiaTimeConfiguration();
             TimeConfiguration.DaysPerSeason = 10;
             TimeConfiguration.DayLength = 1200;
             TimeConfiguration.Seasons = new List<Season>();
@@ -32,7 +35,7 @@ namespace Utopia.Shared.Structs
             TimeConfiguration.Seasons.Add(new Season { Name = "Late Winter",    Temperature = -0.65f,   Moisture = 0.5f });
         }
 
-        public static UtopiaGameTimeConfiguration TimeConfiguration { get; set; }
+        public static UtopiaTimeConfiguration TimeConfiguration { get; set; }
 
         /// <summary>
         /// Amount of seconds passed from the begginning of the world
@@ -104,6 +107,11 @@ namespace Utopia.Shared.Structs
         {
             get { return TotalDays % TimeConfiguration.DaysPerSeason + 1; }
         }
+
+        public int SeasonIndex
+        {
+            get { return TotalDays % TimeConfiguration.DaysPerSeason; }
+        }
         
         /// <summary>
         /// Gets current game year
@@ -113,49 +121,74 @@ namespace Utopia.Shared.Structs
             get { return (int)(TotalSeconds / SecondsPerDay / TimeConfiguration.DaysPerYear) + 1; }
         }
 
+        /// <summary>
+        /// Returns current date without time component
+        /// </summary>
+        public UtopiaTime Date {
+            get { 
+                return new UtopiaTime { 
+                    TotalSeconds = TotalSeconds - TotalSeconds % SecondsPerDay 
+                }; 
+            }
+        }
+
+        public UtopiaTimeSpan TimeOfDay {
+            get { return UtopiaTimeSpan.FromSeconds(TotalSeconds % SecondsPerDay); }
+        }
+
         public override string ToString()
         {
             return string.Format("{0} {1} {2} {3:00}:{4:00}", Year, Season.Name, Day, Hour, Minute);
         }
 
-        public static bool operator >(UtopiaGameTime t1, UtopiaGameTime t2)
+        public static bool operator >(UtopiaTime t1, UtopiaTime t2)
         {
             return t1.TotalSeconds > t2.TotalSeconds;
         }
 
-        public static bool operator <(UtopiaGameTime t1, UtopiaGameTime t2)
+        public static bool operator <(UtopiaTime t1, UtopiaTime t2)
         {
             return t1.TotalSeconds < t2.TotalSeconds;
         }
 
-        public static bool operator ==(UtopiaGameTime t1, UtopiaGameTime t2)
+        public static bool operator >=(UtopiaTime t1, UtopiaTime t2)
+        {
+            return t1.TotalSeconds >= t2.TotalSeconds;
+        }
+
+        public static bool operator <=(UtopiaTime t1, UtopiaTime t2)
+        {
+            return t1.TotalSeconds <= t2.TotalSeconds;
+        }
+
+        public static bool operator ==(UtopiaTime t1, UtopiaTime t2)
         {
             return t1.TotalSeconds == t2.TotalSeconds;
         }
 
-        public static bool operator !=(UtopiaGameTime t1, UtopiaGameTime t2)
+        public static bool operator !=(UtopiaTime t1, UtopiaTime t2)
         {
             return !(t1 == t2);
         }
 
-        public static UtopiaGameTime operator +(UtopiaGameTime t1, UtopiaGameTimeSpan s1)
+        public static UtopiaTime operator +(UtopiaTime t1, UtopiaTimeSpan s1)
         {
             t1.TotalSeconds += s1.TotalSeconds;
             return t1;
         }
 
-        public static UtopiaGameTime operator -(UtopiaGameTime t1, UtopiaGameTimeSpan s1)
+        public static UtopiaTime operator -(UtopiaTime t1, UtopiaTimeSpan s1)
         {
             t1.TotalSeconds -= s1.TotalSeconds;
             return t1;
         }
 
-        public static UtopiaGameTimeSpan operator -(UtopiaGameTime t1, UtopiaGameTime t2)
+        public static UtopiaTimeSpan operator -(UtopiaTime t1, UtopiaTime t2)
         {
-            return UtopiaGameTimeSpan.FromSeconds(t1.TotalSeconds - t2.TotalSeconds);
+            return UtopiaTimeSpan.FromSeconds(t1.TotalSeconds - t2.TotalSeconds);
         }
 
-        public bool Equals(UtopiaGameTime other)
+        public bool Equals(UtopiaTime other)
         {
             return TotalSeconds == other.TotalSeconds;
         }
@@ -163,7 +196,7 @@ namespace Utopia.Shared.Structs
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is UtopiaGameTime && Equals((UtopiaGameTime)obj);
+            return obj is UtopiaTime && Equals((UtopiaTime)obj);
         }
 
         public override int GetHashCode()

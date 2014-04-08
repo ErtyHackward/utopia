@@ -107,7 +107,7 @@ namespace Realms.Client.Components
             _server.ConnectionManager.Listen();
             _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
             _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
-            _server.Clock.SetCurrentTimeOfDay(TimeSpan.FromHours(12));
+            _server.Clock.SetCurrentTimeOfDay(UtopiaTimeSpan.FromHours(12));
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)

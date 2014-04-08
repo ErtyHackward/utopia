@@ -25,7 +25,7 @@ namespace Utopia.Shared.Server.Managers
         private readonly FastRandom _fastRandom;
         private readonly List<ServerChunk> _chunks4Processing = new List<ServerChunk>();
 
-        private TimeSpan _chunkUpdateCycle = TimeSpan.FromDays(1); // A minimum of one day must be passed before a chunk can be do a spawn refresh again !
+        private UtopiaTimeSpan _chunkUpdateCycle = UtopiaTimeSpan.FromDays(1); // A minimum of one day must be passed before a chunk can be do a spawn refresh again !
         private int _maxChunkRefreshPerCycle = 20; //Maximum of 20 chunk update per cycle
 
         public EntitySpawningManager(ServerCore server, IEntitySpawningControler entitySpawningControler)
@@ -39,14 +39,14 @@ namespace Utopia.Shared.Server.Managers
             //This spawn logic can only be down on UtopiaWorldConfiguration and associated processor.
             if (_configuration != null)
             {
-                _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 0, 0, 15, server.Clock, UtopiaSpawningLookup));    
+                _server.Clock.ClockTimers.Add(new Clock.GameClockTimer(UtopiaTimeSpan.FromSeconds(15), server.Clock, UtopiaSpawningLookup));    
             }
         }
         
         /// <summary>
         /// Method responsible to do chunk spawn logic
         /// </summary>
-        private void UtopiaSpawningLookup(DateTime gametime)
+        private void UtopiaSpawningLookup(UtopiaTime gametime)
         {
             //Logic to "Randomize" and limit the number of chunk to update per cycle ======================================================
 
@@ -83,7 +83,7 @@ namespace Utopia.Shared.Server.Managers
                     if (chunk.PureGenerated && isStaticEntity)
                         continue;
 
-                    bool isDayTime = gametime.TimeOfDay > TimeSpan.FromHours(8) && gametime.TimeOfDay < TimeSpan.FromHours(20);
+                    var isDayTime = gametime.TimeOfDay > UtopiaTimeSpan.FromHours(8) && gametime.TimeOfDay < UtopiaTimeSpan.FromHours(20);
                     // check daytime constraints
                     if (!spawnableEntity.SpawningDayTime.HasFlag(ChunkSpawningDayTime.Day) &&
                         isDayTime)

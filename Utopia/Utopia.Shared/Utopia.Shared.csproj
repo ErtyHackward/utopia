@@ -124,9 +124,9 @@
       <DependentUpon>Season.cs</DependentUpon>
     </Compile>
     <Compile Include="Structs\GameCalendar.cs" />
-    <Compile Include="Structs\UtopiaGameTime.cs" />
-    <Compile Include="Structs\UtopiaGameTimeConfiguration.cs" />
-    <Compile Include="Structs\UtopiaGameTimeSpan.cs" />
+    <Compile Include="Structs\UtopiaTime.cs" />
+    <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
+    <Compile Include="Structs\UtopiaTimeSpan.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />

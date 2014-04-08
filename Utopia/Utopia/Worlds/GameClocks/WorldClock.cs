@@ -9,6 +9,7 @@ using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3CoreComponents.Inputs;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -100,7 +101,7 @@ namespace Utopia.Worlds.GameClocks
             logger.Info("Received Server date time for syncing : {0}, local time was : {1}", e.Message.DateTime, _visualClockTime.ToString());
         }
 
-        private void AssignTimeAndFactor(double timeFactor, DateTime worldDatetime)
+        private void AssignTimeAndFactor(double timeFactor, UtopiaTime worldDatetime)
         {
             TimeFactor = (float)timeFactor;
             int Hour = worldDatetime.Hour;

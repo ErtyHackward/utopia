@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Net.Messages;
@@ -13,39 +12,41 @@ namespace Utopia.Shared.Services
     {
         private ServerCore _server;
         private WeatherMessage _lastMessage;
+        
+        /// <summary>
+        /// This field is actually UtopiaTime.TimeConfiguration singleton
+        /// </summary>
+        [ProtoMember(3)]
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public UtopiaTimeConfiguration TimeConfiguration
+        {
+            get { return UtopiaTime.TimeConfiguration; }
+            set {
 
-        [Description("All possible seasons")]
-        [ProtoMember(1, OverwriteList = true)]
-        public List<Season> Seasons { get; set; }
+                if (value.Seasons == null)
+                    return;
 
-        [Description("How many days in each season")]
-        [ProtoMember(2)]
-        public int DaysPerSeason { get; set; }
+                UtopiaTime.TimeConfiguration = value;
+            }
+        }
 
         /// <summary>
         /// Current day [0; DaysPerSeason)
         /// </summary>
         [Browsable(false)]
-        public int Day { get; set; }
-
-        [Browsable(false)]
-        public int SeasonIndex { get; set; }
-
+        public UtopiaTime CurrentDate { get; set; }
+        
         /// <summary>
         /// Gets current season or null if no seasons exists
         /// </summary>
+        [Browsable(false)]
         public Season CurrentSeason {
-            get { return Seasons.Count > 0 ? Seasons[SeasonIndex] : null; }
+            get { return TimeConfiguration.Seasons.Count > 0 ? TimeConfiguration.Seasons[CurrentDate.SeasonIndex] : null; }
         }
 
         public WeatherService()
         {
-            Seasons = new List<Season>( new [] { 
-                new Season { Name = "Summer", Temperature = 1, Moisture = -0.3f}, 
-                new Season { Name = "Winter", Temperature = -1, Moisture = 0.7f} 
-            });
-
-            DaysPerSeason = 10;
+            TimeConfiguration = new UtopiaTimeConfiguration();
         }
 
         public override void Initialize(ServerCore server)
@@ -53,14 +54,10 @@ namespace Utopia.Shared.Services
             _server = server;
             _server.LoginManager.PlayerAuthorized += LoginManager_PlayerAuthorized;
 
-            server.Clock.ClockTimers.Add(new Clock.GameClockTimer(0, 1, 0, 0, server.Clock, PerDayTrigger));
+            server.Clock.ClockTimers.Add(new Clock.GameClockTimer(UtopiaTimeSpan.FromDays(1), server.Clock, PerDayTrigger));
 
-            Day = server.CustomStorage.GetVariable("day", 0);
-            SeasonIndex = server.CustomStorage.GetVariable("season", 0);
-
-            if (SeasonIndex >= Seasons.Count)
-                SeasonIndex = 0;
-
+            CurrentDate = server.CustomStorage.GetVariable("date", new UtopiaTime());
+            
             _lastMessage = UpdateWeather();
         }
 
@@ -71,24 +68,13 @@ namespace Utopia.Shared.Services
 
         public override void Dispose()
         {
-            _server.CustomStorage.SetVariable("day", Day);
-            _server.CustomStorage.SetVariable("season", SeasonIndex);
-
+            _server.CustomStorage.SetVariable("date", CurrentDate);
             _server.LoginManager.PlayerAuthorized -= LoginManager_PlayerAuthorized;
         }
 
-        private void PerDayTrigger(DateTime gametime)
+        private void PerDayTrigger(UtopiaTime gametime)
         {
-            if (Day++ >= DaysPerSeason)
-            {
-                if (SeasonIndex++ >= Seasons.Count)
-                {
-                    // new year
-                    SeasonIndex = 0;
-                }
-                // new season
-                Day = 0;
-            }
+            CurrentDate += UtopiaTimeSpan.FromDays(1);
 
             // each day we will recalculate temperature and humidity values
             _lastMessage = UpdateWeather();
@@ -97,34 +83,35 @@ namespace Utopia.Shared.Services
 
         private WeatherMessage UpdateWeather()
         {
-            if (Seasons.Count == 0)
+            if (TimeConfiguration.Seasons.Count == 0)
                 return new WeatherMessage();
 
-            var growing = Day / ( (float)DaysPerSeason / 2 ) <= 1;
+            var growing = CurrentDate.Day / ((float)TimeConfiguration.DaysPerSeason / 2) <= 1;
 
             Season s1, s2;
             float power;
 
+            var seasonIndex = CurrentDate.SeasonIndex;
+            
             if (growing)
             {
-                var s1Index = SeasonIndex - 1 < 0 ? Seasons.Count - 1 : SeasonIndex - 1;
+                var s1Index = seasonIndex - 1 < 0 ? TimeConfiguration.Seasons.Count - 1 : seasonIndex - 1;
+                s1 = TimeConfiguration.Seasons[s1Index];
+                s2 = TimeConfiguration.Seasons[seasonIndex];
 
-                s1 = Seasons[s1Index];
-                s2 = Seasons[SeasonIndex];
-
-                power = Day / ( (float)DaysPerSeason ) + 0.5f;
+                power = CurrentDate.Day / ((float)TimeConfiguration.DaysPerSeason) + 0.5f;
             }
             else
             {
-                var s2Index = SeasonIndex + 1 >= Seasons.Count ? 0 : SeasonIndex + 1;
-                s1 = Seasons[SeasonIndex];
-                s2 = Seasons[s2Index];
+                var s2Index = seasonIndex + 1 >= TimeConfiguration.Seasons.Count ? 0 : seasonIndex + 1;
+                s1 = TimeConfiguration.Seasons[seasonIndex];
+                s2 = TimeConfiguration.Seasons[s2Index];
 
-                power = Day / ( (float)DaysPerSeason ) - 0.5f;
+                power = CurrentDate.Day / ((float)TimeConfiguration.DaysPerSeason) - 0.5f;
             }
 
             var temperature = Lerp(s1.Temperature, s2.Temperature, power);
-            var moisture = Lerp(s1.Moisture, s2.Moisture, power);
+            var moisture    = Lerp(s1.Moisture,    s2.Moisture,    power);
 
             var msg = new WeatherMessage
             {

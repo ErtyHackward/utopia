@@ -1,6 +1,7 @@
 using System;
 using ProtoBuf;
 using Utopia.Shared.Net.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Net.Messages
 {
@@ -22,7 +23,7 @@ namespace Utopia.Shared.Net.Messages
         /// Gets or sets game DateTime
         /// </summary>
         [ProtoMember(1)]
-        public DateTime DateTime { get; set; }
+        public UtopiaTime DateTime { get; set; }
 
         /// <summary>
         /// Gets or sets how many game seconds in one real second
