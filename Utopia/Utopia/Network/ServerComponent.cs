@@ -7,6 +7,7 @@ using Utopia.Shared.Net.Messages;
 using S33M3DXEngine.Main;
 using Utopia.Shared.Net.Interfaces;
 using S33M3DXEngine.Debug.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Network
 {
@@ -24,7 +25,7 @@ namespace Utopia.Network
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
         public IDynamicEntity Player { get; set; }
-        public DateTime WorldDateTime { get; set; }
+        public UtopiaTime WorldDateTime { get; set; }
         public double TimeFactor { get; set; }
         public GameInformationMessage GameInformations { get; set; }
 

@@ -31,7 +31,7 @@ namespace Utopia.Shared.Server.Managers
         private readonly Dictionary<uint, ServerDynamicEntity> _dynamicEntities = new  Dictionary<uint, ServerDynamicEntity>();
         private readonly object _areaManagerSyncRoot = new object();
         private readonly Timer _entityUpdateTimer;
-        private DateTime _lastUpdate = DateTime.MinValue;
+        private UtopiaTime _lastUpdate;
 
         #region Properties
 #if DEBUG
@@ -172,7 +172,7 @@ namespace Utopia.Shared.Server.Managers
                 {
                     var state = new DynamicUpdateState
                     {
-                        ElapsedTime = _lastUpdate == DateTime.MinValue ? TimeSpan.Zero : _server.Clock.Now - _lastUpdate,
+                        ElapsedTime = _lastUpdate == new UtopiaTime() ? UtopiaTimeSpan.Zero : _server.Clock.Now - _lastUpdate,
                         CurrentTime = _server.Clock.Now
                     };
 

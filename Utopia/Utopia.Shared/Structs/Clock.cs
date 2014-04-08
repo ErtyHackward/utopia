@@ -13,29 +13,24 @@ namespace Utopia.Shared.Structs
 
         public class GameClockTimer : IDisposable
         {
-            public delegate void TimerRaised(DateTime gametime);
+            public delegate void TimerRaised(UtopiaTime gametime);
             private event TimerRaised OnTimerRaised;
-            private DateTime _lastTriggerTime;
-            private TimeSpan _triggerSpan;
+            private UtopiaTime _lastTriggerTime;
+            private UtopiaTimeSpan _triggerSpan;
             private Clock _worldClock;
 
-            public GameClockTimer(int year, int day, int hours, int minute, Clock worldClock, TimerRaised callBack)
+            public GameClockTimer(UtopiaTimeSpan interval, Clock worldClock, TimerRaised callBack)
             {
                 OnTimerRaised += callBack;
                 _worldClock = worldClock;
-                int nbrSeconds = minute * 60;
-                nbrSeconds += hours * (60 * 60);
-                nbrSeconds += day * (60 * 60 * 24);
-                nbrSeconds += year * (60 * 60 * 24 * worldClock.CalendarDaysPerYear);
-
-                _triggerSpan = new TimeSpan(0, 0, 0, nbrSeconds, 0);
+                _triggerSpan = interval;
 
                 WorldTimeChanged(worldClock.Now);
             }
 
-            public void WorldTimeChanged(DateTime currentDateTime)
+            public void WorldTimeChanged(UtopiaTime currentDateTime)
             {
-                _lastTriggerTime = new DateTime(2000, 1, 1, 0, 0, 0);
+                _lastTriggerTime = new UtopiaTime();
 
                 while (_lastTriggerTime < currentDateTime)
                 {
@@ -47,7 +42,7 @@ namespace Utopia.Shared.Structs
 
             public void Update()
             {
-                DateTime currentTime = _worldClock.Now;
+                var currentTime = _worldClock.Now;
                 if (currentTime - _lastTriggerTime >= _triggerSpan)
                 {
                     _lastTriggerTime += _triggerSpan;
@@ -72,7 +67,7 @@ namespace Utopia.Shared.Structs
         private int _calendarDaysPerYear;
         private ServerCore _server;
         private DateTime _clockStartTime;
-        private DateTime _gameStartTime;
+        private UtopiaTime _gameStartTime;
         private double _timeFactor;
         private TimeSpan _dayLength;
         private List<GameClockTimer> _clockTimers = new List<GameClockTimer>();
@@ -80,18 +75,12 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Gets current game time
         /// </summary>
-        public DateTime Now
+        public UtopiaTime Now
         {
             get {
                 var realTimeDiff = DateTime.Now - _clockStartTime;
-                return _gameStartTime + TimeSpan.FromSeconds(realTimeDiff.TotalSeconds * _timeFactor);
+                return _gameStartTime + UtopiaTimeSpan.FromSeconds(realTimeDiff.TotalSeconds * _timeFactor);
             }
-        }
-
-        public int CalendarDaysPerYear
-        {
-            get { return _calendarDaysPerYear; }
-            set { _calendarDaysPerYear = value; }
         }
 
         public List<GameClockTimer> ClockTimers
@@ -107,7 +96,7 @@ namespace Utopia.Shared.Structs
         }
         
         /// <summary>
-        /// Gets the time span that represents 24-hours game day
+        /// Gets the time span (real time) that represents 24-hours game day
         /// </summary>
         public TimeSpan DayLength
         {
@@ -135,12 +124,12 @@ namespace Utopia.Shared.Structs
         /// </summary>
         /// <param name="realTimeSpan"></param>
         /// <returns></returns>
-        public TimeSpan RealToGameSpan(TimeSpan realTimeSpan)
+        public UtopiaTimeSpan RealToGameSpan(TimeSpan realTimeSpan)
         {
-            return TimeSpan.FromSeconds(realTimeSpan.TotalSeconds * _timeFactor);
+            return UtopiaTimeSpan.FromSeconds(realTimeSpan.TotalSeconds * _timeFactor);
         }
 
-        public TimeSpan GameToReal(TimeSpan gameSpan)
+        public TimeSpan GameToReal(UtopiaTimeSpan gameSpan)
         {
             return TimeSpan.FromSeconds(gameSpan.TotalSeconds / _timeFactor);
         }
@@ -148,9 +137,10 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Creates new instance of game clock and starts it
         /// </summary>
+        /// <param name="server"></param>
         /// <param name="startGameTime"></param>
         /// <param name="dayLength"></param>
-        public Clock(ServerCore server, DateTime startGameTime, TimeSpan dayLength)
+        public Clock(ServerCore server, UtopiaTime startGameTime, TimeSpan dayLength)
         {
             _calendarDaysPerYear = 10;
             _clockStartTime = DateTime.Now;
@@ -164,11 +154,11 @@ namespace Utopia.Shared.Structs
             _currentGameCalendar.Year = server.CustomStorage.GetVariable<uint>("CalendarYear", 1);
 
             //Create a clock Event for updating the calendar
-            this.ClockTimers.Add(new GameClockTimer(0, 1, 0, 0, this, PerDayTrigger));
+            ClockTimers.Add(new GameClockTimer(UtopiaTimeSpan.FromDays(1), this, PerDayTrigger));
         }
 
         //Will be raised at every game day
-        private void PerDayTrigger(DateTime gametime)
+        private void PerDayTrigger(UtopiaTime gametime)
         {
             //Update Calendar date/year
             _currentGameCalendar.Day += 1;
@@ -179,16 +169,17 @@ namespace Utopia.Shared.Structs
             }
         }
 
-        public void SetCurrentTime(DateTime time)
+        public void SetCurrentTime(UtopiaTime time)
         {
             _clockStartTime = DateTime.Now;
             _gameStartTime = time;
 
             //Refresh Timer !
-            foreach (var t in _clockTimers) t.WorldTimeChanged(this.Now);
+            foreach (var t in _clockTimers) 
+                t.WorldTimeChanged(Now);
         }
 
-        public void SetCurrentTimeOfDay(TimeSpan time)
+        public void SetCurrentTimeOfDay(UtopiaTimeSpan time)
         {
             SetCurrentTime(_gameStartTime.Date + time);
             _clockStartTime = DateTime.Now;

@@ -30,7 +30,7 @@ namespace Utopia.Shared.Services
                 var weatherService = EditorConfigHelper.Config.Services.OfType<WeatherService>().FirstOrDefault();
                 if (weatherService != null)
                 {
-                    foreach (var s in weatherService.Seasons)
+                    foreach (var s in weatherService.TimeConfiguration.Seasons)
                     {
                         _seasons.Add(s.Name);
                     }

@@ -9,7 +9,7 @@ namespace Utopia.Shared.Structs
     /// Contains game time parameters
     /// </summary>
     [ProtoContract]
-    public class UtopiaGameTimeConfiguration
+    public class UtopiaTimeConfiguration
     {
         [Description("All possible seasons")]
         [ProtoMember(1, OverwriteList = true)]
