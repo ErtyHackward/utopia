@@ -123,7 +123,6 @@
     <Compile Include="Services\Season.designer.cs">
       <DependentUpon>Season.cs</DependentUpon>
     </Compile>
-    <Compile Include="Structs\GameCalendar.cs" />
     <Compile Include="Structs\UtopiaTime.cs" />
     <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
     <Compile Include="Structs\UtopiaTimeSpan.cs" />
