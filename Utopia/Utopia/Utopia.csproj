@@ -230,6 +230,7 @@
     <Compile Include="Worlds\Chunks\VisualChunk3D.cs" />
     <Compile Include="Worlds\Chunks\VisualChunkBase.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks3D.cs" />
+    <Compile Include="Worlds\GameClocks\VisualClockTime.cs" />
     <Compile Include="Worlds\Shadows\WorldShadowMap.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
@@ -244,10 +245,8 @@
     <Compile Include="Worlds\Cubes\LiquidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
-    <Compile Include="Worlds\GameClocks\Clock.cs" />
+    <Compile Include="Worlds\GameClocks\ClientClock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
-    <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
-    <Compile Include="Worlds\GameClocks\WorldClock.cs" />
     <Compile Include="Worlds\Chunks\IWorldChunks.cs" />
     <Compile Include="Worlds\Liquid\enuFloodDirection.cs" />
     <Compile Include="Worlds\SkyDomes\ISkyDome.cs" />
