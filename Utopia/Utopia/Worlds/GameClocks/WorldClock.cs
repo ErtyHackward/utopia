@@ -23,6 +23,8 @@ namespace Utopia.Worlds.GameClocks
         private InputsManager _input;
         private ServerComponent _server;
         private Game _game;
+        private UtopiaTime _baseUtopiaTime;
+        private DateTime _utopiaLastRealTimeUpdate;
         #endregion
 
         #region Public variable/properties
@@ -66,24 +68,18 @@ namespace Utopia.Worlds.GameClocks
         {
             if (_frozenTime) return;
 
-            _deltaTime = TimeFactor * timeSpend.ElapsedGameTimeInS_LD * (float)Math.PI / 43200.0f;
+            _deltaTime = TimeFactor * timeSpend.ElapsedGameTimeInS_LD / (float)UtopiaTime.SecondsPerDay;
 
             //Back UP previous values
-            _clockTime.BackUpValue();
-            _clockTime.Value += _deltaTime;
+            _clockTime += _deltaTime;
 
-            if (_clockTime.Value > Math.PI * 2)
+            if (_clockTime > 1)
             {
                 //+1 Day
-                _clockTime.Value = _clockTime.Value - (2 * (float)Math.PI);
-            }
-            if (_clockTime.Value < Math.PI * -2)
-            {
-                //-1 Day
-                _clockTime.Value = _clockTime.Value + (2 * (float)Math.PI);
+                _clockTime -= 1.0f;
             }
 
-            _visualClockTime.Time = _clockTime.Value;
+            _visualClockTime.ClockTimeNormalized = _clockTime;
         }
         #endregion
 
@@ -104,13 +100,11 @@ namespace Utopia.Worlds.GameClocks
         private void AssignTimeAndFactor(double timeFactor, UtopiaTime worldDatetime)
         {
             TimeFactor = (float)timeFactor;
-            int Hour = worldDatetime.Hour;
-            int Minute = worldDatetime.Minute;
-            int Second = worldDatetime.Second;
 
-            //86400 seconds/day
-            _clockTime.Value = ((Second + (Hour * 3600) + (Minute * 60)) / 86400.0f) * MathHelper.TwoPi;
-            _clockTime.ValuePrev = base._clockTime.Value;
+            _baseUtopiaTime = worldDatetime;
+            _utopiaLastRealTimeUpdate = DateTime.Now;
+
+            _clockTime = _baseUtopiaTime.TimeOfDay.TotalSeconds / (float)UtopiaTime.SecondsPerDay; //Assign number of second in current day / Number of second per day
         }
         #endregion
     }

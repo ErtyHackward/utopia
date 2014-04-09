@@ -9,6 +9,7 @@ namespace Utopia.Shared.Structs
     /// </summary>
     public class Clock : IDisposable
     {
+        private readonly object _syncRoot = new object();
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public class GameClockTimer : IDisposable
@@ -81,10 +82,12 @@ namespace Utopia.Shared.Structs
             }
         }
 
-        public List<GameClockTimer> ClockTimers
+        public void CreateNewTimer(GameClockTimer newTimer)
         {
-            get { return _clockTimers; }
-            set { _clockTimers = value; }
+            lock (_syncRoot)
+            {
+                _clockTimers.Add(newTimer);
+            }
         }
 
         /// <summary>
@@ -163,15 +166,18 @@ namespace Utopia.Shared.Structs
         /// </summary>
         private void Tick()
         {
-            foreach (var timer in ClockTimers)
+            lock (_syncRoot)
             {
-                timer.Update();
+                foreach (var timer in _clockTimers)
+                {
+                    timer.Update();
+                }
             }
         }
 
         public void Dispose()
         {
-            foreach (var t in ClockTimers) t.Dispose();
+            foreach (var t in _clockTimers) t.Dispose();
             //Save server Current elapsed time            
             _server.CustomStorage.SetVariable("GameTimeElapsedSeconds", Now.TotalSeconds);
         }
