@@ -63,7 +63,6 @@ namespace Utopia.Shared.Structs
             }
         }
 
-        private GameCalendar _currentGameCalendar;
         private int _calendarDaysPerYear;
         private ServerCore _server;
         private DateTime _clockStartTime;
@@ -89,12 +88,6 @@ namespace Utopia.Shared.Structs
             set { _clockTimers = value; }
         }
 
-        public GameCalendar CurrentGameCalendar
-        {
-            get { return _currentGameCalendar; }
-            private set { _currentGameCalendar = value; }
-        }
-        
         /// <summary>
         /// Gets the time span (real time) that represents 24-hours game day
         /// </summary>
@@ -149,24 +142,6 @@ namespace Utopia.Shared.Structs
 
             _server = server;
             _server.Scheduler.AddPeriodic(TimeSpan.FromSeconds(1), Tick);
-
-            _currentGameCalendar.Day = server.CustomStorage.GetVariable<uint>("CalendarDay", 1);
-            _currentGameCalendar.Year = server.CustomStorage.GetVariable<uint>("CalendarYear", 1);
-
-            //Create a clock Event for updating the calendar
-            ClockTimers.Add(new GameClockTimer(UtopiaTimeSpan.FromDays(1), this, PerDayTrigger));
-        }
-
-        //Will be raised at every game day
-        private void PerDayTrigger(UtopiaTime gametime)
-        {
-            //Update Calendar date/year
-            _currentGameCalendar.Day += 1;
-            if (_currentGameCalendar.Day > _calendarDaysPerYear)
-            {
-                _currentGameCalendar.Year += 1;
-                _currentGameCalendar.Day = 1;
-            }
         }
 
         public void SetCurrentTime(UtopiaTime time)
@@ -199,8 +174,6 @@ namespace Utopia.Shared.Structs
         public void Dispose()
         {
             foreach (var t in ClockTimers) t.Dispose();
-            _server.CustomStorage.SetVariable("CalendarDay", _currentGameCalendar.Day);
-            _server.CustomStorage.SetVariable("CalendarYear", _currentGameCalendar.Year);
         }
     }
 }
