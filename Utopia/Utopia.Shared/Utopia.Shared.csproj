@@ -120,6 +120,9 @@
     <Compile Include="Entities\GrowingEntity.cs" />
     <Compile Include="Entities\Concrete\PlantGrowingEntity.cs" />
     <Compile Include="Entities\Concrete\TreeGrowingEntity.cs" />
+    <Compile Include="Entities\GrowingEntity.designer.cs">
+      <DependentUpon>GrowingEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\Season.designer.cs">
       <DependentUpon>Season.cs</DependentUpon>
     </Compile>
