@@ -18,25 +18,35 @@ namespace Utopia.Worlds.GameClocks
 
         #region Private/Protected variable
         // Radian angle representing the Period of time inside a day. 0 = Midi, Pi = SunSleep, 2Pi = Midnight, 3/2Pi : Sunrise Morning
-        protected float _clockTime;
+        protected double _clockTime;
         private Game _game;
         private VisualClockTime _visualClockTime;
         private ServerComponent _server;
         private bool _frozenTime;
-        private float _deltaTime;
+        private double _deltaTime;
 
         private UtopiaTime _baseUtopiaTime;
         private DateTime _utopiaLastRealTimeUpdate;
         #endregion
 
         #region Public properties/variables
+        public float TimeFactor { get; set; }
+
         public VisualClockTime ClockTime
         {
             get { return _visualClockTime; }
             set { _visualClockTime = value; }
-        } 
+        }
 
-        public float TimeFactor { get; set; }
+        public UtopiaTime Now
+        {
+            get
+            {
+                var realTimeDiff = DateTime.Now - _utopiaLastRealTimeUpdate;
+                return _baseUtopiaTime + UtopiaTimeSpan.FromSeconds(realTimeDiff.TotalSeconds * TimeFactor);
+            }
+        }
+
         #endregion
 
         public ClientClock(Game game, ServerComponent server)
@@ -66,12 +76,15 @@ namespace Utopia.Worlds.GameClocks
             ClockTime = new VisualClockTime();
         }
 
-        //Dispose resources
         public override void FTSUpdate(GameTime timeSpend)
         {
             if (_frozenTime) return;
+            if (_clockTime == -1)
+            {
+                _clockTime = Now.TimeOfDay.TotalSeconds / (float)UtopiaTime.SecondsPerDay; //Assign number of second in current day / Number of second per day
+            }
 
-            _deltaTime = TimeFactor * timeSpend.ElapsedGameTimeInS_LD / (float)UtopiaTime.SecondsPerDay;
+            _deltaTime = TimeFactor * timeSpend.ElapsedGameTimeInS_HD / (double)UtopiaTime.SecondsPerDay;
 
             //Back UP previous values
             _clockTime += _deltaTime;
@@ -82,7 +95,7 @@ namespace Utopia.Worlds.GameClocks
                 _clockTime -= 1.0f;
             }
 
-            _visualClockTime.ClockTimeNormalized = _clockTime;
+            _visualClockTime.ClockTimeNormalized = (float)_clockTime;
         }
 
         #endregion
@@ -107,14 +120,14 @@ namespace Utopia.Worlds.GameClocks
             _baseUtopiaTime = worldDatetime;
             _utopiaLastRealTimeUpdate = DateTime.Now;
 
-            _clockTime = _baseUtopiaTime.TimeOfDay.TotalSeconds / (float)UtopiaTime.SecondsPerDay; //Assign number of second in current day / Number of second per day
+            _clockTime = -1;
         }
         #endregion
 
         public virtual bool ShowDebugInfo { get; set; }
         public virtual string GetDebugInfo()
         {
-            return string.Format("<Clock Info> {0} : Normalized Daytime : {1},  Normalized2 Daytime : {2} ", ClockTime.ToString(), ClockTime.ClockTimeNormalized, ClockTime.ClockTimeNormalized2);
+            return string.Format("<Clock Info> {0}", Now.ToString());
         }
     }
 }
