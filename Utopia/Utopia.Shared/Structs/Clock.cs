@@ -158,7 +158,6 @@ namespace Utopia.Shared.Structs
         public void SetCurrentTimeOfDay(UtopiaTimeSpan time)
         {
             SetCurrentTime(_gameStartTime.Date + time);
-            _clockStartTime = DateTime.Now;
         }
 
         /// <summary>
@@ -179,7 +178,7 @@ namespace Utopia.Shared.Structs
         {
             foreach (var t in _clockTimers) t.Dispose();
             //Save server Current elapsed time            
-            _server.CustomStorage.SetVariable("GameTimeElapsedSeconds", Now.TotalSeconds);
+            _server.CustomStorage.SetVariable("GameTimeElapsed", Now);
         }
     }
 }
