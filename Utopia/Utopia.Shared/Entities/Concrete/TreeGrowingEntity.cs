@@ -1,4 +1,5 @@
 using ProtoBuf;
+using System.ComponentModel;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -6,6 +7,8 @@ namespace Utopia.Shared.Entities.Concrete
     public class TreeGrowingEntity : GrowingEntity
     {
         [ProtoMember(1)]
-        public ushort TreeTypeId { get; set; }
+        [Category("Growing")]
+        [TypeConverter(typeof(TreeListEditor))]
+        public int TreeTypeId { get; set; }
     }
 }
