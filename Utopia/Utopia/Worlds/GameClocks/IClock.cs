@@ -9,6 +9,6 @@ namespace Utopia.Worlds.GameClocks
 {
     public interface IClock : IUpdatableComponent, IGameComponent, IDebugInfo
     {
-        Clock.VisualClockTime ClockTime { get; set; }        
+        VisualClockTime ClockTime { get; set; }        
     }
 }

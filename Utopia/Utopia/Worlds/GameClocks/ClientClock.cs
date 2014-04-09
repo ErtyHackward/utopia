@@ -2,46 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Utopia.Network;
-using Utopia.Shared.Net.Connections;
-using Utopia.Shared.Net.Messages;
-using S33M3CoreComponents.Inputs.Actions;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
-using S33M3CoreComponents.Inputs;
+using S33M3Resources.Structs;
 using Utopia.Shared.Structs;
+using Utopia.Network;
+using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Net.Connections;
 
 namespace Utopia.Worlds.GameClocks
 {
-    public class WorldClock : Clock
+    public class ClientClock : GameComponent, IClock
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        #region Private variables
-        private float _deltaTime;
-        private bool _frozenTime;
-        private InputsManager _input;
-        private ServerComponent _server;
+        #region Private/Protected variable
+        // Radian angle representing the Period of time inside a day. 0 = Midi, Pi = SunSleep, 2Pi = Midnight, 3/2Pi : Sunrise Morning
+        protected float _clockTime;
         private Game _game;
+        private VisualClockTime _visualClockTime;
+        private ServerComponent _server;
+        private bool _frozenTime;
+        private float _deltaTime;
+
         private UtopiaTime _baseUtopiaTime;
         private DateTime _utopiaLastRealTimeUpdate;
         #endregion
 
-        #region Public variable/properties
+        #region Public properties/variables
+        public VisualClockTime ClockTime
+        {
+            get { return _visualClockTime; }
+            set { _visualClockTime = value; }
+        } 
+
         public float TimeFactor { get; set; }
         #endregion
 
-        /// <summary>
-        /// Control the Game time of teh world
-        /// </summary>
-        /// <param name="game">Base tools class</param>
-        /// <param name="clockSpeed">The Ingame time speed in "Nbr of second ingame for each realtime seconds"; ex : 1 = Real time, 60 = 60times faster than realtime</param>
-        /// <param name="gameTimeStatus">The startup time</param>
-        public WorldClock(Game game, InputsManager input, ServerComponent server)
+        public ClientClock(Game game, ServerComponent server)
         {
-            if (server == null) throw new ArgumentNullException("server");
             _server = server;
-            _input = input;
             _game = game;
 
             AssignTimeAndFactor(server.TimeFactor, server.WorldDateTime);
@@ -57,13 +57,16 @@ namespace Utopia.Worlds.GameClocks
             _game.OnRenderLoopFrozen -= Game_OnRenderLoopFrozen;
         }
 
+
         #region Public methods
+        //Allocate resources
         public override void Initialize()
         {
             _frozenTime = false;
-            base.Initialize();
+            ClockTime = new VisualClockTime();
         }
 
+        //Dispose resources
         public override void FTSUpdate(GameTime timeSpend)
         {
             if (_frozenTime) return;
@@ -81,10 +84,10 @@ namespace Utopia.Worlds.GameClocks
 
             _visualClockTime.ClockTimeNormalized = _clockTime;
         }
+
         #endregion
 
         #region Private methods
-        //A freeze did occurded in the client rendering loop, ask server current datetime for syncing.
         private void Game_OnRenderLoopFrozen(float frozenTime)
         {
             _server.ServerConnection.Send(new RequestDateTimeSyncMessage());
@@ -94,7 +97,7 @@ namespace Utopia.Worlds.GameClocks
         private void ServerConnection_MessageDateTime(object sender, ProtocolMessageEventArgs<DateTimeMessage> e)
         {
             AssignTimeAndFactor(e.Message.TimeFactor, e.Message.DateTime);
-            logger.Info("Received Server date time for syncing : {0}, local time was : {1}", e.Message.DateTime, _visualClockTime.ToString());
+            logger.Info("Received Server date time for syncing : {0}, local time was : {1}", e.Message.DateTime, ClockTime.ToString());
         }
 
         private void AssignTimeAndFactor(double timeFactor, UtopiaTime worldDatetime)
@@ -107,6 +110,11 @@ namespace Utopia.Worlds.GameClocks
             _clockTime = _baseUtopiaTime.TimeOfDay.TotalSeconds / (float)UtopiaTime.SecondsPerDay; //Assign number of second in current day / Number of second per day
         }
         #endregion
+
+        public virtual bool ShowDebugInfo { get; set; }
+        public virtual string GetDebugInfo()
+        {
+            return string.Format("<Clock Info> {0} : Normalized Daytime : {1},  Normalized2 Daytime : {2} ", ClockTime.ToString(), ClockTime.ClockTimeNormalized, ClockTime.ClockTimeNormalized2);
+        }
     }
 }
-
