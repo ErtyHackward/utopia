@@ -115,19 +115,19 @@ namespace Utopia.Shared.Structs
             get
             {
                 int seasonIndex = TotalDays % TimeConfiguration.DaysPerSeason;
-                if (seasonIndex < TimeConfiguration.Seasons.Count -1)  return TimeConfiguration.Seasons[TotalDays % TimeConfiguration.DaysPerSeason];
+                if (seasonIndex < TimeConfiguration.Seasons.Count - 1) return TimeConfiguration.Seasons[SeasonIndex];
                 return null;
             }
         }
 
         public int SeasonNumber 
         {
-            get { return TotalDays % TimeConfiguration.DaysPerSeason + 1; }
+            get { return ((TotalDays % TimeConfiguration.DaysPerYear) / TimeConfiguration.DaysPerSeason) + 1; }
         }
 
         public int SeasonIndex
         {
-            get { return TotalDays % TimeConfiguration.DaysPerSeason; }
+            get { return (TotalDays % TimeConfiguration.DaysPerYear) / TimeConfiguration.DaysPerSeason; }
         }
         
         /// <summary>
@@ -155,7 +155,7 @@ namespace Utopia.Shared.Structs
 
         public override string ToString()
         {
-            return string.Format("Year : {0} Season : {1} Day : {2} [{3:00}:{4:00}:{5:00}]", Year, Season.Name, Day, Hour, Minute, Second);
+            return string.Format("Year : {0} Season : <{1}> Day : {2} [{3:00}:{4:00}:{5:00}]", Year, Season.Name, Day, Hour, Minute, Second);
         }
 
         public static bool operator >(UtopiaTime t1, UtopiaTime t2)

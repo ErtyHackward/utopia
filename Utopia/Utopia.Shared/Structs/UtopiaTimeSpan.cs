@@ -37,76 +37,76 @@ namespace Utopia.Shared.Structs
             get { return TotalDays / UtopiaTime.TimeConfiguration.DaysPerSeason; }
         }
 
-        /// <summary>
-        /// Gets current game seconds component
-        /// </summary>
-        public int Seconds
-        {
-            get { return (int)(TotalSeconds % 60); }
-        }
+        ///// <summary>
+        ///// Gets current game seconds component
+        ///// </summary>
+        //public int Seconds
+        //{
+        //    get { return (int)(TotalSeconds % 60); }
+        //}
 
-        /// <summary>
-        /// Gets current game minute component
-        /// </summary>
-        public int Minutes
-        {
-            get { return TotalMinutes % 60; }
-        }
+        ///// <summary>
+        ///// Gets current game minute component
+        ///// </summary>
+        //public int Minutes
+        //{
+        //    get { return TotalMinutes % 60; }
+        //}
 
-        /// <summary>
-        /// Gets current game hour component
-        /// </summary>
-        public int Hours
-        {
-            get { return TotalHours % 24; }
-        }
+        ///// <summary>
+        ///// Gets current game hour component
+        ///// </summary>
+        //public int Hours
+        //{
+        //    get { return TotalHours % 24; }
+        //}
 
-        /// <summary>
-        /// Gets current game day component
-        /// </summary>
-        public int Days
-        {
-            get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason + 1; }
-        }
+        ///// <summary>
+        ///// Gets current game day component
+        ///// </summary>
+        //public int Days
+        //{
+        //    get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason; }
+        //}
 
-        /// <summary>
-        /// Gets current game season
-        /// </summary>
-        public Season Season
-        {
-            get { return UtopiaTime.TimeConfiguration.Seasons[TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason]; }
-        }
+        ///// <summary>
+        ///// Gets current game season
+        ///// </summary>
+        //public Season Season
+        //{
+        //    get { return UtopiaTime.TimeConfiguration.Seasons[TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason]; }
+        //}
 
-        public int SeasonNumber
-        {
-            get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason + 1; }
-        }
+        //public int SeasonNumber
+        //{
+        //    get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason; }
+        //}
 
         /// <summary>
         /// Gets current game year
         /// </summary>
         public int TotalYears
         {
-            get { return (int)(TotalSeconds / SecondsPerDay / UtopiaTime.TimeConfiguration.DaysPerYear) + 1; }
+            get { return (int)(TotalSeconds / SecondsPerDay / UtopiaTime.TimeConfiguration.DaysPerYear); }
         }
 
         public static UtopiaTimeSpan Zero {
             get { return new UtopiaTimeSpan();} 
         }
 
-        public override string ToString()
-        {
-            if (TotalYears > 0)
-            {
-                return string.Format("{0}y {1}d {2:00}:{3:00}", TotalYears, Days, Hours, Minutes);
-            }
-            if (TotalDays > 0)
-            {
-                return string.Format("{0}d {1:00}:{2:00}", TotalDays, Hours, Minutes);
-            }
+        //public override string ToString()
+        //{
+        //    if (TotalYears > 0)
+        //    {
+        //        return string.Format("{0}y {1}d {2:00}:{3:00}", TotalYears, Days, Hours, Minutes);
+        //    }
+        //    if (TotalDays > 0)
+        //    {
+        //        return string.Format("{0}d {1:00}:{2:00}", TotalDays, Hours, Minutes);
+        //    }
             
-            return string.Format("{0:00}:{1:00}", Hours, Minutes);
-        }
+        //    return string.Format("{0:00}:{1:00}", Hours, Minutes);
+        //}
 
         public static bool operator >(UtopiaTimeSpan t1, UtopiaTimeSpan t2)
         {

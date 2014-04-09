@@ -157,7 +157,7 @@ namespace Utopia.Shared.Structs
 
         public void SetCurrentTimeOfDay(UtopiaTimeSpan time)
         {
-            SetCurrentTime(_gameStartTime.Date + time);
+            SetCurrentTime(Now.Date + time);
         }
 
         /// <summary>
