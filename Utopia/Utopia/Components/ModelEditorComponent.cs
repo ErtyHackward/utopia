@@ -2767,7 +2767,7 @@ namespace Utopia.Components
             if (File.Exists(path))
                 File.Delete(path);
 
-            RenderPng(path);
+            RenderPng(path, true);
         }
 
 
@@ -2921,9 +2921,9 @@ namespace Utopia.Components
             }
         }
 
-        private void RenderPng(string filePath)
+        private void RenderPng(string filePath, bool customRotation = false)
         {
-            using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 2048, Height = 2048 }, null, null, _transform * Matrix.RotationAxis(new Vector3(0,1,0),(float) Math.PI) ))
+            using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 2048, Height = 2048 }, null, null, !customRotation ? default(Matrix) : _transform * Matrix.RotationAxis(new Vector3(0,1,0),(float) Math.PI) ))
                 Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, filePath);
 
             Image img;
