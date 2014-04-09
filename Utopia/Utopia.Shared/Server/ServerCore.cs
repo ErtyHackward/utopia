@@ -142,7 +142,8 @@ namespace Utopia.Shared.Server
 
             Scheduler = new ScheduleManager();
 
-            Clock = new Clock(this, new UtopiaTime(), TimeSpan.FromMinutes(20));
+            UtopiaTime startTime = new UtopiaTime() { TotalSeconds = CustomStorage.GetVariable<long>("GameTimeElapsedSeconds", 0) };
+            Clock = new Clock(this, startTime, TimeSpan.FromMinutes(20));
 
             LandscapeManager = new ServerLandscapeManager(
                 this, 

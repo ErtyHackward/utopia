@@ -63,7 +63,6 @@ namespace Utopia.Shared.Structs
             }
         }
 
-        private int _calendarDaysPerYear;
         private ServerCore _server;
         private DateTime _clockStartTime;
         private UtopiaTime _gameStartTime;
@@ -135,7 +134,6 @@ namespace Utopia.Shared.Structs
         /// <param name="dayLength"></param>
         public Clock(ServerCore server, UtopiaTime startGameTime, TimeSpan dayLength)
         {
-            _calendarDaysPerYear = 10;
             _clockStartTime = DateTime.Now;
             _gameStartTime = startGameTime;
             DayLength = dayLength;
@@ -174,6 +172,8 @@ namespace Utopia.Shared.Structs
         public void Dispose()
         {
             foreach (var t in ClockTimers) t.Dispose();
+            //Save server Current elapsed time            
+            _server.CustomStorage.SetVariable("GameTimeElapsedSeconds", Now.TotalSeconds);
         }
     }
 }
