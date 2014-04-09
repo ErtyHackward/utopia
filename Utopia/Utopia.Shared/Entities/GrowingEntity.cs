@@ -7,6 +7,9 @@ using System.Drawing.Design;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Services;
 using Utopia.Shared.Tools;
+using Utopia.Shared.Configuration;
+using Utopia.Shared.Structs;
+using Utopia.Shared.RealmEditor;
 
 namespace Utopia.Shared.Entities
 {
@@ -16,32 +19,40 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     [ProtoInclude(100, typeof(PlantGrowingEntity))]
     [ProtoInclude(101, typeof(TreeGrowingEntity))]
-    public abstract class GrowingEntity : BlockLinkedItem
+    public abstract partial class GrowingEntity : BlockLinkedItem
     {
         [ProtoMember(1)]
+        [Category("Growing")]
         public List<GrowLevel> GrowLevels { get; set; }
 
         [ProtoMember(2)]
         [Browsable(false)]
+        [Category("Growing")]
         public int CurrentGrowLevel { get; set; }
 
         [ProtoMember(3)]
         [Browsable(false)]
+        [Category("Growing")]
         public DateTime LastLevelUpdate { get; set; }
 
         [ProtoMember(4)]
+        [Category("Growing")]
         [Editor(typeof(Season.SeasonsEditor), typeof(UITypeEditor))]
         public List<string> GrowingSeasons { get; set; }
 
         [ProtoMember(5)]
+        [Category("Growing")]
         [Description("Specify block types where the entity can grow. It will not grow on other block types")]
+        [Editor(typeof(MultiBlockListEditor), typeof(UITypeEditor))]
         public List<byte> GrowingBlocks { get; set; }
 
         [ProtoMember(6)]
+        [Category("Growing")]
         [Description("Do the entity need the light to grow?")]
         public bool NeedLight { get; set; }
 
         [ProtoMember(7)]
+        [Category("Growing")]
         [Description("Probability of entity to rotten at grow level 0. [0;1]")]
         public float RottenChance { get; set; }
 
@@ -62,32 +73,21 @@ namespace Utopia.Shared.Entities
         public string Name { get; set; }
 
         [ProtoMember(3)]
-        [TypeConverter(typeof(ModelStateConverter))]
+        [TypeConverter(typeof(GrowingEntity.ModelStateConverter))]
         public string ModelState { get; set; }
 
         [ProtoMember(4)]
-        public TimeSpan GrowTime { get; set; }
-    }
+        [Browsable(false)]
+        public UtopiaTimeSpan GrowTime { get; set; }
 
-    public class ModelStateConverter : StringConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        [DisplayName("Grow Time (Hours)")]
+        public double GrowTimeH
         {
-            //true means show a combobox
-            return true;
-        }
-
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-        {
-            //true will limit to list. false will show the list, 
-            //but allow free-form entry
-            return true;
-        }
-
-        public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-        {
-            //return new StandardValuesCollection(EditorConfigHelper.Config.BlockProfiles.Where(x => x != null).Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
-            return new StandardValuesCollection(ModelStateSelector.PossibleValues);
+            get { return GrowTime.TotalSeconds / 3600.0f; }
+            set { GrowTime = new UtopiaTimeSpan() { TotalSeconds = (long)(value * 3600.0f) }; }
         }
     }
+
+
+
 }
