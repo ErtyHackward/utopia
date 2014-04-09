@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 
@@ -82,6 +84,53 @@ namespace Utopia.Shared.Entities
             }
         }
 
-        
+        public class TreeListEditor : StringConverter
+        {
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                //true means show a combobox
+                return true;
+            }
+
+            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+            {
+                //true will limit to list. false will show the list, 
+                //but allow free-form entry
+                return true;
+            }
+
+            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                return new StandardValuesCollection(EditorConfigHelper.Config.TreeBluePrints.OrderBy(x => x.Name).ToList());
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+            {
+                return EditorConfigHelper.Config.TreeBluePrints.FirstOrDefault(x => x.Name == (string)value).Id;
+            }
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {
+                var castedValue = value as TreeBluePrint;
+                if (castedValue == null)
+                {
+                    var v = EditorConfigHelper.Config.TreeBluePrints.FirstOrDefault(x => x.Id == (int)value);
+                    return v == null ? null : v.ToString();
+                }
+                else
+                {
+                    return castedValue.ToString();
+                }
+            }
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                return true;
+            }
+            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+            {
+                return true;
+            }
+
+        }
+
     }
 }

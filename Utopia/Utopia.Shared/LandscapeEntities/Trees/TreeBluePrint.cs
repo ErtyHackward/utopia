@@ -64,15 +64,7 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [Category("Configuration")]
         [DisplayName("Foliage size")]
         [ProtoMember(16)]
-        //public Vector3I FoliageSize { get; set; }
-
-        public Vector3I FoliageSize
-        {
-            get { return _foliageSize; }
-            set { _foliageSize = value; }
-        }
-        private Vector3I _foliageSize;
-
+        public Vector3I FoliageSize { get; set; }
 
         public override string ToString()
         {
