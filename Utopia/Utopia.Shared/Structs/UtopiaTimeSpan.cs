@@ -12,7 +12,7 @@ namespace Utopia.Shared.Structs
         private const int SecondsPerDay = SecondsPerHour * 24;
 
         /// <summary>
-        /// Amount of seconds passed from the begginning of the world
+        /// Amount of seconds in this time span
         /// </summary>
         [ProtoMember(1)]
         public long TotalSeconds { get; set; }

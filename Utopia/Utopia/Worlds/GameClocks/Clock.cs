@@ -5,6 +5,7 @@ using System.Text;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Worlds.GameClocks
 {
@@ -16,47 +17,37 @@ namespace Utopia.Worlds.GameClocks
         {
             public int Hours
             {
-                get { return (int)(86400.0f / MathHelper.TwoPi * Time / 3600.0f); }
+                get { return (int)(UtopiaTime.SecondsPerDay * ClockTimeNormalized / 3600.0f); }
             }
 
             public int Minutes
             {
-                get { return (int)((86400.0f / MathHelper.TwoPi * Time % 3600.0f) / 60); }
+                get { return (int)((UtopiaTime.SecondsPerDay * ClockTimeNormalized % 3600.0f) / 60.0f); }
             }
 
             public int Seconds
             {
-                get { return (int)(86400.0f / MathHelper.TwoPi * Time % 60.0f); }
+                get { return (int)(UtopiaTime.SecondsPerDay * ClockTimeNormalized % 60.0f); }
             }
 
-            /// <summary> Radian angle representing the Period of time inside a day. 0 = Midi, Pi = SunSleep, 2Pi = Midnight, 3/2Pi : Sunrise Morning </summary>
-            public float Time { get; set; }
-
-            /// <summary> Normalized representation of the hours [0 => 1], will go from 0 => 1 </summary>
-            public float ClockTimeNormalized
-            { get { return (Time / MathHelper.TwoPi); } }
+            /// <summary> Normalized Period of the day inside a day </summary>
+            public float ClockTimeNormalized { get; set; }
 
             /// <summary> Normalized representation of the hours [0 => 1 => 0], will go from 0 => 1 => 0 => ... </summary>
             public float ClockTimeNormalized2
             {
                 get
                 {
-                    if (Time <= MathHelper.Pi)
+                    if (ClockTimeNormalized <= 0.5)
                     {
-                        return MathHelper.FullLerp(0, 1, 0, MathHelper.Pi, Time);
+                        return MathHelper.FullLerp(0, 1, 0, 0.5, ClockTimeNormalized);
                     }
                     else
                     {
-                        return 1 - MathHelper.FullLerp(0, 1, MathHelper.Pi, MathHelper.TwoPi, Time);
+                        return 1 - MathHelper.FullLerp(0, 1, 0.5, 1, ClockTimeNormalized);
                     }
                 }
             }
-
-            public override string ToString()
-            {
-                return Hours.ToString("00:") + Minutes.ToString("00:") + Seconds.ToString("00");
-            }
-
             /// <summary>
             /// Will providea value between 0 and 1 with "steps" => Fixe low value during night, then lerping during day to a max, ...
             /// </summary>
@@ -89,6 +80,11 @@ namespace Utopia.Worlds.GameClocks
 
                 return interpolationValue;
             }
+
+            public override string ToString()
+            {
+                return Hours.ToString("00:") + Minutes.ToString("00:") + Seconds.ToString("00");
+            }
         }
         #endregion
 
@@ -96,7 +92,7 @@ namespace Utopia.Worlds.GameClocks
         protected VisualClockTime _visualClockTime;
         
         // Radian angle representing the Period of time inside a day. 0 = Midi, Pi = SunSleep, 2Pi = Midnight, 3/2Pi : Sunrise Morning
-        protected FTSValue<float> _clockTime = new FTSValue<float>();        
+        protected float _clockTime;        
         #endregion
 
         #region Public properties/variables
@@ -121,25 +117,6 @@ namespace Utopia.Worlds.GameClocks
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
-            float recomputedClock = _clockTime.Value;
-            if (_clockTime.Value < _clockTime.ValuePrev)
-            {
-                recomputedClock = _clockTime.Value + MathHelper.TwoPi;
-            }
-
-            _clockTime.ValueInterp = MathHelper.Lerp(_clockTime.ValuePrev, recomputedClock, interpolationLd);
-            if (_clockTime.ValueInterp > Math.PI * 2)
-            {
-                //+1 Day
-                _clockTime.ValueInterp = _clockTime.ValueInterp - (2 * (float)Math.PI);
-            }
-            if (_clockTime.ValueInterp < Math.PI * -2)
-            {
-                //-1 Day
-                _clockTime.ValueInterp = _clockTime.ValueInterp + (2 * (float)Math.PI);
-            }
-
-            _visualClockTime.Time = _clockTime.ValueInterp;
         }
 
         #endregion
@@ -147,7 +124,7 @@ namespace Utopia.Worlds.GameClocks
         public virtual bool ShowDebugInfo { get; set; }
         public virtual string GetDebugInfo()
         {
-            return "<Clock Info> Current time : " + ClockTime.ToString(); // +" normalized : " + ClockTime.ClockTimeNormalized2 + " ; " + ClockTime.ClockTimeNormalized + " ; " + ClockTime;
+            return string.Format("<Clock Info> {0} : Normalized Daytime : {1},  Normalized2 Daytime : {2} ", ClockTime.ToString(), ClockTime.ClockTimeNormalized, ClockTime.ClockTimeNormalized2);
         }
     }
 }

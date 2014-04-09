@@ -22,15 +22,15 @@ namespace Utopia.Worlds.GameClocks
         #region Public methods
         public override void Initialize()
         {
-            base._clockTime.Value = _startTime;
+            base._clockTime = _startTime;
             base.Initialize();
         }
 
         public override void FTSUpdate(GameTime timeSpend)
         {
-            _clockTime.Value = (float)(DateTime.Now.Hour * 60 + DateTime.Now.Minute) * (float)(Math.PI) / 12.0f / 60.0f;
+            _clockTime = (float)(DateTime.Now.Hour * 60 + DateTime.Now.Minute) * (float)(Math.PI) / 12.0f / 60.0f;
 
-            _visualClockTime.Time = _clockTime.ValueInterp;
+            _visualClockTime.ClockTimeNormalized = _clockTime;
         }
 
         #endregion

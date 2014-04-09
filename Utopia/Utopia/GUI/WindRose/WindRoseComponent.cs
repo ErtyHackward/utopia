@@ -78,7 +78,7 @@ namespace Utopia.GUI.WindRose
             {
                 _compassPanel.Rotation = (float)yaw;
             }
-            _compassPanel.RotationDayCycle = _worldclock.ClockTime.Time + MathHelper.Pi;
+            _compassPanel.RotationDayCycle = (_worldclock.ClockTime.ClockTimeNormalized) * MathHelper.TwoPi + MathHelper.Pi;
 
             if(_playerManager.Player.BindedSoulStone != null){
                 Vector2 playerLookAtXZ = new Vector2(_playerManager.EntityRotations.LookAt.X, _playerManager.EntityRotations.LookAt.Z);

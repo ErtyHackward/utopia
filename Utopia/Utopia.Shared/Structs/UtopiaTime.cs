@@ -10,9 +10,9 @@ namespace Utopia.Shared.Structs
     [ProtoContract]
     public struct UtopiaTime
     {
-        private const int SecondsPerMinute = 60;
-        private const int SecondsPerHour = SecondsPerMinute * 60;
-        private const int SecondsPerDay = SecondsPerHour * 24;
+        public const int SecondsPerMinute = 60;
+        public const int SecondsPerHour = SecondsPerMinute * 60;
+        public const int SecondsPerDay = SecondsPerHour * 24;
 
         static UtopiaTime()
         {
@@ -43,21 +43,33 @@ namespace Utopia.Shared.Structs
         [ProtoMember(1)]
         public long TotalSeconds { get; set; }
         
+        /// <summary>
+        /// Amount of minutes passed from the begginning of the world
+        /// </summary>
         public int TotalMinutes
         {
             get { return (int)(TotalSeconds / SecondsPerMinute); }
         }
 
+        /// <summary>
+        /// Amount of hours passed from the begginning of the world
+        /// </summary>
         public int TotalHours
         {
             get { return (int)(TotalSeconds / SecondsPerHour); }
         }
 
+        /// <summary>
+        /// Amount of days passed from the begginning of the world
+        /// </summary>
         public int TotalDays
         {
             get { return (int)(TotalSeconds / SecondsPerDay); }
         }
 
+        /// <summary>
+        /// Amount of seasons passed from the begginning of the world
+        /// </summary>
         public int TotalSeasons
         {
             get { return TotalDays / TimeConfiguration.DaysPerSeason; }
@@ -100,7 +112,12 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public Season Season 
         {
-            get { return TimeConfiguration.Seasons[TotalDays % TimeConfiguration.DaysPerSeason]; }
+            get
+            {
+                int seasonIndex = TotalDays % TimeConfiguration.DaysPerSeason;
+                if (seasonIndex < TimeConfiguration.Seasons.Count -1)  return TimeConfiguration.Seasons[TotalDays % TimeConfiguration.DaysPerSeason];
+                return null;
+            }
         }
 
         public int SeasonNumber 
