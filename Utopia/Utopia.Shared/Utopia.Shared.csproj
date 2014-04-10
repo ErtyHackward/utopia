@@ -348,7 +348,6 @@
     <Compile Include="Server\Managers\ServerLandscapeManager.cs" />
     <Compile Include="Server\Managers\ServiceManager.cs" />
     <Compile Include="Server\Managers\SQLiteStorageManager.cs" />
-    <Compile Include="Server\Managers\WeatherManager.cs" />
     <Compile Include="Server\ServerCore.cs" />
     <Compile Include="Server\ServerSettings.cs" />
     <Compile Include="Server\Structs\FocusAI.cs" />
