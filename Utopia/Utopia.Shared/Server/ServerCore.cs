@@ -107,6 +107,11 @@ namespace Utopia.Shared.Server
         /// </summary>
         public EntitySpawningManager EntitySpawningManager { get; private set; }
 
+        /// <summary>
+        /// Contains the logic behind the entities growing
+        /// </summary>
+        public EntityGrowingManager EntityGrowingManager { get; private set; }
+
         public WorldParameters WorldParameters { get; private set; }
 
         #endregion
@@ -175,6 +180,8 @@ namespace Utopia.Shared.Server
             LoginManager = new LoginManager(this, EntityFactory);
 
             EntitySpawningManager = new EntitySpawningManager(this, worldGenerator.EntitySpawningControler);
+
+            EntityGrowingManager = new Managers.EntityGrowingManager(this);
 
             Services.Initialize();
         }
