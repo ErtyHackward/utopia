@@ -123,6 +123,7 @@
     <Compile Include="Entities\GrowingEntity.designer.cs">
       <DependentUpon>GrowingEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Server\Managers\EntityGrowingManager.cs" />
     <Compile Include="Services\Season.designer.cs">
       <DependentUpon>Season.cs</DependentUpon>
     </Compile>
