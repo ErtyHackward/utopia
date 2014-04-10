@@ -37,57 +37,39 @@ namespace Utopia.Shared.Structs
             get { return TotalDays / UtopiaTime.TimeConfiguration.DaysPerSeason; }
         }
 
-        /// <summary>
-        /// Gets current game seconds component
-        /// </summary>
+        public int TotalYears
+        {
+            get { return (int)(TotalDays / UtopiaTime.TimeConfiguration.DaysPerYear); }
+        }
+
         public int Seconds
         {
             get { return (int)(TotalSeconds % 60); }
         }
 
-        /// <summary>
-        /// Gets current game minute component
-        /// </summary>
         public int Minutes
         {
             get { return TotalMinutes % 60; }
         }
 
-        /// <summary>
-        /// Gets current game hour component
-        /// </summary>
         public int Hours
         {
             get { return TotalHours % 24; }
         }
 
-        /// <summary>
-        /// Gets current game day component
-        /// </summary>
         public int Days
         {
             get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason; }
         }
 
-        /// <summary>
-        /// Gets current game season
-        /// </summary>
-        public Season Season
+        public int Seasons
         {
-            get { return UtopiaTime.TimeConfiguration.Seasons[TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason]; }
+            get { return TotalSeasons % UtopiaTime.TimeConfiguration.Seasons.Count; }
         }
 
-        public int SeasonNumber
+        public int Years
         {
-            get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason; }
-        }
-
-        /// <summary>
-        /// Gets current game year
-        /// </summary>
-        public int TotalYears
-        {
-            get { return (int)(TotalSeconds / SecondsPerDay / UtopiaTime.TimeConfiguration.DaysPerYear); }
+            get { return TotalYears; }
         }
 
         public static UtopiaTimeSpan Zero {
