@@ -76,6 +76,14 @@ namespace Utopia.Shared.Structs
         }
 
         /// <summary>
+        /// Amount of Years passed from the begginning of the world
+        /// </summary>
+        public int TotalYears
+        {
+            get { return (int)(TotalDays / UtopiaTime.TimeConfiguration.DaysPerYear); }
+        }
+
+        /// <summary>
         /// Gets current game seconds component
         /// </summary>
         public int Second 
@@ -114,8 +122,7 @@ namespace Utopia.Shared.Structs
         {
             get
             {
-                int seasonIndex = TotalDays % TimeConfiguration.DaysPerSeason;
-                if (seasonIndex < TimeConfiguration.Seasons.Count - 1) return TimeConfiguration.Seasons[SeasonIndex];
+                if (SeasonIndex < TimeConfiguration.Seasons.Count - 1) return TimeConfiguration.Seasons[SeasonIndex];
                 return null;
             }
         }
