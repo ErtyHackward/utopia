@@ -39,7 +39,7 @@ namespace Utopia.Shared.Server.Managers
             //This spawn logic can only be down on UtopiaWorldConfiguration and associated processor.
             if (_configuration != null)
             {
-                _server.Clock.CreateNewTimer(new Clock.GameClockTimer(UtopiaTimeSpan.FromSeconds(15), server.Clock, UtopiaSpawningLookup));    
+                _server.Clock.CreateNewTimer(new Clock.GameClockTimer(UtopiaTimeSpan.FromMinutes(30), server.Clock, UtopiaSpawningLookup));    
             }
         }
         
