@@ -384,12 +384,12 @@ namespace Utopia.Shared.Entities
                 {
                     IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    entity.Container = null; //Remove from its container
                     OnEntityRemoved(new EntityCollectionEventArgs
                     {
                         Entity = entity,
                         SourceDynamicEntityId = sourceDynamicEntityId
                     });
+                    entity.Container = null; //Remove from its container
                     OnCollectionDirty();
                 }
             }

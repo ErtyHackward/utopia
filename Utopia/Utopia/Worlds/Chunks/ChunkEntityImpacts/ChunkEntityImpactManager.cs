@@ -222,12 +222,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return entityRemoved;
         }
 
-        public void SetEntityState(IStaticEntity entity, GrowLevel newEntityState)
-        {
-            var impactedChunk = GetChunk(entity.GetLink().ChunkPosition);
-            impactedChunk.UpdateEntityGrowLevel(entity.StaticId, newEntityState);
-        }
-
         public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
         {
             return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);
