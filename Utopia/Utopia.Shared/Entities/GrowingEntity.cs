@@ -1,15 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Entities.Concrete;
 using System.Drawing.Design;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Services;
-using Utopia.Shared.Tools;
-using Utopia.Shared.Configuration;
 using Utopia.Shared.Structs;
-using Utopia.Shared.RealmEditor;
 
 namespace Utopia.Shared.Entities
 {
@@ -33,7 +28,7 @@ namespace Utopia.Shared.Entities
         [ProtoMember(3)]
         [Browsable(false)]
         [Category("Growing")]
-        public DateTime LastLevelUpdate { get; set; }
+        public UtopiaTime LastLevelUpdate { get; set; }
 
         [ProtoMember(4)]
         [Category("Growing")]
@@ -56,7 +51,7 @@ namespace Utopia.Shared.Entities
         [Description("Probability of entity to rotten at grow level 0. [0;1]")]
         public float RottenChance { get; set; }
 
-        public GrowingEntity()
+        protected GrowingEntity()
         {
             GrowLevels = new List<GrowLevel>();
         }

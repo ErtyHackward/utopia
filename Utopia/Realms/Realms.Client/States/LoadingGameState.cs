@@ -156,7 +156,8 @@ namespace Realms.Client.States
                     serverComponent.ServerConnection.Status != TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-                    serverComponent.BindingServer("127.0.0.1", null);
+                    var port = _vars.LocalServer.Server.SettingsManager.Settings.ServerPort;
+                    serverComponent.BindingServer("127.0.0.1" + (port == 4815 ? "" : ":" + port), null);
                     serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", wp.WorldName, "ClientWorldCache.db");
                 }

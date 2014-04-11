@@ -8,6 +8,7 @@ using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Server;
 using Utopia.Shared.Server.Managers;
 using Utopia.Shared.Services;
@@ -36,7 +37,12 @@ namespace Realms.Client.Components
 
         public bool IsDisposed
         {
-            get { return _server == null; }
+            get { return Server == null; }
+        }
+
+        public ServerCore Server
+        {
+            get { return _server; }
         }
 
 
@@ -48,7 +54,7 @@ namespace Realms.Client.Components
 
         public void InitSinglePlayerServer(WorldParameters worldParam)
         {
-            if (_server != null)
+            if (Server != null)
                 throw new InvalidOperationException("Already initialized");
 
             _worldParam = worldParam;
@@ -96,18 +102,26 @@ namespace Realms.Client.Components
             //var worldGenerator = new WorldGenerator(wp, planProcessor);
             settings.Settings.ChunksCountLimit = 1024 * 3; // better use viewRange * viewRange * 3
 
+            var port = 4815;
+
+            while (!TcpConnectionListener.IsPortFree(port))
+            {
+                port++;
+            }
+            settings.Settings.ServerPort = port;
+
             _server = new ServerCore(settings, worldGenerator, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverSqliteStorageSinglePlayer, _serverFactory, worldParam);
-            _serverFactory.LandscapeManager = _server.LandscapeManager;
-            _serverFactory.DynamicEntityManager = _server.AreaManager;
-            _serverFactory.GlobalStateManager = _server.GlobalStateManager;
-            _serverFactory.ScheduleManager = _server.Scheduler;
+            _serverFactory.LandscapeManager = Server.LandscapeManager;
+            _serverFactory.DynamicEntityManager = Server.AreaManager;
+            _serverFactory.GlobalStateManager = Server.GlobalStateManager;
+            _serverFactory.ScheduleManager = Server.Scheduler;
             _serverFactory.ServerSide = true;
 
-            _server.ConnectionManager.LocalMode = true;
-            _server.ConnectionManager.Listen();
-            _server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
-            _server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
-            _server.Clock.SetCurrentTimeOfDay(UtopiaTimeSpan.FromHours(12));
+            Server.ConnectionManager.LocalMode = true;
+            Server.ConnectionManager.Listen();
+            Server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;
+            Server.LoginManager.GenerationParameters = default(Utopia.Shared.World.PlanGenerator.GenerationParameters); // planProcessor.WorldPlan.Parameters;
+            Server.Clock.SetCurrentTimeOfDay(UtopiaTimeSpan.FromHours(12));
         }
 
         void LoginManagerPlayerEntityNeeded(object sender, NewPlayerEntityNeededEventArgs e)
@@ -115,7 +129,7 @@ namespace Realms.Client.Components
             var dEntity = new PlayerCharacter();
             dEntity.DynamicId = e.EntityId;
             dEntity.DisplacementMode = EntityDisplacementModes.Walking;
-            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
+            dEntity.Position = Server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
             dEntity.CharacterName = "Local player";
 
             dEntity.Health.MaxValue = 100;
@@ -139,11 +153,11 @@ namespace Realms.Client.Components
 
         public void Dispose()
         {
-            if (_server != null)
+            if (Server != null)
             {
-                _server.LoginManager.PlayerEntityNeeded -= LoginManagerPlayerEntityNeeded;
+                Server.LoginManager.PlayerEntityNeeded -= LoginManagerPlayerEntityNeeded;
 
-                _server.Dispose();
+                Server.Dispose();
                 _server = null;
             }
             if (_serverSqliteStorageSinglePlayer != null)

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using S33M3Resources.Structs;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Server.Managers
@@ -21,7 +21,7 @@ namespace Utopia.Shared.Server.Managers
         {
             _server = server;
 
-            _server.Clock.CreateNewTimer(new Clock.GameClockTimer(UtopiaTimeSpan.FromMinutes(5), server.Clock, GrowingLookup)); 
+            _server.Clock.CreateNewTimer(new Clock.GameClockTimer(UtopiaTimeSpan.FromMinutes(15), server.Clock, GrowingLookup)); 
         }
 
         #region Public Methods
@@ -30,22 +30,64 @@ namespace Utopia.Shared.Server.Managers
         #region Private Methods
         private void GrowingLookup(UtopiaTime gametime)
         {
-            //When a chunk, is loaded back from Database (Was generated and modified, then goes into a "Sleep" mode) this method should be call on all
-            //growing entities of this chunk multiple times to "simulate" growing that should have been applied on the entities of this chunk while it was sleeping.
+            var now = _server.Clock.Now;
+
+            var random = new Random();
+
+            foreach (var chunk in _server.LandscapeManager.GetBufferedChunks())
+            {
+                var growingEntities = chunk.Entities.OfType<GrowingEntity>().ToList();
+
+                foreach (var entity in growingEntities)
+                {
+                    var passedTime = now - entity.LastLevelUpdate;
+                    var updated = false;
+
+                    // constranits check
+                    if (entity.GrowingSeasons.Count > 0 && !entity.GrowingSeasons.Contains(now.Season.Name))
+                        continue;
+
+                    if (entity.GrowingBlocks.Count > 0)
+                    {
+                        var cursor = _server.LandscapeManager.GetCursor(entity.Position);
+                        if (!entity.GrowingBlocks.Contains(cursor.PeekValue(Vector3I.Down)))
+                            continue;
+                    }
+
+                    // TODO: check light constraint when implemented
 
 
-            //Get all entities that are growing entities that are not "matured" = can still grow
+                    // update entity to the actual state 
+                    while (entity.CurrentGrowLevel < entity.GrowLevels.Count - 1)
+                    {
+                        var currentLevel = entity.GrowLevels[entity.CurrentGrowLevel];
+                        passedTime -= currentLevel.GrowTime;
 
-            //Filters out entities where
-            // - the minimum time for the next growing state is not reached
-            // - the entity growing is limited by seasons
-            // - the entity growing is limited by "light" presence for the entity
-            // - the entity growing is limited by a link to specific blocks
-            
-            // If passed all those tests, the entity can "grow" to the next level
-            // - If entity grow level = 0, then test its rotten chances => If rotten, then the entity will be removed
-            
-            // Update the entity to make it goes to the next growing state, broadcast a client message to signal the change of growing level for the entity.
+                        if (passedTime.TotalSeconds < 0)
+                            break;
+
+                        if (entity.CurrentGrowLevel == 0 && entity.RottenChance != 0f)
+                        {
+                            if (random.NextDouble() < entity.RottenChance)
+                            {
+                                chunk.Entities.RemoveById(entity.StaticId);
+                                continue;
+                            }
+                        }
+                        
+                        entity.CurrentGrowLevel++;
+                        updated = true;
+                    }
+
+                    if (updated)
+                    {
+                        entity.LastLevelUpdate = now;
+                        chunk.Entities.RemoveById(entity.StaticId);
+                        chunk.Entities.Add(entity);
+                    }
+
+                }
+            }
         }
         #endregion
 
