@@ -283,11 +283,6 @@ namespace Utopia.Worlds.Chunks
 
         public abstract TerraCubeResult GetCube(Vector3I internalPosition);
 
-        public void UpdateEntityGrowLevel(uint entityID, GrowLevel newEntityGrowLevel)
-        {
-            //Find the Entity, ID, assign the new State for the entity.
-        }
-
         private void AddVoxelEntity(EntityCollectionEventArgs e)
         {
             var voxelEntity = e.Entity as IVoxelEntity;
@@ -299,6 +294,14 @@ namespace Utopia.Worlds.Chunks
             if (model != null && voxelEntity.ModelInstance == null) //The model blueprint is existing, and I need to create an instance of it !
             {
                 voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
+
+                //Assign state in case of growing entity !
+                var growingEntity = e.Entity as GrowingEntity;
+                if (growingEntity != null)
+                {
+                    voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevel].ModelState);
+                }
+
                 var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
                 //Get default world translation
                 Matrix instanceTranslation = Matrix.Translation(voxelEntity.Position.AsVector3());

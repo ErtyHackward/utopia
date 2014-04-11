@@ -25,6 +25,12 @@ namespace Utopia.Shared.Entities
         [Category("Growing")]
         public int CurrentGrowLevel { get; set; }
 
+        [Browsable(false)]
+        public bool isLastGrowLevel
+        {
+            get { return CurrentGrowLevel == GrowLevels.Count - 1; }
+        }
+
         [ProtoMember(3)]
         [Browsable(false)]
         [Category("Growing")]
@@ -52,11 +58,11 @@ namespace Utopia.Shared.Entities
         public float RottenChance { get; set; }
 
         /// <summary>
-        /// How much time passed from the last level change
+        /// When the last Grow refresh logic has been done on the entity.
         /// </summary>
         [ProtoMember(8)]
         [Browsable(false)]
-        public UtopiaTimeSpan CurrentGrowTime { get; set; }
+        public UtopiaTime LastGrowRefresh { get; set; }
 
         protected GrowingEntity()
         {
