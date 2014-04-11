@@ -2860,7 +2860,7 @@ namespace Utopia.Components
             _modelsList.Items.Clear();
             var index = 0;
             int i = 0;
-            foreach (var model in _manager.Enumerate())
+            foreach (var model in _manager.Enumerate().OrderBy(m => m.VoxelModel.Name))
             {
                 _modelsList.Items.Add(model);
                 if (model == selected)
