@@ -17,29 +17,29 @@ namespace Utopia.Shared.Structs
         [ProtoMember(1)]
         public long TotalSeconds { get; set; }
 
-        public int TotalMinutes
+        public double TotalMinutes
         {
-            get { return (int)(TotalSeconds / SecondsPerMinute); }
+            get { return (double)TotalSeconds / SecondsPerMinute; }
         }
 
-        public int TotalHours
+        public double TotalHours
         {
-            get { return (int)(TotalSeconds / SecondsPerHour); }
+            get { return (double)TotalSeconds / SecondsPerHour; }
         }
 
-        public int TotalDays
+        public double TotalDays
         {
-            get { return (int)(TotalSeconds / SecondsPerDay); }
+            get { return (double)TotalSeconds / SecondsPerDay; }
         }
 
-        public int TotalSeasons
+        public double TotalSeasons
         {
             get { return TotalDays / UtopiaTime.TimeConfiguration.DaysPerSeason; }
         }
 
-        public int TotalYears
+        public double TotalYears
         {
-            get { return (int)(TotalDays / UtopiaTime.TimeConfiguration.DaysPerYear); }
+            get { return TotalDays / UtopiaTime.TimeConfiguration.DaysPerYear; }
         }
 
         public int Seconds
@@ -49,27 +49,27 @@ namespace Utopia.Shared.Structs
 
         public int Minutes
         {
-            get { return TotalMinutes % 60; }
+            get { return (int)TotalMinutes % 60; }
         }
 
         public int Hours
         {
-            get { return TotalHours % 24; }
+            get { return (int)TotalHours % 24; }
         }
 
         public int Days
         {
-            get { return TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason; }
+            get { return (int)TotalDays % UtopiaTime.TimeConfiguration.DaysPerSeason; }
         }
 
         public int Seasons
         {
-            get { return TotalSeasons % UtopiaTime.TimeConfiguration.Seasons.Count; }
+            get { return (int)TotalSeasons % UtopiaTime.TimeConfiguration.Seasons.Count; }
         }
 
         public int Years
         {
-            get { return TotalYears; }
+            get { return (int)TotalYears; }
         }
 
         public static UtopiaTimeSpan Zero {
@@ -140,24 +140,24 @@ namespace Utopia.Shared.Structs
             return new UtopiaTimeSpan { TotalSeconds = seconds };
         }
 
-        public static UtopiaTimeSpan FromMinutes(int minutes)
+        public static UtopiaTimeSpan FromMinutes(double minutes)
         {
-            return new UtopiaTimeSpan { TotalSeconds = minutes * 60 };
+            return new UtopiaTimeSpan { TotalSeconds = (long)(minutes * 60) };
         }
 
-        public static UtopiaTimeSpan FromHours(int hours)
+        public static UtopiaTimeSpan FromHours(double hours)
         {
-            return new UtopiaTimeSpan { TotalSeconds = hours * 60 * 60 };
+            return new UtopiaTimeSpan { TotalSeconds = (long)(hours * 60 * 60) };
         }
 
-        public static UtopiaTimeSpan FromDays(int days)
+        public static UtopiaTimeSpan FromDays(double days)
         {
-            return new UtopiaTimeSpan { TotalSeconds = (long)days * 24 * 60 * 60 };
+            return new UtopiaTimeSpan { TotalSeconds = (long)(days * 24 * 60 * 60) };
         }
 
-        public static UtopiaTimeSpan FromSeasons(int seasons)
+        public static UtopiaTimeSpan FromSeasons(double seasons)
         {
-            return new UtopiaTimeSpan { TotalSeconds = (long)seasons * UtopiaTime.TimeConfiguration.DaysPerSeason * 24 * 60 * 60 };
+            return new UtopiaTimeSpan { TotalSeconds = (long)(seasons * UtopiaTime.TimeConfiguration.DaysPerSeason * 24 * 60 * 60) };
         }
 
         public bool Equals(UtopiaTimeSpan other)

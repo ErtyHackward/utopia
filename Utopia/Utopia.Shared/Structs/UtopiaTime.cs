@@ -10,6 +10,8 @@ namespace Utopia.Shared.Structs
     [ProtoContract]
     public struct UtopiaTime
     {
+        private long _totalSeconds;
+
         public const int SecondsPerMinute = 60;
         public const int SecondsPerHour = SecondsPerMinute * 60;
         public const int SecondsPerDay = SecondsPerHour * 24;
@@ -41,36 +43,40 @@ namespace Utopia.Shared.Structs
         /// Amount of seconds passed from the begginning of the world
         /// </summary>
         [ProtoMember(1)]
-        public long TotalSeconds { get; set; }
-        
+        public long TotalSeconds
+        {
+            get { return _totalSeconds; }
+            set { _totalSeconds = value; }
+        }
+
         /// <summary>
         /// Amount of minutes passed from the begginning of the world
         /// </summary>
-        public int TotalMinutes
+        public double TotalMinutes
         {
-            get { return (int)(TotalSeconds / SecondsPerMinute); }
+            get { return (double)TotalSeconds / SecondsPerMinute; }
         }
 
         /// <summary>
         /// Amount of hours passed from the begginning of the world
         /// </summary>
-        public int TotalHours
+        public double TotalHours
         {
-            get { return (int)(TotalSeconds / SecondsPerHour); }
+            get { return (double)TotalSeconds / SecondsPerHour; }
         }
 
         /// <summary>
         /// Amount of days passed from the begginning of the world
         /// </summary>
-        public int TotalDays
+        public double TotalDays
         {
-            get { return (int)(TotalSeconds / SecondsPerDay); }
+            get { return (double)TotalSeconds / SecondsPerDay; }
         }
 
         /// <summary>
         /// Amount of seasons passed from the begginning of the world
         /// </summary>
-        public int TotalSeasons
+        public double TotalSeasons
         {
             get { return TotalDays / TimeConfiguration.DaysPerSeason; }
         }
@@ -78,9 +84,9 @@ namespace Utopia.Shared.Structs
         /// <summary>
         /// Amount of Years passed from the begginning of the world
         /// </summary>
-        public int TotalYears
+        public double TotalYears
         {
-            get { return (int)(TotalDays / UtopiaTime.TimeConfiguration.DaysPerYear); }
+            get { return TotalDays / TimeConfiguration.DaysPerYear; }
         }
 
         /// <summary>
@@ -96,7 +102,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public int Minute 
         {
-            get { return TotalMinutes % 60; }
+            get { return (int)TotalMinutes % 60; }
         }
 
         /// <summary>
@@ -104,7 +110,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public int Hour 
         {
-            get { return TotalHours % 24; }
+            get { return (int)TotalHours % 24; }
         }
 
         /// <summary>
@@ -112,7 +118,7 @@ namespace Utopia.Shared.Structs
         /// </summary>
         public int Day 
         {
-            get { return TotalDays % TimeConfiguration.DaysPerSeason + 1; }
+            get { return (int)TotalDays % TimeConfiguration.DaysPerSeason + 1; }
         }
 
         /// <summary>
@@ -122,19 +128,20 @@ namespace Utopia.Shared.Structs
         {
             get
             {
-                if (SeasonIndex < TimeConfiguration.Seasons.Count - 1) return TimeConfiguration.Seasons[SeasonIndex];
+                if (SeasonIndex < TimeConfiguration.Seasons.Count - 1) 
+                    return TimeConfiguration.Seasons[SeasonIndex];
                 return null;
             }
         }
 
         public int SeasonNumber 
         {
-            get { return ((TotalDays % TimeConfiguration.DaysPerYear) / TimeConfiguration.DaysPerSeason) + 1; }
+            get { return (int)TotalDays % TimeConfiguration.DaysPerYear / TimeConfiguration.DaysPerSeason + 1; }
         }
 
         public int SeasonIndex
         {
-            get { return (TotalDays % TimeConfiguration.DaysPerYear) / TimeConfiguration.DaysPerSeason; }
+            get { return (int)TotalDays % TimeConfiguration.DaysPerYear / TimeConfiguration.DaysPerSeason; }
         }
         
         /// <summary>
@@ -158,6 +165,16 @@ namespace Utopia.Shared.Structs
 
         public UtopiaTimeSpan TimeOfDay {
             get { return UtopiaTimeSpan.FromSeconds(TotalSeconds % SecondsPerDay); }
+        }
+
+        public UtopiaTime(int year, int season = 0, int day = 0, int hour = 0, int minute = 0, int second = 0)
+        {
+            _totalSeconds = year * TimeConfiguration.DaysPerYear * SecondsPerDay +
+                            season * TimeConfiguration.DaysPerSeason * SecondsPerDay +
+                            day * SecondsPerDay +
+                            hour * SecondsPerHour +
+                            minute * SecondsPerMinute +
+                            second;
         }
 
         public override string ToString()
