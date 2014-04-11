@@ -28,7 +28,7 @@ namespace Utopia.Shared.Entities
         [ProtoMember(3)]
         [Browsable(false)]
         [Category("Growing")]
-        public UtopiaTime LastLevelUpdate { get; set; }
+        public UtopiaTime LastGrowUpdate { get; set; }
 
         [ProtoMember(4)]
         [Category("Growing")]
@@ -50,6 +50,13 @@ namespace Utopia.Shared.Entities
         [Category("Growing")]
         [Description("Probability of entity to rotten at grow level 0. [0;1]")]
         public float RottenChance { get; set; }
+
+        /// <summary>
+        /// How much time passed from the last level change
+        /// </summary>
+        [ProtoMember(8)]
+        [Browsable(false)]
+        public UtopiaTimeSpan CurrentGrowTime { get; set; }
 
         protected GrowingEntity()
         {

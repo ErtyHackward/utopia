@@ -40,50 +40,66 @@ namespace Utopia.Shared.Server.Managers
 
                 foreach (var entity in growingEntities)
                 {
-                    var passedTime = now - entity.LastLevelUpdate;
                     var updated = false;
 
-                    // constranits check
-                    if (entity.GrowingSeasons.Count > 0 && !entity.GrowingSeasons.Contains(now.Season.Name))
-                        continue;
-
-                    if (entity.GrowingBlocks.Count > 0)
+                    try
                     {
-                        var cursor = _server.LandscapeManager.GetCursor(entity.Position);
-                        if (!entity.GrowingBlocks.Contains(cursor.PeekValue(Vector3I.Down)))
+                        // constranits check
+                        if (entity.GrowingSeasons.Count > 0 && !entity.GrowingSeasons.Contains(now.Season.Name))
                             continue;
-                    }
 
-                    // TODO: check light constraint when implemented
-
-
-                    // update entity to the actual state 
-                    while (entity.CurrentGrowLevel < entity.GrowLevels.Count - 1)
-                    {
-                        var currentLevel = entity.GrowLevels[entity.CurrentGrowLevel];
-                        passedTime -= currentLevel.GrowTime;
-
-                        if (passedTime.TotalSeconds < 0)
-                            break;
-
-                        if (entity.CurrentGrowLevel == 0 && entity.RottenChance != 0f)
+                        if (entity.GrowingBlocks.Count > 0)
                         {
-                            if (random.NextDouble() < entity.RottenChance)
+                            if (entity.Linked)
                             {
-                                chunk.Entities.RemoveById(entity.StaticId);
-                                continue;
+                                var cursor = _server.LandscapeManager.GetCursor(entity.LinkedCube);
+                                if (!entity.GrowingBlocks.Contains(cursor.Read()))
+                                    continue;
+                            }
+                            else
+                            {
+                                var cursor = _server.LandscapeManager.GetCursor(entity.Position);
+                                if (!entity.GrowingBlocks.Contains(cursor.PeekValue(Vector3I.Down)))
+                                    continue;
                             }
                         }
-                        
-                        entity.CurrentGrowLevel++;
-                        updated = true;
-                    }
 
-                    if (updated)
+                        // TODO: check light constraint when implemented
+
+                        var passedTime = now - entity.LastGrowUpdate;
+                        entity.CurrentGrowTime += passedTime;
+
+                        // update entity to the actual state 
+                        while (entity.CurrentGrowLevel < entity.GrowLevels.Count - 1)
+                        {
+                            var currentLevel = entity.GrowLevels[entity.CurrentGrowLevel];
+                            
+                            if (entity.CurrentGrowTime < currentLevel.GrowTime)
+                                break;
+
+                            if (entity.CurrentGrowLevel == 0 && entity.RottenChance != 0f)
+                            {
+                                if (random.NextDouble() < entity.RottenChance)
+                                {
+                                    chunk.Entities.RemoveById(entity.StaticId);
+                                    continue;
+                                }
+                            }
+
+                            entity.CurrentGrowTime -= currentLevel.GrowTime;
+                            entity.CurrentGrowLevel++;
+                            updated = true;
+                        }
+
+                        if (updated)
+                        {
+                            chunk.Entities.RemoveById(entity.StaticId);
+                            chunk.Entities.Add(entity);
+                        }
+                    }
+                    finally
                     {
-                        entity.LastLevelUpdate = now;
-                        chunk.Entities.RemoveById(entity.StaticId);
-                        chunk.Entities.Add(entity);
+                        entity.LastGrowUpdate = now;
                     }
 
                 }
