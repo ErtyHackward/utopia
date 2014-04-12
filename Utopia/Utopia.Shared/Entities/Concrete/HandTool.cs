@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -14,11 +15,14 @@ namespace Utopia.Shared.Entities.Concrete
     /// Special tool used when no tool is set (character mode)
     /// </summary>
     [EditorHide]
-    public class HandTool : Item, ITool
+    public class HandTool : Item, ITool, ISoundEmitterEntity
     {
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(1)]
         public bool RepeatedActionsAllowed { get; set; }
+
+        [Browsable(false)]
+        public ISoundEngine SoundEngine { get; set; }
 
         public override PickType CanPickBlock(BlockProfile blockProfile)
         {
@@ -129,6 +133,11 @@ namespace Utopia.Shared.Entities.Concrete
 
                     // entity should lose its voxel intance if put into the inventory
                     removedEntity.ModelInstance = null;
+
+                    if (SoundEngine != null && EntityFactory.Config.EntityTake != null)
+                    {
+                        SoundEngine.StartPlay3D(EntityFactory.Config.EntityTake, item.Position.AsVector3());
+                    }
 
                     return impact;
                 }

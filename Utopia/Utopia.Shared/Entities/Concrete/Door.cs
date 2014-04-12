@@ -14,7 +14,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     [ProtoContract]
     [Description("Provides door entity functionality. Can be opened or closed. Bind according model states to the class properties.")]
-    public class Door : OrientedBlockItem, IUsableEntity, ISoundEmitterEntity
+    public class Door : OrientedBlockItem, IUsableEntity
     {
         [Category("Door")]
         [Description("Current entity state (initial)")]
@@ -44,15 +44,6 @@ namespace Utopia.Shared.Entities.Concrete
         [TypeConverter(typeof(ShortSoundSelector))]
         [ProtoMember(7)]
         public StaticEntitySoundSource FinishSound { get; set; }
-
-        private ISoundEngine _soundEngine;
-
-        [Browsable(false)]
-        public ISoundEngine SoundEngine
-        {
-            get { return _soundEngine; }
-            set { _soundEngine = value; }
-        }
 
         protected override void OnInstanceChanged(VoxelModelInstance prev)
         {

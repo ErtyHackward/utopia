@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
 using S33M3CoreComponents.Sound;
+using SharpDX;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
@@ -18,11 +19,8 @@ namespace Utopia.Shared.Entities
     /// </summary>
     [ProtoContract]
     [ProtoInclude(100, typeof(BasicCollector))]
-    public abstract class ResourcesCollector : Item, ITool, ISoundEmitterEntity
+    public abstract class ResourcesCollector : Item, ITool
     {
-        [Browsable(false)]
-        public ISoundEngine SoundEngine { get; set; }
-
         /// <summary>
         /// Tool block damage
         /// negative values will repair blocks
@@ -121,7 +119,7 @@ namespace Utopia.Shared.Entities
                     {
                         var random = new Random();
                         var sound = profile.HitSounds[random.Next(0, profile.HitSounds.Count)];
-                        SoundEngine.StartPlay3D(sound, owner.EntityState.PickedBlockPosition);
+                        SoundEngine.StartPlay3D(sound, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
                     }
                 }
 
@@ -137,6 +135,11 @@ namespace Utopia.Shared.Entities
                     }
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.Linked && e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
+
+                    if (SoundEngine != null && EntityFactory.Config.ResourceTake != null)
+                    {
+                        SoundEngine.StartPlay3D(EntityFactory.Config.ResourceTake, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
+                    }
                     
                     var charEntity = owner as CharacterEntity;
                     if (charEntity == null)

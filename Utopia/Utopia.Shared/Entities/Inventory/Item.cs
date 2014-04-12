@@ -3,6 +3,7 @@ using System.Drawing.Design;
 using System.Globalization;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Configuration;
@@ -30,7 +31,7 @@ namespace Utopia.Shared.Entities.Inventory
     [ProtoInclude(106, typeof(GodHandTool))]
     [ProtoInclude(107, typeof(Extractor))]
     [ProtoInclude(108, typeof(MeleeWeapon))]
-    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity
+    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity, ISoundEmitterEntity
     {
         private VoxelModelInstance _modelInstance;
 
@@ -85,6 +86,9 @@ namespace Utopia.Shared.Entities.Inventory
         [Description("Optional model state for the entity, if not set the main state will be used")]
         [TypeConverter(typeof(ModelStateConverter))]
         public string ModelState { get; set; }
+
+        [Browsable(false)]
+        public ISoundEngine SoundEngine { get; set; }
 
         /// <summary>
         /// Gets or sets voxel model instance
@@ -323,6 +327,16 @@ namespace Utopia.Shared.Entities.Inventory
                 // put entity into the world
                 cursor.AddEntity(entity, owner.DynamicId);
                 impact.EntityId = entity.StaticId;
+
+                if (SoundEngine != null)
+                {
+                    var sound = entity.PutSound ?? EntityFactory.Config.EntityPut;
+                    if (sound != null)
+                    {
+                        SoundEngine.StartPlay3D(sound, entity.Position.AsVector3());
+                    }
+                }
+
                 return impact;
             }
             

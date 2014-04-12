@@ -215,6 +215,8 @@ namespace Utopia.Shared.Entities.Inventory
 
             if (item.StaticId == 0 || Find(item.StaticId) != null)
                 item.StaticId = GetFreeId();
+            else
+                _maxId = Math.Max(_maxId, item.StaticId);
         }
 
         /// <summary>
@@ -357,8 +359,6 @@ namespace Utopia.Shared.Entities.Inventory
             }
             else
             {
-                
-                
                 ValidateId(ref  item);
 
                 // adding new slot
