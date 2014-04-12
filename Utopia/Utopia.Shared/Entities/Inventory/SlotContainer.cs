@@ -261,6 +261,9 @@ namespace Utopia.Shared.Entities.Inventory
         /// <returns>True if item put into the inventory otherwise false</returns>
         public bool PutItem(IItem item, int count = 1)
         {
+            if (count == 0)
+                return true;
+
             // inventory is full?
             if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
                 return false;

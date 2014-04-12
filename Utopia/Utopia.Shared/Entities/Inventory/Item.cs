@@ -310,6 +310,7 @@ namespace Utopia.Shared.Entities.Inventory
                     return impact;
                 }
 
+                OnBeforePut(entity);
                 // put entity into the world
                 cursor.AddEntity(entity, owner.DynamicId);
                 impact.EntityId = entity.StaticId;
@@ -319,6 +320,12 @@ namespace Utopia.Shared.Entities.Inventory
             impact.Message = "CharacterEntity owner is expected";
             return impact;
         }
+
+        protected virtual void OnBeforePut(Item item)
+        {
+
+        }
+        
 
         /// <summary>
         /// Defines tool pick behaviour for the blocks

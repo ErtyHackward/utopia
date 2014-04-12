@@ -5,6 +5,7 @@ using Utopia.Shared.Entities.Concrete;
 using System.Drawing.Design;
 using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
 {
@@ -23,13 +24,7 @@ namespace Utopia.Shared.Entities
         [ProtoMember(2)]
         [Browsable(false)]
         [Category("Growing")]
-        public int CurrentGrowLevel { get; set; }
-
-        [Browsable(false)]
-        public bool isLastGrowLevel
-        {
-            get { return CurrentGrowLevel == GrowLevels.Count - 1; }
-        }
+        public int CurrentGrowLevelIndex { get; set; }
 
         [ProtoMember(3)]
         [Browsable(false)]
@@ -63,6 +58,15 @@ namespace Utopia.Shared.Entities
         [ProtoMember(8)]
         [Browsable(false)]
         public UtopiaTime LastGrowRefresh { get; set; }
+        
+        [Browsable(false)]
+        public GrowLevel CurrentGrowLevel { get { return GrowLevels.Count > CurrentGrowLevelIndex ? GrowLevels[CurrentGrowLevelIndex] : default(GrowLevel); } }
+
+        [Browsable(false)]
+        public bool IsLastGrowLevel
+        {
+            get { return CurrentGrowLevelIndex == GrowLevels.Count - 1; }
+        }
 
         protected GrowingEntity()
         {
@@ -87,6 +91,11 @@ namespace Utopia.Shared.Entities
         [ProtoMember(4)]
         [Browsable(false)]
         public UtopiaTimeSpan GrowTime { get; set; }
+
+        [ProtoMember(5)]
+        [Description("Generated entity when harvested")]
+        [TypeConverter(typeof(ValueTypeTypeConverter<InitSlot>))]
+        public InitSlot HarvestSlot { get; set; }
 
         [DisplayName("Grow Time (Hours)")]
         public double GrowTimeH

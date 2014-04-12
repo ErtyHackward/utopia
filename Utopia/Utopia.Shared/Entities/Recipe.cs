@@ -80,10 +80,11 @@ namespace Utopia.Shared.Entities
         public int Count { get; set; }
 
         /// <summary>
-        /// Optional initialization set for containers
+        /// Optional initialization set for containers. In case if the blueprint is the container allows to fill it with the set provided
         /// </summary>
         [ProtoMember(3)]
         [TypeConverter(typeof(ContainerSetSelector))]
+        [Description("Optional initialization set for containers. In case if the blueprint is the container allows to fill it with the set provided")]
         public string SetName { get; set; }
         
         public override string ToString()

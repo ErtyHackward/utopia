@@ -299,7 +299,7 @@ namespace Utopia.Worlds.Chunks
                 var growingEntity = e.Entity as GrowingEntity;
                 if (growingEntity != null)
                 {
-                    voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevel].ModelState);
+                    voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevelIndex].ModelState);
                 }
 
                 var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
