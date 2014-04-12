@@ -85,32 +85,14 @@ namespace Utopia.Shared.Entities.Concrete
                 var item = (IItem)entity;
                 impact.EntityId = entity.StaticId;
 
-                IOwnerBindable playerBindedItem = entity as IOwnerBindable;
+                var playerBindedItem = entity as IOwnerBindable;
                 if (playerBindedItem != null && playerBindedItem.DynamicEntityOwnerID != charEntity.DynamicId)
                 {
                     impact.Message = "This item is not binded to you !";
                     return impact;
                 }
 
-                if (item.IsDestroyedOnWorldRemove == false)
-                {
-                    //Try to put the item into the inventory
-                    if (charEntity.Inventory.PutItem(item))
-                    {
-                        //If inside the inventory, then remove it from the world
-                        cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
-                        impact.Success = true;
-
-                        // entity should lose its voxel intance if put into the inventory
-                        item.ModelInstance = null;
-
-                        return impact;
-                    }
-
-                    impact.Message = "Unable to put item to the inventory, is it full?";
-                    return impact;
-                }
-                else
+                if (item.IsDestroyedOnWorldRemove)
                 {
                     item.BeforeDestruction(charEntity);
                     cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
@@ -119,6 +101,40 @@ namespace Utopia.Shared.Entities.Concrete
                     impact.Message = "Item has been destroyed";
                     return impact;
                 }
+
+
+                var count = 1;
+                var growing = item as PlantGrowingEntity;
+                if (growing != null)
+                {
+                    var slot = growing.CurrentGrowLevel.HarvestSlot;
+                    
+                    if (slot.BlueprintId == 0)
+                    {
+                        count = 0;
+                    }
+                    else
+                    {
+                        count = slot.Count;
+                        item = (Item)EntityFactory.CreateFromBluePrint(slot.BlueprintId);
+                    }
+                }
+
+                //Try to put the item into the inventory
+                if (charEntity.Inventory.PutItem(item, count))
+                {
+                    //If inside the inventory, then remove it from the world
+                    var removedEntity = (Item)cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
+                    impact.Success = true;
+
+                    // entity should lose its voxel intance if put into the inventory
+                    removedEntity.ModelInstance = null;
+
+                    return impact;
+                }
+
+                impact.Message = "Unable to put item to the inventory, is it full?";
+                return impact;
             }
 
             impact.Message = "Expected CharacterEntity owner";

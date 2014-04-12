@@ -39,19 +39,19 @@ namespace Utopia.Shared.Server.Managers
                 var growingEntities = chunk.Entities.OfType<GrowingEntity>().ToList();
 
                 //Check only for entities that can still grow
-                foreach (var entity in growingEntities.Where(x => !x.isLastGrowLevel))
+                foreach (var entity in growingEntities.Where(x => !x.IsLastGrowLevel))
                 {
                     bool entityUpdated = false;
                     //Init LastGrowUpdate
-                    if (entity.LastGrowUpdate.TotalSeconds == 0 && entity.CurrentGrowLevel == 0) entity.LastGrowUpdate = LookupTime;
+                    if (entity.LastGrowUpdate.TotalSeconds == 0 && entity.CurrentGrowLevelIndex == 0) entity.LastGrowUpdate = LookupTime;
 
-                    while (entity.LastGrowRefresh < LookupTime && !entity.isLastGrowLevel)
+                    while (entity.LastGrowRefresh < LookupTime && !entity.IsLastGrowLevel)
                     {
                         entity.LastGrowRefresh += _growingLookupSpan;
                         if (CheckEntityGrowConstraints(entity, entity.LastGrowRefresh))
                         {
                             //Check for rotting entity =====================================
-                            if (entity.CurrentGrowLevel == 0 && entity.RottenChance != 0f)
+                            if (entity.CurrentGrowLevelIndex == 0 && entity.RottenChance != 0f)
                             {
                                 if (random.NextDouble() < entity.RottenChance)
                                 {
@@ -60,7 +60,7 @@ namespace Utopia.Shared.Server.Managers
                                 }
                             }
 
-                            entity.CurrentGrowLevel++;
+                            entity.CurrentGrowLevelIndex++;
                             //Make the entity grow to the next level !
 
                             entityUpdated = true; 
@@ -90,7 +90,7 @@ namespace Utopia.Shared.Server.Managers
 
 
                 //Check minimum time needed
-                if (entity.GrowLevels[entity.CurrentGrowLevel].GrowTime > time - entity.LastGrowUpdate) return false;
+                if (entity.GrowLevels[entity.CurrentGrowLevelIndex].GrowTime > time - entity.LastGrowUpdate) return false;
 
                 // Check Season constraint
                 if (entity.GrowingSeasons.Count > 0 && !entity.GrowingSeasons.Contains(time.Season.Name)) return false;
