@@ -134,13 +134,14 @@ namespace Utopia.Shared.Net.Web
             GetRequestAsync<ServerListResponse>(ServerUrl + string.Format("/api/servers?access_token={0}", Token), OnServerListReceived);
         }
 
-        public void UploadModel(string filePath)
+        public void UploadModel(string filePath, string md5Hash)
         {
             CheckToken();
 
             var nvc = new NameValueCollection();
 
             nvc.Add("name", Path.GetFileNameWithoutExtension(filePath));
+            nvc.Add("modelHash", md5Hash);
 
             var files = new List<UploadFileInfo>();
 
