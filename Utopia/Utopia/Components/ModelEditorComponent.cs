@@ -1898,7 +1898,7 @@ namespace Utopia.Components
             base.FTSUpdate(timeSpent);
         }
 
-        private void ColorFill(VoxelFrame frame, Vector3I vector3I, byte fillIndex, byte newIndex)
+        private IEnumerable<Vector3I> ColorFillFind(VoxelFrame frame, Vector3I vector3I, byte fillIndex)
         {
             for (int x = -1; x < 2; x++)
             {
@@ -1918,12 +1918,31 @@ namespace Utopia.Components
 
                         if (InChunk(frame.BlockData.ChunkSize, checkVector) && frame.BlockData.GetBlock(checkVector) == fillIndex)
                         {
-                            frame.BlockData.SetBlock(checkVector, newIndex);
-                            ColorFill(frame, checkVector, fillIndex, newIndex);
+                            yield return checkVector;
                         }
                     }
                 }
             }
+        }
+
+        private void ColorFill(VoxelFrame frame, Vector3I vector3I, byte fillIndex, byte newIndex)
+        {
+            var checkVectors = new HashSet<Vector3I>();
+            checkVectors.Add(vector3I);
+
+            while (checkVectors.Count > 0)
+            {
+                var vector = checkVectors.First();
+                frame.BlockData.SetBlock(vector, newIndex);
+                checkVectors.Remove(vector);
+                
+                foreach (var v in ColorFillFind(frame, vector, fillIndex))
+                {
+                    if (!checkVectors.Contains(v))
+                        checkVectors.Add(v);
+                }
+            }
+
         }
         
         private void GetSelectedCube(out Vector3I? cubePosition, out Vector3I? newCubePosition)
