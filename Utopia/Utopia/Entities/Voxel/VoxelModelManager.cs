@@ -78,6 +78,9 @@ namespace Utopia.Entities.Voxel
 
                     lock (_syncRoot)
                     {
+                        if (_models.ContainsKey(voxelModel.Name))
+                            _models.Remove(voxelModel.Name);
+
                         _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, VoxelMeshFactory));
                         _pendingModels.Remove(voxelModel.Name);
                     }
@@ -243,6 +246,21 @@ namespace Utopia.Entities.Voxel
                 VoxelModelStorage.Save(model.VoxelModel);
                 _models.Remove(oldName);
                 _models.Add(newName, model);
+            }
+        }
+
+        public VisualVoxelModel GetModelByHash(string hash)
+        {
+            lock (_syncRoot)
+            {
+                var model = _models.Select(p => p.Value).FirstOrDefault(m => m.VoxelModel.Hash.ToString() == hash);
+
+                if (model == null)
+                {
+                    RequestModel(hash);
+                }
+
+                return model;
             }
         }
     }

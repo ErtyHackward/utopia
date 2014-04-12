@@ -2878,7 +2878,12 @@ namespace Utopia.Components
             {
                 foreach (var model in m.Models)
                 {
-                    _manager.GetModel(model.Name);     
+                    if (!string.IsNullOrEmpty(model.Hash))
+                        _manager.GetModelByHash(model.Hash);
+                    else
+                    {
+                        _manager.GetModel(model.Name);
+                    }
                 }
             });
         }
@@ -2912,7 +2917,8 @@ namespace Utopia.Components
 
                 RenderPng(imgPath);
 
-                WebApi.UploadModel(path);
+                _visualVoxelModel.VoxelModel.UpdateHash();
+                WebApi.UploadModel(path, _visualVoxelModel.VoxelModel.Hash.ToString());
 
                 _gui.MessageBox("Model published successfully.");
             }
@@ -2959,9 +2965,9 @@ namespace Utopia.Components
                 var modelPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".uvm");
                 var previewPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".png");
 
-                if (string.IsNullOrEmpty(_visualVoxelModel.VoxelModel.Author))
+                if (string.IsNullOrEmpty(visualVoxelModel.VoxelModel.Author))
                 {
-                    _visualVoxelModel.VoxelModel.Author = Author;
+                    visualVoxelModel.VoxelModel.Author = Author;
                 }
 
                 visualVoxelModel.VoxelModel.SaveToFile(modelPath);
@@ -2971,7 +2977,9 @@ namespace Utopia.Components
                 using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new Size2 { Width = 512, Height = 512 }))
                     Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
 
-                WebApi.UploadModel(modelPath);
+                visualVoxelModel.VoxelModel.UpdateHash();
+
+                WebApi.UploadModel(modelPath, visualVoxelModel.VoxelModel.Hash.ToString());
 
                 count++;
             }
