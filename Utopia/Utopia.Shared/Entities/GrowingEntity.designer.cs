@@ -16,28 +16,6 @@ namespace Utopia.Shared.Entities
 {
     public partial class GrowingEntity
     {
-        public class ModelStateConverter : StringConverter
-        {
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-            {
-                //true means show a combobox
-                return true;
-            }
-
-            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-            {
-                //true will limit to list. false will show the list, 
-                //but allow free-form entry
-                return true;
-            }
-
-            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-            {
-                //return new StandardValuesCollection(EditorConfigHelper.Config.BlockProfiles.Where(x => x != null).Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
-                return new StandardValuesCollection(ModelStateSelector.PossibleValues);
-            }
-        }
-
         public class MultiBlockListEditor : UITypeEditor
         {
             private CheckValuesEditorControl<BlockProfile> editor = null;

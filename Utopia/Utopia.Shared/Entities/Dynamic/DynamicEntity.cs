@@ -174,6 +174,16 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         [ProtoMember(9)]
         public bool CanFly { get; set; }
+
+        /// <summary>
+        /// Not related to the dynamic entities
+        /// </summary>
+        [Browsable(false)]
+        public string ModelState {
+            get { return null; } 
+            set { throw new NotSupportedException(); } 
+        }
+
         #endregion
 
         #region Events

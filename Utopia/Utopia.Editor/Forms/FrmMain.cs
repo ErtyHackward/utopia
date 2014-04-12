@@ -127,13 +127,22 @@ namespace Utopia.Editor.Forms
             //Create Items icons
             foreach (var visualVoxelModel in Program.IconManager.ModelManager.Enumerate())
             {
-                imageList1.Images.Add(_icons[visualVoxelModel.VoxelModel.Name]);
-                largeImageList.Images.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                foreach (var voxelModelState in visualVoxelModel.VoxelModel.States)
+                {
+                    var id = visualVoxelModel.VoxelModel.Name + (voxelModelState.IsMainState ? "" : ":" + voxelModelState.Name);
 
-                _icons[visualVoxelModel.VoxelModel.Name].Tag = imageList1.Images.Count - 1; //Add Image Index in imageList
+                    imageList1.Images.Add(_icons[id]);
+                    largeImageList.Images.Add(id, _icons[id]);
 
-                ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
-                if (visualVoxelModel.VoxelModel.States.Count > 1) ModelSelector.MultiStatesModels.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                    _icons[id].Tag = imageList1.Images.Count - 1; //Add Image Index in imageList
+
+                    if (voxelModelState.IsMainState)
+                    {
+                        ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                        if (visualVoxelModel.VoxelModel.States.Count > 1)
+                            ModelSelector.MultiStatesModels.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                    }
+                }
             }
 
             _cubeOffset = imageList1.Images.Count;
@@ -407,7 +416,7 @@ namespace Utopia.Editor.Forms
                     if (entity is IVoxelEntity)
                     {
                         var voxelEntity = entity as IVoxelEntity;
-                        iconName = voxelEntity.ModelName;
+                        iconName = GetVoxelEntityImgName(voxelEntity);
                     }
 
                     var node = AddSubNode(categoryNode, entity.Name, entity, iconName);
@@ -814,6 +823,26 @@ namespace Utopia.Editor.Forms
             }
         }
 
+        private int GetVoxelEntityImgIndex(IVoxelEntity voxelEntity)
+        {
+            var name = GetVoxelEntityImgName(voxelEntity);
+            return string.IsNullOrEmpty(name) ? -1 : (int)_icons[name].Tag;
+        }
+
+        private string GetVoxelEntityImgName(IVoxelEntity voxelEntity)
+        {
+            if (!string.IsNullOrEmpty(voxelEntity.ModelName))
+            {
+                if (!string.IsNullOrEmpty(voxelEntity.ModelState))
+                {
+                    return voxelEntity.ModelName + ":" + voxelEntity.ModelState;
+                }
+                return voxelEntity.ModelName;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Event raised when a property change in the Details property grid.
         /// </summary>
@@ -837,10 +866,16 @@ namespace Utopia.Editor.Forms
                 var voxelEntity = entity as IVoxelEntity;
 
                 //Look at currently existing Voxel Models following Entity Name
-                item.ImageIndex = string.IsNullOrEmpty(voxelEntity.ModelName) ? -1 : (int)_icons[voxelEntity.ModelName].Tag;
+                
+                item.ImageIndex = GetVoxelEntityImgIndex(voxelEntity);
                 item.SelectedImageIndex = item.ImageIndex;
 
-                ModelStateSelector.PossibleValues = null;
+                ModelStateConverter.PossibleValues = null;
+
+                if (voxelEntity.ModelState != null)
+                {
+                    voxelEntity.ModelState = null;
+                }
 
                 if (voxelEntity.ModelName != null)
                 {
@@ -849,12 +884,22 @@ namespace Utopia.Editor.Forms
 
                     if (model != null)
                     {
-                        ModelStateSelector.PossibleValues =
-                            model.VoxelModel.States.Select(s => s.Name).ToArray();
+                        ModelStateConverter.PossibleValues =
+                            new string[]{ null }.Concat(model.VoxelModel.States.Select(s => s.Name)).ToArray();
                     }
                 }
             }
 
+            if (e.ChangedItem.Label == "ModelState")
+            {
+                var item = tvMainCategories.SelectedNode;
+                var entity = pgDetails.SelectedObject;
+                var voxelEntity = entity as IVoxelEntity;
+
+                item.ImageIndex = GetVoxelEntityImgIndex(voxelEntity);
+                item.SelectedImageIndex = item.ImageIndex;
+            }
+            
             if (e.ChangedItem.Label == "Name")
             {
                 UpdateTree();
@@ -975,7 +1020,7 @@ namespace Utopia.Editor.Forms
                     {
                         var voxelEntity = selectedObject as IVoxelEntity;
 
-                        ModelStateSelector.PossibleValues = null;
+                        ModelStateConverter.PossibleValues = null;
 
                         if (voxelEntity.ModelName != null)
                         {
@@ -984,8 +1029,8 @@ namespace Utopia.Editor.Forms
 
                             if (model != null)
                             {
-                                ModelStateSelector.PossibleValues =
-                                    model.VoxelModel.States.Select(s => s.Name).ToArray();
+                                ModelStateConverter.PossibleValues =
+                                    new string[]{ null }.Concat(model.VoxelModel.States.Select(s => s.Name)).ToArray();
                             }
                         }
                     }

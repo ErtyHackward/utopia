@@ -165,12 +165,26 @@ namespace Utopia.Shared.Entities.Models
         /// <returns></returns>
         public VoxelModelState GetMainState()
         {
-            var mainIndex = States.FindIndex(s => s.Name == "Main");
+            var mainIndex = States.FindIndex(s => string.Equals(s.Name, "Main", StringComparison.InvariantCultureIgnoreCase));
 
             if (mainIndex == -1)
                 mainIndex = 0;
 
             return States[mainIndex];
+        }
+
+        /// <summary>
+        /// Returns the state that will be used as default icon
+        /// </summary>
+        /// <returns></returns>
+        public VoxelModelState GetIconState()
+        {
+            var iconIndex = States.FindIndex(s => string.Equals(s.Name, "Icon", StringComparison.InvariantCultureIgnoreCase));
+
+            if (iconIndex != -1)
+                return States[iconIndex];
+
+            return GetMainState();
         }
 
         public void AddPart(VoxelModelPart part)

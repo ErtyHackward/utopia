@@ -23,13 +23,13 @@ namespace Utopia.Shared.Entities.Concrete
         
         [Category("Door")]
         [Description("Model state if the door is opened")]
-        [TypeConverter(typeof(ModelStateSelector))]
+        [TypeConverter(typeof(ModelStateConverter))]
         [ProtoMember(2)]
         public string OpenedState { get; set; }
 
         [Category("Door")]
         [Description("Model state if the door is closed")]
-        [TypeConverter(typeof(ModelStateSelector))]
+        [TypeConverter(typeof(ModelStateConverter))]
         [ProtoMember(3)]
         public string ClosedState { get; set; }
 

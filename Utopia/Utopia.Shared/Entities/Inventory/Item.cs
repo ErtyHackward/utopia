@@ -78,6 +78,15 @@ namespace Utopia.Shared.Entities.Inventory
         public float PickRange { get; set; }
 
         /// <summary>
+        /// Optional model state for the entity, if not set the main state will be used
+        /// </summary>
+        [ProtoMember(9)]
+        [Category("Appearance")]
+        [Description("Optional model state for the entity, if not set the main state will be used")]
+        [TypeConverter(typeof(ModelStateConverter))]
+        public string ModelState { get; set; }
+
+        /// <summary>
         /// Gets or sets voxel model instance
         /// </summary>
         [Browsable(false)]

@@ -488,7 +488,7 @@
     <Compile Include="Tools\ExceptionHandler.cs" />
     <Compile Include="Tools\FullSoundSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
-    <Compile Include="Tools\ModelStateSelector.cs" />
+    <Compile Include="Tools\ModelStateConverter.cs" />
     <Compile Include="Tools\ShortSoundSelector.cs" />
     <Compile Include="Tools\SoundList.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
