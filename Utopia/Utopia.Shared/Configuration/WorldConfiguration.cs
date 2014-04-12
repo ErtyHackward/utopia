@@ -9,6 +9,7 @@ using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
@@ -159,6 +160,12 @@ namespace Utopia.Shared.Configuration
         [TypeConverter(typeof(BlueprintSelector))]
         [ProtoMember(19)]
         public ushort GraveBlueprint { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on resource inventory put")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(20)]
+        public StaticEntitySoundSource ResourcePut { get; set; }
 
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
@@ -381,7 +388,11 @@ namespace Utopia.Shared.Configuration
             CreateDefaultEntities();
         }
 
-        protected void AddNewEntity(IEntity entityInstance)
+        /// <summary>
+        /// Adds the entity to the configuration, assign unique bleprintid
+        /// </summary>
+        /// <param name="entityInstance"></param>
+        public void AddNewEntity(IEntity entityInstance)
         {
             //Generate a new Blueprint ID, it will represent this Blue print, and must be unique
             ushort newId;

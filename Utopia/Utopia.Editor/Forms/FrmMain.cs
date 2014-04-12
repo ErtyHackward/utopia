@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data.Entity.Design.PluralizationServices;
 using System.Diagnostics;
 using System.Drawing;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -1139,6 +1140,31 @@ namespace Utopia.Editor.Forms
             var filePath = Path.ChangeExtension(Path.GetTempFileName(), ".txt");
             File.WriteAllText(filePath, sb.ToString());
             Process.Start(filePath).WaitForExit();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tag = tvMainCategories.SelectedNode.Tag;
+            if (tag is Entity)
+            {
+                var entity = (Entity)tvMainCategories.SelectedNode.Tag;
+                entity = (Entity)entity.Clone();
+                entity.Name += " (copy)";
+                Configuration.AddNewEntity(entity);
+                UpdateTree();
+                tvMainCategories.SelectedNode = FindByTag(entity);
+
+            }
+        }
+
+        private void entityListView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                pgDetails.SelectedObjects = entityListView.SelectedItems.Cast<ListViewItem>().Select(i=> (Entity)i.Tag).ToArray();
+
+                ShowMainControl(pgDetails);
+            }
         }
     }
 }
