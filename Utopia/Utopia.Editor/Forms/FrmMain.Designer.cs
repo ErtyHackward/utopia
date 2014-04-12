@@ -29,16 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("General", 1, 1);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Trees", 9, 9);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Landscape Entities", 2, 2, new System.Windows.Forms.TreeNode[] {
-            treeNode3});
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Recipes", 8, 8);
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Services", 11, 11);
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("General", 1, 1);
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Entities", 2, 2);
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Trees", 9, 9);
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Landscape Entities", 2, 2, new System.Windows.Forms.TreeNode[] {
+            treeNode12});
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Cubes", 4, 4);
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("WorldProcessor Params", 5, 5);
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Container sets", 7, 7);
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Recipes", 8, 8);
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Services", 11, 11);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.contextMenuCategories = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +68,7 @@
             this.entityListView = new System.Windows.Forms.ListView();
             this.largeImageList = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuEntity = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuCategories.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -241,57 +242,57 @@
             this.tvMainCategories.ImageList = this.imageList1;
             this.tvMainCategories.Location = new System.Drawing.Point(3, 22);
             this.tvMainCategories.Name = "tvMainCategories";
-            treeNode1.ImageIndex = 1;
-            treeNode1.Name = "General";
-            treeNode1.SelectedImageIndex = 1;
-            treeNode1.Text = "General";
-            treeNode2.ContextMenuStrip = this.contextMenuCategories;
-            treeNode2.ImageIndex = 2;
-            treeNode2.Name = "Entities";
-            treeNode2.SelectedImageIndex = 2;
-            treeNode2.Text = "Entities";
-            treeNode3.ContextMenuStrip = this.contextMenuCategories;
-            treeNode3.ImageIndex = 9;
-            treeNode3.Name = "Trees";
-            treeNode3.SelectedImageIndex = 9;
-            treeNode3.Text = "Trees";
-            treeNode4.ImageIndex = 2;
-            treeNode4.Name = "LandscapeEntities";
-            treeNode4.SelectedImageIndex = 2;
-            treeNode4.Text = "Landscape Entities";
-            treeNode5.ContextMenuStrip = this.contextMenuCategories;
-            treeNode5.ImageIndex = 4;
-            treeNode5.Name = "Cubes";
-            treeNode5.SelectedImageIndex = 4;
-            treeNode5.Text = "Cubes";
-            treeNode6.ImageIndex = 5;
-            treeNode6.Name = "WorldProcessor Params";
-            treeNode6.SelectedImageIndex = 5;
-            treeNode6.Text = "WorldProcessor Params";
-            treeNode7.ContextMenuStrip = this.contextMenuCategories;
-            treeNode7.ImageIndex = 7;
-            treeNode7.Name = "Container sets";
-            treeNode7.SelectedImageIndex = 7;
-            treeNode7.Text = "Container sets";
-            treeNode8.ContextMenuStrip = this.contextMenuCategories;
-            treeNode8.ImageIndex = 8;
-            treeNode8.Name = "Recipes";
-            treeNode8.SelectedImageIndex = 8;
-            treeNode8.Text = "Recipes";
-            treeNode9.ContextMenuStrip = this.contextMenuCategories;
-            treeNode9.ImageIndex = 11;
-            treeNode9.Name = "Services";
-            treeNode9.SelectedImageIndex = 11;
-            treeNode9.Text = "Services";
+            treeNode10.ImageIndex = 1;
+            treeNode10.Name = "General";
+            treeNode10.SelectedImageIndex = 1;
+            treeNode10.Text = "General";
+            treeNode11.ContextMenuStrip = this.contextMenuCategories;
+            treeNode11.ImageIndex = 2;
+            treeNode11.Name = "Entities";
+            treeNode11.SelectedImageIndex = 2;
+            treeNode11.Text = "Entities";
+            treeNode12.ContextMenuStrip = this.contextMenuCategories;
+            treeNode12.ImageIndex = 9;
+            treeNode12.Name = "Trees";
+            treeNode12.SelectedImageIndex = 9;
+            treeNode12.Text = "Trees";
+            treeNode13.ImageIndex = 2;
+            treeNode13.Name = "LandscapeEntities";
+            treeNode13.SelectedImageIndex = 2;
+            treeNode13.Text = "Landscape Entities";
+            treeNode14.ContextMenuStrip = this.contextMenuCategories;
+            treeNode14.ImageIndex = 4;
+            treeNode14.Name = "Cubes";
+            treeNode14.SelectedImageIndex = 4;
+            treeNode14.Text = "Cubes";
+            treeNode15.ImageIndex = 5;
+            treeNode15.Name = "WorldProcessor Params";
+            treeNode15.SelectedImageIndex = 5;
+            treeNode15.Text = "WorldProcessor Params";
+            treeNode16.ContextMenuStrip = this.contextMenuCategories;
+            treeNode16.ImageIndex = 7;
+            treeNode16.Name = "Container sets";
+            treeNode16.SelectedImageIndex = 7;
+            treeNode16.Text = "Container sets";
+            treeNode17.ContextMenuStrip = this.contextMenuCategories;
+            treeNode17.ImageIndex = 8;
+            treeNode17.Name = "Recipes";
+            treeNode17.SelectedImageIndex = 8;
+            treeNode17.Text = "Recipes";
+            treeNode18.ContextMenuStrip = this.contextMenuCategories;
+            treeNode18.ImageIndex = 11;
+            treeNode18.Name = "Services";
+            treeNode18.SelectedImageIndex = 11;
+            treeNode18.Text = "Services";
             this.tvMainCategories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode4,
-            treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8,
-            treeNode9});
+            treeNode10,
+            treeNode11,
+            treeNode13,
+            treeNode14,
+            treeNode15,
+            treeNode16,
+            treeNode17,
+            treeNode18});
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 373);
             this.tvMainCategories.TabIndex = 5;
@@ -374,6 +375,7 @@
             this.entityListView.Size = new System.Drawing.Size(661, 392);
             this.entityListView.TabIndex = 2;
             this.entityListView.UseCompatibleStateImageBehavior = false;
+            this.entityListView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.entityListView_KeyPress);
             this.entityListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.entityListView_MouseDoubleClick);
             // 
             // largeImageList
@@ -385,9 +387,17 @@
             // contextMenuEntity
             // 
             this.contextMenuEntity.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.contextMenuEntity.Name = "contextMenuEntity";
-            this.contextMenuEntity.Size = new System.Drawing.Size(108, 26);
+            this.contextMenuEntity.Size = new System.Drawing.Size(108, 48);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.copyToolStripMenuItem.Text = "Copy";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -451,6 +461,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ltreeVisualizerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkConfigurationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
     }
 }
 

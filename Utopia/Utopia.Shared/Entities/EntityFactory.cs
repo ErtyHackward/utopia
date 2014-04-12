@@ -239,6 +239,7 @@ namespace Utopia.Shared.Entities
                 res.CubeId = (byte)bluePrintId;
                 res.Name = profile.Name;
                 res.MaxStackSize = Config.CubeStackSize;
+                res.PutSound = Config.ResourcePut;
                 entity = res;
             }
             else
