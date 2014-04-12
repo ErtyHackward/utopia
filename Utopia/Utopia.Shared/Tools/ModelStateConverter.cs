@@ -7,7 +7,7 @@ namespace Utopia.Shared.Tools
     /// <summary>
     /// Allows to convinient choose of the state of the model
     /// </summary>
-    public class ModelStateSelector : StringConverter
+    public class ModelStateConverter : StringConverter
     {
         public static string[] PossibleValues;
 

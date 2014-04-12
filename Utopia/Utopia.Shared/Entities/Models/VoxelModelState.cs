@@ -36,6 +36,16 @@ namespace Utopia.Shared.Entities.Models
             set { _boundingBox = value; }
         }
 
+        public bool IsMainState
+        {
+            get { return _parentModel.GetMainState() == this; }
+        }
+
+        public bool IsIconState
+        {
+            get { return _parentModel.GetIconState() == this; }
+        }
+
         public VoxelModel ParentModel
         {
             get { return _parentModel; }

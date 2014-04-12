@@ -85,7 +85,7 @@ namespace Utopia.Shared.Entities
         public string Name { get; set; }
 
         [ProtoMember(3)]
-        [TypeConverter(typeof(GrowingEntity.ModelStateConverter))]
+        [TypeConverter(typeof(ModelStateConverter))]
         public string ModelState { get; set; }
 
         [ProtoMember(4)]
