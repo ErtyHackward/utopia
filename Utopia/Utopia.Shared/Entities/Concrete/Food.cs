@@ -13,7 +13,7 @@ namespace Utopia.Shared.Entities.Concrete
 {
     [ProtoContract]
     [Description("Food entity allows to restore player health and still hunger.")]
-    public class Food : Item, ITool, ISoundEmitterEntity
+    public class Food : Item, ITool
     {
         /// <summary>
         /// Amount of energy provide when used
@@ -30,11 +30,6 @@ namespace Utopia.Shared.Entities.Concrete
         public StaticEntitySoundSource UseSound { get; set; }
 
         public bool RepeatedActionsAllowed { get; set; }
-
-        [Browsable(false)]
-        public ISoundEngine SoundEngine { get; set; }
-
-
 
         public override EntityPosition GetPosition(IDynamicEntity owner)
         {

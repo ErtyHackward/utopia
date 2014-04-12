@@ -71,8 +71,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         {
             if (StaticEntityRemoved != null) StaticEntityRemoved(this, e);
         }
-
-
+        
         public ChunkEntityImpactManager()
             : base(null)
         {
@@ -155,7 +154,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             if (e.Message.Link.IsStatic)
             {
                 //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
-                ThreadsManager.RunAsync(() => RemoveEntity(e.Message.Link, e.Message.Link.DynamicEntityId), singleConcurrencyRun: true);
+                ThreadsManager.RunAsync(() => RemoveEntity(e.Message.Link, e.Message.TakerEntityId), singleConcurrencyRun: true);
             }
         }
 
@@ -214,7 +213,10 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             impactedChunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
 
             //Raise event (Playing sound)
-            OnStaticEntityRemoved(new StaticEventArgs() { Entity = entityRemoved });
+            OnStaticEntityRemoved(new StaticEventArgs() { 
+                Entity = entityRemoved, 
+                SourceEntityId = sourceDynamicId 
+            });
 
             // Save the modified Chunk in local buffer DB
             SendChunkForBuffering(impactedChunk);
@@ -452,6 +454,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
     public class StaticEventArgs : EventArgs
     {
         public IStaticEntity Entity { get; set; }
+
+        /// <summary>
+        /// Dynamic entity that took or put the entity
+        /// </summary>
+        public uint SourceEntityId { get; set; }
     }
 }
 

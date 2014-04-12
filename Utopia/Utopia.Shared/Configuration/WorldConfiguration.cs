@@ -162,10 +162,28 @@ namespace Utopia.Shared.Configuration
         public ushort GraveBlueprint { get; set; }
 
         [Category("Sound")]
-        [Description("Sound played on resource inventory put")]
+        [Description("Sound played on resource block put")]
         [TypeConverter(typeof(ShortSoundSelector))]
         [ProtoMember(20)]
         public StaticEntitySoundSource ResourcePut { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on resource block take ")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(21)]
+        public StaticEntitySoundSource ResourceTake { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on entity take")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(22)]
+        public StaticEntitySoundSource EntityTake { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on entity put (default)")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(23)]
+        public StaticEntitySoundSource EntityPut { get; set; }
 
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
