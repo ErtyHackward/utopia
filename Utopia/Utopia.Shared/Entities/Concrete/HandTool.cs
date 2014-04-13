@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
+using S33M3CoreComponents.Maths;
 using S33M3CoreComponents.Sound;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities.Concrete.Interface;
 
@@ -20,9 +23,6 @@ namespace Utopia.Shared.Entities.Concrete
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(1)]
         public bool RepeatedActionsAllowed { get; set; }
-
-        [Browsable(false)]
-        public ISoundEngine SoundEngine { get; set; }
 
         public override PickType CanPickBlock(BlockProfile blockProfile)
         {
@@ -74,7 +74,6 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
-            //Cannot remove the item from the world
             if (!entity.IsPickable)
             {
                 impact.Message = "You need a special tool to pick this item";
@@ -82,6 +81,11 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             cursor.OwnerDynamicId = owner.DynamicId;
+            return TakeImpact(owner, entity, impact, cursor, this);
+        }
+
+        public static IToolImpact TakeImpact(IDynamicEntity owner, IStaticEntity entity, EntityToolImpact impact, ILandscapeCursor cursor, Item hostItem)
+        {
             var charEntity = owner as CharacterEntity;
 
             if (charEntity != null)
@@ -106,26 +110,53 @@ namespace Utopia.Shared.Entities.Concrete
                     return impact;
                 }
 
+                var putItems = new List<KeyValuePair<IItem, int>>();
+                putItems.Add(new KeyValuePair<IItem, int>(item, 1));
 
-                var count = 1;
                 var growing = item as PlantGrowingEntity;
                 if (growing != null)
                 {
-                    var slot = growing.CurrentGrowLevel.HarvestSlot;
-                    
-                    if (slot.BlueprintId == 0)
+                    putItems.Clear();
+                    foreach (var slot in growing.CurrentGrowLevel.HarvestSlots)
                     {
-                        count = 0;
+                        if (slot.BlueprintId != 0)
+                        {
+                            putItems.Add(
+                                new KeyValuePair<IItem, int>((Item)hostItem.EntityFactory.CreateFromBluePrint(slot.BlueprintId),
+                                    slot.Count));
+                        }
                     }
-                    else
+                }
+
+                if (item.Transformations != null)
+                {
+                    var random = new FastRandom(owner.EntityState.PickedEntityPosition.GetHashCode() ^ owner.EntityState.Entropy);
+                    bool transformed = false;
+                    foreach (var itemTransformation in item.Transformations)
                     {
-                        count = slot.Count;
-                        item = (Item)EntityFactory.CreateFromBluePrint(slot.BlueprintId);
+                        if (random.NextDouble() < itemTransformation.TransformChance)
+                        {
+                            putItems.Clear();
+                            item.Transformations = null;
+                            foreach (var slot in itemTransformation.GeneratedItems)
+                            {
+                                putItems.Add(
+                                    new KeyValuePair<IItem, int>((Item)hostItem.EntityFactory.CreateFromBluePrint(slot.BlueprintId),
+                                        slot.Count));
+                                transformed = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (!transformed)
+                    {
+                        // don't allow future transforms
+                        item.Transformations = null;
                     }
                 }
 
                 //Try to put the item into the inventory
-                if (charEntity.Inventory.PutItem(item, count))
+                if (charEntity.Inventory.PutMany(putItems))
                 {
                     //If inside the inventory, then remove it from the world
                     var removedEntity = (Item)cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
@@ -134,9 +165,9 @@ namespace Utopia.Shared.Entities.Concrete
                     // entity should lose its voxel intance if put into the inventory
                     removedEntity.ModelInstance = null;
 
-                    if (SoundEngine != null && EntityFactory.Config.EntityTake != null)
+                    if (hostItem.SoundEngine != null && hostItem.EntityFactory.Config.EntityTake != null)
                     {
-                        SoundEngine.StartPlay3D(EntityFactory.Config.EntityTake, removedEntity.Position.AsVector3());
+                        hostItem.SoundEngine.StartPlay3D(hostItem.EntityFactory.Config.EntityTake, removedEntity.Position.AsVector3());
                     }
 
                     return impact;

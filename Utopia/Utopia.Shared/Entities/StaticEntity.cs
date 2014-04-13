@@ -32,9 +32,9 @@ namespace Utopia.Shared.Entities
         [ProtoMember(2)]
         public Quaternion Rotation { get; set; }
 
-        [ProtoMember(3)]
         [Description("The entity will be destroyed when removed from the world")]
         [Category("Gameplay")]
+        [ProtoMember(3)]
         public bool IsDestroyedOnWorldRemove { get; set; }
 
         private IStaticContainer _container;

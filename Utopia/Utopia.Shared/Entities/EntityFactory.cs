@@ -188,11 +188,6 @@ namespace Utopia.Shared.Entities
             if (handler != null) handler(this, e);
         }
 
-        protected virtual Entity CreateCustomEntity(ushort classId)
-        {
-            return null;
-        }
-
         /// <summary>
         /// Creates an entity by its type
         /// </summary>
@@ -208,11 +203,6 @@ namespace Utopia.Shared.Entities
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
 
             return entity;
-        }
-
-        public Entity CreateFromBluePrint(IEntity entity)
-        {
-            return CreateFromBluePrint(entity.BluePrintId);
         }
 
         public T CreateFromBluePrint<T>(ushort bluePrintId) where T : Entity

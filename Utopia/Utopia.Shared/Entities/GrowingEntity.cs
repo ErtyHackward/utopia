@@ -98,9 +98,8 @@ namespace Utopia.Shared.Entities
         public UtopiaTimeSpan GrowTime { get; set; }
 
         [ProtoMember(5)]
-        [Description("Generated entity when harvested")]
-        [TypeConverter(typeof(ValueTypeTypeConverter<InitSlot>))]
-        public InitSlot HarvestSlot { get; set; }
+        [Description("Generated entities when harvested")]
+        public List<InitSlot> HarvestSlots { get; set; }
 
         [DisplayName("Grow Time (Hours)")]
         public double GrowTimeH
