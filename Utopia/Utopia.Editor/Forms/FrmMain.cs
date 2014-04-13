@@ -868,18 +868,18 @@ namespace Utopia.Editor.Forms
                 //Check if this entity can have a Voxel body
                 var voxelEntity = entity as IVoxelEntity;
 
+                if (voxelEntity.ModelState != null)
+                {
+                    voxelEntity.ModelState = null;
+                }
+
                 //Look at currently existing Voxel Models following Entity Name
                 
                 item.ImageIndex = GetVoxelEntityImgIndex(voxelEntity);
                 item.SelectedImageIndex = item.ImageIndex;
 
                 ModelStateConverter.PossibleValues = null;
-
-                if (voxelEntity.ModelState != null)
-                {
-                    voxelEntity.ModelState = null;
-                }
-
+                
                 if (voxelEntity.ModelName != null)
                 {
 
