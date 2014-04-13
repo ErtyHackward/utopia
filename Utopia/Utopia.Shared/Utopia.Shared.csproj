@@ -130,6 +130,7 @@
     <Compile Include="Structs\UtopiaTime.cs" />
     <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
     <Compile Include="Structs\UtopiaTimeSpan.cs" />
+    <Compile Include="Tools\BlueprintTypeEditor.cs" />
     <Compile Include="Tools\ValueTypeTypeConverter.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
