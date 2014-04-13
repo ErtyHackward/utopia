@@ -170,7 +170,7 @@ namespace System.IO
             writer.Write(range.Position);
             writer.Write(range.Size);
         }
-
+        
         public static byte[] Serialize(this IBinaryStorable item)
         {
             using (var ms = new MemoryStream())

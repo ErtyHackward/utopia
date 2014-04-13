@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
@@ -77,10 +78,25 @@ namespace Utopia.Shared.Entities
             GrowingSeasons = new List<string>();
             GrowingBlocks = new List<byte>();
         }
+
+        public override object Clone()
+        {
+            var cloned = (GrowingEntity)base.Clone();
+
+            cloned.GrowLevels = new List<GrowLevel>(GrowLevels);
+            for (int i = 0; i < cloned.GrowLevels.Count; i++)
+            {
+                cloned.GrowLevels[i] = (GrowLevel)cloned.GrowLevels[i].Clone();
+            }
+            cloned.GrowingBlocks = new List<byte>(GrowingBlocks);
+            cloned.GrowingSeasons = new List<string>(GrowingSeasons);
+
+            return cloned;
+        }
     }
 
     [ProtoContract]
-    public struct GrowLevel
+    public struct GrowLevel : ICloneable
     {
         [ProtoMember(1)]
         [Browsable(false)]
@@ -106,6 +122,13 @@ namespace Utopia.Shared.Entities
         {
             get { return GrowTime.TotalSeconds / 3600.0f; }
             set { GrowTime = new UtopiaTimeSpan() { TotalSeconds = (long)(value * 3600.0f) }; }
+        }
+        
+        public object Clone()
+        {
+            var cloned = (GrowLevel)MemberwiseClone();
+            cloned.HarvestSlots = new List<InitSlot>(HarvestSlots);
+            return cloned;
         }
     }
 
