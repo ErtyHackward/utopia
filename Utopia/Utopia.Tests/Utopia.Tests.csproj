@@ -64,11 +64,16 @@
     <Compile Include="BBoxOptimizeTest.cs" />
     <Compile Include="BlockTagEqualityTest.cs" />
     <Compile Include="CloneTest.cs" />
+    <Compile Include="GrowLogicTest.cs" />
     <Compile Include="Md5HashTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtobufInheritanceTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\S33M3Engines\S33M3CoreComponents\S33M3CoreComponents.csproj">
+      <Project>{D0C4DB7F-547E-4A40-A5CA-41391A310938}</Project>
+      <Name>S33M3CoreComponents</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\S33M3Engines\S33M3Resources\S33M3Resources.csproj">
       <Project>{52E1F2EF-4462-4CC3-A783-2D3A352A2602}</Project>
       <Name>S33M3Resources</Name>

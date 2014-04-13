@@ -2,8 +2,10 @@
 using System.Linq;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Server.Structs;
+using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
-using System.Collections.Generic;
 
 namespace Utopia.Shared.Server.Managers
 {
@@ -11,26 +13,17 @@ namespace Utopia.Shared.Server.Managers
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        #region Private variable
         private ServerCore _server;
-        private UtopiaTimeSpan _growingLookupSpan = UtopiaTimeSpan.FromMinutes(15);
-        #endregion
-
-        #region Public Properties
-        #endregion
-
+        
         public EntityGrowingManager(ServerCore server)
         {
             _server = server;
 
-            _server.Clock.CreateNewTimer(new Clock.GameClockTimer(_growingLookupSpan, server.Clock, GrowingLookup)); 
+            if (_server != null)
+                _server.Clock.CreateNewTimer(new Clock.GameClockTimer(UtopiaTimeSpan.FromMinutes(15), server.Clock, GrowingLookup));
         }
 
-        #region Public Methods
-        #endregion
-
-        #region Private Methods
-        private void GrowingLookup(UtopiaTime LookupTime)
+        private void GrowingLookup(UtopiaTime gametime)
         {
             var random = new Random();
 
@@ -38,90 +31,139 @@ namespace Utopia.Shared.Server.Managers
             {
                 var growingEntities = chunk.Entities.OfType<GrowingEntity>().ToList();
 
-                //Check only for entities that can still grow
-                foreach (var entity in growingEntities.Where(x => !x.IsLastGrowLevel))
+                foreach (var entity in growingEntities)
                 {
-                    bool entityUpdated = false;
-                    //Init LastGrowUpdate
-                    if (entity.LastGrowUpdate.TotalSeconds == 0 && entity.CurrentGrowLevelIndex == 0) entity.LastGrowUpdate = LookupTime;
+                    var now = _server.Clock.Now;
+                    
+                    // fix time cheat
+                    if (now > entity.LastGrowUpdate)
+                        EntityGrowCheck(_server.Clock.Now, entity, chunk, random);
+                    
+                    entity.LastGrowUpdate = now;
+                }
+            }
+        }
 
-                    while (entity.LastGrowRefresh < LookupTime && !entity.IsLastGrowLevel)
-                    {
-                        entity.LastGrowRefresh += _growingLookupSpan;
-                        if (CheckEntityGrowConstraints(entity, entity.LastGrowRefresh))
-                        {
-                            //Check for rotting entity =====================================
-                            if (entity.CurrentGrowLevelIndex == 0 && entity.RottenChance != 0f)
-                            {
-                                if (random.NextDouble() < entity.RottenChance)
-                                {
-                                    chunk.Entities.RemoveById(entity.StaticId);
-                                    continue;
-                                }
-                            }
+        public void EntityGrowCheck(UtopiaTime now, GrowingEntity entity, ServerChunk chunk, Random random)
+        {
+            if (entity.LastGrowUpdate.IsZero)
+                return;
 
-                            entity.CurrentGrowLevelIndex++;
-                            //Make the entity grow to the next level !
+            var checkTimeSpan = now - entity.LastGrowUpdate;
 
-                            entityUpdated = true; 
-                        }
-                    }
+            bool updated;
+            bool rotten;
 
-                    if (entityUpdated)
+            // grow time left at the current season
+            var tillTheEndOfSeason = UtopiaTimeSpan.FromSeasons(1d - entity.LastGrowUpdate.TotalSeasons % 1d);
+
+            if (checkTimeSpan <= tillTheEndOfSeason)
+            {
+                // small grow update
+                updated = GrowSeasonLogic(entity, now.Season, checkTimeSpan, random, chunk, out rotten);
+
+                if (rotten)
+                    return;
+            }
+            else
+            {
+                // grow at the end of the first season
+                updated = GrowSeasonLogic(entity, now.Season, tillTheEndOfSeason, random, chunk, out rotten);
+
+                if (rotten)
+                    return;
+
+                // align time to the beginning of next season
+                checkTimeSpan -= tillTheEndOfSeason;
+
+                while (checkTimeSpan.TotalSeconds > 0)
+                {
+                    var seasonCheckSpan = checkTimeSpan.TotalSeasons > 0 ? UtopiaTimeSpan.FromSeasons(1) : checkTimeSpan;
+
+                    updated = GrowSeasonLogic(entity, (now - checkTimeSpan).Season, seasonCheckSpan, random, chunk, out rotten) || updated;
+
+                    if (rotten)
+                        return;
+
+                    checkTimeSpan -= seasonCheckSpan;
+                }
+            }
+
+            if (updated)
+            {
+                if (entity is PlantGrowingEntity)
+                {
+                    if (chunk != null)
                     {
                         chunk.Entities.RemoveById(entity.StaticId);
                         chunk.Entities.Add(entity);
-                        entity.LastGrowUpdate = LookupTime;
                     }
+                }
+                if (entity is TreeGrowingEntity)
+                {
+                    // TODO: tree grow logic
                 }
             }
         }
 
         /// <summary>
-        /// Fct responsible to check if the entity can grow to the next level, or not.
+        /// Grow at a season
         /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="time"></param>
-        /// <returns></returns>
-        private bool CheckEntityGrowConstraints(GrowingEntity entity, UtopiaTime time)
+        private bool GrowSeasonLogic(GrowingEntity entity, Season season, UtopiaTimeSpan passedTime, Random random, ServerChunk chunk, out bool rotten)
         {
-            try
+            bool updated = false;
+            rotten = false;
+
+            // constranits check
+            if (entity.GrowingSeasons.Count > 0 && !entity.GrowingSeasons.Contains(season.Name))
+                return false;
+
+            if (entity.GrowingBlocks.Count > 0 && _server != null)
             {
-
-
-                //Check minimum time needed
-                if (entity.GrowLevels[entity.CurrentGrowLevelIndex].GrowTime > time - entity.LastGrowUpdate) return false;
-
-                // Check Season constraint
-                if (entity.GrowingSeasons.Count > 0 && !entity.GrowingSeasons.Contains(time.Season.Name)) return false;
-
-                //Check Block linked constraint
-                if (entity.GrowingBlocks.Count > 0)
+                if (entity.Linked)
                 {
-                    if (entity.Linked)
+                    var cursor = _server.LandscapeManager.GetCursor(entity.LinkedCube);
+                    if (!entity.GrowingBlocks.Contains(cursor.Read()))
+                        return false;
+                }
+                else
+                {
+                    var cursor = _server.LandscapeManager.GetCursor(entity.Position);
+                    if (!entity.GrowingBlocks.Contains(cursor.PeekValue(Vector3I.Down)))
+                        return false;
+                }
+            }
+
+            // TODO: check light constraint when implemented
+
+            entity.CurrentGrowTime += passedTime;
+
+            // update entity to the actual state 
+            while (!entity.IsLastGrowLevel)
+            {
+                var currentLevel = entity.CurrentGrowLevel;
+
+                if (entity.CurrentGrowTime < currentLevel.GrowTime)
+                    break;
+
+                if (entity.CurrentGrowLevelIndex == 0 && entity.RottenChance != 0f)
+                {
+                    if (random.NextDouble() < entity.RottenChance)
                     {
-                        var cursor = _server.LandscapeManager.GetCursor(entity.LinkedCube);
-                        if (!entity.GrowingBlocks.Contains(cursor.Read())) return false;
-                    }
-                    else
-                    {
-                        var cursor = _server.LandscapeManager.GetCursor(entity.Position);
-                        if (!entity.GrowingBlocks.Contains(cursor.PeekValue(Vector3I.Down))) return false;
+                        if (chunk != null)
+                            chunk.Entities.RemoveById(entity.StaticId);
+                        rotten = true;
+                        return true;
                     }
                 }
 
-                // TODO: check light constraint when implemented
-
-                return true;
-
+                entity.CurrentGrowTime -= currentLevel.GrowTime;
+                entity.CurrentGrowLevelIndex++;
+                updated = true;
             }
-            catch (Exception e)
-            {
-                logger.Error("Error while applying Growing logic : {0}", e.Message);
-                return false;
-            }
+
+
+            return updated;
         }
-        #endregion
-
     }
 }

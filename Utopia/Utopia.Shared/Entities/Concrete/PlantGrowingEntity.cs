@@ -14,7 +14,7 @@ namespace Utopia.Shared.Entities.Concrete
 
             var plant = (PlantGrowingEntity)item;
             plant.CurrentGrowLevelIndex = 0;
-            plant.LastGrowRefresh = new UtopiaTime();
+            plant.CurrentGrowTime = new UtopiaTimeSpan();
             plant.LastGrowUpdate = new UtopiaTime();
         }
     }
