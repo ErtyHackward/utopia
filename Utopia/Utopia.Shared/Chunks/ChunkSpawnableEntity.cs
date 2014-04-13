@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Services;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Chunks
 {
@@ -16,7 +18,8 @@ namespace Utopia.Shared.Chunks
     {
         private float _dynamicEntitySpawnRadius;
 
-        [Browsable(false)]
+        [Editor(typeof(BlueprintTypeEditor<Entity>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(1)]
         public ushort BluePrintId { get; set; }
 
@@ -79,7 +82,8 @@ namespace Utopia.Shared.Chunks
 
         public override string ToString()
         {
-            return EntityName;
+            //return EntityName;
+            return BluePrintId < 256 ? EditorConfigHelper.Config.BlockProfiles[BluePrintId].Name : EditorConfigHelper.Config.BluePrints[BluePrintId].Name;
         }
     }
 

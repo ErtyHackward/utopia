@@ -70,7 +70,7 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Item blueprint id
         /// </summary>
-        [Editor(typeof(BlueprintTypeEditor), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<object>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(1)]
         public ushort BlueprintId { get; set; }

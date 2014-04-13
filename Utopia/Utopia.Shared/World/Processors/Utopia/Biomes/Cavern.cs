@@ -1,15 +1,19 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Tools;
+using System.Drawing.Design;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     [ProtoContract]
     public partial class Cavern
     {
-        [Browsable(false)]
         [ProtoMember(1)]
-        public byte CubeId { get; set; }
+        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
+        public byte Cube { get; set; }
 
         [ProtoMember(2)]
         public string Name { get; set; }

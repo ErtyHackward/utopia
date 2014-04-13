@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Tools;
+using System.Drawing.Design;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.LandscapeEntities.Trees
 {
@@ -33,11 +36,13 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         public LSystemRule Rules_d { get; set; }
         [Category("Configuration")]
         [ProtoMember(7)]
-        [Browsable(false)]
+        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte TrunkBlock { get; set; }
         [Category("Configuration")]
         [ProtoMember(8)]
-        [Browsable(false)]
+        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte FoliageBlock { get; set; }
         [Category("Configuration")]
         [ProtoMember(9)]

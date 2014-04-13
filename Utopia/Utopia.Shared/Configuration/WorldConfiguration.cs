@@ -157,7 +157,7 @@ namespace Utopia.Shared.Configuration
         public int Version { get; set; }
 
         [Description("Entity that should be created when player die")]
-        [Editor(typeof(BlueprintTypeEditor), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<Entity>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(19)]
         public ushort GraveBlueprint { get; set; }

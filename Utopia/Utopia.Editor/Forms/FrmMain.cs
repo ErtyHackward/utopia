@@ -78,8 +78,12 @@ namespace Utopia.Editor.Forms
                     BlueprintSelector.Configuration = _configuration;
                     CharacterBlueprintSelector.Configuration = _configuration;
                     CubeSelector.Configuration = _configuration;
-                    BlueprintTypeEditor.Configuration = _configuration;
-                    BlueprintTypeEditor.Images = _icons;
+                    BlueprintTypeEditor<object>.Configuration = _configuration;
+                    BlueprintTypeEditor<Entity>.Configuration = _configuration;
+                    BlueprintTypeEditor<CubeResource>.Configuration = _configuration;
+                    BlueprintTypeEditor<object>.Images = _icons;
+                    BlueprintTypeEditor<Entity>.Images = _icons;
+                    BlueprintTypeEditor<CubeResource>.Images = _icons;
                     BlueprintTextHintConverter.Configuration = _configuration;
 
                     UpdateImageList();

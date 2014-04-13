@@ -7,6 +7,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Tools
@@ -14,13 +16,16 @@ namespace Utopia.Shared.Tools
     /// <summary>
     /// PropertyGrid editor component to show all possible models to use
     /// </summary>
-    public class BlueprintTypeEditor : UITypeEditor
+    public class BlueprintTypeEditor<T> : UITypeEditor
     {
         public static WorldConfiguration Configuration;
         public static Dictionary<string, Image> Images;
         
         private IWindowsFormsEditorService _service;
         private ListView _list;
+        private Type typeParameterType = typeof(T);
+        private bool isBlock;
+        private bool isEntities;
 
         private string GetVoxelEntityImgName(IVoxelEntity voxelEntity)
         {
@@ -34,6 +39,22 @@ namespace Utopia.Shared.Tools
             }
 
             return null;
+        }
+
+        public BlueprintTypeEditor()
+        {
+            if (typeParameterType == typeof(CubeResource))
+            {
+                isBlock = true;
+                return;
+            }
+            if (typeParameterType == typeof(Entity))
+            {
+                isEntities = true;
+                return;
+            }
+            isBlock = true;
+            isEntities = true;
         }
 
         private void Initialize()
@@ -56,44 +77,57 @@ namespace Utopia.Shared.Tools
             _list.LargeImageList = imgList;
             _list.SmallImageList = imgList;
 
-            var groupBlocks = new ListViewGroup("Blocks");
-            _list.Groups.Add(groupBlocks);
-            var groupEntities = new ListViewGroup("Entities");
-            _list.Groups.Add(groupEntities);
-
-            foreach (var blockProfile in Configuration.BlockProfiles.Skip(1))
+            if (isBlock)
             {
-                Image icon;
-                if (Images.TryGetValue("CubeResource_" + blockProfile.Name, out icon))
+                ListViewGroup groupBlocks = null;
+                if (isBlock)
                 {
-                    imgList.Images.Add(icon);
-                    var item = new ListViewItem();
-                    item.Text = blockProfile.Name;
-                    item.ImageIndex = imgList.Images.Count - 1;
-                    item.Tag = (ushort)blockProfile.Id;
-                    _list.Items.Add(item).Group = groupBlocks;
+                    groupBlocks = new ListViewGroup("Blocks");
+                    _list.Groups.Add(groupBlocks);
+                }
+
+                foreach (var blockProfile in Configuration.BlockProfiles.Skip(1))
+                {
+                    Image icon;
+                    if (Images.TryGetValue("CubeResource_" + blockProfile.Name, out icon))
+                    {
+                        imgList.Images.Add(icon);
+                        var item = new ListViewItem();
+                        item.Text = blockProfile.Name;
+                        item.ImageIndex = imgList.Images.Count - 1;
+                        item.Tag = (ushort)blockProfile.Id;
+                        _list.Items.Add(item).Group = groupBlocks;
+                    }
                 }
             }
 
-            foreach (var pair in Configuration.BluePrints.OrderBy(p => p.Value.Name))
+            if (isEntities)
             {
-                var blueprint = pair.Value;
+                ListViewGroup groupEntities = null;
+                if (isEntities)
+                {
+                    groupEntities = new ListViewGroup("Entities");
+                    _list.Groups.Add(groupEntities);
+                }
+                foreach (var pair in Configuration.BluePrints.OrderBy(p => p.Value.Name))
+                {
+                    var blueprint = pair.Value;
 
-                Image icon = null;
+                    Image icon = null;
 
+                    var iconName = GetVoxelEntityImgName((IVoxelEntity)blueprint);
+                    if (!string.IsNullOrEmpty(iconName))
+                        Images.TryGetValue(iconName, out icon);
 
-                var iconName = GetVoxelEntityImgName((IVoxelEntity)blueprint);
-                if (!string.IsNullOrEmpty(iconName))
-                    Images.TryGetValue(iconName, out icon);
-
-                if (icon != null)
-                    imgList.Images.Add(icon);
-                var item = new ListViewItem();
-                item.Text = blueprint.Name;
-                if (icon != null)
-                    item.ImageIndex = imgList.Images.Count - 1;
-                item.Tag = pair.Key;
-                _list.Items.Add(item).Group = groupEntities;
+                    if (icon != null)
+                        imgList.Images.Add(icon);
+                    var item = new ListViewItem();
+                    item.Text = blueprint.Name;
+                    if (icon != null)
+                        item.ImageIndex = imgList.Images.Count - 1;
+                    item.Tag = pair.Key;
+                    _list.Items.Add(item).Group = groupEntities;
+                }
             }
 
         }
@@ -122,7 +156,16 @@ namespace Utopia.Shared.Tools
             if (e.Value == null)
                 return;
 
-            var value = (ushort)e.Value;
+            ushort value;
+
+            if (e.Value is byte)
+            {
+                value = (byte)e.Value;
+            }
+            else
+            {
+                value = (ushort)e.Value;
+            }
 
             string iconName;
 
@@ -155,7 +198,15 @@ namespace Utopia.Shared.Tools
 
             if (value != null)
             {
-                var currentItem = _list.Items.Cast<ListViewItem>().FirstOrDefault( i => (ushort)i.Tag == (ushort)value);
+                ListViewItem currentItem;
+                if (value is byte)
+                {
+                    currentItem = _list.Items.Cast<ListViewItem>().FirstOrDefault(i => (ushort)i.Tag == (byte)value);
+                }
+                else
+                {
+                    currentItem = _list.Items.Cast<ListViewItem>().FirstOrDefault(i => (ushort)i.Tag == (ushort)value);
+                }
 
                 if (currentItem != null)
                 {

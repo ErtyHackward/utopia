@@ -12,6 +12,9 @@ using System.ComponentModel;
 using Utopia.Shared.Configuration;
 using System.Linq;
 using Utopia.Shared.Structs.Helpers;
+using Utopia.Shared.Tools;
+using System.Drawing.Design;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -49,16 +52,19 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [ProtoMember(1)]
         public string Name { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(2)]
+        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte SurfaceCube { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(3)]
+        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte UnderSurfaceCube { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(4)]
+        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte GroundCube { get; set; }        
 
         [Description("Under surface layer size"), Category("Composition")]
@@ -185,26 +191,26 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-                    if (vein.CubeId != UtopiaProcessorParams.CubeId.LavaFlow &&
-                        vein.CubeId != UtopiaProcessorParams.CubeId.WaterFlow)
+                    if (vein.Cube != UtopiaProcessorParams.CubeId.LavaFlow &&
+                        vein.Cube != UtopiaProcessorParams.CubeId.WaterFlow)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
                         int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
                         int z = rnd.Next(0, 16);
 
-                        PopulateChunkWithResource(vein.CubeId, cursor, x, y, z, vein.VeinSize, rnd);
+                        PopulateChunkWithResource(vein.Cube, cursor, x, y, z, vein.VeinSize, rnd);
                     }
                     else
                     {
-                        if (vein.CubeId == UtopiaProcessorParams.CubeId.LavaFlow)
+                        if (vein.Cube == UtopiaProcessorParams.CubeId.LavaFlow)
                         {
                             //Get Rnd chunk Location.
                             int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
                             int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
                             int z = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
 
-                            PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                            PopulateChunkWithLiquidSources(vein.Cube, cursor, x, y, z, vein.VeinSize);
                         }
                     }
                 }
@@ -226,7 +232,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         int y = rnd.Next(cavern.SpawningHeight.Min, cavern.SpawningHeight.Max);
                         int z = rnd.Next(7, 9);
                         int layer = rnd.Next(cavern.CavernHeightSize.Min, cavern.CavernHeightSize.Max + 1);
-                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.CubeId, rnd);
+                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.Cube, rnd);
                     }
                 }
             }
