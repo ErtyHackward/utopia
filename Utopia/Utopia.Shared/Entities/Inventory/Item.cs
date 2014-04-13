@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Globalization;
@@ -81,11 +82,19 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Optional model state for the entity, if not set the main state will be used
         /// </summary>
-        [ProtoMember(9)]
         [Category("Appearance")]
         [Description("Optional model state for the entity, if not set the main state will be used")]
         [TypeConverter(typeof(ModelStateConverter))]
+        [ProtoMember(9)]
         public string ModelState { get; set; }
+
+        /// <summary>
+        /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
+        /// </summary>
+        [Category("Gameplay")]
+        [ProtoMember(10)]
+        public List<ItemTransformation> Transformations { get; set; }
+
 
         [Browsable(false)]
         public ISoundEngine SoundEngine { get; set; }
@@ -155,6 +164,7 @@ namespace Utopia.Shared.Entities.Inventory
             MaxStackSize = 1;
 
             EmittedSound = new StaticEntitySoundSource();
+            Transformations = new List<ItemTransformation>();
         }
 
         /// <summary>
@@ -373,5 +383,32 @@ namespace Utopia.Shared.Entities.Inventory
         {
             return PickType.Pick;
         }
+
+        public override object Clone()
+        {
+            var item = (Item)base.Clone();
+            if (Transformations != null)
+                item.Transformations = new List<ItemTransformation>(Transformations);
+            
+            return item;
+        }
+    }
+
+    [ProtoContract]
+    public struct ItemTransformation
+    {
+        /// <summary>
+        /// Entity that will be given instead of default
+        /// </summary>
+        [Description("Entities that will be given instead of default")]
+        [ProtoMember(1)]
+        public List<InitSlot> GeneratedItems { get; set; }
+
+        /// <summary>
+        /// A chance that item will transform to other entity [0;1]
+        /// </summary>
+        [Description("A chance that item will transform to other entity [0;1]")]
+        [ProtoMember(2)]
+        public float TransformChance { get; set; }
     }
 }

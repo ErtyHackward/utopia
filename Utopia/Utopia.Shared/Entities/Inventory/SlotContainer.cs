@@ -626,5 +626,54 @@ namespace Utopia.Shared.Entities.Inventory
             // check our container
             return Find(staticId) == null;
         }
+
+        /// <summary>
+        /// Allows to put many items at once or nothing (transaction way)
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        public bool PutMany(IEnumerable<KeyValuePair<IItem, int>> items)
+        {
+            var put = new List<KeyValuePair<IItem, int>>();
+            bool success = true;
+            foreach (var keyValuePair in items)
+            {
+                if (!PutItem(keyValuePair.Key, keyValuePair.Value))
+                {
+                    success = false;
+                    break;
+                }
+                put.Add(keyValuePair);
+            }
+
+            if (!success)
+            {
+                foreach (var keyValuePair in put)
+                {
+                    TakeItem(keyValuePair.Key.BluePrintId, keyValuePair.Value);
+                }
+            }
+
+            return success;
+        }
+
+        internal bool TakeItem(ushort blueprintId, int count)
+        {
+            while (count > 0)
+            {
+                var slot = this.LastOrDefault(s => s.Item.BluePrintId == blueprintId);
+
+                if (slot == null)
+                    break;
+
+                var takeItems = Math.Min(slot.ItemsCount, count);
+
+                TakeItem(slot.GridPosition, takeItems);
+
+                count -= takeItems;
+            }
+
+            return count == 0;
+        }
     }
 }

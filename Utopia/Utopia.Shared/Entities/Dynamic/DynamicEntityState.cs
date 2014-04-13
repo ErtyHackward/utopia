@@ -84,6 +84,12 @@ namespace Utopia.Shared.Entities.Dynamic
         [ProtoMember(12)]
         public ToolState ToolState;
 
+        /// <summary>
+        /// Random number
+        /// </summary>
+        [ProtoMember(13)]
+        public int Entropy { get; set; }
+
         public DynamicEntityState Clone()
         {
             return (DynamicEntityState)this.MemberwiseClone();
