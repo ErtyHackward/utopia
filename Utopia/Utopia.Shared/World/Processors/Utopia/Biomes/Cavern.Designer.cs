@@ -10,42 +10,5 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     public partial class Cavern
     {
-        [TypeConverter(typeof(CubeConverter))]
-        [DisplayName("Cube")]
-        public string CubeName
-        {
-            //When first loaded set property with the first item in the rule list.
-            get
-            {
-                return EditorConfigHelper.Config.BlockProfiles.First(x => x.Id == CubeId).Name;
-            }
-            set
-            {
-                //Get ID from name, name must be unic !
-                CubeId = EditorConfigHelper.Config.BlockProfiles.First(x => x.Name == value).Id;
-            }
-        }
-
-        internal class CubeConverter : StringConverter
-        {
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-            {
-                //true means show a combobox
-                return true;
-            }
-
-            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-            {
-                //true will limit to list. false will show the list, 
-                //but allow free-form entry
-                return true;
-            }
-
-            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-            {
-                return new StandardValuesCollection(EditorConfigHelper.Config.BlockProfiles.Select(x => x.Name).Where(x => x != "System Reserved").OrderBy(x => x).ToList());
-            }
-        }
-
     }
 }

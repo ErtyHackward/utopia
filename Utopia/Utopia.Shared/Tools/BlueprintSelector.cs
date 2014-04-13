@@ -138,7 +138,16 @@ namespace Utopia.Shared.Tools
             if (value is string)
                 return value;
 
-            var bpId = (ushort)value;
+            ushort bpId;
+
+            if (value is byte)
+            {
+                bpId = (byte)value;
+            }
+            else
+            {
+                bpId = (ushort)value;
+            }
 
             if (bpId == 0)
                 return "Choose...";
