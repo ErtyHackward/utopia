@@ -96,7 +96,7 @@ namespace Utopia.Shared.Entities
     }
 
     [ProtoContract]
-    public struct GrowLevel : ICloneable
+    public class GrowLevel : ICloneable
     {
         [ProtoMember(1)]
         [Browsable(false)]
@@ -122,6 +122,11 @@ namespace Utopia.Shared.Entities
         {
             get { return GrowTime.TotalSeconds / 3600.0f; }
             set { GrowTime = new UtopiaTimeSpan() { TotalSeconds = (long)(value * 3600.0f) }; }
+        }
+
+        public GrowLevel()
+        {
+            HarvestSlots = new List<InitSlot>();
         }
         
         public object Clone()

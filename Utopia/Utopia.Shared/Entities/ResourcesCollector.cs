@@ -175,6 +175,15 @@ namespace Utopia.Shared.Entities
             impact.Message = "Cannot hit air block";
             return impact;
         }
+
+        public override object Clone()
+        {
+            var collector = (ResourcesCollector)base.Clone();
+
+            collector.SpecialDamages = new List<CubeDamage>(SpecialDamages);
+
+            return collector;
+        }
     }
 
     [ProtoContract]
