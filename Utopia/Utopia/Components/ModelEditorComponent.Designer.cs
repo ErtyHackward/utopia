@@ -541,10 +541,10 @@ namespace Utopia.Components
             toolColorBrushButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.ColorBrush); };
 
             var toolColorFillButton = new StickyButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorFillButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.FillBrush); };
+            toolColorFillButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.ColorFillBrush); };
 
-            var toolSliceColorBrush = new StickyButtonControl { Text = "Slice color", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolSliceColorBrush.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.SliceBrush); };
+            var toolBlockFillBrush = new StickyButtonControl { Text = "Block fill", Bounds = new UniRectangle(0, 0, 70, 20) };
+            toolBlockFillBrush.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.BlockFillBrush); };
 
             var presetTool = new StickyButtonControl { Text = "Preset", Bounds = new UniRectangle(0, 0, 70, 20) };
             presetTool.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.Preset); };
@@ -555,7 +555,7 @@ namespace Utopia.Components
             _frameToolsGroup.Children.Add(toolEditButton);
             _frameToolsGroup.Children.Add(toolColorBrushButton);
             _frameToolsGroup.Children.Add(toolColorFillButton);
-            _frameToolsGroup.Children.Add(toolSliceColorBrush);
+            _frameToolsGroup.Children.Add(toolBlockFillBrush);
             _frameToolsGroup.Children.Add(presetTool);
             _frameToolsGroup.Children.Add(selectionTool);
             
@@ -597,18 +597,26 @@ namespace Utopia.Components
 
             _tpSliceBrush.Children.Add(new LabelControl { Text = "Slice axis:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            var xSlice = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20) };
-            xSlice.Pressed += delegate { _sliceAxis = EditorAxis.X; };
+            var xSlice = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            xSlice.Pressed += delegate { _sliceAxis ^= EditorAxis.X; if (!_sliceAxis.HasFlag(EditorAxis.X)) xSlice.Release(); };
 
-            var ySlice = new StickyButtonControl { Text = "Y", Bounds = new UniRectangle(0, 0, 20, 20), Sticked = true };
-            ySlice.Pressed += delegate { _sliceAxis = EditorAxis.Y; };
+            var ySlice = new StickyButtonControl { Text = "Y", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            ySlice.Pressed += delegate { _sliceAxis ^= EditorAxis.Y; if (!_sliceAxis.HasFlag(EditorAxis.Y)) ySlice.Release(); };
 
-            var zSlice = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20) };
-            zSlice.Pressed += delegate { _sliceAxis = EditorAxis.Z; };
-            
+            var zSlice = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            zSlice.Pressed += delegate { _sliceAxis ^= EditorAxis.Z; if (!_sliceAxis.HasFlag(EditorAxis.Z)) zSlice.Release(); };
+
+            var wholeSlice = new StickyButtonControl { Text = "Go through", Bounds = new UniRectangle(0, 0, 60, 20), Separate = true };
+            wholeSlice.Pressed += delegate { _wholeSlice = !_wholeSlice; if (!_wholeSlice) wholeSlice.Release(); };
+
+            var diagonalTouch = new StickyButtonControl { Text = "Diag", Bounds = new UniRectangle(0, 0, 60, 20), Separate = true };
+            diagonalTouch.Pressed += delegate { _diagonalTouch = !_diagonalTouch; if (!_diagonalTouch) diagonalTouch.Release(); };
+
             _tpSliceBrush.Children.Add(xSlice);
             _tpSliceBrush.Children.Add(ySlice);
             _tpSliceBrush.Children.Add(zSlice);
+            _tpSliceBrush.Children.Add(wholeSlice);
+            _tpSliceBrush.Children.Add(diagonalTouch);
             _tpSliceBrush.UpdateLayout();
 
             #endregion
@@ -899,10 +907,10 @@ namespace Utopia.Components
                 case FrameEditorTools.ColorBrush:
                     _toolsWindow.Children.Add(_tpMirror);
                     break;
-                case FrameEditorTools.FillBrush:
-                    _toolsWindow.Children.Add(_tpMirror);
+                case FrameEditorTools.ColorFillBrush:
+                    _toolsWindow.Children.Add(_tpSliceBrush);
                     break;
-                case FrameEditorTools.SliceBrush:
+                case FrameEditorTools.BlockFillBrush:
                     _toolsWindow.Children.Add(_tpSliceBrush);
                     break;
                 case FrameEditorTools.Preset:
@@ -942,10 +950,10 @@ namespace Utopia.Components
         None,
         Edit,
         ColorBrush,
-        FillBrush,
-        SliceBrush,
+        ColorFillBrush,
         Preset,
-        Selection
+        Selection,
+        BlockFillBrush
     }
 }
 
