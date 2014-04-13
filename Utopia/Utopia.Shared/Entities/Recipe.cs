@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using ProtoBuf;
 using Utopia.Shared.Tools;
 
@@ -69,8 +70,9 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Item blueprint id
         /// </summary>
+        [Editor(typeof(BlueprintTypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(1)]
-        [TypeConverter(typeof(BlueprintSelector))]
         public ushort BlueprintId { get; set; }
 
         /// <summary>
@@ -82,9 +84,9 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Optional initialization set for containers. In case if the blueprint is the container allows to fill it with the set provided
         /// </summary>
-        [ProtoMember(3)]
         [TypeConverter(typeof(ContainerSetSelector))]
         [Description("Optional initialization set for containers. In case if the blueprint is the container allows to fill it with the set provided")]
+        [ProtoMember(3)]
         public string SetName { get; set; }
         
         public override string ToString()

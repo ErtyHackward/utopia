@@ -118,4 +118,37 @@ namespace Utopia.Shared.Tools
             return new StandardValuesCollection(Configuration.BluePrints.Where(bp => bp.Value is CharacterEntity).Select(bp => bp.Value.Name).ToArray());
         }
     }
+
+    public class BlueprintTextHintConverter : TypeConverter
+    {
+        public static WorldConfiguration Configuration { get; set; }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType)
+        {
+            if (value is string)
+                return value;
+
+            var bpId = (ushort)value;
+
+            if (bpId == 0)
+                return "Choose...";
+
+            if (bpId < 256)
+            {
+                return Configuration.BlockProfiles[bpId].Name;
+            }
+
+            return Configuration.BluePrints[bpId].Name;
+        }
+    }
 }

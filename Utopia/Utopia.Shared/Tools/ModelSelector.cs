@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Design;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using Utopia.Shared.Entities;
@@ -42,7 +43,7 @@ namespace Utopia.Shared.Tools
             _list.SmallImageList = imgList;
 
 
-            foreach (var model in isMultiStatesModels ? MultiStatesModels : Models)
+            foreach (var model in (isMultiStatesModels ? MultiStatesModels : Models).OrderBy(p => p.Key))
             {
                 imgList.Images.Add(model.Value);
                 var item = new ListViewItem();
