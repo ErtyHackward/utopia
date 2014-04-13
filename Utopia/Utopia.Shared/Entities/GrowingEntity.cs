@@ -26,6 +26,9 @@ namespace Utopia.Shared.Entities
         [Category("Growing")]
         public int CurrentGrowLevelIndex { get; set; }
 
+        /// <summary>
+        /// Last grow service check
+        /// </summary>
         [ProtoMember(3)]
         [Browsable(false)]
         [Category("Growing")]
@@ -53,11 +56,11 @@ namespace Utopia.Shared.Entities
         public float RottenChance { get; set; }
 
         /// <summary>
-        /// When the last Grow refresh logic has been done on the entity.
+        /// How much grow time passed from the last level change
         /// </summary>
         [ProtoMember(8)]
         [Browsable(false)]
-        public UtopiaTime LastGrowRefresh { get; set; }
+        public UtopiaTimeSpan CurrentGrowTime { get; set; }
         
         [Browsable(false)]
         public GrowLevel CurrentGrowLevel { get { return GrowLevels.Count > CurrentGrowLevelIndex ? GrowLevels[CurrentGrowLevelIndex] : default(GrowLevel); } }
@@ -71,6 +74,8 @@ namespace Utopia.Shared.Entities
         protected GrowingEntity()
         {
             GrowLevels = new List<GrowLevel>();
+            GrowingSeasons = new List<string>();
+            GrowingBlocks = new List<byte>();
         }
     }
 

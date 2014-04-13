@@ -128,7 +128,7 @@ namespace Utopia.Shared.Structs
         {
             get
             {
-                if (SeasonIndex < TimeConfiguration.Seasons.Count - 1) 
+                if (SeasonIndex < TimeConfiguration.Seasons.Count) 
                     return TimeConfiguration.Seasons[SeasonIndex];
                 return null;
             }
@@ -166,6 +166,8 @@ namespace Utopia.Shared.Structs
         public UtopiaTimeSpan TimeOfDay {
             get { return UtopiaTimeSpan.FromSeconds(TotalSeconds % SecondsPerDay); }
         }
+
+        public bool IsZero { get { return TotalSeconds == 0; } }
 
         public UtopiaTime(int year, int season = 0, int day = 0, int hour = 0, int minute = 0, int second = 0)
         {

@@ -17,5 +17,10 @@ namespace Utopia.Shared.Services
         [Description("Median moisture offset for this season in range [-1;1]")]
         [ProtoMember(3)]
         public float Moisture { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

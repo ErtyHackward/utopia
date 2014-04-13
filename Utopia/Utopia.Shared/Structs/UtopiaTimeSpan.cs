@@ -78,13 +78,17 @@ namespace Utopia.Shared.Structs
 
         public override string ToString()
         {
-            if (TotalYears > 0)
+            if (Years > 0)
             {
-                return string.Format("{0}y {1}d {2:00}:{3:00}", TotalYears, Days, Hours, Minutes);
+                return string.Format("{0}y {4}s {1}d {2:00}:{3:00}", Years, Days, Hours, Minutes, Seasons);
             }
-            if (TotalDays > 0)
+            if (Seasons > 0)
             {
-                return string.Format("{0}d {1:00}:{2:00}", TotalDays, Hours, Minutes);
+                return string.Format("{0}s {1}d {2:00}:{3:00}", Seasons, Days, Hours, Minutes);
+            }
+            if (Days > 0)
+            {
+                return string.Format("{0}d {1:00}:{2:00}", Days, Hours, Minutes);
             }
             
             return string.Format("{0:00}:{1:00}", Hours, Minutes);
@@ -158,6 +162,11 @@ namespace Utopia.Shared.Structs
         public static UtopiaTimeSpan FromSeasons(double seasons)
         {
             return new UtopiaTimeSpan { TotalSeconds = (long)(seasons * UtopiaTime.TimeConfiguration.DaysPerSeason * 24 * 60 * 60) };
+        }
+
+        public static UtopiaTimeSpan FromYears(double years)
+        {
+            return new UtopiaTimeSpan { TotalSeconds = (long)(years * UtopiaTime.TimeConfiguration.DaysPerYear * 24 * 60 * 60) };
         }
 
         public bool Equals(UtopiaTimeSpan other)

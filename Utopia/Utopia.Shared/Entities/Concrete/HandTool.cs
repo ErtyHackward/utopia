@@ -136,7 +136,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                     if (SoundEngine != null && EntityFactory.Config.EntityTake != null)
                     {
-                        SoundEngine.StartPlay3D(EntityFactory.Config.EntityTake, item.Position.AsVector3());
+                        SoundEngine.StartPlay3D(EntityFactory.Config.EntityTake, removedEntity.Position.AsVector3());
                     }
 
                     return impact;
