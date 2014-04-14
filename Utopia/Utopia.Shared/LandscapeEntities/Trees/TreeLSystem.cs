@@ -22,8 +22,10 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         }
 
         #region Public Methods
-        public List<BlockWithPosition> Generate(FastRandom rnd, Vector3I WPos, TreeBluePrint treeType)
+        public List<BlockWithPosition> Generate(int seed, Vector3I WPos, TreeBluePrint treeType)
         {
+            FastRandom rnd = new FastRandom(seed);
+
             Dictionary<Vector3I, BlockWithPosition> meshDico = new Dictionary<Vector3I, BlockWithPosition>();
 
             //randomize tree growth level, minimum=2

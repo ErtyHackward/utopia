@@ -21,9 +21,11 @@ namespace Utopia.Shared.LandscapeEntities
         [ProtoMember(3, OverwriteList = true)]
         public List<BlockWithPosition> Blocks { get; set; }
 
-        //Static Entities
         [ProtoMember(4)]
         public Vector3I RootLocation { get; set; }
+
+        [ProtoMember(5)]
+        public int GenerationSeed { get; set; }
     }
 
 }

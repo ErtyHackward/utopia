@@ -19,6 +19,8 @@ using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared.Entities.Interfaces;
 using System.Collections.Generic;
 using Utopia.Shared.World.Processors.Utopia.OtherFct;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -572,16 +574,33 @@ namespace Utopia.Shared.World.Processors.Utopia
             //The entities are sorted by their origine chunk hashcode value
             foreach (LandscapeEntity entity in landscapeEntities)
             {
+                bool isLandscapeEntityRootInsideChunk = (entity.RootLocation.X >= 0 && entity.RootLocation.X < AbstractChunk.ChunkSize.X && entity.RootLocation.Z >= 0 && entity.RootLocation.Z < AbstractChunk.ChunkSize.Z);
+
                 //Get LandscapeEntity
                 var landscapeEntity = _worldParameters.Configuration.LandscapeEntitiesDico[entity.LandscapeEntityId];
-
+                
                 foreach (var staticEntity in landscapeEntity.StaticItems)
                 {
                     //Get number of object
                     var nbr = chunkRnd.Next(staticEntity.Quantity.Min, staticEntity.Quantity.Max);
-                    //If Root out of chunk, devide the qt of object to spawn by 2
-                    if ((entity.RootLocation.X < 0 || entity.RootLocation.X >= AbstractChunk.ChunkSize.X || entity.RootLocation.Z < 0 || entity.RootLocation.Z >= AbstractChunk.ChunkSize.Z))
+                    if (isLandscapeEntityRootInsideChunk)
                     {
+                        //This entity location is inside the correct chunk.
+
+                        //Its a tree !
+                        if (landscapeEntity is TreeBluePrint)
+                        {
+                            //Create tree soul and attach this entity to the chunk
+                            var soul = entityFactory.CreateEntity<TreeSoul>();
+                            soul.Position = new Vector3D(chunkWorldPosition.X + entity.RootLocation.X + 0.5, entity.RootLocation.Y, chunkWorldPosition.Y + entity.RootLocation.Z + 0.5);
+                            soul.TreeRndSeed = entity.GenerationSeed;
+                            soul.TreeBlueprintIndex = entity.LandscapeEntityId;
+                            chunk.Entities.Add(soul);
+                        }
+                    }
+                    else
+                    {
+                        //If Root out of chunk, devide the qt of object to spawn by 2
                         nbr = (int)(nbr / 2.0);
                     }
 

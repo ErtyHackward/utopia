@@ -232,12 +232,12 @@ namespace Utopia.Shared.Entities.Models
             }
         }
 
-        public static VoxelModel GenerateTreeModel(TreeBluePrint blueprint, TreeLSystem treeSystem = null)
+        public static VoxelModel GenerateTreeModel(int seed, TreeBluePrint blueprint, TreeLSystem treeSystem = null)
         {
             if (treeSystem == null)
                 treeSystem = new TreeLSystem();
 
-            var blocks = treeSystem.Generate(new FastRandom(), new Vector3I(), blueprint);
+            var blocks = treeSystem.Generate(seed, new Vector3I(), blueprint);
 
             var max = new Vector3I(int.MinValue);
             var min = new Vector3I(int.MaxValue);
@@ -255,7 +255,6 @@ namespace Utopia.Shared.Entities.Models
             model.ColorMapping.BlockColors = new Color4[64];
             model.ColorMapping.BlockColors[0] = Color.Brown.ToColor4();
             model.ColorMapping.BlockColors[1] = Color.Green.ToColor4();
-
 
             var frame = new VoxelFrame(size);
             foreach (var blockWithPosition in blocks)
