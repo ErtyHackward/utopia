@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using ProtoBuf;
 using Utopia.Shared.Services;
 
@@ -78,20 +79,26 @@ namespace Utopia.Shared.Structs
 
         public override string ToString()
         {
+            var sb = new StringBuilder();
+
             if (Years > 0)
             {
-                return string.Format("{0}y {4}s {1}d {2:00}:{3:00}", Years, Days, Hours, Minutes, Seasons);
+                sb.AppendFormat("{0}y ", Years);
             }
             if (Seasons > 0)
             {
-                return string.Format("{0}s {1}d {2:00}:{3:00}", Seasons, Days, Hours, Minutes);
+                sb.AppendFormat("{0}s ", Seasons);
             }
             if (Days > 0)
             {
-                return string.Format("{0}d {1:00}:{2:00}", Days, Hours, Minutes);
+                sb.AppendFormat("{0}d ", Days);
             }
-            
-            return string.Format("{0:00}:{1:00}", Hours, Minutes);
+            if (Hours != 0 || Minutes != 0)
+            {
+                sb.AppendFormat("{0:00}:{1:00}", Hours, Minutes);
+            }
+
+            return sb.ToString().Trim();
         }
 
         public static bool operator >(UtopiaTimeSpan t1, UtopiaTimeSpan t2)
@@ -187,7 +194,7 @@ namespace Utopia.Shared.Structs
 
         public static UtopiaTimeSpan Parse(string s)
         {
-            if (s.Contains(" "))
+            if (!s.Contains(":") || s.Contains(" "))
             {
                 var spl = s.ToLower().Split(new []{' '}, StringSplitOptions.RemoveEmptyEntries);
 

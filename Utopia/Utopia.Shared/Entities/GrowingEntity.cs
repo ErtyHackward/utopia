@@ -76,32 +76,25 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     public class GrowLevel : ICloneable
     {
-        [ProtoMember(1)]
         [Browsable(false)]
+        [ProtoMember(1)]
         public string LevelId { get; set; }
 
         [ProtoMember(2)]
         public string Name { get; set; }
-
-        [ProtoMember(3)]
+        
         [TypeConverter(typeof(ModelStateConverter))]
+        [ProtoMember(3)]
         public string ModelState { get; set; }
-
+        
+        [TypeConverter(typeof(UtopiaTimeSpanConverter))]
         [ProtoMember(4)]
-        [Browsable(false)]
         public UtopiaTimeSpan GrowTime { get; set; }
-
-        [ProtoMember(5)]
+        
         [Description("Generated entities when harvested")]
+        [ProtoMember(5)]
         public List<InitSlot> HarvestSlots { get; set; }
-
-        [DisplayName("Grow Time (Hours)")]
-        public double GrowTimeH
-        {
-            get { return GrowTime.TotalSeconds / 3600.0f; }
-            set { GrowTime = new UtopiaTimeSpan() { TotalSeconds = (long)(value * 3600.0f) }; }
-        }
-
+        
         public GrowLevel()
         {
             HarvestSlots = new List<InitSlot>();
