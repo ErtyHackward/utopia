@@ -87,6 +87,12 @@
     <Compile Include="Forms\FrmItemAdd.Designer.cs">
       <DependentUpon>FrmItemAdd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmLoading.Designer.cs">
+      <DependentUpon>FrmLoading.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,6 +140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmItemAdd.resx">
       <DependentUpon>FrmItemAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmLoading.resx">
+      <DependentUpon>FrmLoading.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>

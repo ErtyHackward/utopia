@@ -21,8 +21,9 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets recipe result item
         /// </summary>
+        [Editor(typeof(BlueprintTypeEditor<object>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(2)]
-        [TypeConverter(typeof(BlueprintSelector))]
         public ushort ResultBlueprintId { get; set; }
 
         /// <summary>

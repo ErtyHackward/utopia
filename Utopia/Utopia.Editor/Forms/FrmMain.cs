@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Data.Entity.Design.PluralizationServices;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,12 +11,15 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using S33M3CoreComponents.Config;
 using Utopia.Editor.Properties;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Web;
+using Utopia.Shared.Net.Web.Responses;
 using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using System.Linq;
@@ -27,6 +31,7 @@ using System.IO.Pipes;
 using ProtoBuf;
 using Utopia.Shared.Tools.XMLSerializer;
 using S33M3Resources.Structs;
+using Container = Utopia.Shared.Entities.Concrete.Container;
 
 namespace Utopia.Editor.Forms
 {
@@ -39,6 +44,7 @@ namespace Utopia.Editor.Forms
         private UserControl _processorControl;
         private Dictionary<string, Image> _icons;
         private PluralizationService _pluralization;
+        private AsyncOperation _ao;
 
         #region Public Properties
         public WorldConfiguration Configuration
@@ -69,9 +75,7 @@ namespace Utopia.Editor.Forms
                             AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as UtopiaWorldConfiguration));
                             break;
                     }
-
-                    _icons = Program.IconManager.GenerateIcons(_configuration);
-
+                    
                     containerEditor.Configuration = _configuration;
                     containerEditor.Icons = _icons;
                     ContainerSetSelector.Configuration = _configuration;
@@ -192,6 +196,8 @@ namespace Utopia.Editor.Forms
                 new CultureInfo("en"));
             
             UpdateRecent();
+
+            _ao = AsyncOperationManager.CreateOperation(null);
         }
 
         #region Private Methods
@@ -274,6 +280,8 @@ namespace Utopia.Editor.Forms
             }
         }
 
+        private FrmLoading _loadingForm = new FrmLoading();
+
         private void OpenConfiguration(string fileName)
         {
             if (!File.Exists(fileName))
@@ -290,31 +298,81 @@ namespace Utopia.Editor.Forms
                 return;
             }
 
-            try
-            {
-                Configuration = WorldConfiguration.LoadFromFile(fileName, withHelperAssignation: true);
-                _filePath = fileName;
+            ShowLoadingForm();
 
-                var recent = Settings.Default.RecentConfigurations ?? new StringCollection();
-
-                recent.Remove(_filePath);
-                
-                recent.Insert(0, _filePath);
-
-                while (recent.Count > 3)
+            new ThreadStart(delegate {
+                try
                 {
-                    recent.RemoveAt(recent.Count-1);
+                    var configuration = WorldConfiguration.LoadFromFile(fileName, withHelperAssignation: true);
+
+                    var availableModels = Program.IconManager.ModelManager.Enumerate().ToList();
+
+                    var needToLoadModels =
+                        configuration.BluePrints.Where(
+                            p => !availableModels.Exists(m => m.VoxelModel.Name == ((IVoxelEntity)p.Value).ModelName))
+                            .Select(p => ((IVoxelEntity)p.Value).ModelName).Where(m => !string.IsNullOrEmpty(m))
+                            .ToList();
+
+                    _ao.Post(delegate
+                    {
+                        _loadingForm.infoLabel.Text = "Downloading models...";
+                    }, null);
+
+                    if (needToLoadModels.Count > 0)
+                    {
+                        for (int i = 0; i < needToLoadModels.Count; i++)
+                        {
+                            var needToLoadModel = needToLoadModels[i];
+                            _ao.Post(delegate
+                            {
+                                _loadingForm.infoLabel.Text = string.Format("Downloading model: {1}/{2} {0}", needToLoadModel, i + 1, needToLoadModels.Count);
+                            }, null);
+                            
+                            Program.IconManager.ModelManager.DownloadModel(needToLoadModel);
+                        }
+                    }
+
+                    _ao.Post(delegate {
+                        _loadingForm.infoLabel.Text = "Rendering icons...";
+                    }, null);
+
+                    _icons = Program.IconManager.GenerateIcons(configuration);
+
+                    _ao.Post(delegate {
+                        Configuration = configuration;
+                    }, null);
+                    
+                    _filePath = fileName;
+
+
+                    var recent = Settings.Default.RecentConfigurations ?? new StringCollection();
+                    recent.Remove(_filePath);
+                    recent.Insert(0, _filePath);
+
+                    while (recent.Count > 3)
+                    {
+                        recent.RemoveAt(recent.Count - 1);
+                    }
+
+                    Settings.Default.RecentConfigurations = recent;
+                    Settings.Default.Save();
+                    _ao.Post(delegate
+                    {
+                        UpdateRecent();
+                        HideLoadingForm();
+                    }, null);
+                }
+                catch (Exception x)
+                {
+                    _ao.Post(delegate
+                    {
+                        HideLoadingForm();
+                        MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }, null);
                 }
 
-                Settings.Default.RecentConfigurations = recent;
-                Settings.Default.Save();
-
-                UpdateRecent();
-            }
-            catch (Exception x)
-            {
-                MessageBox.Show("Error: " + x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }).BeginInvoke(null, null);
         }
 
         //Save
@@ -1217,6 +1275,129 @@ namespace Utopia.Editor.Forms
 
                 ShowMainControl(pgDetails);
             }
+        }
+
+        private void FrmMain_Shown(object sender, EventArgs e)
+        {
+            Activate();
+        }
+
+        private void ShowLoadingForm()
+        {
+            _loadingForm.StartPosition = FormStartPosition.Manual;
+            _loadingForm.Location = new Point(this.Location.X + (this.Width - _loadingForm.Width) / 2, this.Location.Y + (this.Height - _loadingForm.Height) / 2);
+            _loadingForm.Show(this);
+            _loadingForm.infoLabel.Text = "";
+            _loadingForm.Refresh();
+        }
+
+        private void HideLoadingForm()
+        {
+            _loadingForm.Hide();
+        }
+
+        ManualResetEvent waitModels = new ManualResetEvent(false);
+        private ModelsListResponse _modelsListResponse;
+        private void downloadAllModelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+            ClientSettings.Current = new XmlSettingsManager<ClientConfig>(@"client.config", SettingsStorage.CustomPath, appdata + @"\Realms\Client");
+            ClientSettings.Current.Load();
+
+            if (string.IsNullOrEmpty(ClientSettings.Current.Settings.Token))
+            {
+                MessageBox.Show("Unable to find login credentials. Please login to the game, exit. And try here again.");
+                return;
+            }
+
+            ShowLoadingForm();
+
+            new ThreadStart(delegate { 
+                try
+                {
+                    var webApi = new ClientWebApi();
+                    webApi.TokenVerified += webApi_TokenVerified;
+                    webApi.OauthVerifyTokenAsync(ClientSettings.Current.Settings.Token);
+                    waitModels.WaitOne();
+
+                    if (string.IsNullOrEmpty(webApi.Token))
+                    {
+                        RunInMainThread(() => MessageBox.Show(this, "Authorization failed."));
+                        return;
+                    }
+
+                    RunInMainThread(() => _loadingForm.infoLabel.Text = "Downloading list..." );
+
+                    webApi.GetModelsListAsync(webApi_ModelsReceived);
+                    waitModels.Reset();
+                    waitModels.WaitOne();
+
+                    var availableModels = Program.IconManager.ModelManager.Enumerate().ToList();
+                    var needToDownload = new List<string>();
+                    foreach (var modelInfo in _modelsListResponse.Models)
+                    {
+                        var m = availableModels.FirstOrDefault(mo => mo.VoxelModel.Name == modelInfo.Name);
+
+                        if (m == null)
+                        {
+                            needToDownload.Add(modelInfo.Name);
+                            continue;
+                        }
+
+                        m.VoxelModel.UpdateHash();
+                        if (!string.IsNullOrEmpty(modelInfo.Hash) && m.VoxelModel.Hash.ToString() != modelInfo.Hash)
+                            needToDownload.Add(modelInfo.Name);
+                    }
+
+                    if (needToDownload.Count == 0)
+                    {
+                        RunInMainThread(() => MessageBox.Show(this, "All models were already downloaded"));
+                        return;
+                    }
+
+                    for (int i = 0; i < needToDownload.Count; i++)
+                    {
+                        var modelName = needToDownload[i];
+                        RunInMainThread(() => _loadingForm.infoLabel.Text = string.Format("Downloading model {0}/{1} {2}", i + 1, needToDownload.Count, modelName));
+                        Program.IconManager.ModelManager.DownloadModel(modelName);
+                    }
+
+                    if (_configuration != null)
+                    {
+                        RunInMainThread(() => _loadingForm.infoLabel.Text = "Rendering images...");
+                        _icons = Program.IconManager.GenerateIcons(_configuration);
+                        RunInMainThread(() =>
+                        {
+                            UpdateImageList();
+                            UpdateTree(); 
+                        });
+                    }
+                    RunInMainThread(() => MessageBox.Show(this, needToDownload.Count + " models were loaded."));
+                }
+                finally
+                {
+                    RunInMainThread(HideLoadingForm);
+                }
+            }).BeginInvoke(null, null);
+            
+        }
+
+        public void RunInMainThread(System.Action action)
+        {
+            _ao.Post((o) => action(), null);
+        }
+
+
+        void webApi_TokenVerified(object sender, Shared.Net.Web.Responses.VerifyResponse e)
+        {
+            waitModels.Set();
+        }
+
+        private void webApi_ModelsReceived(ModelsListResponse response)
+        {
+            _modelsListResponse = response;
+            waitModels.Set();
         }
     }
 }

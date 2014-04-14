@@ -62,6 +62,11 @@ namespace Utopia.Shared.Tools
             }
         }
 
+        public override bool IsDropDownResizable
+        {
+            get { return true; }
+        }
+
         public override bool GetPaintValueSupported(System.ComponentModel.ITypeDescriptorContext context)
         {
             return true;
