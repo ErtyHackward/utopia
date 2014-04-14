@@ -117,6 +117,7 @@
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\IEntitySpawningControler.cs" />
     <Compile Include="ClassExt\ListExtension.cs" />
+    <Compile Include="Entities\Concrete\TreeSoul.cs" />
     <Compile Include="Entities\GrowingEntity.cs" />
     <Compile Include="Entities\Concrete\PlantGrowingEntity.cs" />
     <Compile Include="Entities\Concrete\TreeGrowingEntity.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
     <Compile Include="Structs\UtopiaTimeSpan.cs" />
     <Compile Include="Tools\BlueprintTypeEditor.cs" />
+    <Compile Include="Tools\UtopiaTimeSpanConverter.cs" />
     <Compile Include="Tools\ValueTypeTypeConverter.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />

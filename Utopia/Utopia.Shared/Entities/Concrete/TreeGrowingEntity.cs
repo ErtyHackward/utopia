@@ -30,5 +30,8 @@ namespace Utopia.Shared.Entities.Concrete
         /// </summary>
         [ProtoMember(3)]
         public float Scale { get; set; }
+
+        [ProtoMember(4)]
+        public int TreeRndSeed { get; set; }
     }
 }

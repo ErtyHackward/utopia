@@ -187,8 +187,53 @@ namespace Utopia.Shared.Structs
 
         public static UtopiaTimeSpan Parse(string s)
         {
-            var ts = TimeSpan.Parse(s);
-            return FromSeconds(ts.TotalSeconds);
+            if (s.Contains(" "))
+            {
+                var spl = s.ToLower().Split(new []{' '}, StringSplitOptions.RemoveEmptyEntries);
+
+                var span = new UtopiaTimeSpan();
+
+                foreach (var s1 in spl)
+                {
+                    var value = s1.Remove(s1.Length-1);
+                    if (s1.EndsWith("y"))
+                    {
+                        int years;
+                        if (int.TryParse(value, out years))
+                            span += FromYears(years);
+                    }
+                    if (s1.EndsWith("s"))
+                    {
+                        int seasons;
+                        if (int.TryParse(value, out seasons))
+                            span += FromSeasons(seasons);
+                    }
+                    if (s1.EndsWith("d"))
+                    {
+                        int days;
+                        if (int.TryParse(value, out days))
+                            span += FromDays(days);
+                    }
+                    if (s1.EndsWith("h"))
+                    {
+                        int hours;
+                        if (int.TryParse(value, out hours))
+                            span += FromHours(hours);
+                    }
+                    if (s1.Contains(":"))
+                    {
+                        var ts = TimeSpan.Parse(s1);
+                        span += FromSeconds(ts.TotalSeconds);
+                    }
+                }
+
+                return span;
+            }
+            else
+            {
+                var ts = TimeSpan.Parse(s);
+                return FromSeconds(ts.TotalSeconds);
+            }
         }
     }
 }
