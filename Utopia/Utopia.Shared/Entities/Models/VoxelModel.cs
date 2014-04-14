@@ -4,6 +4,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
+using SharpDX;
+using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Models
@@ -121,6 +125,9 @@ namespace Utopia.Shared.Entities.Models
 
         public void SaveToFile(string path)
         {
+            if (File.Exists(path))
+                File.Delete(path);
+
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
                 Serializer.Serialize(fs, this);
@@ -223,6 +230,50 @@ namespace Utopia.Shared.Entities.Models
                         ps.ActiveFrame--;
                 }
             }
+        }
+
+        public static VoxelModel GenerateTreeModel(TreeBluePrint blueprint, TreeLSystem treeSystem = null)
+        {
+            if (treeSystem == null)
+                treeSystem = new TreeLSystem();
+
+            var blocks = treeSystem.Generate(new FastRandom(), new Vector3I(), blueprint);
+
+            var max = new Vector3I(int.MinValue);
+            var min = new Vector3I(int.MaxValue);
+
+            foreach (var blockWithPosition in blocks)
+            {
+                max = Vector3I.Max(max, blockWithPosition.WorldPosition);
+                min = Vector3I.Min(min, blockWithPosition.WorldPosition);
+            }
+
+            var size = max - min + Vector3I.One;
+            var model = new VoxelModel();
+            model.Name = "Tree Example";
+            model.ColorMapping = new ColorMapping();
+            model.ColorMapping.BlockColors = new Color4[64];
+            model.ColorMapping.BlockColors[0] = Color.Brown.ToColor4();
+            model.ColorMapping.BlockColors[1] = Color.Green.ToColor4();
+
+
+            var frame = new VoxelFrame(size);
+            foreach (var blockWithPosition in blocks)
+            {
+                frame.BlockData.SetBlock(blockWithPosition.WorldPosition - min, blockWithPosition.BlockId == blueprint.TrunkBlock ? (byte)1 : (byte)2);
+            }
+
+            model.Frames.Add(frame);
+            var part = new VoxelModelPart();
+            part.Name = "Main";
+            model.Parts.Add(part);
+
+            var state = new VoxelModelState(model);
+            state.Name = "Default";
+            state.PartsStates[0].Translation = new Vector3(-size.x / 2f, 0, -size.z / 2f);
+            model.States.Add(state);
+
+            return model;
         }
     }
 
