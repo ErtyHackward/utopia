@@ -188,7 +188,7 @@ namespace LtreeVisualizer.Components
             FastRandom rnd = new FastRandom();
             FastRandom rndColor = new FastRandom();
             //Generate the list of Tree points.
-            List<BlockWithPosition> result = _treeSystem.Generate(rnd, new S33M3Resources.Structs.Vector3I(), treeTemplate);
+            List<BlockWithPosition> result = _treeSystem.Generate(rnd.Next(), new S33M3Resources.Structs.Vector3I(), treeTemplate);
 
             _letreeVertexCollection = new List<VertexHLSLLTree>();
             _letreeIndexCollection = new List<ushort>();

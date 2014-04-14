@@ -9,7 +9,7 @@ namespace Utopia.Shared.LandscapeEntities
 {
     public static class LandscapeEntityParser
     {
-        public static List<LandscapeEntity> GlobalMesh2ChunkMesh(IEnumerable<BlockWithPosition> globalMesh, Vector3I worldRootLocation, int landscapeEntityId)
+        public static List<LandscapeEntity> GlobalMesh2ChunkMesh(IEnumerable<BlockWithPosition> globalMesh, Vector3I worldRootLocation, int landscapeEntityId, int generationSeed)
         {
             var chunks = new Dictionary<Vector3I, LandscapeEntity>();
 
@@ -25,6 +25,7 @@ namespace Utopia.Shared.LandscapeEntities
                     chunkMesh = new LandscapeEntity();
                     chunkMesh.LandscapeEntityId = landscapeEntityId;
                     chunkMesh.ChunkLocation = chunkLocation;
+                    chunkMesh.GenerationSeed = generationSeed;
                     chunkMesh.Blocks = new List<BlockWithPosition>();
                     chunkMesh.RootLocation = new Vector3I(worldRootLocation.X - (chunkLocation.X * AbstractChunk.ChunkSize.X),
                                                           worldRootLocation.Y,

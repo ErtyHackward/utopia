@@ -22,7 +22,7 @@ namespace Utopia.Tests
 
             try
             {
-                var model = VoxelModel.GenerateTreeModel(conf.TreeBluePrints[0]);
+                var model = VoxelModel.GenerateTreeModel(0 ,conf.TreeBluePrints[0]);
 
                 model.SaveToFile(@"C:\Dev\Utopia\Setup\Output\Tree.uvm");
             }
