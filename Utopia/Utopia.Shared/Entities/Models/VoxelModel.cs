@@ -270,7 +270,7 @@ namespace Utopia.Shared.Entities.Models
 
             var state = new VoxelModelState(model);
             state.Name = "Default";
-            state.PartsStates[0].Translation = new Vector3(-size.x / 2f, 0, -size.z / 2f);
+            state.PartsStates[0].Translation = new Vector3(min.X, 0, min.Z);
             model.States.Add(state);
 
             return model;
