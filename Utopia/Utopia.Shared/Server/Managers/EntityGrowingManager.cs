@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using S33M3Resources.Structs;
+using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Server.Structs;
@@ -99,9 +100,53 @@ namespace Utopia.Shared.Server.Managers
                         chunk.Entities.Add(entity);
                     }
                 }
-                if (entity is TreeGrowingEntity)
+                var tree = entity as TreeGrowingEntity;
+                if (tree != null)
                 {
-                    // TODO: tree grow logic
+                    var treeBlueprint = _server.EntityFactory.Config.TreeBluePrints[tree.TreeTypeId];
+
+                    if (tree.CurrentGrowTime > treeBlueprint.GrowTime)
+                    {
+                        // the tree is ready
+
+                        // create tree blocks
+                        var rootOffset = -tree.VoxelModel.States[0].PartsStates[0].Translation;
+                        var cursor = _server.LandscapeManager.GetCursor(tree.Position);
+                        var frame = tree.VoxelModel.Frames[0];
+                        var range = new Range3I(new Vector3I(), frame.BlockData.ChunkSize);
+                        
+                        foreach (var position in range)
+                        {
+                            var value = frame.BlockData.GetBlock(position);
+                            if (value == 0)
+                                continue;
+                            var blockType = value == 1 ? treeBlueprint.TrunkBlock : treeBlueprint.FoliageBlock;
+                            var worldPos = (Vector3I)(tree.Position + rootOffset);
+                            cursor.GlobalPosition = worldPos;
+                            if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                            {
+                                cursor.Write(blockType);
+                            }
+                        }
+
+                        // create tree soul
+                        var soul = _server.EntityFactory.CreateEntity<TreeSoul>();
+                        soul.Position = tree.Position;
+                        soul.TreeRndSeed = tree.TreeRndSeed;
+                        soul.TreeBlueprintIndex = tree.TreeTypeId;
+
+                        chunk.Entities.Add(soul);
+
+                        // remove the growing tree
+                        chunk.Entities.RemoveById(tree.StaticId);
+                    }
+                    else
+                    {
+                        // just make the model bigger
+                        tree.Scale = (float)tree.CurrentGrowTime.TotalSeconds / treeBlueprint.GrowTime.TotalSeconds;
+                        chunk.Entities.RemoveById(tree.StaticId);
+                        chunk.Entities.Add(tree);
+                    }
                 }
             }
         }
@@ -138,30 +183,41 @@ namespace Utopia.Shared.Server.Managers
 
             entity.CurrentGrowTime += passedTime;
 
-            // update entity to the actual state 
-            while (!entity.IsLastGrowLevel)
+            var plant = entity as PlantGrowingEntity;
+
+            if (plant != null)
             {
-                var currentLevel = entity.CurrentGrowLevel;
-
-                if (entity.CurrentGrowTime < currentLevel.GrowTime)
-                    break;
-
-                if (entity.CurrentGrowLevelIndex == 0 && entity.RottenChance != 0f)
+                // update entity to the actual state 
+                while (!plant.IsLastGrowLevel)
                 {
-                    if (random.NextDouble() < entity.RottenChance)
-                    {
-                        if (chunk != null)
-                            chunk.Entities.RemoveById(entity.StaticId);
-                        rotten = true;
-                        return true;
-                    }
-                }
+                    var currentLevel = plant.CurrentGrowLevel;
 
-                entity.CurrentGrowTime -= currentLevel.GrowTime;
-                entity.CurrentGrowLevelIndex++;
-                updated = true;
+                    if (plant.CurrentGrowTime < currentLevel.GrowTime)
+                        break;
+
+                    if (plant.CurrentGrowLevelIndex == 0 && plant.RottenChance != 0f)
+                    {
+                        if (random.NextDouble() < plant.RottenChance)
+                        {
+                            if (chunk != null)
+                                chunk.Entities.RemoveById(plant.StaticId);
+                            rotten = true;
+                            return true;
+                        }
+                    }
+
+                    plant.CurrentGrowTime -= currentLevel.GrowTime;
+                    plant.CurrentGrowLevelIndex++;
+                    updated = true;
+                }
             }
 
+            var tree = entity as TreeGrowingEntity;
+
+            if (tree != null)
+            {
+                updated = true;
+            }
 
             return updated;
         }

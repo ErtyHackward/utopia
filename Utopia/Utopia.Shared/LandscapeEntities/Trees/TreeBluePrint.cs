@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Services;
+using Utopia.Shared.Structs;
 using Utopia.Shared.Tools;
 using System.Drawing.Design;
 using Utopia.Shared.Entities.Concrete;
@@ -70,6 +72,22 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [DisplayName("Foliage size")]
         [ProtoMember(16)]
         public Vector3I FoliageSize { get; set; }
+        
+        [Category("Growing")]
+        [Description("Tree grow time from seed to final state")]
+        [TypeConverter(typeof(UtopiaTimeSpanConverter))]
+        [ProtoMember(17)]
+        public UtopiaTimeSpan GrowTime { get; set; }
+        [Category("Growing")]
+        [Description("Will grow only in specified seasond. If not set will grow all the time")]
+        [Editor(typeof(Season.SeasonsEditor), typeof(UITypeEditor))]
+        [ProtoMember(18)]
+        public List<string> GrowingSeasons { get; set; }
+
+        public TreeBluePrint()
+        {
+            GrowingSeasons = new List<string>();
+        }
 
         public override string ToString()
         {

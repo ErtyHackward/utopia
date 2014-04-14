@@ -15,6 +15,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Resources.ModelComp;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -296,7 +297,7 @@ namespace Utopia.Worlds.Chunks
                 voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
 
                 //Assign state in case of growing entity !
-                var growingEntity = e.Entity as GrowingEntity;
+                var growingEntity = e.Entity as PlantGrowingEntity;
                 if (growingEntity != null)
                 {
                     voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevelIndex].ModelState);

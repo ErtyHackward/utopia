@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using ProtoBuf;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
@@ -16,6 +17,7 @@ namespace Utopia.Shared.Entities
     /// </summary>
     [ProtoContract]
     [ProtoInclude(100, typeof(Item))]
+    [ProtoInclude(101, typeof(TreeSoul))]
     public abstract class StaticEntity : Entity, IStaticEntity
     {
         /// <summary>
