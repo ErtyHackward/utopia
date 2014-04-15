@@ -435,7 +435,14 @@ namespace Utopia.Worlds.Chunks
                     var entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
                                                                 MathHelper.Floor(entityWorldPosition.Y),
                                                                 MathHelper.Floor(entityWorldPosition.Z));
-                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
+                    //new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), 
+                    this.UpdateOrder = 1;
+                    var cubeRange = new Range3I
+                    {
+                        Position = new Vector3I(entityBlockPosition.X, 0, entityBlockPosition.Z),
+                        Size = Vector3I.One
+                    };
+                    _chunkEntityImpactManager.CheckImpact(this, cubeRange);
                 }
             }
         }
@@ -459,7 +466,15 @@ namespace Utopia.Worlds.Chunks
                 var entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
                                                             MathHelper.Floor(entityWorldPosition.Y),
                                                             MathHelper.Floor(entityWorldPosition.Z));
-                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
+
+                this.UpdateOrder = 1;
+                //Compute the Range impacted by the cube change
+                var cubeRange = new Range3I
+                {
+                    Position = new Vector3I(entityBlockPosition.X, 0, entityBlockPosition.Z),
+                    Size = Vector3I.One
+                };
+                _chunkEntityImpactManager.CheckImpact(this, cubeRange);
             }
         }
 
