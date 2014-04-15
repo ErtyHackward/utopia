@@ -342,7 +342,7 @@ namespace Utopia.Worlds.Chunks
                         else
                         {
                             var voxelModel = VoxelModel.GenerateTreeModel(treeGrowing.TreeRndSeed,
-                                _visualWorldParameters.WorldParameters.Configuration.TreeBluePrints[
+                                _visualWorldParameters.WorldParameters.Configuration.TreeBluePrintsDico[
                                     treeGrowing.TreeTypeId]);
 
                             model = new VisualVoxelModel(voxelModel, _voxelModelManager.VoxelMeshFactory);

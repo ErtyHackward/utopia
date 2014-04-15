@@ -19,7 +19,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// Configuration blueprint index
         /// </summary>
         [ProtoMember(1)]
-        public int TreeBlueprintIndex { get; set; }
+        public int TreeBlueprintId { get; set; }
 
         /// <summary>
         /// Random seed to create the tree
