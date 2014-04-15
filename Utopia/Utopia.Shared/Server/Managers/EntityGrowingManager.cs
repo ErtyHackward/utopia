@@ -114,7 +114,7 @@ namespace Utopia.Shared.Server.Managers
                         var model = VoxelModel.GenerateTreeModel(tree.TreeRndSeed, treeBlueprint);
 
                         // create tree blocks
-                        var rootOffset = -model.States[0].PartsStates[0].Translation;
+                        var rootOffset = model.States[0].PartsStates[0].Translation;
                         var cursor = _server.LandscapeManager.GetCursor(tree.Position);
                         var frame = model.Frames[0];
                         var range = new Range3I(new Vector3I(), frame.BlockData.ChunkSize);
@@ -125,7 +125,7 @@ namespace Utopia.Shared.Server.Managers
                             if (value == 0)
                                 continue;
                             var blockType = value == 1 ? treeBlueprint.TrunkBlock : treeBlueprint.FoliageBlock;
-                            var worldPos = (Vector3I)(tree.Position + rootOffset);
+                            var worldPos = (Vector3I)(tree.Position + rootOffset) + position;
                             cursor.GlobalPosition = worldPos;
                             if (cursor.Read() == WorldConfiguration.CubeId.Air)
                             {
@@ -223,9 +223,9 @@ namespace Utopia.Shared.Server.Managers
                 // the seed will not grow if there is a tree nearby
                 foreach (var checkChunk in _server.LandscapeManager.SurroundChunks(tree.Position))
                 {
-                    if (checkChunk.Entities.OfType<TreeSoul>().Any(s => Vector3D.Distance(s.Position, tree.Position) < 10))
+                    if (checkChunk.Entities.OfType<TreeSoul>().Any(s => Vector3D.Distance(s.Position, tree.Position) < 16))
                         return false;
-                    if (checkChunk.Entities.OfType<TreeGrowingEntity>().Any(t => t.Scale > 0.1 && Vector3D.Distance(t.Position, tree.Position) < 10))
+                    if (checkChunk.Entities.OfType<TreeGrowingEntity>().Any(t => t != tree && t.Scale > 0.1 && Vector3D.Distance(t.Position, tree.Position) < 16))
                         return false;
                 }
                 

@@ -333,7 +333,7 @@ namespace Utopia.Entities.Managers
             ShowDebugInfo = true;
 
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
-            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, voxelModelManager);
+            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, null, voxelModelManager);
 
             //Add a new Timer trigger
             _energyUpdateTimer = timerManager.AddTimer(1000); //A timer that will be raised every second

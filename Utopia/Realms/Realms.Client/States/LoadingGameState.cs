@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Ninject;
 using Ninject.Parameters;
 using Realms.Client.Components;
@@ -201,7 +202,7 @@ namespace Realms.Client.States
             _vars.DisposeGameComponents = true;
 
             var clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
-
+            
             var clientFactory = _ioc.Get<EntityFactory>("Client");
             clientFactory.Config = clientSideworldParam.Configuration;
             
@@ -317,6 +318,8 @@ namespace Realms.Client.States
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
 
+            LoadMissingModels(clientSideworldParam.Configuration, voxelModelManager);
+
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);
@@ -358,6 +361,20 @@ namespace Realms.Client.States
 
             var engine = _ioc.Get<D3DEngine>();
             inputsManager.MouseManager.MouseCapture = true;
+        }
+
+        private void LoadMissingModels(WorldConfiguration configuration, VoxelModelManager voxelModelManager)
+        {
+            ThreadsManager.RunAsync(() => {
+                voxelModelManager.Initialize();
+                var availableModels = voxelModelManager.Enumerate().Select(m => m.VoxelModel.Name).ToList();
+                var neededModels = configuration.GetUsedModelsNames().Where(m => !availableModels.Contains(m)).ToList();
+
+                foreach (var neededModel in neededModels)
+                {
+                    voxelModelManager.DownloadModel(neededModel);                                      
+                }
+            });
         }
 
         //All chunks have been created on the client (They can be rendered)
