@@ -257,7 +257,12 @@ namespace Utopia.Entities.Voxel
         {
             lock (_syncRoot)
             {
-                var model = _models.Select(p => p.Value).FirstOrDefault(m => m.VoxelModel.Hash.ToString() == hash);
+                var model = _models.Select(p => p.Value).FirstOrDefault(m =>
+                {
+                    if (m.VoxelModel.Hash == null)
+                        m.VoxelModel.UpdateHash();
+                    return m.VoxelModel.Hash.ToString() == hash;
+                });
 
                 if (model == null)
                 {

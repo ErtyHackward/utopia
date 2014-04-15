@@ -33,5 +33,10 @@ namespace Utopia.Shared.Entities.Concrete
 
         [ProtoMember(4)]
         public int TreeRndSeed { get; set; }
+
+        /// <summary>
+        /// Temporal voxel model
+        /// </summary>
+        public object VisualVoxelModel { get; set; }
     }
 }

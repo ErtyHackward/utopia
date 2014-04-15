@@ -7,6 +7,7 @@ using System.Text;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Services;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Tools;
 using System.Drawing.Design;
@@ -38,12 +39,12 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         public LSystemRule Rules_d { get; set; }
         [Category("Configuration")]
         [ProtoMember(7)]
-        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte TrunkBlock { get; set; }
         [Category("Configuration")]
         [ProtoMember(8)]
-        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte FoliageBlock { get; set; }
         [Category("Configuration")]
@@ -83,6 +84,11 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [Editor(typeof(Season.SeasonsEditor), typeof(UITypeEditor))]
         [ProtoMember(18)]
         public List<string> GrowingSeasons { get; set; }
+        [Category("Growing")]
+        [Description("Tree seed inventory icon model")]
+        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [ProtoMember(19)]
+        public string SeedModel { get; set; }
 
         public TreeBluePrint()
         {

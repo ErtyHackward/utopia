@@ -131,6 +131,7 @@
     <Compile Include="Structs\UtopiaTime.cs" />
     <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
     <Compile Include="Structs\UtopiaTimeSpan.cs" />
+    <Compile Include="Tools\BlueprintTextHintConverter.cs" />
     <Compile Include="Tools\BlueprintTypeEditor.cs" />
     <Compile Include="Tools\UtopiaTimeSpanConverter.cs" />
     <Compile Include="Tools\ValueTypeTypeConverter.cs" />
@@ -480,7 +481,6 @@
     <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
-    <Compile Include="Tools\BlueprintSelector.cs" />
     <Compile Include="Tools\ContainerEditor.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 using System.Drawing.Design;
 using Utopia.Shared.Entities.Concrete;
@@ -11,7 +12,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
     public partial class Cavern
     {
         [ProtoMember(1)]
-        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte Cube { get; set; }
 

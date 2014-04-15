@@ -53,17 +53,17 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public string Name { get; set; }
 
         [ProtoMember(2)]
-        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte SurfaceCube { get; set; }
 
         [ProtoMember(3)]
-        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte UnderSurfaceCube { get; set; }
 
         [ProtoMember(4)]
-        [Editor(typeof(BlueprintTypeEditor<CubeResource>), typeof(UITypeEditor))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
         [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte GroundCube { get; set; }        
 

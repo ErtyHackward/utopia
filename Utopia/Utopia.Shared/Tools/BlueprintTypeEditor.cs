@@ -6,26 +6,28 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Tools
 {
+    public class BlueprintTypeEditor : BlueprintTypeEditor<object>
+    {
+
+    }
+
     /// <summary>
     /// PropertyGrid editor component to show all possible models to use
     /// </summary>
     public class BlueprintTypeEditor<T> : UITypeEditor
-    {
-        public static WorldConfiguration Configuration;
-        public static Dictionary<string, Image> Images;
-        
+    {      
         private IWindowsFormsEditorService _service;
         private ListView _list;
         private Type typeParameterType = typeof(T);
-        private bool isBlock;
-        private bool isEntities;
 
         private string GetVoxelEntityImgName(IVoxelEntity voxelEntity)
         {
@@ -39,22 +41,6 @@ namespace Utopia.Shared.Tools
             }
 
             return null;
-        }
-
-        public BlueprintTypeEditor()
-        {
-            if (typeParameterType == typeof(CubeResource))
-            {
-                isBlock = true;
-                return;
-            }
-            if (typeParameterType == typeof(Entity))
-            {
-                isEntities = true;
-                return;
-            }
-            isBlock = true;
-            isEntities = true;
         }
 
         private void Initialize()
@@ -77,19 +63,16 @@ namespace Utopia.Shared.Tools
             _list.LargeImageList = imgList;
             _list.SmallImageList = imgList;
 
-            if (isBlock)
+            if (typeParameterType.IsRelatives(typeof(BlockProfile)))
             {
-                ListViewGroup groupBlocks = null;
-                if (isBlock)
-                {
-                    groupBlocks = new ListViewGroup("Blocks");
-                    _list.Groups.Add(groupBlocks);
-                }
+                var groupBlocks = new ListViewGroup("Blocks");
+                _list.Groups.Add(groupBlocks);
+                
 
-                foreach (var blockProfile in Configuration.BlockProfiles.Skip(1))
+                foreach (var blockProfile in BlueprintTextHintConverter.Configuration.BlockProfiles.Skip(1))
                 {
                     Image icon;
-                    if (Images.TryGetValue("CubeResource_" + blockProfile.Name, out icon))
+                    if (BlueprintTextHintConverter.Images.TryGetValue("CubeResource_" + blockProfile.Name, out icon))
                     {
                         imgList.Images.Add(icon);
                         var item = new ListViewItem();
@@ -101,23 +84,23 @@ namespace Utopia.Shared.Tools
                 }
             }
 
-            if (isEntities)
+            if (typeParameterType.IsRelatives(typeof(Entity)))
             {
-                ListViewGroup groupEntities = null;
-                if (isEntities)
-                {
-                    groupEntities = new ListViewGroup("Entities");
-                    _list.Groups.Add(groupEntities);
-                }
-                foreach (var pair in Configuration.BluePrints.OrderBy(p => p.Value.Name))
+                var groupEntities = new ListViewGroup("Entities");
+                _list.Groups.Add(groupEntities);
+                
+                foreach (var pair in BlueprintTextHintConverter.Configuration.BluePrints.OrderBy(p => p.Value.Name))
                 {
                     var blueprint = pair.Value;
+
+                    if (!typeParameterType.IsInstanceOfType(blueprint))
+                        continue;
 
                     Image icon = null;
 
                     var iconName = GetVoxelEntityImgName((IVoxelEntity)blueprint);
                     if (!string.IsNullOrEmpty(iconName))
-                        Images.TryGetValue(iconName, out icon);
+                        BlueprintTextHintConverter.Images.TryGetValue(iconName, out icon);
 
                     if (icon != null)
                         imgList.Images.Add(icon);
@@ -171,18 +154,19 @@ namespace Utopia.Shared.Tools
 
             if (value < 256)
             {
-                iconName = "CubeResource_" + Configuration.BlockProfiles[value].Name;
+                iconName = "CubeResource_" + BlueprintTextHintConverter.Configuration.BlockProfiles[value].Name;
             }
             else
             {
-                iconName = GetVoxelEntityImgName((IVoxelEntity)Configuration.BluePrints[value]);
+                iconName = GetVoxelEntityImgName((IVoxelEntity)BlueprintTextHintConverter.Configuration.BluePrints[value]);
             }
 
             Image img;
-            if (Images.TryGetValue(iconName, out img))
-            {
-                e.Graphics.DrawImage(img, e.Bounds);
-            }
+            if (!string.IsNullOrEmpty(iconName))
+                if (BlueprintTextHintConverter.Images.TryGetValue(iconName, out img))
+                {
+                    e.Graphics.DrawImage(img, e.Bounds);
+                }
 
             base.PaintValue(e);
         }
