@@ -451,7 +451,7 @@ namespace Utopia.Shared.Chunks
 
             if (cubePosition.Y  < _visualWorldParam.WorldRange.Max.Y - 1 && Index(ref cubePosition, true, out cubeIndex))
             {
-                cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex], _config);
+                cubewithPosition = new TerraCubeWithPosition(cubePosition, Cubes[cubeIndex], _config.BlockProfiles[Cubes[cubeIndex].Id]);
                 return _config.BlockProfiles[cubewithPosition.Cube.Id].IsPickable;
             }
 
