@@ -105,7 +105,7 @@ namespace Utopia.Shared.Server.Managers
                 var tree = entity as TreeGrowingEntity;
                 if (tree != null)
                 {
-                    var treeBlueprint = _server.EntityFactory.Config.TreeBluePrints[tree.TreeTypeId];
+                    var treeBlueprint = _server.EntityFactory.Config.TreeBluePrintsDico[tree.TreeTypeId];
 
                     if (tree.CurrentGrowTime > treeBlueprint.GrowTime)
                     {
@@ -137,7 +137,7 @@ namespace Utopia.Shared.Server.Managers
                         var soul = _server.EntityFactory.CreateEntity<TreeSoul>();
                         soul.Position = tree.Position;
                         soul.TreeRndSeed = tree.TreeRndSeed;
-                        soul.TreeBlueprintIndex = tree.TreeTypeId;
+                        soul.TreeBlueprintId = tree.TreeTypeId;
 
                         chunk.Entities.Add(soul);
 

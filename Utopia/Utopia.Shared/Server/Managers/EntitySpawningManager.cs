@@ -88,7 +88,7 @@ namespace Utopia.Shared.Server.Managers
             {
                 // TODO: check other constraints (season, maxseeds etc)
                 
-                var seeds = chunk.Entities.OfType<TreeGrowingEntity>().Count(e => e.TreeTypeId == soul.TreeBlueprintIndex);
+                var seeds = chunk.Entities.OfType<TreeGrowingEntity>().Count(e => e.TreeTypeId == soul.TreeBlueprintId);
                 if (seeds == 0)
                 {
                     var pos = new Vector2I(_fastRandom.Next(chunk.BlockData.ChunkSize.X),
@@ -96,7 +96,7 @@ namespace Utopia.Shared.Server.Managers
 
                     var metaData = chunk.BlockData.GetColumnInfo(pos);
                     
-                    var cursor = _server.LandscapeManager.GetCursor(BlockHelper.ConvertToGlobal(chunk.Position, new Vector3I(pos.X, metaData.MaxGroundHeight, pos.Y)));
+                    var cursor = _server.LandscapeManager.GetCursor(BlockHelper.ConvertToGlobal(chunk.Position, new Vector3I(pos.X, metaData.MaxGroundHeight+1, pos.Y)));
                     
                     while (cursor.GlobalPosition.Y > 0)
                     {
@@ -118,9 +118,9 @@ namespace Utopia.Shared.Server.Managers
                     if (cursor.GlobalPosition.Y == 0)
                         return;
                     var config =_server.EntityFactory.Config;
-                    var treeBp = config.TreeBluePrints[soul.TreeBlueprintIndex];
+                    var treeBp = config.TreeBluePrintsDico[soul.TreeBlueprintId];
                     var treeSeed = _server.EntityFactory.CreateEntity<TreeGrowingEntity>();
-                    treeSeed.TreeTypeId = soul.TreeBlueprintIndex;
+                    treeSeed.TreeTypeId = soul.TreeBlueprintId;
                     treeSeed.TreeRndSeed = _fastRandom.Next();
                     treeSeed.ModelName = treeBp.SeedModel;
                     treeSeed.Name = "Seed of " + treeBp.Name;
@@ -130,8 +130,8 @@ namespace Utopia.Shared.Server.Managers
                     treeSeed.MountPoint = BlockFace.Top;
                     treeSeed.Position = cursor.GlobalPosition + new Vector3D(0.5, 0, 0.5);
                     treeSeed.LinkedCube = cursor.GlobalPosition - Vector3I.Up;
-                    treeSeed.GrowingSeasons = config.TreeBluePrints[soul.TreeBlueprintIndex].GrowingSeasons;
-                    treeSeed.GrowingBlocks = config.TreeBluePrints[soul.TreeBlueprintIndex].GrowingBlocks;
+                    treeSeed.GrowingSeasons = config.TreeBluePrintsDico[soul.TreeBlueprintId].GrowingSeasons;
+                    treeSeed.GrowingBlocks = config.TreeBluePrintsDico[soul.TreeBlueprintId].GrowingBlocks;
                     cursor.AddEntity(treeSeed);
                 }
             }
