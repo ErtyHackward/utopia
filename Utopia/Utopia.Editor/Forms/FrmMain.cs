@@ -296,15 +296,11 @@ namespace Utopia.Editor.Forms
             new ThreadStart(delegate {
                 try
                 {
-                    var configuration = WorldConfiguration.LoadFromFile(fileName, withHelperAssignation: true);
+                    var configuration = WorldConfiguration.LoadFromFile(fileName, true);
 
-                    var availableModels = Program.IconManager.ModelManager.Enumerate().ToList();
+                    var availableModels = Program.IconManager.ModelManager.Enumerate().Select(m => m.VoxelModel.Name).ToList();
 
-                    var needToLoadModels =
-                        configuration.BluePrints.Where(
-                            p => !availableModels.Exists(m => m.VoxelModel.Name == ((IVoxelEntity)p.Value).ModelName))
-                            .Select(p => ((IVoxelEntity)p.Value).ModelName).Where(m => !string.IsNullOrEmpty(m))
-                            .ToList();
+                    var needToLoadModels = configuration.GetUsedModelsNames().Where(m => !availableModels.Contains(m)).ToList();
 
                     _ao.Post(delegate
                     {

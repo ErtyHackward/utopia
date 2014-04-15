@@ -30,6 +30,31 @@ namespace Utopia.Worlds.Chunks
 {
     public abstract class VisualChunkBase : CompressibleChunk, IDisposable
     {
+        private struct TreeBpSeed
+        {
+            public int TreeBlueprint;
+            public int TreeSeed;
+
+            public bool Equals(TreeBpSeed other)
+            {
+                return TreeBlueprint == other.TreeBlueprint && TreeSeed == other.TreeSeed;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                return obj is TreeBpSeed && Equals((TreeBpSeed)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (TreeBlueprint * 397) ^ TreeSeed;
+                }
+            }
+        }
+
         #region Private variables
         private readonly object _syncRoot = new object();
         /// <summary>
@@ -44,6 +69,7 @@ namespace Utopia.Worlds.Chunks
         private readonly WorldChunks _worldChunkManager;
         private readonly VoxelModelManager _voxelModelManager;
         private readonly IChunkEntityImpactManager _chunkEntityImpactManager;
+        private readonly Dictionary<TreeBpSeed,VisualVoxelModel> _cachedTrees;
 
         private Range3I _cubeRange;
         
@@ -167,7 +193,8 @@ namespace Utopia.Worlds.Chunks
                             ChunkDataProvider provider = null)
             : base(provider)
         {
-            
+            _cachedTrees = new Dictionary<TreeBpSeed, VisualVoxelModel>();
+
             Graphics = new ChunkGraphics(this, d3DEngine);
 
             _d3DEngine = d3DEngine;
@@ -287,13 +314,45 @@ namespace Utopia.Worlds.Chunks
         private void AddVoxelEntity(EntityCollectionEventArgs e)
         {
             var voxelEntity = e.Entity as IVoxelEntity;
-            if (voxelEntity == null) return; //My static entity is not a Voxel Entity => Not possible to render it so !!!
+            if (voxelEntity == null) 
+                return; //My static entity is not a Voxel Entity => Not possible to render it so !!!
 
             //Create the Voxel Model Instance for the Item
             VisualVoxelModel model = null;
-            if (!string.IsNullOrEmpty(voxelEntity.ModelName)) model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
+            if (!string.IsNullOrEmpty(voxelEntity.ModelName)) 
+                model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
             if (model != null && voxelEntity.ModelInstance == null) //The model blueprint is existing, and I need to create an instance of it !
             {
+                var treeGrowing = e.Entity as TreeGrowingEntity;
+                if (treeGrowing != null)
+                {
+                    if (treeGrowing.Scale > 0)
+                    {
+                        // we need to use generated voxel model
+                        TreeBpSeed key;
+                        key.TreeBlueprint = treeGrowing.TreeTypeId;
+                        key.TreeSeed = treeGrowing.TreeRndSeed;
+
+                        VisualVoxelModel treeModel;
+
+                        if (_cachedTrees.TryGetValue(key, out treeModel))
+                        {
+                            model = treeModel;
+                        }
+                        else
+                        {
+                            var voxelModel = VoxelModel.GenerateTreeModel(treeGrowing.TreeRndSeed,
+                                _visualWorldParameters.WorldParameters.Configuration.TreeBluePrints[
+                                    treeGrowing.TreeTypeId]);
+
+                            model = new VisualVoxelModel(voxelModel, _voxelModelManager.VoxelMeshFactory);
+
+                            _cachedTrees.Add(key, model);
+                        }
+                    }
+                }
+
+
                 voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
 
                 //Assign state in case of growing entity !
@@ -321,6 +380,11 @@ namespace Utopia.Worlds.Chunks
 
                 //Apply special scaling to created entity (By default all blue print are 16 times too big.
                 Matrix instanceScaling = Matrix.Scaling(1.0f / 16.0f);
+
+                if (treeGrowing != null && treeGrowing.Scale > 0)
+                {
+                    instanceScaling = Matrix.Scaling(treeGrowing.Scale);
+                }
 
                 //Create the World transformation matrix for the instance.
                 //We take the Model instance world matrix where we add a Rotation and scaling proper to the instance

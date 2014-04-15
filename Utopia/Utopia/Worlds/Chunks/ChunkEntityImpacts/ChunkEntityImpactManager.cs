@@ -197,6 +197,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             var impactedChunk = GetChunkFromBlock(entityBlockPosition);
+            if (impactedChunk == null)
+                return;
+
             impactedChunk.Entities.Add(entity, sourceDynamicId);
 
             //Raise event (Playing sound)

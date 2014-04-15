@@ -20,12 +20,6 @@ namespace Utopia.Shared.Entities.Concrete
         public int TreeTypeId { get; set; }
 
         /// <summary>
-        /// Holds the exact voxel model of the future tree
-        /// </summary>
-        [ProtoMember(2)]
-        public VoxelModel VoxelModel { get; set; }
-
-        /// <summary>
         /// Actual scale of the model [0;1]
         /// </summary>
         [ProtoMember(3)]
@@ -33,10 +27,5 @@ namespace Utopia.Shared.Entities.Concrete
 
         [ProtoMember(4)]
         public int TreeRndSeed { get; set; }
-
-        /// <summary>
-        /// Temporal voxel model
-        /// </summary>
-        public object VisualVoxelModel { get; set; }
     }
 }
