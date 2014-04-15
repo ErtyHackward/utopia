@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Server.Structs;
 using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
@@ -109,10 +111,12 @@ namespace Utopia.Shared.Server.Managers
                     {
                         // the tree is ready
 
+                        var model = VoxelModel.GenerateTreeModel(tree.TreeRndSeed, treeBlueprint);
+
                         // create tree blocks
-                        var rootOffset = -tree.VoxelModel.States[0].PartsStates[0].Translation;
+                        var rootOffset = -model.States[0].PartsStates[0].Translation;
                         var cursor = _server.LandscapeManager.GetCursor(tree.Position);
-                        var frame = tree.VoxelModel.Frames[0];
+                        var frame = model.Frames[0];
                         var range = new Range3I(new Vector3I(), frame.BlockData.ChunkSize);
                         
                         foreach (var position in range)
@@ -216,6 +220,15 @@ namespace Utopia.Shared.Server.Managers
 
             if (tree != null)
             {
+                // the seed will not grow if there is a tree nearby
+                foreach (var checkChunk in _server.LandscapeManager.SurroundChunks(tree.Position))
+                {
+                    if (checkChunk.Entities.OfType<TreeSoul>().Any(s => Vector3D.Distance(s.Position, tree.Position) < 10))
+                        return false;
+                    if (checkChunk.Entities.OfType<TreeGrowingEntity>().Any(t => t.Scale > 0.1 && Vector3D.Distance(t.Position, tree.Position) < 10))
+                        return false;
+                }
+                
                 updated = true;
             }
 

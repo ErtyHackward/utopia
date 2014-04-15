@@ -454,6 +454,18 @@ namespace Utopia.Shared.Configuration
             Flat = 2
         }
         #endregion
+
+        /// <summary>
+        /// Returns a list of all used models in the configuration
+        /// </summary>
+        public List<string> GetUsedModelsNames()
+        {
+            var needToLoadModels = BluePrints.Values.OfType<IVoxelEntity>().Select(e => e.ModelName).Where(m => !string.IsNullOrEmpty(m)).ToList();
+            needToLoadModels.AddRange(CharacterClasses.Select(c => c.ModelName));
+            needToLoadModels.AddRange(TreeBluePrints.Select(c => c.SeedModel));
+            needToLoadModels = needToLoadModels.Distinct().ToList();
+            return needToLoadModels;
+        }
     }
 
     [ProtoContract]
