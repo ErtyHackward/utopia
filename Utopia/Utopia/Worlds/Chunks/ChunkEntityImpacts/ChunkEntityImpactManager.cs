@@ -213,6 +213,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         {
             IStaticEntity entityRemoved;
             var impactedChunk = GetChunk(entity.ChunkPosition);
+
+            if (impactedChunk == null)
+                return null;
             impactedChunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId, out entityRemoved);
 
             //Raise event (Playing sound)

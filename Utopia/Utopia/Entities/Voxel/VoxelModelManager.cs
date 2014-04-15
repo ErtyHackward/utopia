@@ -176,14 +176,18 @@ namespace Utopia.Entities.Voxel
             // load all models
             lock (_syncRoot)
             {
+                if (_initialized)
+                    return;
+
                 foreach (var voxelModel in VoxelModelStorage.Enumerate())
                 {
                     var vmodel = new VisualVoxelModel(voxelModel, VoxelMeshFactory);
                     vmodel.BuildMesh(); //Build the mesh of all local models
                     _models.Add(voxelModel.Name, vmodel);
                 }
+                
+                _initialized = true;
             }
-            _initialized = true;
             
             // if we have some requested models, remove those that was loaded
             List<string> loadedModels;

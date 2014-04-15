@@ -6,6 +6,7 @@ using System.Linq;
 using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -93,23 +94,45 @@ namespace Utopia.Shared.Server.Managers
                     var pos = new Vector2I(_fastRandom.Next(chunk.BlockData.ChunkSize.X),
                         _fastRandom.Next(chunk.BlockData.ChunkSize.Z));
 
-                    var cInfo = chunk.BlockData.GetColumnInfo(pos);
-                    var cursor = _server.LandscapeManager.GetCursor(BlockHelper.ConvertToGlobal(chunk.Position, new Vector3I(pos.X, cInfo.MaxGroundHeight, pos.Y)));
-
-                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                    var metaData = chunk.BlockData.GetColumnInfo(pos);
+                    
+                    var cursor = _server.LandscapeManager.GetCursor(BlockHelper.ConvertToGlobal(chunk.Position, new Vector3I(pos.X, metaData.MaxGroundHeight, pos.Y)));
+                    
+                    while (cursor.GlobalPosition.Y > 0)
                     {
-                        var treeBp = _server.EntityFactory.Config.TreeBluePrints[soul.TreeBlueprintIndex];
-                        var treeSeed = _server.EntityFactory.CreateEntity<TreeGrowingEntity>();
-                        treeSeed.TreeTypeId = soul.TreeBlueprintIndex;
-                        treeSeed.TreeRndSeed = _fastRandom.Next();
-                        treeSeed.ModelName = treeBp.SeedModel;
-                        treeSeed.Name = "Seed of " + treeBp.Name;
-                        treeSeed.IsPickable = true;
-                        treeSeed.MountPoint = BlockFace.Top;
-                        treeSeed.Position = cursor.GlobalPosition + new Vector3D(0.5, 0, 0.5);
-                        treeSeed.LinkedCube = cursor.GlobalPosition - Vector3I.Up;
-                        cursor.AddEntity(treeSeed);
+                        var val = cursor.PeekValue(Vector3I.Down);
+                        
+                        if (val != WorldConfiguration.CubeId.Air)
+                            break;
+
+                        cursor.Move(Vector3I.Down);
+
                     }
+
+                    if (cursor.Read() != WorldConfiguration.CubeId.Air)
+                    {
+
+                        return;
+                    }
+
+                    if (cursor.GlobalPosition.Y == 0)
+                        return;
+                    var config =_server.EntityFactory.Config;
+                    var treeBp = config.TreeBluePrints[soul.TreeBlueprintIndex];
+                    var treeSeed = _server.EntityFactory.CreateEntity<TreeGrowingEntity>();
+                    treeSeed.TreeTypeId = soul.TreeBlueprintIndex;
+                    treeSeed.TreeRndSeed = _fastRandom.Next();
+                    treeSeed.ModelName = treeBp.SeedModel;
+                    treeSeed.Name = "Seed of " + treeBp.Name;
+                    treeSeed.IsPickable = true;
+                    treeSeed.IsPlayerCollidable = true;
+                    treeSeed.CollisionType = Entity.EntityCollisionType.Model;
+                    treeSeed.MountPoint = BlockFace.Top;
+                    treeSeed.Position = cursor.GlobalPosition + new Vector3D(0.5, 0, 0.5);
+                    treeSeed.LinkedCube = cursor.GlobalPosition - Vector3I.Up;
+                    treeSeed.GrowingSeasons = config.TreeBluePrints[soul.TreeBlueprintIndex].GrowingSeasons;
+                    treeSeed.GrowingBlocks = config.TreeBluePrints[soul.TreeBlueprintIndex].GrowingBlocks;
+                    cursor.AddEntity(treeSeed);
                 }
             }
         }

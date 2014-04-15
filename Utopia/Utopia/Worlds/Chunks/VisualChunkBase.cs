@@ -346,12 +346,12 @@ namespace Utopia.Worlds.Chunks
                                     treeGrowing.TreeTypeId]);
 
                             model = new VisualVoxelModel(voxelModel, _voxelModelManager.VoxelMeshFactory);
+                            model.BuildMesh();
 
                             _cachedTrees.Add(key, model);
                         }
                     }
                 }
-
 
                 voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
 
@@ -362,7 +362,7 @@ namespace Utopia.Worlds.Chunks
                     voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevelIndex].ModelState);
                 }
 
-                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, model, _voxelModelManager);
                 //Get default world translation
                 Matrix instanceTranslation = Matrix.Translation(voxelEntity.Position.AsVector3());
 

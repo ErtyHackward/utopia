@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
@@ -89,6 +90,11 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
         [ProtoMember(19)]
         public string SeedModel { get; set; }
+        [Category("Growing")]
+        [Description("Will grow only on specified blocks. If not set will grow anywhere")]
+        [Editor(typeof(GrowingEntity.MultiBlockListEditor), typeof(UITypeEditor))]
+        [ProtoMember(20)]
+        public List<byte> GrowingBlocks { get; set; }
 
         public TreeBluePrint()
         {
