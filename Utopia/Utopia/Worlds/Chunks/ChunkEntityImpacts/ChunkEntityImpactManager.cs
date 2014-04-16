@@ -116,39 +116,39 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <param name="e"></param>
         private void ServerConnection_MessageBlockChange(object sender, ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
-            //The server change modification will be queued inside a single concurrency thread pool. (Only one running at the same time)
-            ThreadsManager.RunAsync(() => ReplaceBlockThreaded(e), singleConcurrencyRun: true);
+            ReplaceBlocks(e.Message.BlockPositions, e.Message.BlockValues, e.Message.Tags, true);
         }
 
-        private void ReplaceBlockThreaded(ProtocolMessageEventArgs<BlocksChangedMessage> e)
+        //Replace block logic handling the MessageBlockChange server message
+        private void ReplaceBlock(ProtocolMessageEventArgs<BlocksChangedMessage> e)
         {
-            ReplaceBlocks(e.Message.BlockPositions, e.Message.BlockValues, e.Message.Tags, true);
+            //ReplaceBlocks(e.Message.BlockPositions, e.Message.BlockValues, e.Message.Tags, true);
 
-            //For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
-            //whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
-            //_onHoldNetworkMsg.Clear();
-            //for (int i = 0; i < e.Message.BlockValues.Length; i++)
-            //{
-            //    BlockTag tag = e.Message.Tags != null ? e.Message.Tags[i] : null;
+            ////For each block modified transform the data to get both CubeID and Cube World position, then call the ReplaceBlock that will analyse
+            ////whats the impact of the block replacement - Draw impact only - to know wish chunks must be refreshed.
+            ////_onHoldNetworkMsg.Clear();
+            ////for (int i = 0; i < e.Message.BlockValues.Length; i++)
+            ////{
+            ////    BlockTag tag = e.Message.Tags != null ? e.Message.Tags[i] : null;
 
-            //    if (ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], true, tag) == false)
-            //    {
-            //        _onHoldNetworkMsg.Add(new TerraCubePositionTag(e.Message.BlockPositions[i], e.Message.BlockValues[i], tag, _visualWorldParameters.WorldParameters.Configuration));
-            //    }
-            //}
+            ////    if (ReplaceBlock(ref e.Message.BlockPositions[i], e.Message.BlockValues[i], true, tag) == false)
+            ////    {
+            ////        _onHoldNetworkMsg.Add(new TerraCubePositionTag(e.Message.BlockPositions[i], e.Message.BlockValues[i], tag, _visualWorldParameters.WorldParameters.Configuration));
+            ////    }
+            ////}
 
-            ////If it was not possible to Do the block changes on chunk then retry until you can !
-            //while (_onHoldNetworkMsg.Count > 0)
-            //{
-            //    System.Threading.Thread.Sleep(5);
-            //    for (int i = _onHoldNetworkMsg.Count - 1; i >= 0; i--)
-            //    {
-            //        if (ReplaceBlock(ref _onHoldNetworkMsg[i].Position, _onHoldNetworkMsg[i].Cube.Id, true, _onHoldNetworkMsg[i].Tag) == true)
-            //        {
-            //            _onHoldNetworkMsg.RemoveAt(i);
-            //        }
-            //    }
-            //}
+            //////If it was not possible to Do the block changes on chunk then retry until you can !
+            ////while (_onHoldNetworkMsg.Count > 0)
+            ////{
+            ////    System.Threading.Thread.Sleep(5);
+            ////    for (int i = _onHoldNetworkMsg.Count - 1; i >= 0; i--)
+            ////    {
+            ////        if (ReplaceBlock(ref _onHoldNetworkMsg[i].Position, _onHoldNetworkMsg[i].Cube.Id, true, _onHoldNetworkMsg[i].Tag) == true)
+            ////        {
+            ////            _onHoldNetworkMsg.RemoveAt(i);
+            ////        }
+            ////    }
+            ////}
         }
 
         public void ProcessMessageEntityOut(ProtocolMessageEventArgs<EntityOutMessage> e)
@@ -233,21 +233,16 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return entityRemoved;
         }
 
-        //Replace multiple blocks at once
         public void ReplaceBlocks(Vector3I[] position, byte[] blockId, BlockTag[] tags, bool isNetworkChange)
         {
             //Single block to change =============================================
             if (blockId.Length == 1)
             {
-                while (
-                        ! ReplaceBlock(ref position[0], blockId[0], isNetworkChange, tags != null ? tags[0] : null) &&
-                        isNetworkChange)
-                {
-                    System.Threading.Thread.Sleep(5);
-                }
+                ThreadsManager.RunAsync(() => ReplaceBlockThreaded(position[0], blockId[0], isNetworkChange, tags != null ? tags[0] : null), singleConcurrencyRun: true);
                 return;
             }
 
+            //Multiple blocks to change =============================================
             Dictionary<VisualChunk, List<TerraCubePositionTag>> blockPerChunk = new Dictionary<VisualChunk, List<TerraCubePositionTag>>();
             List<TerraCubePositionTag> blockList;
             //Multiple block to changes at once
@@ -267,18 +262,24 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 }
             }
 
-            //Send modified blocks per chunks
+            //Create a thread for working on the update per chunk !
             foreach (var blocks in blockPerChunk)
             {
-                while (
-                        !ReplaceChunkBlocks(blocks.Key, blocks.Value, isNetworkChange) &&
-                        isNetworkChange)
-                {
-                    System.Threading.Thread.Sleep(5);
-                }
+                ThreadsManager.RunAsync(() => ReplaceChunkBlocksThreaded(blocks.Key, blocks.Value, isNetworkChange), singleConcurrencyRun: true);
             }
         }
 
+
+        public void ReplaceChunkBlocksThreaded(VisualChunk impactedChunk, List<TerraCubePositionTag> blocks, bool isNetworkChanged)
+        {
+            while (!ReplaceChunkBlocks(impactedChunk, blocks, isNetworkChanged) &&
+                    isNetworkChanged)
+            {
+                System.Threading.Thread.Sleep(5);
+            }
+        }
+
+        //Multiple blocks replace logic 
         public bool ReplaceChunkBlocks(VisualChunk impactedChunk, List<TerraCubePositionTag> blocks, bool isNetworkChanged)
         {
             if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
@@ -336,7 +337,17 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return true;
         }
 
-        public bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
+        //Single block replace logic
+        public void ReplaceBlockThreaded(Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
+        {
+            while (!ReplaceBlock(cubeCoordinates, replacementCubeId, isNetworkChange, blockTag) &&
+                   isNetworkChange)
+            {
+                System.Threading.Thread.Sleep(5);
+            }
+        }
+
+        public bool ReplaceBlock(Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null)
         {
             return ReplaceBlock(_cubesHolder.Index(ref cubeCoordinates), ref cubeCoordinates, replacementCubeId, isNetworkChange, blockTag);
         }
@@ -480,70 +491,6 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                     NeightBorChunk.UpdateOrder = cubeChunk.UpdateOrder == 1 ? 2 : 1;
                 }
             }
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z + _lightManager.LightPropagateSteps);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X, cube.Position.Z - _lightManager.LightPropagateSteps);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z + _lightManager.LightPropagateSteps);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X + _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
-
-            //NeightBorChunk = _worldChunks.GetChunk(cube.Position.X - _lightManager.LightPropagateSteps, cube.Position.Z - _lightManager.LightPropagateSteps);
-            //if (NeightBorChunk.Position != mainChunkId && NeightBorChunk.State > ChunkState.OuterLightSourcesProcessed)
-            //{
-            //    NeightBorChunk.State = ChunkState.OuterLightSourcesProcessed;
-            //    NeightBorChunk.UpdateOrder = !profile.IsBlockingLight ? 2 : 1;
-            //    //Console.WriteLine(NeightBorChunk.ChunkID + " => " + NeightBorChunk.UpdateOrder);
-            //}
 
 #if PERFTEST
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("CheckImpact END");

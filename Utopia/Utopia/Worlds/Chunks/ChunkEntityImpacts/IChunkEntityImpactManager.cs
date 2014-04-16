@@ -25,7 +25,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         SingleArrayChunkContainer CubesHolder { get; set; }
         IWorldChunks WorldChunks { get; set; }
-        bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
+        bool ReplaceBlock(Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager, VisualWorldParameters wp);
         void CheckImpact(VisualChunkBase cubeChunk, Range3I cubeRange);
