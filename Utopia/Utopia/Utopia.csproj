@@ -122,6 +122,7 @@
     <Compile Include="GUI\WindRose\CompassControlRenderer.cs" />
     <Compile Include="GUI\WindRose\WindRoseComponent.cs" />
     <Compile Include="GUI\WindRose\CompassControl.cs" />
+    <Compile Include="Network\BlocksChangedMessageBuffer.cs" />
     <Compile Include="Particules\SpriteDynamicEmitter.cs" />
     <Compile Include="PostEffects\IPostEffect.cs" />
     <Compile Include="PostEffects\PostEffectComponent.cs" />
