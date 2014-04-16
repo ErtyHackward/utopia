@@ -32,6 +32,15 @@ namespace Utopia.Shared.Entities.Concrete
         /// This time marks the beginning of the process
         /// </summary>
         [ProtoMember(3)]
-        public UtopiaTime DisappearStarted { get; set; }
+        public UtopiaTime LastUpdate { get; set; }
+
+        /// <summary>
+        /// Indicates if the tree is damaged and should restore itself or die
+        /// </summary>
+        [ProtoMember(4)]
+        public bool IsDamaged { get; set; }
+
+        [ProtoMember(5)]
+        public bool IsDying { get; set; }
     }
 }
