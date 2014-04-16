@@ -1,5 +1,6 @@
 ﻿using System;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete.Interface;
@@ -70,7 +71,14 @@ namespace Utopia.Entities.Voxel
 
                 if (voxelModelBB != null)
                 {
-                    LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
+                    var treeGrowing = wrapped as TreeGrowingEntity;
+
+                    var scaleFactor =  1f / 16;
+
+                    if (treeGrowing != null && treeGrowing.Scale > 0)
+                        scaleFactor = treeGrowing.Scale;
+
+                    LocalBBox = new BoundingBox(voxelModelBB.Minimum * scaleFactor, voxelModelBB.Maximum * scaleFactor);
 
                     //Add instance rotation, if existing
                     if (Entity is IStaticEntity)

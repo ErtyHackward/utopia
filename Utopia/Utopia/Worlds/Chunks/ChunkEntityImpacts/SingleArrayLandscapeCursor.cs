@@ -192,5 +192,29 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return _landscapeManager.RemoveEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        /// <returns></returns>
+        public Scope TransactionScope()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        public void BeginTransaction()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        public void CommitTransaction()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

@@ -105,6 +105,37 @@ namespace Utopia.Shared.Interfaces
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         /// <returns></returns>
         IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0);
+
+        /// <summary>
+        /// Starts new transaction and returns the object that will finish it when disposed
+        /// </summary>
+        /// <returns></returns>
+        Scope TransactionScope();
+
+        /// <summary>
+        /// Starts new transaction
+        /// </summary>
+        void BeginTransaction();
+
+        /// <summary>
+        /// Finish the transaction
+        /// </summary>
+        void CommitTransaction();
+    }
+
+    public class Scope : IDisposable
+    {
+        Action _action;
+
+        public Scope(Action action)
+        {
+            _action = action;
+        }
+        public void Dispose()
+        {
+            if (_action != null)
+                _action();
+        }
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs
