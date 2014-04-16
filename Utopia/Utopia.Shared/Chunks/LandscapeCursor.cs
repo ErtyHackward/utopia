@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -18,7 +20,10 @@ namespace Utopia.Shared.Chunks
         private IAbstractChunk _currentChunk;
         private Vector3I _internalPosition;
         private Vector3I _position;
-        
+
+        private bool _transactionActive = false;
+        private List<IAbstractChunk> _transactionChunks; 
+
         /// <summary>
         /// Occurs when someone tries to write using this cursor
         /// </summary>
@@ -95,12 +100,13 @@ namespace Utopia.Shared.Chunks
         /// <param name="sourceDynamicId"></param>
         public void Write(byte value, BlockTag tag = null, uint sourceDynamicId = 0)
         {
-            OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { 
-                GlobalPosition = GlobalPosition, 
-                Value = value, 
-                BlockTag = tag,
-                SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
-            });
+            if (BeforeWrite != null)
+                OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { 
+                    GlobalPosition = GlobalPosition, 
+                    Value = value, 
+                    BlockTag = tag,
+                    SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
+                });
 
             _currentChunk.BlockData.SetBlock(_internalPosition, value, tag, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
@@ -316,6 +322,15 @@ namespace Utopia.Shared.Chunks
             if (newChunkPos != _currentChunk.Position)
             {
                 _currentChunk = _manager.GetChunk(newChunkPos);
+
+                if (_transactionActive)
+                {
+                    if (!_transactionChunks.Contains(_currentChunk))
+                    {
+                        ((InsideDataProvider)_currentChunk.BlockData).BeginTransaction();
+                        _transactionChunks.Add(_currentChunk);
+                    }
+                }
             }
 
             return this;
@@ -360,6 +375,53 @@ namespace Utopia.Shared.Chunks
             chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId, out entityRemoved);
 
             return entityRemoved;
+        }
+
+        /// <summary>
+        /// Starts new transaction and returns the object that will finish it when disposed
+        /// Affects only blocks events
+        /// </summary>
+        /// <returns></returns>
+        public Scope TransactionScope()
+        {
+            BeginTransaction();
+            return new Scope(CommitTransaction);
+        }
+
+        /// <summary>
+        /// Starts new transaction
+        /// Affects only blocks events
+        /// </summary>
+        public void BeginTransaction()
+        {
+            if (_transactionActive)
+                throw new InvalidOperationException("The transaction is already started");
+
+            _transactionActive = true;
+            _transactionChunks = new List<IAbstractChunk>();
+            if (_currentChunk != null)
+            {
+                 ((InsideDataProvider)_currentChunk.BlockData).BeginTransaction();
+                _transactionChunks.Add(_currentChunk);
+            }
+        }
+
+        /// <summary>
+        /// Finish the transaction
+        /// </summary>
+        public void CommitTransaction()
+        {
+            if (!_transactionActive)
+                throw new InvalidOperationException("The transaction was not started");
+
+            _transactionActive = false;
+
+            foreach (var data in _transactionChunks.Select(c => c.BlockData).OfType<InsideDataProvider>())
+            {
+                data.CommitTransaction();
+            }
+
+            _transactionChunks = null;
         }
 
         /// <summary>

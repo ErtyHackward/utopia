@@ -118,18 +118,21 @@ namespace Utopia.Shared.Server.Managers
                         var cursor = _server.LandscapeManager.GetCursor(tree.Position);
                         var frame = model.Frames[0];
                         var range = new Range3I(new Vector3I(), frame.BlockData.ChunkSize);
-                        
-                        foreach (var position in range)
+
+                        using (cursor.TransactionScope())
                         {
-                            var value = frame.BlockData.GetBlock(position);
-                            if (value == 0)
-                                continue;
-                            var blockType = value == 1 ? treeBlueprint.TrunkBlock : treeBlueprint.FoliageBlock;
-                            var worldPos = (Vector3I)(tree.Position + rootOffset) + position;
-                            cursor.GlobalPosition = worldPos;
-                            if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                            foreach (var position in range)
                             {
-                                cursor.Write(blockType);
+                                var value = frame.BlockData.GetBlock(position);
+                                if (value == 0)
+                                    continue;
+                                var blockType = value == 1 ? treeBlueprint.TrunkBlock : treeBlueprint.FoliageBlock;
+                                var worldPos = (Vector3I)(tree.Position + rootOffset) + position;
+                                cursor.GlobalPosition = worldPos;
+                                if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                                {
+                                    cursor.Write(blockType);
+                                }
                             }
                         }
 
