@@ -69,26 +69,17 @@ namespace Utopia.Entities.Voxel
                     voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
                 }
 
-                if (voxelModelBB != null)
+                var scaleFactor = GetModelScale(wrapped);
+
+                LocalBBox = new BoundingBox(voxelModelBB.Minimum * scaleFactor, voxelModelBB.Maximum * scaleFactor);
+
+                //Add instance rotation, if existing
+                if (Entity is IStaticEntity)
                 {
-                    var treeGrowing = wrapped as TreeGrowingEntity;
-
-                    var scaleFactor =  1f / 16;
-
-                    if (treeGrowing != null && treeGrowing.Scale > 0)
-                        scaleFactor = treeGrowing.Scale;
-
-                    LocalBBox = new BoundingBox(voxelModelBB.Minimum * scaleFactor, voxelModelBB.Maximum * scaleFactor);
-
-                    //Add instance rotation, if existing
-                    if (Entity is IStaticEntity)
-                    {
-                        LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)Entity).Rotation));
-                    }
-
-                    ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
+                    LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(( (IStaticEntity)Entity ).Rotation));
                 }
-                
+
+                ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
             }
         }
 

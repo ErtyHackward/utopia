@@ -39,9 +39,23 @@ namespace Utopia.Entities
             }
         }
 
+        protected float GetModelScale(IEntity entity)
+        {
+            var tree = Entity as TreeGrowingEntity;
+            var scale = 1f / 16;
+
+            if (tree != null && tree.Scale > 0)
+            {
+                scale = tree.Scale;
+            }
+
+            return scale;
+        }
+
         public void SetEntityVoxelBB(BoundingBox bb)
         {
-            LocalBBox = new BoundingBox(bb.Minimum / 16, bb.Maximum / 16);
+            var scale = GetModelScale(Entity);
+            LocalBBox = new BoundingBox(bb.Minimum * scale, bb.Maximum * scale);
             RefreshWorldBoundingBox(Entity.Position);
         }
 
