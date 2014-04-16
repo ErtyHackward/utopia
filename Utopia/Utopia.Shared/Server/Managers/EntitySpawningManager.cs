@@ -130,6 +130,7 @@ namespace Utopia.Shared.Server.Managers
                     treeSeed.MountPoint = BlockFace.Top;
                     treeSeed.Position = cursor.GlobalPosition + new Vector3D(0.5, 0, 0.5);
                     treeSeed.LinkedCube = cursor.GlobalPosition - Vector3I.Up;
+                    treeSeed.BlockFaceCentered = true;
                     treeSeed.GrowingSeasons = config.TreeBluePrintsDico[soul.TreeBlueprintId].GrowingSeasons;
                     treeSeed.GrowingBlocks = config.TreeBluePrintsDico[soul.TreeBlueprintId].GrowingBlocks;
                     cursor.AddEntity(treeSeed);
