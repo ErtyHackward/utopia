@@ -352,11 +352,11 @@ namespace Utopia.Worlds.SkyDomes
 
         private void DrawingMoon(DeviceContext context)
         {
-            float alpha = (float)Math.Abs(Math.Sin(_clock.ClockTime.ClockTimeNormalized + (float)Math.PI / 2.0f));
+            float alpha = (float)Math.Abs(Math.Sin((_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi) + (float)Math.PI / 2.0f));
             //Set States.
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled);
 
-            Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX(_clock.ClockTime.ClockTimeNormalized + (float)Math.PI / 2.0f) *
+            Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX((_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi) + (float)Math.PI / 2.0f) *
                             Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *
                             Matrix.Translation(LightDirection.X * 1900, LightDirection.Y * 1900, LightDirection.Z * 1900) *
                             Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);
@@ -386,7 +386,7 @@ namespace Utopia.Worlds.SkyDomes
 
             //Draw moonLight
             World = Matrix.Scaling(6f, 6f, 6f) *
-                    Matrix.RotationX(_clock.ClockTime.ClockTimeNormalized + (float)Math.PI / 2.0f) *
+                    Matrix.RotationX((_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi) + (float)Math.PI / 2.0f) *
                     Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *
                     Matrix.Translation(LightDirection.X * 1700, LightDirection.Y * 1700, LightDirection.Z * 1700) *
                     Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);
