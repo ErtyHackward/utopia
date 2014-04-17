@@ -148,14 +148,10 @@ namespace Utopia.Shared.Chunks
                 {
                     if (!_transaction)
                         break;
+                    _transaction = true;
                 }
 
                 Thread.Sleep(0);
-            }
-
-            lock (_syncRoot)
-            {
-                _transaction = true;
             }
         }
 
