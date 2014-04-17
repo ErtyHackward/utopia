@@ -90,7 +90,13 @@ namespace Utopia.Shared.Server.Managers
             {
                 SpawnSeeds(chunk, soul);
                 TreeIntegrity(chunk, soul);
+                SpawnTreeEntities(chunk, soul);
             }
+        }
+
+        private void SpawnTreeEntities(ServerChunk chunk, TreeSoul soul)
+        {
+            
         }
 
         private void TreeIntegrity(ServerChunk chunk, TreeSoul soul)
