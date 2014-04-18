@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ProtoBuf;
 using S33M3CoreComponents.Maths;
@@ -90,13 +91,12 @@ namespace Utopia.Shared.Entities
                 lock (_syncRoot)
                 {
                     _entities.Clear();
+                    foreach (var keyValuePair in value)
+                    {
+                        var entity = (IStaticEntity)keyValuePair.Value;
+                        AddWithId(entity, keyValuePair.Key, 0, true);
+                    }
                 }
-                foreach (var keyValuePair in value)
-                {
-                    var entity = (IStaticEntity)keyValuePair.Value;
-                    AddWithId(entity, keyValuePair.Key, 0, true);
-                }
-                
             }
         }
 
@@ -230,7 +230,6 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
-
                 entity.StaticId = staicId;
                 entity.Container = this;
                 _entities.Add(entity.StaticId, entity);
@@ -354,19 +353,26 @@ namespace Utopia.Shared.Entities
         /// <param name="entity"></param>
         public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId, out IStaticEntity entity)
         {
+            bool removed = false;
             lock (_syncRoot)
             {
                 if(_entities.TryGetValue(staticEntityId, out entity))
                 {
-                    IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    OnEntityRemoved(new EntityCollectionEventArgs { 
-                        Entity = entity, 
-                        SourceDynamicEntityId = sourceDynamicEntityId 
-                    });
-                    entity.Container = null; //Remove from its container after event raise !
-                    OnCollectionDirty();
+                    removed = true;
                 }
+            }
+
+            if (removed)
+            {
+                IsDirty = true;
+                OnEntityRemoved(new EntityCollectionEventArgs
+                {
+                    Entity = entity,
+                    SourceDynamicEntityId = sourceDynamicEntityId
+                });
+                entity.Container = null; //Remove from its container after event raise !
+                OnCollectionDirty();
             }
         }
 
@@ -377,21 +383,28 @@ namespace Utopia.Shared.Entities
         /// <param name="sourceDynamicEntityId"></param>
         public void RemoveById(uint staticEntityId, uint sourceDynamicEntityId = 0)
         {
+            bool removed = false;
+            IStaticEntity entity;
+
             lock (_syncRoot)
             {
-                IStaticEntity entity;
                 if (_entities.TryGetValue(staticEntityId, out entity))
                 {
-                    IsDirty = true;
                     _entities.Remove(staticEntityId);
-                    OnEntityRemoved(new EntityCollectionEventArgs
-                    {
-                        Entity = entity,
-                        SourceDynamicEntityId = sourceDynamicEntityId
-                    });
-                    entity.Container = null; //Remove from its container
-                    OnCollectionDirty();
+                    removed = true;
                 }
+            }
+
+            if (removed)
+            {
+                IsDirty = true;
+                OnEntityRemoved(new EntityCollectionEventArgs
+                {
+                    Entity = entity,
+                    SourceDynamicEntityId = sourceDynamicEntityId
+                });
+                entity.Container = null; //Remove from its container
+                OnCollectionDirty();
             }
         }
 
@@ -411,9 +424,10 @@ namespace Utopia.Shared.Entities
                 }
 
                 _entities.Clear();
-                OnCollectionCleared();
-                OnCollectionDirty();
             }
+
+            OnCollectionCleared();
+            OnCollectionDirty();
         }
 
         /// <summary>
@@ -440,28 +454,17 @@ namespace Utopia.Shared.Entities
         {
             lock (_syncRoot)
             {
-                foreach (var entity in _entities)
+                foreach (var entity in _entities.Where(entity => entity.Value is T))
                 {
-                    if(entity.Value is T)
-                        yield return (T)entity.Value;
-                }
-            }
-        }
-
-        public void Foreach<T>(Action<T> action) where T : IStaticEntity
-        {
-            lock (_syncRoot)
-            {
-                foreach (var entity in _entities)
-                {
-                    if (entity.Value is T)
-                        action((T)entity.Value);
+                    yield return (T)entity.Value;
                 }
             }
         }
 
         public void RemoveAll<T>(Predicate<T> condition, uint sourceDynamicId = 0) where T : IStaticEntity
         {
+            var entitiesRemoved = new List<IStaticEntity>();
+
             lock (_syncRoot)
             {
                 for (int i = _entities.Count - 1; i >= 0; i--)
@@ -469,19 +472,26 @@ namespace Utopia.Shared.Entities
                     var value = _entities[_entities.Keys[i]]; // O(1)
                     if (value is T && condition((T)value))
                     {
-                        IsDirty = true;
+                        entitiesRemoved.Add(value);
                         _entities.RemoveAt(i); // O(Count)
-                        OnEntityRemoved(new EntityCollectionEventArgs {
-                            Entity = value,
-                            SourceDynamicEntityId = sourceDynamicId
-                        });
-                        value.Container = null;
                     }
                 }
-
-                if (IsDirty)
-                    OnCollectionDirty();
             }
+
+            IsDirty = entitiesRemoved.Count > 0;
+
+            foreach (var entity in entitiesRemoved)
+            {
+                OnEntityRemoved(new EntityCollectionEventArgs
+                {
+                    Entity = entity,
+                    SourceDynamicEntityId = sourceDynamicId
+                });
+                entity.Container = null;
+            }
+
+            if (IsDirty)
+                OnCollectionDirty();
         }
 
         /// <summary>
