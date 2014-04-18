@@ -36,13 +36,11 @@ namespace Utopia.Shared.Entities
         [Editor(typeof(MultiBlockListEditor), typeof(UITypeEditor))]
         [ProtoMember(5)]
         public List<byte> GrowingBlocks { get; set; }
-
         
         [Category("Growing")]
         [Description("Do the entity need the light to grow?")]
         [ProtoMember(6)]
         public bool NeedLight { get; set; }
-
         
         [Category("Growing")]
         [Description("Probability of entity to rotten at grow level 0. [0;1]")]

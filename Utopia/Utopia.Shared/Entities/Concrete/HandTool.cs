@@ -11,6 +11,7 @@ using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities.Concrete.Interface;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -110,6 +111,19 @@ namespace Utopia.Shared.Entities.Concrete
                     return impact;
                 }
 
+                var treeItem = item as TreeGrowingEntity;
+
+                if (treeItem != null)
+                {
+                    if (treeItem.Scale > 0.05)
+                    {
+                        impact.Message = "The tree is growing, you can't remove it by hands";
+                        return impact;
+                    }
+                    treeItem.Scale = 0;
+                    treeItem.LastGrowUpdate = new UtopiaTime();
+                }
+                
                 var putItems = new List<KeyValuePair<IItem, int>>();
                 putItems.Add(new KeyValuePair<IItem, int>(item, 1));
 
