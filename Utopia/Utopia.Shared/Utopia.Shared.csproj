@@ -116,6 +116,7 @@
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\IEntitySpawningControler.cs" />
+    <Compile Include="ClassExt\CursorHelper.cs" />
     <Compile Include="ClassExt\ListExtension.cs" />
     <Compile Include="Entities\Concrete\TreeSoul.cs" />
     <Compile Include="Entities\GrowingEntity.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Services\Season.designer.cs">
       <DependentUpon>Season.cs</DependentUpon>
     </Compile>
+    <Compile Include="Structs\Scope.cs" />
     <Compile Include="Structs\UtopiaTime.cs" />
     <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
     <Compile Include="Structs\UtopiaTimeSpan.cs" />

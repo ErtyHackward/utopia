@@ -21,7 +21,7 @@ namespace Utopia.Shared.Chunks
         private Vector3I _internalPosition;
         private Vector3I _position;
 
-        private bool _transactionActive = false;
+        private bool _transactionActive;
         private List<IAbstractChunk> _transactionChunks; 
 
         /// <summary>
@@ -375,17 +375,6 @@ namespace Utopia.Shared.Chunks
             chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId, out entityRemoved);
 
             return entityRemoved;
-        }
-
-        /// <summary>
-        /// Starts new transaction and returns the object that will finish it when disposed
-        /// Affects only blocks events
-        /// </summary>
-        /// <returns></returns>
-        public Scope TransactionScope()
-        {
-            BeginTransaction();
-            return new Scope(CommitTransaction);
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using System.Threading;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -548,6 +549,12 @@ namespace Utopia.Shared.Server.Managers
                     }
                 }
             }
+        }
+
+        public IEnumerable<IStaticEntity> AroundEntities(Vector3D position, float radius)
+        {
+            var distanceSquared = radius * radius;
+            return SurroundChunks(position, radius).SelectMany(chunk => chunk.Entities).Where(e => Vector3D.DistanceSquared(e.Position, position) <= distanceSquared);
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ProtoBuf;
-using Utopia.Shared.Entities.Interfaces;
+﻿using ProtoBuf;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Concrete
@@ -19,7 +14,7 @@ namespace Utopia.Shared.Entities.Concrete
         /// Configuration blueprint index
         /// </summary>
         [ProtoMember(1)]
-        public int TreeBlueprintId { get; set; }
+        public int TreeTypeId { get; set; }
 
         /// <summary>
         /// Random seed to create the tree
@@ -42,5 +37,8 @@ namespace Utopia.Shared.Entities.Concrete
 
         [ProtoMember(5)]
         public bool IsDying { get; set; }
+
+        [ProtoMember(6)]
+        public UtopiaTime LastItemsRegeneration { get; set; }
     }
 }

@@ -10,12 +10,14 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
+using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.Server.Structs;
 using Utopia.Shared.Services;
 using Utopia.Shared.Structs;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Structs.Helpers;
+using Utopia.Shared.Structs.Landscape;
 
 namespace Utopia.Shared.Server.Managers
 {
@@ -74,7 +76,7 @@ namespace Utopia.Shared.Server.Managers
             foreach (var chunk in _chunks4Processing.Take(_maxChunkRefreshPerCycle))
             {
                 SpawnBiomeEntities(gametime, chunk);
-                TreeSoulUpdate(gametime, chunk);
+                TreeSoulUpdate(chunk);
                 chunk.LastSpawningRefresh = gametime;
             }
 
@@ -84,21 +86,91 @@ namespace Utopia.Shared.Server.Managers
                 _chunks4Processing.RemoveRange(0, _maxChunkRefreshPerCycle);
         }
 
-        private void TreeSoulUpdate(UtopiaTime gametime, ServerChunk chunk)
+        private void TreeSoulUpdate(ServerChunk chunk)
         {
             foreach (var soul in chunk.Entities.OfType<TreeSoul>().ToList())
             {
-                SpawnSeeds(chunk, soul);
                 TreeIntegrity(chunk, soul);
-                SpawnTreeEntities(chunk, soul);
+                if (!soul.IsDamaged)
+                {
+                    SpawnSeeds(chunk, soul);
+                    SpawnTreeEntities(chunk, soul);
+                }
             }
         }
 
         private void SpawnTreeEntities(ServerChunk chunk, TreeSoul soul)
         {
             var config = _server.EntityFactory.Config;
-            var treeBp = config.TreeBluePrintsDico[soul.TreeBlueprintId];
-            
+            var treeBp = config.TreeBluePrintsDico[soul.TreeTypeId];
+
+            if (_server.Clock.Now - soul.LastItemsRegeneration < treeBp.ItemsRegenerationTime)
+                return;
+
+            List<BlockWithPosition> treeBlocks = null;
+
+            soul.LastItemsRegeneration = _server.Clock.Now;
+
+            foreach (var item in treeBp.StaticItems)
+            {
+                // check quantity limit 
+                var maxItems = _fastRandom.Next(item.Quantity.Min, item.Quantity.Max + 1);
+                if (_server.LandscapeManager.AroundEntities(soul.Position, item.SpawningRange).Count(e => e.BluePrintId == item.ItemblueprintId) >= maxItems)
+                    continue;
+
+                var point = _fastRandom.NextVector2IInRadius(item.SpawningRange) + new Vector2I((int)soul.Position.X, (int)soul.Position.Z);
+
+                var groundSpawning = item.SpawningType == SpawningType.Ground || (item.SpawningType == SpawningType.Both && _fastRandom.NextDouble() < 0.5f);
+
+                if (groundSpawning)
+                {
+                    var cursor = _server.LandscapeManager.GetCursor(new Vector3I(point.X, AbstractChunk.ChunkSize.Y - 1, point.Y));
+
+                    while (true)
+                    {
+                        var block = cursor.Read();
+
+                        if (block != WorldConfiguration.CubeId.Air && block != treeBp.FoliageBlock)
+                            break;
+
+                        cursor.Move(Vector3I.Down);
+                    }
+                    cursor.Move(Vector3I.Up);
+
+                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                    {
+                        if (Vector3I.Distance(cursor.GlobalPosition, (Vector3I)soul.Position) <= item.SpawningRange)
+                        {
+                            var entity = (IStaticEntity)_server.EntityFactory.CreateFromBluePrint(item.ItemblueprintId);
+                            entity.Position = cursor.GlobalPosition;
+                            cursor.AddEntity(entity);
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    // lazy initialization of tree 
+                    treeBlocks = treeBlocks ?? _treeLSystem.Generate(soul.TreeRndSeed, (Vector3I)soul.Position, treeBp);
+
+                    // find the lowest Y in our point
+                    var minY = treeBlocks.Where(b => b.WorldPosition.X == point.X && b.WorldPosition.Z == point.Y).Select(b => b.WorldPosition.Y).DefaultIfEmpty().Min();
+
+                    
+                    if (minY == 0 || minY <= soul.Position.Y)
+                        // the point is outside of tree
+                        continue; 
+
+                    var cursor = _server.LandscapeManager.GetCursor(new Vector3I(point.X, minY - 1, point.Y));
+                    if (cursor.Read() == WorldConfiguration.CubeId.Air)
+                    {
+                        var entity = (IStaticEntity)_server.EntityFactory.CreateFromBluePrint(item.ItemblueprintId);
+                        entity.Position = cursor.GlobalPosition;
+                        cursor.AddEntity(entity);
+                    }
+                }
+
+            }
 
         }
 
@@ -112,7 +184,7 @@ namespace Utopia.Shared.Server.Managers
                 return;
 
             var config = _server.EntityFactory.Config;
-            var treeBp = config.TreeBluePrintsDico[soul.TreeBlueprintId];
+            var treeBp = config.TreeBluePrintsDico[soul.TreeTypeId];
             var treeBlocks = _treeLSystem.Generate(soul.TreeRndSeed, new Vector3I(), treeBp);
 
             var cursor = _server.LandscapeManager.GetCursor(soul.Position);
@@ -158,7 +230,7 @@ namespace Utopia.Shared.Server.Managers
         {
             // TODO: check other constraints (season, maxseeds etc)
 
-            var seeds = chunk.Entities.OfType<TreeGrowingEntity>().Count(e => e.TreeTypeId == soul.TreeBlueprintId);
+            var seeds = chunk.Entities.OfType<TreeGrowingEntity>().Count(e => e.TreeTypeId == soul.TreeTypeId);
             if (seeds == 0)
             {
                 var pos = new Vector2I(_fastRandom.Next(chunk.BlockData.ChunkSize.X),
@@ -189,9 +261,9 @@ namespace Utopia.Shared.Server.Managers
                     return;
 
                 var config = _server.EntityFactory.Config;
-                var treeBp = config.TreeBluePrintsDico[soul.TreeBlueprintId];
+                var treeBp = config.TreeBluePrintsDico[soul.TreeTypeId];
                 var treeSeed = _server.EntityFactory.CreateEntity<TreeGrowingEntity>();
-                treeSeed.TreeTypeId = soul.TreeBlueprintId;
+                treeSeed.TreeTypeId = soul.TreeTypeId;
                 treeSeed.TreeRndSeed = _fastRandom.Next();
                 treeSeed.ModelName = treeBp.SeedModel;
                 treeSeed.Name = "Seed of " + treeBp.Name;
@@ -202,8 +274,8 @@ namespace Utopia.Shared.Server.Managers
                 treeSeed.Position = cursor.GlobalPosition + new Vector3D(0.5, 0, 0.5);
                 treeSeed.LinkedCube = cursor.GlobalPosition - Vector3I.Up;
                 treeSeed.BlockFaceCentered = true;
-                treeSeed.GrowingSeasons = config.TreeBluePrintsDico[soul.TreeBlueprintId].GrowingSeasons;
-                treeSeed.GrowingBlocks = config.TreeBluePrintsDico[soul.TreeBlueprintId].GrowingBlocks;
+                treeSeed.GrowingSeasons = config.TreeBluePrintsDico[soul.TreeTypeId].GrowingSeasons;
+                treeSeed.GrowingBlocks = config.TreeBluePrintsDico[soul.TreeTypeId].GrowingBlocks;
                 cursor.AddEntity(treeSeed);
             }
         }
