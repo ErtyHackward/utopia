@@ -141,10 +141,15 @@ namespace Utopia.Shared.Server.Managers
             chunk.NeedSave = true;
             chunk.PureGenerated = false;
 
-            lock (_chunksToSave)
+            if (Monitor.TryEnter(_chunksToSave,5000))
             {
                 if (!_chunksToSave.Contains(chunk))
                     _chunksToSave.Add(chunk);
+                Monitor.Exit(_chunksToSave);
+            }
+            else
+            {
+                logger.Debug("Unable to aquire lock to save the chunk");
             }
         }
 
@@ -385,35 +390,44 @@ namespace Utopia.Shared.Server.Managers
 
         public void SaveChunks()
         {
-            lock (_chunksToSave)
+            if (Monitor.TryEnter(_chunksToSave, 5000))
             {
-
-                SaveTime = 0;
-                ChunksSaved = 0;
-
-                if (_chunksToSave.Count == 0)
-                    return;
-
-                _saveStopwatch.Restart();
-                var positions = new Vector3I[_chunksToSave.Count];
-                var datas = new List<byte[]>(_chunksToSave.Count);
-
-                int index = 0;
-                foreach (var serverChunk in _chunksToSave)
+                try
                 {
-                    serverChunk.NeedSave = false;
-                    positions[index] = serverChunk.Position;
-                    datas.Add(serverChunk.Compress());
-                    index++;
+                    SaveTime = 0;
+                    ChunksSaved = 0;
+
+                    if (_chunksToSave.Count == 0)
+                        return;
+
+                    _saveStopwatch.Restart();
+                    var positions = new Vector3I[_chunksToSave.Count];
+                    var datas = new List<byte[]>(_chunksToSave.Count);
+
+                    int index = 0;
+                    foreach (var serverChunk in _chunksToSave)
+                    {
+                        serverChunk.NeedSave = false;
+                        positions[index] = serverChunk.Position;
+                        datas.Add(serverChunk.Compress());
+                        index++;
+                    }
+
+                    _chunksStorage.SaveChunksData(positions, datas.ToArray());
+                    _chunksToSave.Clear();
+                    _saveStopwatch.Stop();
+
+                    SaveTime = _saveStopwatch.Elapsed.TotalMilliseconds;
+                    ChunksSaved = positions.Length;
                 }
-
-                _chunksStorage.SaveChunksData(positions, datas.ToArray());
-                _chunksToSave.Clear();
-                _saveStopwatch.Stop();
-
-                SaveTime = _saveStopwatch.Elapsed.TotalMilliseconds;
-                ChunksSaved = positions.Length;
-
+                finally
+                {
+                    Monitor.Exit(_chunksToSave);
+                }
+            }
+            else
+            {
+                logger.Debug("Unable to aquire lock for saving chunks in 5sec, skipping");
             }
         }
 

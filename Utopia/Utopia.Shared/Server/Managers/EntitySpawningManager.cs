@@ -96,7 +96,10 @@ namespace Utopia.Shared.Server.Managers
 
         private void SpawnTreeEntities(ServerChunk chunk, TreeSoul soul)
         {
+            var config = _server.EntityFactory.Config;
+            var treeBp = config.TreeBluePrintsDico[soul.TreeBlueprintId];
             
+
         }
 
         private void TreeIntegrity(ServerChunk chunk, TreeSoul soul)
