@@ -95,6 +95,11 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [Editor(typeof(GrowingEntity.MultiBlockListEditor), typeof(UITypeEditor))]
         [ProtoMember(20)]
         public List<byte> GrowingBlocks { get; set; }
+        [Category("Growing")]
+        [Description("How much game time should pass between items regenerations")]
+        [TypeConverter(typeof(UtopiaTimeSpanConverter))]
+        [ProtoMember(21)]
+        public UtopiaTimeSpan ItemsRegenerationTime { get; set; }
 
         public TreeBluePrint()
         {

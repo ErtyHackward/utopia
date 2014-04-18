@@ -594,7 +594,7 @@ namespace Utopia.Shared.World.Processors.Utopia
                             var soul = entityFactory.CreateEntity<TreeSoul>();
                             soul.Position = new Vector3D(chunkWorldPosition.X + entity.RootLocation.X + 0.5, entity.RootLocation.Y, chunkWorldPosition.Y + entity.RootLocation.Z + 0.5);
                             soul.TreeRndSeed = entity.GenerationSeed;
-                            soul.TreeBlueprintId = entity.LandscapeEntityId;
+                            soul.TreeTypeId = entity.LandscapeEntityId;
                             chunk.Entities.Add(soul);
                         }
                     }

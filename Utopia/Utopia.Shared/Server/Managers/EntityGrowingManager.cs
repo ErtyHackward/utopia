@@ -2,6 +2,7 @@
 using System.Linq;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
@@ -140,7 +141,7 @@ namespace Utopia.Shared.Server.Managers
                         var soul = _server.EntityFactory.CreateEntity<TreeSoul>();
                         soul.Position = tree.Position;
                         soul.TreeRndSeed = tree.TreeRndSeed;
-                        soul.TreeBlueprintId = tree.TreeTypeId;
+                        soul.TreeTypeId = tree.TreeTypeId;
 
                         chunk.Entities.Add(soul);
 

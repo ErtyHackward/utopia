@@ -512,7 +512,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         public override ILandscapeCursor GetCursor(Vector3I blockPosition)
         {
             SingleArrayLandscapeCursor cursor = new SingleArrayLandscapeCursor(this, blockPosition, _wp.Configuration);
-            if (cursor.isError) return null;
+            if (cursor.IsError) return null;
             else return cursor;
         }
 

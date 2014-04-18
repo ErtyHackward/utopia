@@ -32,12 +32,12 @@ namespace Utopia.Worlds.Chunks
     {
         private struct TreeBpSeed
         {
-            public int TreeBlueprint;
+            public int TreeTypeId;
             public int TreeSeed;
 
             public bool Equals(TreeBpSeed other)
             {
-                return TreeBlueprint == other.TreeBlueprint && TreeSeed == other.TreeSeed;
+                return TreeTypeId == other.TreeTypeId && TreeSeed == other.TreeSeed;
             }
 
             public override bool Equals(object obj)
@@ -50,7 +50,7 @@ namespace Utopia.Worlds.Chunks
             {
                 unchecked
                 {
-                    return (TreeBlueprint * 397) ^ TreeSeed;
+                    return (TreeTypeId * 397) ^ TreeSeed;
                 }
             }
         }
@@ -330,7 +330,7 @@ namespace Utopia.Worlds.Chunks
                     {
                         // we need to use generated voxel model
                         TreeBpSeed key;
-                        key.TreeBlueprint = treeGrowing.TreeTypeId;
+                        key.TreeTypeId = treeGrowing.TreeTypeId;
                         key.TreeSeed = treeGrowing.TreeRndSeed;
 
                         VisualVoxelModel treeModel;
@@ -352,6 +352,17 @@ namespace Utopia.Worlds.Chunks
                         }
                     }
                 }
+
+                var treeSoul = e.Entity as TreeSoul;
+                if (treeSoul != null)
+                {
+                    TreeBpSeed key;
+                    key.TreeTypeId = treeSoul.TreeTypeId;
+                    key.TreeSeed = treeSoul.TreeRndSeed;
+
+                    _cachedTrees.Remove(key);
+                }
+
 
                 voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
 
