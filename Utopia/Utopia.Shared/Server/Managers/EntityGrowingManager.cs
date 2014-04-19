@@ -225,7 +225,7 @@ namespace Utopia.Shared.Server.Managers
             if (tree != null)
             {
                 // the seed will not grow if there is a tree nearby
-                foreach (var checkChunk in _server.LandscapeManager.SurroundChunks(tree.Position))
+                foreach (var checkChunk in _server.LandscapeManager.AroundChunks(tree.Position))
                 {
                     if (checkChunk.Entities.OfType<TreeSoul>().Any(s => Vector3D.Distance(s.Position, tree.Position) < 16))
                         return false;

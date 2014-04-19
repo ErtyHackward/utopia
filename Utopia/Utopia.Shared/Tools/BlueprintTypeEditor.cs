@@ -209,6 +209,10 @@ namespace Utopia.Shared.Tools
 
             _service.DropDownControl(_list);
 
+            if (_list.Tag is ushort && (ushort)_list.Tag < 256)
+            {
+                return (byte)(ushort)_list.Tag;
+            }
             return _list.Tag;
         }
         
