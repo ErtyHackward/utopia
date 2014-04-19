@@ -54,7 +54,7 @@ namespace Utopia.Shared.Chunks
                     _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
                 
                 //Transform the Cube position into Chunk Position
-                _currentChunk = _manager.GetChunkFromBlock(_position);
+                ChangeChunk(_manager.GetChunkFromBlock(_position));
             }
         }
 
@@ -321,19 +321,27 @@ namespace Utopia.Shared.Chunks
 
             if (newChunkPos != _currentChunk.Position)
             {
-                _currentChunk = _manager.GetChunk(newChunkPos);
-
-                if (_transactionActive)
-                {
-                    if (!_transactionChunks.Contains(_currentChunk))
-                    {
-                        ((InsideDataProvider)_currentChunk.BlockData).BeginTransaction();
-                        _transactionChunks.Add(_currentChunk);
-                    }
-                }
+                ChangeChunk(_manager.GetChunk(newChunkPos));
             }
 
             return this;
+        }
+
+        private void ChangeChunk(IAbstractChunk newChunk)
+        {
+            if (_currentChunk == newChunk)
+                return;
+
+            _currentChunk = newChunk;
+
+            if (_transactionActive)
+            {
+                if (!_transactionChunks.Contains(_currentChunk))
+                {
+                    ((InsideDataProvider)_currentChunk.BlockData).BeginTransaction();
+                    _transactionChunks.Add(_currentChunk);
+                }
+            }
         }
 
         /// <summary>

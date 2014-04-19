@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using S33M3CoreComponents.Physics.Verlet;
 using S33M3Resources.Structs;
 using SharpDX;
+using Utopia.Shared.Entities.Interfaces;
 
 namespace Utopia.Shared.Interfaces
 {
@@ -54,5 +56,7 @@ namespace Utopia.Shared.Interfaces
         void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition);
 
         Vector3D GetHighestPoint(Vector3D vector2);
+        IEnumerable<IAbstractChunk> AroundChunks(Vector3D vector3D, float radius = 10);
+        IEnumerable<IStaticEntity> AroundEntities(Vector3D position, float radius);
     }
 }

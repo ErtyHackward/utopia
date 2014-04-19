@@ -27,5 +27,10 @@ namespace Utopia.Shared.Entities.Concrete
 
         [ProtoMember(4)]
         public int TreeRndSeed { get; set; }
+
+        public override string StackType
+        {
+            get { return "TreeSeed" + TreeTypeId + "_" + TreeRndSeed; }
+        }
     }
 }

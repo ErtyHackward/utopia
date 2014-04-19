@@ -234,11 +234,15 @@ namespace Utopia.Shared.Entities.Dynamic
             var arg = EntityUseEventArgs.FromState(this);
             arg.Tool = tool;
 
+
             if (tool != null)
-                arg.Impact = tool.Use(this);
+            {
+                using (new PerfLimit("Tool use logic " + tool.Name))
+                    arg.Impact = tool.Use(this);
+            }
             else
             {
-                arg.Impact = new ToolImpact{ Message = "Null tool" };
+                arg.Impact = new ToolImpact { Message = "Null tool" };
             }
             
             OnUse(arg);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using ProtoBuf;
 using S33M3CoreComponents.Sound;
+using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
@@ -10,6 +12,7 @@ using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
@@ -135,6 +138,44 @@ namespace Utopia.Shared.Entities
                     }
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.Linked && e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
+
+                    foreach (var treeSoul in EntityFactory.LandscapeManager.AroundEntities(owner.EntityState.PickedBlockPosition, 16).OfType<TreeSoul>())
+                    {
+                        var treeBp = EntityFactory.Config.TreeBluePrintsDico[treeSoul.TreeTypeId];
+
+                        if (cube != treeBp.FoliageBlock && cube != treeBp.TrunkBlock)
+                            continue;
+
+                        var treeLSystem = new TreeLSystem();
+
+                        var treeBlocks = treeLSystem.Generate(treeSoul.TreeRndSeed, (Vector3I)treeSoul.Position, treeBp);
+
+                        // did we remove the block of the tree?
+                        if (treeBlocks.Exists(b => b.WorldPosition == owner.EntityState.PickedBlockPosition))
+                        {
+                            treeSoul.IsDamaged = true;
+
+                            // count removed trunk blocks
+                            var totalTrunks = treeBlocks.Count(b => b.BlockId == treeBp.TrunkBlock);
+
+                            var existsTrunks = treeBlocks.Count(b =>
+                            {
+                                if (b.BlockId == treeBp.TrunkBlock)
+                                {
+                                    cursor.GlobalPosition = b.WorldPosition;
+                                    return cursor.Read() == treeBp.TrunkBlock;
+                                }
+                                return false;
+                            });
+
+                            if (existsTrunks < totalTrunks / 2)
+                            {
+                                treeSoul.IsDying = true;
+                            }
+                        }
+                    }
+
+                    
 
                     if (SoundEngine != null && EntityFactory.Config.ResourceTake != null)
                     {
