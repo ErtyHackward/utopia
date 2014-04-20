@@ -24,6 +24,7 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (!owner.EntityState.IsEntityPicked)
             {
+                impact.Success = true;
                 return impact;
             }
 
@@ -31,11 +32,14 @@ namespace Utopia.Shared.Entities.Concrete
 
             if (entity == null)
             {
-                impact.Message = "Can't find such entity, desync?";
+                impact.Success = true;
                 return impact;
             }
 
-            return entity.HealthImpact(-Damage, owner);
+            var imp = entity.HealthImpact(-Damage, owner);
+            imp.Success = true;
+
+            return imp;
         }
     }
 }

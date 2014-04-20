@@ -178,6 +178,13 @@ namespace Utopia.Shared.Entities.Dynamic
             Oxygen = new Energy();
         }
 
+        internal override void FactoryInitialize()
+        {
+            base.FactoryInitialize();
+
+            Health.CurrentValue = Health.MaxValue;
+        }
+
         private void Initialize()
         {
             Equipment = new CharacterEquipment(this);

@@ -115,7 +115,7 @@ namespace Utopia.Shared.Entities.Concrete
 
                 if (treeItem != null)
                 {
-                    if (treeItem.Scale > 0.05)
+                    if (treeItem.Scale > 0.2)
                     {
                         impact.Message = "The tree is growing, you can't remove it by hands";
                         return impact;

@@ -33,8 +33,8 @@ namespace Utopia.Shared.Server.Managers
         private readonly List<ServerChunk> _chunks4Processing = new List<ServerChunk>();
         private TreeLSystem _treeLSystem = new TreeLSystem();
 
-        private UtopiaTimeSpan _chunkUpdateCycle = UtopiaTimeSpan.FromMinutes(15); // A minimum of one day must be passed before a chunk can be do a spawn refresh again !
-        private int _maxChunkRefreshPerCycle = 50; //Maximum of 20 chunk update per cycle
+        private UtopiaTimeSpan _chunkUpdateCycle = UtopiaTimeSpan.FromDays(1); // A minimum of one day must be passed before a chunk can be do a spawn refresh again !
+        private int _maxChunkRefreshPerCycle = 50; //Maximum of 50 chunk update per cycle
 
         public EntitySpawningManager(ServerCore server, IEntitySpawningControler entitySpawningControler)
         {
