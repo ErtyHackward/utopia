@@ -105,7 +105,7 @@ namespace Utopia.Shared.Server.Structs
 
                     if (_dynamicEntity.FactionId != 0)
                     {
-                        var faction = Enumerable.First<Faction>(_server.GlobalStateManager.GlobalState.Factions, f => f.FactionId == _dynamicEntity.FactionId);
+                        var faction = _server.GlobalStateManager.GlobalState.Factions.First(f => f.FactionId == _dynamicEntity.FactionId);
 
                         if (!faction.MembersIds.Contains(_dynamicEntity.DynamicId))
                             faction.MembersIds.Add(_dynamicEntity.DynamicId);

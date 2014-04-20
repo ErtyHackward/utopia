@@ -16,14 +16,14 @@ Source: Deps\dxwebsetup.exe; Flags: dontcopy
 Source: ..\Utopia\Realms\Realms.Client\bin\Release\*; DestDir: {app}; Excludes: *.dds,*.pdb,*.vshost.*,*.exe.config,Newtonsoft.Json.xml,Ninject.xml,NLog.xml,protobuf-net.xml,SharpDX.*.xml,SharpDX.xml; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Setup]
-VersionInfoVersion=1.2.4
+VersionInfoVersion=1.2.5
 VersionInfoCompany=April32
 VersionInfoDescription=Utopia
 VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2013-2014
 VersionInfoProductName=Utopia realms
 MinVersion=0,6.0.6000
 AppName=Utopia: Realms
-AppVerName=Utopia: Realms, 1.2.4
+AppVerName=Utopia: Realms, 1.2.5
 AppPublisher=April32
 AppPublisherURL=http://april32.com
 AppSupportURL=http://utopiarealms.com

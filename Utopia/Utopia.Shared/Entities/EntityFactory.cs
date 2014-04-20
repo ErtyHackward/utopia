@@ -245,6 +245,8 @@ namespace Utopia.Shared.Entities
 
             InjectFields(entity);
 
+            entity.FactoryInitialize();
+
             // allow post produce prepare
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
 
