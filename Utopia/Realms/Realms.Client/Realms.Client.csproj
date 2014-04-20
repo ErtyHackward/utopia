@@ -270,6 +270,7 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)PacksOptimize\bin\Release\PacksOptimize.exe" "$(TargetDir)" /Y
 xcopy "$(SolutionDir)Utopia.Updater\bin\Release\Launcher.exe" "$(TargetDir)" /Y
+xcopy "$(SolutionDir)Utopia.Editor\bin\Release\Utopia.Editor.exe" "$(TargetDir)" /Y
 
 if $(ConfigurationName) == ReleasePublish (
 PacksOptimize.exe action=Compilation "'path=$(TargetDir)'" "'includePath=$(TargetDir)Effects'" debugcompil=0
