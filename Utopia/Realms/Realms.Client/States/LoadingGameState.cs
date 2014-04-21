@@ -68,6 +68,8 @@ namespace Realms.Client.States
     /// </summary>
     public class LoadingGameState : GameState
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IKernel _ioc;
         private RealmRuntimeVariables _vars;
         
@@ -124,6 +126,7 @@ namespace Realms.Client.States
             {
                 var serverComponent = _ioc.Get<ServerComponent>();
                 var guiManager = _ioc.Get<GuiManager>();
+                logger.Info("Disconnected from the server. Error text: {0}", serverComponent.LastErrorText);
                 guiManager.MessageBox("Can't connect to the server. " + serverComponent.LastErrorText, "error");
                 StatesManager.ActivateGameStateAsync("MainMenu");
             }
