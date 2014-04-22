@@ -119,6 +119,8 @@
     <Compile Include="GUI\EnergyBar\EnergyBar.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBarsContainer.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBarsContainerRenderer.cs" />
+    <Compile Include="GUI\Weather\WeatherContainer.cs" />
+    <Compile Include="GUI\Weather\WeatherContainerRenderer.cs" />
     <Compile Include="GUI\WindRose\CompassControlRenderer.cs" />
     <Compile Include="GUI\WindRose\WindRoseComponent.cs" />
     <Compile Include="GUI\WindRose\CompassControl.cs" />

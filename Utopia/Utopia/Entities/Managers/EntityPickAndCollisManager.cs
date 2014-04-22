@@ -42,7 +42,6 @@ namespace Utopia.Entities.Managers
         private ServerComponent _server;
         private InputsManager _input;
         private IWorldChunks _worldChunks;
-        private PlayerEntityManager _playerManager;
         private bool? _onEntityTop = null;
         #endregion
 

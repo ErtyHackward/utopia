@@ -24,6 +24,20 @@ namespace Utopia.Shared.Structs.Helpers
             return vec3;
         }
 
+        public static Vector3I GlobalToInternalChunkPosition(Vector3D globalPosition)
+        {
+            var vec3 = new Vector3I(globalPosition.X % AbstractChunk.ChunkSize.X, globalPosition.Y % AbstractChunk.ChunkSize.Y, globalPosition.Z % AbstractChunk.ChunkSize.Z);
+
+            if (vec3.X < 0)
+                vec3.X = AbstractChunk.ChunkSize.X + vec3.X;
+            if (vec3.Y < 0)
+                vec3.Y = AbstractChunk.ChunkSize.Y + vec3.Y;
+            if (vec3.Z < 0)
+                vec3.Z = AbstractChunk.ChunkSize.Z + vec3.Z;
+
+            return vec3;
+        }
+
         public static Vector3I GlobalToInternalChunkPosition(Vector3I globalPosition)
         {
             var vec3 = new Vector3I(globalPosition.X % AbstractChunk.ChunkSize.X, globalPosition.Y % AbstractChunk.ChunkSize.Y, globalPosition.Z % AbstractChunk.ChunkSize.Z);
