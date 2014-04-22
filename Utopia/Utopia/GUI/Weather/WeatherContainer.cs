@@ -68,10 +68,7 @@ namespace Utopia.GUI.TopPanel
         {
             var playerChunk = _worldChunks.GetChunkFromChunkCoord(_playerEntityManager.ChunkPosition);
             var inChunkPosition =  BlockHelper.GlobalToInternalChunkPosition(_playerEntityManager.Player.Position);
-            if (inChunkPosition.X < 0 || inChunkPosition.Z < 0)
-            {
-                Console.WriteLine("");
-            }
+
             var chunkColumnMeta = playerChunk.BlockData.GetColumnInfo(inChunkPosition.X, inChunkPosition.Z);
             //var c = GetChunk((int)PlayerManager.CameraWorldPosition.X, (int)PlayerManager.CameraWorldPosition.Z);
             ////From World Coord to Cube Array Coord

@@ -64,10 +64,10 @@ namespace Utopia.Worlds.Weather
             //Assign new wind direction !
             Wind.WindFlow = e.Message.WindDirection;
             //Keep the offsetting from server into more real range.
-            //TemperatureOffset = MathHelper.FullLerp(-0.3f, 0.3f, -1, 1, e.Message.TemperatureOffset, true);
-            //MoistureOffset = MathHelper.FullLerp(-0.3f, 0.3f, -1, 1, e.Message.MoistureOffset, true);
-            TemperatureOffset = e.Message.TemperatureOffset;
-            MoistureOffset = e.Message.MoistureOffset;
+            TemperatureOffset = MathHelper.FullLerp(-0.5f, 0.5f, -1, 1, e.Message.TemperatureOffset, true);
+            MoistureOffset = MathHelper.FullLerp(-0.5f, 0.5f, -1, 1, e.Message.MoistureOffset, true);
+            //TemperatureOffset = e.Message.TemperatureOffset;
+            //MoistureOffset = e.Message.MoistureOffset;
         }
         #endregion
     }
