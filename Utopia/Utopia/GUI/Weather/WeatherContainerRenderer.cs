@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Utopia.GUI.TopPanel
 {
-    public class WeatherRenderer : IFlatControlRenderer<WeatherContainer>
+    public class WeatherContainerRenderer : IFlatControlRenderer<WeatherContainer>
     {
         public void Render(WeatherContainer control, IFlatGuiGraphics graphics)
         {

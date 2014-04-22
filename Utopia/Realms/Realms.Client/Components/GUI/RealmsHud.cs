@@ -14,6 +14,8 @@ using Utopia.GUI;
 using Utopia.GUI.Inventory;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Weather;
+using Utopia.Worlds.Chunks;
 
 namespace Realms.Client.Components.GUI
 {
@@ -56,9 +58,11 @@ namespace Realms.Client.Components.GUI
                          ToolBarUi toolbar, 
                          InputsManager inputManager, 
                          CameraManager<ICameraFocused> camManager,
-                         PlayerEntityManager playerEntityManager
+                         PlayerEntityManager playerEntityManager,
+                         IWeather weather,
+                         IWorldChunks worldChunks
                          ) :
-            base(screen, d3DEngine, toolbar, inputManager, camManager, playerEntityManager)
+            base(screen, d3DEngine, toolbar, inputManager, camManager, playerEntityManager, weather, worldChunks)
         {
             _screen = screen;
             _d3DEngine = d3DEngine;

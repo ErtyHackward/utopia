@@ -153,8 +153,7 @@ namespace Utopia.Worlds.Chunks
             }
             else
             {
-                var pos = PlayerManager.Player.Position.ToCubePosition();
-                var playerChunk = GetChunk(ref pos);
+                var playerChunk = GetChunk(PlayerManager.Player.Position.ToCubePosition());
 
                 if (SliceViewChunks <= 9)
                 {
