@@ -118,21 +118,24 @@ namespace Utopia.Worlds.SkyDomes
 
         public override void BeforeDispose()
         {
-            ((Clouds)_clouds).BeforeDispose();
-            _clouds.Dispose();
+            if (_clouds != null)
+            {
+                ((Clouds)_clouds).BeforeDispose();
+                _clouds.Dispose();
+            }
 
-            _posiTextureEffect.Dispose();
-            _skyDomeEffect.Dispose();
+            if (_posiTextureEffect != null) _posiTextureEffect.Dispose();
+            if (_skyDomeEffect != null) _skyDomeEffect.Dispose();
 
-            _domeVertexBuffer.Dispose();
-            _domeIndexBuffer.Dispose();
+            if (_domeVertexBuffer != null) _domeVertexBuffer.Dispose();
+            if (_domeIndexBuffer != null) _domeIndexBuffer.Dispose();
 
-            _moonVertexBuffer.Dispose();
-            _moonIndexBuffer.Dispose();
+            if (_moonVertexBuffer != null) _moonVertexBuffer.Dispose();
+            if (_moonIndexBuffer != null) _moonIndexBuffer.Dispose();
 
-            _skyTex_View.Dispose();
-            _moonTex_View.Dispose();
-            _glowTex_View.Dispose();
+            if (_skyTex_View != null) _skyTex_View.Dispose();
+            if (_moonTex_View != null) _moonTex_View.Dispose();
+            if (_glowTex_View != null) _glowTex_View.Dispose();
         }
 
         public override void FTSUpdate(GameTime timeSpend)

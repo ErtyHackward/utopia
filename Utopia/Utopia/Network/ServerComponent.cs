@@ -592,7 +592,7 @@ namespace Utopia.Network
             var ea = new ServerConnectionStatusEventArgs 
             { 
                 Status = e.Status,
-                Final = final
+                Final = final,
             };
 
             OnConnectionStatusChanged(ea);
