@@ -124,14 +124,14 @@ namespace Utopia.GUI
 
         public override void BeforeDispose()
         {
-            _toolbarUi.Dispose();
-            _spriteRender.Dispose();
-            _crosshair.Dispose();
-            _font.Dispose();
-            _tooltip.Dispose();
-            _weatherContainer.Dispose();
-            _energyBar.Dispose();
-            _d3DEngine.ScreenSize_Updated -= D3DEngineViewPortUpdated;
+            if (_toolbarUi != null) _toolbarUi.Dispose();
+            if (_spriteRender != null) _spriteRender.Dispose();
+            if (_crosshair != null) _crosshair.Dispose();
+            if (_font != null) _font.Dispose();
+            if (_tooltip != null) _tooltip.Dispose();
+            if (_weatherContainer != null) _weatherContainer.Dispose();
+            if (_energyBar != null) _energyBar.Dispose();
+            if (_d3DEngine != null) _d3DEngine.ScreenSize_Updated -= D3DEngineViewPortUpdated;
         }
 
         #region Public methods
