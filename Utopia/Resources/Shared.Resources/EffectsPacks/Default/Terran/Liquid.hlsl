@@ -141,7 +141,14 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float fogvalue = input.fogPower;
-	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1); //If fog maximum, pixel clamped (Will leave the sky buffer at this place)
+	if (FogType != 2.0)
+	{
+		if (fogvalue <= 0.001)
+		{
+			clip(-1);
+			return output;
+		}
+	}
 
 	//The alpha value is following the Angle of view to the face
 	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.StaticUVW).rgb, 1) * input.EmissiveLight;

@@ -211,8 +211,14 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float fogvalue = input.fogPower;
-	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1);  //Clip if fog is complete
-
+	if (FogType != 2.0)
+	{
+		if (fogvalue <= 0.001)
+		{
+			clip(-1);
+			return output;
+		}
+	}
 	//float4 color = TerraTexture.SampleLevel(SamplerDiffuse, input.UVW, 0);
 	float4 color = TerraTexture.Sample(SamplerDiffuse, input.UVW);
 	
