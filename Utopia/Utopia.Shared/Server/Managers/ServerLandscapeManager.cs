@@ -326,9 +326,23 @@ namespace Utopia.Shared.Server.Managers
                         }
                         else
                         {
-                            chunk = new ServerChunk { Position = position };
-                            chunk.Decompress(data);
-                            EntityFactory.PrepareEntities(chunk.Entities);
+
+                            try
+                            {
+                                chunk = new ServerChunk { Position = position };
+                                chunk.Decompress(data);
+                                EntityFactory.PrepareEntities(chunk.Entities);
+                            }
+                            catch (Exception e)
+                            {
+                                logger.Error("Error when decompressing chunk {1}: {0}", e.Message, position);
+                                var generatedChunk = _generator.GetChunk(position);
+
+                                if (generatedChunk != null)
+                                {
+                                    chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };
+                                }
+                            }
                         }
 
                         _chunks.Add(position, chunk);
