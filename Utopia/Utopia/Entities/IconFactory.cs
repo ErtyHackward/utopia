@@ -179,6 +179,9 @@ namespace Utopia.Entities
 
                 var id = voxelItem.ModelName;
 
+                if (id == null)
+                    return;
+
                 if (!string.IsNullOrEmpty(voxelItem.ModelState))
                 {
                     id += ":" + voxelItem.ModelState;
