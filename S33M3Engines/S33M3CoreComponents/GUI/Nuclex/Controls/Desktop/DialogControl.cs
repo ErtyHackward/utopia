@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
+using S33M3Resources.Structs;
 using SharpDX;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.GUI;
+using Control = S33M3CoreComponents.GUI.Nuclex.Controls.Control;
+using ListControl = S33M3CoreComponents.GUI.Nuclex.Controls.Desktop.ListControl;
 
 namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
 {
@@ -43,54 +49,74 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
             var type = typeof(T);
             var fieldInfos = type.GetFields();
 
-            const int LabelWidth = 80;
-            const int EditWidth = 80;
+            int LabelWidth = 80;
+            int EditWidth = 80;
 
             foreach (var fieldInfo in fieldInfos)
             {
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(int))
+                LabelWidth = Math.Max(LabelWidth, fieldInfo.Name.Length * 6);
+            }
+
+            foreach (var fieldInfo in fieldInfos)
+            {
+                if (!fieldInfo.IsPublic)
+                    continue;
+
+                var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
+                Children.Add(label);
+
+                if (fieldInfo.FieldType == typeof(int))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
-                    Children.Add(label);
                     var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20), IsNumeric = true };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(float))
+                if (fieldInfo.FieldType == typeof(float))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
-                    Children.Add(label);
                     var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20), IsNumeric = true };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(string))
+                if (fieldInfo.FieldType == typeof(string))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
-                    Children.Add(label);
                     var edit = new InputControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20) };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(bool))
+                if (fieldInfo.FieldType == typeof(bool))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
-                    Children.Add(label);
                     var edit = new OptionControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 20) };
                     Children.Add(edit);
                     Bounds.Size.Y += 25;
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(DialogSelection))
+                if (fieldInfo.FieldType == typeof(DialogSelection))
                 {
-                    var label = new LabelControl { Bounds = new UniRectangle(0, 0, LabelWidth, 20), Text = fieldInfo.Name };
-                    Children.Add(label);
                     var edit = new ListControl { Name = fieldInfo.Name, Bounds = new UniRectangle(0, 0, EditWidth, 80), SelectionMode = ListSelectionMode.Single };
                     Children.Add(edit);
                     Bounds.Size.Y += 85;
+                }
+
+                if (fieldInfo.FieldType == typeof(ByteColor))
+                {
+                    var edit = new ColorButtonControl
+                    {
+                        Name = fieldInfo.Name,
+                        Bounds = new UniRectangle(0, 0, EditWidth, 20)
+                    };
+                    edit.Pressed += delegate {
+                        var colorDialog = new ColorDialog();
+                        colorDialog.Color = System.Drawing.Color.FromArgb(edit.Color.A, edit.Color.R, edit.Color.G, edit.Color.B);
+                        if (colorDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            edit.Color = new ByteColor(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
+                        }
+                    };
+                    Children.Add(edit);
+                    Bounds.Size.Y += 25;
                 }
             }
 
@@ -108,7 +134,7 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
             Children.Add(buttonsGroup);
 
             Bounds.Size.Y += 60;
-            Bounds.Size.X = 200;
+            Bounds.Size.X = 120 + LabelWidth;
 
             UpdateLayout();
         }
@@ -137,7 +163,7 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     {
                         var edit = (InputControl)control;
                         float value;
-                        float.TryParse(edit.Text, out value);
+                        float.TryParse(edit.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
                         fi.SetValueDirect(__makeref(t), value);
                     }
 
@@ -162,6 +188,12 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                         ds.SelectedIndex = edit.SelectedItems[0];
 
                         fi.SetValueDirect(__makeref(t), ds);
+                    }
+
+                    if (fi.FieldType == typeof(ByteColor))
+                    {
+                        var edit = (ColorButtonControl)control;
+                        fi.SetValueDirect(__makeref(t), edit.Color);
                     }
                 }
             }
@@ -198,33 +230,36 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
 
             foreach (var fieldInfo in fieldInfos)
             {
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(int))
+                if (!fieldInfo.IsPublic)
+                    continue;
+
+                if (fieldInfo.FieldType == typeof(int))
                 {
                     var edit = Children.Get<InputControl>(fieldInfo.Name);
                     edit.Text = fieldInfo.GetValue(t).ToString();
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(float))
+                if (fieldInfo.FieldType == typeof(float))
                 {
                     var edit = Children.Get<InputControl>(fieldInfo.Name);
-                    edit.Text = fieldInfo.GetValue(t).ToString();
+                    edit.Text = ((float)fieldInfo.GetValue(t)).ToString(CultureInfo.InvariantCulture);
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(string))
+                if (fieldInfo.FieldType == typeof(string))
                 {
                     var edit = Children.Get<InputControl>(fieldInfo.Name);
                     var obj = fieldInfo.GetValue(t);
                     edit.Text = obj == null ? null : obj.ToString();
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(bool))
+                if (fieldInfo.FieldType == typeof(bool))
                 {
                     var edit = Children.Get<OptionControl>(fieldInfo.Name);
                     var obj = fieldInfo.GetValue(t);
                     edit.Selected = (bool)obj;
                 }
 
-                if (fieldInfo.IsPublic && fieldInfo.FieldType == typeof(DialogSelection))
+                if (fieldInfo.FieldType == typeof(DialogSelection))
                 {
                     var edit = Children.Get<ListControl>(fieldInfo.Name);
                     var obj = fieldInfo.GetValue(t);
@@ -241,6 +276,13 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     if (ds.SelectedIndex != -1)
                         edit.SelectedItems.Add(ds.SelectedIndex);
                     edit.Tag = ds;
+                }
+
+                if (fieldInfo.FieldType == typeof(ByteColor))
+                {
+                    var edit = Children.Get<ColorButtonControl>(fieldInfo.Name);
+                    var obj = fieldInfo.GetValue(t);
+                    edit.Color = (ByteColor)obj;
                 }
 
             }
