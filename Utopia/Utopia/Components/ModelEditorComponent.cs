@@ -13,6 +13,7 @@ using SharpDX.Direct3D11;
 using Utopia.Entities;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Net.Web;
 using Utopia.Shared.Structs;
@@ -763,6 +764,38 @@ namespace Utopia.Components
             part.IsArm = e.IsArm;
 
             NeedSave();
+        }
+
+        private void OnPartsEffectButtonPressed()
+        {
+            if (SelectedStateIndex == -1)
+            {
+                _gui.MessageBox("Select a state to edit");
+                return;
+            }
+
+            var particule =
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules;
+
+            if (particule == null)
+                particule = new StaticEntityParticule();
+
+            var s = new DialogPartEffectStruct(particule);
+            _partEffectDialog.ShowDialog(_screen, _d3DEngine.ViewPort,s , "Edit the effect", OnEffectEdited);
+        }
+
+        private void OnEffectEdited(DialogPartEffectStruct obj)
+        {
+            if (obj.EnableEffect)
+            {
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules =
+                    obj.ToStaticParticule();
+            }
+            else
+            {
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules =
+                    null;
+            }
         }
 
         private void OnPartsDeletePressed()

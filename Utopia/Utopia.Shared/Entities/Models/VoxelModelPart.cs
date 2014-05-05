@@ -25,7 +25,7 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         [ProtoMember(3)]
         public bool IsArm { get; set; }
-
+        
         public override string ToString()
         {
             return Name;
