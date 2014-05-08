@@ -92,7 +92,6 @@ namespace Utopia.GUI.WindRose
             else currentDay += "th";
             var dateStr = string.Format("{0} of {1} from Year {2}", currentDay, currentDateTime.Season, currentDateTime.Year);
             _dateTime.Text = dateStr;
-            
             _compassPanel.RotationDayCycle = (_worldclock.ClockTime.ClockTimeNormalized) * MathHelper.TwoPi + MathHelper.Pi;
 
             if(_playerManager.Player.BindedSoulStone != null){
