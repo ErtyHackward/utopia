@@ -124,7 +124,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.causticPower = clamp( ((length(worldPosition.xyz) - 30) / 20), 0, 1);
 	if(facetype != 3) output.causticPower = 1;
-	output.BiomeData = input.BiomeInfo.xy;
+	output.BiomeData = (input.BiomeInfo.xy * 0.6f) + 0.2f;
 	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
 	output.BiomeData.y = saturate(output.BiomeData.y + WeatherGlobalOffset.y);
 	output.Various.x = input.VertexInfo1.z;
