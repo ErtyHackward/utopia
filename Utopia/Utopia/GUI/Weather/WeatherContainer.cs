@@ -77,12 +77,14 @@ namespace Utopia.GUI.TopPanel
             //var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX, arrayZ));
             //var line2 = string.Format("Biomes MetaData : Temperature {0:0.00}, Moisture {1:0.00}, ColumnMaxHeight : {2}, ChunkID : {3}", columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, columnInfo.MaxHeight, c.Position);
 
-            float temperature = chunkColumnMeta.Temperature / 255.0f;
-            //temperature += _weather.TemperatureOffset;
+            float temperature = chunkColumnMeta.Temperature / 256.0f;
+            temperature = (temperature * 0.6f) + 0.2f;
+            temperature += _weather.TemperatureOffset;
             temperature = Math.Max(Math.Min(temperature, 1.0f),0.0f);
 
-            float moisture = chunkColumnMeta.Moisture / 255.0f;
-            //moisture += _weather.MoistureOffset;
+            float moisture = chunkColumnMeta.Moisture / 256.0f;
+            moisture = (temperature * 0.6f) + 0.2f;
+            moisture += _weather.MoistureOffset;
             moisture = Math.Max(Math.Min(moisture, 1.0f), 0.0f);
 
             _tempCursor.Bounds.Location.Y = _weatherFrame.GetAbsoluteBounds().Height - (temperature * _weatherFrame.GetAbsoluteBounds().Height);
