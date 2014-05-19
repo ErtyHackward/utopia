@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using Utopia.Shared.Structs;
@@ -145,6 +146,12 @@ namespace Utopia.Shared.Entities.Models
                 return _internalState;
             }
         }
+
+        /// <summary>
+        /// Contains a list of particles emit data, null if the particles are not initialized
+        /// </summary>
+        public List<DateTime> ParticuleLastEmit { get; set; }
+
         #endregion
 
         public VoxelModelInstance(VoxelModel model = null)
