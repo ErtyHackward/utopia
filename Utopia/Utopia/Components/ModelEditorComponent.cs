@@ -12,6 +12,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities;
 using Utopia.Entities.Voxel;
+using Utopia.Particules;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Models;
