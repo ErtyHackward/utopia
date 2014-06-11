@@ -305,14 +305,14 @@ namespace Utopia.Shared.Configuration
         }
         #endregion
 
-        public object CreateNewCube()
+        public BlockProfile CreateNewCube(BlockProfile copyFrom = null)
         {
             //Get New Cube ID.
             //We keep the id from 0 to 99 for "System" cubes
             //101 to 254 for Custom created cubes
             byte newProfileId = (byte)(BlockProfiles.Where(x => x != null).Max(x => x.Id) + 1);
 
-            BlockProfile newCubeProfile = new BlockProfile()
+            BlockProfile newCubeProfile = copyFrom ?? new BlockProfile()
             {
                 Name = "NewCustomCube",
                 Id = newProfileId,
@@ -330,6 +330,12 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.25f,
                 IsSystemCube = false
             };
+
+            if (copyFrom != null)
+            {
+                newCubeProfile.Id = newProfileId;
+                newCubeProfile.IsSystemCube = false;
+            }
 
             if (BlockProfiles.Length <= newProfileId)
             {
