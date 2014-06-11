@@ -1252,7 +1252,26 @@ namespace Utopia.Editor.Forms
                 Configuration.AddNewEntity(entity);
                 UpdateTree();
                 tvMainCategories.SelectedNode = FindByTag(entity);
+            } else if (tag is BlockProfile)
+            {
+                var profile = (BlockProfile)tvMainCategories.SelectedNode.Tag;
+                profile = Serializer.DeepClone(profile);
+                profile.Name += " (copy)";
+                
+                if (Configuration.BlockProfiles.Length >= 256)
+                {
+                    MessageBox.Show("Only 255 blocks are possible");
+                    return;
+                }
 
+                Configuration.CreateNewCube(profile);
+                
+                UpdateTree();
+                tvMainCategories.SelectedNode = FindByTag(profile);
+            }
+            else
+            {
+                MessageBox.Show("Sorry, copying of this is not yet implemented, ask Erty Hackward on the forum");
             }
         }
 
