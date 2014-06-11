@@ -632,10 +632,24 @@ namespace Utopia.Components
         {
             _modelEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogModelEditStruct(), "Add a new model", OnModelAdded);
         }
+
+        private string NormalizeName(string modelName)
+        {
+            modelName = modelName.Replace(" ", "");
+            modelName = modelName.Replace("'", "");
+            if (modelName.Length > 0)
+                modelName = char.ToUpper(modelName[0]) + modelName.Remove(0, 1);
+
+            return modelName;
+        }
+
+
         private void OnModelAdded(DialogModelEditStruct e)
         {
             if (string.IsNullOrEmpty(e.Name))
                 e.Name = "rename_me";
+
+            e.Name = NormalizeName(e.Name);
 
             var model = new VisualVoxelModel(new VoxelModel { Name = e.Name }, _meshFactory);
             var voxelModelState = new VoxelModelState(model.VoxelModel);
@@ -681,6 +695,8 @@ namespace Utopia.Components
         {
             if (string.IsNullOrEmpty(e.Name))
                 e.Name = "rename_me";
+
+            e.Name = NormalizeName(e.Name);
 
             if (_manager.Contains(VisualVoxelModel.VoxelModel.Name))
             {
@@ -789,13 +805,11 @@ namespace Utopia.Components
         {
             if (obj.EnableEffect)
             {
-                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules =
-                    obj.ToStaticParticule();
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules = obj.ToStaticParticule();
             }
             else
             {
-                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules =
-                    null;
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules = null;
             }
         }
 
