@@ -47,6 +47,7 @@ namespace Utopia.Shared.Server.Managers
             RegisterCommand(new SetSpawnPointCommand());
             RegisterCommand(new MotdCommand());
             RegisterCommand(new DefaultRoleCommand());
+            RegisterCommand(new WipeChunkCommand());
         }
 
         public void RegisterCommand(IChatCommand command)

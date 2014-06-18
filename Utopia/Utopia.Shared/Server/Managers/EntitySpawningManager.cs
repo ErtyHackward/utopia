@@ -143,6 +143,13 @@ namespace Utopia.Shared.Server.Managers
                         {
                             var entity = (IStaticEntity)_server.EntityFactory.CreateFromBluePrint(item.ItemblueprintId);
                             entity.Position = cursor.GlobalPosition;
+
+                            var blockLinkedItem = entity as IBlockLinkedEntity;
+                            if (blockLinkedItem != null)
+                            {
+                                blockLinkedItem.LinkedCube = cursor.GlobalPosition + Vector3I.Down;
+                            }
+
                             cursor.AddEntity(entity);
                         }
                     }
@@ -166,6 +173,13 @@ namespace Utopia.Shared.Server.Managers
                     {
                         var entity = (IStaticEntity)_server.EntityFactory.CreateFromBluePrint(item.ItemblueprintId);
                         entity.Position = cursor.GlobalPosition;
+
+                        var blockLinkedItem = entity as IBlockLinkedEntity;
+                        if (blockLinkedItem != null)
+                        {
+                            blockLinkedItem.LinkedCube = cursor.GlobalPosition + Vector3I.Down;
+                        }
+
                         cursor.AddEntity(entity);
                     }
                 }
@@ -345,6 +359,13 @@ namespace Utopia.Shared.Server.Managers
 
                         var cursor = _server.LandscapeManager.GetCursor(entityLocation);
                         logger.Debug("Spawning new static entity : {0} at location {1}", staticEntity.Name, entityLocation);
+
+                        var blockLinkedItem = staticEntity as IBlockLinkedEntity;
+                        if (blockLinkedItem != null)
+                        {
+                            blockLinkedItem.LinkedCube = (Vector3I)entityLocation + Vector3I.Down;
+                        }
+
                         cursor.AddEntity(staticEntity);
                     }
 

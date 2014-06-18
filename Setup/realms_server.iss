@@ -14,7 +14,7 @@ Name: fr; MessagesFile: compiler:Languages\French.isl
 Source: ..\Utopia\Realms\Realms.Server\bin\Release\*; DestDir: {app}; Excludes: *.dds,*.pdb,*.vshost.*,*.exe.config,Newtonsoft.Json.xml,Ninject.xml,NLog.xml,protobuf-net.xml,SharpDX.*.xml,SharpDX.xml,Config,Effects,GUI; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Setup]
-VersionInfoVersion=1.0.9
+VersionInfoVersion=1.0.10
 VersionInfoCompany=Utopia
 VersionInfoDescription=Utopia
 VersionInfoCopyright=Fabian Ceressia, Vladislav Pozdnyakov, 2013-2014
