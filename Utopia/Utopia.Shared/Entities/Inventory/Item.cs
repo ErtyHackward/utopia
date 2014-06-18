@@ -92,6 +92,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
         /// </summary>
         [Category("Gameplay")]
+        [Description("Allows to transform the item when it is picked")]
         [ProtoMember(10)]
         public List<ItemTransformation> Transformations { get; set; }
 

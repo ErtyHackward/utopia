@@ -12,6 +12,7 @@ namespace Utopia.Shared.Entities.Concrete
     {
         [ProtoMember(1)]
         [Category("Growing")]
+        [Description("Required. Specify all growing levels accroding to the model. Set the model state for each state.")]
         public List<GrowLevel> GrowLevels { get; set; }
 
         [ProtoMember(2)]
