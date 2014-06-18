@@ -47,6 +47,7 @@ namespace Utopia.Editor.Forms
         private AsyncOperation _ao;
 
         #region Public Properties
+
         public WorldConfiguration Configuration
         {
             get { return _configuration; }
@@ -59,7 +60,8 @@ namespace Utopia.Editor.Forms
 
                     CheckFileIntegrity();
 
-                    Text = _configuration.ConfigurationName + " with processor : " + _configuration.WorldProcessor + " - realm editor";
+                    Text = _configuration.ConfigurationName + " with processor : " + _configuration.WorldProcessor +
+                           " - realm editor";
                     saveToolStripMenuItem.Enabled = true;
                     saveAsToolStripMenuItem.Enabled = true;
                     tvMainCategories.Enabled = true;
@@ -75,7 +77,7 @@ namespace Utopia.Editor.Forms
                             AttachProcessorFrame(new FrmUtopiaProcessorConfig(value as UtopiaWorldConfiguration));
                             break;
                     }
-                    
+
                     containerEditor.Configuration = _configuration;
                     containerEditor.Icons = _icons;
                     ContainerSetSelector.Configuration = _configuration;
@@ -104,7 +106,7 @@ namespace Utopia.Editor.Forms
             if (Configuration.Version < 2)
             {
                 //Init Textures arrays
-                foreach (var blockp in Configuration.BlockProfiles.Where( x => x.Textures == null))
+                foreach (var blockp in Configuration.BlockProfiles.Where(x => x.Textures == null))
                 {
                     blockp.Textures = new TextureData[6];
                     for (int i = 0; i < 6; i++)
@@ -119,7 +121,7 @@ namespace Utopia.Editor.Forms
         private void UpdateImageList()
         {
             //Removes all image above _entitiesOffset
-            while (imageList1.Images.Count > _entitiesOffset) 
+            while (imageList1.Images.Count > _entitiesOffset)
                 imageList1.Images.RemoveAt(imageList1.Images.Count - 1);
 
             largeImageList.Images.Clear();
@@ -133,7 +135,8 @@ namespace Utopia.Editor.Forms
             {
                 foreach (var voxelModelState in visualVoxelModel.VoxelModel.States)
                 {
-                    var id = visualVoxelModel.VoxelModel.Name + (voxelModelState.IsMainState ? "" : ":" + voxelModelState.Name);
+                    var id = visualVoxelModel.VoxelModel.Name +
+                             (voxelModelState.IsMainState ? "" : ":" + voxelModelState.Name);
 
                     imageList1.Images.Add(_icons[id]);
                     largeImageList.Images.Add(id, _icons[id]);
@@ -142,9 +145,11 @@ namespace Utopia.Editor.Forms
 
                     if (voxelModelState.IsMainState)
                     {
-                        ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                        ModelSelector.Models.Add(visualVoxelModel.VoxelModel.Name,
+                            _icons[visualVoxelModel.VoxelModel.Name]);
                         if (visualVoxelModel.VoxelModel.States.Count > 1)
-                            ModelSelector.MultiStatesModels.Add(visualVoxelModel.VoxelModel.Name, _icons[visualVoxelModel.VoxelModel.Name]);
+                            ModelSelector.MultiStatesModels.Add(visualVoxelModel.VoxelModel.Name,
+                                _icons[visualVoxelModel.VoxelModel.Name]);
                     }
                 }
             }
@@ -155,7 +160,8 @@ namespace Utopia.Editor.Forms
             {
                 if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
                 imageList1.Images.Add(_icons["CubeResource_" + cubeprofiles.Name]);
-                largeImageList.Images.Add("CubeResource_" + cubeprofiles.Name, _icons["CubeResource_" + cubeprofiles.Name]);
+                largeImageList.Images.Add("CubeResource_" + cubeprofiles.Name,
+                    _icons["CubeResource_" + cubeprofiles.Name]);
                 _icons["CubeResource_" + cubeprofiles.Name].Tag = imageList1.Images.Count - 1;
             }
 
@@ -175,6 +181,7 @@ namespace Utopia.Editor.Forms
 
             tvMainCategories.Refresh();
         }
+
         #endregion
 
         public FrmMain()
@@ -182,12 +189,12 @@ namespace Utopia.Editor.Forms
             InitializeComponent();
 
             _entitiesOffset = imageList1.Images.Count;
-            
+
             tvMainCategories.ImageList = imageList1;
 
             _pluralization = PluralizationService.CreateService(
                 new CultureInfo("en"));
-            
+
             UpdateRecent();
 
             _ao = AsyncOperationManager.CreateOperation(null);
@@ -206,7 +213,7 @@ namespace Utopia.Editor.Forms
                 for (int i = fileToolStripMenuItem.DropDownItems.Count - 1; i >= 0; i--)
                 {
                     ToolStripItem item = fileToolStripMenuItem.DropDownItems[i];
-                    if (item.Tag is string) 
+                    if (item.Tag is string)
                         fileToolStripMenuItem.DropDownItems.RemoveAt(i);
                 }
 
@@ -216,7 +223,7 @@ namespace Utopia.Editor.Forms
                 {
                     var item = new ToolStripMenuItem(Path.GetFileName(recentConfiguration));
                     item.Tag = recentConfiguration;
-                    item.Click += (sender, args) => OpenConfiguration(( sender as ToolStripItem ).Tag as string);
+                    item.Click += (sender, args) => OpenConfiguration((sender as ToolStripItem).Tag as string);
                     fileToolStripMenuItem.DropDownItems.Insert(insertIndex++, item);
                 }
                 recentToolStripMenuItem.Visible = true;
@@ -242,11 +249,11 @@ namespace Utopia.Editor.Forms
             switch (processorChoose.SelectedProcessor)
             {
                 case WorldConfiguration.WorldProcessors.Flat:
-                    newConfiguration = new FlatWorldConfiguration(withHelperAssignation:true);
+                    newConfiguration = new FlatWorldConfiguration(withHelperAssignation: true);
                     ((FlatWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
                     break;
                 case WorldConfiguration.WorldProcessors.Utopia:
-                    newConfiguration = new UtopiaWorldConfiguration(withHelperAssignation:true);
+                    newConfiguration = new UtopiaWorldConfiguration(withHelperAssignation: true);
                     ((UtopiaWorldConfiguration)newConfiguration).ProcessorParam.CreateDefaultValues();
                     break;
                 default:
@@ -293,14 +300,17 @@ namespace Utopia.Editor.Forms
 
             ShowLoadingForm();
 
-            new ThreadStart(delegate {
+            new ThreadStart(delegate
+            {
                 try
                 {
                     var configuration = WorldConfiguration.LoadFromFile(fileName, true);
 
-                    var availableModels = Program.IconManager.ModelManager.Enumerate().Select(m => m.VoxelModel.Name).ToList();
+                    var availableModels =
+                        Program.IconManager.ModelManager.Enumerate().Select(m => m.VoxelModel.Name).ToList();
 
-                    var needToLoadModels = configuration.GetUsedModelsNames().Where(m => !availableModels.Contains(m)).ToList();
+                    var needToLoadModels =
+                        configuration.GetUsedModelsNames().Where(m => !availableModels.Contains(m)).ToList();
 
                     _ao.Post(delegate
                     {
@@ -314,23 +324,24 @@ namespace Utopia.Editor.Forms
                             var needToLoadModel = needToLoadModels[i];
                             _ao.Post(delegate
                             {
-                                _loadingForm.infoLabel.Text = string.Format("Downloading model: {1}/{2} {0}", needToLoadModel, i + 1, needToLoadModels.Count);
+                                _loadingForm.infoLabel.Text = string.Format("Downloading model: {1}/{2} {0}",
+                                    needToLoadModel, i + 1, needToLoadModels.Count);
                             }, null);
-                            
+
                             Program.IconManager.ModelManager.DownloadModel(needToLoadModel);
                         }
                     }
 
                     _ao.Post(delegate {
-                        _loadingForm.infoLabel.Text = "Rendering icons...";
+                                          _loadingForm.infoLabel.Text = "Rendering icons...";
                     }, null);
 
                     _icons = Program.IconManager.GenerateIcons(configuration);
 
                     _ao.Post(delegate {
-                        Configuration = configuration;
+                                          Configuration = configuration;
                     }, null);
-                    
+
                     _filePath = fileName;
 
 
@@ -401,6 +412,7 @@ namespace Utopia.Editor.Forms
         {
             MessageBox.Show("Utopia Realms configuration editor. v" + Assembly.GetExecutingAssembly().GetName().Version);
         }
+
         // ===========================================
 
 
@@ -430,7 +442,7 @@ namespace Utopia.Editor.Forms
             tvMainCategories.BeginUpdate();
 
             object selectedTag = null;
-            
+
             if (tvMainCategories.SelectedNode != null)
                 selectedTag = tvMainCategories.SelectedNode.Tag;
 
@@ -462,7 +474,7 @@ namespace Utopia.Editor.Forms
                 categoryNode.ContextMenuStrip = contextMenuCategories;
                 categoryNode.ImageIndex = 9;
                 categoryNode.SelectedImageIndex = 10;
-                
+
                 foreach (var entity in _configuration.BluePrints.Values.Where(e => e.GroupName == entityGroup))
                 {
                     string iconName = null;
@@ -488,7 +500,8 @@ namespace Utopia.Editor.Forms
                 var blockProfile = _configuration.BlockProfiles[i];
                 if (blockProfile.Name == "System Reserved") continue;
 
-                var node = AddSubNode(cubesRootNode, blockProfile.Name, blockProfile, "CubeResource_" + blockProfile.Name);
+                var node = AddSubNode(cubesRootNode, blockProfile.Name, blockProfile,
+                    "CubeResource_" + blockProfile.Name);
                 node.ContextMenuStrip = contextMenuEntity;
                 node.Tag = blockProfile;
             }
@@ -522,14 +535,16 @@ namespace Utopia.Editor.Forms
             recipesNode.Nodes.Clear();
 
             //Remove all recipte that are using a not existing bluePrintId
-            _configuration.Recipes.RemoveAll(x => _configuration.BluePrints.Keys.Contains(x.ResultBlueprintId) == false && x.ResultBlueprintId >= 256);
+            _configuration.Recipes.RemoveAll(
+                x => _configuration.BluePrints.Keys.Contains(x.ResultBlueprintId) == false && x.ResultBlueprintId >= 256);
 
             foreach (var recipeGroup in _configuration.Recipes.GroupBy(g => g.ContainerBlueprintId))
             {
-                var groupNode = AddSubNode(recipesNode, recipeGroup.Key == 0 ? "Player" : _configuration.BluePrints[recipeGroup.Key].Name, recipeGroup.Key);
+                var groupNode = AddSubNode(recipesNode,
+                    recipeGroup.Key == 0 ? "Player" : _configuration.BluePrints[recipeGroup.Key].Name, recipeGroup.Key, recipeGroup.Key == 0 ? "" : GetVoxelEntityImgName((IVoxelEntity)_configuration.BluePrints[recipeGroup.Key]));
                 groupNode.ContextMenuStrip = contextMenuCategories;
                 groupNode.Tag = recipeGroup.Key;
-                
+
                 foreach (var recipe in recipeGroup)
                 {
                     string iconName = null;
@@ -622,12 +637,13 @@ namespace Utopia.Editor.Forms
             //The SoulStone
             if (_configuration.BluePrints.Values.OfType<Utopia.Shared.Entities.Concrete.System.SoulStone>().Count() != 1)
             {
-                MessageBox.Show(string.Format("Mandatory soulstone entity is missing !"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Mandatory soulstone entity is missing !"), "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 return false;
             }
 
             //Check If the per block per texture all speed animation are the same.
-            foreach (var profile in _configuration.BlockProfiles.Where(x => x!= null && x.Textures != null))
+            foreach (var profile in _configuration.BlockProfiles.Where(x => x != null && x.Textures != null))
             {
                 if (profile.Name == "Air" || profile.Name == "System Reserved") continue;
 
@@ -636,7 +652,9 @@ namespace Utopia.Editor.Forms
                 {
                     if (BlockTexture.Texture.Name == null)
                     {
-                        MessageBox.Show(string.Format("The block {0} doesn't have all its texture assigned !", profile.Name), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(
+                            string.Format("The block {0} doesn't have all its texture assigned !", profile.Name),
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
 
@@ -651,7 +669,11 @@ namespace Utopia.Editor.Forms
                     //Existing texture
                     if (d.AnimationSpeed != BlockTexture.AnimationSpeed)
                     {
-                        MessageBox.Show(string.Format("The texture {0} for the block {1} is used multiple times with different animation speed, the speed must be equal !", BlockTexture.Texture.Name, profile.Name), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(
+                            string.Format(
+                                "The texture {0} for the block {1} is used multiple times with different animation speed, the speed must be equal !",
+                                BlockTexture.Texture.Name, profile.Name), "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
                         return false;
                     }
                 }
@@ -716,15 +738,16 @@ namespace Utopia.Editor.Forms
                 if (t != null)
                     return t;
             }
-            
+
             return null;
         }
 
         #region GUI events Handling
+
         //Called when the ADD button is pushed on a Main Category treeview
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tvMainCategories.SelectedNode == null) 
+            if (tvMainCategories.SelectedNode == null)
                 return;
 
             switch (tvMainCategories.SelectedNode.Name)
@@ -745,7 +768,10 @@ namespace Utopia.Editor.Forms
                     break;
                 case "Recipes":
 
-                    var possibleBlueprints = _configuration.BluePrints.Values.Where(v => v is Container).Select(bp => bp.BluePrintId).ToList();
+                    var possibleBlueprints =
+                        _configuration.BluePrints.Values.Where(v => v is Container)
+                            .Select(bp => bp.BluePrintId)
+                            .ToList();
 
                     var resultBpId = (ushort)0;
 
@@ -756,7 +782,8 @@ namespace Utopia.Editor.Forms
                             new FrmBlueprintChoose(
                                 new[] { new KeyValuePair<ushort, string>(0, "Player") }.Concat(
                                     possibleBlueprints.Select(
-                                        bpid => new KeyValuePair<ushort, string>(bpid, _configuration.BluePrints[bpid].Name))));
+                                        bpid =>
+                                            new KeyValuePair<ushort, string>(bpid, _configuration.BluePrints[bpid].Name))));
 
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
@@ -765,8 +792,9 @@ namespace Utopia.Editor.Forms
                         else
                             return;
                     }
-                    
-                    var recipe = new Recipe { 
+
+                    var recipe = new Recipe
+                    {
                         Name = "noname",
                         ContainerBlueprintId = resultBpId
                     };
@@ -776,7 +804,18 @@ namespace Utopia.Editor.Forms
 
                     break;
                 case "Trees":
-                    var tree = new TreeBluePrint() { Name = "Tree", Angle = 30, Iteration = 3, IterationRndLevel = 0, SmallBranches = true, TrunkType = TrunkType.Single, FoliageGenerationStart = 1, Axiom ="FFF", FoliageSize = new Vector3I(1,1,1) };
+                    var tree = new TreeBluePrint()
+                    {
+                        Name = "Tree",
+                        Angle = 30,
+                        Iteration = 3,
+                        IterationRndLevel = 0,
+                        SmallBranches = true,
+                        TrunkType = TrunkType.Single,
+                        FoliageGenerationStart = 1,
+                        Axiom = "FFF",
+                        FoliageSize = new Vector3I(1, 1, 1)
+                    };
                     tree.Id = _configuration.GetNextLandscapeEntityId();
                     _configuration.TreeBluePrints.Add(tree);
                     UpdateTree();
@@ -792,17 +831,18 @@ namespace Utopia.Editor.Forms
                         UpdateTree();
                         tvMainCategories.SelectedNode = FindByTag(service);
                     }
-                    
+
                     break;
             }
-            if (tvMainCategories.SelectedNode == null) 
+            if (tvMainCategories.SelectedNode == null)
                 return;
 
             if (tvMainCategories.SelectedNode.Parent == tvMainCategories.Nodes["Recipes"])
             {
-                var recipe = new Recipe { 
-                    Name = "noname", 
-                    ContainerBlueprintId = (ushort)tvMainCategories.SelectedNode.Tag 
+                var recipe = new Recipe
+                {
+                    Name = "noname",
+                    ContainerBlueprintId = (ushort)tvMainCategories.SelectedNode.Tag
                 };
 
                 _configuration.Recipes.Add(recipe);
@@ -857,7 +897,8 @@ namespace Utopia.Editor.Forms
             else if (tag is Recipe)
             {
                 _configuration.Recipes.Remove((Recipe)tag);
-            } if (tag is TreeBluePrint)
+            }
+            if (tag is TreeBluePrint)
             {
                 _configuration.TreeBluePrints.Remove((TreeBluePrint)tag);
             }
@@ -887,7 +928,7 @@ namespace Utopia.Editor.Forms
         {
             if (!string.IsNullOrEmpty(voxelEntity.ModelName))
             {
-                if (!string.IsNullOrEmpty(voxelEntity.ModelState))
+                if (!string.IsNullOrEmpty(voxelEntity.ModelState) && voxelEntity.ModelState != "Default")
                 {
                     return voxelEntity.ModelName + ":" + voxelEntity.ModelState;
                 }
@@ -925,12 +966,12 @@ namespace Utopia.Editor.Forms
                 }
 
                 //Look at currently existing Voxel Models following Entity Name
-                
+
                 item.ImageIndex = GetVoxelEntityImgIndex(voxelEntity);
                 item.SelectedImageIndex = item.ImageIndex;
 
                 ModelStateConverter.PossibleValues = null;
-                
+
                 if (voxelEntity.ModelName != null)
                 {
 
@@ -939,7 +980,7 @@ namespace Utopia.Editor.Forms
                     if (model != null)
                     {
                         ModelStateConverter.PossibleValues =
-                            new string[]{ null }.Concat(model.VoxelModel.States.Select(s => s.Name)).ToArray();
+                            new string[] { null }.Concat(model.VoxelModel.States.Select(s => s.Name)).ToArray();
                     }
                 }
             }
@@ -953,7 +994,7 @@ namespace Utopia.Editor.Forms
                 item.ImageIndex = GetVoxelEntityImgIndex(voxelEntity);
                 item.SelectedImageIndex = item.ImageIndex;
             }
-            
+
             if (e.ChangedItem.Label == "Name")
             {
                 UpdateTree();
@@ -993,7 +1034,9 @@ namespace Utopia.Editor.Forms
                     // show entities in that category
                     entityListView.Groups.Clear();
                     entityListView.Items.Clear();
-                    foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GroupName == (string)selectedObject))
+                    foreach (
+                        var entity in
+                            _configuration.BluePrints.Values.Where(en => en.GroupName == (string)selectedObject))
                     {
                         string imgKey = null;
 
@@ -1002,7 +1045,8 @@ namespace Utopia.Editor.Forms
                             imgKey = (entity as IVoxelEntity).ModelName;
                         }
 
-                        var lvi = new ListViewItem { 
+                        var lvi = new ListViewItem
+                        {
                             Text = entity.Name,
                             ImageKey = imgKey,
                             Tag = entity
@@ -1021,7 +1065,8 @@ namespace Utopia.Editor.Forms
                     entityListView.Items.Clear();
 
                     // get entities types
-                    var entitiesGroups = _configuration.BluePrints.Values.Select(en => en.GroupName).Distinct().ToArray();
+                    var entitiesGroups =
+                        _configuration.BluePrints.Values.Select(en => en.GroupName).Distinct().ToArray();
 
                     // add categories
 
@@ -1031,7 +1076,8 @@ namespace Utopia.Editor.Forms
                         //group.HeaderAlignment = HorizontalAlignment.Left;
                         entityListView.Groups.Add(group);
 
-                        foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GroupName == entityGroup))
+                        foreach (var entity in _configuration.BluePrints.Values.Where(en => en.GroupName == entityGroup)
+                            )
                         {
                             string imgKey = null;
 
@@ -1040,7 +1086,8 @@ namespace Utopia.Editor.Forms
                                 imgKey = (entity as IVoxelEntity).ModelName;
                             }
 
-                            var lvi = new ListViewItem { 
+                            var lvi = new ListViewItem
+                            {
                                 Text = entity.Name,
                                 ImageKey = imgKey,
                                 Tag = entity
@@ -1049,7 +1096,7 @@ namespace Utopia.Editor.Forms
                             entityListView.Items.Add(lvi).Group = group;
                         }
 
-                        
+
                     }
 
 
@@ -1061,13 +1108,13 @@ namespace Utopia.Editor.Forms
                     pgDetails.Visible = true;
                     if (selectedObject is BlockProfile)
                     {
-                        pgDetails.Enabled = !( (BlockProfile)tvMainCategories.SelectedNode.Tag ).IsSystemCube;
+                        pgDetails.Enabled = !((BlockProfile)tvMainCategories.SelectedNode.Tag).IsSystemCube;
                     }
                     else
                     {
                         pgDetails.Enabled = true;
                     }
-                    if (( ModifierKeys & Keys.Control ) != 0) pgDetails.Enabled = true;
+                    if ((ModifierKeys & Keys.Control) != 0) pgDetails.Enabled = true;
                     pgDetails.SelectedObject = tvMainCategories.SelectedNode.Tag;
 
                     if (selectedObject is IVoxelEntity)
@@ -1084,14 +1131,14 @@ namespace Utopia.Editor.Forms
                             if (model != null)
                             {
                                 ModelStateConverter.PossibleValues =
-                                    new string[]{ null }.Concat(model.VoxelModel.States.Select(s => s.Name)).ToArray();
+                                    new string[] { null }.Concat(model.VoxelModel.States.Select(s => s.Name)).ToArray();
                             }
                         }
                     }
 
                     if (selectedObject is TreeBluePrint)
                     {
-                        SendTreeTemplateForVisualization( (TreeBluePrint)selectedObject);
+                        SendTreeTemplateForVisualization((TreeBluePrint)selectedObject);
                     }
                 }
             }
@@ -1126,6 +1173,7 @@ namespace Utopia.Editor.Forms
         {
             Application.Exit();
         }
+
         #endregion
 
         private void ContainerEditorItemNeeded(object sender, ItemNeededEventArgs e)
@@ -1154,24 +1202,30 @@ namespace Utopia.Editor.Forms
             }
         }
 
-        Thread _pipeThread;
-        Pipe _dataPipe = new Pipe();
+        private Thread _pipeThread;
+        private Pipe _dataPipe = new Pipe();
+
         private void ltreeVisualizerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_pipeThread == null || (_pipeThread.ThreadState != System.Threading.ThreadState.Running && _pipeThread.ThreadState != System.Threading.ThreadState.WaitSleepJoin))
+            if (_pipeThread == null ||
+                (_pipeThread.ThreadState != System.Threading.ThreadState.Running &&
+                 _pipeThread.ThreadState != System.Threading.ThreadState.WaitSleepJoin))
             {
-                if(_pipeThread != null) Console.WriteLine(_pipeThread.ThreadState);
+                if (_pipeThread != null) Console.WriteLine(_pipeThread.ThreadState);
                 _pipeThread = new Thread(_dataPipe.Start);
                 _pipeThread.Start();
             }
 
-            if(Pipe.RunningLtree == null || Pipe.RunningLtree.HasExited == true) Pipe.RunningLtree = System.Diagnostics.Process.Start(@"LtreeVisualizer.exe");
+            if (Pipe.RunningLtree == null || Pipe.RunningLtree.HasExited == true)
+                Pipe.RunningLtree = System.Diagnostics.Process.Start(@"LtreeVisualizer.exe");
         }
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (Pipe.RunningLtree != null && Pipe.RunningLtree.HasExited == false) Pipe.RunningLtree.Kill();
-            if (_pipeThread != null && (_pipeThread.ThreadState == System.Threading.ThreadState.Running || _pipeThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin))
+            if (_pipeThread != null &&
+                (_pipeThread.ThreadState == System.Threading.ThreadState.Running ||
+                 _pipeThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin))
             {
                 Pipe.StopThread = true;
                 try
@@ -1191,7 +1245,7 @@ namespace Utopia.Editor.Forms
 
         private void tvMainCategories_MouseUp(object sender, MouseEventArgs e)
         {
-            
+
         }
 
         private void tvMainCategories_MouseDown(object sender, MouseEventArgs e)
@@ -1213,7 +1267,11 @@ namespace Utopia.Editor.Forms
             sb.AppendLine();
 
             #region check how much items without recipes
-            var items = _configuration.BluePrints.Values.OfType<Item>().Where(i => !_configuration.Recipes.Exists(r => r.ResultBlueprintId == i.BluePrintId)).ToList();
+
+            var items =
+                _configuration.BluePrints.Values.OfType<Item>()
+                    .Where(i => !_configuration.Recipes.Exists(r => r.ResultBlueprintId == i.BluePrintId))
+                    .ToList();
             if (items.Count > 0)
             {
                 problemFound = true;
@@ -1225,8 +1283,9 @@ namespace Utopia.Editor.Forms
                 }
                 sb.AppendLine();
             }
+
             #endregion
-            
+
             if (!problemFound)
             {
                 sb.AppendLine("No problems found!");
@@ -1246,18 +1305,19 @@ namespace Utopia.Editor.Forms
             var tag = tvMainCategories.SelectedNode.Tag;
             if (tag is Entity)
             {
-                var entity = (Entity)tvMainCategories.SelectedNode.Tag;
+                var entity = (Entity)tag;
                 entity = (Entity)entity.Clone();
                 entity.Name += " (copy)";
                 Configuration.AddNewEntity(entity);
                 UpdateTree();
                 tvMainCategories.SelectedNode = FindByTag(entity);
-            } else if (tag is BlockProfile)
+            }
+            else if (tag is BlockProfile)
             {
-                var profile = (BlockProfile)tvMainCategories.SelectedNode.Tag;
+                var profile = (BlockProfile)tag;
                 profile = Serializer.DeepClone(profile);
                 profile.Name += " (copy)";
-                
+
                 if (Configuration.BlockProfiles.Length >= 256)
                 {
                     MessageBox.Show("Only 255 blocks are possible");
@@ -1265,9 +1325,17 @@ namespace Utopia.Editor.Forms
                 }
 
                 Configuration.CreateNewCube(profile);
-                
+
                 UpdateTree();
                 tvMainCategories.SelectedNode = FindByTag(profile);
+            }
+            else if (tag is Recipe)
+            {
+                var recipe = Serializer.DeepClone((Recipe)tag);
+                recipe.Name += " (copy)";
+                Configuration.Recipes.Add(recipe);
+                UpdateTree();
+                tvMainCategories.SelectedNode = FindByTag(recipe);
             }
             else
             {
@@ -1279,7 +1347,8 @@ namespace Utopia.Editor.Forms
         {
             if (e.KeyChar == (char)Keys.Return)
             {
-                pgDetails.SelectedObjects = entityListView.SelectedItems.Cast<ListViewItem>().Select(i=> (Entity)i.Tag).ToArray();
+                pgDetails.SelectedObjects =
+                    entityListView.SelectedItems.Cast<ListViewItem>().Select(i => (Entity)i.Tag).ToArray();
 
                 ShowMainControl(pgDetails);
             }
@@ -1293,7 +1362,8 @@ namespace Utopia.Editor.Forms
         private void ShowLoadingForm()
         {
             _loadingForm.StartPosition = FormStartPosition.Manual;
-            _loadingForm.Location = new Point(this.Location.X + (this.Width - _loadingForm.Width) / 2, this.Location.Y + (this.Height - _loadingForm.Height) / 2);
+            _loadingForm.Location = new Point(this.Location.X + (this.Width - _loadingForm.Width) / 2,
+                this.Location.Y + (this.Height - _loadingForm.Height) / 2);
             _loadingForm.Show(this);
             _loadingForm.infoLabel.Text = "";
             _loadingForm.Refresh();
@@ -1304,13 +1374,15 @@ namespace Utopia.Editor.Forms
             _loadingForm.Hide();
         }
 
-        ManualResetEvent waitModels = new ManualResetEvent(false);
+        private ManualResetEvent waitModels = new ManualResetEvent(false);
         private ModelsListResponse _modelsListResponse;
+
         private void downloadAllModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-            ClientSettings.Current = new XmlSettingsManager<ClientConfig>(@"client.config", SettingsStorage.CustomPath, appdata + @"\Realms\Client");
+            ClientSettings.Current = new XmlSettingsManager<ClientConfig>(@"client.config", SettingsStorage.CustomPath,
+                appdata + @"\Realms\Client");
             ClientSettings.Current.Load();
 
             if (string.IsNullOrEmpty(ClientSettings.Current.Settings.Token))
@@ -1321,7 +1393,8 @@ namespace Utopia.Editor.Forms
 
             ShowLoadingForm();
 
-            new ThreadStart(delegate { 
+            new ThreadStart(delegate
+            {
                 try
                 {
                     var webApi = new ClientWebApi();
@@ -1335,7 +1408,7 @@ namespace Utopia.Editor.Forms
                         return;
                     }
 
-                    RunInMainThread(() => _loadingForm.infoLabel.Text = "Downloading list..." );
+                    RunInMainThread(() => _loadingForm.infoLabel.Text = "Downloading list...");
 
                     webApi.GetModelsListAsync(webApi_ModelsReceived);
                     waitModels.Reset();
@@ -1367,7 +1440,11 @@ namespace Utopia.Editor.Forms
                     for (int i = 0; i < needToDownload.Count; i++)
                     {
                         var modelName = needToDownload[i];
-                        RunInMainThread(() => _loadingForm.infoLabel.Text = string.Format("Downloading model {0}/{1} {2}", i + 1, needToDownload.Count, modelName));
+                        RunInMainThread(
+                            () =>
+                                _loadingForm.infoLabel.Text =
+                                    string.Format("Downloading model {0}/{1} {2}", i + 1, needToDownload.Count,
+                                        modelName));
                         Program.IconManager.ModelManager.DownloadModel(modelName);
                     }
 
@@ -1378,7 +1455,7 @@ namespace Utopia.Editor.Forms
                         RunInMainThread(() =>
                         {
                             UpdateImageList();
-                            UpdateTree(); 
+                            UpdateTree();
                         });
                     }
                     RunInMainThread(() => MessageBox.Show(this, needToDownload.Count + " models were loaded."));
@@ -1388,7 +1465,7 @@ namespace Utopia.Editor.Forms
                     RunInMainThread(HideLoadingForm);
                 }
             }).BeginInvoke(null, null);
-            
+
         }
 
         public void RunInMainThread(System.Action action)
@@ -1397,7 +1474,7 @@ namespace Utopia.Editor.Forms
         }
 
 
-        void webApi_TokenVerified(object sender, Shared.Net.Web.Responses.VerifyResponse e)
+        private void webApi_TokenVerified(object sender, VerifyResponse e)
         {
             waitModels.Set();
         }
@@ -1406,6 +1483,65 @@ namespace Utopia.Editor.Forms
         {
             _modelsListResponse = response;
             waitModels.Set();
+        }
+
+        private void tvMainCategories_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            var item = ((TreeNode)e.Item).Tag;
+
+            if (!(item is Recipe))
+                return;
+
+            DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+
+        private void tvMainCategories_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void tvMainCategories_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+            {
+                Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
+                TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
+                TreeNode newNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+
+                bool allowed = false;
+
+                var recipe = newNode.Tag as Recipe;
+
+                if (recipe != null)
+                {
+                    if (destinationNode.Parent != tvMainCategories.Nodes["Recipes"])
+                        return;
+
+                    recipe.ContainerBlueprintId = (ushort)destinationNode.Tag;
+                    allowed = true;
+                }
+
+                if (allowed)
+                {
+                    destinationNode.Nodes.Add((TreeNode)newNode.Clone());
+                    destinationNode.Expand();
+                    //Remove Original Node
+                    newNode.Remove();
+                }
+            }
+
+        }
+
+        private void tvMainCategories_DragOver(object sender, DragEventArgs e)
+        {
+            Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
+            var node = tvMainCategories.GetNodeAt(pt);
+
+            if (node != null)
+                tvMainCategories.SelectedNode = node;
         }
     }
 }

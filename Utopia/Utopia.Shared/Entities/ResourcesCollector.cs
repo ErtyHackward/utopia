@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using ProtoBuf;
 using S33M3CoreComponents.Sound;
@@ -13,6 +14,7 @@ using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
@@ -230,7 +232,8 @@ namespace Utopia.Shared.Entities
     [ProtoContract]
     public struct CubeDamage
     {
-        [TypeConverter(typeof(CubeSelector))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(1)]
         public byte CubeId { get; set; }
 

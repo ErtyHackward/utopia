@@ -55,6 +55,7 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ltreeVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadAllModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.officialSiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +71,6 @@
             this.contextMenuEntity = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.downloadAllModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuCategories.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -200,6 +200,13 @@
             this.checkConfigurationToolStripMenuItem.Text = "Check configuration...";
             this.checkConfigurationToolStripMenuItem.Click += new System.EventHandler(this.checkConfigurationToolStripMenuItem_Click);
             // 
+            // downloadAllModelsToolStripMenuItem
+            // 
+            this.downloadAllModelsToolStripMenuItem.Name = "downloadAllModelsToolStripMenuItem";
+            this.downloadAllModelsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.downloadAllModelsToolStripMenuItem.Text = "Download new models...";
+            this.downloadAllModelsToolStripMenuItem.Click += new System.EventHandler(this.downloadAllModelsToolStripMenuItem_Click);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -237,6 +244,7 @@
             // 
             // tvMainCategories
             // 
+            this.tvMainCategories.AllowDrop = true;
             this.tvMainCategories.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvMainCategories.Enabled = false;
             this.tvMainCategories.HideSelection = false;
@@ -298,7 +306,11 @@
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 373);
             this.tvMainCategories.TabIndex = 5;
+            this.tvMainCategories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvMainCategories_ItemDrag);
             this.tvMainCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMainCategories_AfterSelect);
+            this.tvMainCategories.DragDrop += new System.Windows.Forms.DragEventHandler(this.tvMainCategories_DragDrop);
+            this.tvMainCategories.DragEnter += new System.Windows.Forms.DragEventHandler(this.tvMainCategories_DragEnter);
+            this.tvMainCategories.DragOver += new System.Windows.Forms.DragEventHandler(this.tvMainCategories_DragOver);
             this.tvMainCategories.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseDown);
             this.tvMainCategories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseUp);
             // 
@@ -407,13 +419,6 @@
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-            // 
-            // downloadAllModelsToolStripMenuItem
-            // 
-            this.downloadAllModelsToolStripMenuItem.Name = "downloadAllModelsToolStripMenuItem";
-            this.downloadAllModelsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.downloadAllModelsToolStripMenuItem.Text = "Download new models...";
-            this.downloadAllModelsToolStripMenuItem.Click += new System.EventHandler(this.downloadAllModelsToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
