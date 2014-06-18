@@ -100,7 +100,7 @@ namespace Utopia.Shared
     public static class OtherHelper
     {
         /// <summary>
-        /// Tells if the collection has at last the number of items
+        /// Tells if the collection has at least the number of items
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collection"></param>

@@ -359,6 +359,10 @@ namespace Utopia.Shared.Chunks
             if (blockLinkedEntity != null && blockLinkedEntity.Linked)
             {
                 entityBlockPosition = blockLinkedEntity.LinkedCube;
+                
+                // you probably forget to set LinkedCube property of the entity
+                if (Vector3D.DistanceSquared(entity.Position, blockLinkedEntity.LinkedCube) > 256)
+                    throw new InvalidOperationException("Invalid linked block");
             }
             else
             {

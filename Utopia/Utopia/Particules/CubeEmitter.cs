@@ -317,12 +317,20 @@ namespace Utopia.Particules
             {
                 if (blockProfile.Textures == null || blockProfile.Textures.Count(x => x.Texture.Name == null) > 0) continue;
                 List<Color> colorArray = new List<Color>();
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
+
+                try
+                {
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
+                }
+                catch (KeyNotFoundException e)
+                {
+                    logger.Error(e);
+                }
                 _cubeColorSampled.Add(blockProfile.Id, colorArray.ToArray());
             }
 

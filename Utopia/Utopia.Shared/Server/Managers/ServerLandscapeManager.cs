@@ -293,6 +293,31 @@ namespace Utopia.Shared.Server.Managers
             return chunks;
         }
 
+        public ServerChunk GenerateChunk(Vector3I chunkPos)
+        {
+            var generatedChunk = _generator.GetChunk(chunkPos);
+
+            if (generatedChunk != null)
+            {
+                return new ServerChunk(generatedChunk) { Position = chunkPos, LastAccess = DateTime.Now };
+            }
+            return null;
+        }
+
+        public void WipeChunk(Vector3I chunkPos)
+        {
+            var chunk = GetChunk(chunkPos);
+
+            if (chunk.PureGenerated)
+                return;
+
+            RemoveChunk(chunk);
+
+            chunk = GenerateChunk(chunkPos);
+            RequestSave(chunk);
+            SaveChunks();
+        }
+
         /// <summary>
         /// Gets chunk. First it tries to get cached in memory value, then it checks the database, and then it generates the chunk
         /// </summary>
@@ -300,7 +325,7 @@ namespace Utopia.Shared.Server.Managers
         /// <returns></returns>
         public override ServerChunk GetChunk(Vector3I position)
         {
-            ServerChunk chunk = null;
+            ServerChunk chunk;
             // search chunk in memory or load it
             if (_chunks.ContainsKey(position))
             {
@@ -317,12 +342,7 @@ namespace Utopia.Shared.Server.Managers
 
                         if (data == null)
                         {
-                            var generatedChunk = _generator.GetChunk(position);
-                            
-                            if (generatedChunk != null)
-                            {
-                                chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };
-                            }
+                            chunk = GenerateChunk(position);
                         }
                         else
                         {
@@ -336,12 +356,7 @@ namespace Utopia.Shared.Server.Managers
                             catch (Exception e)
                             {
                                 logger.Error("Error when decompressing chunk {1}: {0}", e.Message, position);
-                                var generatedChunk = _generator.GetChunk(position);
-
-                                if (generatedChunk != null)
-                                {
-                                    chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };
-                                }
+                                chunk = GenerateChunk(position);
                             }
                         }
 
