@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Ninject;
 using Ninject.Parameters;
 using Realms.Client.Components;
@@ -67,6 +68,8 @@ namespace Realms.Client.States
     /// </summary>
     public class LoadingGameState : GameState
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IKernel _ioc;
         private RealmRuntimeVariables _vars;
         
@@ -123,6 +126,7 @@ namespace Realms.Client.States
             {
                 var serverComponent = _ioc.Get<ServerComponent>();
                 var guiManager = _ioc.Get<GuiManager>();
+                logger.Info("Disconnected from the server. Error text: {0}", serverComponent.LastErrorText);
                 guiManager.MessageBox("Can't connect to the server. " + serverComponent.LastErrorText, "error");
                 StatesManager.ActivateGameStateAsync("MainMenu");
             }
@@ -156,7 +160,8 @@ namespace Realms.Client.States
                     serverComponent.ServerConnection.Status != TcpConnectionStatus.Connected)
                 {
                     serverComponent.MessageEntityIn += ServerConnectionMessageEntityIn;
-                    serverComponent.BindingServer("127.0.0.1", null);
+                    var port = _vars.LocalServer.Server.SettingsManager.Settings.ServerPort;
+                    serverComponent.BindingServer("127.0.0.1" + (port == 4815 ? "" : ":" + port), null);
                     serverComponent.ConnectToServer("local", _vars.DisplayName, "qwe123".GetSHA1Hash());
                     _vars.LocalDataBasePath = Path.Combine(_vars.ApplicationDataPath, "Client", "Singleplayer", wp.WorldName, "ClientWorldCache.db");
                 }
@@ -200,7 +205,7 @@ namespace Realms.Client.States
             _vars.DisposeGameComponents = true;
 
             var clientSideworldParam = _ioc.Get<ServerComponent>().GameInformations.WorldParameter;
-
+            
             var clientFactory = _ioc.Get<EntityFactory>("Client");
             clientFactory.Config = clientSideworldParam.Configuration;
             
@@ -316,6 +321,8 @@ namespace Realms.Client.States
             var c = clouds as Clouds;
             if (c != null) c.LateInitialization(sharedFrameCB);
 
+            LoadMissingModels(clientSideworldParam.Configuration, voxelModelManager);
+
             AddComponent(cameraManager);
             AddComponent(serverComponent);
             AddComponent(inputsManager);
@@ -357,6 +364,20 @@ namespace Realms.Client.States
 
             var engine = _ioc.Get<D3DEngine>();
             inputsManager.MouseManager.MouseCapture = true;
+        }
+
+        private void LoadMissingModels(WorldConfiguration configuration, VoxelModelManager voxelModelManager)
+        {
+            ThreadsManager.RunAsync(() => {
+                voxelModelManager.Initialize();
+                var availableModels = voxelModelManager.Enumerate().Select(m => m.VoxelModel.Name).ToList();
+                var neededModels = configuration.GetUsedModelsNames().Where(m => !availableModels.Contains(m)).ToList();
+
+                foreach (var neededModel in neededModels)
+                {
+                    voxelModelManager.DownloadModel(neededModel);                                      
+                }
+            });
         }
 
         //All chunks have been created on the client (They can be rendered)

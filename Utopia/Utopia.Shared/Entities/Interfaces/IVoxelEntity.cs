@@ -13,6 +13,11 @@ namespace Utopia.Shared.Entities.Interfaces
         string ModelName { get; set; }
 
         /// <summary>
+        /// Gets or sets voxel model state to use
+        /// </summary>
+        string ModelState { get; set; }
+
+        /// <summary>
         /// Gets or sets voxel model instance
         /// </summary>
         VoxelModelInstance ModelInstance { get; set; }

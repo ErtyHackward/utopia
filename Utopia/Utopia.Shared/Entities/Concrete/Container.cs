@@ -23,13 +23,13 @@ namespace Utopia.Shared.Entities.Concrete
 
         [Category("Container")]
         [Description("Model state if the container is opened")]
-        [TypeConverter(typeof(ModelStateSelector))]
+        [TypeConverter(typeof(ModelStateConverter))]
         [ProtoMember(1)]
         public string OpenedState { get; set; }
 
         [Category("Container")]
         [Description("Model state if the container is closed")]
-        [TypeConverter(typeof(ModelStateSelector))]
+        [TypeConverter(typeof(ModelStateConverter))]
         [ProtoMember(2)]
         public string ClosedState { get; set; }
 
@@ -147,21 +147,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         public bool TakeItems(ushort blueprintId, int count)
         {
-            while (count > 0)
-            {
-                var slot = _content.LastOrDefault(s => s.Item.BluePrintId == blueprintId);
-
-                if (slot == null)
-                    break;
-
-                var takeItems = Math.Min(slot.ItemsCount, count);
-
-                _content.TakeItem(slot.GridPosition, takeItems);
-
-                count -= takeItems;
-            }
-
-            return count == 0;
+            return _content.TakeItem(blueprintId, count);
         }
 
         public bool PutItems(IItem item, int count)

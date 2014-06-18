@@ -263,8 +263,10 @@ namespace Utopia.Particules
         private void ApplyBiomeColor(ref Color baseColor, byte biomeColorId, ChunkColumnInfo ci)
         {
             //Apply weather offset
-            var moistureAmount = MathHelper.Clamp((ci.Moisture / 256f) + _weather.MoistureOffset, 0f, 1f);
-            var tempAmount = MathHelper.Clamp((ci.Temperature / 256f) + _weather.TemperatureOffset, 0f, 1f);
+            var m = ((ci.Moisture / 256f) * 0.6f) + 0.2f;
+            var moistureAmount = MathHelper.Clamp(m + _weather.MoistureOffset, 0f, 1f);
+            var t = ((ci.Temperature / 256f) * 0.6f) + 0.2f;
+            var tempAmount = MathHelper.Clamp(t + _weather.TemperatureOffset, 0f, 1f);
 
             //X = Moisture
             int moisture = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Width - 1, 0.0, 1.0, moistureAmount);
@@ -315,12 +317,20 @@ namespace Utopia.Particules
             {
                 if (blockProfile.Textures == null || blockProfile.Textures.Count(x => x.Texture.Name == null) > 0) continue;
                 List<Color> colorArray = new List<Color>();
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
+
+                try
+                {
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
+                }
+                catch (KeyNotFoundException e)
+                {
+                    logger.Error(e);
+                }
                 _cubeColorSampled.Add(blockProfile.Id, colorArray.ToArray());
             }
 

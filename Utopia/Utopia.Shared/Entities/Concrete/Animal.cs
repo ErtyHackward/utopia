@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Drawing.Design;
 using ProtoBuf;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Inventory;
@@ -13,10 +14,11 @@ namespace Utopia.Shared.Entities.Concrete
         /// <summary>
         /// Gets or sets weapon that animal will use
         /// </summary>
-        [ProtoMember(1)]
         [Description("Weapon of the animal")]
         [Category("Gameplay")]
-        [TypeConverter(typeof(BlueprintSelector))]
+        [Editor(typeof(BlueprintTypeEditor<MeleeWeapon>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
+        [ProtoMember(1)]
         public ushort WeaponBlueprint { get; set; }
         
         public void Initialize(EntityFactory factory)

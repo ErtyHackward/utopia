@@ -12,7 +12,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     [ProtoContract]
     [Description("Plays some music, can be switched off")]
-    public class MusicPlayer : OrientedBlockItem, IUsableEntity, ISoundEmitterEntity
+    public class MusicPlayer : OrientedBlockItem, IUsableEntity
     {
         [ProtoMember(1)]
         public bool Enabled { get; set; }
@@ -45,8 +45,5 @@ namespace Utopia.Shared.Entities.Concrete
                 }
             }
         }
-
-        [Browsable(false)]
-        public ISoundEngine SoundEngine { get; set; }
     }
 }

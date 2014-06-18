@@ -15,11 +15,11 @@ namespace Utopia.Shared.Chunks
         [ProtoMember(3)]
         public bool IsWild;
         [ProtoMember(4, OverwriteList = true)]
-        public List<ChunkSpawnableEntity> SpawnableEntities;
+        public Dictionary<ushort, int> InitialSpawnableEntitiesAmount;
 
         public ChunkMetaData()
         {
-            SpawnableEntities = new List<ChunkSpawnableEntity>();
+            InitialSpawnableEntitiesAmount = new Dictionary<ushort, int>();
         }
 
         public ChunkMetaData(ChunkMetaData copyFrom)
@@ -27,7 +27,7 @@ namespace Utopia.Shared.Chunks
             ChunkMasterBiomeType = copyFrom.ChunkMasterBiomeType;
             ChunkMaxHeightBuilt = copyFrom.ChunkMaxHeightBuilt;
             IsWild = copyFrom.IsWild;
-            SpawnableEntities = new List<ChunkSpawnableEntity>(copyFrom.SpawnableEntities);
+            InitialSpawnableEntitiesAmount = new Dictionary<ushort, int>(copyFrom.InitialSpawnableEntitiesAmount);
         }
 
         public void setChunkMaxHeightBuilt(ChunkColumnInfo[] columnsInfo)

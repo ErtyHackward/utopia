@@ -7,8 +7,8 @@ namespace Utopia.Shared.Structs
     /// </summary>
     public struct DynamicUpdateState
     {
-        public TimeSpan ElapsedTime;
+        public UtopiaTimeSpan ElapsedTime;
         public TimeSpan RealTime;
-        public DateTime CurrentTime;
+        public UtopiaTime CurrentTime;
     }
 }

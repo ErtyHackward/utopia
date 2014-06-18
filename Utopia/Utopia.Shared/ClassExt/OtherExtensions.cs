@@ -143,5 +143,10 @@ namespace S33M3Resources.Structs
             return ray;
         }
 
+        public static bool IsRelatives(this Type potentialBase, Type potentialDescendant)
+        {
+            return potentialDescendant.IsAssignableFrom(potentialBase) || potentialBase.IsAssignableFrom(potentialDescendant);
+        }
+
     }
 }

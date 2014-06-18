@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Linq;
 using ProtoBuf;
 using S33M3CoreComponents.Sound;
+using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Settings;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
@@ -18,11 +24,8 @@ namespace Utopia.Shared.Entities
     /// </summary>
     [ProtoContract]
     [ProtoInclude(100, typeof(BasicCollector))]
-    public abstract class ResourcesCollector : Item, ITool, ISoundEmitterEntity
+    public abstract class ResourcesCollector : Item, ITool
     {
-        [Browsable(false)]
-        public ISoundEngine SoundEngine { get; set; }
-
         /// <summary>
         /// Tool block damage
         /// negative values will repair blocks
@@ -121,7 +124,7 @@ namespace Utopia.Shared.Entities
                     {
                         var random = new Random();
                         var sound = profile.HitSounds[random.Next(0, profile.HitSounds.Count)];
-                        SoundEngine.StartPlay3D(sound, owner.EntityState.PickedBlockPosition);
+                        SoundEngine.StartPlay3D(sound, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
                     }
                 }
 
@@ -137,6 +140,49 @@ namespace Utopia.Shared.Entities
                     }
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.Linked && e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
+
+                    foreach (var treeSoul in EntityFactory.LandscapeManager.AroundEntities(owner.EntityState.PickedBlockPosition, 16).OfType<TreeSoul>())
+                    {
+                        var treeBp = EntityFactory.Config.TreeBluePrintsDico[treeSoul.TreeTypeId];
+
+                        if (cube != treeBp.FoliageBlock && cube != treeBp.TrunkBlock)
+                            continue;
+
+                        var treeLSystem = new TreeLSystem();
+
+                        var treeBlocks = treeLSystem.Generate(treeSoul.TreeRndSeed, (Vector3I)treeSoul.Position, treeBp);
+
+                        // did we remove the block of the tree?
+                        if (treeBlocks.Exists(b => b.WorldPosition == owner.EntityState.PickedBlockPosition))
+                        {
+                            treeSoul.IsDamaged = true;
+
+                            // count removed trunk blocks
+                            var totalTrunks = treeBlocks.Count(b => b.BlockId == treeBp.TrunkBlock);
+
+                            var existsTrunks = treeBlocks.Count(b =>
+                            {
+                                if (b.BlockId == treeBp.TrunkBlock)
+                                {
+                                    cursor.GlobalPosition = b.WorldPosition;
+                                    return cursor.Read() == treeBp.TrunkBlock;
+                                }
+                                return false;
+                            });
+
+                            if (existsTrunks < totalTrunks / 2)
+                            {
+                                treeSoul.IsDying = true;
+                            }
+                        }
+                    }
+
+                    
+
+                    if (SoundEngine != null && EntityFactory.Config.ResourceTake != null)
+                    {
+                        SoundEngine.StartPlay3D(EntityFactory.Config.ResourceTake, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
+                    }
                     
                     var charEntity = owner as CharacterEntity;
                     if (charEntity == null)
@@ -172,12 +218,22 @@ namespace Utopia.Shared.Entities
             impact.Message = "Cannot hit air block";
             return impact;
         }
+
+        public override object Clone()
+        {
+            var collector = (ResourcesCollector)base.Clone();
+
+            collector.SpecialDamages = new List<CubeDamage>(SpecialDamages);
+
+            return collector;
+        }
     }
 
     [ProtoContract]
     public struct CubeDamage
     {
-        [TypeConverter(typeof(CubeSelector))]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(1)]
         public byte CubeId { get; set; }
 

@@ -188,11 +188,6 @@ namespace Utopia.Shared.Entities
             if (handler != null) handler(this, e);
         }
 
-        protected virtual Entity CreateCustomEntity(ushort classId)
-        {
-            return null;
-        }
-
         /// <summary>
         /// Creates an entity by its type
         /// </summary>
@@ -208,11 +203,6 @@ namespace Utopia.Shared.Entities
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
 
             return entity;
-        }
-
-        public Entity CreateFromBluePrint(IEntity entity)
-        {
-            return CreateFromBluePrint(entity.BluePrintId);
         }
 
         public T CreateFromBluePrint<T>(ushort bluePrintId) where T : Entity
@@ -239,6 +229,7 @@ namespace Utopia.Shared.Entities
                 res.CubeId = (byte)bluePrintId;
                 res.Name = profile.Name;
                 res.MaxStackSize = Config.CubeStackSize;
+                res.PutSound = Config.ResourcePut;
                 entity = res;
             }
             else
@@ -253,6 +244,8 @@ namespace Utopia.Shared.Entities
             }
 
             InjectFields(entity);
+
+            entity.FactoryInitialize();
 
             // allow post produce prepare
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });

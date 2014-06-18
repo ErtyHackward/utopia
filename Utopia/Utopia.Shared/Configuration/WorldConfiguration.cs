@@ -9,6 +9,7 @@ using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
@@ -156,9 +157,34 @@ namespace Utopia.Shared.Configuration
         public int Version { get; set; }
 
         [Description("Entity that should be created when player die")]
-        [TypeConverter(typeof(BlueprintSelector))]
+        [Editor(typeof(BlueprintTypeEditor<Entity>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(19)]
         public ushort GraveBlueprint { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on resource block put")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(20)]
+        public StaticEntitySoundSource ResourcePut { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on resource block take ")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(21)]
+        public StaticEntitySoundSource ResourceTake { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on entity take")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(22)]
+        public StaticEntitySoundSource EntityTake { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on entity put (default)")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(23)]
+        public StaticEntitySoundSource EntityPut { get; set; }
 
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
@@ -279,14 +305,14 @@ namespace Utopia.Shared.Configuration
         }
         #endregion
 
-        public object CreateNewCube()
+        public BlockProfile CreateNewCube(BlockProfile copyFrom = null)
         {
             //Get New Cube ID.
             //We keep the id from 0 to 99 for "System" cubes
             //101 to 254 for Custom created cubes
             byte newProfileId = (byte)(BlockProfiles.Where(x => x != null).Max(x => x.Id) + 1);
 
-            BlockProfile newCubeProfile = new BlockProfile()
+            BlockProfile newCubeProfile = copyFrom ?? new BlockProfile()
             {
                 Name = "NewCustomCube",
                 Id = newProfileId,
@@ -304,6 +330,12 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.25f,
                 IsSystemCube = false
             };
+
+            if (copyFrom != null)
+            {
+                newCubeProfile.Id = newProfileId;
+                newCubeProfile.IsSystemCube = false;
+            }
 
             if (BlockProfiles.Length <= newProfileId)
             {
@@ -381,7 +413,11 @@ namespace Utopia.Shared.Configuration
             CreateDefaultEntities();
         }
 
-        protected void AddNewEntity(IEntity entityInstance)
+        /// <summary>
+        /// Adds the entity to the configuration, assign unique bleprintid
+        /// </summary>
+        /// <param name="entityInstance"></param>
+        public void AddNewEntity(IEntity entityInstance)
         {
             //Generate a new Blueprint ID, it will represent this Blue print, and must be unique
             ushort newId;
@@ -424,6 +460,18 @@ namespace Utopia.Shared.Configuration
             Flat = 2
         }
         #endregion
+
+        /// <summary>
+        /// Returns a list of all used models in the configuration
+        /// </summary>
+        public List<string> GetUsedModelsNames()
+        {
+            var needToLoadModels = BluePrints.Values.OfType<IVoxelEntity>().Select(e => e.ModelName).Where(m => !string.IsNullOrEmpty(m)).ToList();
+            needToLoadModels.AddRange(CharacterClasses.Select(c => c.ModelName));
+            needToLoadModels.AddRange(TreeBluePrints.Select(c => c.SeedModel));
+            needToLoadModels = needToLoadModels.Distinct().ToList();
+            return needToLoadModels;
+        }
     }
 
     [ProtoContract]

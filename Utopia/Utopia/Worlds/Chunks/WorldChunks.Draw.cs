@@ -153,8 +153,7 @@ namespace Utopia.Worlds.Chunks
             }
             else
             {
-                var pos = PlayerManager.Player.Position.ToCubePosition();
-                var playerChunk = GetChunk(ref pos);
+                var playerChunk = GetChunk(PlayerManager.Player.Position.ToCubePosition());
 
                 if (SliceViewChunks <= 9)
                 {
@@ -278,9 +277,10 @@ namespace Utopia.Worlds.Chunks
                 if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
                     continue;
                 
+                //For Each different entity Model
                 foreach (var pair in chunk.AllPairs())
                 {
-                    // update instances data
+                    // For each instance of the model - update data
                     foreach (var staticEntity in pair.Value)
                     {
                         //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
@@ -371,12 +371,12 @@ namespace Utopia.Worlds.Chunks
         private void DisposeDrawComponents()
         {
             //_terra_View.Dispose();
-            _liquidEffect.Dispose();
-            _terraEffect.Dispose();
-            _biomesColors_View.Dispose();
-            _voxelModelEffect.Dispose();
-            _voxelModelInstancedEffect.Dispose();
-            _textureAnimation_View.Dispose();
+            if (_liquidEffect != null) _liquidEffect.Dispose();
+            if (_terraEffect != null) _terraEffect.Dispose();
+            if (_biomesColors_View != null) _biomesColors_View.Dispose();
+            if (_voxelModelEffect != null) _voxelModelEffect.Dispose();
+            if (_voxelModelInstancedEffect != null) _voxelModelInstancedEffect.Dispose();
+            if (_textureAnimation_View != null) _textureAnimation_View.Dispose();
         }
         #endregion
 

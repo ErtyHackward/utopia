@@ -7,6 +7,8 @@ using Utopia.Shared.Net.Messages;
 using S33M3DXEngine.Main;
 using Utopia.Shared.Net.Interfaces;
 using S33M3DXEngine.Debug.Interfaces;
+using Utopia.Shared.Structs;
+using System.Collections.Generic;
 
 namespace Utopia.Network
 {
@@ -20,11 +22,12 @@ namespace Utopia.Network
         private ErrorMessage _lastError;
         private bool _tryingGlobal;
         private bool _needToTryLocal;
+        private BlocksChangedMessageBuffer _blocksChangedMessageBuffer;
 
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
         public IDynamicEntity Player { get; set; }
-        public DateTime WorldDateTime { get; set; }
+        public UtopiaTime WorldDateTime { get; set; }
         public double TimeFactor { get; set; }
         public GameInformationMessage GameInformations { get; set; }
 
@@ -197,6 +200,7 @@ namespace Utopia.Network
         public ServerComponent()
         {
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
+            _blocksChangedMessageBuffer = new BlocksChangedMessageBuffer();
         }
 
         public override void BeforeDispose()
@@ -286,6 +290,9 @@ namespace Utopia.Network
                 {
                     InvokeEventForNetworkDataReceived(data);
                 }
+
+                //Time based flush of blockChangeBuffer
+                OnMessageBlockChange(_blocksChangedMessageBuffer.Flush(elapsedTime, false));
             }
         }
 
@@ -330,7 +337,7 @@ namespace Utopia.Network
 
         protected void OnMessageBlockChange(BlocksChangedMessage ea)
         {
-            if (MessageBlockChange != null) MessageBlockChange(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
+            if (MessageBlockChange != null && ea != null) MessageBlockChange(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
         }
 
         protected void OnMessagePosition(EntityPositionMessage ea)
@@ -459,6 +466,11 @@ namespace Utopia.Network
             {
                 ((ITimeStampedMsg)msg).MessageRecTime = DateTime.Now;
             }
+
+            if ((MessageTypes)msg.MessageId != MessageTypes.BlockChange)
+            {
+                OnMessageBlockChange(_blocksChangedMessageBuffer.Flush(0, true));
+            }
             
             switch ((MessageTypes)msg.MessageId)
             {
@@ -478,7 +490,7 @@ namespace Utopia.Network
                     OnMessageGameInformation((GameInformationMessage)msg);
                     break;
                 case MessageTypes.BlockChange:
-                    OnMessageBlockChange((BlocksChangedMessage)msg);
+                    _blocksChangedMessageBuffer.Add((BlocksChangedMessage)msg);
                     break;
                 case MessageTypes.EntityPosition:
                     OnMessagePosition((EntityPositionMessage)msg);
@@ -580,7 +592,7 @@ namespace Utopia.Network
             var ea = new ServerConnectionStatusEventArgs 
             { 
                 Status = e.Status,
-                Final = final
+                Final = final,
             };
 
             OnConnectionStatusChanged(ea);

@@ -100,13 +100,17 @@ namespace Utopia.Editor
             //Create Items icons
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
-                using (var dxIcon = _iconFactory.CreateVoxelIcon(visualVoxelModel, IconSize))
+                foreach (var voxelModelState in visualVoxelModel.VoxelModel.States)
                 {
-                    var memStr = new MemoryStream();
-                    Resource.ToStream(_engine.ImmediateContext, dxIcon, ImageFileFormat.Png, memStr);
-                    memStr.Position = 0;
-                    result.Add(visualVoxelModel.VoxelModel.Name, new Bitmap(memStr));
-                    memStr.Dispose();
+
+                    using (var dxIcon = _iconFactory.CreateVoxelIcon(visualVoxelModel, IconSize, voxelModelState))
+                    {
+                        var memStr = new MemoryStream();
+                        Resource.ToStream(_engine.ImmediateContext, dxIcon, ImageFileFormat.Png, memStr);
+                        memStr.Position = 0;
+                        result.Add(visualVoxelModel.VoxelModel.Name + (voxelModelState.IsMainState?"":":"+voxelModelState.Name) , new Bitmap(memStr));
+                        memStr.Dispose();
+                    }
                 }
             }
 

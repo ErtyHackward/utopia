@@ -13,22 +13,19 @@ namespace Utopia.Shared.Structs.Landscape
     {
         public TerraCube Cube;
         public Vector3I Position;
-        public BlockProfile BlockProfile;
         public BlockTag Tag;
 
         public static TerraCubePositionTag DefaultValue = default(TerraCubePositionTag);
 
-        public TerraCubePositionTag(Vector3I pos, TerraCube cube, BlockTag tag, WorldConfiguration config)
+        public TerraCubePositionTag(Vector3I pos, TerraCube cube, BlockTag tag)
         {
-            BlockProfile = config.BlockProfiles[cube.Id];
             Position = pos;
             Cube = cube;
             Tag = tag;
         }
 
-        public TerraCubePositionTag(Vector3I pos, byte cubeId, BlockTag tag, WorldConfiguration config)
+        public TerraCubePositionTag(Vector3I pos, byte cubeId, BlockTag tag)
         {
-            BlockProfile = config.BlockProfiles[cubeId];
             Position = pos;
             Cube = new TerraCube(cubeId);
             Tag = tag;

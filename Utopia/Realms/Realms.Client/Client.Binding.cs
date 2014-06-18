@@ -88,6 +88,9 @@ namespace Realms.Client
             {
                 _d3dEngine.GameWindow.StartPosition = FormStartPosition.Manual;
                 _d3dEngine.GameWindow.Location = ClientSettings.Current.Settings.GraphicalParameters.WindowPos;
+                var rect = Screen.GetWorkingArea(_d3dEngine.GameWindow.Location);
+                if (!rect.Contains(_d3dEngine.GameWindow.Location))
+                    _d3dEngine.GameWindow.Location = new Point();
             }
 
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
@@ -204,7 +207,7 @@ namespace Realms.Client
 
             //Game Componenents =========================================
             _iocContainer.Bind<ServerComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<IClock>().To<WorldClock>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IClock>().To<ClientClock>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PlayerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<WindRoseComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);

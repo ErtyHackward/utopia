@@ -20,6 +20,8 @@ using Utopia.Shared.Settings;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.GUI.TopPanel;
+using Utopia.Worlds.Chunks;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.GUI
 {
@@ -42,6 +44,7 @@ namespace Utopia.GUI
         private ToolBarUi _toolbarUi;
         private int _selectedSlot;
         private EnergyBarsContainer _energyBar;
+        private WeatherContainer _weatherContainer;
         private TooltipControl _tooltip;
         #endregion
 
@@ -66,7 +69,9 @@ namespace Utopia.GUI
            ToolBarUi toolbar,
            InputsManager inputManager,
            CameraManager<ICameraFocused> camManager,
-           PlayerEntityManager playerEntityManager)
+           PlayerEntityManager playerEntityManager,
+        IWeather weather,
+        IWorldChunks worldChunks)
         {
             IsDefferedLoadContent = true;
 
@@ -89,6 +94,10 @@ namespace Utopia.GUI
             _energyBar.LayoutFlags = ControlLayoutFlags.Skip;
             _energyBar.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
 
+            _weatherContainer = new WeatherContainer(d3DEngine, weather, worldChunks, playerEntityManager);
+            _weatherContainer.LayoutFlags = ControlLayoutFlags.Skip;
+            _weatherContainer.Bounds.Location = new UniVector(0, 0); //Always bound to top left location of the screen !
+
             _screen.ToolTipShow += _screen_ToolTipShow;
             _screen.ToolTipHide += _screen_ToolTipHide;
         }
@@ -107,6 +116,7 @@ namespace Utopia.GUI
             {
                 _screen.Desktop.Children.Add(ToolbarUi);
                 _screen.Desktop.Children.Add(_energyBar);
+                _screen.Desktop.Children.Add(_weatherContainer);
                 ToolbarUi.Locate(S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.HorisontalCenter | S33M3CoreComponents.GUI.Nuclex.Controls.ControlDock.VerticalBottom);
             }
             //the guimanager will draw the GUI screen, not the Hud !
@@ -114,13 +124,14 @@ namespace Utopia.GUI
 
         public override void BeforeDispose()
         {
-            _toolbarUi.Dispose();
-            _spriteRender.Dispose();
-            _crosshair.Dispose();
-            _font.Dispose();
-            _tooltip.Dispose();
-            _energyBar.Dispose();
-            _d3DEngine.ScreenSize_Updated -= D3DEngineViewPortUpdated;
+            if (_toolbarUi != null) _toolbarUi.Dispose();
+            if (_spriteRender != null) _spriteRender.Dispose();
+            if (_crosshair != null) _crosshair.Dispose();
+            if (_font != null) _font.Dispose();
+            if (_tooltip != null) _tooltip.Dispose();
+            if (_weatherContainer != null) _weatherContainer.Dispose();
+            if (_energyBar != null) _energyBar.Dispose();
+            if (_d3DEngine != null) _d3DEngine.ScreenSize_Updated -= D3DEngineViewPortUpdated;
         }
 
         #region Public methods
@@ -137,6 +148,11 @@ namespace Utopia.GUI
                 _screen.Desktop.Children.Add(_energyBar);
             }
 
+            if (!_screen.Desktop.Children.Contains(_weatherContainer))
+            {
+                _screen.Desktop.Children.Add(_weatherContainer);
+            }
+
             var screenSize = new Vector2I((int)_d3DEngine.ViewPort.Width, (int)_d3DEngine.ViewPort.Height);
 
             ToolbarUi.Bounds.Location = new UniVector((screenSize.X - ToolbarUi.Bounds.Size.X.Offset) / 2, screenSize.Y - ToolbarUi.Bounds.Size.Y);
@@ -148,6 +164,7 @@ namespace Utopia.GUI
         {
             _screen.Desktop.Children.Remove(ToolbarUi);
             _screen.Desktop.Children.Remove(_energyBar);
+            _screen.Desktop.Children.Remove(_weatherContainer);
             base.DisableComponent();
         }
 
@@ -226,6 +243,7 @@ namespace Utopia.GUI
 
             _toolbarUi.Update(timeSpend);
             _energyBar.Update(timeSpend);
+            _weatherContainer.Update(timeSpend);
         }
 
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)

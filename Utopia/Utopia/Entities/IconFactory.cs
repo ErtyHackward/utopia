@@ -160,19 +160,6 @@ namespace Utopia.Entities
             if (_iconTextureArray != null) _iconTextureArray.Dispose();
         }
 
-        //Too costy to recreate, better keep it
-        public override void UnloadContent()
-        {
-            //this.DisableComponent(); //Disable to component
-
-            //if (_iconsTextureArray != null) _iconsTextureArray.Dispose();
-            //if (_iconTextureArray != null) _iconTextureArray.Dispose();
-
-            //_nbrCubeIcon = 0;
-
-            //this.IsInitialized = false;
-        }
-
         #region Public methods
         public void Lookup(IItem item, out SpriteTexture texture, out int textureArrayIndex)
         {
@@ -186,18 +173,22 @@ namespace Utopia.Entities
                 textureArrayIndex = _cubeIconIndexes[cubeId];
                 return;
             }
-            else if (item is Item)
+            if (item is Item)
             {
                 var voxelItem = item as Item;
 
-                _voxelIcons.TryGetValue(voxelItem.ModelName, out texture);
+                var id = voxelItem.ModelName;
 
-                //2 options : 
-                // option 1 :  draw voxelModel in a render target texture (reuse/pool while unchanged)
-                // option 2 :  cpu projection of voxels into a dynamic Texture (making a for loop on blocks, creating a sort of heigtmap in a bitmap)
+                if (id == null)
+                    return;
+
+                if (!string.IsNullOrEmpty(voxelItem.ModelState))
+                {
+                    id += ":" + voxelItem.ModelState;
+                }
+
+                _voxelIcons.TryGetValue(id, out texture);
             }
-          
-            return;
         }
         #endregion
 
@@ -260,7 +251,7 @@ namespace Utopia.Entities
             var scale = (float)rMax / sphere.Radius; // Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
 
             if (transform == default(Matrix))
-                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5) * transform;
+                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
             else
             {
                 instance.World = transform;
@@ -297,47 +288,56 @@ namespace Utopia.Entities
 
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
-                System.Threading.Thread.Sleep(0);
-                texture.Begin(context);
+                foreach (var voxelModelState in visualVoxelModel.VoxelModel.States)
+                {
+                    System.Threading.Thread.Sleep(0);
+                    texture.Begin(context);
 
-                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+                    RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
-                _voxelEffect.Begin(context);
+                    _voxelEffect.Begin(context);
 
-                _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
-                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(view * projection);
-                _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
+                    _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(view * projection);
+                    _voxelEffect.CBPerFrame.IsDirty = true;
 
-                var instance = visualVoxelModel.VoxelModel.CreateInstance();
-
-                var iconState = visualVoxelModel.VoxelModel.States.FirstOrDefault(s => string.Equals(s.Name, "Icon", StringComparison.CurrentCultureIgnoreCase));
-
-                var state = iconState ?? visualVoxelModel.VoxelModel.GetMainState();
-
-                instance.SetState(state);
-                var size = state.BoundingBox.GetSize();
-
-                var offset = -size / 2 - state.BoundingBox.Minimum;
-
-                const float scaleFactor = 1.6f; // the bigger factor the bigger items
-
-                var scale = Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
-
-                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
-
-                visualVoxelModel.Draw(context, _voxelEffect, instance);
-
-                texture.End(context, false);
+                    var instance = visualVoxelModel.VoxelModel.CreateInstance();
 
 
-                var tex2D = texture.CloneTexture(context, ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
+                    instance.SetState(voxelModelState);
+                    var size = voxelModelState.BoundingBox.GetSize();
+                    var offset = -size / 2 - voxelModelState.BoundingBox.Minimum;
 
-                //Create shadow around icon
-                //tex2D = DrawOuterShadow(context, texture, tex2D);
-                
-                //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
+                    const float scaleFactor = 1.6f; // the bigger factor the bigger items
 
-                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, ToDispose(new SpriteTexture(tex2D)));
+                    var scale = Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
+
+                    instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+
+                    visualVoxelModel.Draw(context, _voxelEffect, instance);
+
+                    texture.End(context, false);
+
+
+                    var tex2D = texture.CloneTexture(context, ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
+
+                    try
+                    {
+                        if (voxelModelState.IsIconState)
+                        {
+                            _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, ToDispose(new SpriteTexture(tex2D)));
+                            _voxelIcons.Add(visualVoxelModel.VoxelModel.Name + ":" + voxelModelState.Name, ToDispose(new SpriteTexture(tex2D)));
+                        }
+                        else
+                        {
+                            _voxelIcons.Add(visualVoxelModel.VoxelModel.Name + ":" + voxelModelState.Name, ToDispose(new SpriteTexture(tex2D)));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error("Error when generating icons: {0}", e.Message);
+                    }
+                }
             }
 
             //Reset device Default render target

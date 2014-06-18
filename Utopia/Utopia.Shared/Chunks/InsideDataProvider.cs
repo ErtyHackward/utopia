@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
@@ -140,9 +141,20 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public void BeginTransaction()
         {
-            if (_transaction)
-                throw new InvalidOperationException("Transaction is already started");
-            _transaction = true;
+            // if there are currently other transaction running, wait unit it will finish
+            while (true)
+            {
+                lock (_syncRoot)
+                {
+                    if (!_transaction)
+                    {
+                        _transaction = true;
+                        break;
+                    }
+                }
+
+                Thread.Sleep(0);
+            }
         }
 
         /// <summary>
@@ -152,14 +164,16 @@ namespace Utopia.Shared.Chunks
         {
             if (!_transaction)
                 throw new InvalidOperationException("Transaction was not started");
-            _transaction = false;
-
+            lock (_syncRoot)
+            {
+                _transaction = false;    
+            }
+            
             if (_transactionPositions.Count == 0) 
                 return;
 
             lock (_transactionPositions)
             {
-
                 OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                        {
                                            Count = _transactionPositions.Count,
@@ -192,8 +206,6 @@ namespace Utopia.Shared.Chunks
                 // copy data
                 if (_blockBytes != null && copyData)
                 {
-
-
                     var newArray = new byte[newSize.X * newSize.Y * newSize.Z];
 
                     Vector3I copySize;
@@ -466,7 +478,7 @@ namespace Utopia.Shared.Chunks
                 if (ColumnsInfo[indexColumn].MaxHeight <= inChunkPosition.Y)
                 {
                     int yPosi = inChunkPosition.Y - 1;
-                    while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
+                    while (yPosi > 0 && GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air)
                     {
                         yPosi--;
                     }

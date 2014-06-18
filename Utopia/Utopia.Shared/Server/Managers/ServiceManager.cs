@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Server.Managers
@@ -42,6 +43,10 @@ namespace Utopia.Shared.Server.Managers
             s.Dispose();
         }
 
+        public T GetService<T>()  where T : Service
+        {
+            return _services.OfType<T>().FirstOrDefault();
+        }
 
         public IEnumerator<Service> GetEnumerator()
         {

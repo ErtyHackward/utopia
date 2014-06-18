@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
+using S33M3CoreComponents.Maths;
+using S33M3CoreComponents.Sound;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Entities.Concrete.Interface;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Concrete
 {
@@ -14,7 +19,7 @@ namespace Utopia.Shared.Entities.Concrete
     /// Special tool used when no tool is set (character mode)
     /// </summary>
     [EditorHide]
-    public class HandTool : Item, ITool
+    public class HandTool : Item, ITool, ISoundEmitterEntity
     {
         [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
         [ProtoMember(1)]
@@ -70,7 +75,6 @@ namespace Utopia.Shared.Entities.Concrete
                 return impact;
             }
 
-            //Cannot remove the item from the world
             if (!entity.IsPickable)
             {
                 impact.Message = "You need a special tool to pick this item";
@@ -78,6 +82,11 @@ namespace Utopia.Shared.Entities.Concrete
             }
 
             cursor.OwnerDynamicId = owner.DynamicId;
+            return TakeImpact(owner, entity, impact, cursor, this);
+        }
+
+        public static IToolImpact TakeImpact(IDynamicEntity owner, IStaticEntity entity, EntityToolImpact impact, ILandscapeCursor cursor, Item hostItem)
+        {
             var charEntity = owner as CharacterEntity;
 
             if (charEntity != null)
@@ -85,32 +94,14 @@ namespace Utopia.Shared.Entities.Concrete
                 var item = (IItem)entity;
                 impact.EntityId = entity.StaticId;
 
-                IOwnerBindable playerBindedItem = entity as IOwnerBindable;
+                var playerBindedItem = entity as IOwnerBindable;
                 if (playerBindedItem != null && playerBindedItem.DynamicEntityOwnerID != charEntity.DynamicId)
                 {
                     impact.Message = "This item is not binded to you !";
                     return impact;
                 }
 
-                if (item.IsDestroyedOnWorldRemove == false)
-                {
-                    //Try to put the item into the inventory
-                    if (charEntity.Inventory.PutItem(item))
-                    {
-                        //If inside the inventory, then remove it from the world
-                        cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
-                        impact.Success = true;
-
-                        // entity should lose its voxel intance if put into the inventory
-                        item.ModelInstance = null;
-
-                        return impact;
-                    }
-
-                    impact.Message = "Unable to put item to the inventory, is it full?";
-                    return impact;
-                }
-                else
+                if (item.IsDestroyedOnWorldRemove)
                 {
                     item.BeforeDestruction(charEntity);
                     cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
@@ -119,6 +110,85 @@ namespace Utopia.Shared.Entities.Concrete
                     impact.Message = "Item has been destroyed";
                     return impact;
                 }
+
+                var treeItem = item as TreeGrowingEntity;
+
+                if (treeItem != null)
+                {
+                    if (treeItem.Scale > 0.2)
+                    {
+                        impact.Message = "The tree is growing, you can't remove it by hands";
+                        return impact;
+                    }
+                    treeItem.Scale = 0;
+                    treeItem.LastGrowUpdate = new UtopiaTime();
+                }
+                
+                var putItems = new List<KeyValuePair<IItem, int>>();
+                putItems.Add(new KeyValuePair<IItem, int>(item, 1));
+
+                var growing = item as PlantGrowingEntity;
+                if (growing != null)
+                {
+                    putItems.Clear();
+                    foreach (var slot in growing.CurrentGrowLevel.HarvestSlots)
+                    {
+                        if (slot.BlueprintId != 0)
+                        {
+                            putItems.Add(
+                                new KeyValuePair<IItem, int>((Item)hostItem.EntityFactory.CreateFromBluePrint(slot.BlueprintId),
+                                    slot.Count));
+                        }
+                    }
+                }
+
+                if (item.Transformations != null)
+                {
+                    var random = new FastRandom(owner.EntityState.PickedEntityPosition.GetHashCode() ^ owner.EntityState.Entropy);
+                    bool transformed = false;
+                    foreach (var itemTransformation in item.Transformations)
+                    {
+                        if (random.NextDouble() < itemTransformation.TransformChance)
+                        {
+                            putItems.Clear();
+                            item.Transformations = null;
+                            foreach (var slot in itemTransformation.GeneratedItems)
+                            {
+                                putItems.Add(
+                                    new KeyValuePair<IItem, int>((Item)hostItem.EntityFactory.CreateFromBluePrint(slot.BlueprintId),
+                                        slot.Count));
+                                transformed = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (!transformed)
+                    {
+                        // don't allow future transforms
+                        item.Transformations = null;
+                    }
+                }
+
+                //Try to put the item into the inventory
+                if (charEntity.Inventory.PutMany(putItems))
+                {
+                    //If inside the inventory, then remove it from the world
+                    var removedEntity = (Item)cursor.RemoveEntity(owner.EntityState.PickedEntityLink);
+                    impact.Success = true;
+
+                    // entity should lose its voxel intance if put into the inventory
+                    removedEntity.ModelInstance = null;
+
+                    if (hostItem.SoundEngine != null && hostItem.EntityFactory.Config.EntityTake != null)
+                    {
+                        hostItem.SoundEngine.StartPlay3D(hostItem.EntityFactory.Config.EntityTake, removedEntity.Position.AsVector3());
+                    }
+
+                    return impact;
+                }
+
+                impact.Message = "Unable to put item to the inventory, is it full?";
+                return impact;
             }
 
             impact.Message = "Expected CharacterEntity owner";

@@ -15,6 +15,7 @@ using Utopia.Entities.Voxel;
 using Utopia.Resources.ModelComp;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -23,11 +24,37 @@ using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
+using Utopia.Shared.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
     public abstract class VisualChunkBase : CompressibleChunk, IDisposable
     {
+        private struct TreeBpSeed
+        {
+            public int TreeTypeId;
+            public int TreeSeed;
+
+            public bool Equals(TreeBpSeed other)
+            {
+                return TreeTypeId == other.TreeTypeId && TreeSeed == other.TreeSeed;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                return obj is TreeBpSeed && Equals((TreeBpSeed)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (TreeTypeId * 397) ^ TreeSeed;
+                }
+            }
+        }
+
         #region Private variables
         private readonly object _syncRoot = new object();
         /// <summary>
@@ -42,6 +69,7 @@ namespace Utopia.Worlds.Chunks
         private readonly WorldChunks _worldChunkManager;
         private readonly VoxelModelManager _voxelModelManager;
         private readonly IChunkEntityImpactManager _chunkEntityImpactManager;
+        private readonly Dictionary<TreeBpSeed,VisualVoxelModel> _cachedTrees;
 
         private Range3I _cubeRange;
         
@@ -165,7 +193,8 @@ namespace Utopia.Worlds.Chunks
                             ChunkDataProvider provider = null)
             : base(provider)
         {
-            
+            _cachedTrees = new Dictionary<TreeBpSeed, VisualVoxelModel>();
+
             Graphics = new ChunkGraphics(this, d3DEngine);
 
             _d3DEngine = d3DEngine;
@@ -281,21 +310,70 @@ namespace Utopia.Worlds.Chunks
         }
 
         public abstract TerraCubeResult GetCube(Vector3I internalPosition);
-        
+
         private void AddVoxelEntity(EntityCollectionEventArgs e)
         {
             var voxelEntity = e.Entity as IVoxelEntity;
-            if (voxelEntity == null) return; //My static entity is not a Voxel Entity => Not possible to render it so !!!
+            if (voxelEntity == null) 
+                return; //My static entity is not a Voxel Entity => Not possible to render it so !!!
 
             //Create the Voxel Model Instance for the Item
             VisualVoxelModel model = null;
-            if (!string.IsNullOrEmpty(voxelEntity.ModelName)) model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
-
+            if (!string.IsNullOrEmpty(voxelEntity.ModelName)) 
+                model = _voxelModelManager.GetModel(voxelEntity.ModelName, false);
             if (model != null && voxelEntity.ModelInstance == null) //The model blueprint is existing, and I need to create an instance of it !
             {
-                voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
-                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
+                var treeGrowing = e.Entity as TreeGrowingEntity;
+                if (treeGrowing != null)
+                {
+                    if (treeGrowing.Scale > 0)
+                    {
+                        // we need to use generated voxel model
+                        TreeBpSeed key;
+                        key.TreeTypeId = treeGrowing.TreeTypeId;
+                        key.TreeSeed = treeGrowing.TreeRndSeed;
 
+                        VisualVoxelModel treeModel;
+
+                        if (_cachedTrees.TryGetValue(key, out treeModel))
+                        {
+                            model = treeModel;
+                        }
+                        else
+                        {
+                            var voxelModel = VoxelModel.GenerateTreeModel(treeGrowing.TreeRndSeed,
+                                _visualWorldParameters.WorldParameters.Configuration.TreeBluePrintsDico[
+                                    treeGrowing.TreeTypeId]);
+
+                            model = new VisualVoxelModel(voxelModel, _voxelModelManager.VoxelMeshFactory);
+                            model.BuildMesh();
+
+                            _cachedTrees.Add(key, model);
+                        }
+                    }
+                }
+
+                var treeSoul = e.Entity as TreeSoul;
+                if (treeSoul != null)
+                {
+                    TreeBpSeed key;
+                    key.TreeTypeId = treeSoul.TreeTypeId;
+                    key.TreeSeed = treeSoul.TreeRndSeed;
+
+                    _cachedTrees.Remove(key);
+                }
+
+
+                voxelEntity.ModelInstance = new VoxelModelInstance(model.VoxelModel);
+
+                //Assign state in case of growing entity !
+                var growingEntity = e.Entity as PlantGrowingEntity;
+                if (growingEntity != null)
+                {
+                    voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevelIndex].ModelState);
+                }
+
+                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, model, _voxelModelManager);
                 //Get default world translation
                 Matrix instanceTranslation = Matrix.Translation(voxelEntity.Position.AsVector3());
 
@@ -313,6 +391,11 @@ namespace Utopia.Worlds.Chunks
 
                 //Apply special scaling to created entity (By default all blue print are 16 times too big.
                 Matrix instanceScaling = Matrix.Scaling(1.0f / 16.0f);
+
+                if (treeGrowing != null && treeGrowing.Scale > 0)
+                {
+                    instanceScaling = Matrix.Scaling(treeGrowing.Scale);
+                }
 
                 //Create the World transformation matrix for the instance.
                 //We take the Model instance world matrix where we add a Rotation and scaling proper to the instance
@@ -363,7 +446,14 @@ namespace Utopia.Worlds.Chunks
                     var entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
                                                                 MathHelper.Floor(entityWorldPosition.Y),
                                                                 MathHelper.Floor(entityWorldPosition.Z));
-                    _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
+                    //new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), 
+                    this.UpdateOrder = 1;
+                    var cubeRange = new Range3I
+                    {
+                        Position = new Vector3I(entityBlockPosition.X, 0, entityBlockPosition.Z),
+                        Size = Vector3I.One
+                    };
+                    _chunkEntityImpactManager.CheckImpact(this, cubeRange);
                 }
             }
         }
@@ -387,7 +477,15 @@ namespace Utopia.Worlds.Chunks
                 var entityBlockPosition = new Vector3I(MathHelper.Floor(entityWorldPosition.X),
                                                             MathHelper.Floor(entityWorldPosition.Y),
                                                             MathHelper.Floor(entityWorldPosition.Z));
-                _chunkEntityImpactManager.CheckImpact(new TerraCubeWithPosition(entityBlockPosition, WorldConfiguration.CubeId.Air, _visualWorldParameters.WorldParameters.Configuration), this);
+
+                this.UpdateOrder = 1;
+                //Compute the Range impacted by the cube change
+                var cubeRange = new Range3I
+                {
+                    Position = new Vector3I(entityBlockPosition.X, 0, entityBlockPosition.Z),
+                    Size = Vector3I.One
+                };
+                _chunkEntityImpactManager.CheckImpact(this, cubeRange);
             }
         }
 

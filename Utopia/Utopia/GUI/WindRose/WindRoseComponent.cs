@@ -16,6 +16,7 @@ using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Maths;
 using Utopia.Worlds.GameClocks;
+using S33M3CoreComponents.GUI.Nuclex.Controls;
 
 namespace Utopia.GUI.WindRose
 {
@@ -28,6 +29,7 @@ namespace Utopia.GUI.WindRose
         private readonly IClock _worldclock;
 
         private CompassControl _compassPanel;
+        private LabelControl _dateTime;
 
         #endregion
 
@@ -64,8 +66,11 @@ namespace Utopia.GUI.WindRose
                          DayCircle = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\DayCircle.png", Vector2I.Zero, imageLoadParam)),
                          MaskArrow = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\MaskArrow.png", Vector2I.Zero, imageLoadParam)),
                          SoulStoneIcon = ToDispose(new SpriteTexture(_engine.Device, ClientSettings.TexturePack + @"Gui\SoulStoneIcon.png", Vector2I.Zero, imageLoadParam)),
-                         sampler = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipLinear)
+                         sampler = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipLinear),                         
                      };
+
+             _dateTime = new LabelControl() { Color = Color.Tomato, Text = "", Bounds = new UniRectangle(-50, -5, new UniScalar(1.0f, 0.0f), 20.0f) };
+             _compassPanel.Children.Add(_dateTime);
 
             _compassPanel.LayoutFlags = S33M3CoreComponents.GUI.Nuclex.Controls.ControlLayoutFlags.Skip;
             _guiScreen.Desktop.Children.Add(_compassPanel);
@@ -78,7 +83,16 @@ namespace Utopia.GUI.WindRose
             {
                 _compassPanel.Rotation = (float)yaw;
             }
-            _compassPanel.RotationDayCycle = _worldclock.ClockTime.Time + MathHelper.Pi;
+
+            var currentDateTime = _worldclock.Now;
+            string currentDay = currentDateTime.Day.ToString();
+            if (currentDateTime.Day == 1) currentDay += "st";
+            else if (currentDateTime.Day == 2) currentDay += "nd";
+            else if (currentDateTime.Day == 3) currentDay += "rd";
+            else currentDay += "th";
+            var dateStr = string.Format("{0} of {1} from Year {2}", currentDay, currentDateTime.Season, currentDateTime.Year);
+            _dateTime.Text = dateStr;
+            _compassPanel.RotationDayCycle = (_worldclock.ClockTime.ClockTimeNormalized) * MathHelper.TwoPi + MathHelper.Pi;
 
             if(_playerManager.Player.BindedSoulStone != null){
                 Vector2 playerLookAtXZ = new Vector2(_playerManager.EntityRotations.LookAt.X, _playerManager.EntityRotations.LookAt.Z);

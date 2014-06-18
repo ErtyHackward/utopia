@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using S33M3DXEngine.Main.Interfaces;
 using S33M3DXEngine.Debug.Interfaces;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Worlds.GameClocks
 {
     public interface IClock : IUpdatableComponent, IGameComponent, IDebugInfo
     {
-        Clock.VisualClockTime ClockTime { get; set; }        
+        VisualClockTime ClockTime { get; set; }
+        UtopiaTime Now { get; }
     }
 }

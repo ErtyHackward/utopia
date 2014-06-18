@@ -174,6 +174,16 @@ namespace Utopia.Shared.Entities.Dynamic
         [Browsable(false)]
         [ProtoMember(9)]
         public bool CanFly { get; set; }
+
+        /// <summary>
+        /// Not related to the dynamic entities
+        /// </summary>
+        [Browsable(false)]
+        public string ModelState {
+            get { return null; } 
+            set { throw new NotSupportedException(); } 
+        }
+
         #endregion
 
         #region Events
@@ -224,11 +234,15 @@ namespace Utopia.Shared.Entities.Dynamic
             var arg = EntityUseEventArgs.FromState(this);
             arg.Tool = tool;
 
+
             if (tool != null)
-                arg.Impact = tool.Use(this);
+            {
+                using (new PerfLimit("Tool use logic " + tool.Name))
+                    arg.Impact = tool.Use(this);
+            }
             else
             {
-                arg.Impact = new ToolImpact{ Message = "Null tool" };
+                arg.Impact = new ToolImpact { Message = "Null tool" };
             }
             
             OnUse(arg);

@@ -319,7 +319,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
         /// <returns></returns>
-        public VisualChunk GetChunk(ref Vector3I cubePosition)
+        public VisualChunk GetChunk(Vector3I cubePosition)
         {
             return GetChunk(cubePosition.X, cubePosition.Z);
         }
@@ -339,6 +339,10 @@ namespace Utopia.Worlds.Chunks
             return GetChunk(X, Z);
         }
 
+        public VisualChunk GetPlayerChunk()
+        {
+            return GetChunk(BlockHelper.EntityToBlock(_camManager.ActiveCamera.WorldPosition.Value));
+        }
 
         /// <summary>
         /// Get a world's chunk from a chunk location in world coordinate with array bound test
@@ -819,7 +823,6 @@ namespace Utopia.Worlds.Chunks
                 {
                     line4 = string.Format("Biomes MetaData : Chunk Biome Type {0}, Column Biome Type {1}", _utopiaProcessorParam.Biomes[c.BlockData.ChunkMetaData.ChunkMasterBiomeType].Name, _utopiaProcessorParam.Biomes[columnInfo.Biome].Name);
                 }
-
 
                 return string.Join("\r\n", line0, line1, line2, line3, line4);
             }

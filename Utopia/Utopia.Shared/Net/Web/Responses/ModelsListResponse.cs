@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Utopia.Shared.Net.Web.Responses
@@ -33,7 +34,14 @@ namespace Utopia.Shared.Net.Web.Responses
     {
         [JsonProperty("id")]
         public int Id { get; set; }
+
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("updateDate")]
+        public DateTime Updated { get; set; }
+
+        [JsonProperty("modelHash")]
+        public string Hash { get; set; }
     }
 }

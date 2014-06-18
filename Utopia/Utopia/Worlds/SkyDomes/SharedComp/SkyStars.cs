@@ -63,8 +63,8 @@ namespace Utopia.Worlds.SkyDomes.SharedComp
 
         public override void BeforeDispose()
         {
-            _effectStars.Dispose();
-            _skyStarVB.Dispose();
+            if (_effectStars != null) _effectStars.Dispose();
+            if (_skyStarVB != null) _skyStarVB.Dispose();
         }
 
         public override void FTSUpdate( GameTime timeSpend)

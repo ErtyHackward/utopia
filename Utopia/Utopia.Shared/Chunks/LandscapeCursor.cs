@@ -1,5 +1,6 @@
 using System;
-using Utopia.Shared.Entities;
+using System.Collections.Generic;
+using System.Linq;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -19,7 +20,10 @@ namespace Utopia.Shared.Chunks
         private IAbstractChunk _currentChunk;
         private Vector3I _internalPosition;
         private Vector3I _position;
-        
+
+        private bool _transactionActive;
+        private List<IAbstractChunk> _transactionChunks; 
+
         /// <summary>
         /// Occurs when someone tries to write using this cursor
         /// </summary>
@@ -50,7 +54,7 @@ namespace Utopia.Shared.Chunks
                     _internalPosition.Z = AbstractChunk.ChunkSize.Z + _internalPosition.Z;
                 
                 //Transform the Cube position into Chunk Position
-                _currentChunk = _manager.GetChunkFromBlock(_position);
+                ChangeChunk(_manager.GetChunkFromBlock(_position));
             }
         }
 
@@ -96,12 +100,13 @@ namespace Utopia.Shared.Chunks
         /// <param name="sourceDynamicId"></param>
         public void Write(byte value, BlockTag tag = null, uint sourceDynamicId = 0)
         {
-            OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { 
-                GlobalPosition = GlobalPosition, 
-                Value = value, 
-                BlockTag = tag,
-                SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
-            });
+            if (BeforeWrite != null)
+                OnBeforeWrite(new LandscapeCursorBeforeWriteEventArgs { 
+                    GlobalPosition = GlobalPosition, 
+                    Value = value, 
+                    BlockTag = tag,
+                    SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
+                });
 
             _currentChunk.BlockData.SetBlock(_internalPosition, value, tag, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
@@ -316,10 +321,27 @@ namespace Utopia.Shared.Chunks
 
             if (newChunkPos != _currentChunk.Position)
             {
-                _currentChunk = _manager.GetChunk(newChunkPos);
+                ChangeChunk(_manager.GetChunk(newChunkPos));
             }
 
             return this;
+        }
+
+        private void ChangeChunk(IAbstractChunk newChunk)
+        {
+            if (_currentChunk == newChunk)
+                return;
+
+            _currentChunk = newChunk;
+
+            if (_transactionActive)
+            {
+                if (!_transactionChunks.Contains(_currentChunk))
+                {
+                    ((InsideDataProvider)_currentChunk.BlockData).BeginTransaction();
+                    _transactionChunks.Add(_currentChunk);
+                }
+            }
         }
 
         /// <summary>
@@ -337,6 +359,10 @@ namespace Utopia.Shared.Chunks
             if (blockLinkedEntity != null && blockLinkedEntity.Linked)
             {
                 entityBlockPosition = blockLinkedEntity.LinkedCube;
+                
+                // you probably forget to set LinkedCube property of the entity
+                if (Vector3D.DistanceSquared(entity.Position, blockLinkedEntity.LinkedCube) > 256)
+                    throw new InvalidOperationException("Invalid linked block");
             }
             else
             {
@@ -361,6 +387,42 @@ namespace Utopia.Shared.Chunks
             chunk.Entities.RemoveById(entity.Tail[0], sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId, out entityRemoved);
 
             return entityRemoved;
+        }
+
+        /// <summary>
+        /// Starts new transaction
+        /// Affects only blocks events
+        /// </summary>
+        public void BeginTransaction()
+        {
+            if (_transactionActive)
+                throw new InvalidOperationException("The transaction is already started");
+
+            _transactionActive = true;
+            _transactionChunks = new List<IAbstractChunk>();
+            if (_currentChunk != null)
+            {
+                 ((InsideDataProvider)_currentChunk.BlockData).BeginTransaction();
+                _transactionChunks.Add(_currentChunk);
+            }
+        }
+
+        /// <summary>
+        /// Finish the transaction
+        /// </summary>
+        public void CommitTransaction()
+        {
+            if (!_transactionActive)
+                throw new InvalidOperationException("The transaction was not started");
+
+            _transactionActive = false;
+
+            foreach (var data in _transactionChunks.Select(c => c.BlockData).OfType<InsideDataProvider>())
+            {
+                data.CommitTransaction();
+            }
+
+            _transactionChunks = null;
         }
 
         /// <summary>

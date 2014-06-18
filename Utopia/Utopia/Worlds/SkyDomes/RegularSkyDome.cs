@@ -79,8 +79,6 @@ namespace Utopia.Worlds.SkyDomes
             cloudDrawIndex = this.DrawOrders.AddIndex(989, "Clouds");
         }
 
-        
-
         #region Public Methods
         public override void Initialize()
         {
@@ -120,21 +118,24 @@ namespace Utopia.Worlds.SkyDomes
 
         public override void BeforeDispose()
         {
-            ((Clouds)_clouds).BeforeDispose();
-            _clouds.Dispose();
+            if (_clouds != null)
+            {
+                ((Clouds)_clouds).BeforeDispose();
+                _clouds.Dispose();
+            }
 
-            _posiTextureEffect.Dispose();
-            _skyDomeEffect.Dispose();
+            if (_posiTextureEffect != null) _posiTextureEffect.Dispose();
+            if (_skyDomeEffect != null) _skyDomeEffect.Dispose();
 
-            _domeVertexBuffer.Dispose();
-            _domeIndexBuffer.Dispose();
+            if (_domeVertexBuffer != null) _domeVertexBuffer.Dispose();
+            if (_domeIndexBuffer != null) _domeIndexBuffer.Dispose();
 
-            _moonVertexBuffer.Dispose();
-            _moonIndexBuffer.Dispose();
+            if (_moonVertexBuffer != null) _moonVertexBuffer.Dispose();
+            if (_moonIndexBuffer != null) _moonIndexBuffer.Dispose();
 
-            _skyTex_View.Dispose();
-            _moonTex_View.Dispose();
-            _glowTex_View.Dispose();
+            if (_skyTex_View != null) _skyTex_View.Dispose();
+            if (_moonTex_View != null) _moonTex_View.Dispose();
+            if (_glowTex_View != null) _glowTex_View.Dispose();
         }
 
         public override void FTSUpdate(GameTime timeSpend)
@@ -168,29 +169,7 @@ namespace Utopia.Worlds.SkyDomes
         #region Private Methods
         private void RefreshSunColor()
         {
-            float SunColorBase;
-            if (_clock.ClockTime.ClockTimeNormalized <= 0.2083944 || _clock.ClockTime.ClockTimeNormalized > 0.9583824) // Between 23h00 and 05h00 => Dark night
-            {
-                SunColorBase = 0.05f;
-            }
-            else
-            {
-                if (_clock.ClockTime.ClockTimeNormalized > 0.2083944 && _clock.ClockTime.ClockTimeNormalized <= 0.4166951) // Between 05h00 and 10h00 => Go to Full Day
-                {
-                    SunColorBase = MathHelper.FullLerp(0.05f, 1, 0.2083944, 0.4166951, _clock.ClockTime.ClockTimeNormalized);
-                }
-                else
-                {
-                    if (_clock.ClockTime.ClockTimeNormalized > 0.4166951 && _clock.ClockTime.ClockTimeNormalized <= 0.6666929) // Between 10h00 and 16h00 => Full Day
-                    {
-                        SunColorBase = 1f;
-                    }
-                    else
-                    {
-                        SunColorBase = MathHelper.FullLerp(1, 0.05f, 0.6666929, 0.9583824, _clock.ClockTime.ClockTimeNormalized); //Go to Full night
-                    }
-                }
-            }
+            float SunColorBase = _clock.ClockTime.SmartTimeInterpolation();
 
             base._sunColor.Red = SunColorBase;
             base._sunColor.Green = SunColorBase;
@@ -376,11 +355,11 @@ namespace Utopia.Worlds.SkyDomes
 
         private void DrawingMoon(DeviceContext context)
         {
-            float alpha = (float)Math.Abs(Math.Sin(_clock.ClockTime.Time + (float)Math.PI / 2.0f));
+            float alpha = (float)Math.Abs(Math.Sin((_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi) + (float)Math.PI / 2.0f));
             //Set States.
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled);
 
-            Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
+            Matrix World = Matrix.Scaling(2f, 2f, 2f) * Matrix.RotationX((_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi) + (float)Math.PI / 2.0f) *
                             Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *
                             Matrix.Translation(LightDirection.X * 1900, LightDirection.Y * 1900, LightDirection.Z * 1900) *
                             Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);
@@ -410,7 +389,7 @@ namespace Utopia.Worlds.SkyDomes
 
             //Draw moonLight
             World = Matrix.Scaling(6f, 6f, 6f) *
-                    Matrix.RotationX(_clock.ClockTime.Time + (float)Math.PI / 2.0f) *
+                    Matrix.RotationX((_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi) + (float)Math.PI / 2.0f) *
                     Matrix.RotationY(-_fPhi + (float)Math.PI / 2.0f) *
                     Matrix.Translation(LightDirection.X * 1700, LightDirection.Y * 1700, LightDirection.Z * 1700) *
                     Matrix.Translation((float)_camManager.ActiveCamera.WorldPosition.ValueInterp.X, -(float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Y, (float)_camManager.ActiveCamera.WorldPosition.ValueInterp.Z);

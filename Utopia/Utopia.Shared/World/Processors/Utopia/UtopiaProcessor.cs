@@ -19,6 +19,8 @@ using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared.Entities.Interfaces;
 using System.Collections.Generic;
 using Utopia.Shared.World.Processors.Utopia.OtherFct;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors.Utopia
 {
@@ -33,7 +35,7 @@ namespace Utopia.Shared.World.Processors.Utopia
         private UtopiaWorldConfiguration _config;
         private BiomeHelper _biomeHelper;
         private LandscapeBufferManager _landscapeBufferManager;
-
+        private UtopiaEntitySpawningControler _spawnControler;
         //Landscape entities generators
 
         #endregion
@@ -66,6 +68,7 @@ namespace Utopia.Shared.World.Processors.Utopia
             _worldGeneratedHeight = _config.ProcessorParam.WorldGeneratedHeight;
             _landscapeBufferManager = landscapeEntityManager;
             LandscapeEntities = new LandscapeEntities(_landscapeBufferManager, _worldParameters);
+            _spawnControler = new UtopiaEntitySpawningControler(_config);
 
             landscapeEntityManager.Processor = this;
         }
@@ -116,13 +119,14 @@ namespace Utopia.Shared.World.Processors.Utopia
                 Array.Copy(landscapeBuffer.ColumnsInfoBuffer, columnsInfo, columnsInfo.Length);
 
                 var metaData = CreateChunkMetaData(columnsInfo);
-                PopulateChunk(chunk, chunkBytes, ref chunkWorldPosition, columnsInfo, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
+                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
+                chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
+
+                PopulateChunk(chunk, chunkBytes, metaData, chunkRnd, _entityFactory, landscapeBuffer.Entities);
 
                 RefreshChunkMetaData(metaData, columnsInfo);
 
                 chunk.BlockData.SetBlockBytes(chunkBytes); //Save block array
-                chunk.BlockData.ColumnsInfo = columnsInfo; //Save Columns info Array
-                chunk.BlockData.ChunkMetaData = metaData;  //Save the metaData Informations
             });
         }
 
@@ -539,16 +543,15 @@ namespace Utopia.Shared.World.Processors.Utopia
         /// </summary>
         /// <param name="ChunkCubes"></param>
         /// <param name="chunkMetaData"></param>
-        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columnInfo, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
+        private void PopulateChunk(GeneratedChunk chunk, byte[] chunkData, ChunkMetaData chunkMetaData, FastRandom chunkRnd, EntityFactory entityFactory, List<LandscapeEntity> landscapeEntities)
         {
             //Get Chunk Master Biome
             var masterBiome = _config.ProcessorParam.Biomes[chunkMetaData.ChunkMasterBiomeType];
-            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, columnInfo);
-
+            ByteChunkCursor dataCursor = new ByteChunkCursor(chunkData, chunk.BlockData.ColumnsInfo);
+            
             masterBiome.GenerateChunkCaverns(dataCursor, chunkRnd);
             masterBiome.GenerateChunkResources(dataCursor, chunkRnd);
-            masterBiome.GenerateChunkItems(dataCursor, chunk, ref chunkWorldPosition, columnInfo, masterBiome, chunkRnd, entityFactory);
-            chunkMetaData.SpawnableEntities = new List<ChunkSpawnableEntity>(masterBiome.SpawnableEntities); 
+            chunkMetaData.InitialSpawnableEntitiesAmount = masterBiome.GenerateChunkStaticItems(dataCursor, chunk, masterBiome, chunkRnd, entityFactory, _spawnControler);
             InsertMicrolandscapeStaticEntities(dataCursor, chunk, chunkRnd, entityFactory, landscapeEntities);
         }
 
@@ -571,16 +574,33 @@ namespace Utopia.Shared.World.Processors.Utopia
             //The entities are sorted by their origine chunk hashcode value
             foreach (LandscapeEntity entity in landscapeEntities)
             {
+                bool isLandscapeEntityRootInsideChunk = (entity.RootLocation.X >= 0 && entity.RootLocation.X < AbstractChunk.ChunkSize.X && entity.RootLocation.Z >= 0 && entity.RootLocation.Z < AbstractChunk.ChunkSize.Z);
+
                 //Get LandscapeEntity
                 var landscapeEntity = _worldParameters.Configuration.LandscapeEntitiesDico[entity.LandscapeEntityId];
-
+                
                 foreach (var staticEntity in landscapeEntity.StaticItems)
                 {
                     //Get number of object
                     var nbr = chunkRnd.Next(staticEntity.Quantity.Min, staticEntity.Quantity.Max);
-                    //If Root out of chunk, devide the qt of object to spawn by 2
-                    if ((entity.RootLocation.X < 0 || entity.RootLocation.X >= AbstractChunk.ChunkSize.X || entity.RootLocation.Z < 0 || entity.RootLocation.Z >= AbstractChunk.ChunkSize.Z))
+                    if (isLandscapeEntityRootInsideChunk)
                     {
+                        //This entity location is inside the correct chunk.
+
+                        //Its a tree !
+                        if (landscapeEntity is TreeBluePrint)
+                        {
+                            //Create tree soul and attach this entity to the chunk
+                            var soul = entityFactory.CreateEntity<TreeSoul>();
+                            soul.Position = new Vector3D(chunkWorldPosition.X + entity.RootLocation.X + 0.5, entity.RootLocation.Y, chunkWorldPosition.Y + entity.RootLocation.Z + 0.5);
+                            soul.TreeRndSeed = entity.GenerationSeed;
+                            soul.TreeTypeId = entity.LandscapeEntityId;
+                            chunk.Entities.Add(soul);
+                        }
+                    }
+                    else
+                    {
+                        //If Root out of chunk, devide the qt of object to spawn by 2
                         nbr = (int)(nbr / 2.0);
                     }
 

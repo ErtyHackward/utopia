@@ -23,7 +23,7 @@ namespace Utopia.Shared.Tools
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
         {
             ISoundDataSourceBase v = value as ISoundDataSourceBase;
-            if (v.FilePath == null) return "";
+            if (v == null || v.FilePath == null) return "";
             return v.FilePath;
         }
     }
